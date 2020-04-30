@@ -16,11 +16,14 @@ jobs:
       with:
         java-version: '11.x'
     
-    - name: Gradle Wrapper Validation
-      uses: gradle/wrapper-validation-action@v1.0.3
-    
     - name: Test with Gradle
       run: ./gradlew clean test
 
     - name: Build with Gradle
       run: ./gradlew assemble
+
+    - name: Release artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: peoplemover
+        path: service/build/libs/peoplemover.jar
