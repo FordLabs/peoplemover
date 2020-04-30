@@ -1,0 +1,68 @@
+PeopleMover V2
+Problems, Assumptions, and Hypotheses
+
+## Structure:
+- Assumption
+    - Hypothesis
+
+
+## Problem:
+Allocation of people to products is inefficient
+- Allocating people to products is too time consuming
+  - If we make allocating people to products faster, we will spend less time wondering who goes where
+- The current process is manual
+  - If we automate the process, we will have fewer weekly meetings to discuss allocations, leading to greater efficiency
+- The current allocations process takes a long time
+  - Current observation: multiple meetings per week to discuss allocations
+- We do not currently have an efficient process
+  - Current observation: John mentioned spending ~10 minutes at the start of a meeting writing names on stickies
+- The managers know the best process for allocating people to products
+  - If we automate the managers’ current process, it can be consistently repeated.
+- Labs has a consistent vision/service model across the product teams
+  - If we ask all teams about the office vision, we will receive similar responses from every team
+
+## Problem: 
+Engineers/PMs/Designers do not have input on what products they end up on
+AND people are unhappy with their product assignments
+### Note:
+“We” below is the royal “we” referring to the Labs as a collective.
+- Allocations is a bigger problem than just management
+  - TBD
+- People cannot choose their product
+  - Current observations: John’s admission that he didn’t ask JK about which product, and assumed anything would be good
+- People are unhappy due to their product
+  - If we allow people to have a more active role in choosing their product, then they will be happier
+- People have reasonable expectations
+  - TBD
+- We can define and measure satisfaction
+  - If we conduct a baseline and follow-up survey of happiness, we will see a pattern
+- We know what makes a good product experience
+  - TBD
+
+## Problem:
+There is no place to visualize who is assigned to which product
+- Visualization helps with Allocation
+  - If we provide a visual representation of allocations (as opposed to a spreadsheet), allocations meetings will take less time
+- People want to know who is on which product
+  - If we provide insight into product teams, there will be no confusion as to who is on which product
+
+## Problem:
+People are assigned to products for too long
+- People want to move off of products
+  - If we give people the opportunity to rotate to a new product, they will take it.
+- We know what “too long” means
+  - TBD
+
+## Problem:
+People are being assigned to teams where they aren’t equipped to succeed
+- People know what success means (common definition across products)
+  - See consistent vision assumption
+- Moving products increases satisfaction
+  - If a team member moves to a new product, their satisfaction and engagement with their product will increase.
+
+## Problem:
+It’s hard to retrieve data about previous product assignments
+- Managers have data about previous assignments
+  - If we ask managers about previous product assignments for an employee, we could locate it within 2 days
+- Managers want data about previous assignments
+  - If managers had data about previous product assignments, they would make different staffing decisions

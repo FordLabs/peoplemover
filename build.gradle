@@ -1,0 +1,110 @@
+buildscript {
+    ext.kotlin_version = '1.3.70'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'com.github.pivotalservices.cf-app' version '2.3.0-rc.8'
+    id 'java'
+    id 'org.sonarqube' version '2.8'
+    id 'jacoco'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.3.61'
+    id "org.jetbrains.kotlin.plugin.spring" version "1.3.71"
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'kotlin'
+
+group = 'com.ford'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    implementation name: 'libauthquest-1.0.3'
+
+    compile 'com.google.guava:guava:28.2-jre'
+    compile 'org.springframework.cloud:spring-cloud-spring-service-connector:2.0.7.RELEASE'
+    compile 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.7.RELEASE'
+    compile 'com.microsoft.sqlserver:mssql-jdbc:7.2.2.jre11'
+    compile 'org.flywaydb:flyway-maven-plugin:6.2.1'
+    compileOnly 'org.projectlombok:lombok:1.18.10'
+
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.2.4.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.2.4.RELEASE'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.30'
+    implementation 'com.auth0:java-jwt:3.10.0'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.2.41'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.10'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+
+// DEPLOYMENT CONFIGURATION
+apply plugin: 'cf-app'
+cfConfig {
+    // See GettingStarted.md for information on updating these values
+    space = "FordLabs_Experiments_InternalProjects-prod"
+    org = "FordLabs_Experiments_InternalProjects_EDC1_Prod"
+
+    name = "PeopleMover"
+    host = "peoplemover"
+    buildpack = "java_buildpack"
+    filePath = "build/libs/PeopleMover-0.0.1-SNAPSHOT.jar"
+    environment = [
+            "spring.datasource.username": "",
+            "spring.datasource.password": "",
+            "JBP_CONFIG_OPEN_JDK_JRE"   : "{ jre: {version: 11.+} }"
+    ]
+}
+
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled false
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.coverage.jacoco.reportPath", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
+}
+
+project.tasks["jacocoTestReport"].dependsOn "test"
+project.tasks["sonarqube"].dependsOn "jacocoTestReport"
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}

@@ -1,0 +1,1 @@
+ALTER TABLE person_location_preference DROP COLUMN location_preference;
