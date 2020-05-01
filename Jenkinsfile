@@ -43,6 +43,8 @@ pipeline {
                     sh """./gradlew cf-push-blue-green \
                             -Pcf.name=StagePeopleMover \
                             -Pcf.host=stagepeoplemover \
+                            -Pcf.ccHost=$peoplemover_pcf_cchost \
+                            -Pcf.domain=$peoplemover_pcf_domain \
                             -Pcf.ccUser=$JENKINS_USER \
                             -Pcf.ccPassword=$JENKINS_PASSWORD \
                             -Pcf.environment.spring.datasource.username=$DB_USER \
@@ -68,6 +70,8 @@ pipeline {
                     sh """./gradlew cf-push-blue-green \
                             -Pcf.ccUser=$JENKINS_USER \
                             -Pcf.ccPassword=$JENKINS_PASSWORD \
+                            -Pcf.ccHost=$peoplemover_pcf_cchost \
+                            -Pcf.domain=$peoplemover_pcf_domain \
                             -Pcf.environment.spring.datasource.username=$DB_USER \
                             -Pcf.environment.spring.datasource.password=$DB_PASSWORD \
                             -Pcf.environment.spring.datasource.url="jdbc:sqlserver://$peoplemover_db_ip;databaseName=PeopleMover" \
