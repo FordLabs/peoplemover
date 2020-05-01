@@ -22,8 +22,12 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew assemble
 
+    - name: Extract branch name
+      shell: bash
+      run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+    
     - name: Release artifact
       uses: actions/upload-artifact@v2
       with:
-        name: peoplemover
+        name: PeopleMover-0.0.1-SNAPSHOT.${{ env.BRANCH_NAME }}.jar
         path: build/libs/PeopleMover-0.0.1-SNAPSHOT.jar
