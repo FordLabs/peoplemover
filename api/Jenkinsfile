@@ -148,15 +148,17 @@ pipeline {
                 }
             }
             steps {
-                pushToCloudFoundry(
-                    target: '',
-                    organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
-                    cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
-                    credentialsId: 'flipJenkins',
-                    manifestChoice: [
-                        manifestFile: "${env.MANIFEST}",
-                    ]
-                )
+                dir("ui") {
+                    pushToCloudFoundry(
+                        target: "$peoplemover_pcf_cchost",
+                        organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
+                        cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
+                        credentialsId: 'flipJenkins',
+                        manifestChoice: [
+                            manifestFile: "${env.MANIFEST}",
+                        ]
+                    )
+                }
             }
         }
     }
