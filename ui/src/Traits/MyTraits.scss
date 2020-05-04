@@ -1,0 +1,199 @@
+/*!
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Application/Styleguide/Colors.scss';
+
+.myTraitsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-items: left;
+  margin: 0 136px;
+}
+
+.horizontalLine {
+  margin-top: 6px;
+  margin-bottom: 24px;
+  border: 1px solid $gray-4;
+  width: 222px;
+}
+
+.myTraitsCircle {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  margin-right: 7px;
+}
+
+.selectRoleCircle {
+  height: 20px;
+  width: 20px;
+  margin-right: 5px;
+}
+
+.whiteCircleBorder {
+  border: 1px solid $gray-4;
+}
+
+.addNewTraitUnfilledCircle {
+  border: 1px solid $prime-1;
+  display: flex;
+  align-items: center;
+}
+
+.duplicateErrorMessage {
+  color: $error-message;
+  font-size: 12px;
+  padding-top: 6px;
+  font-style: italic;
+}
+
+.separator {
+  margin: 16px 0;
+  border: 1px solid #BFBCBB;
+}
+
+.separatorBetweenTags {
+  margin-top: 21px;
+  margin-bottom: 32px;
+  border: 1px solid #BFBCBB;
+  min-width: 225px;
+}
+
+.myTraitsModalContainer {
+  text-align: left;
+  color: $gray-1;
+  margin: -8px auto auto;
+  min-width: 225px;
+
+  .traitName {
+    font-size: 12px;
+    line-height: 24px;
+    max-width: 160px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .traitRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 0;
+    position: relative;
+
+    .addNewTraitText {
+      color: $prime-1;
+    }
+
+    .addTraitIcon {
+      margin: auto;
+      font-size: 12px;
+    }
+  }
+
+  .traitIcons{
+    color: $gray-4;
+    position: absolute;
+    right: 0;
+
+    :hover {
+      color: $prime-1;
+      cursor: pointer;
+    }
+
+    .traitEditIcon{
+      margin-right: 5px;
+    }
+
+    .traitDeleteIcon{
+      margin-left: 5px;
+    }
+  }
+
+  .highlightedCircle {
+    box-shadow:
+            0 0 0 1px white,
+            0 0 0 3px $gray-3;
+  }
+
+  .addNewTraitRow {
+    cursor: pointer;
+  }
+
+  .traitWarning {
+    font-style: italic;
+    font-size: 10px;
+    margin-top: 15px;
+  }
+
+  .selectRoleCircles {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+
+    .closeButton {
+      margin-left: 1px;
+      color: $gray-2;
+    }
+  }
+
+  .editTraitsButtons {
+    padding-top: 6px;
+
+    button {
+      width: 100px;
+      height: 32px;
+      padding: 0;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .cancelFormButton {
+      margin: 0 8px 0 0;
+    }
+
+    .saveFormButton {
+      margin: 0 0 0 8px;
+    }
+  }
+}
+
+.traitWarning {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 10px;
+  color: $gray-1;
+  padding-top: 6px;
+  text-align: left;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 16px;
+  color: $gray-1;
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+.editTraitName {
+  margin-bottom: 6px;
+}

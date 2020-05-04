@@ -1,0 +1,101 @@
+pipeline {
+    agent any
+
+    environment {
+        NPM_ENVIRONMENT = getNpmEnvironment()
+        MANIFEST = getManifest()
+    }
+
+    tools {
+        nodejs 'node'
+    }
+    stages {
+
+        stage('Npm Install') {
+            steps {
+                sh "npm install"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh "CI=true npm run test"
+            }
+        }
+
+        stage('Analyze') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'stage'
+                }
+            }
+            steps {
+                withSonarQubeEnv('FordLabs SonarQube') {
+                    sh "npm run coverage"
+                    sh "npm run analyze"
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh "${env.NPM_ENVIRONMENT} npm run build"
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'stage'
+                    branch 'dev'
+                }
+            }
+            steps {
+                pushToCloudFoundry(
+                    target: '',
+                    organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
+                    cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
+                    credentialsId: 'flipJenkins',
+                    manifestChoice: [
+                        manifestFile: "${env.MANIFEST}",
+                    ]
+                )
+            }
+        }
+    }
+
+}
+
+def getNpmEnvironment() {
+    def branchName = "${env.BRANCH_NAME}"
+    if (branchName == "dev" || branchName == "stage") {
+        return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org \
+                  REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
+                  REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_qa_client_id \
+                  REACT_APP_AUTH_ENABLED=false \
+                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
+                """.stripIndent()
+    } else if (branchName == "master") {
+        return """REACT_APP_URL=https://peoplemover.$peoplemover_pcf_org \
+                  REACT_APP_AUTHQUEST_URL=$authquest_prod_url \
+                  REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_prod_client_id \
+                  REACT_APP_AUTH_ENABLED=false \
+                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=false \
+                """.stripIndent()
+    } else {
+        return ' '
+    }
+}
+
+def getManifest() {
+    def branchName = "${env.BRANCH_NAME}"
+    if (branchName == "dev") {
+        return 'manifest_QA.yml'
+    } else if (branchName == "stage") {
+        return 'manifest_Stage.yml'
+    } else {
+        return 'manifest.yml'
+    }
+}

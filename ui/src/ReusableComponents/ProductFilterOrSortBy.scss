@@ -1,0 +1,69 @@
+/*!
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Application/Styleguide/Colors.scss';
+
+.dropdown {
+  width: auto;
+  font-size: 12px;
+  color: $gray-1;
+}
+
+.sortby-dropdown{
+  min-width: 100px;
+}
+
+.filterBy-dropdown{
+  min-width: 0;
+}
+
+.sortby-option {
+  height: 25px;
+  font-size: 12px;
+  padding: 0 4px;
+  display: flex;
+  align-items:center;
+}
+
+.dropdown-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  font-size: 0.875rem;
+  color: $gray-1 !important;
+  min-width: 50px;
+}
+
+.sortby-option-check{
+  margin-left: auto;
+}
+
+.filter-option {
+  margin-top: 6px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.filter-option > .checkbox {
+  margin: 0;
+  margin-right: 6px;
+}
+
+.filter-option > .filter-label-name {
+  word-break: break-all;
+}

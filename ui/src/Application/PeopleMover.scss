@@ -1,0 +1,148 @@
+/*!
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Application/Styleguide/Colors.scss';
+
+.noOverflow {
+    overflow: hidden;
+}
+
+.boardButtons button {
+    margin: 0 12px;
+}
+
+.productListContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    flex-grow: 1
+}
+
+.newProduct {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    height: 30px;
+    align-items: center;
+}
+
+.newProduct.productCardContainer {
+    padding-bottom: 4px;
+    cursor: pointer;
+}
+
+.addProductIcon {
+    margin-left: 11px;
+    margin-right: 8px;
+    padding-bottom: 4px;
+}
+
+.newProductText {
+    font-size: 14px;
+    color: $gray-1;
+    padding-bottom: 2px;
+}
+
+.spaceNotExistsError {
+    margin-left: 50px;
+    color: deeppink;
+    font-size: xx-large;
+}
+
+.logo-image {
+    height: 25px;
+    width: 25px;
+}
+
+.logo-title-container {
+    display: flex;
+    align-items: center;
+}
+
+.page-title {
+    padding-top: 6px;
+    padding-left: 8px;
+}
+
+.productAndAccordionContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+}
+
+.accordionContainer {
+    flex-grow: 0;
+    min-width: 204px;
+    max-height: 82vh;
+    margin-top: 2px;
+
+    font-size: 14px;
+    color: $gray-1;
+}
+
+.unassignedContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.unassignedTitleAndIcon,
+.archivedTitleAndIcon {
+    padding-left: 20px;
+}
+
+.drawerCaret {
+    margin-right: 14px;
+}
+
+.archivedHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 46px;
+    flex-grow: 1;
+}
+
+.accordionHeaderContainer {
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+    border: 2px solid $gray-5;
+    border-bottom: 0;
+    border-radius: 2px;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.accordionText {
+    padding-left: 5px;
+}
+
+.addtionalFilterMultiValue {
+    background-color: $gray-5;
+    border-radius: 6px;
+    display: flex;
+    margin: 3px;
+    padding: 6px 4px;
+    min-width: 0;
+    box-sizing: border-box;
+    align-items: center;
+    height: 22px;
+    font-style: italic;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 10vw;
+    white-space: nowrap;
+}

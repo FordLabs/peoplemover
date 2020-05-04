@@ -1,0 +1,141 @@
+/*!
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Application/Styleguide/Colors.scss';
+
+.personContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 2px 5px 8px 5px;
+  cursor: pointer;
+  position: relative;
+
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: bold;
+  color: #403D3D;
+  border-radius: 2px;
+  background-color: $white;
+  min-height: 43px;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+
+  &:hover {
+    box-shadow: 0 0 0 2px $prime-1;
+
+    .personRoleColor {
+      border-top: 2px solid white !important;
+      border-right: 2px solid white !important;
+      border-bottom: 2px solid white !important;
+      box-sizing: border-box;
+    }
+  }
+
+  &.Placeholder {
+    border: 2px solid transparent;
+    border-right: none;
+  }
+
+  &.Placeholder:hover {
+    border-color: white !important;
+
+    .personRoleColor {
+      border-top: none !important;
+      border-bottom: none !important;
+      border-right: 2px solid white !important;
+    }
+  }
+}
+
+.NotPlaceholder {
+  .personRoleColor {
+    width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 20px;
+    border-top-right-radius: inherit;
+    border-bottom-right-radius: inherit;
+  }
+}
+
+.personContainer:hover .personEditIcon {
+  margin-left: 0;
+  visibility: visible;
+}
+
+.personContainer:hover .personNameAndRoleContainer {
+  border-color: $white;
+}
+
+.personContainer p {
+  margin: 2px;
+  user-select: none;
+  max-width: 132px;
+}
+
+.personNameAndRoleContainer {
+  width: 142px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  padding: 4px 8px;
+}
+
+div.DefaultColor {
+  background-color: $white;
+  border-radius: 2px;
+}
+
+div.Placeholder {
+  background-color: $white;
+}
+
+.personRole {
+  font-size: 10px;
+  line-height: 11px;
+  font-weight: normal;
+}
+
+.personEditIcon {
+  visibility: hidden;
+  margin-left: 2px;
+}
+
+.personRoleColor {
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 20px;
+}
+
+.borderedPeople {
+  border: 1px solid $gray-5;
+}
+
+.borderedPeople:hover{
+  border: 1px solid #FFFFFF;
+}
+
+.borderedPeople .personRoleColor{
+  border-top-right-radius: 1px;
+  border-bottom-right-radius: 1px;
+}
+
+.chrisBoyer{
+  cursor: url(https://emoji.slack-edge.com/T56ARKB1Q/cboyer17/6d69a2301aef49de.png), auto;
+}

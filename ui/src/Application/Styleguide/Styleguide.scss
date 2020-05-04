@@ -1,0 +1,175 @@
+/*!
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import './Colors.scss';
+
+header {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  background-color: $white;
+  padding: 15px 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  align-items: center;
+  z-index: 2;
+  position: sticky;
+  top: 0;
+}
+
+body {
+  margin: 0;
+  font-family: Helvetica, sans-serif;
+}
+
+header h1 {
+  margin: 0;
+  background: $logo-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 20px;
+  line-height: 23px;
+}
+
+h1, h2, h3, p, label, a {
+  font-family: Helvetica, sans-serif;
+}
+
+h1, h2 {
+  color: #273336;
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+a.link {
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 16px;
+}
+
+a.deleteLink {
+  color: $prime-1;
+}
+
+.deleteLinkColor {
+  color: #C82656;
+}
+
+.greyIcon {
+  color: $gray-1;
+}
+
+.orangeIcon {
+  color: $prime-1;
+}
+
+button,
+input[type="button"],
+input[type="submit"] {
+  border: none;
+  outline: none;
+  color: $white;
+  background-color: $prime-1;
+  cursor: pointer;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+
+input[type="button"].disabled,
+input[type="button"]:disabled {
+  //background-color: $prime-5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+input[type="text"] {
+  padding-left: 8px;
+}
+
+button.createButton,
+input[type="button"].createButton,
+input[type="submit"].createButton {
+  background-color: $prime-1;
+  color: $white;
+
+  font-size: 16px;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.squareButton {
+  padding: 10px 30px;
+  border-radius: 6px;
+}
+
+.alignSelfCenter {
+  align-self: center;
+}
+
+.deleteButtonContainer {
+  display: flex;
+  margin-top: 32px;
+}
+
+.obliterateLink {
+  cursor: pointer;
+  text-decoration: underline;
+
+  font-size: 16px;
+  padding-top: 1px;
+}
+
+.ProductDesigner {
+   background-color: $role-2;
+ }
+
+.ProductManager {
+  background-color: $role-1;
+}
+
+.SoftwareEngineer {
+  background-color: $role-3;
+}
+
+.optionRoleBadge {
+  height: 100%;
+  min-width: 6px;
+  width: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.customControlContainer {
+  height: 30px;
+  position: relative;
+
+  .optionRoleBadge {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+  }
+}
+
+.roleOptionLabel {
+  text-align: left;
+  width: 100%;
+  margin-left: 5px;
+}

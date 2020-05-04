@@ -1,0 +1,52 @@
+/*!
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Application/Styleguide/Colors.scss';
+
+.createNewPersonContainer {
+    position: absolute;
+    top: 140px;
+    left: 139px;
+    width: 214px;
+    height: 60px;
+    border-radius: 2px;
+    border: 1px solid $gray-4;
+    display: flex;
+    flex-direction: column;
+    background-color: $white;
+    justify-content: center;
+
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.createNewPersonLink {
+    padding: 8px 10px 8px 15px;
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+.createNewPersonIcon {
+    margin: 0 8px 0 0;
+}
+
+.createNewPersonText {
+    border-bottom: 1px solid $gray-4;
+    padding: 12px 10px 9px 15px;
+    color: $gray-2;
+    flex-grow: 1;
+}

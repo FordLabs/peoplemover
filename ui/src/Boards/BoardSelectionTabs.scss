@@ -1,0 +1,97 @@
+/*!
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Application/Styleguide/Colors.scss';
+
+.boardSelectionContainer {
+    display: flex;
+    justify-content: space-between;
+    z-index: 1;
+    position: sticky;
+    top: 68px;
+}
+
+.boardSelectionContainer .tab {
+    background-color: $gray-5;
+    min-height: 40px;
+}
+
+.tabContainer {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+}
+
+.tabContainer .tab {
+    color: $gray-1;
+    min-width: 150px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    height: 100%;
+    border-right: 2px solid white;
+}
+
+.tabContainer .icon {
+    margin: 0 12px 0 0;
+    padding: 3px;
+    height: 16px;
+}
+
+.tabContainer button {
+    background-color: transparent;
+    margin: 12px 10px 10px 10px;
+
+    color: $gray-1;
+    font-weight: bold;
+
+    font-size: 16px;
+    line-height: 18px;
+    text-align: left;
+}
+
+.tabContainer .selected {
+    color: $white;
+}
+
+.boardSelectionContainer .spaceFiller {
+    background-color: $gray-5;
+    display: flex;
+    flex-grow: 10;
+}
+
+.tabContainer div.selected {
+    background-color: $prime-1;
+}
+
+button.selectionTabButton {
+    color: $prime-1;
+    padding-right: 20px;
+    font-weight: bold;
+    min-width: 140px;
+}
+
+.addBoardIcon, .myRolesIcon {
+    margin-right: 8px;
+    color: $purple-title;
+}
+
+.myTagsIcon{
+    margin-right: 5px;
+    color: $purple-title;
+}
