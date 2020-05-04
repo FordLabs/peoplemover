@@ -1,10 +1,15 @@
 pipeline {
     agent any
+    environment {
+        NPM_ENVIRONMENT = getNpmEnvironment()
+        MANIFEST = getManifest()
+    }
     tools {
         jdk 'openjdk-11-jdk'
+        nodejs 'node'
     }
     stages {
-        stage('Test') {
+        stage('API Test') {
             steps {
                 dir("api") {
                     sh "./gradlew clean test"
@@ -12,7 +17,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('API Build') {
             steps {
                 dir("api") {
                     sh "./gradlew assemble"
@@ -20,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('Analyze') {
+        stage('API Analyze') {
             when {
                 anyOf {
                     branch 'master'
@@ -36,7 +41,48 @@ pipeline {
             }
         }
 
-        stage('Deploy Stage') {
+        stage('Npm Install') {
+            steps {
+                dir("ui") {
+                    sh "npm install"
+                }
+            }
+        }
+
+        stage('UI Test') {
+            steps {
+                dir("ui") {
+                    sh "CI=true npm run test"
+                }
+            }
+        }
+
+        stage('UI Build') {
+            steps {
+                dir("ui") {
+                    sh "${env.NPM_ENVIRONMENT} npm run build"
+                }
+            }
+        }
+
+        stage('UI Analyze') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'stage'
+                }
+            }
+            steps {
+                withSonarQubeEnv('FordLabs SonarQube') {
+                    dir("ui") {
+                        sh "npm run coverage"
+                        sh "npm run analyze"
+                    }
+                }
+            }
+        }
+
+        stage('API Deploy Stage') {
             when {
                 branch 'stage'
             }
@@ -65,7 +111,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy Prod') {
+        stage('API Deploy Prod') {
             when {
                 branch 'master'
             }
@@ -92,5 +138,58 @@ pipeline {
                 }
             }
         }
+
+        stage('UI Deploy') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'stage'
+                    branch 'dev'
+                }
+            }
+            steps {
+                pushToCloudFoundry(
+                    target: '',
+                    organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
+                    cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
+                    credentialsId: 'flipJenkins',
+                    manifestChoice: [
+                        manifestFile: "${env.MANIFEST}",
+                    ]
+                )
+            }
+        }
+    }
+}
+
+def getNpmEnvironment() {
+    def branchName = "${env.BRANCH_NAME}"
+    if (branchName == "dev" || branchName == "stage") {
+        return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org \
+                  REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
+                  REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_qa_client_id \
+                  REACT_APP_AUTH_ENABLED=false \
+                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
+                """.stripIndent()
+    } else if (branchName == "master") {
+        return """REACT_APP_URL=https://peoplemover.$peoplemover_pcf_org \
+                  REACT_APP_AUTHQUEST_URL=$authquest_prod_url \
+                  REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_prod_client_id \
+                  REACT_APP_AUTH_ENABLED=false \
+                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=false \
+                """.stripIndent()
+    } else {
+        return ' '
+    }
+}
+
+def getManifest() {
+    def branchName = "${env.BRANCH_NAME}"
+    if (branchName == "dev") {
+        return 'manifest_QA.yml'
+    } else if (branchName == "stage") {
+        return 'manifest_Stage.yml'
+    } else {
+        return 'manifest.yml'
     }
 }
