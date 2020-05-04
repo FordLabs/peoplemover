@@ -13,13 +13,17 @@ pipeline {
 
         stage('Npm Install') {
             steps {
-                sh "npm install"
+                dir("ui") {
+                    sh "npm install"
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh "CI=true npm run test"
+                dir("ui") {
+                    sh "CI=true npm run test"
+                }
             }
         }
 
@@ -32,15 +36,19 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('FordLabs SonarQube') {
-                    sh "npm run coverage"
-                    sh "npm run analyze"
+                    dir("ui") {
+                        sh "npm run coverage"
+                        sh "npm run analyze"
+                    }
                 }
             }
         }
 
         stage('Build') {
             steps {
-                sh "${env.NPM_ENVIRONMENT} npm run build"
+                dir("ui") {
+                    sh "${env.NPM_ENVIRONMENT} npm run build"
+                }
             }
         }
 
