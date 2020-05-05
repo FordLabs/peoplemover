@@ -38,10 +38,7 @@ function BoardButtons({setCurrentModal}: BoardButtonsProps): JSX.Element {
             <div className={'sortByDropDownContainer'}>
                 <ProductSortBy/>
             </div>
-            <button className="squareButton createButton"
-                onClick={() => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>Create Person
-            </button>
-            { process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED === 'true' &&
+            {process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED === 'true' &&
                 <button data-testid="editContributorsModal" className={'editContributorsModal'}
                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
                     <i className="fas fa-user" data-testid={'userIcon'}></i>

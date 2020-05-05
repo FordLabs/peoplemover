@@ -48,11 +48,6 @@ describe('Boards', () => {
             expect(app.queryByText('Product 2')).not.toBeInTheDocument();
         });
 
-        it('should not fail if some products have null locations and others do not', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-            await app.findByText('board one');
-        });
-
         describe('TRANSITION', () => {
             const hiddenBoardName = `${BOARD_PREFIX_TO_HIDE_DURING_TRANSITION}dontshowup`;
 
@@ -68,13 +63,6 @@ describe('Boards', () => {
                 } as AxiosResponse));
             });
 
-            it('should not show boards with our prefix', async () => {
-                const app = renderWithRedux(<PeopleMover/>);
-
-                await app.findByText('board one');
-                expect(app.queryByText(hiddenBoardName)).not.toBeInTheDocument();
-            });
-
             it('should start with board one as current board', async () => {
                 const app = renderWithRedux(<PeopleMover/>);
                 await app.findByText('Product 1');
@@ -88,7 +76,7 @@ describe('Boards', () => {
             await act(async () => {
                 const store = createStore(rootReducer, compose(applyMiddleware(thunk)));
                 const component = <PeopleMover/>;
-                const app = await renderWithRedux(component, store);
+                renderWithRedux(component, store);
 
                 const expectedProduct1Matcher = jasmine.objectContaining({
                     product: TestUtils.productWithAssignments,
@@ -96,25 +84,13 @@ describe('Boards', () => {
                 const expectedProduct2Matcher = jasmine.objectContaining({
                     product: TestUtils.productWithoutAssignments,
                 });
-                const expectedBoard2ProductMatcher = jasmine.objectContaining({
-                    product: TestUtils.productsForBoard2[0],
-                });
 
                 await wait(() => {
                     expect(store.getState().productRefs.length).toEqual(2);
                 });
-                let productCardRefAndProductPairs = store.getState().productRefs;
+                const productCardRefAndProductPairs = store.getState().productRefs;
                 expect(productCardRefAndProductPairs).toContainEqual(expectedProduct1Matcher);
                 expect(productCardRefAndProductPairs).toContainEqual(expectedProduct2Matcher);
-
-                const secondBoard = await app.findByText('board two');
-                secondBoard.click();
-
-                await wait(() => {
-                    expect(store.getState().productRefs.length).toEqual(1);
-                });
-                productCardRefAndProductPairs = store.getState().productRefs;
-                expect(productCardRefAndProductPairs).toContainEqual(expectedBoard2ProductMatcher);
             });
         });
     });

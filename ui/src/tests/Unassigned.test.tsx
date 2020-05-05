@@ -91,7 +91,7 @@ describe('Unassigned Products', () => {
             await TestUtils.waitForHomePageToLoad(app);
 
             expect(app.queryByTestId('unassignedPeopleContainer')).not.toBeInTheDocument();
-            fireEvent.click(app.getByText('Create Person'));
+            fireEvent.click(app.getByText('Add Person'));
             await TestUtils.waitForHomePageToLoad(app);
 
             fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Person Name'}});
@@ -108,7 +108,7 @@ describe('Unassigned Products', () => {
             const countBadge = await app.findByTestId('countBadge');
             expect(countBadge.innerHTML).toEqual('1');
 
-            const createPersonButton = await app.findByText('Create Person');
+            const createPersonButton = await app.findByText('Add Person');
             fireEvent.click(createPersonButton);
 
             const nameField = await app.findByLabelText('Name');

@@ -18,9 +18,7 @@
 import {connect} from 'react-redux';
 import {AvailableModals, closeModalAction} from '../Actions';
 import Modal from '../../Modal/Modal';
-import CreateBoardForm from '../../Boards/CreateBoardForm';
 import React from 'react';
-import EditBoardForm from '../../Boards/EditBoardForm';
 import ProductForm from '../../Products/ProductForm';
 import PersonForm from '../../People/PersonForm';
 import AssignmentForm from '../../Assignments/AssignmentForm';
@@ -41,12 +39,6 @@ const getCurrentModal = (currentModal: CurrentModalState, currentBoard: Board, a
     const {modal, item} = currentModal;
 
     switch (modal) {
-    case AvailableModals.CREATE_BOARD:
-        return <CreateBoardForm boards={boards}/>;
-    case AvailableModals.EDIT_BOARD:
-        return <EditBoardForm boardId={item.id}
-            boardName={item.name}
-            isTheOnlyBoard={boards.length < 2}/>;
     case AvailableModals.CREATE_PRODUCT:
         return <ProductForm editing={false}
             boardId={currentBoard!.id}
@@ -87,10 +79,6 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
     const {modal} = currentModal;
 
     switch (modal) {
-    case AvailableModals.CREATE_BOARD:
-        return 'Create New Board';
-    case AvailableModals.EDIT_BOARD:
-        return 'Edit Board';
     case AvailableModals.CREATE_PRODUCT:
         return 'Create New Product';
     case AvailableModals.EDIT_PRODUCT:

@@ -42,8 +42,6 @@ export enum AvailableActions {
 }
 
 export enum AvailableModals {
-    CREATE_BOARD,
-    EDIT_BOARD,
     CREATE_PRODUCT,
     EDIT_PRODUCT,
     CREATE_PERSON,

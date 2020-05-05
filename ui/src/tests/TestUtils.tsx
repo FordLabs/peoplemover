@@ -57,6 +57,51 @@ export function renderWithReduxEnzyme(
     return mount(<Provider store={testingStore}>{component}</Provider>);
 }
 
+export const mockDate = (expected: Date): () => void => {
+    const _Date = Date;
+
+    // If any Date or number is passed to the constructor
+    // use that instead of our mocked date
+    function MockDate(mockOverride?: Date | number): Date {
+        return new _Date(mockOverride || expected);
+    }
+
+    MockDate.UTC = _Date.UTC;
+    MockDate.parse = _Date.parse;
+    MockDate.now = (): number => expected.getTime();
+    // Give our mock Date has the same prototype as Date
+    // Some libraries rely on this to identify Date objects
+    MockDate.prototype = _Date.prototype;
+
+    // Our mock is not a full implementation of Date
+    // Types will not match but it's good enough for our tests
+    global.Date = MockDate as any;
+
+    // Callback function to remove the Date mock
+    return (): void => {
+        global.Date = _Date;
+    };
+};
+
+export function mockCreateRange(): () => void {
+    const _createRange = window.document.createRange;
+
+    window.document.createRange = function createRange(): Range {
+        return {
+            setEnd: () => null,
+            setStart: () => null,
+            getBoundingClientRect: (): DOMRect => {
+                return {right: 0} as DOMRect;
+            },
+            commonAncestorContainer: document.createElement('div'),
+        } as unknown as Range;
+    };
+
+    return (): void => {
+        window.document.createRange = _createRange;
+    };
+}
+
 const hank: Person = {
     spaceId: 1,
     id: 200,

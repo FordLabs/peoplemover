@@ -41,13 +41,6 @@ describe('Products', () => {
     });
 
     describe('home page', () => {
-        it('displays the board names', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
-            await app.findByText('board one');
-            await app.findByText('board two');
-        });
-
         it('displays the product names', async () => {
             const app = renderWithRedux(<PeopleMover/>);
             await app.findByText('Product 1');
@@ -472,7 +465,6 @@ describe('Products', () => {
             const app = renderWithRedux(<PeopleMover/>);
 
             await app.findByText('Person 1');
-            await app.findByText('board one');
         });
 
         it('displays persons role on each assignment', async () => {
@@ -571,18 +563,20 @@ describe('Products', () => {
             ));
             Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
 
-            const app = renderWithRedux(<PeopleMover/>);
+            await act(async () => {
+                const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
-            fireEvent.click(newProductButton);
+                const newProductButton = await app.findByText('New Product');
+                fireEvent.click(newProductButton);
 
-            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
-            fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
-            fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
+                fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
+                fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
+                fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
 
-            fireEvent.click(app.getByText('Create'));
-            await app.findByText('board one');
-            expect(app.queryByText('Add Products')).toBeNull();
+                fireEvent.click(app.getByText('Create'));
+
+                expect(app.queryByText('Add Products')).toBeNull();
+            });
         });
     });
 
