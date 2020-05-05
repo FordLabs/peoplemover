@@ -284,6 +284,20 @@ describe('people actions', () => {
         });
     });
 
+    it('should have initially selected product selected', async () => {
+        const products: Product[] = [];
+        const component = <PersonForm editing={false}
+                                      products={products}
+                                      initialPersonName={'BRADLEY'}
+                                      initiallySelectedProduct={TestUtils.productWithAssignments}
+        />;
+
+        await act(async () => {
+            const wrapper = await renderWithRedux(component);
+            await wrapper.findByText('Product 1');
+        });
+    });
+
     it('should not show the unassigned product or archived products in product list', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
         const component = <PersonForm editing={false}
