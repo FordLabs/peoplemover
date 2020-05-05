@@ -71,10 +71,10 @@ function ConfirmationModal({
 
                 </div>
 
-                <div className={`yesNoButtons confirmationModalControls${canArchive ? ' archiveable' : ''}`}>
+                <div className={`yesNoButtons confirmationControlButtons confirmationModalControls${canArchive ? ' archiveable' : ''}`}>
 
-                    <a className="formButton link deleteLink" data-testid="confirmationModalCancel"
-                        onClick={close}>Cancel</a>
+                    <button className="formButton cancelFormButton" data-testid="confirmationModalCancel"
+                        onClick={close}>Cancel</button>
 
                     <div className={`archiveAndDeleteContainer${canArchive && !isArchived ? ' archiveable' : ''}`}>
                         {canArchive && !isArchived && (<button

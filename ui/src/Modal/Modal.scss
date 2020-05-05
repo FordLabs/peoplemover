@@ -92,6 +92,10 @@
     padding: 0 52px;
 }
 
+.confirmationControlButtons {
+    margin-top: 32px;
+}
+
 .archiveAndDeleteContainer {
     justify-content: flex-end;
 }
@@ -99,7 +103,7 @@
 .archiveAndDeleteContainer.archiveable {
     display: flex;
     flex-direction: row;
-    min-width: 255px;
+    min-width: 242px;
     justify-content: space-between;
 }
 

@@ -1,0 +1,18 @@
+Git Process for PeopleMover
+
+1. Create a branch based off stage for your story with name "storyNumber__description_of_story"
+2. Do all work in this branch
+3. Prefix any commits with "[#storyNumber] did this thing"
+4. Push your branch to origin
+5. When you think it is ready for review,
+5a. pull origin stage into your branch
+5b. merge your branch into dev
+5c. If merge conflicts, fix in dev, not in your branch
+6. Create a pull request on GitHub from your branch to stage and make PM & PD as reviewers
+7. Once they have approved, squash and merge with commit message like in step 3
+7a. You can add co-authored by in the squashed commit if you like
+
+Prod
+1. Verify everything waiting in stage is correct
+2. Merge from stage to master
+3. Delete all unnecessary branches after a prod push

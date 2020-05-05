@@ -70,10 +70,6 @@ describe('SpaceDashbord tests', () => {
             moment.tz.setDefault('GMT');
         });
 
-        afterEach(() => {
-            moment.tz.setDefault();
-        });
-
         it('should display space last modified date and time on a space', async () => {
             const {component} = await createTestComponent();
             expect(component.getByText('Last modified Tuesday, April 14, 2020 at 6:06 pm')).not.toBeNull();
