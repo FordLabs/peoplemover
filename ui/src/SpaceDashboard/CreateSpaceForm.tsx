@@ -49,12 +49,12 @@ function CreateSpaceForm({
     }
 
     function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
-        setSpaceName(event.target.value);
+        setSpaceName(event.target.value.split(" ").join(""));
     }
 
     return  <div className={'createSpaceContainer'}>
         <label className={'createSpaceLabel'} htmlFor="spaceNameField">Space Name</label>
-        <input className={'createSpaceInputField'} id="spaceNameField" type="text" onChange={onSpaceNameFieldChanged}/>
+        <input className={'createSpaceInputField'} id="spaceNameField" type="text"  value={spaceName} onChange={onSpaceNameFieldChanged}/>
 
         <div className={'createSpaceButtonContainer'}>
             <button className={'createSpaceCancelButton'} onClick={closeModal}>Cancel</button>
