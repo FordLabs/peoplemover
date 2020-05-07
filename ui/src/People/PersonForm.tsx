@@ -108,8 +108,12 @@ function PersonForm({
                 setInitialProducts(createProductsFromAssignments(assignments));
                 setSelectedProducts(createProductsFromAssignments(assignments));
             } else {
+
                 if (initialPersonName) {
                     setPerson((updatingPerson: Person) => ({...updatingPerson, name: initialPersonName}));
+                }
+                if (initiallySelectedProduct) {
+                    setSelectedProducts([initiallySelectedProduct]);
                 }
             }
         }
