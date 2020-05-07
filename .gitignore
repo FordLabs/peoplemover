@@ -1,7 +1,7 @@
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
-/out
+api/out/
 application-local.properties
 node_modules/
 
@@ -21,7 +21,7 @@ node_modules/
 *.ipr
 
 # env
-
+ui/.env.local
 application-local.properties
 
 ### VSCode ###
