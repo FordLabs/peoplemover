@@ -80,6 +80,7 @@ class AssignmentService(
         assignmentRepository.deleteAndUpdateSpaceLastModified(assignmentToDelete)
     }
 
+    @Transactional
     fun deleteAndUnassign(assignmentId: Int) {
         assignmentRepository.findByIdOrNull(assignmentId)?.let { assignmentToDelete ->
             deleteOneAssignment(assignmentToDelete)
@@ -126,6 +127,7 @@ class AssignmentService(
         return createAssignment(assignment)
     }
 
+    @Transactional
     private fun createAssignment(assignment: Assignment): Assignment {
         val createdAssignment: Assignment = assignmentRepository.saveAndUpdateSpaceLastModified(assignment)
         deleteAssignmentIfPersonIsUnassigned(assignment.person.id!!, createdAssignment.productId)
