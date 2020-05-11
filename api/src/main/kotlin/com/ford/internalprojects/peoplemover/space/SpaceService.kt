@@ -82,9 +82,7 @@ class SpaceService(
         throw InvalidTokenException()
     }
 
-    fun getLastModifiedForSpace(spaceName: String): TimestampResponse {
-        val space: Space = spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
-        return TimestampResponse(space.lastModifiedDate)
+    fun getSpace(spaceName: String): Space {
+        return spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
     }
-
 }

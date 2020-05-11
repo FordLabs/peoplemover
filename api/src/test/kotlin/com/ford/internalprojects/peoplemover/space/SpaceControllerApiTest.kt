@@ -240,6 +240,22 @@ class SpaceControllerApiTest {
     }
 
     @Test
+    fun `GET should return correct space for current user`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
+        val result = mockMvc.perform(get("/api/space/${space1.name}"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualSpace: Space = objectMapper.readValue(
+                result.response.contentAsString,
+                Space::class.java
+        )
+
+        assertThat(actualSpace).isEqualTo(space1)
+    }
+
+    @Test
     fun `GET should return 401 when access token is invalid`() {
         val validateTokenRequest = ValidateTokenRequest(accessToken= "INVALID_TOKEN")
         `when`(authService.validateAccessToken(validateTokenRequest)).thenReturn(ResponseEntity.badRequest().build())
@@ -247,22 +263,6 @@ class SpaceControllerApiTest {
                 .header("Authorization", "Bearer ${validateTokenRequest.accessToken}"))
                 .andExpect(status().isUnauthorized)
         verify(authService).validateAccessToken(validateTokenRequest)
-    }
-
-    @Test
-    fun `GET should return last modified timestamp for a space`() {
-        val expectedTimestamp: Timestamp = Timestamp.valueOf("2010-01-12 01:01:01")
-        val space: Space = spaceRepository.save(Space(name = "SpaceOne", lastModifiedDate = expectedTimestamp))
-
-        val result = mockMvc.perform(get("/api/space/${space.name}"))
-                .andExpect(status().isOk)
-                .andReturn()
-
-        val actualTimestampResponse: TimestampResponse = objectMapper.readValue(
-                result.response.contentAsString,
-                TimestampResponse::class.java)
-        val expectedTimestampResponse = TimestampResponse(expectedTimestamp)
-        assertThat(actualTimestampResponse).isEqualTo(expectedTimestampResponse)
     }
 
     @Test

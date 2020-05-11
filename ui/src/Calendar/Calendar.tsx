@@ -23,12 +23,6 @@ function Calendar({spaceId}: CalendarProps): JSX.Element {
     function onChange(date: Date): void {
         setCurrentDate(date);
         setIsCalendarOpen(false);
-        Axios.get(`${process.env.REACT_APP_URL}product/${spaceId}/${moment(date.toDateString()).format('YYYY-MM-DD')}`,
-            {headers: {'Content-Type': 'application/json'}}
-        ).then(response => {
-            console.log(response.data);
-        });
-
     }
 
     function isWeekday(date: Date): boolean {
