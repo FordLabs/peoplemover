@@ -4,8 +4,6 @@ import DatePicker from 'react-datepicker';
 import ReactDatePicker from 'react-datepicker';
 import React, {createRef, useEffect, useState} from 'react';
 import './Calendar.scss';
-import Axios from "axios";
-import moment from "moment";
 
 interface CalendarProps {
     spaceId: number;
