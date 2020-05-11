@@ -18,6 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {AssignmentDTO} from '../Domain/AssignmentDTO';
 import {Assignment} from './Assignment';
+import {CreateAssignmentsRequest} from "./CreateAssignmentRequest";
 
 class AssignmentClient {
 
@@ -48,8 +49,16 @@ class AssignmentClient {
         ));
     }
 
+    static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {
+        return Axios.post(`${process.env.REACT_APP_URL}/assignment`, assignment);
+    }
+
     static async getAssignmentsUsingPersonId(personId: number): Promise<AxiosResponse> {
         return Axios.get(process.env.REACT_APP_URL + 'person/' + personId + '/assignments');
+    }
+
+    static async getAssignmentsForDate(spaceId: number, date: string): Promise<AxiosResponse> {
+        return Axios.get(process.env.REACT_APP_URL + 'assignment/' + spaceId + '/' + date);
     }
 
     static async updateAssignmentsUsingIds(personId: number, productIds: Array<number>, initialProductIds: Array<number>): Promise<void> {

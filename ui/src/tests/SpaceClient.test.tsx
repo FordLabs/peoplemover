@@ -17,6 +17,8 @@
 
 import Axios from "axios";
 import SpaceClient from "../SpaceDashboard/SpaceClient";
+import SpaceDashboard from "../SpaceDashboard/SpaceDashboard";
+import {Space} from "../SpaceDashboard/Space";
 
 describe('Space Client', function () {
     it('should invite users to a space', function () {
@@ -37,5 +39,19 @@ describe('Space Client', function () {
         };
 
         expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
+    });
+
+    it('should return the space given a space name', function () {
+        Axios.get = jest.fn();
+        process.env.REACT_APP_URL = 'testUrl/';
+
+        const expectedUrl = 'testUrl/space/testName';
+        const expectedConfig = {
+            headers: { 'Content-Type': 'application/json' },
+        };
+
+        SpaceClient.getSpaceFromName('testName');
+
+        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 });

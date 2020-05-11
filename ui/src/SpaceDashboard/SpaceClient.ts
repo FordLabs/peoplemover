@@ -28,6 +28,12 @@ class SpaceClient {
         }});
     }
 
+    static async getSpaceFromName(spaceName: string): Promise<AxiosResponse<Space>> {
+        return Axios.get(`${process.env.REACT_APP_URL}space/${spaceName}`, {headers: {
+            'Content-Type': 'application/json',
+        }});
+    }
+
     static async createSpaceForUser(spaceName: string, accessToken: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
         return Axios.post(
             `${process.env.REACT_APP_URL}user/space`,
@@ -55,7 +61,6 @@ class SpaceClient {
             }
         );
     }
-
 }
 
 export default SpaceClient;

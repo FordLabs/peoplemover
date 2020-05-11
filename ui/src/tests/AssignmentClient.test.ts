@@ -89,4 +89,10 @@ describe('the assignment client', () => {
             });
         });
     });
+
+    it('should get all assignments for given date', function () {
+        const productIds = [1, 2, 3, 4];
+
+        await AssignmentClient.getAssignmentsForDate();
+    });
 });
