@@ -32,7 +32,7 @@ describe('the assignment card', () => {
             spaceId: 0,
             id: 1,
             name: "Billiam O'Handy",
-            spaceRole: {id: 1, spaceId: 0, name: 'Software Engineer', color: {id: 1, color: '#44'}},
+            spaceRole: {id: 1, spaceId: 0, name: 'Software Engineer', color: {id: 1, color: '1'}},
         },
         placeholder: false,
         productId: 0,

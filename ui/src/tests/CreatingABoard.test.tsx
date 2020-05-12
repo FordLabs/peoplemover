@@ -118,17 +118,17 @@ describe('the Board Creation form', () => {
             fireEvent.click(copyFromOption);
 
             const copyFromBoardOption = await app.findByTestId('copyFromBoard');
-            fireEvent.change(copyFromBoardOption, {target: {value: 'board two'}});
+            fireEvent.change(copyFromBoardOption, {target: {value: 'Board Two'}});
 
             const boardNameField = await app.findByLabelText('Name');
-            fireEvent.change(boardNameField, {target: {value: 'board three'}});
+            fireEvent.change(boardNameField, {target: {value: 'Board Three'}});
 
             const saveButton = await app.findByText('Create');
             fireEvent.click(saveButton);
             
             const createBoardRequest: Board = {
                 id: 2,
-                name: 'board three',
+                name: 'Board Three',
                 products: TestUtils.productsForBoard2,
                 spaceId: 1,
             };
@@ -150,7 +150,7 @@ describe('the Board Creation form', () => {
             fireEvent.click(await app.findByTestId('createBoardButton'));
 
             const boardNameField = await app.findByLabelText('Name');
-            fireEvent.change(boardNameField, {target: {value: 'board one'}});
+            fireEvent.change(boardNameField, {target: {value: 'Board One'}});
 
             const saveButton = await app.findByText('Create');
             fireEvent.click(saveButton);

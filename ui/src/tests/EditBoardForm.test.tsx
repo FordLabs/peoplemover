@@ -36,7 +36,7 @@ describe('edit board form', () => {
             fireEvent.click(app.getByTestId('openEditBoardIcon-1'));
 
             expect(app.getByText('Edit Board')).toBeInTheDocument();
-            expect(app.getByLabelText(/Name/).value).toEqual('board one');
+            expect(app.getByLabelText(/Name/).value).toEqual('Board One');
         });
 
         it('should show the delete board button in the edit board modal', async () => {
@@ -101,7 +101,7 @@ describe('edit board form', () => {
             fireEvent.click(app.getByTestId('openEditBoardIcon-2'));
             await TestUtils.waitForHomePageToLoad(app);
 
-            expect(app.getByLabelText('Name').value).toEqual('board two');
+            expect(app.getByLabelText('Name').value).toEqual('Board Two');
         });
 
     });
@@ -206,9 +206,9 @@ describe('edit board form', () => {
 
             const app = renderWithRedux(<PeopleMover/>);
 
-            await app.findByText('board one');
+            await app.findByText('Board One');
             await app.findByText('Product 1');
-            expect(app.queryByText('board two')).not.toBeInTheDocument();
+            expect(app.queryByText('Board Two')).not.toBeInTheDocument();
 
             const editBoardButton = await app.findByTestId('openEditBoardIcon-1');
             fireEvent.click(editBoardButton);

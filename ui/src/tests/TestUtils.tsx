@@ -35,9 +35,10 @@ import {Board} from '../Boards/Board';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {ProductTag} from '../ProductTag/ProductTag';
 import ColorClient from '../Roles/ColorClient';
-import {Color} from '../Roles/Role';
+import {Color, SpaceRole} from '../Roles/Role';
 import {SpaceLocation} from '../Locations/SpaceLocation';
 import {AxiosResponse} from 'axios';
+import {Space} from "../SpaceDashboard/Space";
 
 export function renderWithRedux(
     component: JSX.Element,
@@ -56,23 +57,6 @@ export function renderWithReduxEnzyme(
     const testingStore: Store = store ? store : createStore(rootReducer, initialState);
     return mount(<Provider store={testingStore}>{component}</Provider>);
 }
-
-const hank: Person = {
-    spaceId: 1,
-    id: 200,
-    name: 'Hank',
-    spaceRole: {name: 'Product Manager', id: 2, spaceId: 1, color: {id: 2, color: '#45'}},
-    notes: "Don't forget the WD-40!",
-    newPerson: false,
-};
-
-const unassignedperson: Person = {
-    spaceId: 1,
-    id: 101,
-    name: 'Unassigned Pearson 7',
-    spaceRole: {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}},
-    newPerson: false,
-};
 
 class TestUtils {
     static mockClientCalls(): void {
@@ -100,22 +84,21 @@ class TestUtils {
         AssignmentClient.updateAssignmentsUsingIds = emptyAsyncFunction;
         AssignmentClient.updateAssignment = emptyAxiosResponse;
         AssignmentClient.getAssignmentsUsingPersonId = jest.fn(() => Promise.resolve({
-            data: [{
-                productId: TestUtils.productWithAssignments.id,
-            }, {
-                productId: TestUtils.unassignedProduct.id,
-            }],
+            data: [
+                {productId: TestUtils.productWithAssignments.id},
+                {productId: TestUtils.unassignedProduct.id},
+            ],
         } as AxiosResponse));
 
         RoleClient.get = jest.fn(() => Promise.resolve({
             data: [
-                {id: 1, name: 'Software Engineer', spaceId: 1, color: TestUtils.color1},
-                {id: 2, name: 'Product Manager', spaceId: 1, color: TestUtils.color2},
-                {id: 3, name: 'Product Designer', spaceId: 1, color: TestUtils.color3},
+                TestUtils.softwareEngineer,
+                TestUtils.programManager,
+                TestUtils.productDesigner,
             ],
         } as AxiosResponse));
         RoleClient.add = jest.fn(() => Promise.resolve({
-            data: {name: 'Product Owner', id: 1, spaceId: -1, color: {color: '1', id: 2}},
+            data: TestUtils.productOwner,
         } as AxiosResponse));
         RoleClient.edit = jest.fn(() => Promise.resolve({
             data: {name: 'Architecture', id: 1, spaceId: -1, color: TestUtils.color3},
@@ -162,7 +145,7 @@ class TestUtils {
             data: {id: 9, name: 'Fin Tech'},
         } as AxiosResponse));
         ProductTagClient.edit = jest.fn(() => Promise.resolve({
-            data: {id:6, name: 'Finance', spaceId:2},
+            data: {id: 6, name: 'Finance', spaceId: 2},
         } as AxiosResponse));
         ProductTagClient.delete = emptyAxiosResponse;
     }
@@ -173,37 +156,14 @@ class TestUtils {
 
     static dummyCallback: () => void = () => null;
 
-    static person1: Person = {
-        spaceId: 1,
-        id: 100,
-        name: 'Person 1',
-        spaceRole: {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}},
-        notes: 'I love the theater',
-        newPerson: false,
-    };
+    static originDate = '2019-01-01';
 
-    static people: Array<Person> = [
-        TestUtils.person1,
-        hank,
-        unassignedperson,
-    ];
+    static color1: Color = {id: 1, color: '1'};
+    static color2: Color = {id: 2, color: '2'};
+    static color3: Color = {id: 3, color: '3'};
+    static whiteColor: Color = {id: 4, color: 'white'};
 
-    static annarbor = {id: 1, name: 'Ann Arbor', spaceId: 1};
-    static detroit = {id: 2, name: 'Detroit', spaceId: 1};
-    static dearborn = {id: 3, name: 'Dearborn', spaceId: 1};
-    static southfield = {id: 4, name: 'Southfield', spaceId: 1};
-
-    static locations: SpaceLocation[] = [
-        TestUtils.annarbor,
-        TestUtils.detroit,
-        TestUtils.dearborn,
-        TestUtils.southfield,
-    ];
-
-    static color1: Color = {color: '1', id: 1};
-    static color2: Color = {color: '2', id: 2};
-    static color3: Color = {color: '3', id: 3};
-    static whiteColor: Color = {color: 'white', id: 4};
+    static otherColor: Color = {id: 100, color: '100'};
 
     static colors: Array<Color> = [
         TestUtils.color1,
@@ -212,29 +172,73 @@ class TestUtils {
         TestUtils.whiteColor,
     ];
 
-    static productTag1: ProductTag = {
-        id: 5,
-        name: 'AV',
+    static softwareEngineer: SpaceRole = {id: 1, name: 'Software Engineer', spaceId: 1, color: TestUtils.color1};
+    static programManager: SpaceRole = {id: 2, name: 'Product Manager', spaceId: 1, color: TestUtils.color2};
+    static productDesigner: SpaceRole = {id: 3, name: 'Product Designer', spaceId: 1, color: TestUtils.color3};
+
+    static productOwner: SpaceRole = {id: 1, name: 'Product Owner', spaceId: -1, color: TestUtils.otherColor};
+
+    static spaceRoles: Array<SpaceRole> = [
+        TestUtils.softwareEngineer,
+        TestUtils.programManager,
+        TestUtils.productDesigner,
+    ];
+
+    static person1: Person = {
         spaceId: 1,
+        id: 100,
+        name: 'Person 1',
+        spaceRole: TestUtils.softwareEngineer,
+        notes: 'I love the theater',
+        newPerson: false,
     };
 
-    static productTag2: ProductTag = {
-        id: 6,
-        name: 'FordX',
+    static person2: Person = {
         spaceId: 1,
+        id: 200,
+        name: 'Person 2',
+        spaceRole: TestUtils.programManager,
+        notes: "Don't forget the WD-40!",
+        newPerson: false,
     };
 
-    static productTag3: ProductTag = {
-        id: 7,
-        name: 'EV',
+    static unassignedPerson: Person = {
         spaceId: 1,
+        id: 101,
+        name: 'Unassigned Person 7',
+        spaceRole: TestUtils.softwareEngineer,
+        newPerson: false,
     };
 
-    static productTag4: ProductTag = {
-        id: 8,
-        name: 'Mache',
-        spaceId: 1,
-    };
+    static people: Array<Person> = [
+        TestUtils.person1,
+        TestUtils.person2,
+        TestUtils.unassignedPerson,
+    ];
+
+    static annarbor: SpaceLocation = {id: 1, name: 'Ann Arbor', spaceId: 1};
+    static detroit: SpaceLocation = {id: 2, name: 'Detroit', spaceId: 1};
+    static dearborn: SpaceLocation = {id: 3, name: 'Dearborn', spaceId: 1};
+    static southfield: SpaceLocation = {id: 4, name: 'Southfield', spaceId: 1};
+
+    static locations: Array<SpaceLocation> = [
+        TestUtils.annarbor,
+        TestUtils.detroit,
+        TestUtils.dearborn,
+        TestUtils.southfield,
+    ];
+
+    static productTag1: ProductTag = {id: 5, name: 'AV', spaceId: 1};
+    static productTag2: ProductTag = {id: 6, name: 'FordX', spaceId: 1};
+    static productTag3: ProductTag = {id: 7, name: 'EV', spaceId: 1};
+    static productTag4: ProductTag = {id: 8, name: 'Mache', spaceId: 1};
+
+    static productTags: Array<ProductTag> = [
+        TestUtils.productTag1,
+        TestUtils.productTag2,
+        TestUtils.productTag3,
+        TestUtils.productTag4,
+    ];
 
     static assignmentForPerson1: Assignment = {
         id: 1,
@@ -244,25 +248,18 @@ class TestUtils {
         joinedProductDate: new Date(2018),
     };
 
-    static productTags: Array<ProductTag> = [
-        TestUtils.productTag1,
-        TestUtils.productTag2,
-        TestUtils.productTag3,
-        TestUtils.productTag4,
-    ];
-
-    static assignmentForHank: Assignment = {
+    static assignmentForPerson2: Assignment = {
         id: 3,
         productId: 102,
         placeholder: true,
-        person: hank,
+        person: TestUtils.person2,
         joinedProductDate: new Date(2019),
     };
 
     static assignmentForUnassigned: Assignment = {
         id: 11,
         productId: 999,
-        person: TestUtils.person1,
+        person: TestUtils.unassignedPerson,
         placeholder: false,
         joinedProductDate: new Date(2017),
     };
@@ -281,7 +278,7 @@ class TestUtils {
     static productWithAssignments: Product = {
         id: 1,
         name: 'Product 1',
-        startDate: '1/1/11',
+        startDate: TestUtils.originDate,
         endDate: '2/2/22',
         spaceLocation: TestUtils.southfield,
         assignments: [TestUtils.assignmentForPerson1],
@@ -294,13 +291,25 @@ class TestUtils {
     static productWithoutAssignments: Product = {
         id: 3,
         name: 'Product 3',
-        startDate: '1/1/11',
+        startDate: TestUtils.originDate,
         endDate: '2/2/22',
         spaceLocation: TestUtils.dearborn,
         assignments: [],
         archived: false,
         boardId: 1,
         productTags: [TestUtils.productTag1],
+    };
+
+    static product2: Product = {
+        id: 2,
+        name: 'Product 2',
+        startDate: '',
+        endDate: '',
+        spaceLocation: TestUtils.detroit,
+        assignments: [],
+        archived: false,
+        boardId: 2,
+        productTags: [],
     };
 
     static archivedProduct: Product = {
@@ -323,33 +332,25 @@ class TestUtils {
     ];
 
     static productsForBoard2: Array<Product> = [
-        {
-            id: 2,
-            name: 'Product 2',
-            startDate: '',
-            endDate: '',
-            spaceLocation: TestUtils.detroit,
-            assignments: [],
-            archived: false,
-            boardId: 2,
-            productTags: [],
-        },
+        TestUtils.product2,
     ];
 
+    static board1: Board = {id: 1, name: 'Board One', products: TestUtils.products, spaceId: 1};
+    static board2: Board = {id: 2, name: 'Board Two', products: TestUtils.productsForBoard2, spaceId: 1};
+
     static boards: Array<Board> = [
-        {
-            id: 1,
-            name: 'board one',
-            products: TestUtils.products,
-            spaceId: 1,
-        },
-        {
-            id: 2,
-            name: 'board two',
-            products: TestUtils.productsForBoard2,
-            spaceId: 1,
-        },
+        TestUtils.board1,
+        TestUtils.board2,
     ];
+
+    static space: Space = {
+        id: 1,
+        name: 'Space One',
+        boards: TestUtils.boards,
+        roles: TestUtils.spaceRoles,
+        locations: TestUtils.locations,
+        lastModifiedDate: TestUtils.originDate,
+    };
 }
 
 export default TestUtils;

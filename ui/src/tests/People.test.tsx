@@ -206,7 +206,7 @@ describe('people actions', () => {
                 const expectedPerson: Person = {
                     ...emptyPerson(),
                     name: 'Some Name',
-                    spaceRole: {name: 'Product Owner', id: 1, spaceId: -1, color: {color: '1', id: 2}},
+                    spaceRole: {name: 'Product Owner', id: 1, spaceId: -1, color: {color: '100', id: 100}},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
                 expect(spy.mock.calls[0]).toEqual([expectedPerson]);
@@ -384,7 +384,7 @@ describe('people actions', () => {
         const board: Board = {
             spaceId: 0,
             id: 1,
-            name: 'board one',
+            name: 'Board One',
             products: [
                 {
                     boardId: 2,
@@ -488,7 +488,7 @@ describe('people actions', () => {
             const updatedBoard: Board = {
                 spaceId: 0,
                 id: 1,
-                name: 'board one',
+                name: 'Board One',
                 products: updatedProducts,
             };
 

@@ -34,7 +34,7 @@ describe('Product List tests', () => {
                 data: [
                     {
                         id: 'b1',
-                        name: 'board one',
+                        name: 'Board One',
                         products: [
                             TestUtils.unassignedProduct,
                             TestUtils.productWithAssignments,
@@ -44,7 +44,7 @@ describe('Product List tests', () => {
                                 start: '',
                                 end: '',
                                 location: 'Detroit',
-                                assignments: [TestUtils.assignmentForHank],
+                                assignments: [TestUtils.assignmentForPerson2],
                                 productTags: [],
                             },
                         ],

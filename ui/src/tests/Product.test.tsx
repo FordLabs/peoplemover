@@ -44,8 +44,8 @@ describe('Products', () => {
         it('displays the board names', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            await app.findByText('board one');
-            await app.findByText('board two');
+            await app.findByText('Board One');
+            await app.findByText('Board Two');
         });
 
         it('displays the product names', async () => {
@@ -80,7 +80,7 @@ describe('Products', () => {
                         [
                             {
                                 id: 'b1',
-                                name: 'board one',
+                                name: 'Board One',
                                 products: [
                                     TestUtils.productWithAssignments,
                                 ],
@@ -189,7 +189,7 @@ describe('Products', () => {
                         [
                             {
                                 id: 'b1',
-                                name: 'board one',
+                                name: 'Board One',
                                 products: [
                                     productWithManyAssignments,
                                 ],
@@ -472,7 +472,7 @@ describe('Products', () => {
             const app = renderWithRedux(<PeopleMover/>);
 
             await app.findByText('Person 1');
-            await app.findByText('board one');
+            await app.findByText('Board One');
         });
 
         it('displays persons role on each assignment', async () => {
@@ -581,7 +581,7 @@ describe('Products', () => {
             fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
 
             fireEvent.click(app.getByText('Create'));
-            await app.findByText('board one');
+            await app.findByText('Board One');
             expect(app.queryByText('Add Products')).toBeNull();
         });
     });

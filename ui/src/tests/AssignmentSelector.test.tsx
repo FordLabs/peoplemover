@@ -51,7 +51,7 @@ describe('the assignment form', () => {
 
             const labelElement = await wrapper.findByLabelText('Name');
             const containerToFindOptionsIn = { container: await wrapper.findByTestId('assignmentForm') };
-            await selectEvent.select(labelElement, /Hank/, containerToFindOptionsIn);
+            await selectEvent.select(labelElement, /Person 2/, containerToFindOptionsIn);
 
             const productSelect = await wrapper.findByLabelText('Assign to');
             await selectEvent.select(productSelect, 'Product 1');

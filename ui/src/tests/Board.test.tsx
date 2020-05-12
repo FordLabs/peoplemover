@@ -50,7 +50,7 @@ describe('Boards', () => {
 
         it('should not fail if some products have null locations and others do not', async () => {
             const app = renderWithRedux(<PeopleMover/>);
-            await app.findByText('board one');
+            await app.findByText('Board One');
         });
 
         describe('TRANSITION', () => {
@@ -71,7 +71,7 @@ describe('Boards', () => {
             it('should not show boards with our prefix', async () => {
                 const app = renderWithRedux(<PeopleMover/>);
 
-                await app.findByText('board one');
+                await app.findByText('Board One');
                 expect(app.queryByText(hiddenBoardName)).not.toBeInTheDocument();
             });
 
@@ -107,7 +107,7 @@ describe('Boards', () => {
                 expect(productCardRefAndProductPairs).toContainEqual(expectedProduct1Matcher);
                 expect(productCardRefAndProductPairs).toContainEqual(expectedProduct2Matcher);
 
-                const secondBoard = await app.findByText('board two');
+                const secondBoard = await app.findByText('Board Two');
                 secondBoard.click();
 
                 await wait(() => {
