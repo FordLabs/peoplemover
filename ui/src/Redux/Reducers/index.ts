@@ -30,6 +30,8 @@ import sortProductsReducer from './sortProductsReducer';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
 import {unmodifiedInitialBoardsReducer} from './unmodifiedIntialBoardsReducer';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
+import currentSpaceReducer from './currentSpaceReducer';
+import {Space} from '../../SpaceDashboard/Space';
 
 export default combineReducers({
     currentModal: currentModalReducer,
@@ -41,6 +43,7 @@ export default combineReducers({
     productRefs: productRefsReducer,
     sortValueOption: sortProductsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
+    currentSpace: currentSpaceReducer,
 });
 
 export interface GlobalStateProps {
@@ -54,4 +57,5 @@ export interface GlobalStateProps {
     productRefs: Array<ProductCardRefAndProductPair>;
     sortValueOption: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    currentSpace: Space;
 }

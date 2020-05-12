@@ -24,6 +24,7 @@ import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
+import {Space} from "../../SpaceDashboard/Space";
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -39,6 +40,7 @@ export enum AvailableActions {
     UNREGISTER_PRODUCT_REF,
     SET_UNMODIFIED_INITIAL_BOARDS,
     SET_GROUPED_TAG_FILTER_OPTIONS,
+    SET_CURRENT_SPACE
 }
 
 export enum AvailableModals {
@@ -118,6 +120,11 @@ export const setUnmodifiedInitialBoardsAction = (boards: Array<Board>) => ({
 export const setAllGroupedTagFilterOptions = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
     type: AvailableActions.SET_GROUPED_TAG_FILTER_OPTIONS,
     allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+});
+
+export const setCurrentSpace = (space: Space) => ({
+    type: AvailableActions.SET_CURRENT_SPACE,
+    space,
 });
 
 export const fetchBoardsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
