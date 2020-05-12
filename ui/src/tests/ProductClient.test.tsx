@@ -16,39 +16,22 @@
  */
 
 import Axios from "axios";
-import SpaceClient from "../SpaceDashboard/SpaceClient";
+import ProductClient from "../Products/ProductClient";
 
-describe('Space Client', function () {
-    it('should invite users to a space', function () {
-        Axios.put = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
+describe('Product Client', function () {
 
-        SpaceClient.inviteUsersToSpace('spaceName', ['email1@mail.com', 'email2@mail.com']);
-
-        const expectedUrl = 'testUrl/user/invite/space';
-        const expectedData = {
-            spaceName: 'spaceName',
-            emails: ['email1@mail.com', 'email2@mail.com'],
-        };
-        const expectedConfig = {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-
-        expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
-    });
-
-    it('should return the space given a space name', function () {
+    it('should return the products given a date', function () {
+        const spaceId = 1;
+        const date = '2019-01-10';
         Axios.get = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = 'testUrl/space/testName';
+        const expectedUrl = `testUrl/${spaceId}/${date}`;
         const expectedConfig = {
             headers: { 'Content-Type': 'application/json' },
         };
 
-        SpaceClient.getSpaceFromName('testName');
+        ProductClient.getProductsForDate(spaceId, date);
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });

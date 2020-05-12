@@ -18,6 +18,8 @@
 import Axios, {AxiosResponse} from 'axios';
 import {wait} from '@testing-library/react';
 import AssignmentClient from '../Assignments/AssignmentClient';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from "../Assignments/CreateAssignmentRequest";
+import TestUtils from "./TestUtils";
 
 describe('the assignment client', () => {
     beforeEach(() => {
@@ -90,9 +92,48 @@ describe('the assignment client', () => {
         });
     });
 
-    it('should get all assignments for given date', function () {
-        const productIds = [1, 2, 3, 4];
+    it('should get all assignments for given date', async () => {
+        const spaceId = 10;
+        const date = '2019-01-10';
 
-        await AssignmentClient.getAssignmentsForDate();
+        Axios.get = jest.fn();
+        process.env.REACT_APP_URL = 'testUrl/';
+
+        const expectedUrl = `testUrl/assignment/${spaceId}/${date}`;
+        const expectedConfig = {
+            headers: {'Content-Type': 'application/json'},
+        };
+
+        await AssignmentClient.getAssignmentsUsingDate(spaceId, date);
+
+        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    });
+
+    it('should create assignments for given date', async () => {
+        const spaceId = 10;
+        const date = new Date('2019-01-10');
+        const productPlaceholderPair: ProductPlaceholderPair = {
+            productId: 1,
+            placeholder: false
+        };
+
+        const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
+            requestedDate: date,
+            person: TestUtils.person1,
+            products: new Set([productPlaceholderPair]),
+
+        };
+
+        Axios.post = jest.fn();
+        process.env.REACT_APP_URL = 'testUrl/';
+
+        const expectedUrl = 'testUrl/assignment';
+        const expectedConfig = {
+            headers: {'Content-Type': 'application/json'},
+        };
+
+        await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest);
+
+        expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
     });
 });

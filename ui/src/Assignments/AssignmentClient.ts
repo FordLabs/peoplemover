@@ -50,15 +50,19 @@ class AssignmentClient {
     }
 
     static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {
-        return Axios.post(`${process.env.REACT_APP_URL}/assignment`, assignment);
+        return Axios.post(`${process.env.REACT_APP_URL}assignment`, assignment,
+            {headers: { 'Content-Type': 'application/json'}}
+        );
     }
 
     static async getAssignmentsUsingPersonId(personId: number): Promise<AxiosResponse> {
         return Axios.get(process.env.REACT_APP_URL + 'person/' + personId + '/assignments');
     }
 
-    static async getAssignmentsForDate(spaceId: number, date: string): Promise<AxiosResponse> {
-        return Axios.get(process.env.REACT_APP_URL + 'assignment/' + spaceId + '/' + date);
+    static async getAssignmentsUsingDate(spaceId: number, date: string): Promise<AxiosResponse> {
+        return Axios.get(process.env.REACT_APP_URL + 'assignment/' + spaceId + '/' + date,
+            {headers: { 'Content-Type': 'application/json'}}
+        );
     }
 
     static async updateAssignmentsUsingIds(personId: number, productIds: Array<number>, initialProductIds: Array<number>): Promise<void> {

@@ -42,7 +42,8 @@ class ProductClient {
 
     static async getProductsForDate(spaceId: number, date: string): Promise<AxiosResponse> {
         return Axios.get(
-            process.env.REACT_APP_URL + `${spaceId}/${date}`
+            process.env.REACT_APP_URL + `${spaceId}/${date}`,
+            {headers: { 'Content-Type': 'application/json'}}
         );
     }
 }
