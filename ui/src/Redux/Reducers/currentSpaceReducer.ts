@@ -20,7 +20,7 @@
 import {AvailableActions} from '../Actions';
 import {Space} from '../../SpaceDashboard/Space';
 
-const currentSpaceReducer = (state: Space, action: { type: AvailableActions; space: Space }): Space => {
+const currentSpaceReducer = (state: Space | null = null, action: { type: AvailableActions; space: Space }): Space | null => {
     switch (action.type) {
     case AvailableActions.SET_CURRENT_SPACE:
         return action.space;

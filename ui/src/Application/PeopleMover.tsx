@@ -42,11 +42,8 @@ export interface PeopleMoverProps {
     currentModal: CurrentModalState;
     currentBoard: Board;
     boards: Array<Board>;
-    productRefs: Array<ProductCardRefAndProductPair>;
 
     fetchBoards(): Promise<void>;
-
-    setCurrentModal(modalState: CurrentModalState): void;
 
     setPeople(people: Array<Person>): Array<Person>;
 }
@@ -112,21 +109,14 @@ function PeopleMover({
     );
 }
 
-const mapStateToProps = ({
-    currentModal,
-    currentBoard,
-    boards,
-    productRefs,
-}: GlobalStateProps) => ({
-    currentModal,
-    currentBoard,
-    boards,
-    productRefs,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentModal: state.currentModal,
+    currentBoard: state.currentBoard,
+    boards: state.boards,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     fetchBoards: () => dispatch(fetchBoardsAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
 });
 

@@ -122,7 +122,7 @@ export const setAllGroupedTagFilterOptions = (allGroupedTagFilterOptions: Array<
     allGroupedTagFilterOptions: allGroupedTagFilterOptions,
 });
 
-export const setCurrentSpace = (space: Space) => ({
+export const setCurrentSpaceAction = (space: Space) => ({
     type: AvailableActions.SET_CURRENT_SPACE,
     space,
 });
