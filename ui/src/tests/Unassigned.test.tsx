@@ -144,7 +144,7 @@ describe('Unassigned Products', () => {
     });
 
     describe('edit menus', () => {
-        it('should open edit person dialog when clicking on elipsis', async () => {
+        it('should open edit person dialog when clicking on ellipsis', async () => {
             const component = <PeopleMover/>;
             const initialState = { people: TestUtils.people};
             const app = renderWithRedux(component, undefined, initialState);

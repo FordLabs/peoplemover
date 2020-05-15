@@ -35,9 +35,11 @@ import {Board} from '../Boards/Board';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {ProductTag} from '../ProductTag/ProductTag';
 import ColorClient from '../Roles/ColorClient';
-import {Color} from '../Roles/Role';
+import {Color, SpaceRole} from '../Roles/Role';
 import {SpaceLocation} from '../Locations/SpaceLocation';
 import {AxiosResponse} from 'axios';
+import SpaceClient from "../SpaceDashboard/SpaceClient";
+import {Space} from "../SpaceDashboard/Space";
 
 export function renderWithRedux(
     component: JSX.Element,
@@ -111,14 +113,6 @@ const hank: Person = {
     newPerson: false,
 };
 
-const unassignedperson: Person = {
-    spaceId: 1,
-    id: 101,
-    name: 'Unassigned Pearson 7',
-    spaceRole: {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}},
-    newPerson: false,
-};
-
 class TestUtils {
     static mockClientCalls(): void {
         const emptyAxiosResponse = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
@@ -138,6 +132,10 @@ class TestUtils {
         } as AxiosResponse));
         PeopleClient.updatePerson = emptyAxiosResponse;
         PeopleClient.removePerson = emptyAxiosResponse;
+
+        SpaceClient.getSpaceFromName = jest.fn(() => Promise.resolve({
+            data: TestUtils.space,
+        } as AxiosResponse));
 
         AssignmentClient.createAssignmentsUsingIds = jest.fn(() => Promise.resolve([]));
         AssignmentClient.createAssignmentUsingIds = emptyAxiosResponse;
@@ -227,10 +225,18 @@ class TestUtils {
         newPerson: false,
     };
 
+    static unassignedPerson: Person = {
+        spaceId: 1,
+        id: 101,
+        name: 'Unassigned Pearson 7',
+        spaceRole: {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}},
+        newPerson: false,
+    };
+
     static people: Array<Person> = [
         TestUtils.person1,
         hank,
-        unassignedperson,
+        TestUtils.unassignedPerson,
     ];
 
     static annarbor = {id: 1, name: 'Ann Arbor', spaceId: 1};
@@ -243,6 +249,12 @@ class TestUtils {
         TestUtils.detroit,
         TestUtils.dearborn,
         TestUtils.southfield,
+    ];
+
+    static role1 = {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}};
+
+    static roles: SpaceRole[] = [
+        TestUtils.role1,
     ];
 
     static color1: Color = {color: '1', id: 1};
@@ -307,7 +319,7 @@ class TestUtils {
     static assignmentForUnassigned: Assignment = {
         id: 11,
         productId: 999,
-        person: TestUtils.person1,
+        person: TestUtils.unassignedPerson,
         placeholder: false,
         joinedProductDate: new Date(2017),
     };
@@ -395,6 +407,15 @@ class TestUtils {
             spaceId: 1,
         },
     ];
+
+    static space: Space = {
+        id: 1,
+        name: 'test space',
+        boards: TestUtils.boards,
+        roles: TestUtils.roles,
+        locations: TestUtils.locations,
+        lastModifiedDate: '2019-01-01',
+    }
 }
 
 export default TestUtils;

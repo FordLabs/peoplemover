@@ -26,9 +26,11 @@ import {Board} from '../Boards/Board';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {FilterOption} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
+import {Space} from "../SpaceDashboard/Space";
 
 interface ProductListProps {
     currentBoard: Board;
+    currentSpace: Space;
     setCurrentModal(modalState: CurrentModalState): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 }
@@ -104,9 +106,11 @@ function ProductList({
 
 const mapStateToProps = ({
     currentBoard,
+    currentSpace,
     allGroupedTagFilterOptions,
 }: GlobalStateProps) => ({
     currentBoard,
+    currentSpace,
     allGroupedTagFilterOptions,
 });
 

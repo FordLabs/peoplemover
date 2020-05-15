@@ -22,6 +22,7 @@ import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import BoardClient from '../Boards/BoardClient';
 import {createMemoryHistory} from 'history';
+import SpaceClient from "../SpaceDashboard/SpaceClient";
 
 describe('PeopleMover', () => {
     let app: RenderResult;
@@ -52,6 +53,11 @@ describe('PeopleMover', () => {
 
     it('should display Filter option on startup', async () => {
         await app.findByText('Filter:');
+    });
+
+    it('should display products', async () => {
+        await app.findAllByText(TestUtils.productWithAssignments.name);
+        await app.findAllByText(TestUtils.productWithoutAssignments.name);
     });
 });
 

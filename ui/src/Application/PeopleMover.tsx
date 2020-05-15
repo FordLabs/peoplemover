@@ -26,7 +26,7 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import UnassignedDrawerContainer from '../Redux/Containers/UnassignedDrawerContainer';
 import {connect} from 'react-redux';
-import {fetchBoardsAction, setCurrentModalAction, setPeopleAction} from '../Redux/Actions';
+import {fetchBoardsAction, setCurrentModalAction, setCurrentSpaceAction, setPeopleAction} from '../Redux/Actions';
 import BoardSelectionTabs from '../Boards/BoardSelectionTabs';
 import {ProductCardRefAndProductPair} from '../Products/ProductDnDHelper';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -37,22 +37,27 @@ import PeopleClient from '../People/PeopleClient';
 import Header from './Header';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import {Redirect} from 'react-router-dom';
+import {Space} from "../SpaceDashboard/Space";
+import SpaceClient from "../SpaceDashboard/SpaceClient";
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
     currentBoard: Board;
+    currentSpace: Space;
     boards: Array<Board>;
 
     fetchBoards(): Promise<void>;
-
+    setCurrentSpace(space: Space): Space;
     setPeople(people: Array<Person>): Array<Person>;
 }
 
 function PeopleMover({
     currentModal,
     currentBoard,
+    currentSpace,
     boards,
     fetchBoards,
+    setCurrentSpace,
     setPeople,
 }: PeopleMoverProps): JSX.Element {
     const [redirect, setRedirect] = useState<JSX.Element>();
@@ -68,6 +73,11 @@ function PeopleMover({
     async function RenderPage(): Promise<void> {
         if (currentModal.modal === null) {
             try {
+                const spaceName = window.location.pathname.replace('/', '');
+                await SpaceClient.getSpaceFromName(spaceName)
+                    .then(response => {
+                        setCurrentSpace(response.data);
+                    } );
                 await fetchBoards();
                 const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;
 
@@ -112,11 +122,13 @@ function PeopleMover({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentModal: state.currentModal,
     currentBoard: state.currentBoard,
+    currentSpace: state.currentSpace,
     boards: state.boards,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     fetchBoards: () => dispatch(fetchBoardsAction()),
+    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
 });
 
