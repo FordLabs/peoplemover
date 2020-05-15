@@ -39,7 +39,7 @@ function RedirectAuthPage({isSignup}: Props): JSX.Element {
 
         const startingPage = isSignup ? 'signup' : 'login';
 
-        window.location.href = `${process.env.REACT_APP_AUTHQUEST_URL}/${startingPage}?redirect_uri=${redirectUri}&client_id=${authquestClientID}`;
+        window.location.href = `${process.env.REACT_APP_AUTHQUEST_URL}/${startingPage}?redirect_uri=${redirectUri}&client_id=${authquestClientID}&primaryColor=4F5FAB`;
     }
 
     function userVisitsPageWithTokenFlow(accessToken: string): void {
