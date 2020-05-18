@@ -40,7 +40,8 @@ export enum AvailableActions {
     UNREGISTER_PRODUCT_REF,
     SET_UNMODIFIED_INITIAL_BOARDS,
     SET_GROUPED_TAG_FILTER_OPTIONS,
-    SET_CURRENT_SPACE
+    SET_CURRENT_SPACE,
+    SET_VIEWING_DATE
 }
 
 export enum AvailableModals {
@@ -125,6 +126,11 @@ export const setAllGroupedTagFilterOptions = (allGroupedTagFilterOptions: Array<
 export const setCurrentSpaceAction = (space: Space) => ({
     type: AvailableActions.SET_CURRENT_SPACE,
     space,
+});
+
+export const setViewingDateAction = (date: Date) => ({
+    type: AvailableActions.SET_VIEWING_DATE,
+    date,
 });
 
 export const fetchBoardsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>

@@ -32,6 +32,7 @@ import {unmodifiedInitialBoardsReducer} from './unmodifiedIntialBoardsReducer';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
 import {Space} from '../../SpaceDashboard/Space';
+import {viewingDateReducer} from "./viewingDateReducer";
 
 export default combineReducers({
     currentModal: currentModalReducer,
@@ -44,6 +45,7 @@ export default combineReducers({
     sortValueOption: sortProductsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
     currentSpace: currentSpaceReducer,
+    viewingDate: viewingDateReducer,
 });
 
 export interface GlobalStateProps {
@@ -58,4 +60,5 @@ export interface GlobalStateProps {
     sortValueOption: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;
+    viewingDate: Date;
 }

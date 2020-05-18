@@ -4,13 +4,23 @@ import DatePicker from 'react-datepicker';
 import ReactDatePicker from 'react-datepicker';
 import React, {createRef, useEffect, useState} from 'react';
 import './Calendar.scss';
+import {connect} from "react-redux";
+import {setViewingDateAction} from "../Redux/Actions";
+import {GlobalStateProps} from "../Redux/Reducers";
 
 interface CalendarProps {
     spaceId: number;
+    viewingDate: Date;
+
+    setViewingDate(date: Date): Date;
 }
 
-function Calendar({spaceId}: CalendarProps): JSX.Element {
-    const [currentDate, setCurrentDate] = useState<Date>();
+function Calendar({
+    spaceId,
+    viewingDate,
+    setViewingDate,
+}: CalendarProps
+): JSX.Element {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     const calendarRef = createRef<ReactDatePicker>();
 
@@ -19,7 +29,7 @@ function Calendar({spaceId}: CalendarProps): JSX.Element {
     }, [isCalendarOpen]);
 
     function onChange(date: Date): void {
-        setCurrentDate(date);
+        setViewingDate(date);
         setIsCalendarOpen(false);
     }
 
@@ -32,7 +42,7 @@ function Calendar({spaceId}: CalendarProps): JSX.Element {
         <div className="calendar tab" data-testid="calendar">
             <DatePicker
                 ref={calendarRef}
-                selected={currentDate}
+                selected={viewingDate}
                 onChange={onChange}
                 onClickOutside={(): void => {
                     setTimeout(() => setIsCalendarOpen(false), 250);
@@ -51,4 +61,12 @@ function Calendar({spaceId}: CalendarProps): JSX.Element {
     );
 }
 
-export default Calendar;
+const mapStateToProps = (state: GlobalStateProps) => ({
+    viewingDate: state.viewingDate,
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+    setViewingDate: (date: Date) => dispatch(setViewingDateAction(date)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Calendar);
