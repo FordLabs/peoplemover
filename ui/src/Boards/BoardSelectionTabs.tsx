@@ -44,7 +44,7 @@ function BoardSelectionTabs({
 
     return (
         <div className="boardSelectionContainer">
-            <Calendar spaceId={currentBoard.spaceId}/>
+            <Calendar/>
             <div className="spaceFiller"/>
             <button className="selectionTabButton tab"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}

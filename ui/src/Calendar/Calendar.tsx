@@ -9,14 +9,12 @@ import {setViewingDateAction} from "../Redux/Actions";
 import {GlobalStateProps} from "../Redux/Reducers";
 
 interface CalendarProps {
-    spaceId: number;
     viewingDate: Date;
 
     setViewingDate(date: Date): Date;
 }
 
 function Calendar({
-    spaceId,
     viewingDate,
     setViewingDate,
 }: CalendarProps
