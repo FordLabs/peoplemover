@@ -1,7 +1,7 @@
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
-/out
+/api/out/
 application-local.properties
 node_modules/
 

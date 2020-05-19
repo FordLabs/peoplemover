@@ -140,7 +140,7 @@ function AssignmentCardList({
         if (midpointOfRef >= height) {
             window.scrollBy(0, 10);
         }
-        if (midpointOfRef <= 0) {
+        if (midpointOfRef <= 120) {
             window.scrollBy(0, -10);
         }
     }
