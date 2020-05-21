@@ -81,28 +81,6 @@ class AssignmentService(
     }
 
     @Transactional
-    fun deleteAndUnassign(assignmentId: Int) {
-        assignmentRepository.findByIdOrNull(assignmentId)?.let { assignmentToDelete ->
-            deleteOneAssignment(assignmentToDelete)
-
-            val allRemainingAssignments: List<Assignment> = getAssignmentsForTheGivenPersonId(assignmentToDelete.person.id!!)
-            val boardId: Int = getBoardIdForAssignment(assignmentToDelete)
-
-            allRemainingAssignments.filter { assignment -> boardId == getBoardIdForAssignment(assignment) }.ifEmpty {
-                productRepository.findProductByNameAndBoardId("unassigned", boardId)
-                        ?.let { unassignedProductForBoard ->
-                            val unassignedAssignment = Assignment(
-                                    person = assignmentToDelete.person,
-                                    productId = unassignedProductForBoard.id!!,
-                                    spaceId = assignmentToDelete.person.spaceId
-                            )
-                            createAssignment(unassignedAssignment)
-                        }
-            }
-        }
-    }
-
-    @Transactional
     fun deleteForProductId(productId: Int) {
         assignmentRepository.deleteByProductId(productId)
     }
@@ -128,17 +106,10 @@ class AssignmentService(
     }
 
     @Transactional
-    private fun createAssignment(assignment: Assignment): Assignment {
+    fun createAssignment(assignment: Assignment): Assignment {
         val createdAssignment: Assignment = assignmentRepository.saveAndUpdateSpaceLastModified(assignment)
         deleteAssignmentIfPersonIsUnassigned(assignment.person.id!!, createdAssignment.productId)
         return createdAssignment
-    }
-
-    private fun getBoardIdForAssignment(assignment: Assignment): Int {
-        val product: Product = productRepository.findByIdOrNull(assignment.productId)
-                ?: throw ProductNotExistsException()
-
-        return product.boardId
     }
 
     private fun getPersonIfValidAssignmentRequest(assignmentRequest: AssignmentRequest): Person {

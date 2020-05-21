@@ -20,8 +20,6 @@ package com.ford.internalprojects.peoplemover
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRequest
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
 import com.ford.internalprojects.peoplemover.auth.AuthClient
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardService
 import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.color.ColorService
 import com.ford.internalprojects.peoplemover.person.Person
@@ -52,9 +50,6 @@ class LocalConfig {
 
     @Autowired
     private lateinit var roleService: RoleService
-
-    @Autowired
-    private lateinit var boardService: BoardService
 
     @Autowired
     private lateinit var personService: PersonService
@@ -89,8 +84,6 @@ class LocalConfig {
         val role2: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE SECOND BEST (UNDERSTUDY)", colors[1]?.id)
         val role3: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE WURST", colors[2]?.id)
 
-        val board: Board = boardService.createBoardForNewSpace("Board1", createdSpace)
-
         val jane: Person = personService.createPerson(
                 Person(
                         name = "Jane Smith",
@@ -116,7 +109,7 @@ class LocalConfig {
                 spaceName
         )
 
-        val savedProducts: List<Product> = productRepository.findAllByBoardId(board.id!!)
+        val savedProducts: List<Product> = productRepository.findAllBySpaceId(spaceId = createdSpace.id)
 
         assignmentService.createAssignmentFromAssignmentRequest(AssignmentRequest(
                 personId = jane.id!!,

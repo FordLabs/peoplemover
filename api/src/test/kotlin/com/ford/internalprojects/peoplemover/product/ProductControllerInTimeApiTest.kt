@@ -19,8 +19,6 @@ package com.ford.internalprojects.peoplemover.product
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardRepository
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
@@ -46,9 +44,6 @@ class ProductControllerInTimeApiTest {
     private lateinit var productRepository: ProductRepository
 
     @Autowired
-    private lateinit var boardRepository: BoardRepository
-
-    @Autowired
     private lateinit var assignmentRepository: AssignmentRepository
 
     @Autowired
@@ -64,26 +59,22 @@ class ProductControllerInTimeApiTest {
     private lateinit var mockMvc: MockMvc
 
     private lateinit var space: Space
-    private lateinit var board: Board
     private lateinit var product1: Product
     private lateinit var product2: Product
 
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
-        board = boardRepository.save(Board(name = "board", spaceId = space.id!!))
         product1 = productRepository.save(Product(
                 name = "product one",
                 startDate = LocalDate.of(2020, 5, 1),
                 endDate = LocalDate.of(2020, 6, 1),
-                boardId = board.id!!,
                 spaceId = space.id!!
         ))
         product2 = productRepository.save(Product(
                 name = "product two",
                 startDate = LocalDate.of(2020, 4, 1),
                 endDate = LocalDate.of(2020, 6, 1),
-                boardId = board.id!!,
                 spaceId = space.id!!
         ))
     }
@@ -92,7 +83,6 @@ class ProductControllerInTimeApiTest {
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()
-        boardRepository.deleteAll()
         personRepository.deleteAll()
         spaceRepository.deleteAll()
     }
@@ -152,7 +142,6 @@ class ProductControllerInTimeApiTest {
         val nullStartProduct: Product = productRepository.save(Product(
                 name = "product with null start date",
                 endDate = LocalDate.of(2020, 10, 1),
-                boardId = board.id!!,
                 spaceId = space.id!!
         ))
 
@@ -176,7 +165,6 @@ class ProductControllerInTimeApiTest {
         val nullStartProduct: Product = productRepository.save(Product(
                 name = "product with null start date",
                 startDate = LocalDate.of(2020, 6, 1),
-                boardId = board.id!!,
                 spaceId = space.id!!
         ))
 

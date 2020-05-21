@@ -18,8 +18,6 @@
 package com.ford.internalprojects.peoplemover.location
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
@@ -50,9 +48,6 @@ class LocationControllerApiTest {
     private lateinit var spaceLocationRepository: SpaceLocationRepository
 
     @Autowired
-    private lateinit var boardRepository: BoardRepository
-
-    @Autowired
     private lateinit var productRepository: ProductRepository
 
     @Autowired
@@ -62,19 +57,16 @@ class LocationControllerApiTest {
     private lateinit var objectMapper: ObjectMapper
 
     private lateinit var space: Space
-    private lateinit var board: Board
 
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
-        board = boardRepository.save(Board(name = "board", spaceId = space.id!!))
     }
 
     @After
     fun tearDown() {
         spaceLocationRepository.deleteAll()
         productRepository.deleteAll()
-        boardRepository.deleteAll()
         spaceRepository.deleteAll()
     }
 
@@ -205,7 +197,6 @@ class LocationControllerApiTest {
         val originalProduct: Product = productRepository.save(
                 Product(
                         name = "Product1",
-                        boardId = board.id!!,
                         spaceLocation = location,
                         spaceId = space.id!!
                 )

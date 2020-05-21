@@ -18,8 +18,6 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
@@ -58,9 +56,6 @@ class AssignmentControllerApiTest {
     private lateinit var spaceRepository: SpaceRepository
 
     @Autowired
-    private lateinit var boardRepository: BoardRepository
-
-    @Autowired
     private lateinit var spaceLocationRepository: SpaceLocationRepository
 
     @Autowired
@@ -70,15 +65,13 @@ class AssignmentControllerApiTest {
     private lateinit var objectMapper: ObjectMapper
 
     private lateinit var space: Space
-    private lateinit var board: Board
     private lateinit var product: Product
     private lateinit var person: Person
 
     @Before
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
-        board = boardRepository.save(Board(name = "board", spaceId = space.id!!))
-        product = productRepository.save(Product(name = "Justice League", boardId = board.id!!, spaceId = space.id!!))
+        product = productRepository.save(Product(name = "Justice League", spaceId = space.id!!))
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
     }
 
@@ -88,7 +81,6 @@ class AssignmentControllerApiTest {
         productRepository.deleteAll()
         personRepository.deleteAll()
         spaceLocationRepository.deleteAll()
-        boardRepository.deleteAll()
         spaceRepository.deleteAll()
     }
 
@@ -186,7 +178,7 @@ class AssignmentControllerApiTest {
 
     @Test
     fun `POST should delete existing unassigned assignment for a person when assigning them to something else`() {
-        val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", boardId = board.id!!, spaceId = space.id!!))
+        val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", spaceId = space.id!!))
         assignmentRepository.save(Assignment(person = person, productId = unassignedProduct.id!!, spaceId = space.id!!))
         val assignmentRequest = AssignmentRequest(personId = person.id!!, productId = product.id!!)
         mockMvc.perform(post("/api/assignment")
@@ -196,30 +188,5 @@ class AssignmentControllerApiTest {
         val personsAssignment: Assignment = assignmentRepository.getByPersonId(person.id!!)[0]
         assertThat(assignmentRepository.count()).isOne()
         assertThat(personsAssignment.productId).isEqualTo(product.id!!)
-    }
-
-    @Test
-    fun `DELETE should delete the assignment`() {
-        val assignment: Assignment = assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!))
-        assertThat(assignmentRepository.count()).isOne();
-        mockMvc.perform(delete("/api/assignment/${assignment.id}")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent)
-                .andReturn()
-        assertThat(assignmentRepository.count()).isZero()
-    }
-
-    @Test
-    fun `DELETE should unassign person when their last assignment is deleted`() {
-        val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", boardId = board.id!!, spaceId = space.id!!))
-        val lastAssignment: Assignment = assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!))
-
-        mockMvc.perform(delete("/api/assignment/${lastAssignment.id}")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent)
-                .andReturn()
-        val personsAssignment: Assignment = assignmentRepository.getByPersonId(person.id!!)[0]
-        assertThat(assignmentRepository.count()).isOne()
-        assertThat(personsAssignment.productId).isEqualTo(unassignedProduct.id)
     }
 }

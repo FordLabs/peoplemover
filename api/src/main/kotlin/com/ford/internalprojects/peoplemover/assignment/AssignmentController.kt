@@ -65,13 +65,4 @@ class AssignmentController(
         logger.logInfoMessage("Assignment with id: [${updatedAssignment.id}] updated.")
         return ResponseEntity.ok(updatedAssignment)
     }
-
-    @DeleteMapping(path = ["/api/assignment/{assignmentId}"])
-    @Throws(Exception::class)
-    fun deleteAssignment(@PathVariable assignmentId: Int): ResponseEntity<Unit> {
-        assignmentService.deleteAndUnassign(assignmentId)
-        logger.logInfoMessage("Assignment with id: [$assignmentId] deleted.")
-        return ResponseEntity(HttpStatus.NO_CONTENT)
-    }
-
 }

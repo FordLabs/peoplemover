@@ -18,8 +18,6 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
@@ -61,9 +59,6 @@ class AssignmentControllerInTimeApiTest {
     private lateinit var spaceRepository: SpaceRepository
 
     @Autowired
-    private lateinit var boardRepository: BoardRepository
-
-    @Autowired
     private lateinit var spaceLocationRepository: SpaceLocationRepository
 
     @Autowired
@@ -73,7 +68,6 @@ class AssignmentControllerInTimeApiTest {
     private lateinit var objectMapper: ObjectMapper
 
     private lateinit var space: Space
-    private lateinit var board: Board
     private lateinit var productOne: Product
     private lateinit var productTwo: Product
     private lateinit var productThree: Product
@@ -85,10 +79,9 @@ class AssignmentControllerInTimeApiTest {
     @Before
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
-        board = boardRepository.save(Board(name = "board", spaceId = space.id!!))
-        productOne = productRepository.save(Product(name = "Justice League", boardId = board.id!!, spaceId = space.id!!))
-        productTwo = productRepository.save(Product(name = "Avengers", boardId = board.id!!, spaceId = space.id!!))
-        productThree = productRepository.save(Product(name = "Misfits", boardId = board.id!!, spaceId = space.id!!))
+        productOne = productRepository.save(Product(name = "Justice League", spaceId = space.id!!))
+        productTwo = productRepository.save(Product(name = "Avengers", spaceId = space.id!!))
+        productThree = productRepository.save(Product(name = "Misfits", spaceId = space.id!!))
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
     }
 
@@ -98,7 +91,6 @@ class AssignmentControllerInTimeApiTest {
         productRepository.deleteAll()
         personRepository.deleteAll()
         spaceLocationRepository.deleteAll()
-        boardRepository.deleteAll()
         spaceRepository.deleteAll()
     }
 
