@@ -17,28 +17,18 @@
 
 import React from 'react';
 import './BoardSelectionTabs.scss';
-import {AvailableModals, setCurrentBoardAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
-import {Board} from './Board';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
 
 interface BoardSelectionTabsProps {
-    currentBoard: Board;
-    boards: Array<Board>;
-
-    changeCurrentBoard(board: Board, sortOptionValue: string): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function BoardSelectionTabs({
-    currentBoard,
-    boards,
-    changeCurrentBoard,
     setCurrentModal,
 }: BoardSelectionTabsProps): JSX.Element {
 
@@ -66,17 +56,8 @@ function BoardSelectionTabs({
     );
 }
 
-const mapStateToProps = ({currentBoard, boards}: GlobalStateProps ) => ({
-    currentBoard,
-    boards,
-});
-
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    changeCurrentBoard: (board: Board, sortOptionValue: string) => dispatch(setCurrentBoardAction(board, sortOptionValue)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(BoardSelectionTabs);
+export default connect(null, mapDispatchToProps)(BoardSelectionTabs);

@@ -18,7 +18,6 @@
 import React from 'react';
 import {renderWithRedux} from './TestUtils';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
-import {Board} from '../Boards/Board';
 import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';
 import {Person} from '../People/Person';

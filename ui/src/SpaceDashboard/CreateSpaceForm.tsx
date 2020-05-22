@@ -26,13 +26,12 @@ import './CreateSpaceForm.scss';
 
 interface CreateSpaceFormProps {
     onSubmit(): Promise<void>;
-
     closeModal(): void;
 }
 
 function CreateSpaceForm({
-    closeModal,
     onSubmit,
+    closeModal,
 }: CreateSpaceFormProps): JSX.Element {
 
     const [spaceName, setSpaceName] = useState<string>('');

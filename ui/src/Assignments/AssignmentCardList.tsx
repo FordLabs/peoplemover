@@ -18,7 +18,7 @@
 import React, {RefObject} from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
-import {AvailableModals, fetchBoardsAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import {
     AssignmentCardRefAndAssignmentPair,
     getProductUserDroppedAssignmentOn,
@@ -37,7 +37,7 @@ interface AssignmentCardListProps {
     container: string;
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
-    fetchBoards(): void;
+    fetchProducts(): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
@@ -45,7 +45,7 @@ function AssignmentCardList({
     container,
     product,
     productRefs,
-    fetchBoards,
+    fetchProducts,
     setCurrentModal,
 }: AssignmentCardListProps): JSX.Element {
 
@@ -118,7 +118,7 @@ function AssignmentCardList({
                     try {
                         await AssignmentClient.createAssignment(assignmentDTO);
                         await AssignmentClient.deleteAssignment(assignment);
-                        fetchBoards();
+                        fetchProducts();
                         assignmentUpdated = true;
                     } catch (error) {
                         if (error.response.status === 409) {
@@ -199,7 +199,7 @@ const mapStateToProps = ({productRefs}: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchBoards: () => dispatch(fetchBoardsAction()),
+    fetchProducts: () => dispatch(fetchProductsAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 

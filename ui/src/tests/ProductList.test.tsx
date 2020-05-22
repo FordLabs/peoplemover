@@ -18,7 +18,6 @@
 import React from 'react';
 import {fireEvent} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
-import BoardClient from '../Boards/BoardClient';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {AxiosResponse} from 'axios';
 

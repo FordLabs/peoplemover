@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-import {currentBoardReducer, sortByProductName} from '../Redux/Reducers/currentBoardReducer';
+import {sortByProductName} from '../Redux/Reducers/currentBoardReducer';
 import {AvailableActions} from '../Redux/Actions';
-import {Board} from '../Boards/Board';
 
 describe('sort by product name', () => {
     it('return -1', () => {

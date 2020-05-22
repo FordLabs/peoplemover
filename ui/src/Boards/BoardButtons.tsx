@@ -40,9 +40,8 @@ function BoardButtons({setCurrentModal}: BoardButtonsProps): JSX.Element {
             </div>
             {process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED === 'true' &&
                 <button data-testid="editContributorsModal" className={'editContributorsModal'}
-                        onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
+                    onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
                     <i className="fas fa-user" data-testid={'userIcon'}></i>
-                    {/*<i className={isDropdownOpen ? 'fas fa-caret-up drawerCaret' : 'fas fa-caret-down drawerCaret'}/>*/}
                     <i className="fas fa-caret-down drawerCaret"/>
                 </button>
             }

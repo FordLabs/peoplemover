@@ -44,7 +44,6 @@ import {Dispatch} from 'redux';
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
-    boardId?: number;
     spaceId: number;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -54,7 +53,6 @@ interface ProductFormProps {
 function ProductForm({
     editing,
     product,
-    boardId,
     spaceId,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
@@ -107,7 +105,7 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return emptyProduct(boardId);
+            return emptyProduct(spaceId);
         }
         return product;
     }
@@ -426,8 +424,8 @@ function ProductForm({
         </div>
     );
 }
-const mapStateToProps = ({ allGroupedTagFilterOptions}: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

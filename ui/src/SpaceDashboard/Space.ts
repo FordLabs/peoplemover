@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-import {Board} from "../Boards/Board";
 import {SpaceRole} from "../Roles/Role";
 import {SpaceLocation} from "../Locations/SpaceLocation";
 
 export interface Space {
     id?: number;
     name: string;
-    boards: Board[];
     roles: SpaceRole[];
     locations:    SpaceLocation[];
     lastModifiedDate: string;

@@ -212,8 +212,8 @@ function AssignmentForm({
     );
 }
 
-const mapStateToProps = ({people}: GlobalStateProps) => ({
-    people,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    people: state.people,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

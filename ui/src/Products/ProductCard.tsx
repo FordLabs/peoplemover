@@ -19,8 +19,7 @@ import React, {RefObject, useEffect, useState} from 'react';
 import './Product.scss';
 import {connect} from 'react-redux';
 import {
-    AvailableModals,
-    fetchBoardsAction,
+    AvailableModals, fetchProductsAction,
     registerProductRefAction,
     setCurrentModalAction,
     setWhichEditMenuOpenAction,
@@ -50,7 +49,7 @@ interface ProductCardProps {
 
     setCurrentModal(modalState: CurrentModalState): void;
 
-    fetchBoards(): void;
+    fetchProducts(): void;
 }
 
 function ProductCard({
@@ -61,7 +60,7 @@ function ProductCard({
     whichEditMenuOpen,
     setWhichEditMenuOpen,
     setCurrentModal,
-    fetchBoards,
+    fetchProducts,
 }: ProductCardProps): JSX.Element {
 
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
@@ -123,7 +122,7 @@ function ProductCard({
 
     function archiveProductAndCloseEditMenu(): void {
         toggleEditMenu();
-        archiveProduct().then(fetchBoards);
+        archiveProduct().then(fetchProducts);
     }
 
     function archiveProduct(): Promise<AxiosResponse> {
@@ -189,13 +188,13 @@ function ProductCard({
     );
 }
 
-const mapStateToProps = ({whichEditMenuOpen}: GlobalStateProps) => ({
-    whichEditMenuOpen,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    whichEditMenuOpen: state.whichEditMenuOpen,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchBoards: () => dispatch(fetchBoardsAction()),
+    fetchProducts: () => dispatch(fetchProductsAction()),
     setWhichEditMenuOpen: (menu: EditMenuToOpen) => dispatch(setWhichEditMenuOpenAction(menu)),
     registerProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(registerProductRefAction(productRef)),
     unregisterProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(unregisterProductRefAction(productRef)),

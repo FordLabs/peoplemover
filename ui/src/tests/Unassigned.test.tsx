@@ -19,9 +19,7 @@ import {fireEvent, wait} from '@testing-library/react';
 import React from 'react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import BoardClient from '../Boards/BoardClient';
 import {Product} from '../Products/Product';
-import {Board} from '../Boards/Board';
 import {Assignment} from '../Assignments/Assignment';
 
 describe('Unassigned Products', () => {

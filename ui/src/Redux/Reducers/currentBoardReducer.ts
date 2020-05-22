@@ -16,7 +16,6 @@
  */
 
 import {AvailableActions} from '../Actions';
-import {Board} from '../../Boards/Board';
 import {Product} from '../../Products/Product';
 
 export function sortByProductName(productAName: string, productBName: string): number {
@@ -27,38 +26,38 @@ function getSpaceLocationNameSafetly(product: Product): string {
     return product.spaceLocation ? product.spaceLocation.name : 'ZZZZZZZZ';
 }
 
-export const currentBoardReducer = (
-    state: Board | null = null,
-    action: {type: AvailableActions; board: Board; sortOptionValue?: string}
-): Board | null  => {
-
-    if (action.type === AvailableActions.SET_CURRENT_BOARD) {
-        if (action.sortOptionValue === 'location') {
-            const sortedProducts: Product[] = action.board.products.sort((productA: Product, productB: Product) => {
-                const locationA = getSpaceLocationNameSafetly(productA);
-                const locationB = getSpaceLocationNameSafetly(productB);
-
-                const locationCompare = locationA.toLowerCase().localeCompare(locationB.toLowerCase());
-                if (locationCompare === 0) {
-                    return sortByProductName(productA.name, productB.name);
-                }
-                return locationCompare;
-            });
-
-            const copiedState = {...action.board};
-            copiedState.products = sortedProducts;
-            return copiedState;
-
-        } else if (action.sortOptionValue === 'name') {
-            const sortedProducts: Product[] = action.board.products.sort((productA: Product, productB: Product) => {
-                return sortByProductName(productA.name, productB.name);
-            });
-            const copiedState = {...action.board};
-            copiedState.products = sortedProducts;
-            return copiedState;
-        } else {
-            return {...action.board};
-        }
-    }
-    return state;
-};
+// export const currentBoardReducer = (
+//     state: Board | null = null,
+//     action: {type: AvailableActions; board: Board; sortOptionValue?: string}
+// ): Board | null  => {
+//
+//     if (action.type === AvailableActions.SET_CURRENT_BOARD) {
+//         if (action.sortOptionValue === 'location') {
+//             const sortedProducts: Product[] = action.board.products.sort((productA: Product, productB: Product) => {
+//                 const locationA = getSpaceLocationNameSafetly(productA);
+//                 const locationB = getSpaceLocationNameSafetly(productB);
+//
+//                 const locationCompare = locationA.toLowerCase().localeCompare(locationB.toLowerCase());
+//                 if (locationCompare === 0) {
+//                     return sortByProductName(productA.name, productB.name);
+//                 }
+//                 return locationCompare;
+//             });
+//
+//             const copiedState = {...action.board};
+//             copiedState.products = sortedProducts;
+//             return copiedState;
+//
+//         } else if (action.sortOptionValue === 'name') {
+//             const sortedProducts: Product[] = action.board.products.sort((productA: Product, productB: Product) => {
+//                 return sortByProductName(productA.name, productB.name);
+//             });
+//             const copiedState = {...action.board};
+//             copiedState.products = sortedProducts;
+//             return copiedState;
+//         } else {
+//             return {...action.board};
+//         }
+//     }
+//     return state;
+// };

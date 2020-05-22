@@ -21,16 +21,11 @@ import currentSpaceReducer from '../Redux/Reducers/currentSpaceReducer';
 import {AvailableActions} from '../Redux/Actions';
 import TestUtils from './TestUtils';
 import {Space} from "../SpaceDashboard/Space";
-import {Board} from "../Boards/Board";
 
 describe('current space reducer', () => {
-    const board1: Board = { id: 1, name: 'Board One', products: TestUtils.products, spaceId: 1 };
-    const board2: Board = { id: 2, name: 'Board Two', products: TestUtils.productsForBoard2, spaceId: 1 };
-
     const space: Space = {
         id: 1,
         name: 'Space One',
-        boards: [board1, board2],
         roles: [],
         locations: [],
         lastModifiedDate: '2019-01-01',

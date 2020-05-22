@@ -67,4 +67,5 @@ function MyTagsModal({setShouldShowConfirmCloseModal}: MyTagsModalProps): JSX.El
         </div>
     );
 }
+
 export default MyTagsModal;

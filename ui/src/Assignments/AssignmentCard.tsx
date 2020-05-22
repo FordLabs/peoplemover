@@ -20,7 +20,7 @@ import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
-import {AvailableModals, fetchBoardsAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';
 import {AssignmentDTO} from '../Domain/AssignmentDTO';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -40,7 +40,7 @@ interface AssignmentCardProps {
 
     setCurrentModal?(modalState: CurrentModalState): void;
 
-    fetchBoards?(): void;
+    fetchProducts?(): void;
 }
 
 function AssignmentCard({
@@ -49,7 +49,7 @@ function AssignmentCard({
     isUnassignedProduct,
     startDraggingAssignment,
     setCurrentModal,
-    fetchBoards,
+    fetchProducts,
 }: AssignmentCardProps): JSX.Element {
 
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
@@ -93,12 +93,12 @@ function AssignmentCard({
             placeholder: !assignment.placeholder,
         };
         toggleEditMenu();
-        AssignmentClient.updateAssignment(assignmentDTO).then(fetchBoards);
+        AssignmentClient.updateAssignment(assignmentDTO).then(fetchProducts);
     }
 
     function cancelAssignmentAndCloseEditMenu(): void {
         toggleEditMenu();
-        AssignmentClient.deleteAssignment(assignment).then(fetchBoards);
+        AssignmentClient.deleteAssignment(assignment).then(fetchProducts);
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -168,13 +168,13 @@ function AssignmentCard({
     );
 }
 
-const mapStateToProps = ({whichEditMenuOpen}: GlobalStateProps) => ({
-    whichEditMenuOpen,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    whichEditMenuOpen: state.whichEditMenuOpen,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchBoards: () => dispatch(fetchBoardsAction()),
+    fetchProducts: () => dispatch(fetchProductsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCard);

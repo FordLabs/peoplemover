@@ -15,10 +15,8 @@
  * limitations under the License.
  */
 
-import {Board} from '../Boards/Board';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
-import {Reassignment} from '../ReassignedDrawer/Reassignment';
 
 export class BoardComparison {
     static compare(board1: Board, board2: Board): Array<Reassignment> {

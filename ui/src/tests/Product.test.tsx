@@ -20,7 +20,6 @@ import Axios, {AxiosResponse} from 'axios';
 import {act, fireEvent} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import BoardClient from '../Boards/BoardClient';
 import ProductClient from '../Products/ProductClient';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {wait} from '@testing-library/dom';

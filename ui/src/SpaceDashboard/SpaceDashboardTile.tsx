@@ -39,5 +39,4 @@ export default function SpaceDashboardTile({space, onClick}: SpaceDashboardTileP
         <div className="space-name">{space.name}</div>
         <div className="last-modified-text">Last modified {timestamp}</div>
     </div>;
-
 }

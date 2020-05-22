@@ -18,23 +18,17 @@
 import Select from 'react-select';
 import {CustomIndicator, filterByStyles, SortByOption} from './ReactSelectStyles';
 import React, {useEffect, useState} from 'react';
-import {setCurrentBoardAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {Board} from '../Boards/Board';
 import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Option} from '../CommonTypes/Option';
 import './ProductFilterOrSortBy.scss';
 
 interface ProductSortByProps {
-    currentBoard: Board;
-    setCurrentBoard(board: Board, sortValueOption: string): void;
     sortValueOption: string;
 }
 
 function ProductSortBy({
-    currentBoard,
-    setCurrentBoard,
     sortValueOption,
 }: ProductSortByProps): JSX.Element {
 
@@ -60,22 +54,16 @@ function ProductSortBy({
                 inputId="sortby-dropdown"
                 options={sortByOptions}
                 value={originalSortOption}
-                onChange={(value): void => setCurrentBoard(currentBoard, (value as Option).value)}
+                // onChange={(value): void => setCurrentBoard(currentBoard, (value as Option).value)}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
         </React.Fragment>
     );
 }
 
-const mapStateToProps = ({
-    currentBoard,
-    sortValueOption,
-}: GlobalStateProps) => ({
-    currentBoard: currentBoard ? currentBoard : {} as Board,
-    sortValueOption: sortValueOption,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    sortValueOption: state.sortValueOption,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentBoard: (board: Board, sortValueOption: string) => dispatch(setCurrentBoardAction(board, sortValueOption)),
-});
+const mapDispatchToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSortBy);

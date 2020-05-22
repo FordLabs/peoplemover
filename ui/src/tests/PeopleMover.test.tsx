@@ -20,7 +20,6 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
-import BoardClient from '../Boards/BoardClient';
 import {createMemoryHistory} from 'history';
 import SpaceClient from "../SpaceDashboard/SpaceClient";
 

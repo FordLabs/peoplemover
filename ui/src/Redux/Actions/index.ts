@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-import BoardClient from '../../Boards/BoardClient';
-import {Board} from '../../Boards/Board';
 import {Person} from '../../People/Person';
 import {EditMenuToOpen} from '../../ReusableComponents/EditMenuToOpen';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
@@ -25,12 +23,13 @@ import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
 import {Space} from "../../SpaceDashboard/Space";
+import {Product} from "../../Products/Product";
+import ProductClient from "../../Products/ProductClient";
+import moment from "moment";
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
     CLOSE_MODAL,
-    SET_CURRENT_BOARD,
-    SET_BOARDS,
     SET_IS_UNASSIGNED_DRAWER_OPEN,
     SET_WHICH_EDIT_MENU_OPEN,
     ADD_PERSON,
@@ -38,10 +37,10 @@ export enum AvailableActions {
     SET_PEOPLE,
     REGISTER_PRODUCT_REF,
     UNREGISTER_PRODUCT_REF,
-    SET_UNMODIFIED_INITIAL_BOARDS,
     SET_GROUPED_TAG_FILTER_OPTIONS,
     SET_CURRENT_SPACE,
-    SET_VIEWING_DATE
+    SET_VIEWING_DATE,
+    SET_PRODUCTS,
 }
 
 export enum AvailableModals {
@@ -65,17 +64,6 @@ export const setCurrentModalAction = (modalState: CurrentModalState) => ({
 
 export const closeModalAction = () => ({
     type: AvailableActions.CLOSE_MODAL,
-});
-
-export const setCurrentBoardAction = (board: Board, sortOptionValue: string) => ({
-    type: AvailableActions.SET_CURRENT_BOARD,
-    board,
-    sortOptionValue,
-});
-
-export const setBoardsAction = (boards: Array<Board>) => ({
-    type: AvailableActions.SET_BOARDS,
-    boards,
 });
 
 export const setIsUnassignedDrawerOpenAction = (open: boolean) => ({
@@ -113,11 +101,6 @@ export const unregisterProductRefAction = (productRef: ProductCardRefAndProductP
     productRef,
 });
 
-export const setUnmodifiedInitialBoardsAction = (boards: Array<Board>) => ({
-    type: AvailableActions.SET_UNMODIFIED_INITIAL_BOARDS,
-    boards,
-});
-
 export const setAllGroupedTagFilterOptions = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
     type: AvailableActions.SET_GROUPED_TAG_FILTER_OPTIONS,
     allGroupedTagFilterOptions: allGroupedTagFilterOptions,
@@ -133,37 +116,18 @@ export const setViewingDateAction = (date: Date) => ({
     date,
 });
 
-export const fetchBoardsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
+export const setProductsAction = (products: Array<Product>) => ({
+    type: AvailableActions.SET_PRODUCTS,
+    products,
+});
+
+export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return BoardClient.getAllBoards().then(result => {
-            const boards: Array<Board> = result.data || [];
-            const boardsWithoutTransitionPrefix = boards.filter(board => !board.name.startsWith(BOARD_PREFIX_TO_HIDE_DURING_TRANSITION));
-
-            dispatch(setBoardsAction(boardsWithoutTransitionPrefix));
-
-            const board: Board = getBoardFromBoardsById(
-                getState().currentBoard ? getState().currentBoard.id : null,
-                boardsWithoutTransitionPrefix
-            );
-            if (getState().currentBoard !== board) {
-                const sort = localStorage.getItem('sortBy') ?? 'name';
-                dispatch(setCurrentBoardAction(board, sort));
-            }
+        return ProductClient.getProductsForDate(
+            getState().currentSpace.id,
+            moment(getState().viewingDate).format('YYYY-MM-DD')
+        ).then(result => {
+            const products: Array<Product> = result.data || [];
+            dispatch(setProductsAction(products));
         });
     };
-
-export const BOARD_PREFIX_TO_HIDE_DURING_TRANSITION = '#NOPE$';
-
-function getBoardFromBoardsById(boardId: number, boards: Array<Board>): Board {
-    if (boards.length === 0 ) {
-        return {} as Board;
-    }
-
-    let board: Board;
-    if (boardId == null) {
-        board = boards[0];
-    } else {
-        board = boards.find(board => board!.id === boardId) || boards[0];
-    }
-    return board;
-}

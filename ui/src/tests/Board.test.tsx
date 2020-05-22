@@ -17,16 +17,7 @@
 
 import React from 'react';
 import PeopleMover from '../Application/PeopleMover';
-import BoardClient from '../Boards/BoardClient';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import {applyMiddleware, compose, createStore} from 'redux';
-import rootReducer from '../Redux/Reducers';
-import {wait} from '@testing-library/dom';
-import thunk from 'redux-thunk';
-import {act} from '@testing-library/react';
-import {AxiosResponse} from 'axios';
-import {Board} from '../Boards/Board';
-import {BOARD_PREFIX_TO_HIDE_DURING_TRANSITION} from '../Redux/Actions';
 
 describe('Boards', () => {
     beforeEach(() => {
@@ -40,58 +31,6 @@ describe('Boards', () => {
             const app = renderWithRedux(<PeopleMover/>);
             await app.findByText('Powered by');
             await app.findByText('FordLabs');
-        });
-
-        it('should use client to get all boards for space on component will mount', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-            await app.findByText('Product 1');
-            expect(app.queryByText('Product 2')).not.toBeInTheDocument();
-        });
-
-        describe('TRANSITION', () => {
-            const hiddenBoardName = `${BOARD_PREFIX_TO_HIDE_DURING_TRANSITION}dontshowup`;
-
-            beforeEach(() => {
-                const boardWithPrefix: Board = {
-                    id: 19,
-                    name: hiddenBoardName,
-                    spaceId: 1,
-                    products: [],
-                };
-                BoardClient.getAllBoards = jest.fn(() => Promise.resolve({
-                    data: [boardWithPrefix, ...TestUtils.boards],
-                } as AxiosResponse));
-            });
-
-            it('should start with board one as current board', async () => {
-                const app = renderWithRedux(<PeopleMover/>);
-                await app.findByText('Product 1');
-            });
-
-        });
-    });
-
-    describe('products in the current board', () => {
-        it('should only have corresponding products in productRefs', async () => {
-            await act(async () => {
-                const store = createStore(rootReducer, compose(applyMiddleware(thunk)));
-                const component = <PeopleMover/>;
-                renderWithRedux(component, store);
-
-                const expectedProduct1Matcher = jasmine.objectContaining({
-                    product: TestUtils.productWithAssignments,
-                });
-                const expectedProduct2Matcher = jasmine.objectContaining({
-                    product: TestUtils.productWithoutAssignments,
-                });
-
-                await wait(() => {
-                    expect(store.getState().productRefs.length).toEqual(2);
-                });
-                const productCardRefAndProductPairs = store.getState().productRefs;
-                expect(productCardRefAndProductPairs).toContainEqual(expectedProduct1Matcher);
-                expect(productCardRefAndProductPairs).toContainEqual(expectedProduct2Matcher);
-            });
         });
     });
 })

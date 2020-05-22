@@ -18,7 +18,6 @@
 import React from 'react';
 import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
-import BoardClient from '../Boards/BoardClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
@@ -27,7 +26,6 @@ import {createStore, PreloadedState} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from '../People/Person';
-import {Board} from '../Boards/Board';
 import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';
 import {Option} from '../CommonTypes/Option';
@@ -287,9 +285,9 @@ describe('people actions', () => {
     it('should have initially selected product selected', async () => {
         const products: Product[] = [];
         const component = <PersonForm editing={false}
-                                      products={products}
-                                      initialPersonName={'BRADLEY'}
-                                      initiallySelectedProduct={TestUtils.productWithAssignments}
+            products={products}
+            initialPersonName={'BRADLEY'}
+            initiallySelectedProduct={TestUtils.productWithAssignments}
         />;
 
         await act(async () => {
@@ -434,7 +432,8 @@ describe('people actions', () => {
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments];
         const component = <PersonForm editing={true}
             products={products}
-            assignment={TestUtils.assignmentForPerson1}/>;
+            assignment={TestUtils.assignmentForPerson1}
+        />;
 
         await act(async () => {
             const wrapper = await renderWithReduxEnzyme(component, store);
