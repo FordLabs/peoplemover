@@ -19,7 +19,7 @@ import {AvailableActions} from '../Actions';
 
 const sortProductsReducer = (state: string | null = null, action: {type: AvailableActions; sortOptionValue?: string}): string | null => {
 
-    if (action.type === AvailableActions.SET_CURRENT_BOARD && action.sortOptionValue) {
+    if (action.type === AvailableActions.SET_CURRENT_SPACE && action.sortOptionValue) {
         localStorage.setItem('sortBy', action.sortOptionValue);
         return action.sortOptionValue;
     }

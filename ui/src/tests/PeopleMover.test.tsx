@@ -22,6 +22,7 @@ import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 import SpaceClient from "../SpaceDashboard/SpaceClient";
+import ProductClient from "../Products/ProductClient";
 
 describe('PeopleMover', () => {
     let app: RenderResult;
@@ -66,7 +67,7 @@ describe('PeopleMover Routing', () => {
     });
 
     it('should show 404 page when bad space name is provided',  async () => {
-        BoardClient.getAllBoards = jest.fn(() => Promise.reject());
+        ProductClient.getProductsForDate = jest.fn(() => Promise.reject());
 
         const history = createMemoryHistory({ initialEntries: ['/somebadName'] });
 

@@ -31,6 +31,7 @@ import {Assignment} from '../Assignments/Assignment';
 import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, SpaceRole} from '../Roles/Role';
+import ProductClient from "../Products/ProductClient";
 
 describe('people actions', () => {
     beforeEach(() => {
@@ -379,41 +380,33 @@ describe('people actions', () => {
         fireEvent.change(app.getByLabelText('Name'), {target: {value: 'John'}});
         fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
 
-        const board: Board = {
+        const unassignedProduct: Product = {
             spaceId: 0,
-            id: 1,
-            name: 'board one',
-            products: [
+            productTags: [],
+            archived: false,
+            id: 999,
+            name: 'unassigned',
+            startDate: '',
+            endDate: '',
+            assignments: [
                 {
-                    boardId: 2,
-                    productTags: [],
-                    archived: false,
-                    id: 999,
-                    name: 'unassigned',
-                    startDate: '',
-                    endDate: '',
-                    assignments: [
-                        {
-                            id: 2,
-                            person: {
-                                name: 'John',
-                                spaceRole: {name: 'Software Engineer', spaceId: 0, id: 2},
-                                newPerson: false,
-                                id: 2,
-                                spaceId: 0,
-                            },
-                            productId: 999,
-                            placeholder: false,
-                        },
-                    ],
+                    id: 2,
+                    person: {
+                        name: 'John',
+                        spaceRole: {name: 'Software Engineer', spaceId: 0, id: 2},
+                        newPerson: false,
+                        id: 2,
+                        spaceId: 0,
+                    },
+                    productId: 999,
+                    placeholder: false,
                 },
             ],
         };
-        (BoardClient.getAllBoards as Function) = jest.fn(() => Promise.resolve({data: [board]}));
+        (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve({data: [unassignedProduct]}));
 
         fireEvent.click(app.getByText('Create'));
 
-        fireEvent.click(unassignedDrawerCaret);
         await app.findByText('John');
         expect(app.queryByText('Submit')).toBeNull();
     });

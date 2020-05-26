@@ -178,6 +178,9 @@ class TestUtils {
         ProductClient.createProduct = emptyAxiosResponse;
         ProductClient.deleteProduct = emptyAxiosResponse;
         ProductClient.editProduct = emptyAxiosResponse;
+        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
+            data: TestUtils.products,
+        } as AxiosResponse));
 
         ProductTagClient.get = jest.fn(() => Promise.resolve({
             data: TestUtils.productTags,
@@ -196,6 +199,8 @@ class TestUtils {
     }
 
     static dummyCallback: () => void = () => null;
+
+    static originDateString = '2019-01-01';
 
     static annarbor = {id: 1, name: 'Ann Arbor', spaceId: 1};
     static detroit = {id: 2, name: 'Detroit', spaceId: 1};
@@ -354,6 +359,11 @@ class TestUtils {
         TestUtils.archivedProduct,
     ];
 
+    static notEmptyProducts: Array<Product> = [
+        TestUtils.productWithAssignments,
+    ];
+
+
     static productsForBoard2: Array<Product> = [
         {
             id: 2,
@@ -370,10 +380,10 @@ class TestUtils {
 
     static space: Space = {
         id: 1,
-        name: 'test space',
+        name: 'testSpace',
         roles: TestUtils.roles,
         locations: TestUtils.locations,
-        lastModifiedDate: '2019-01-01',
+        lastModifiedDate: TestUtils.originDateString,
     }
 }
 
