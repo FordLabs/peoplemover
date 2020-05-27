@@ -24,7 +24,6 @@ import com.ford.internalprojects.peoplemover.assignment.exceptions.NoAssignments
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
-import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
@@ -89,6 +88,11 @@ class AssignmentService(
         return assignmentRepository.getByPersonId(personId)
     }
 
+    fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<Assignment> {
+        val allAssignmentsBeforeOrOnDate = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
+        return getAllAssignmentsForPersonOnDate(personId, allAssignmentsBeforeOrOnDate)
+    }
+
     fun deleteAllAssignments(personId: Int) {
         val assignments: List<Assignment> = getAssignmentsForTheGivenPersonId(personId)
         assignments.forEach { deleteOneAssignment(it) }
@@ -130,7 +134,7 @@ class AssignmentService(
         }
     }
 
-    fun getAssignmentsByDate(spaceId: Int, requestedDate: String): Set<Assignment> {
+    fun getAssignmentsByDate(spaceId: Int, requestedDate: String): List<Assignment> {
         spaceRepository.findByIdOrNull(spaceId) ?: throw SpaceNotExistsException()
 
         val requestedLocalDate = try {
@@ -140,20 +144,22 @@ class AssignmentService(
         }
 
         val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
-        var allAssignments: Set<Assignment> = mutableSetOf()
+        var allAssignments: List<Assignment> = arrayListOf()
         people.forEach { person ->
             val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByEffectiveDateLessThanEqualAndPersonOrderByEffectiveDateAsc(requestedLocalDate, person)
-            allAssignments = if (assignmentsForPerson.isNotEmpty()) {
-                val lastDate: LocalDate = assignmentsForPerson.last().effectiveDate!!
-                val assignmentsOnLastDate: Set<Assignment> = assignmentsForPerson.filter { it.effectiveDate == lastDate }.toSet()
-                allAssignments.plus(assignmentsOnLastDate)
-            } else {
-                val assignmentsWithNullEffectiveDate: Set<Assignment> = assignmentRepository.findAllByEffectiveDateIsNullAndPerson(person)
-                allAssignments.plus(assignmentsWithNullEffectiveDate)
-            }
+            allAssignments = allAssignments.plus(getAllAssignmentsForPersonOnDate(person.id!!, assignmentsForPerson))
         }
 
         return allAssignments
+    }
+
+    private fun getAllAssignmentsForPersonOnDate(personId: Int, sortedAssignmentsForPerson: List<Assignment>): List<Assignment> {
+        return if (sortedAssignmentsForPerson.isNotEmpty()) {
+            val lastDate: LocalDate = sortedAssignmentsForPerson.last().effectiveDate!!
+            sortedAssignmentsForPerson.filter { it.effectiveDate == lastDate }
+        } else {
+            assignmentRepository.findAllByEffectiveDateIsNullAndPersonId(personId)
+        }
     }
 
     fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {

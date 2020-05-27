@@ -29,5 +29,6 @@ interface AssignmentRepository : PeopleMoverRepository<Assignment, Int> {
     fun findAllByPersonAndEffectiveDate(person: Person, requestedDate: LocalDate): List<Assignment>
 
     fun findAllByEffectiveDateLessThanEqualAndPersonOrderByEffectiveDateAsc(requestedDate: LocalDate, person: Person): List<Assignment>
-    fun findAllByEffectiveDateIsNullAndPerson(person: Person): Set<Assignment>
+    fun findAllByEffectiveDateIsNullAndPersonId(personId: Int): List<Assignment>
+    fun findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId: Int, effectiveDate: LocalDate): List<Assignment>
 }

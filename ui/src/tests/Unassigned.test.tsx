@@ -21,6 +21,7 @@ import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';
+import ProductClient from "../Products/ProductClient";
 
 describe('Unassigned Products', () => {
     beforeEach(() => {
@@ -63,16 +64,12 @@ describe('Unassigned Products', () => {
             const emptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
                 assignments: [],
-                boardId: 2,
-            };
-            const testBoard: Board = {
-                ...TestUtils.boards[1],
-                products: [emptyUnassignedProduct],
+                spaceId: 2,
             };
 
-            (BoardClient.getAllBoards as Function) = jest.fn(() => Promise.resolve(
+            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve(
                 {
-                    data: [testBoard],
+                    data: [emptyUnassignedProduct],
                 }
             ));
 
@@ -119,16 +116,12 @@ describe('Unassigned Products', () => {
             const definitelyNotEmptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
                 assignments: [newUnassignment, TestUtils.assignmentForUnassigned],
-                boardId: 2,
-            };
-            const testBoard: Board = {
-                ...TestUtils.boards[1],
-                products: [definitelyNotEmptyUnassignedProduct],
+                spaceId: 2,
             };
 
-            (BoardClient.getAllBoards as Function) = jest.fn(() => Promise.resolve(
+            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve(
                 {
-                    data: [testBoard],
+                    data: [definitelyNotEmptyUnassignedProduct],
                 }
             ));
 

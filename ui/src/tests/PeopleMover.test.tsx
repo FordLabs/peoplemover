@@ -21,7 +21,6 @@ import PeopleMover from '../Application/PeopleMover';
 import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
-import SpaceClient from "../SpaceDashboard/SpaceClient";
 import ProductClient from "../Products/ProductClient";
 
 describe('PeopleMover', () => {

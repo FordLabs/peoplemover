@@ -30,6 +30,7 @@ import '../Application/Styleguide/Styleguide.scss';
 import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
+import {CreateAssignmentsRequest} from "./CreateAssignmentRequest";
 
 interface AssignmentCardProps {
     assignment: Assignment;
@@ -86,14 +87,16 @@ function AssignmentCard({
     }
 
     function markAsPlaceholderAndCloseEditMenu(): void {
-        const assignmentDTO: AssignmentDTO = {
-            id: assignment.id,
-            personId: assignment.person.id,
-            productId: assignment.productId,
-            placeholder: !assignment.placeholder,
+        AssignmentClient.getAssignmentsUsingPersonId(assignment.person.id)
+
+        const assignmentToUpdate: CreateAssignmentsRequest = {
+            requestedDate: assignment.effectiveDate!!,
+            person: assignment.person,
+            products: !assignment.placeholder,
         };
+
         toggleEditMenu();
-        AssignmentClient.updateAssignment(assignmentDTO).then(fetchProducts);
+        AssignmentClient.createAssignmentForDate()
     }
 
     function cancelAssignmentAndCloseEditMenu(): void {

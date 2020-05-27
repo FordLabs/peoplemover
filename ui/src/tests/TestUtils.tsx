@@ -269,7 +269,7 @@ class TestUtils {
     static unassignedPerson: Person = {
         spaceId: 1,
         id: 101,
-        name: 'Unassigned Pearson 7',
+        name: 'Unassigned Person 7',
         spaceRole: TestUtils.softwareEngineer,
         newPerson: false,
     };

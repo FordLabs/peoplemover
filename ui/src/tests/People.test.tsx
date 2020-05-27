@@ -32,6 +32,7 @@ import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, SpaceRole} from '../Roles/Role';
 import ProductClient from "../Products/ProductClient";
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from "../Assignments/CreateAssignmentRequest";
 
 describe('people actions', () => {
     beforeEach(() => {
@@ -457,34 +458,21 @@ describe('people actions', () => {
             fireEvent.click(editPersonButton);
         });
 
-        function updateResponseForGetAllBoards(assignments: Array<Assignment>): void {
-            const updatedProduct: Product = {
-                boardId: 1,
-                id: 1,
-                name: 'Product 1',
-                startDate: '1/1/11',
-                endDate: '2/2/22',
-                spaceLocation: {id: 23, name: 'Place', spaceId: 3},
-                assignments: assignments,
-                archived: false,
-                productTags: [],
-            };
+        function updateResponseForGetAllAssignments(assignmentRequest: CreateAssignmentsRequest): void {
+            (AssignmentClient.createAssignmentForDate as Function) = jest.fn(() => Promise.resolve({data: [assignmentRequest]}));
 
-            const updatedProducts: Array<Product> = [
-                TestUtils.unassignedProduct,
-                updatedProduct,
-                TestUtils.productWithoutAssignments,
-                TestUtils.archivedProduct,
-            ];
+            const assignments: Array<Assignment> = [];
+            let count = 0;
+            assignmentRequest.products.forEach((product: ProductPlaceholderPair) => {
+                assignments.push({
+                    id: count++,
+                    person: assignmentRequest.person,
+                    placeholder: product.placeholder,
+                    productId: product.productId,
+                });
+            });
 
-            const updatedBoard: Board = {
-                spaceId: 0,
-                id: 1,
-                name: 'board one',
-                products: updatedProducts,
-            };
-
-            (BoardClient.getAllBoards as Function) = jest.fn(() => Promise.resolve({data: [updatedBoard]}));
+            (AssignmentClient.getAssignmentsUsingDate as Function) = jest.fn(() => Promise.resolve({data: [assignments]}));
         }
 
         it('should show Edit Person Modal when you click on edit person option', async () => {
@@ -513,8 +501,18 @@ describe('people actions', () => {
                 fireEvent.mouseDown(markAsPlaceholderButton);
                 fireEvent.mouseUp(markAsPlaceholderButton);
 
-                const updatedAssignment: Assignment = {...TestUtils.assignmentForPerson1, placeholder: true};
-                updateResponseForGetAllBoards([updatedAssignment]);
+                let productPlaceholderPair = new Set<ProductPlaceholderPair>();
+
+                const assignmentToCreate: CreateAssignmentsRequest = {
+                    requestedDate: new Date(TestUtils.originDateString),
+                    person: TestUtils.person1,
+                    products: productPlaceholderPair.add({
+                        productId: TestUtils.productWithAssignments.id,
+                        placeholder: true,
+                    }),
+                };
+
+                updateResponseForGetAllAssignments(assignmentToCreate);
 
                 const person1Card = await app.findByTestId('assignmentCard1');
                 const person1role: SpaceRole = (TestUtils.people[0].spaceRole as SpaceRole);
@@ -532,7 +530,7 @@ describe('people actions', () => {
                 fireEvent.mouseUp(markAsPlaceholderButton);
 
                 const updatedAssignment: Assignment = {...TestUtils.assignmentForPerson1, placeholder: true};
-                updateResponseForGetAllBoards([updatedAssignment]);
+                updateResponseForGetAllAssignments([updatedAssignment]);
 
                 const editPersonButton = await app.findByTestId('editPersonIconContainer-1');
                 fireEvent.click(editPersonButton);
@@ -541,7 +539,7 @@ describe('people actions', () => {
                 fireEvent.mouseDown(unmarkAsPlaceholderButton);
                 fireEvent.mouseUp(unmarkAsPlaceholderButton);
 
-                updateResponseForGetAllBoards([{...updatedAssignment, placeholder: false}]);
+                updateResponseForGetAllAssignments([{...updatedAssignment, placeholder: false}]);
 
                 const person1Card = await app.findByTestId('assignmentCard1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
@@ -554,7 +552,7 @@ describe('people actions', () => {
             fireEvent.mouseDown(cancelAssignmentButton);
             fireEvent.mouseUp(cancelAssignmentButton);
 
-            updateResponseForGetAllBoards([]);
+            updateResponseForGetAllAssignments([]);
 
             await wait(() => {
                 expect(app.queryByText('Person 1')).not.toBeInTheDocument();

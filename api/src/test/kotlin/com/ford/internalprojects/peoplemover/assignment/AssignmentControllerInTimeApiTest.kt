@@ -73,6 +73,7 @@ class AssignmentControllerInTimeApiTest {
     private lateinit var productThree: Product
     private lateinit var person: Person
 
+    val mar1 = "2019-03-01"
     val apr1 = "2019-04-01"
     val apr2 = "2019-04-02"
 
@@ -122,9 +123,9 @@ class AssignmentControllerInTimeApiTest {
         val result = mockMvc.perform(get("/api/assignment/${space.id}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
-        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+        val actualAssignments: List<Assignment> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
         )
 
         assertThat(actualAssignments.size).isEqualTo(2)
@@ -161,9 +162,9 @@ class AssignmentControllerInTimeApiTest {
         val result = mockMvc.perform(get("/api/assignment/${space.id}/$apr2"))
                 .andExpect(status().isOk)
                 .andReturn()
-        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+        val actualAssignments: List<Assignment> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
         )
 
         assertThat(actualAssignments.size).isOne()
@@ -202,9 +203,9 @@ class AssignmentControllerInTimeApiTest {
         val result = mockMvc.perform(get("/api/assignment/${space.id}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
-        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+        val actualAssignments: List<Assignment> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
         )
 
         assertThat(actualAssignments.size).isEqualTo(2)
@@ -227,6 +228,28 @@ class AssignmentControllerInTimeApiTest {
 
         mockMvc.perform(get("/api/assignment/${space.id}/$bogusDate"))
                 .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `GET should return all assignments for the given personId and a specific date`() {
+        val personTwo: Person = personRepository.save(Person("person two", space.id!!))
+        val assignmentWeShouldNotSee: Assignment = assignmentRepository.save(Assignment(person = personTwo, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
+        val assignmentWeShouldNotSee2: Assignment = assignmentRepository.save(Assignment(person = personTwo, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr2)))
+        val assignmentWeShouldNotSee3: Assignment = assignmentRepository.save(Assignment(person = person, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr2)))
+        val assignmentWeShouldSee: Assignment = assignmentRepository.save(Assignment(person = person, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
+        val assignmentWeShouldNotSee4: Assignment = assignmentRepository.save(Assignment(person = person, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar1)))
+
+        val result = mockMvc.perform(get("/api/person/${person.id}/assignments/date/${apr1}"))
+                .andExpect(status().isOk)
+                .andReturn()
+        val actualAssignments: List<Assignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
+        )
+        assertThat(assignmentRepository.count()).isEqualTo(5)
+        assertThat(actualAssignments.size).isOne()
+        assertThat(actualAssignments).contains(assignmentWeShouldSee)
+        assertThat(actualAssignments).doesNotContain(assignmentWeShouldNotSee, assignmentWeShouldNotSee2, assignmentWeShouldNotSee3, assignmentWeShouldNotSee4)
     }
 
     @Test
