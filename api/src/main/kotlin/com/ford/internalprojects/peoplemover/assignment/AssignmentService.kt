@@ -144,10 +144,10 @@ class AssignmentService(
         }
 
         val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
-        var allAssignments: List<Assignment> = arrayListOf()
+        val allAssignments: MutableList<Assignment> = mutableListOf()
         people.forEach { person ->
-            val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByEffectiveDateLessThanEqualAndPersonOrderByEffectiveDateAsc(requestedLocalDate, person)
-            allAssignments = allAssignments.plus(getAllAssignmentsForPersonOnDate(person.id!!, assignmentsForPerson))
+            val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedLocalDate)
+            allAssignments.addAll(getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson))
         }
 
         return allAssignments
