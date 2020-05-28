@@ -94,17 +94,34 @@ describe('the assignment client', () => {
 
     it('should get all assignments for given date', async () => {
         const spaceId = 10;
-        const date = '2019-01-10';
+        const date = new Date(2019,1,10);
 
         Axios.get = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = `testUrl/assignment/${spaceId}/${date}`;
+        const expectedUrl = `testUrl/assignment/${spaceId}/2019-02-10`;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };
 
         await AssignmentClient.getAssignmentsUsingDate(spaceId, date);
+
+        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    });
+
+    it('should get all assignments for given personId and date', async () => {
+        const personId = 10;
+        const date = new Date(2019,1,10);
+
+        Axios.get = jest.fn();
+        process.env.REACT_APP_URL = 'testUrl/';
+
+        const expectedUrl = `testUrl/person/${personId}/assignments/date/2019-02-10`;
+        const expectedConfig = {
+            headers: {'Content-Type': 'application/json'},
+        };
+
+        await AssignmentClient.getAssignmentsUsingPersonIdAndDate(personId, date);
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
@@ -120,7 +137,7 @@ describe('the assignment client', () => {
         const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
             requestedDate: date,
             person: TestUtils.person1,
-            products: new Set([productPlaceholderPair]),
+            products: [productPlaceholderPair],
 
         };
 

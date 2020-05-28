@@ -20,7 +20,7 @@ import {Person} from "../People/Person";
 export interface CreateAssignmentsRequest {
     requestedDate: Date;
     person: Person;
-    products: Set<ProductPlaceholderPair>;
+    products: Array<ProductPlaceholderPair>;
 }
 
 export interface ProductPlaceholderPair {

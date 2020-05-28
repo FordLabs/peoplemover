@@ -19,6 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {AssignmentDTO} from '../Domain/AssignmentDTO';
 import {Assignment} from './Assignment';
 import {CreateAssignmentsRequest} from "./CreateAssignmentRequest";
+import moment from "moment";
 
 class AssignmentClient {
 
@@ -50,7 +51,7 @@ class AssignmentClient {
     }
 
     static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {
-        return Axios.post(`${process.env.REACT_APP_URL}assignment`, assignment,
+        return Axios.post(`${process.env.REACT_APP_URL}assignment/create`, assignment,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }
@@ -59,8 +60,16 @@ class AssignmentClient {
         return Axios.get(process.env.REACT_APP_URL + 'person/' + personId + '/assignments');
     }
 
-    static async getAssignmentsUsingDate(spaceId: number, date: string): Promise<AxiosResponse> {
-        return Axios.get(process.env.REACT_APP_URL + 'assignment/' + spaceId + '/' + date,
+    static async getAssignmentsUsingPersonIdAndDate(personId: number, date: Date): Promise<AxiosResponse> {
+        const dateAsString = moment(date).format('YYYY-MM-DD');
+        return Axios.get(process.env.REACT_APP_URL + 'person/' + personId + '/assignments/date/' + dateAsString,
+            {headers: { 'Content-Type': 'application/json'}}
+        );
+    }
+
+    static async getAssignmentsUsingDate(spaceId: number, date: Date): Promise<AxiosResponse> {
+        const dateAsString = moment(date).format('YYYY-MM-DD');
+        return Axios.get(process.env.REACT_APP_URL + 'assignment/' + spaceId + '/' + dateAsString,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }

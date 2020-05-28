@@ -22,7 +22,6 @@ import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
 import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';
-import {AssignmentDTO} from '../Domain/AssignmentDTO';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 
@@ -30,9 +29,10 @@ import '../Application/Styleguide/Styleguide.scss';
 import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {CreateAssignmentsRequest} from "./CreateAssignmentRequest";
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from "./CreateAssignmentRequest";
 
 interface AssignmentCardProps {
+    viewingDate: Date;
     assignment: Assignment;
     container?: string;
     isUnassignedProduct: boolean;
@@ -45,6 +45,7 @@ interface AssignmentCardProps {
 }
 
 function AssignmentCard({
+    viewingDate,
     assignment = {id: 0} as Assignment,
     container,
     isUnassignedProduct,
@@ -86,17 +87,26 @@ function AssignmentCard({
         setCurrentModal!!(newModalState);
     }
 
-    function markAsPlaceholderAndCloseEditMenu(): void {
-        AssignmentClient.getAssignmentsUsingPersonId(assignment.person.id)
+    async function markAsPlaceholderAndCloseEditMenu(): Promise<void> {
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
+
+        const assignmentIndex: number = assignments.findIndex(fetchedAssignment => (fetchedAssignment.productId === assignment.productId));
+        assignments[assignmentIndex].placeholder = !assignment.placeholder;
+
+        const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments.map(fetchedAssignment => ({
+            productId: fetchedAssignment.productId,
+            placeholder: fetchedAssignment.placeholder,
+        } as ProductPlaceholderPair));
 
         const assignmentToUpdate: CreateAssignmentsRequest = {
             requestedDate: assignment.effectiveDate!!,
             person: assignment.person,
-            products: !assignment.placeholder,
+            products: productPlaceholderPairs,
         };
 
         toggleEditMenu();
-        AssignmentClient.createAssignmentForDate()
+
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
     }
 
     function cancelAssignmentAndCloseEditMenu(): void {
@@ -173,6 +183,7 @@ function AssignmentCard({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     whichEditMenuOpen: state.whichEditMenuOpen,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

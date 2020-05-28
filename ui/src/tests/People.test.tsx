@@ -501,22 +501,32 @@ describe('people actions', () => {
                 fireEvent.mouseDown(markAsPlaceholderButton);
                 fireEvent.mouseUp(markAsPlaceholderButton);
 
-                let productPlaceholderPair = new Set<ProductPlaceholderPair>();
-
                 const assignmentToCreate: CreateAssignmentsRequest = {
                     requestedDate: new Date(TestUtils.originDateString),
                     person: TestUtils.person1,
-                    products: productPlaceholderPair.add({
+                    products: [{
                         productId: TestUtils.productWithAssignments.id,
                         placeholder: true,
-                    }),
+                    }],
                 };
 
                 updateResponseForGetAllAssignments(assignmentToCreate);
+                app.debug();
 
                 const person1Card = await app.findByTestId('assignmentCard1');
                 const person1role: SpaceRole = (TestUtils.people[0].spaceRole as SpaceRole);
                 const person1RoleColor: Color = (person1role.color as Color);
+
+                /**
+                 * THIS TEST IS FAILING BECAUSE IT EXPECTS THE SAME ASSIGNMENT ID BEFORE THE PLACEHOLDER VALUE WAS UPDATED.
+                 * NEW ENDPOINT DELETES THE ASSIGNMENT AND RECREATES IT WITH A NEW ID.
+                 * THEME APPLIER IS NEVER CALLED ON 'ASSIGNMENTCARD1' SINCE IT IS A NEW DOM ELEMENT AND NO LONGER UPDATING
+                 * THE COMPONENT STATE (WE THINK)
+                 *
+                 * LOOK AT REPLACE THE MOCK CALL CHECK WITH SOMETHING VISIBLE TO THE USED SINCE THE CONTENT GETS REDRAWN
+                 * TRY TO FIND A TEST ALREADY DOING THIS AS BASE IF POSSIBLE
+                 * FALLBACK IS CHECKING IF THE MARK AS PLACEHOLDER TEXT HAS CHANGED
+                 */
 
                 expect(ThemeApplier.setBorderColorOnElement).toHaveBeenCalledWith(
                     person1Card,

@@ -138,6 +138,12 @@ class TestUtils {
                 productId: TestUtils.unassignedProduct.id,
             }],
         } as AxiosResponse));
+        AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn(() => Promise.resolve({
+            data: [TestUtils.assignmentForPerson1],
+        } as AxiosResponse));
+        AssignmentClient.getAssignmentsUsingDate = jest.fn(() => Promise.resolve({
+            data: [TestUtils.assignments],
+        } as AxiosResponse));
 
         RoleClient.get = jest.fn(() => Promise.resolve({
             data: [
@@ -189,7 +195,7 @@ class TestUtils {
             data: {id: 9, name: 'Fin Tech'},
         } as AxiosResponse));
         ProductTagClient.edit = jest.fn(() => Promise.resolve({
-            data: {id:6, name: 'Finance', spaceId:2},
+            data: {id: 6, name: 'Finance', spaceId: 2},
         } as AxiosResponse));
         ProductTagClient.delete = emptyAxiosResponse;
     }
@@ -285,7 +291,7 @@ class TestUtils {
         productId: 1,
         placeholder: false,
         person: TestUtils.person1,
-        joinedProductDate: new Date(2018),
+        effectiveDate: new Date(2018),
     };
 
     static assignmentForHank: Assignment = {
@@ -293,7 +299,7 @@ class TestUtils {
         productId: 102,
         placeholder: true,
         person: TestUtils.hank,
-        joinedProductDate: new Date(2019),
+        effectiveDate: new Date(2019),
     };
 
     static assignmentForUnassigned: Assignment = {
@@ -301,8 +307,14 @@ class TestUtils {
         productId: 999,
         person: TestUtils.unassignedPerson,
         placeholder: false,
-        joinedProductDate: new Date(2017),
+        effectiveDate: new Date(2017),
     };
+
+    static assignments: Array<Assignment> = [
+        TestUtils.assignmentForPerson1,
+        TestUtils.assignmentForHank,
+        TestUtils.assignmentForUnassigned,
+    ];
 
     static unassignedProduct: Product = {
         id: 999,
