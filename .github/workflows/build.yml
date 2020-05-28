@@ -2,12 +2,11 @@ name: build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ stage, master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     
@@ -18,9 +17,11 @@ jobs:
     
     - name: Test with Gradle
       run: ./gradlew clean test
+      working-directory: ./api
 
     - name: Build with Gradle
       run: ./gradlew assemble
+      working-directory: ./api
 
     - name: Extract branch name
       shell: bash
@@ -30,4 +31,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: PeopleMover-0.0.1-SNAPSHOT.${{ env.BRANCH_NAME }}.jar
-        path: build/libs/PeopleMover-0.0.1-SNAPSHOT.jar
+        path: api/build/libs/PeopleMover-0.0.1-SNAPSHOT.jar
