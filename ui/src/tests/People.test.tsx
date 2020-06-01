@@ -33,6 +33,7 @@ import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, SpaceRole} from '../Roles/Role';
 import ProductClient from "../Products/ProductClient";
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from "../Assignments/CreateAssignmentRequest";
+import {AxiosResponse} from "axios";
 
 describe('people actions', () => {
     beforeEach(() => {
@@ -448,6 +449,15 @@ describe('people actions', () => {
     describe('editing people/assignments', () => {
         let app: RenderResult;
 
+        let assignmentToCreate: CreateAssignmentsRequest = {
+            requestedDate: new Date(TestUtils.originDateString),
+            person: TestUtils.person1,
+            products: [{
+                productId: TestUtils.productWithAssignments.id,
+                placeholder: true,
+            }],
+        };
+
         beforeEach(async () => {
             const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(TestUtils.originDateString)} as GlobalStateProps;
             app = renderWithRedux(<PeopleMover/>, undefined, initialState);
@@ -489,15 +499,6 @@ describe('people actions', () => {
         describe('toggle placeholder from edit menu', () => {
             const originalImpl = ThemeApplier.setBorderColorOnElement;
 
-            let assignmentToCreate: CreateAssignmentsRequest = {
-                requestedDate: new Date(TestUtils.originDateString),
-                person: TestUtils.person1,
-                products: [{
-                    productId: TestUtils.productWithAssignments.id,
-                    placeholder: true,
-                }],
-            };
-
             const markAsPlaceHolder = async (): Promise<void> => {
                 await act(async () => {
                     const markAsPlaceholderButton = await app.findByText('Mark as Placeholder');
@@ -534,7 +535,7 @@ describe('people actions', () => {
                 fireEvent.mouseDown(unmarkAsPlaceholderButton);
                 fireEvent.mouseUp(unmarkAsPlaceholderButton);
 
-                assignmentToCreate = {
+                const assignmentWithoutPlaceholderToCreate = {
                     ...assignmentToCreate,
                     products: [{
                         productId: TestUtils.productWithAssignments.id,
@@ -546,7 +547,7 @@ describe('people actions', () => {
 
                 const person1Card = await app.findByTestId('assignmentCard1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate);
             });
         });
 
@@ -556,10 +557,15 @@ describe('people actions', () => {
             fireEvent.mouseDown(cancelAssignmentButton);
             fireEvent.mouseUp(cancelAssignmentButton);
 
-            updateResponseForGetAllAssignments([]);
+            const unassignedAssignmentToCreate = {
+                ...assignmentToCreate,
+                products: [],
+            };
+
+            updateResponseForGetAllAssignments(unassignedAssignmentToCreate);
 
             await wait(() => {
-                expect(app.queryByText('Person 1')).not.toBeInTheDocument();
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate);
             });
         });
     });

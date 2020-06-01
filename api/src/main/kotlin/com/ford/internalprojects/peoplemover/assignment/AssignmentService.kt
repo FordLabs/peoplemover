@@ -20,7 +20,6 @@ package com.ford.internalprojects.peoplemover.assignment
 import com.ford.internalprojects.peoplemover.assignment.exceptions.AssignmentAlreadyExistsException
 import com.ford.internalprojects.peoplemover.assignment.exceptions.AssignmentNotExistsException
 import com.ford.internalprojects.peoplemover.assignment.exceptions.InvalidDateFormatException
-import com.ford.internalprojects.peoplemover.assignment.exceptions.NoAssignmentsToCreateException
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
@@ -164,11 +163,15 @@ class AssignmentService(
 
     fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
         if (assignmentRequest.products.isNullOrEmpty()) {
-            throw NoAssignmentsToCreateException()
+            return createUnassignmentForDate(assignmentRequest)
         } else {
             deleteAllAssignmentsForDate(assignmentRequest)
             return createAssignmentsForDate(assignmentRequest)
         }
+    }
+
+    private fun createUnassignmentForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun createAssignmentsForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {

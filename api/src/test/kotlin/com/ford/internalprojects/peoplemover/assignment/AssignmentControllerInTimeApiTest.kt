@@ -71,6 +71,7 @@ class AssignmentControllerInTimeApiTest {
     private lateinit var productOne: Product
     private lateinit var productTwo: Product
     private lateinit var productThree: Product
+    private lateinit var unassignedProduct: Product
     private lateinit var person: Person
 
     val mar1 = "2019-03-01"
@@ -83,6 +84,7 @@ class AssignmentControllerInTimeApiTest {
         productOne = productRepository.save(Product(name = "Justice League", spaceId = space.id!!))
         productTwo = productRepository.save(Product(name = "Avengers", spaceId = space.id!!))
         productThree = productRepository.save(Product(name = "Misfits", spaceId = space.id!!))
+        unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = space.id!!))
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
     }
 
@@ -295,6 +297,45 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
+    fun `POST should assign person to unassigned when given an empty set of products` () {
+        val assignment1: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        val emptyAssignmentRequest = CreateAssignmentsRequest(
+                requestedDate = LocalDate.parse(apr1),
+                person = person,
+                products = Sets.newSet()
+        )
+
+        val expectedAssignment = Assignment(
+                person = person,
+                productId = unassignedProduct.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        )
+
+        val result = mockMvc.perform(post("/api/assignment/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(emptyAssignmentRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+        )
+
+        assertThat(assignmentRepository.count()).isOne()
+        assertThat(assignmentRepository.findAll()).doesNotContain(assignment1)
+        assertThat(assignmentRepository.findAll()).contains(expectedAssignment)
+        assertThat(actualAssignments).contains(expectedAssignment)
+    }
+
+    @Test
     fun `POST should return 400 when given assignment with an invalid person` () {
         val bogusPerson = Person(id = 99999999, name = "fake person", spaceId = space.id!!)
 
@@ -328,29 +369,5 @@ class AssignmentControllerInTimeApiTest {
                 .andExpect(status().isBadRequest)
 
         assertThat(assignmentRepository.count()).isZero()
-    }
-
-    @Test
-    fun `POST should return 400 when given an empty set of products` () {
-        val assignment1: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
-        ))
-
-        val bogusAssignmentRequest = CreateAssignmentsRequest(
-                requestedDate = LocalDate.parse(apr1),
-                person = person,
-                products = Sets.newSet()
-        )
-
-        mockMvc.perform(post("/api/assignment/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(bogusAssignmentRequest)))
-                .andExpect(status().isBadRequest)
-
-        assertThat(assignmentRepository.count()).isOne()
-        assertThat(assignmentRepository.findAll()).contains(assignment1)
     }
 }

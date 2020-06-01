@@ -109,9 +109,24 @@ function AssignmentCard({
         AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
     }
 
-    function cancelAssignmentAndCloseEditMenu(): void {
+    async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
+
+        const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments
+            .filter(fetchedAssignment => fetchedAssignment.id !== assignment.id)
+            .map(fetchedAssignment => ({
+                productId: fetchedAssignment.productId,
+                placeholder: fetchedAssignment.placeholder,
+            } as ProductPlaceholderPair));
+
+        const assignmentToUpdate: CreateAssignmentsRequest = {
+            requestedDate: viewingDate,
+            person: assignment.person,
+            products: productPlaceholderPairs,
+        };
+
         toggleEditMenu();
-        AssignmentClient.deleteAssignment(assignment).then(fetchProducts);
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
