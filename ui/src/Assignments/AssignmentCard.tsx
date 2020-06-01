@@ -99,7 +99,7 @@ function AssignmentCard({
         } as ProductPlaceholderPair));
 
         const assignmentToUpdate: CreateAssignmentsRequest = {
-            requestedDate: assignment.effectiveDate!!,
+            requestedDate: viewingDate,
             person: assignment.person,
             products: productPlaceholderPairs,
         };

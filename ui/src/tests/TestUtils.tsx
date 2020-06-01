@@ -291,7 +291,7 @@ class TestUtils {
         productId: 1,
         placeholder: false,
         person: TestUtils.person1,
-        effectiveDate: new Date(2018),
+        effectiveDate: new Date(2018,0,1),
     };
 
     static assignmentForHank: Assignment = {
