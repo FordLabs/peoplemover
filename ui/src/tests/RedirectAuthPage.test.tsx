@@ -54,7 +54,7 @@ describe('should redirect to login page', () => {
 
         mount(<RedirectAuthPage isSignup={false}/>);
 
-        expect(window.location.href).toEqual(`${process.env.REACT_APP_AUTHQUEST_URL}/login?redirect_uri=${redirectUri}&client_id=${authquestClientID}&primaryColor=4F5FAB`);
+        expect(window.location.href).toEqual(`${process.env.REACT_APP_AUTHQUEST_URL}/login?redirect_uri=${redirectUri}&client_id=${authquestClientID}`);
     });
 
     it('should redirect users to AuthQuest signup page when hitting /signup', () => {
@@ -64,7 +64,7 @@ describe('should redirect to login page', () => {
 
         mount(<RedirectAuthPage isSignup={true}/>);
 
-        expect(window.location.href).toEqual(`${process.env.REACT_APP_AUTHQUEST_URL}/signup?redirect_uri=${redirectUri}&client_id=${authquestClientID}&primaryColor=4F5FAB`);
+        expect(window.location.href).toEqual(`${process.env.REACT_APP_AUTHQUEST_URL}/signup?redirect_uri=${redirectUri}&client_id=${authquestClientID}`);
     });
 
     it('should ask the backend for the accessToken if an access_code is in the url and store it in the cookies', (done) => {
