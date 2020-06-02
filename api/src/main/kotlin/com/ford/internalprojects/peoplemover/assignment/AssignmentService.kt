@@ -23,6 +23,7 @@ import com.ford.internalprojects.peoplemover.assignment.exceptions.InvalidDateFo
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
+import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
@@ -162,16 +163,25 @@ class AssignmentService(
     }
 
     fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
-        if (assignmentRequest.products.isNullOrEmpty()) {
-            return createUnassignmentForDate(assignmentRequest)
+        deleteAllAssignmentsForDate(assignmentRequest)
+        return if (assignmentRequest.products.isNullOrEmpty()) {
+            setOf(createUnassignmentForDate(assignmentRequest))
         } else {
-            deleteAllAssignmentsForDate(assignmentRequest)
-            return createAssignmentsForDate(assignmentRequest)
+            createAssignmentsForDate(assignmentRequest)
         }
     }
 
-    private fun createUnassignmentForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private fun createUnassignmentForDate(assignmentRequest: CreateAssignmentsRequest): Assignment {
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", assignmentRequest.person.spaceId)
+        return assignmentRepository.save(
+                Assignment(
+                        person = assignmentRequest.person,
+                        placeholder = false,
+                        productId = unassignedProduct!!.id!!,
+                        spaceId = assignmentRequest.person.spaceId,
+                        effectiveDate = assignmentRequest.requestedDate
+                )
+        )
     }
 
     private fun createAssignmentsForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {

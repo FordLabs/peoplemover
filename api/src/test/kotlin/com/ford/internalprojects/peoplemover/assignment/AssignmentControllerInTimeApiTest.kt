@@ -298,7 +298,7 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `POST should assign person to unassigned when given an empty set of products` () {
-        val assignment1: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -330,9 +330,8 @@ class AssignmentControllerInTimeApiTest {
         )
 
         assertThat(assignmentRepository.count()).isOne()
-        assertThat(assignmentRepository.findAll()).doesNotContain(assignment1)
-        assertThat(assignmentRepository.findAll()).contains(expectedAssignment)
-        assertThat(actualAssignments).contains(expectedAssignment)
+        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment,"id")
+        assertThat(actualAssignments.first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
     }
 
     @Test
