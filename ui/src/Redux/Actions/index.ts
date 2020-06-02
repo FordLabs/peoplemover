@@ -116,9 +116,10 @@ export const setViewingDateAction = (date: Date) => ({
     date,
 });
 
-export const setProductsAction = (products: Array<Product>) => ({
+export const setProductsAction = (products: Array<Product>, sortOption: string) => ({
     type: AvailableActions.SET_PRODUCTS,
     products,
+    sortOption
 });
 
 export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
@@ -128,6 +129,7 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
             moment(getState().viewingDate).format('YYYY-MM-DD')
         ).then(result => {
             const products: Array<Product> = result.data || [];
-            dispatch(setProductsAction(products));
+            const sort = localStorage.getItem('sortBy') ?? 'name';
+            dispatch(setProductsAction(products, sort));
         });
     };

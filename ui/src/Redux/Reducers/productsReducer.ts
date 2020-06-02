@@ -20,7 +20,7 @@
 import {AvailableActions} from "../Actions";
 import {Product} from "../../Products/Product";
 
-const productsReducer = (state: Array<Product> = [], action: {type: AvailableActions; products: Array<Product>} ): Array<Product> => {
+const productsReducer = (state: Array<Product> = [], action: {type: AvailableActions; products: Array<Product>; sortOption: string} ): Array<Product> => {
     if (action.type === AvailableActions.SET_PRODUCTS) {
         return [...action.products];
     } else {
