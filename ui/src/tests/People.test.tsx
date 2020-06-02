@@ -288,9 +288,9 @@ describe('people actions', () => {
     it('should have initially selected product selected', async () => {
         const products: Product[] = [];
         const component = <PersonForm editing={false}
-            products={products}
-            initialPersonName={'BRADLEY'}
-            initiallySelectedProduct={TestUtils.productWithAssignments}
+                                      products={products}
+                                      initialPersonName={'BRADLEY'}
+                                      initiallySelectedProduct={TestUtils.productWithAssignments}
         />;
 
         await act(async () => {
@@ -302,8 +302,8 @@ describe('people actions', () => {
     it('should not show the unassigned product or archived products in product list', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
         const component = <PersonForm editing={false}
-            products={products}
-            initialPersonName={'BRADLEY'}/>;
+                                      products={products}
+                                      initialPersonName={'BRADLEY'}/>;
 
         await act(async () => {
             const wrapper = await renderWithReduxEnzyme(component);
@@ -321,8 +321,8 @@ describe('people actions', () => {
     it('should remove the unassigned product when a product is selected from dropdown', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.unassignedProduct];
         const component = <PersonForm editing={false}
-            products={products}
-            initialPersonName={'BRADLEY'}/>;
+                                      products={products}
+                                      initialPersonName={'BRADLEY'}/>;
 
         await act(async () => {
             const wrapper = await renderWithRedux(component);
@@ -426,8 +426,8 @@ describe('people actions', () => {
 
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments];
         const component = <PersonForm editing={true}
-            products={products}
-            assignment={TestUtils.assignmentForPerson1}
+                                      products={products}
+                                      assignment={TestUtils.assignmentForPerson1}
         />;
 
         await act(async () => {
@@ -611,19 +611,11 @@ describe('Deleting a Person', () => {
         });
 
         it('sends delete request after the YES button is clicked', async () => {
-            function updateResponseToRemovePersonAlsoDeletesAllAssignments(): void {
-                const updatedProducts: Array<Product> = [{
-                    ...TestUtils.productWithAssignments,
-                    assignments: [],
-                }];
-                const updatedBoards: Array<Board> = [{
-                    ...TestUtils.boards[0],
-                    products: updatedProducts,
-                }];
-                (BoardClient.getAllBoards as Function) = jest.fn(() => Promise.resolve({data: updatedBoards}));
-            }
-
-            updateResponseToRemovePersonAlsoDeletesAllAssignments();
+            const updatedProducts: Array<Product> = [{
+                ...TestUtils.productWithAssignments,
+                assignments: [],
+            }];
+            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve({data: updatedProducts}));
 
             fireEvent.click(app.getByTestId('confirmDeleteButton'));
 

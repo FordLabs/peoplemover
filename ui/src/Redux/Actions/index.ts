@@ -129,7 +129,9 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
             moment(getState().viewingDate).format('YYYY-MM-DD')
         ).then(result => {
             const products: Array<Product> = result.data || [];
-            const sort = localStorage.getItem('sortBy') ?? 'name';
+
+            const savedSort = localStorage.getItem('sortBy');
+            const sort = savedSort !== null && savedSort !== undefined ? savedSort : 'name';
             dispatch(setProductsAction(products, sort));
         });
     };

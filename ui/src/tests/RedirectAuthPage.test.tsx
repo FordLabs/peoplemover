@@ -67,7 +67,7 @@ describe('should redirect to login page', () => {
         expect(window.location.href).toEqual(`${process.env.REACT_APP_AUTHQUEST_URL}/signup?redirect_uri=${redirectUri}&client_id=${authquestClientID}&primaryColor=4F5FAB`);
     });
 
-    it('should ask the backend for the accessToken if an access_code is in the url and store it in the cookies', (done) => {
+    it('should ask the backend for the accessToken if an access_code is in the url and store it in the cookies', async () => {
         Axios.post = jest.fn(() => Promise.resolve({
             data: {
                 access_token: 'TOKEN123',
@@ -78,7 +78,7 @@ describe('should redirect to login page', () => {
             href: 'http://localhost?access_code=123ABC',
         };
 
-        wait( () => {
+        await wait( () => {
 
             const history = createMemoryHistory({ initialEntries: ['/login'] });
 
@@ -91,8 +91,6 @@ describe('should redirect to login page', () => {
         });
 
 
-        // The setTimeout call is needed because of the Axios promise response is not ready until the next event flush.
-        setTimeout(() => {
             const cookies = new Cookies();
             const accessToken = cookies.get('accessToken');
 
@@ -100,13 +98,15 @@ describe('should redirect to login page', () => {
             expect(accessToken).toEqual('TOKEN123');
 
             cookies.remove('accessToken');
-            done();
-        });
 
     });
 
 
-    it('should check if accessToken is valid if one exists in the cookies', (done) => {
+    it('should check if accessToken is valid if one exists in the cookies', async() => {
+
+        (window.location as any) = {
+            href: 'http://localhost:8080/api/',
+        };
 
         const fakeAccessToken = 'FAKE_TOKEN123';
 
@@ -121,7 +121,7 @@ describe('should redirect to login page', () => {
 
         const history = createMemoryHistory({ initialEntries: ['/login'] });
 
-        wait(() => {
+        await wait(() => {
             mount(
                 <Router history={history}>
                     <RedirectAuthPage isSignup={false} />
@@ -130,18 +130,15 @@ describe('should redirect to login page', () => {
         });
 
 
-        setTimeout(() => {
             expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
 
             AccessTokenClient.validateAccessToken = originalFunc;
             cookies.remove('accessToken');
 
-            done();
-        });
 
     });
 
-    it('should refresh access token after access token is successfully validated', (done) => {
+    it('should refresh access token after access token is successfully validated', async() => {
         const fakeAccessToken = 'FAKE_TOKEN123';
 
         const cookies = new Cookies();
@@ -164,7 +161,7 @@ describe('should redirect to login page', () => {
 
         const history = createMemoryHistory({ initialEntries: ['/login'] });
 
-        wait(() => {
+        await wait(() => {
             mount(
                 <Router history={history}>
                     <RedirectAuthPage isSignup={false} />
@@ -172,7 +169,6 @@ describe('should redirect to login page', () => {
             );
         });
 
-        setTimeout(() => {
             expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
             expect(AccessTokenClient.refreshAccessToken).toHaveBeenCalledWith(fakeAccessToken);
             expect(cookies.get('accessToken')).toEqual('NEW_TOKEN');
@@ -182,8 +178,6 @@ describe('should redirect to login page', () => {
 
             cookies.remove('accessToken');
 
-            done();
-        });
 
     });
 
@@ -191,7 +185,7 @@ describe('should redirect to login page', () => {
     // we are using will make this test pass if cookies.remove is called with {path: '/'} or cookies.remove()
     // even though if cookies.remove() is called the implementation will fail.
     // Keep this in mind!
-    it('should clear access_token from the cookies if the token is not valid', (done) => {
+    it('should clear access_token from the cookies if the token is not valid', async () => {
 
         (window.location as any) = {
             href: 'http://localhost/',
@@ -210,7 +204,7 @@ describe('should redirect to login page', () => {
 
         const history = createMemoryHistory({ initialEntries: ['/login'] });
 
-        wait(() => {
+        await wait(() => {
             mount(
                 <Router history={history}>
                     <RedirectAuthPage isSignup={false} />
@@ -218,7 +212,6 @@ describe('should redirect to login page', () => {
             );
         });
 
-        setTimeout(() => {
             expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
             expect(cookies.get('accessToken')).toBeUndefined();
 
@@ -226,8 +219,6 @@ describe('should redirect to login page', () => {
 
             cookies.remove('accessToken');
 
-            done();
-        });
 
     });
 

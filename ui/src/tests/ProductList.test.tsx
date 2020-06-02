@@ -20,6 +20,7 @@ import {fireEvent} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {AxiosResponse} from 'axios';
+import ProductClient from "../Products/ProductClient";
 
 describe('Product List tests', () => {
     beforeEach(() => {
@@ -28,27 +29,9 @@ describe('Product List tests', () => {
     });
 
     it('should only have one edit menu open at a time', async () => {
-        BoardClient.getAllBoards = jest.fn(() => Promise.resolve(
+        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve(
             {
-                data: [
-                    {
-                        id: 'b1',
-                        name: 'board one',
-                        products: [
-                            TestUtils.unassignedProduct,
-                            TestUtils.productWithAssignments,
-                            {
-                                id: 102,
-                                name: 'Product 2',
-                                start: '',
-                                end: '',
-                                location: 'Detroit',
-                                assignments: [TestUtils.assignmentForHank],
-                                productTags: [],
-                            },
-                        ],
-                    },
-                ],
+                data: TestUtils.products,
             } as AxiosResponse
         ));
         const underTest = renderWithRedux(<PeopleMover/>);

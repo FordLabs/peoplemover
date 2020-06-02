@@ -144,7 +144,7 @@ describe('the assignment client', () => {
         Axios.post = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = 'testUrl/assignment';
+        const expectedUrl = 'testUrl/assignment/create';
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };

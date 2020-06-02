@@ -352,6 +352,18 @@ class TestUtils {
         productTags: [TestUtils.productTag1],
     };
 
+    static productForHank: Product = {
+        id: 102,
+        name: 'Hanky Product',
+        spaceId: 1,
+        startDate: '1/1/11',
+        endDate: '2/2/22',
+        spaceLocation: TestUtils.dearborn,
+        assignments: [TestUtils.assignmentForHank],
+        archived: false,
+        productTags: [],
+    };
+
     static archivedProduct: Product = {
         id: 4,
         name: 'I am archived',
@@ -367,6 +379,7 @@ class TestUtils {
     static products: Array<Product> = [
         TestUtils.unassignedProduct,
         TestUtils.productWithAssignments,
+        TestUtils.productForHank,
         TestUtils.productWithoutAssignments,
         TestUtils.archivedProduct,
     ];
