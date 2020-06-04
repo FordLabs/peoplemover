@@ -30,10 +30,8 @@ import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';
 import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {Color, SpaceRole} from '../Roles/Role';
 import ProductClient from "../Products/ProductClient";
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from "../Assignments/CreateAssignmentRequest";
-import {AxiosResponse} from "axios";
 
 describe('people actions', () => {
     beforeEach(() => {
@@ -513,15 +511,16 @@ describe('people actions', () => {
                 ThemeApplier.setBorderColorOnElement = originalImpl;
             });
 
-            it('should update an assignment to be a placeholder when you click on Mark as Placeholder option', async () => {
+            it('should update an assignment to toggle placeholder when you click on Mark/Unmark as Placeholder option', async () => {
                 await markAsPlaceHolder();
 
-                const person1Card = await app.findByTestId('assignmentCard1');
+                let person1Card = await app.findByTestId('assignmentCard1');
                 expect(person1Card).toHaveClass('Placeholder');
                 expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate);
-            });
 
-            it('should update an assignment to not be a placeholder when you click on Unmark as Placeholder option', async () => {
+                const editPersonButton = await app.findByTestId('editPersonIconContainer-1');
+                fireEvent.click(editPersonButton);
+
                 const unmarkAsPlaceholderButton = await app.findByText('Unmark as Placeholder');
                 fireEvent.mouseDown(unmarkAsPlaceholderButton);
                 fireEvent.mouseUp(unmarkAsPlaceholderButton);
@@ -536,7 +535,7 @@ describe('people actions', () => {
 
                 updateResponseForGetAllAssignments(assignmentToCreate);
 
-                const person1Card = await app.findByTestId('assignmentCard1');
+                person1Card = await app.findByTestId('assignmentCard1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
                 expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate);
             });
