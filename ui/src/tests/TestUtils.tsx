@@ -358,7 +358,7 @@ class TestUtils {
         spaceId: 1,
         startDate: '1/1/11',
         endDate: '2/2/22',
-        spaceLocation: TestUtils.dearborn,
+        spaceLocation: TestUtils.annarbor,
         assignments: [TestUtils.assignmentForHank],
         archived: false,
         productTags: [],

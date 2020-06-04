@@ -462,10 +462,6 @@ describe('people actions', () => {
             const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(TestUtils.originDateString)} as GlobalStateProps;
             app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const reassignedDrawerCaret = drawerCarets[1];
-            fireEvent.click(reassignedDrawerCaret);
-
             const editPersonButton = await app.findByTestId('editPersonIconContainer-1');
             fireEvent.click(editPersonButton);
         });
@@ -526,11 +522,6 @@ describe('people actions', () => {
             });
 
             it('should update an assignment to not be a placeholder when you click on Unmark as Placeholder option', async () => {
-                await markAsPlaceHolder();
-
-                const editPersonButton = await app.findByTestId('editPersonIconContainer-1');
-                fireEvent.click(editPersonButton);
-
                 const unmarkAsPlaceholderButton = await app.findByText('Unmark as Placeholder');
                 fireEvent.mouseDown(unmarkAsPlaceholderButton);
                 fireEvent.mouseUp(unmarkAsPlaceholderButton);
@@ -579,10 +570,6 @@ describe('Deleting a Person', () => {
         TestUtils.mockClientCalls();
         app = renderWithRedux(<PeopleMover/>);
         await TestUtils.waitForHomePageToLoad(app);
-
-        const drawerCarets = await app.findAllByTestId('drawerCaret');
-        const reassignedDrawerCaret = drawerCarets[1];
-        fireEvent.click(reassignedDrawerCaret);
     });
 
     it('does not show the confirmation modal when the page loads', async () => {
