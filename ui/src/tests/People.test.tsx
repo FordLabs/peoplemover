@@ -192,8 +192,9 @@ describe('people actions', () => {
             const personForm = await app.findByTestId('personForm');
             const labelElement = await app.findByLabelText('Role');
             const containerToFindOptionsIn = {container: personForm};
-            await act(async () => {
-                await selectEvent.create(labelElement, 'Product Owner', containerToFindOptionsIn);
+
+            await wait(() => {
+                selectEvent.create(labelElement, 'Product Owner', containerToFindOptionsIn);
             });
 
             expect(personForm).toHaveFormValues({role: 'Product Owner'});
