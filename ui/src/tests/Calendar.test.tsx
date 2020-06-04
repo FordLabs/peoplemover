@@ -19,6 +19,8 @@ import TestUtils, {mockCreateRange, mockDate, renderWithRedux} from './TestUtils
 import PeopleMover from '../Application/PeopleMover';
 import React from 'react';
 import {findByText, fireEvent, queryByText, wait} from '@testing-library/react';
+import {fetchProductsAction} from "../Redux/Actions";
+import ProductClient from "../Products/ProductClient";
 
 describe('Calendar', () => {
     let resetDateMock: () => void;
@@ -40,6 +42,7 @@ describe('Calendar', () => {
     it('should display current date on initial load', async () => {
         const app = renderWithRedux(<PeopleMover/>);
         await app.findByText('Viewing: May 14, 2019');
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.id, '2019-05-14');
     });
 
     it('should display chosen date when manually selected', async () => {
@@ -52,6 +55,7 @@ describe('Calendar', () => {
         fireEvent.click(daySeventeen);
 
         await app.findByText('Viewing: May 17, 2019');
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.id, '2019-05-17');
     });
 
     it('should have down caret when closed and up arrow when open', async () => {

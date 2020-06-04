@@ -119,7 +119,7 @@ export const setViewingDateAction = (date: Date) => ({
 export const setProductsAction = (products: Array<Product>, sortOption: string) => ({
     type: AvailableActions.SET_PRODUCTS,
     products,
-    sortOption
+    sortOption,
 });
 
 export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>

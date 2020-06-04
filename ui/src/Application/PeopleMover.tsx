@@ -41,6 +41,7 @@ import {Product} from "../Products/Product";
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
     currentSpace: Space;
+    viewingDate: Date;
     products: Array<Product>;
 
     fetchProducts(): Array<Product>;
@@ -51,6 +52,7 @@ export interface PeopleMoverProps {
 function PeopleMover({
     currentModal,
     currentSpace,
+    viewingDate,
     products,
     fetchProducts,
     setCurrentSpace,
@@ -65,6 +67,10 @@ function PeopleMover({
     useEffect(() => {
         RenderPage().then();
     }, [currentModal]);
+
+    useEffect(() => {
+        if(hasProducts()) fetchProducts();
+    }, [viewingDate]);
 
     async function RenderPage(): Promise<void> {
         if (currentModal.modal === null) {
@@ -83,6 +89,7 @@ function PeopleMover({
             }
         }
     }
+
     if (redirect) {
         return redirect;
     }
@@ -117,6 +124,7 @@ function PeopleMover({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentModal: state.currentModal,
     currentSpace: state.currentSpace,
+    viewingDate: state.viewingDate,
     products: state.products,
 });
 
