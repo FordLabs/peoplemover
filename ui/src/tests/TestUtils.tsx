@@ -126,17 +126,8 @@ class TestUtils {
             data: TestUtils.space,
         } as AxiosResponse));
 
-        AssignmentClient.createAssignmentsUsingIds = jest.fn(() => Promise.resolve([]));
-        AssignmentClient.createAssignmentUsingIds = emptyAxiosResponse;
-        AssignmentClient.deleteAssignment = emptyAxiosResponse;
-        AssignmentClient.updateAssignmentsUsingIds = emptyAsyncFunction;
-        AssignmentClient.updateAssignment = emptyAxiosResponse;
-        AssignmentClient.getAssignmentsUsingPersonId = jest.fn(() => Promise.resolve({
-            data: [{
-                productId: TestUtils.productWithAssignments.id,
-            }, {
-                productId: TestUtils.unassignedProduct.id,
-            }],
+        AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({
+            data: [TestUtils.assignmentForPerson1],
         } as AxiosResponse));
         AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn(() => Promise.resolve({
             data: [TestUtils.assignmentForPerson1],

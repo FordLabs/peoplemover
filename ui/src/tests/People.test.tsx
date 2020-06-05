@@ -66,7 +66,10 @@ describe('people actions', () => {
 
 
     it('While editing, queries the Assignment Client on load for products this person is assigned to', async () => {
-        const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people} as GlobalStateProps;
+        const initialState: PreloadedState<GlobalStateProps> = {
+            people: TestUtils.people,
+            viewingDate: new Date(2020, 5, 5),
+        } as GlobalStateProps;
         const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
         const editPersonButton = await app.findByTestId('editPersonIconContainer-1');
@@ -81,9 +84,7 @@ describe('people actions', () => {
         fireEvent.click(saveButton);
 
         await wait(() => {
-            const spy = jest.spyOn(AssignmentClient, 'updateAssignmentsUsingIds');
-            expect(spy).toBeCalledTimes(1);
-            expect(spy.mock.calls[0]).toEqual([100, [1], [1]]);
+            expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toBeCalledWith(TestUtils.person1.id, new Date(2020, 5, 5));
         });
     });
 
@@ -96,7 +97,7 @@ describe('people actions', () => {
         await app.findByPlaceholderText('e.g. Jane Smith');
     });
 
-    it('submits unaltered assignment with default values', async () => {
+    it('should not submit assignment when nothing changed', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
         const createPersonButton = await app.findByText('Add Person');
@@ -105,7 +106,7 @@ describe('people actions', () => {
         fireEvent.click(app.getByText('Create'));
 
         await wait(() => {
-            expect(AssignmentClient.createAssignmentsUsingIds).toBeCalledTimes(0);
+            expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
         });
     });
 
@@ -175,7 +176,7 @@ describe('people actions', () => {
 
             await wait(() => {
                 expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-                expect(AssignmentClient.createAssignmentsUsingIds).toBeCalledTimes(1);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
                 const expectedPerson: Person = {
                     ...emptyPerson(),
                     name: 'Some Name',
@@ -201,7 +202,7 @@ describe('people actions', () => {
 
             await wait(() => {
                 expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-                expect(AssignmentClient.createAssignmentsUsingIds).toBeCalledTimes(1);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
                 const expectedPerson: Person = {
                     ...emptyPerson(),
                     name: 'Some Name',
@@ -246,23 +247,25 @@ describe('people actions', () => {
             newPerson: true,
         };
 
-        let app: RenderResult;
+        const initialState: PreloadedState<GlobalStateProps> = {
+            viewingDate: new Date(2020, 5,5),
+        } as GlobalStateProps;
 
         const checkForCreatedPerson = async (): Promise<void> => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
             expect(PeopleClient.createPersonForSpace).toBeCalledWith(expectedPerson);
 
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentsUsingIds');
+            const spy = jest.spyOn(AssignmentClient, 'createAssignmentForDate');
             expect(spy).toBeCalledTimes(1);
-            expect(spy.mock.calls[0]).toEqual([
-                emptyPerson().id,
-                [TestUtils.unassignedProduct.id]
-            ]);
+            expect(spy.mock.calls[0]).toEqual({
+                effectiveDate: new Date(2020,5,5),
+                person: expectedPerson,
+                products: [],
+            });
         };
 
         it('assigns the person created by the PersonForm', async () => {
-            app = renderWithRedux(<PeopleMover/>);
-
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
             const createPersonButton = await app.findByText('Add Person');
             fireEvent.click(createPersonButton);
 
