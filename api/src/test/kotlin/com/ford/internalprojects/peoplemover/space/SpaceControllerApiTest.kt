@@ -208,6 +208,20 @@ class SpaceControllerApiTest {
     }
 
     @Test
+    fun `GET should return the number of spaces`() {
+        spaceRepository.save(Space(name = "Ken Masters"))
+        spaceRepository.save(Space(name = "KenM"))
+        spaceRepository.save(Space(name = "Ken Starr"))
+
+        val result = mockMvc.perform(get("/api/space/total"))
+                .andExpect(status().isOk).andReturn()
+
+        val actual: Int = result.response.contentAsString.toInt()
+
+        assertThat(actual).isEqualTo(3)
+    }
+
+    @Test
     fun `GET should return all spaces for current user`() {
         val spaces = listOf("Reserved", "Reserved", "SpaceOne", "SpaceTwo")
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))

@@ -92,4 +92,13 @@ public class BoardController {
       );
     return ResponseEntity.noContent().build();
   }
+
+  @GetMapping(path = "/total")
+  public ResponseEntity<Long> totalBoards() throws Exception {
+    long totalBoardsCount = boardService.getTotalBoardsCount();
+    this.logger.logInfoMessage(
+            String.format("Total board count: " + totalBoardsCount)
+    );
+    return ResponseEntity.ok(totalBoardsCount);
+  }
 }

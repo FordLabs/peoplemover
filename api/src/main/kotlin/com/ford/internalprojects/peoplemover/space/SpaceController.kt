@@ -37,6 +37,13 @@ class SpaceController(private val spaceService: SpaceService, private val logger
         return ResponseEntity.ok(spaces)
     }
 
+    @GetMapping("/api/space/total")
+    fun totalSpaces(): ResponseEntity<Int> {
+        val spaces: List<Space> = spaceService.findAll()
+        logger.logInfoMessage("All space retrieved.")
+        return ResponseEntity.ok(spaces.size)
+    }
+
     @PostMapping("/api/user/space")
     fun createUserSpace(
             @RequestBody request: SpaceCreationRequest,

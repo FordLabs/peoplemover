@@ -136,6 +136,10 @@ public class BoardService {
     boardRepository.deleteAndUpdateSpaceLastModified(boardToDelete);
   }
 
+  public long getTotalBoardsCount(){
+    return boardRepository.count();
+  }
+
   private boolean hasBoardWithId(Integer boardId) {
     return boardId != null && boardRepository.findById(boardId).isPresent();
   }

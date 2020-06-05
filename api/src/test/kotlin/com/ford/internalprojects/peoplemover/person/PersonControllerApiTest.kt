@@ -225,4 +225,20 @@ class PersonControllerApiTest {
         assertThat(personRepository.findAll()).doesNotContain(personToDelete)
         assertThat(assignmentRepository.findAll()).doesNotContain(assignmentToDelete)
     }
+
+    @Test
+    fun `GET total should return total number of persons`() {
+        val board1: Board = boardRepository.save(Board(name = "board1", spaceId = space.id!!))
+        val person1: Person = personRepository.save(Person(name = "John", spaceId = space.id!!))
+        val person2: Person = personRepository.save(Person(name = "Jack", spaceId = space.id!!))
+        val person3: Person = personRepository.save(Person(name = "Jill", spaceId = space.id!!))
+
+        val request = mockMvc.perform(get("/api/person/total"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val totalPersonCount = request.response.contentAsString.toLong()
+
+        assertThat(totalPersonCount).isEqualTo(3)
+    }
 }

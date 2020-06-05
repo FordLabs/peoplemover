@@ -67,4 +67,10 @@ class PersonController(
         return ResponseEntity.ok().build()
     }
 
+    @GetMapping("/total")
+    fun totalPersons(): ResponseEntity<Long> {
+        val count = personService.countOfPeople()
+        return ResponseEntity.ok(count)
+    }
+
 }

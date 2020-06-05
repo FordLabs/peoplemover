@@ -53,4 +53,8 @@ class PersonService(
         val personToRemove = personRepository.findByIdOrNull(personId) ?: throw PersonNotExistsException()
         personRepository.deleteAndUpdateSpaceLastModified(personToRemove)
     }
+
+    fun countOfPeople(): Long {
+        return personRepository.count()
+    }
 }
