@@ -255,13 +255,14 @@ describe('people actions', () => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
             expect(PeopleClient.createPersonForSpace).toBeCalledWith(expectedPerson);
 
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentForDate');
-            expect(spy).toBeCalledTimes(1);
-            expect(spy.mock.calls[0]).toEqual({
-                effectiveDate: new Date(2020,5,5),
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
+                requestedDate: initialState.viewingDate,
                 person: expectedPerson,
                 products: [],
             });
+
+
         };
 
         it('assigns the person created by the PersonForm', async () => {

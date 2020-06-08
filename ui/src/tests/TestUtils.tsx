@@ -108,13 +108,7 @@ class TestUtils {
         const emptyAsyncFunction = jest.fn(() => Promise.resolve());
 
         PeopleClient.createPersonForSpace = jest.fn(x => Promise.resolve({
-            data: {
-                id: x.id,
-                name: x.name,
-                spaceRole: x.spaceRole,
-                notes: x.notes,
-                newPerson: x.newPerson,
-            },
+            data:  x,
         } as AxiosResponse));
         PeopleClient.getAllPeopleInSpace = jest.fn(() => Promise.resolve({
             data: TestUtils.people,

@@ -16,8 +16,6 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {AssignmentDTO} from '../Domain/AssignmentDTO';
-import {Assignment} from './Assignment';
 import {CreateAssignmentsRequest} from "./CreateAssignmentRequest";
 import moment from "moment";
 
