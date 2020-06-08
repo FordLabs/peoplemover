@@ -18,7 +18,9 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
@@ -59,21 +61,26 @@ class ProductControllerInTimeApiTest {
     private lateinit var mockMvc: MockMvc
 
     private lateinit var space: Space
+    private lateinit var person: Person
     private lateinit var product1: Product
     private lateinit var product2: Product
+
+    val apr1 = "2019-04-01"
+    val may1 = "2019-05-01"
 
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
+        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
         product1 = productRepository.save(Product(
                 name = "product one",
-                startDate = LocalDate.of(2020, 5, 1),
+                startDate = LocalDate.parse(may1),
                 endDate = LocalDate.of(2020, 6, 1),
                 spaceId = space.id!!
         ))
         product2 = productRepository.save(Product(
                 name = "product two",
-                startDate = LocalDate.of(2020, 4, 1),
+                startDate = LocalDate.parse(apr1),
                 endDate = LocalDate.of(2020, 6, 1),
                 spaceId = space.id!!
         ))
@@ -89,8 +96,7 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return all products for date they are both active`() {
-        val requestedDate = "2020-05-01"
-        val result = mockMvc.perform(get("/api/product/${space.id}/$requestedDate"))
+        val result = mockMvc.perform(get("/api/product/${space.id}/$may1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -120,6 +126,38 @@ class ProductControllerInTimeApiTest {
         assertThat(actualProducts.size).isOne()
         val actualProduct2: Product = actualProducts[0]
         assertThat(actualProduct2).isEqualTo(product2)
+    }
+
+    @Test
+    fun `GET should return products with only assignments effective on or before given date`() {
+        val assignmentWeShouldSee: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = product2.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+        val assignmentWeShouldNotSee: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = product2.id!!,
+                effectiveDate = LocalDate.parse(may1),
+                spaceId = space.id!!
+        ))
+
+        val result = mockMvc.perform(get("/api/product/${space.id}/$apr1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualProducts: List<Product> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Product::class.java)
+        )
+
+        val actualProduct2: Product = actualProducts[0]
+
+        assertThat(assignmentRepository.count()).isEqualTo(2)
+        assertThat(actualProduct2.assignments.size).isOne()
+        assertThat(actualProduct2.assignments).contains(assignmentWeShouldSee)
+        assertThat(actualProduct2.assignments).doesNotContain(assignmentWeShouldNotSee)
     }
 
     @Test
