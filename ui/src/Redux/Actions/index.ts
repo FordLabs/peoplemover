@@ -126,7 +126,7 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return ProductClient.getProductsForDate(
             getState().currentSpace.id,
-            moment(getState().viewingDate).format('YYYY-MM-DD')
+            getState().viewingDate
         ).then(result => {
             const products: Array<Product> = result.data || [];
 

@@ -17,6 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Product} from './Product';
+import moment from "moment";
 
 class ProductClient {
 
@@ -40,9 +41,10 @@ class ProductClient {
         );
     }
 
-    static async getProductsForDate(spaceId: number, date: string): Promise<AxiosResponse> {
+    static async getProductsForDate(spaceId: number, date: Date): Promise<AxiosResponse> {
+        const formattedDate = moment(date).format('YYYY-MM-DD');
         return Axios.get(
-            process.env.REACT_APP_URL + `product/${spaceId}/${date}`,
+            process.env.REACT_APP_URL + `product/${spaceId}/${formattedDate}`,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }

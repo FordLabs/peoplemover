@@ -32,6 +32,8 @@ import {Assignment} from './Assignment';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AssignmentDTO} from '../Domain/AssignmentDTO';
 import AssignmentClient from './AssignmentClient';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from "./CreateAssignmentRequest";
+import {placeholder} from "@babel/types";
 
 interface AssignmentCardListProps {
     container: string;
@@ -194,8 +196,8 @@ function AssignmentCardList({
     );
 }
 
-const mapStateToProps = ({productRefs}: GlobalStateProps) => ({
-    productRefs,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    productRefs: state.productRefs,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

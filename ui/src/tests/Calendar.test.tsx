@@ -19,7 +19,6 @@ import TestUtils, {mockCreateRange, mockDate, renderWithRedux} from './TestUtils
 import PeopleMover from '../Application/PeopleMover';
 import React from 'react';
 import {findByText, fireEvent, queryByText, wait} from '@testing-library/react';
-import {fetchProductsAction} from "../Redux/Actions";
 import ProductClient from "../Products/ProductClient";
 
 describe('Calendar', () => {
