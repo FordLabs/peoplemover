@@ -162,9 +162,14 @@ class AssignmentService(
         }
     }
 
+    private fun requestOnlyContainsUnassigned(assignmentRequest: CreateAssignmentsRequest): Boolean {
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", assignmentRequest.person.spaceId)
+        return (assignmentRequest.products.size == 1 && assignmentRequest.products.first().productId == unassignedProduct!!.id)
+    }
+
     fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
         deleteAllAssignmentsForDate(assignmentRequest)
-        return if (assignmentRequest.products.isNullOrEmpty()) {
+        return if (assignmentRequest.products.isNullOrEmpty() || requestOnlyContainsUnassigned(assignmentRequest)) {
             setOf(createUnassignmentForDate(assignmentRequest))
         } else {
             createAssignmentsForDate(assignmentRequest)
@@ -188,18 +193,23 @@ class AssignmentService(
         val space = spaceRepository.findByIdOrNull(assignmentRequest.person.spaceId) ?: throw SpaceNotExistsException()
 
         val createdAssignments = hashSetOf<Assignment>()
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", assignmentRequest.person.spaceId)
+
         assignmentRequest.products.forEach { product ->
             productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
-            val assignment = assignmentRepository.save(
-                    Assignment(
-                            person = assignmentRequest.person,
-                            placeholder = product.placeholder,
-                            productId = product.productId,
-                            spaceId = space.id!!,
-                            effectiveDate = assignmentRequest.requestedDate
-                    )
-            )
-            createdAssignments.add(assignment)
+
+            if(product.productId != unassignedProduct!!.id) {
+                val assignment = assignmentRepository.save(
+                        Assignment(
+                                person = assignmentRequest.person,
+                                placeholder = product.placeholder,
+                                productId = product.productId,
+                                spaceId = space.id!!,
+                                effectiveDate = assignmentRequest.requestedDate
+                        )
+                )
+                createdAssignments.add(assignment)
+            }
         }
         return createdAssignments
     }

@@ -25,6 +25,7 @@ import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.google.common.collect.Sets.newHashSet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -294,6 +295,73 @@ class AssignmentControllerInTimeApiTest {
         assertThat(assignmentRepository.findAll()).containsAll(actualAssignments)
         assertThat(assignmentRepository.findAll()).contains(nullAssignmentToKeep)
         assertThat(assignmentRepository.findAll()).doesNotContain(oldAssignmentToReplace)
+    }
+
+    @Test
+    fun `POST should not assign person to unassigned when given set of products` () {
+        val assignmentRequest = CreateAssignmentsRequest(
+                requestedDate = LocalDate.parse(apr1),
+                person = person,
+                products = newHashSet(
+                        ProductPlaceholderPair (productId= unassignedProduct.id!!, placeholder = false ),
+                        ProductPlaceholderPair (productId= productOne.id!!, placeholder = false )
+                )
+        )
+
+        val expectedAssignment = Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        )
+
+        val result = mockMvc.perform(post("/api/assignment/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(assignmentRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+        )
+
+        assertThat(assignmentRepository.count()).isOne()
+        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment,"id")
+        assertThat(actualAssignments.first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
+    }
+
+    @Test
+    fun `POST should assign person to unassigned when given only unassigned product` () {
+        val unassignedAssignmentRequest = CreateAssignmentsRequest(
+                requestedDate = LocalDate.parse(apr1),
+                person = person,
+                products = Sets.newSet(
+                     ProductPlaceholderPair(productId = unassignedProduct.id!!, placeholder = false)
+                )
+        )
+
+        val expectedAssignment = Assignment(
+                person = person,
+                productId = unassignedProduct.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        )
+
+        val result = mockMvc.perform(post("/api/assignment/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(unassignedAssignmentRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+        )
+
+        assertThat(assignmentRepository.count()).isOne()
+        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment,"id")
+        assertThat(actualAssignments.first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
     }
 
     @Test
