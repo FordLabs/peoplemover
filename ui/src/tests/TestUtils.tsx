@@ -276,6 +276,7 @@ class TestUtils {
         productId: 1,
         placeholder: false,
         person: TestUtils.person1,
+        spaceId: 1,
         effectiveDate: new Date(2018, 0, 1),
     };
 
@@ -284,6 +285,7 @@ class TestUtils {
         productId: 102,
         placeholder: true,
         person: TestUtils.hank,
+        spaceId: 1,
         effectiveDate: new Date(2019, 0, 1),
     };
 
@@ -292,6 +294,7 @@ class TestUtils {
         productId: 999,
         person: TestUtils.unassignedPerson,
         placeholder: false,
+        spaceId: 1,
         effectiveDate: new Date(2017, 0, 1),
     };
 

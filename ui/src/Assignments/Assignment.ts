@@ -22,5 +22,6 @@ export interface Assignment {
     person: Person;
     placeholder: boolean;
     productId: number;
+    spaceId: number;
     effectiveDate?: Date;
 }
