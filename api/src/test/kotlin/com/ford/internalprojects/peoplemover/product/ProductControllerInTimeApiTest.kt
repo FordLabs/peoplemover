@@ -65,8 +65,12 @@ class ProductControllerInTimeApiTest {
     private lateinit var product1: Product
     private lateinit var product2: Product
 
+    val mar1 = "2019-03-01"
     val apr1 = "2019-04-01"
+    val apr2 = "2019-04-02"
     val may1 = "2019-05-01"
+    val jun1 = "2019-06-01"
+    val sep1 = "2019-09-01"
 
     @Before
     fun setUp() {
@@ -75,13 +79,13 @@ class ProductControllerInTimeApiTest {
         product1 = productRepository.save(Product(
                 name = "product one",
                 startDate = LocalDate.parse(may1),
-                endDate = LocalDate.of(2020, 6, 1),
+                endDate = LocalDate.parse(jun1),
                 spaceId = space.id!!
         ))
         product2 = productRepository.save(Product(
                 name = "product two",
                 startDate = LocalDate.parse(apr1),
-                endDate = LocalDate.of(2020, 6, 1),
+                endDate = LocalDate.parse(jun1),
                 spaceId = space.id!!
         ))
     }
@@ -113,8 +117,7 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return only second product for date only second active`() {
-        val requestedDate = "2020-04-01"
-        val result = mockMvc.perform(get("/api/product/${space.id}/$requestedDate"))
+        val result = mockMvc.perform(get("/api/product/${space.id}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -130,20 +133,26 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return products with only assignments effective on or before given date`() {
-        val assignmentWeShouldSee: Assignment = assignmentRepository.save(Assignment(
+        val oldAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = product2.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
-        val assignmentWeShouldNotSee: Assignment = assignmentRepository.save(Assignment(
+        val assignmentWeShouldSee: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = product2.id!!,
+                effectiveDate = LocalDate.parse(apr2),
+                spaceId = space.id!!
+        ))
+        val futureAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = product2.id!!,
                 effectiveDate = LocalDate.parse(may1),
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get("/api/product/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/product/${space.id}/$apr2"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -154,16 +163,16 @@ class ProductControllerInTimeApiTest {
 
         val actualProduct2: Product = actualProducts[0]
 
-        assertThat(assignmentRepository.count()).isEqualTo(2)
+        assertThat(assignmentRepository.count()).isEqualTo(3)
         assertThat(actualProduct2.assignments.size).isOne()
         assertThat(actualProduct2.assignments).contains(assignmentWeShouldSee)
-        assertThat(actualProduct2.assignments).doesNotContain(assignmentWeShouldNotSee)
+        assertThat(actualProduct2.assignments).doesNotContain(oldAssignment)
+        assertThat(actualProduct2.assignments).doesNotContain(futureAssignment)
     }
 
     @Test
     fun `GET should return no products for date that is before both start dates`() {
-        val requestedDate = "2020-03-01"
-        val result = mockMvc.perform(get("/api/product/${space.id}/$requestedDate"))
+        val result = mockMvc.perform(get("/api/product/${space.id}/$mar1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -183,8 +192,7 @@ class ProductControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val requestedDate = "2020-09-01"
-        val result = mockMvc.perform(get("/api/product/${space.id}/$requestedDate"))
+        val result = mockMvc.perform(get("/api/product/${space.id}/$sep1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -202,12 +210,11 @@ class ProductControllerInTimeApiTest {
     fun `GET should return only the null end date product`() {
         val nullStartProduct: Product = productRepository.save(Product(
                 name = "product with null start date",
-                startDate = LocalDate.of(2020, 6, 1),
+                startDate = LocalDate.parse(jun1),
                 spaceId = space.id!!
         ))
 
-        val requestedDate = "2020-09-01"
-        val result = mockMvc.perform(get("/api/product/${space.id}/$requestedDate"))
+        val result = mockMvc.perform(get("/api/product/${space.id}/$sep1"))
                 .andExpect(status().isOk)
                 .andReturn()
 

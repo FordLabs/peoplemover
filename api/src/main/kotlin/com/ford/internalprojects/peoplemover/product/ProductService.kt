@@ -25,7 +25,6 @@ import com.ford.internalprojects.peoplemover.space.Space
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.time.Period
 import javax.transaction.Transactional
 
 @Service
@@ -38,8 +37,11 @@ class ProductService(
     }
 
     fun findAllBySpaceIdAndDate(spaceId: Int, date: LocalDate): Set<Product> {
-        return productRepository.findAllBySpaceIdAndDate(spaceId, date).map {
-            it.copy(assignments = it.assignments.filter { assignment -> assignment.effectiveDate === null || Period.between(assignment.effectiveDate, date).days >= 0 }.toSet())
+        val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceId, date.toString())
+        return productRepository.findAllBySpaceIdAndDate(spaceId, date).map {product ->
+            product.copy(assignments = assignmentsForDate.filter {assignment ->
+                assignment.productId == product.id!!
+            }.toSet())
         }.toSet()
     }
 
