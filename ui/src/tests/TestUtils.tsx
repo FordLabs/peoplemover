@@ -276,7 +276,7 @@ class TestUtils {
         productId: 1,
         placeholder: false,
         person: TestUtils.person1,
-        effectiveDate: new Date(2018,0,1),
+        effectiveDate: new Date(2018, 0, 1),
     };
 
     static assignmentForHank: Assignment = {
@@ -284,7 +284,7 @@ class TestUtils {
         productId: 102,
         placeholder: true,
         person: TestUtils.hank,
-        effectiveDate: new Date(2019),
+        effectiveDate: new Date(2019, 0, 1),
     };
 
     static assignmentForUnassigned: Assignment = {
@@ -292,7 +292,7 @@ class TestUtils {
         productId: 999,
         person: TestUtils.unassignedPerson,
         placeholder: false,
-        effectiveDate: new Date(2017),
+        effectiveDate: new Date(2017, 0, 1),
     };
 
     static assignments: Array<Assignment> = [
