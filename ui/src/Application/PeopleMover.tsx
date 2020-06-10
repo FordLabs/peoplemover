@@ -106,7 +106,7 @@ function PeopleMover({
                     <div className="accordionContainer">
                         <div className="accordionHeaderContainer">
                             <UnassignedDrawerContainer/>
-                            <ProductGraveyard products={products}/>
+                            <ProductGraveyard/>
                         </div>
                     </div>
                 </div>

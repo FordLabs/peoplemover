@@ -105,7 +105,6 @@ export function mockCreateRange(): () => void {
 class TestUtils {
     static mockClientCalls(): void {
         const emptyAxiosResponse = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-        const emptyAsyncFunction = jest.fn(() => Promise.resolve());
 
         PeopleClient.createPersonForSpace = jest.fn(x => Promise.resolve({
             data:  x,

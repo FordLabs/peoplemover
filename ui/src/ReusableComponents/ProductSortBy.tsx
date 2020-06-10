@@ -64,6 +64,4 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     sortValueOption: state.sortValueOption,
 });
 
-const mapDispatchToProps = () => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductSortBy);
+export default connect(mapStateToProps)(ProductSortBy);
