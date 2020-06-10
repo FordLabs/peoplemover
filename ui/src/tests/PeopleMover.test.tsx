@@ -57,6 +57,12 @@ describe('PeopleMover', () => {
     it('should display products', async () => {
         await app.findAllByText(TestUtils.productWithAssignments.name);
         await app.findAllByText(TestUtils.productWithoutAssignments.name);
+        await app.findAllByText(TestUtils.productForHank.name);
+    });
+
+    it('should show the Flabs branding on load', async () => {
+        await app.findByText('Powered by');
+        await app.findByText('FordLabs');
     });
 });
 

@@ -22,6 +22,8 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';
 import ProductClient from "../Products/ProductClient";
+import {PreloadedState} from "redux";
+import {GlobalStateProps} from "../Redux/Reducers";
 
 describe('Unassigned Products', () => {
     beforeEach(() => {
@@ -135,10 +137,10 @@ describe('Unassigned Products', () => {
     });
 
     describe('edit menus', () => {
+        const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people} as GlobalStateProps;
+
         it('should open edit person dialog when clicking on ellipsis', async () => {
-            const component = <PeopleMover/>;
-            const initialState = { people: TestUtils.people};
-            const app = renderWithRedux(component, undefined, initialState);
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawer = drawerCarets[0];
@@ -152,9 +154,7 @@ describe('Unassigned Products', () => {
         });
 
         it('should close unassigned edit menu when opening an edit menu in product list', async () => {
-            const component = <PeopleMover/>;
-            const initialState = { people: TestUtils.people};
-            const app = renderWithRedux(component, undefined, initialState);
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawer = drawerCarets[0];

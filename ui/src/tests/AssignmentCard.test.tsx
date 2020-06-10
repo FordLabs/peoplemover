@@ -36,6 +36,7 @@ describe('the assignment card', () => {
         },
         placeholder: false,
         productId: 0,
+        spaceId: 1,
     };
 
     it('should render the assigned persons name', () => {
@@ -156,6 +157,7 @@ describe('the assignment card', () => {
             },
             placeholder: false,
             productId: 0,
+            spaceId: 1,
         };
         const underTest = renderWithRedux(<AssignmentCard assignment={assignmentThatIsNew}
             isUnassignedProduct={false}/>);

@@ -31,7 +31,7 @@ describe('Product Client', function () {
             headers: { 'Content-Type': 'application/json' },
         };
 
-        ProductClient.getProductsForDate(spaceId, date);
+        ProductClient.getProductsForDate(spaceId, new Date(2019, 0, 10));
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });

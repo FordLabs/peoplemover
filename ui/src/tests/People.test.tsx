@@ -30,8 +30,8 @@ import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';
 import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import ProductClient from "../Products/ProductClient";
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from "../Assignments/CreateAssignmentRequest";
+import ProductClient from '../Products/ProductClient';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 
 describe('people actions', () => {
     beforeEach(() => {
@@ -248,7 +248,7 @@ describe('people actions', () => {
         };
 
         const initialState: PreloadedState<GlobalStateProps> = {
-            viewingDate: new Date(2020, 5,5),
+            viewingDate: new Date(2020, 5, 5),
         } as GlobalStateProps;
 
         const checkForCreatedPerson = async (): Promise<void> => {
@@ -290,9 +290,9 @@ describe('people actions', () => {
     it('should have initially selected product selected', async () => {
         const products: Product[] = [];
         const component = <PersonForm editing={false}
-                                      products={products}
-                                      initialPersonName={'BRADLEY'}
-                                      initiallySelectedProduct={TestUtils.productWithAssignments}
+            products={products}
+            initialPersonName={'BRADLEY'}
+            initiallySelectedProduct={TestUtils.productWithAssignments}
         />;
 
         await act(async () => {
@@ -304,8 +304,8 @@ describe('people actions', () => {
     it('should not show the unassigned product or archived products in product list', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
         const component = <PersonForm editing={false}
-                                      products={products}
-                                      initialPersonName={'BRADLEY'}/>;
+            products={products}
+            initialPersonName={'BRADLEY'}/>;
 
         await act(async () => {
             const wrapper = await renderWithReduxEnzyme(component);
@@ -323,8 +323,8 @@ describe('people actions', () => {
     it('should remove the unassigned product when a product is selected from dropdown', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.unassignedProduct];
         const component = <PersonForm editing={false}
-                                      products={products}
-                                      initialPersonName={'BRADLEY'}/>;
+            products={products}
+            initialPersonName={'BRADLEY'}/>;
 
         await act(async () => {
             const wrapper = await renderWithRedux(component);
@@ -403,6 +403,7 @@ describe('people actions', () => {
                         spaceId: 0,
                     },
                     productId: 999,
+                    spaceId: 0,
                     placeholder: false,
                 },
             ],
@@ -428,8 +429,8 @@ describe('people actions', () => {
 
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments];
         const component = <PersonForm editing={true}
-                                      products={products}
-                                      assignment={TestUtils.assignmentForPerson1}
+            products={products}
+            assignment={TestUtils.assignmentForPerson1}
         />;
 
         await act(async () => {
@@ -476,6 +477,7 @@ describe('people actions', () => {
             assignmentRequest.products.forEach((product: ProductPlaceholderPair) => {
                 assignments.push({
                     id: count++,
+                    spaceId: assignmentRequest.person.spaceId,
                     person: assignmentRequest.person,
                     placeholder: product.placeholder,
                     productId: product.productId,

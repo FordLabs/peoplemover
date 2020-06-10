@@ -91,12 +91,12 @@ describe('Products', () => {
                 const wrapper = await renderWithRedux(component, store);
                 await TestUtils.waitForHomePageToLoad(wrapper);
 
-                AssignmentClient.updateAssignment = jest.fn(() => Promise.resolve({} as AxiosResponse));
+                AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({} as AxiosResponse));
 
                 const person1AssignmentCard = await wrapper.findByText('Person 1');
                 fireEvent.mouseDown(person1AssignmentCard);
                 fireEvent.mouseUp(person1AssignmentCard);
-                expect(AssignmentClient.updateAssignment).not.toHaveBeenCalled();
+                expect(AssignmentClient.createAssignmentForDate).not.toHaveBeenCalled();
             });
         });
 
@@ -111,6 +111,7 @@ describe('Products', () => {
                     {
                         id: 1,
                         productId: 2,
+                        spaceId: 0,
                         person: {
                             newPerson: false,
                             spaceId: 0,
@@ -123,6 +124,7 @@ describe('Products', () => {
                     {
                         id: 900,
                         productId: 2,
+                        spaceId: 0,
                         person: {
                             newPerson: false,
                             spaceId: 0,
@@ -135,6 +137,7 @@ describe('Products', () => {
                     {
                         id: 4,
                         productId: 2,
+                        spaceId: 0,
                         person: {
                             newPerson: false,
                             spaceId: 0,
@@ -147,6 +150,7 @@ describe('Products', () => {
                     {
                         id: 3,
                         productId: 2,
+                        spaceId: 0,
                         person: {
                             newPerson: false,
                             spaceId: 0,

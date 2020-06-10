@@ -90,15 +90,13 @@ describe('should redirect to login page', () => {
 
         });
 
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
 
-            const cookies = new Cookies();
-            const accessToken = cookies.get('accessToken');
+        expect(Axios.post).toHaveBeenCalledWith(`${process.env.REACT_APP_URL}access_token`, {accessCode: '123ABC'});
+        expect(accessToken).toEqual('TOKEN123');
 
-            expect(Axios.post).toHaveBeenCalledWith(`${process.env.REACT_APP_URL}access_token`, {accessCode: '123ABC'});
-            expect(accessToken).toEqual('TOKEN123');
-
-            cookies.remove('accessToken');
-
+        cookies.remove('accessToken');
     });
 
 
@@ -129,13 +127,10 @@ describe('should redirect to login page', () => {
             );
         });
 
+        expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
 
-            expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-
-            AccessTokenClient.validateAccessToken = originalFunc;
-            cookies.remove('accessToken');
-
-
+        AccessTokenClient.validateAccessToken = originalFunc;
+        cookies.remove('accessToken');
     });
 
     it('should refresh access token after access token is successfully validated', async() => {
@@ -169,16 +164,14 @@ describe('should redirect to login page', () => {
             );
         });
 
-            expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-            expect(AccessTokenClient.refreshAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-            expect(cookies.get('accessToken')).toEqual('NEW_TOKEN');
+        expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
+        expect(AccessTokenClient.refreshAccessToken).toHaveBeenCalledWith(fakeAccessToken);
+        expect(cookies.get('accessToken')).toEqual('NEW_TOKEN');
 
-            AccessTokenClient.validateAccessToken = originalFunc;
-            AccessTokenClient.refreshAccessToken = origRefreshFunc;
+        AccessTokenClient.validateAccessToken = originalFunc;
+        AccessTokenClient.refreshAccessToken = origRefreshFunc;
 
-            cookies.remove('accessToken');
-
-
+        cookies.remove('accessToken');
     });
 
     // We are trying to test setting and removing cookies on the root path only. The 'universal-cookies' library
@@ -212,14 +205,12 @@ describe('should redirect to login page', () => {
             );
         });
 
-            expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-            expect(cookies.get('accessToken')).toBeUndefined();
+        expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
+        expect(cookies.get('accessToken')).toBeUndefined();
 
-            AccessTokenClient.validateAccessToken = originalFunc;
+        AccessTokenClient.validateAccessToken = originalFunc;
 
-            cookies.remove('accessToken');
-
-
+        cookies.remove('accessToken');
     });
 
 
