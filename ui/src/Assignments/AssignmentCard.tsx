@@ -29,7 +29,7 @@ import '../Application/Styleguide/Styleguide.scss';
 import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from "./CreateAssignmentRequest";
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 
 interface AssignmentCardProps {
     viewingDate: Date;

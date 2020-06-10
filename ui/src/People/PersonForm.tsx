@@ -43,7 +43,7 @@ import {Assignment} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
-import {ProductPlaceholderPair} from "../Assignments/CreateAssignmentRequest";
+import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 
 interface PersonFormProps {
     editing: boolean;

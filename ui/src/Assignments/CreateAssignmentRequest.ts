@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Person} from "../People/Person";
+import {Person} from '../People/Person';
 
 export interface CreateAssignmentsRequest {
     requestedDate: Date;

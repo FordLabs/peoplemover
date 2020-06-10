@@ -25,7 +25,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {FilterOption} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
-import {Space} from "../SpaceDashboard/Space";
+import {Space} from '../SpaceDashboard/Space';
 
 interface ProductListProps {
     currentSpace: Space;

@@ -30,10 +30,8 @@ import {Product} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Assignment} from './Assignment';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {AssignmentDTO} from '../Domain/AssignmentDTO';
 import AssignmentClient from './AssignmentClient';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from "./CreateAssignmentRequest";
-import {placeholder} from "@babel/types";
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 
 interface AssignmentCardListProps {
     container: string;

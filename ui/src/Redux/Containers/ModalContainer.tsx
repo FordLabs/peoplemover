@@ -29,9 +29,9 @@ import MyTagsModal from '../../Tags/MyTagsModal';
 import MyRolesModal from '../../Roles/MyRolesModal';
 import CreateSpaceForm from '../../SpaceDashboard/CreateSpaceForm';
 import {Dispatch} from 'redux';
-import EditContributorsForm from "../../SpaceDashboard/EditContributorsForm";
-import {Product} from "../../Products/Product";
-import {Space} from "../../SpaceDashboard/Space";
+import EditContributorsForm from '../../SpaceDashboard/EditContributorsForm';
+import {Product} from '../../Products/Product';
+import {Space} from '../../SpaceDashboard/Space';
 
 
 const getCurrentModal = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space): JSX.Element | null => {

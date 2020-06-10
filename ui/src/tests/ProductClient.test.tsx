@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import Axios from "axios";
-import ProductClient from "../Products/ProductClient";
+import Axios from 'axios';
+import ProductClient from '../Products/ProductClient';
 
 describe('Product Client', function () {
 

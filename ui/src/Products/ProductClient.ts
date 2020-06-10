@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Product} from './Product';
-import moment from "moment";
+import moment from 'moment';
 
 class ProductClient {
 

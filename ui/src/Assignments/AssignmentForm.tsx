@@ -39,8 +39,8 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import './AssignmentForm.scss';
 import {Option} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
-import {ProductPlaceholderPair} from "./CreateAssignmentRequest";
-import {Assignment} from "./Assignment";
+import {ProductPlaceholderPair} from './CreateAssignmentRequest';
+import {Assignment} from './Assignment';
 
 interface AssignmentFormProps {
     products: Array<Product>;

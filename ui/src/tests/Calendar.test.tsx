@@ -19,9 +19,9 @@ import TestUtils, {mockCreateRange, renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import React from 'react';
 import {findByText, fireEvent, queryByText, wait} from '@testing-library/react';
-import ProductClient from "../Products/ProductClient";
-import {PreloadedState} from "redux";
-import {GlobalStateProps} from "../Redux/Reducers";
+import ProductClient from '../Products/ProductClient';
+import {PreloadedState} from 'redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;

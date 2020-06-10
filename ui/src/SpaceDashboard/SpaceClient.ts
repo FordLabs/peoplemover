@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
-import {SpaceWithAccessTokenResponse} from "./SpaceWithAccessTokenResponse";
+import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 
 class SpaceClient {
 

@@ -17,9 +17,8 @@
  *
  */
 
-import {AvailableActions} from "../Actions";
-import {Product} from "../../Products/Product";
-import {switchCase} from "@babel/types";
+import {AvailableActions} from '../Actions';
+import {Product} from '../../Products/Product';
 
 const productsReducer = (state: Array<Product> = [], action: {type: AvailableActions; products: Array<Product>; sortOption: string} ): Array<Product> => {
     if (action.type === AvailableActions.SET_PRODUCTS) {

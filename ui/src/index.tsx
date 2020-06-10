@@ -31,8 +31,8 @@ import Error404Page from './Application/Error404Page';
 import ReportPage from './Reports/ReportPage';
 import LandingPage from './LandingPage/LandingPage';
 import RedirectAuthPage from './ReusableComponents/RedirectAuthPage';
-import SpaceDashboard from "./SpaceDashboard/SpaceDashboard";
-import ValidationGuard from "./Validation/ValidationGuard";
+import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
+import ValidationGuard from './Validation/ValidationGuard';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;

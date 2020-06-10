@@ -19,8 +19,7 @@
 
 import currentSpaceReducer from '../Redux/Reducers/currentSpaceReducer';
 import {AvailableActions} from '../Redux/Actions';
-import TestUtils from './TestUtils';
-import {Space} from "../SpaceDashboard/Space";
+import {Space} from '../SpaceDashboard/Space';
 
 describe('current space reducer', () => {
     const space: Space = {

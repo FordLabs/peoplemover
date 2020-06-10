@@ -16,10 +16,9 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {wait} from '@testing-library/react';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from "../Assignments/CreateAssignmentRequest";
-import TestUtils from "./TestUtils";
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
+import TestUtils from './TestUtils';
 
 describe('the assignment client', () => {
     beforeEach(() => {

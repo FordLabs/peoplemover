@@ -28,9 +28,9 @@ import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
 import {Space} from '../../SpaceDashboard/Space';
-import {viewingDateReducer} from "./viewingDateReducer";
-import productsReducer from "./productsReducer";
-import {Product} from "../../Products/Product";
+import {viewingDateReducer} from './viewingDateReducer';
+import productsReducer from './productsReducer';
+import {Product} from '../../Products/Product';
 
 export default combineReducers({
     currentModal: currentModalReducer,

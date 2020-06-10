@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import Axios from "axios";
-import SpaceClient from "../SpaceDashboard/SpaceClient";
+import Axios from 'axios';
+import SpaceClient from '../SpaceDashboard/SpaceClient';
 
-describe('Space Client', function () {
-    it('should invite users to a space', function () {
+describe('Space Client', function() {
+    it('should invite users to a space', function() {
         Axios.put = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 
@@ -39,7 +39,7 @@ describe('Space Client', function () {
         expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
     });
 
-    it('should return the space given a space name', function () {
+    it('should return the space given a space name', function() {
         Axios.get = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 

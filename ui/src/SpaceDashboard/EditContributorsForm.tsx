@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, useEffect, useState} from "react";
-import SpaceClient from "./SpaceClient";
-import {Dispatch} from "redux";
-import {closeModalAction} from "../Redux/Actions";
-import {connect} from "react-redux";
-import "./EditContributorsForm.scss"
+import React, {ChangeEvent, useEffect, useState} from 'react';
+import SpaceClient from './SpaceClient';
+import {Dispatch} from 'redux';
+import {closeModalAction} from '../Redux/Actions';
+import {connect} from 'react-redux';
+import './EditContributorsForm.scss'
 
 
 import {useLocation} from 'react-router-dom'

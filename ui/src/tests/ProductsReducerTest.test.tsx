@@ -16,8 +16,8 @@
  */
 
 import {AvailableActions} from '../Redux/Actions';
-import productsReducer, {sortByProductName} from "../Redux/Reducers/productsReducer";
-import {Product} from "../Products/Product";
+import productsReducer, {sortByProductName} from '../Redux/Reducers/productsReducer';
+import {Product} from '../Products/Product';
 
 describe('sort by product name', () => {
     it('return -1', () => {

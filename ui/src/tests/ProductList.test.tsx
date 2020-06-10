@@ -20,7 +20,7 @@ import {fireEvent} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {AxiosResponse} from 'axios';
-import ProductClient from "../Products/ProductClient";
+import ProductClient from '../Products/ProductClient';
 
 describe('Product List tests', () => {
     beforeEach(() => {

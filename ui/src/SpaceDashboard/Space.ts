@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {SpaceRole} from "../Roles/Role";
-import {SpaceLocation} from "../Locations/SpaceLocation";
+import {SpaceRole} from '../Roles/Role';
+import {SpaceLocation} from '../Locations/SpaceLocation';
 
 export interface Space {
     id?: number;

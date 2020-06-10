@@ -16,8 +16,8 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {CreateAssignmentsRequest} from "./CreateAssignmentRequest";
-import moment from "moment";
+import {CreateAssignmentsRequest} from './CreateAssignmentRequest';
+import moment from 'moment';
 
 class AssignmentClient {
     static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {

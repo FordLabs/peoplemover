@@ -4,9 +4,9 @@ import DatePicker from 'react-datepicker';
 import ReactDatePicker from 'react-datepicker';
 import React, {createRef, useEffect, useState} from 'react';
 import './Calendar.scss';
-import {connect} from "react-redux";
-import {setViewingDateAction} from "../Redux/Actions";
-import {GlobalStateProps} from "../Redux/Reducers";
+import {connect} from 'react-redux';
+import {setViewingDateAction} from '../Redux/Actions';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 interface CalendarProps {
     viewingDate: Date;

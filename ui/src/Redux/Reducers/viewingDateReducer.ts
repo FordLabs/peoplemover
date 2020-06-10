@@ -17,7 +17,7 @@
  *
  */
 
-import {AvailableActions} from "../Actions";
+import {AvailableActions} from '../Actions';
 
 export const viewingDateReducer = (
     state: Date = new Date(),

@@ -22,10 +22,9 @@ import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
-import {Space} from "../../SpaceDashboard/Space";
-import {Product} from "../../Products/Product";
-import ProductClient from "../../Products/ProductClient";
-import moment from "moment";
+import {Space} from '../../SpaceDashboard/Space';
+import {Product} from '../../Products/Product';
+import ProductClient from '../../Products/ProductClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,

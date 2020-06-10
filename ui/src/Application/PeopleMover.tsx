@@ -34,9 +34,9 @@ import {Person} from '../People/Person';
 import PeopleClient from '../People/PeopleClient';
 import Header from './Header';
 import {Redirect} from 'react-router-dom';
-import {Space} from "../SpaceDashboard/Space";
-import SpaceClient from "../SpaceDashboard/SpaceClient";
-import {Product} from "../Products/Product";
+import {Space} from '../SpaceDashboard/Space';
+import SpaceClient from '../SpaceDashboard/SpaceClient';
+import {Product} from '../Products/Product';
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
