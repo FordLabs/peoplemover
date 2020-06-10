@@ -25,7 +25,6 @@ import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.google.common.collect.Sets.newHashSet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -100,23 +99,19 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `GET should return all assignments for the given spaceId and past date`() {
-//        Apr 1: Person A is on Prod1 and Prod2
-//        Apr 2: Person A no longer works on Prod1
-//        Apr 1: Get all assignments should return Person A on Prod 1 and Prod2
-
-        val assignment1: Assignment = assignmentRepository.save(Assignment(
+        val currentAssignment1: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
-        val assignment2: Assignment = assignmentRepository.save(Assignment(
+        val currentAssignment2: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
-        val assignment3: Assignment = assignmentRepository.save(Assignment(
+        val futureAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr2),
@@ -132,30 +127,25 @@ class AssignmentControllerInTimeApiTest {
         )
 
         assertThat(actualAssignments.size).isEqualTo(2)
-        assertThat(actualAssignments).contains(assignment1)
-        assertThat(actualAssignments).contains(assignment2)
-        assertThat(actualAssignments).doesNotContain(assignment3)
+        assertThat(actualAssignments).contains(currentAssignment1, currentAssignment2)
+        assertThat(actualAssignments).doesNotContain(futureAssignment)
     }
 
     @Test
     fun `GET should return all assignments for the given spaceId and recent date`() {
-//        Apr 1: Person A is on Prod1 and Prod2
-//        Apr 2: Person A no longer works on Prod1
-//        Apr 2: Get all assignments should return Person A on Prod2 only
-
-        val assignment1: Assignment = assignmentRepository.save(Assignment(
+        val oldAssignment1: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
-        val assignment2: Assignment = assignmentRepository.save(Assignment(
+        val oldAssignment2: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
-        val assignment3: Assignment = assignmentRepository.save(Assignment(
+        val newAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr2),
@@ -171,32 +161,27 @@ class AssignmentControllerInTimeApiTest {
         )
 
         assertThat(actualAssignments.size).isOne()
-        assertThat(actualAssignments).contains(assignment3)
-        assertThat(actualAssignments).doesNotContain(assignment1)
-        assertThat(actualAssignments).doesNotContain(assignment2)
+        assertThat(actualAssignments).contains(newAssignment)
+        assertThat(actualAssignments).doesNotContain(oldAssignment1, oldAssignment2)
     }
 
     @Test
     fun `GET should return null effective date assignments when all assignments for person have null effective date`() {
-//        Origin: Person A and Person B both work on Prod1.
-//        Apr 1: Person B moves to Prod2.
-//        Apr 1: Get all assignments should return Person A on Prod1 and Person B on Prod2.
-
         val personTwo: Person = personRepository.save(Person(name = "Avengers", spaceId = space.id!!))
 
-        val assignment1: Assignment = assignmentRepository.save(Assignment(
+        val originalAssignmentToKeep: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = null,
                 spaceId = space.id!!
         ))
-        val assignment2: Assignment = assignmentRepository.save(Assignment(
+        val originalAssignmentToReplace: Assignment = assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = null,
                 spaceId = space.id!!
         ))
-        val assignment3: Assignment = assignmentRepository.save(Assignment(
+        val newAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -212,9 +197,8 @@ class AssignmentControllerInTimeApiTest {
         )
 
         assertThat(actualAssignments.size).isEqualTo(2)
-        assertThat(actualAssignments).contains(assignment1)
-        assertThat(actualAssignments).contains(assignment3)
-        assertThat(actualAssignments).doesNotContain(assignment2)
+        assertThat(actualAssignments).contains(originalAssignmentToKeep, newAssignment)
+        assertThat(actualAssignments).doesNotContain(originalAssignmentToReplace)
     }
 
     @Test
@@ -235,12 +219,38 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `GET should return all assignments for the given personId and a specific date`() {
-        val personTwo: Person = personRepository.save(Person("person two", space.id!!))
-        val assignmentWeShouldNotSee: Assignment = assignmentRepository.save(Assignment(person = personTwo, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
-        val assignmentWeShouldNotSee2: Assignment = assignmentRepository.save(Assignment(person = personTwo, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr2)))
-        val assignmentWeShouldNotSee3: Assignment = assignmentRepository.save(Assignment(person = person, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr2)))
-        val assignmentWeShouldSee: Assignment = assignmentRepository.save(Assignment(person = person, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
-        val assignmentWeShouldNotSee4: Assignment = assignmentRepository.save(Assignment(person = person, productId = productOne.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar1)))
+        val oldAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                spaceId = space.id!!,
+                effectiveDate = LocalDate.parse(mar1)
+        ))
+        val currentAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                spaceId = space.id!!,
+                effectiveDate = LocalDate.parse(apr1)
+        ))
+        val futureAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                spaceId = space.id!!,
+                effectiveDate = LocalDate.parse(apr2)
+        ))
+
+        val personTwo: Person = personRepository.save(Person(name = "person two", spaceId = space.id!!))
+        val currentAssignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
+                person = personTwo,
+                productId = productOne.id!!,
+                spaceId = space.id!!,
+                effectiveDate = LocalDate.parse(apr1)
+        ))
+        val futureAssignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
+                person = personTwo,
+                productId = productOne.id!!,
+                spaceId = space.id!!,
+                effectiveDate = LocalDate.parse(apr2)
+        ))
 
         val result = mockMvc.perform(get("/api/person/${person.id}/assignments/date/${apr1}"))
                 .andExpect(status().isOk)
@@ -249,25 +259,27 @@ class AssignmentControllerInTimeApiTest {
                 result.response.contentAsString,
                 objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
         )
+
         assertThat(assignmentRepository.count()).isEqualTo(5)
         assertThat(actualAssignments.size).isOne()
-        assertThat(actualAssignments).contains(assignmentWeShouldSee)
-        assertThat(actualAssignments).doesNotContain(assignmentWeShouldNotSee, assignmentWeShouldNotSee2, assignmentWeShouldNotSee3, assignmentWeShouldNotSee4)
+        assertThat(actualAssignments).contains(currentAssignmentForPerson1)
+        assertThat(actualAssignments).doesNotContain(currentAssignmentForPerson2, futureAssignmentForPerson2)
+        assertThat(actualAssignments).doesNotContain(oldAssignmentForPerson1, futureAssignmentForPerson1)
     }
 
     @Test
     fun `POST should only replace any existing assignments for a given date`() {
-        val oldAssignmentToReplace: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
-        ))
-
         val nullAssignmentToKeep: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = null,
+                spaceId = space.id!!
+        ))
+
+        val oldAssignmentToReplace: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
 
@@ -302,7 +314,7 @@ class AssignmentControllerInTimeApiTest {
         val assignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
-                products = newHashSet(
+                products = Sets.newSet(
                         ProductPlaceholderPair (productId= unassignedProduct.id!!, placeholder = false ),
                         ProductPlaceholderPair (productId= productOne.id!!, placeholder = false )
                 )
@@ -403,7 +415,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `POST should return 400 when given assignment with an invalid person` () {
+    fun `POST should return 400 when given an invalid person` () {
         val bogusPerson = Person(id = 99999999, name = "fake person", spaceId = space.id!!)
 
         val bogusAssignmentRequest = CreateAssignmentsRequest (
@@ -423,7 +435,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `POST should return 400 when given assignment with an invalid product`() {
+    fun `POST should return 400 when given an invalid product`() {
         val bogusAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
