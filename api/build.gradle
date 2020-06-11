@@ -35,6 +35,8 @@ repositories {
 dependencies {
     implementation name: 'libauthquest-1.0.3'
 
+    runtime 'mysql:mysql-connector-java'
+
     compile 'com.google.guava:guava:28.2-jre'
     compile 'org.springframework.cloud:spring-cloud-spring-service-connector:2.0.7.RELEASE'
     compile 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.7.RELEASE'
