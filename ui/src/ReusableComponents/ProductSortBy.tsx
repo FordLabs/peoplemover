@@ -23,13 +23,21 @@ import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Option} from '../CommonTypes/Option';
 import './ProductFilterOrSortBy.scss';
+import {fetchProductsAction, setCurrentSpaceAction, setPeopleAction, setProductsAction} from "../Redux/Actions";
+import {Product} from "../Products/Product";
+import {Space} from "../SpaceDashboard/Space";
+import {Person} from "../People/Person";
 
 interface ProductSortByProps {
     sortValueOption: string;
+    products: Product[];
+    setProducts(products: Product[], sortOption: string): void;
 }
 
 function ProductSortBy({
     sortValueOption,
+    products,
+    setProducts,
 }: ProductSortByProps): JSX.Element {
 
     const [originalSortOption, setOriginalSortOption] = useState<Option>();
@@ -54,7 +62,7 @@ function ProductSortBy({
                 inputId="sortby-dropdown"
                 options={sortByOptions}
                 value={originalSortOption}
-                // onChange={(value): void => setCurrentBoard(currentBoard, (value as Option).value)}
+                onChange={(value): void => setProducts(products, (value as Option).value)}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
         </React.Fragment>
     );
@@ -62,6 +70,11 @@ function ProductSortBy({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     sortValueOption: state.sortValueOption,
+    products: state.products,
 });
 
-export default connect(mapStateToProps)(ProductSortBy);
+const mapDispatchToProps = (dispatch: any) => ({
+    setProducts: (products: Array<Product>, sortOption: string) => dispatch(setProductsAction(products, sortOption)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductSortBy);
