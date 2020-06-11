@@ -18,9 +18,9 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 
 @RestController
 class AssignmentController(
@@ -34,8 +34,13 @@ class AssignmentController(
         return ResponseEntity.ok(assignmentsForTheGivenPersonId)
     }
 
+    @GetMapping("/api/person/{personId}/assignments/date/{date}")
+    fun getAssignmentsByPersonIdForDate(@PathVariable personId: Int, @PathVariable date: String): ResponseEntity<List<Assignment>> {
+        return ResponseEntity.ok(assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(date)))
+    }
+
     @GetMapping(path = ["/api/assignment/{spaceId}/{requestedDate}"])
-    fun getAssignmentsByDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<Set<Assignment>> {
+    fun getAssignmentsByDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
         val assignmentsByDate = assignmentService.getAssignmentsByDate(spaceId, requestedDate)
         logger.logInfoMessage("All assignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
         return ResponseEntity.ok(assignmentsByDate)
@@ -65,13 +70,4 @@ class AssignmentController(
         logger.logInfoMessage("Assignment with id: [${updatedAssignment.id}] updated.")
         return ResponseEntity.ok(updatedAssignment)
     }
-
-    @DeleteMapping(path = ["/api/assignment/{assignmentId}"])
-    @Throws(Exception::class)
-    fun deleteAssignment(@PathVariable assignmentId: Int): ResponseEntity<Unit> {
-        assignmentService.deleteAndUnassign(assignmentId)
-        logger.logInfoMessage("Assignment with id: [$assignmentId] deleted.")
-        return ResponseEntity(HttpStatus.NO_CONTENT)
-    }
-
 }

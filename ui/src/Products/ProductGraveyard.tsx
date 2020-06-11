@@ -21,6 +21,8 @@ import './ProductGraveyard.scss';
 import ArchivedProduct from './ArchivedProduct';
 import {Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
+import {connect} from "react-redux";
+import {GlobalStateProps} from "../Redux/Reducers";
 
 interface ProductGraveyardProps{
     products: Array<Product>;
@@ -50,4 +52,8 @@ function ProductGraveyard({products}: ProductGraveyardProps): JSX.Element {
     );
 }
 
-export default ProductGraveyard;
+const mapStateToProps = (state: GlobalStateProps) => ({
+    products: state.products,
+});
+
+export default connect (mapStateToProps) (ProductGraveyard);

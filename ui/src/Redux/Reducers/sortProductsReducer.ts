@@ -17,11 +17,11 @@
 
 import {AvailableActions} from '../Actions';
 
-const sortProductsReducer = (state: string | null = null, action: {type: AvailableActions; sortOptionValue?: string}): string | null => {
+const sortProductsReducer = (state: string | null = null, action: {type: AvailableActions; sortOption?: string}): string | null => {
 
-    if (action.type === AvailableActions.SET_CURRENT_BOARD && action.sortOptionValue) {
-        localStorage.setItem('sortBy', action.sortOptionValue);
-        return action.sortOptionValue;
+    if (action.type === AvailableActions.SET_PRODUCTS && action.sortOption) {
+        localStorage.setItem('sortBy', action.sortOption);
+        return action.sortOption;
     }
     return state;
 };

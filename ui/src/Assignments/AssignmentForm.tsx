@@ -39,11 +39,14 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import './AssignmentForm.scss';
 import {Option} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
+import {ProductPlaceholderPair} from './CreateAssignmentRequest';
+import {Assignment} from './Assignment';
 
 interface AssignmentFormProps {
     products: Array<Product>;
     initiallySelectedProduct: Product;
     people: Array<Person>;
+    viewingDate: Date;
 
     closeModal(): void;
 
@@ -56,6 +59,7 @@ function AssignmentForm({
     products,
     initiallySelectedProduct,
     people,
+    viewingDate,
     setIsUnassignedDrawerOpen,
     closeModal,
     setCurrentModal,
@@ -73,14 +77,63 @@ function AssignmentForm({
         }
     }
 
+    function getSelectedProductPairs(): ProductPlaceholderPair[] {
+        return selectedProducts.map((product) => {
+            return {
+                productId: product.id,
+                placeholder: placeholder,
+            } as ProductPlaceholderPair;
+        });
+
+    }
+
+    function getExistingProductPairsForPerson(): ProductPlaceholderPair[] {
+        const assignmentsForPerson: Assignment[] = [];
+
+        products.forEach((product) => {
+            product.assignments.forEach(assignmentForProduct => {
+                if (assignmentForProduct.person.id === selectedPerson.id ) {
+                    assignmentsForPerson.push(assignmentForProduct);
+                }
+            });
+        });
+
+        return assignmentsForPerson?.map(assignmentForPerson => {
+            return {
+                productId: assignmentForPerson.productId,
+                placeholder: assignmentForPerson.placeholder,
+            };
+        });
+    }
+
+    function getProductPairsForPerson(): ProductPlaceholderPair[] {
+        let allProductPairs: ProductPlaceholderPair [] = [];
+
+        const selectedProductPairs: ProductPlaceholderPair[] = getSelectedProductPairs();
+        const selectedProductIds: number[] = Array.from(selectedProductPairs.map(selectedProductPairs => {
+            return selectedProductPairs.productId;
+        }));
+
+        const existingProductPairs = getExistingProductPairsForPerson();
+        const existingProductPairsExcludingSelectedProductPairs = existingProductPairs.filter(existingProductPair => !selectedProductIds.includes(existingProductPair.productId));
+
+        allProductPairs.push(...selectedProductPairs);
+        allProductPairs.push(...existingProductPairsExcludingSelectedProductPairs);
+
+        return allProductPairs;
+    }
+
     async function handleSubmit(): Promise<void> {
         if (canClickSubmit()) {
             if (getProductFromProductListWithName('unassigned', selectedProducts)) {
                 setIsUnassignedDrawerOpen(true);
             }
-            const productIds: Array<number> = selectedProducts.map(product => product.id);
-            const placeholders: Array<boolean> = selectedProducts.map(() => placeholder);
-            await AssignmentClient.createAssignmentsUsingIds(selectedPerson.id, productIds, placeholders);
+            await AssignmentClient.createAssignmentForDate({
+                requestedDate: viewingDate,
+                person: selectedPerson,
+                products: getProductPairsForPerson(),
+            });
+
             closeModal();
         }
     }
@@ -212,8 +265,9 @@ function AssignmentForm({
     );
 }
 
-const mapStateToProps = ({people}: GlobalStateProps) => ({
-    people,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    people: state.people,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

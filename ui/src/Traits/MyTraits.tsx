@@ -244,10 +244,8 @@ function MyTraits({
     );
 }
 
-const mapStateToProps = ({
-    allGroupedTagFilterOptions,
-}: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

@@ -103,17 +103,6 @@ input[type="text"] {
   padding-left: 8px;
 }
 
-button.createButton,
-input[type="button"].createButton,
-input[type="submit"].createButton {
-  background-color: $prime-1;
-  color: $white;
-
-  font-size: 16px;
-  line-height: 18px;
-  white-space: nowrap;
-}
-
 .squareButton {
   padding: 10px 30px;
   border-radius: 6px;

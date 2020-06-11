@@ -17,7 +17,6 @@
 
 import RoleClient from '../Roles/RoleClient';
 import LocationClient from '../Locations/LocationClient';
-import BoardClient from '../Boards/BoardClient';
 import PeopleClient from '../People/PeopleClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from '../Products/ProductClient';
@@ -31,13 +30,14 @@ import {Person} from '../People/Person';
 import {mount, ReactWrapper} from 'enzyme';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
-import {Board} from '../Boards/Board';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {ProductTag} from '../ProductTag/ProductTag';
 import ColorClient from '../Roles/ColorClient';
-import {Color} from '../Roles/Role';
+import {Color, SpaceRole} from '../Roles/Role';
 import {SpaceLocation} from '../Locations/SpaceLocation';
 import {AxiosResponse} from 'axios';
+import SpaceClient from '../SpaceDashboard/SpaceClient';
+import {Space} from '../SpaceDashboard/Space';
 
 export function renderWithRedux(
     component: JSX.Element,
@@ -57,36 +57,57 @@ export function renderWithReduxEnzyme(
     return mount(<Provider store={testingStore}>{component}</Provider>);
 }
 
-const hank: Person = {
-    spaceId: 1,
-    id: 200,
-    name: 'Hank',
-    spaceRole: {name: 'Product Manager', id: 2, spaceId: 1, color: {id: 2, color: '#45'}},
-    notes: "Don't forget the WD-40!",
-    newPerson: false,
+export const mockDate = (expected: Date): () => void => {
+    const _Date = Date;
+
+    // If any Date or number is passed to the constructor
+    // use that instead of our mocked date
+    function MockDate(mockOverride?: Date | number): Date {
+        return new _Date(mockOverride || expected);
+    }
+
+    MockDate.UTC = _Date.UTC;
+    MockDate.parse = _Date.parse;
+    MockDate.now = (): number => expected.getTime();
+    // Give our mock Date has the same prototype as Date
+    // Some libraries rely on this to identify Date objects
+    MockDate.prototype = _Date.prototype;
+
+    // Our mock is not a full implementation of Date
+    // Types will not match but it's good enough for our tests
+    global.Date = MockDate as any;
+
+    // Callback function to remove the Date mock
+    return (): void => {
+        global.Date = _Date;
+    };
 };
 
-const unassignedperson: Person = {
-    spaceId: 1,
-    id: 101,
-    name: 'Unassigned Pearson 7',
-    spaceRole: {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}},
-    newPerson: false,
-};
+export function mockCreateRange(): () => void {
+    const _createRange = window.document.createRange;
+
+    window.document.createRange = function createRange(): Range {
+        return {
+            setEnd: () => null,
+            setStart: () => null,
+            getBoundingClientRect: (): DOMRect => {
+                return {right: 0} as DOMRect;
+            },
+            commonAncestorContainer: document.createElement('div'),
+        } as unknown as Range;
+    };
+
+    return (): void => {
+        window.document.createRange = _createRange;
+    };
+}
 
 class TestUtils {
     static mockClientCalls(): void {
         const emptyAxiosResponse = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-        const emptyAsyncFunction = jest.fn(() => Promise.resolve());
 
         PeopleClient.createPersonForSpace = jest.fn(x => Promise.resolve({
-            data: {
-                id: x.id,
-                name: x.name,
-                spaceRole: x.spaceRole,
-                notes: x.notes,
-                newPerson: x.newPerson,
-            },
+            data:  x,
         } as AxiosResponse));
         PeopleClient.getAllPeopleInSpace = jest.fn(() => Promise.resolve({
             data: TestUtils.people,
@@ -94,17 +115,18 @@ class TestUtils {
         PeopleClient.updatePerson = emptyAxiosResponse;
         PeopleClient.removePerson = emptyAxiosResponse;
 
-        AssignmentClient.createAssignmentsUsingIds = jest.fn(() => Promise.resolve([]));
-        AssignmentClient.createAssignmentUsingIds = emptyAxiosResponse;
-        AssignmentClient.deleteAssignment = emptyAxiosResponse;
-        AssignmentClient.updateAssignmentsUsingIds = emptyAsyncFunction;
-        AssignmentClient.updateAssignment = emptyAxiosResponse;
-        AssignmentClient.getAssignmentsUsingPersonId = jest.fn(() => Promise.resolve({
-            data: [{
-                productId: TestUtils.productWithAssignments.id,
-            }, {
-                productId: TestUtils.unassignedProduct.id,
-            }],
+        SpaceClient.getSpaceFromName = jest.fn(() => Promise.resolve({
+            data: TestUtils.space,
+        } as AxiosResponse));
+
+        AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({
+            data: [TestUtils.assignmentForPerson1],
+        } as AxiosResponse));
+        AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn(() => Promise.resolve({
+            data: [TestUtils.assignmentForPerson1],
+        } as AxiosResponse));
+        AssignmentClient.getAssignmentsUsingDate = jest.fn(() => Promise.resolve({
+            data: [TestUtils.assignments],
         } as AxiosResponse));
 
         RoleClient.get = jest.fn(() => Promise.resolve({
@@ -143,17 +165,12 @@ class TestUtils {
         } as AxiosResponse));
         LocationClient.delete = emptyAxiosResponse;
 
-        BoardClient.createBoard = emptyAxiosResponse;
-        BoardClient.createEmptyBoard = emptyAxiosResponse;
-        BoardClient.updateBoard = emptyAxiosResponse;
-        BoardClient.deleteBoard = emptyAxiosResponse;
-        BoardClient.getAllBoards = jest.fn(() => Promise.resolve({
-            data: TestUtils.boards,
-        } as AxiosResponse));
-
         ProductClient.createProduct = emptyAxiosResponse;
         ProductClient.deleteProduct = emptyAxiosResponse;
         ProductClient.editProduct = emptyAxiosResponse;
+        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
+            data: TestUtils.products,
+        } as AxiosResponse));
 
         ProductTagClient.get = jest.fn(() => Promise.resolve({
             data: TestUtils.productTags,
@@ -162,7 +179,7 @@ class TestUtils {
             data: {id: 9, name: 'Fin Tech'},
         } as AxiosResponse));
         ProductTagClient.edit = jest.fn(() => Promise.resolve({
-            data: {id:6, name: 'Finance', spaceId:2},
+            data: {id: 6, name: 'Finance', spaceId: 2},
         } as AxiosResponse));
         ProductTagClient.delete = emptyAxiosResponse;
     }
@@ -173,20 +190,7 @@ class TestUtils {
 
     static dummyCallback: () => void = () => null;
 
-    static person1: Person = {
-        spaceId: 1,
-        id: 100,
-        name: 'Person 1',
-        spaceRole: {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}},
-        notes: 'I love the theater',
-        newPerson: false,
-    };
-
-    static people: Array<Person> = [
-        TestUtils.person1,
-        hank,
-        unassignedperson,
-    ];
+    static originDateString = '2019-01-01';
 
     static annarbor = {id: 1, name: 'Ann Arbor', spaceId: 1};
     static detroit = {id: 2, name: 'Detroit', spaceId: 1};
@@ -198,6 +202,18 @@ class TestUtils {
         TestUtils.detroit,
         TestUtils.dearborn,
         TestUtils.southfield,
+    ];
+
+    static productTag1: ProductTag = {id: 5, name: 'AV', spaceId: 1};
+    static productTag2: ProductTag = {id: 6, name: 'FordX', spaceId: 1};
+    static productTag3: ProductTag = {id: 7, name: 'EV', spaceId: 1};
+    static productTag4: ProductTag = {id: 8, name: 'Mache', spaceId: 1};
+
+    static productTags: Array<ProductTag> = [
+        TestUtils.productTag1,
+        TestUtils.productTag2,
+        TestUtils.productTag3,
+        TestUtils.productTag4,
     ];
 
     static color1: Color = {color: '1', id: 1};
@@ -212,81 +228,101 @@ class TestUtils {
         TestUtils.whiteColor,
     ];
 
-    static productTag1: ProductTag = {
-        id: 5,
-        name: 'AV',
+    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}};
+    static productManager = {name: 'Product Manager', id: 2, spaceId: 1, color: {id: 2, color: '#45'}};
+    static productDesigner = {name: 'Product Designer', id: 3, spaceId: 1, color: {id: 3, color: '#46'}};
+
+    static roles: SpaceRole[] = [
+        TestUtils.softwareEngineer,
+        TestUtils.productManager,
+        TestUtils.productDesigner,
+    ];
+
+    static person1: Person = {
         spaceId: 1,
+        id: 100,
+        name: 'Person 1',
+        spaceRole: TestUtils.softwareEngineer,
+        notes: 'I love the theater',
+        newPerson: false,
     };
 
-    static productTag2: ProductTag = {
-        id: 6,
-        name: 'FordX',
+    static hank: Person = {
         spaceId: 1,
+        id: 200,
+        name: 'Hank',
+        spaceRole: TestUtils.productManager,
+        notes: "Don't forget the WD-40!",
+        newPerson: false,
     };
 
-    static productTag3: ProductTag = {
-        id: 7,
-        name: 'EV',
+    static unassignedPerson: Person = {
         spaceId: 1,
+        id: 101,
+        name: 'Unassigned Person 7',
+        spaceRole: TestUtils.softwareEngineer,
+        newPerson: false,
     };
 
-    static productTag4: ProductTag = {
-        id: 8,
-        name: 'Mache',
-        spaceId: 1,
-    };
+    static people: Array<Person> = [
+        TestUtils.person1,
+        TestUtils.hank,
+        TestUtils.unassignedPerson,
+    ];
 
     static assignmentForPerson1: Assignment = {
         id: 1,
         productId: 1,
         placeholder: false,
         person: TestUtils.person1,
-        joinedProductDate: new Date(2018),
+        spaceId: 1,
+        effectiveDate: new Date(2018, 0, 1),
     };
-
-    static productTags: Array<ProductTag> = [
-        TestUtils.productTag1,
-        TestUtils.productTag2,
-        TestUtils.productTag3,
-        TestUtils.productTag4,
-    ];
 
     static assignmentForHank: Assignment = {
         id: 3,
         productId: 102,
         placeholder: true,
-        person: hank,
-        joinedProductDate: new Date(2019),
+        person: TestUtils.hank,
+        spaceId: 1,
+        effectiveDate: new Date(2019, 0, 1),
     };
 
     static assignmentForUnassigned: Assignment = {
         id: 11,
         productId: 999,
-        person: TestUtils.person1,
+        person: TestUtils.unassignedPerson,
         placeholder: false,
-        joinedProductDate: new Date(2017),
+        spaceId: 1,
+        effectiveDate: new Date(2017, 0, 1),
     };
+
+    static assignments: Array<Assignment> = [
+        TestUtils.assignmentForPerson1,
+        TestUtils.assignmentForHank,
+        TestUtils.assignmentForUnassigned,
+    ];
 
     static unassignedProduct: Product = {
         id: 999,
         name: 'unassigned',
+        spaceId: 1,
         assignments: [TestUtils.assignmentForUnassigned],
         startDate: '',
         endDate: '',
         archived: false,
-        boardId: 1,
         productTags: [],
     };
 
     static productWithAssignments: Product = {
         id: 1,
         name: 'Product 1',
+        spaceId: 1,
         startDate: '1/1/11',
         endDate: '2/2/22',
         spaceLocation: TestUtils.southfield,
         assignments: [TestUtils.assignmentForPerson1],
         archived: false,
-        boardId: 1,
         productTags: [TestUtils.productTag2],
         notes: 'note',
     };
@@ -294,62 +330,72 @@ class TestUtils {
     static productWithoutAssignments: Product = {
         id: 3,
         name: 'Product 3',
+        spaceId: 1,
         startDate: '1/1/11',
         endDate: '2/2/22',
         spaceLocation: TestUtils.dearborn,
         assignments: [],
         archived: false,
-        boardId: 1,
         productTags: [TestUtils.productTag1],
+    };
+
+    static productForHank: Product = {
+        id: 102,
+        name: 'Hanky Product',
+        spaceId: 1,
+        startDate: '1/1/11',
+        endDate: '2/2/22',
+        spaceLocation: TestUtils.annarbor,
+        assignments: [TestUtils.assignmentForHank],
+        archived: false,
+        productTags: [],
     };
 
     static archivedProduct: Product = {
         id: 4,
         name: 'I am archived',
+        spaceId: 1,
         startDate: '',
         endDate: '',
         spaceLocation: TestUtils.detroit,
         assignments: [],
         archived: true,
-        boardId: 1,
         productTags: [],
     };
 
     static products: Array<Product> = [
         TestUtils.unassignedProduct,
         TestUtils.productWithAssignments,
+        TestUtils.productForHank,
         TestUtils.productWithoutAssignments,
         TestUtils.archivedProduct,
+    ];
+
+    static notEmptyProducts: Array<Product> = [
+        TestUtils.productWithAssignments,
     ];
 
     static productsForBoard2: Array<Product> = [
         {
             id: 2,
             name: 'Product 2',
+            spaceId: 1,
             startDate: '',
             endDate: '',
             spaceLocation: TestUtils.detroit,
             assignments: [],
             archived: false,
-            boardId: 2,
             productTags: [],
         },
     ];
 
-    static boards: Array<Board> = [
-        {
-            id: 1,
-            name: 'board one',
-            products: TestUtils.products,
-            spaceId: 1,
-        },
-        {
-            id: 2,
-            name: 'board two',
-            products: TestUtils.productsForBoard2,
-            spaceId: 1,
-        },
-    ];
+    static space: Space = {
+        id: 1,
+        name: 'testSpace',
+        roles: TestUtils.roles,
+        locations: TestUtils.locations,
+        lastModifiedDate: TestUtils.originDateString,
+    }
 }
 
 export default TestUtils;

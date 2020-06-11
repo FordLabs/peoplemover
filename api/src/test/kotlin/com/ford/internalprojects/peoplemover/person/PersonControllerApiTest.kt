@@ -20,8 +20,6 @@ package com.ford.internalprojects.peoplemover.person
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
@@ -67,9 +65,6 @@ class PersonControllerApiTest {
     private lateinit var productRepository: ProductRepository
 
     @Autowired
-    private lateinit var boardRepository: BoardRepository
-
-    @Autowired
     private lateinit var spaceLocationRepository: SpaceLocationRepository
 
     @Autowired
@@ -88,7 +83,6 @@ class PersonControllerApiTest {
         spaceRolesRepository.deleteAll()
         personRepository.deleteAll()
         productRepository.deleteAll()
-        boardRepository.deleteAll()
         spaceLocationRepository.deleteAll()
         spaceRepository.deleteAll()
     }
@@ -205,12 +199,11 @@ class PersonControllerApiTest {
 
     @Test
     fun `DELETE should remove person and associated assignments`() {
-        val board: Board = boardRepository.save(Board(name = "board", spaceId = space.id!!))
         val personToDelete: Person = personRepository.save(Person(name = "John", spaceId = space.id!!))
         val personToRemain: Person = personRepository.save(Person(name = "Jack", spaceId = space.id!!))
         assertThat(personRepository.count()).isEqualTo(2)
 
-        val product: Product = productRepository.save(Product(name = "product", boardId = board.id!!, spaceId = space.id!!))
+        val product: Product = productRepository.save(Product(name = "product", spaceId = space.id!!))
         val assignmentToDelete: Assignment = assignmentRepository.save(Assignment(person = personToDelete, productId = product.id!!, spaceId = space.id!!))
         val assignmentToRemain: Assignment = assignmentRepository.save(Assignment(person = personToRemain, productId = product.id!!, spaceId = space.id!!))
         assertThat(assignmentRepository.count()).isEqualTo(2)
@@ -228,7 +221,6 @@ class PersonControllerApiTest {
 
     @Test
     fun `GET total should return total number of persons`() {
-        val board1: Board = boardRepository.save(Board(name = "board1", spaceId = space.id!!))
         val person1: Person = personRepository.save(Person(name = "John", spaceId = space.id!!))
         val person2: Person = personRepository.save(Person(name = "Jack", spaceId = space.id!!))
         val person3: Person = personRepository.save(Person(name = "Jill", spaceId = space.id!!))

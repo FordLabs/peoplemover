@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import {AvailableActions} from '../Actions';
-import {Board} from '../../Boards/Board';
+import {Person} from '../People/Person';
 
-const boardsReducer = (state: Array<Board> = [], action: {type: AvailableActions; boards: Array<Board>} ): Array<Board> => {
-    if (action.type === AvailableActions.SET_BOARDS) {
-        return [...action.boards];
-    } else {
-        return state;
-    }
-};
+export interface CreateAssignmentsRequest {
+    requestedDate: Date;
+    person: Person;
+    products: Array<ProductPlaceholderPair>;
+}
 
-export default boardsReducer;
+export interface ProductPlaceholderPair {
+    productId: number;
+    placeholder: boolean;
+}

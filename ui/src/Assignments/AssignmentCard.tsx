@@ -20,9 +20,8 @@ import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
-import {AvailableModals, fetchBoardsAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';
-import {AssignmentDTO} from '../Domain/AssignmentDTO';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 
@@ -30,8 +29,10 @@ import '../Application/Styleguide/Styleguide.scss';
 import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 
 interface AssignmentCardProps {
+    viewingDate: Date;
     assignment: Assignment;
     container?: string;
     isUnassignedProduct: boolean;
@@ -40,16 +41,17 @@ interface AssignmentCardProps {
 
     setCurrentModal?(modalState: CurrentModalState): void;
 
-    fetchBoards?(): void;
+    fetchProducts?(): void;
 }
 
 function AssignmentCard({
+    viewingDate,
     assignment = {id: 0} as Assignment,
     container,
     isUnassignedProduct,
     startDraggingAssignment,
     setCurrentModal,
-    fetchBoards,
+    fetchProducts,
 }: AssignmentCardProps): JSX.Element {
 
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
@@ -85,20 +87,46 @@ function AssignmentCard({
         setCurrentModal!!(newModalState);
     }
 
-    function markAsPlaceholderAndCloseEditMenu(): void {
-        const assignmentDTO: AssignmentDTO = {
-            id: assignment.id,
-            personId: assignment.person.id,
-            productId: assignment.productId,
-            placeholder: !assignment.placeholder,
+    async function markAsPlaceholderAndCloseEditMenu(): Promise<void> {
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
+
+        const assignmentIndex: number = assignments.findIndex(fetchedAssignment => (fetchedAssignment.productId === assignment.productId));
+        assignments[assignmentIndex].placeholder = !assignment.placeholder;
+
+        const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments.map(fetchedAssignment => ({
+            productId: fetchedAssignment.productId,
+            placeholder: fetchedAssignment.placeholder,
+        } as ProductPlaceholderPair));
+
+        const assignmentToUpdate: CreateAssignmentsRequest = {
+            requestedDate: viewingDate,
+            person: assignment.person,
+            products: productPlaceholderPairs,
         };
+
         toggleEditMenu();
-        AssignmentClient.updateAssignment(assignmentDTO).then(fetchBoards);
+
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
     }
 
-    function cancelAssignmentAndCloseEditMenu(): void {
+    async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
+
+        const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments
+            .filter(fetchedAssignment => fetchedAssignment.id !== assignment.id)
+            .map(fetchedAssignment => ({
+                productId: fetchedAssignment.productId,
+                placeholder: fetchedAssignment.placeholder,
+            } as ProductPlaceholderPair));
+
+        const assignmentToUpdate: CreateAssignmentsRequest = {
+            requestedDate: viewingDate,
+            person: assignment.person,
+            products: productPlaceholderPairs,
+        };
+
         toggleEditMenu();
-        AssignmentClient.deleteAssignment(assignment).then(fetchBoards);
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -168,13 +196,14 @@ function AssignmentCard({
     );
 }
 
-const mapStateToProps = ({whichEditMenuOpen}: GlobalStateProps) => ({
-    whichEditMenuOpen,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    whichEditMenuOpen: state.whichEditMenuOpen,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchBoards: () => dispatch(fetchBoardsAction()),
+    fetchProducts: () => dispatch(fetchProductsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCard);

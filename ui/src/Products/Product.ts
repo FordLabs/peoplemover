@@ -22,6 +22,7 @@ import {SpaceLocation} from '../Locations/SpaceLocation';
 export interface Product {
     id: number;
     name: string;
+    spaceId: number;
     startDate?: string;
     endDate?: string;
     dorf?: string;
@@ -30,20 +31,19 @@ export interface Product {
     archived: boolean;
     notes?: string;
     assignments: Array<Assignment>;
-    boardId: number;
 }
 
-export function emptyProduct(boardId?: number): Product {
+export function emptyProduct(spaceId?: number): Product {
     return {
         id: -1,
         name: '',
+        spaceId: spaceId ? spaceId : -1,
         startDate: '',
         endDate: '',
         dorf: '',
         productTags: [],
         archived: false,
         notes: '',
-        boardId: boardId ? boardId : -1,
         assignments: [],
     };
 }

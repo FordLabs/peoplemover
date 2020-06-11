@@ -20,9 +20,9 @@ import {act, fireEvent, getByText, RenderResult, wait} from '@testing-library/re
 import React from 'react';
 import AssignmentForm from '../Assignments/AssignmentForm';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import rootReducer from '../Redux/Reducers';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from './TestUtils';
-import {createStore} from 'redux';
+import {createStore, PreloadedState} from 'redux';
 import {setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
 import selectEvent from 'react-select-event';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
@@ -35,6 +35,10 @@ describe('AssignmentForm', () => {
     });
 
     describe('in create mode', () => {
+        const initialState: PreloadedState<GlobalStateProps> = {
+            viewingDate: new Date(2020, 5,5),
+        } as GlobalStateProps;
+
         async function openAssignPersonForm(app: RenderResult): Promise<void> {
             await TestUtils.waitForHomePageToLoad(app);
             fireEvent.click(app.getByTestId('addPersonToProductIcon-1'));
@@ -57,7 +61,7 @@ describe('AssignmentForm', () => {
         });
 
         it('submits an assignment with the given person and product', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
             await openAssignPersonForm(app);
 
             const labelElement = await app.findByLabelText('Name');
@@ -66,13 +70,19 @@ describe('AssignmentForm', () => {
 
             fireEvent.click(app.getByText('Assign'));
 
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentsUsingIds');
-            expect(spy).toBeCalledTimes(1);
-            expect(spy.mock.calls[0]).toEqual([100, [1], [false]]);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
+                requestedDate: initialState.viewingDate,
+                person: TestUtils.person1,
+                products: [{
+                    productId: TestUtils.assignmentForPerson1.productId,
+                    placeholder: TestUtils.assignmentForPerson1.placeholder,
+                }],
+            });
         });
 
         it('submits an assignment when the enter key is pressed', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
             await openAssignPersonForm(app);
 
             const labelElement = await app.findByLabelText('Name');
@@ -81,13 +91,19 @@ describe('AssignmentForm', () => {
 
             fireEvent.keyDown(app.getByText('Assign'), {key: 'Enter', code: 13});
 
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentsUsingIds');
-            expect(spy).toBeCalledTimes(1);
-            expect(spy.mock.calls[0]).toEqual([100, [1], [false]]);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
+                requestedDate: initialState.viewingDate,
+                person: TestUtils.person1,
+                products: [{
+                    productId: TestUtils.assignmentForPerson1.productId,
+                    placeholder: TestUtils.assignmentForPerson1.placeholder,
+                }],
+            });
         });
 
         it('submits an assignment with the given placeholder status', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
             await openAssignPersonForm(app);
 
             const labelElement = await app.findByLabelText('Name');
@@ -97,9 +113,15 @@ describe('AssignmentForm', () => {
             fireEvent.click(app.getByLabelText('Mark as Placeholder'));
             fireEvent.click(app.getByText('Assign'));
 
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentsUsingIds');
-            expect(spy).toBeCalledTimes(1);
-            expect(spy.mock.calls[0]).toEqual([100, [1], [true]]);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
+                requestedDate: initialState.viewingDate,
+                person: TestUtils.person1,
+                products: [{
+                    productId: TestUtils.assignmentForPerson1.productId,
+                    placeholder: true,
+                }],
+            });
         });
 
         it('does not assign if person does not exist', async () => {
@@ -108,8 +130,7 @@ describe('AssignmentForm', () => {
             await prefillReactSelectField(app, 'Name', 'John');
             fireEvent.click(app.getByText('Assign'));
 
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentUsingIds');
-            expect(spy).toBeCalledTimes(0);
+            expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
         });
 
         it('does not assign if person field is empty', async () => {
@@ -120,8 +141,7 @@ describe('AssignmentForm', () => {
             const assignButton = app.getByText('Assign');
             expect(assignButton.hasAttribute('disabled')).toBeTruthy();
 
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentUsingIds');
-            expect(spy).toBeCalledTimes(0);
+            expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
         });
 
         it('is not dismissed if Assign is clicked with invalid person name', async () => {

@@ -8,6 +8,7 @@ node_modules/
 .env.local
 .env.development.local
 .env.test.local
+.env.stage.local
 .env.production.local
 
 ### STS ###
@@ -26,7 +27,7 @@ node_modules/
 *.ipr
 
 # env
-
+ui/.env.local
 application-local.properties
 
 ### VSCode ###

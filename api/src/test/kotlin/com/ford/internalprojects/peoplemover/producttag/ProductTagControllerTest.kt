@@ -18,8 +18,6 @@
 package com.ford.internalprojects.peoplemover.producttag
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
@@ -53,9 +51,6 @@ class ProductTagControllerTest {
     private lateinit var productRepository: ProductRepository
 
     @Autowired
-    private lateinit var boardRepository: BoardRepository
-
-    @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
@@ -72,7 +67,6 @@ class ProductTagControllerTest {
     fun tearDown() {
         productTagRepository.deleteAll()
         productRepository.deleteAll()
-        boardRepository.deleteAll()
         spaceRepository.deleteAll()
     }
 
@@ -143,10 +137,8 @@ class ProductTagControllerTest {
         val productTag: ProductTag = productTagRepository.save(
                 ProductTag(spaceId =  space.id!!, name =  "Fin Tech")
         )
-        val board: Board = boardRepository.save(Board("board", space.id!!))
         val product: Product = productRepository.save(Product(
                 name = "P1",
-                boardId = board.id!!,
                 productTags = hashSetOf(productTag),
                 spaceId = space.id!!
         ))

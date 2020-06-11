@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import {Space} from "./Space";
+import {Space} from './Space';
 import * as React from 'react';
 import './SpaceDashboardTile.scss';
-import moment, {now} from "moment";
+import moment, {now} from 'moment';
 
 interface SpaceDashboardTileProps {
     space: Space;
@@ -39,5 +39,4 @@ export default function SpaceDashboardTile({space, onClick}: SpaceDashboardTileP
         <div className="space-name">{space.name}</div>
         <div className="last-modified-text">Last modified {timestamp}</div>
     </div>;
-
 }

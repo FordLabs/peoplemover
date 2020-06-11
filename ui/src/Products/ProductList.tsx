@@ -22,13 +22,14 @@ import {connect} from 'react-redux';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {Board} from '../Boards/Board';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {FilterOption} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
+import {Space} from '../SpaceDashboard/Space';
 
 interface ProductListProps {
-    currentBoard: Board;
+    currentSpace: Space;
+    products: Array<Product>;
     setCurrentModal(modalState: CurrentModalState): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 }
@@ -39,7 +40,8 @@ export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOpt
 }
 
 function ProductList({
-    currentBoard,
+    currentSpace,
+    products,
     setCurrentModal,
     allGroupedTagFilterOptions,
 }: ProductListProps ): JSX.Element {
@@ -79,7 +81,7 @@ function ProductList({
 
     return (
         <div className="productListContainer" data-testid="productListContainer">
-            {currentBoard.products && currentBoard.products.map((product: Product) => {
+            {products && products.map((product: Product) => {
                 const productFiltersLoaded = allGroupedTagFilterOptions.length > 0;
                 if (productFiltersLoaded
                     && isActiveProduct(product)
@@ -102,12 +104,10 @@ function ProductList({
     );
 }
 
-const mapStateToProps = ({
-    currentBoard,
-    allGroupedTagFilterOptions,
-}: GlobalStateProps) => ({
-    currentBoard,
-    allGroupedTagFilterOptions,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
+    products: state.products,
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

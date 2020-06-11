@@ -19,10 +19,11 @@ import {fireEvent, wait} from '@testing-library/react';
 import React from 'react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import BoardClient from '../Boards/BoardClient';
 import {Product} from '../Products/Product';
-import {Board} from '../Boards/Board';
 import {Assignment} from '../Assignments/Assignment';
+import ProductClient from '../Products/ProductClient';
+import {PreloadedState} from 'redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('Unassigned Products', () => {
     beforeEach(() => {
@@ -65,16 +66,12 @@ describe('Unassigned Products', () => {
             const emptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
                 assignments: [],
-                boardId: 2,
-            };
-            const testBoard: Board = {
-                ...TestUtils.boards[1],
-                products: [emptyUnassignedProduct],
+                spaceId: 2,
             };
 
-            (BoardClient.getAllBoards as Function) = jest.fn(() => Promise.resolve(
+            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve(
                 {
-                    data: [testBoard],
+                    data: [emptyUnassignedProduct],
                 }
             ));
 
@@ -91,7 +88,7 @@ describe('Unassigned Products', () => {
             await TestUtils.waitForHomePageToLoad(app);
 
             expect(app.queryByTestId('unassignedPeopleContainer')).not.toBeInTheDocument();
-            fireEvent.click(app.getByText('Create Person'));
+            fireEvent.click(app.getByText('Add Person'));
             await TestUtils.waitForHomePageToLoad(app);
 
             fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Person Name'}});
@@ -108,7 +105,7 @@ describe('Unassigned Products', () => {
             const countBadge = await app.findByTestId('countBadge');
             expect(countBadge.innerHTML).toEqual('1');
 
-            const createPersonButton = await app.findByText('Create Person');
+            const createPersonButton = await app.findByText('Add Person');
             fireEvent.click(createPersonButton);
 
             const nameField = await app.findByLabelText('Name');
@@ -121,16 +118,12 @@ describe('Unassigned Products', () => {
             const definitelyNotEmptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
                 assignments: [newUnassignment, TestUtils.assignmentForUnassigned],
-                boardId: 2,
-            };
-            const testBoard: Board = {
-                ...TestUtils.boards[1],
-                products: [definitelyNotEmptyUnassignedProduct],
+                spaceId: 2,
             };
 
-            (BoardClient.getAllBoards as Function) = jest.fn(() => Promise.resolve(
+            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve(
                 {
-                    data: [testBoard],
+                    data: [definitelyNotEmptyUnassignedProduct],
                 }
             ));
 
@@ -144,10 +137,10 @@ describe('Unassigned Products', () => {
     });
 
     describe('edit menus', () => {
-        it('should open edit person dialog when clicking on elipsis', async () => {
-            const component = <PeopleMover/>;
-            const initialState = { people: TestUtils.people};
-            const app = renderWithRedux(component, undefined, initialState);
+        const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people} as GlobalStateProps;
+
+        it('should open edit person dialog when clicking on ellipsis', async () => {
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawer = drawerCarets[0];
@@ -161,9 +154,7 @@ describe('Unassigned Products', () => {
         });
 
         it('should close unassigned edit menu when opening an edit menu in product list', async () => {
-            const component = <PeopleMover/>;
-            const initialState = { people: TestUtils.people};
-            const app = renderWithRedux(component, undefined, initialState);
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawer = drawerCarets[0];

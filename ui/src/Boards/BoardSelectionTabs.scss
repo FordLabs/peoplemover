@@ -20,6 +20,8 @@
 .boardSelectionContainer {
     display: flex;
     justify-content: space-between;
+    background-color: $gray-5;
+    max-height: 40px;
     z-index: 1;
     position: sticky;
     top: 68px;
@@ -30,60 +32,18 @@
     min-height: 40px;
 }
 
-.tabContainer {
-    display: flex;
-    align-items: center;
-    overflow-x: auto;
-}
-
-.tabContainer .tab {
-    color: $gray-1;
-    min-width: 150px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    height: 100%;
-    border-right: 2px solid white;
-}
-
-.tabContainer .icon {
-    margin: 0 12px 0 0;
-    padding: 3px;
-    height: 16px;
-}
-
-.tabContainer button {
-    background-color: transparent;
-    margin: 12px 10px 10px 10px;
-
-    color: $gray-1;
-    font-weight: bold;
-
-    font-size: 16px;
-    line-height: 18px;
-    text-align: left;
-}
-
-.tabContainer .selected {
-    color: $white;
-}
-
 .boardSelectionContainer .spaceFiller {
     background-color: $gray-5;
     display: flex;
     flex-grow: 10;
 }
 
-.tabContainer div.selected {
-    background-color: $prime-1;
-}
-
 button.selectionTabButton {
     color: $prime-1;
     padding-right: 20px;
     font-weight: bold;
-    min-width: 140px;
+    font-size: 14px;
+    line-height: 16px;
 }
 
 .addBoardIcon, .myRolesIcon {
@@ -95,3 +55,24 @@ button.selectionTabButton {
     margin-right: 5px;
     color: $purple-title;
 }
+
+button.createButton,
+input[type="button"].createButton,
+input[type="submit"].createButton {
+    background-color: $prime-1;
+    color: $white;
+
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 18px;
+    white-space: nowrap;
+
+    margin: 5px 11px;
+    padding: 0 30px;
+
+    i {
+        padding-right: 8px;
+    }
+}
+

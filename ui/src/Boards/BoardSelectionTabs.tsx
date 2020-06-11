@@ -17,100 +17,47 @@
 
 import React from 'react';
 import './BoardSelectionTabs.scss';
-import {AvailableModals, setCurrentBoardAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
-import {Board} from './Board';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
+import 'react-datepicker/dist/react-datepicker.css';
+import Calendar from '../Calendar/Calendar';
 
 interface BoardSelectionTabsProps {
-    currentBoard: Board;
-    boards: Array<Board>;
-
-    changeCurrentBoard(board: Board, sortOptionValue: string): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function BoardSelectionTabs({
-    currentBoard,
-    boards,
-    changeCurrentBoard,
     setCurrentModal,
 }: BoardSelectionTabsProps): JSX.Element {
 
-    function tabSelectedStyles(currentBoard: Board, boardId: number): string {
-        if (currentBoard && currentBoard.id === boardId) {
-            return 'selected';
-        }
-        return '';
-    }
-
     return (
         <div className="boardSelectionContainer">
-            {boards.length > 0 && (
-                <div className="tabContainer">
-                    {boards.map((board: Board, index: number) => {
-                        const baseClassName = tabSelectedStyles(currentBoard, board.id);
-                        return (
-                            <React.Fragment key={index}>
-                                <div className={`${baseClassName} tab`}
-                                    onClick={() => changeCurrentBoard(board, localStorage.getItem('sortBy')!)}
-                                    key={board.id}>
-
-                                    <button
-                                        className={baseClassName}
-                                        key={board.id}
-                                    >
-                                        {board.name}
-                                    </button>
-
-                                    <div
-                                        className={`${baseClassName} fas fa-ellipsis-v icon`}
-                                        onClick={() => setCurrentModal({modal: AvailableModals.EDIT_BOARD, item: board})}
-                                        data-testid={'openEditBoardIcon-' + board.id}/>
-                                </div>
-                            </React.Fragment>
-                        );
-                    })}
-                </div>
-            )}
+            <Calendar/>
             <div className="spaceFiller"/>
             <button className="selectionTabButton tab"
-                onClick={() => setCurrentModal({modal: AvailableModals.MY_TAGS})}
+                onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
                 data-testid="myTagsButton">
                 <div className="fas fa-tags myTagsIcon" data-testid="myTagsIcon"/>
                 My Tags
             </button>
             <button className="selectionTabButton tab"
-                onClick={() => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
+                onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
                 <div className="fas fa-id-badge myRolesIcon" data-testid="myRolesIcon"/>
                 My Roles
             </button>
-            <button className="selectionTabButton tab"
-                onClick={() => setCurrentModal({modal: AvailableModals.CREATE_BOARD})}
-                data-testid="createBoardButton">
-                <div className="fa fa-plus addBoardIcon"/>
-                New Board
+            <button type="button" className="squareButton createButton"
+                onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
+                <i className="fa fa-plus fa-sm"/>
+                Add Person
             </button>
         </div>
     );
 }
 
-const mapStateToProps = ({currentBoard, boards}: GlobalStateProps ) => ({
-    currentBoard,
-    boards,
-});
-
-
-
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    changeCurrentBoard: (board: Board, sortOptionValue: string) => dispatch(setCurrentBoardAction(board, sortOptionValue)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(BoardSelectionTabs);
+export default connect(null, mapDispatchToProps)(BoardSelectionTabs);

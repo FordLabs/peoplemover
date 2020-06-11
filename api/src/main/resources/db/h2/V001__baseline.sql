@@ -11,16 +11,6 @@ create table color
     color varchar(255) unique
 );
 
-create table board
-(
-    id       int          not null primary key,
-    name     varchar(255) not null,
-    space_id int,
-
-    FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
-    constraint UQ_Board unique(space_id, name)
-);
-
 create table space_locations
 (
     id       int identity primary key,
@@ -35,7 +25,6 @@ create table product
 (
     id                int not null primary key,
     archived          bit not null,
-    board_id          int,
     dorf              varchar(255),
     end_date          date,
     name              varchar(255),
@@ -44,10 +33,8 @@ create table product
     space_location_id int,
     space_id          int,
 
-    FOREIGN KEY (board_id) REFERENCES board (id) on delete cascade,
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
     FOREIGN KEY (space_location_id) REFERENCES space_locations (id) ON DELETE SET NULL,
-    constraint UQ_Product unique (board_id, name)
 );
 
 create table space_roles

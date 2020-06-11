@@ -163,14 +163,13 @@ function ProductFilter({
     );
 }
 
-const mapStateToProps = ({
-    allGroupedTagFilterOptions,
-}: GlobalStateProps) => ({
-    allGroupedTagFilterOptions,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
+    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
+        dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductFilter);
