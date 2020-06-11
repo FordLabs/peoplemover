@@ -40,11 +40,13 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Trait} from '../Traits/Trait';
 import {StylesConfig} from 'react-select';
 import {Dispatch} from 'redux';
+import moment from "moment";
 
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
     spaceId: number;
+    viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     closeModal(): void;
@@ -54,6 +56,7 @@ function ProductForm({
     editing,
     product,
     spaceId,
+    viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     closeModal,
@@ -105,7 +108,7 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return emptyProduct(spaceId);
+            return {...emptyProduct(spaceId), startDate: viewingDate};
         }
         return product;
     }
@@ -353,7 +356,7 @@ function ProductForm({
                         type="date"
                         name="start"
                         id="start"
-                        value={currentProduct.startDate ? currentProduct.startDate : ''}
+                        value={currentProduct.startDate ? currentProduct.startDate : viewingDate}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('startDate', e.target.value)}/>
                 </div>
                 <div className="formItem">
@@ -425,6 +428,7 @@ function ProductForm({
     );
 }
 const mapStateToProps = (state: GlobalStateProps) => ({
+    viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

@@ -375,7 +375,6 @@ class TestUtils {
         TestUtils.productWithAssignments,
     ];
 
-
     static productsForBoard2: Array<Product> = [
         {
             id: 2,

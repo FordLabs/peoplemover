@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
