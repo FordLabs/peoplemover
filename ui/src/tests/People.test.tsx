@@ -417,12 +417,6 @@ describe('people actions', () => {
     });
 
     it('should open the unassigned drawer from the Edit Person form when a person is edited into Unassigned product', async () => {
-        (AssignmentClient.getAssignmentsUsingPersonId as Function) = jest.fn(() => Promise.resolve({
-            data: [{
-                productId: 1,
-            }],
-        }));
-
         const state = {people: TestUtils.people};
         const store = createStore(rootReducer, state);
         store.dispatch = jest.fn();
