@@ -44,6 +44,7 @@ import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
+import {Space} from "../SpaceDashboard/Space";
 
 interface PersonFormProps {
     editing: boolean;
@@ -52,6 +53,7 @@ interface PersonFormProps {
     initialPersonName?: string;
     assignment?: Assignment;
     people: Array<Person>;
+    currentSpace: Space;
     viewingDate: Date;
 
     closeModal(): void;
@@ -64,18 +66,19 @@ interface PersonFormProps {
 }
 
 function PersonForm({
-                        editing,
-                        products,
-                        initiallySelectedProduct,
-                        initialPersonName,
-                        people,
-                        viewingDate,
-                        assignment,
-                        closeModal,
-                        addPerson,
-                        editPerson,
-                        setIsUnassignedDrawerOpen,
-                    }: PersonFormProps): JSX.Element {
+    editing,
+    products,
+    initiallySelectedProduct,
+    initialPersonName,
+    people,
+    currentSpace,
+    viewingDate,
+    assignment,
+    closeModal,
+    addPerson,
+    editPerson,
+    setIsUnassignedDrawerOpen,
+}: PersonFormProps): JSX.Element {
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
@@ -93,7 +96,7 @@ function PersonForm({
 
     useEffect(() => {
         async function setup() {
-            const rolesResponse: AxiosResponse = await RoleClient.get();
+            const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.name);
             setRoles(rolesResponse.data);
 
             if (editing && assignment) {
@@ -240,7 +243,7 @@ function PersonForm({
     function handleCreateRole(inputValue: string): void {
         setIsLoading(true);
         const roleAddRequest: RoleAddRequest = {name: inputValue};
-        RoleClient.add(roleAddRequest).then((response: AxiosResponse) => {
+        RoleClient.add(roleAddRequest, currentSpace.name).then((response: AxiosResponse) => {
             const newRole: SpaceRole = response.data;
             setRoles(roles => [...roles, newRole]);
             updatePersonField('spaceRole', newRole);
@@ -383,7 +386,8 @@ function PersonForm({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     people: state.people,
-    viewingDate: state.viewingDate
+    currentSpace: state.currentSpace,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

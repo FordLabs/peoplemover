@@ -41,11 +41,13 @@ import {Trait} from '../Traits/Trait';
 import {StylesConfig} from 'react-select';
 import {Dispatch} from 'redux';
 import moment from "moment";
+import {Space} from "../SpaceDashboard/Space";
 
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
     spaceId: number;
+    currentSpace: Space;
     viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -56,6 +58,7 @@ function ProductForm({
     editing,
     product,
     spaceId,
+    currentSpace,
     viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
@@ -97,10 +100,10 @@ function ProductForm({
 
     useEffect(() => {
 
-        LocationClient.get().then(result => {
+        LocationClient.get(currentSpace.name).then(result => {
             setAvailableLocations(result.data);
         });
-        ProductTagClient.get().then(result => setAvailableProductTags(result.data));
+        ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
         setSelectedProductTags(currentProduct.productTags);
 
@@ -221,7 +224,7 @@ function ProductForm({
         const productTag: TraitAddRequest = {
             name: inputValue,
         };
-        ProductTagClient.add(productTag).then((response: AxiosResponse) => {
+        ProductTagClient.add(productTag, currentSpace.name).then((response: AxiosResponse) => {
             const newProductTag: ProductTag = response.data;
             setAvailableProductTags(productTags => [...productTags, {
                 id: newProductTag.id,
@@ -239,7 +242,7 @@ function ProductForm({
         const location: TraitAddRequest = {
             name: inputValue,
         };
-        LocationClient.add(location).then((result: AxiosResponse) => {
+        LocationClient.add(location, currentSpace.name).then((result: AxiosResponse) => {
             const newLocation: SpaceLocation = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
             addGroupedTagFilterOptions(0, newLocation as Trait);
@@ -428,6 +431,7 @@ function ProductForm({
     );
 }
 const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
     viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });

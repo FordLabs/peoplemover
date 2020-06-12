@@ -21,16 +21,19 @@ import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult, wai
 import PeopleMover from '../Application/PeopleMover';
 import RoleClient from '../Roles/RoleClient';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
+import {PreloadedState} from "redux";
+import {GlobalStateProps} from "../Redux/Reducers";
 
 describe('PeopleMover Role Modal', () => {
     let app: RenderResult;
+    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
         await act(async () => {
-            app = renderWithRedux(<PeopleMover/>);
+            app = renderWithRedux(<PeopleMover/>, undefined, initialState);
             const myRolesButton = await app.findByText('My Roles');
             fireEvent.click(myRolesButton);
         });
@@ -154,7 +157,7 @@ describe('PeopleMover Role Modal', () => {
                 name: expectedNewRoleName,
                 colorId: TestUtils.whiteColor.id,
             };
-            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest);
+            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace.name);
         });
 
         it('should save role with the given name and color when you click on Save button', async () => {

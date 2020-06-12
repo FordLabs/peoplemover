@@ -34,6 +34,8 @@ import ProductClient from '../Products/ProductClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 
 describe('people actions', () => {
+    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
+
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
@@ -297,7 +299,7 @@ describe('people actions', () => {
         />;
 
         await act(async () => {
-            const wrapper = await renderWithRedux(component);
+            const wrapper = await renderWithRedux(component, undefined, initialState);
             await wrapper.findByText('Product 1');
         });
     });
@@ -309,7 +311,7 @@ describe('people actions', () => {
             initialPersonName={'BRADLEY'}/>;
 
         await act(async () => {
-            const wrapper = await renderWithReduxEnzyme(component);
+            const wrapper = await renderWithReduxEnzyme(component, undefined, initialState);
 
             const productSelect = await wrapper.find('Select');
             const selectProps: any = productSelect.at(1).instance().props;
@@ -328,7 +330,7 @@ describe('people actions', () => {
             initialPersonName={'BRADLEY'}/>;
 
         await act(async () => {
-            const wrapper = await renderWithRedux(component);
+            const wrapper = await renderWithRedux(component, undefined, initialState);
             const productDropDown = await wrapper.findByLabelText('Assign to');
             await wrapper.findByText('unassigned');
             await selectEvent.select(productDropDown, 'Product 1');
@@ -338,7 +340,7 @@ describe('people actions', () => {
     });
 
     it('PersonForm allows choices of person names provided by the API', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
+        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
         const createPersonButton = await app.findByText('Add Person');
         fireEvent.click(createPersonButton);
@@ -418,7 +420,7 @@ describe('people actions', () => {
     });
 
     it('should open the unassigned drawer from the Edit Person form when a person is edited into Unassigned product', async () => {
-        const state = {people: TestUtils.people};
+        const state = {people: TestUtils.people, currentSpace: TestUtils.space};
         const store = createStore(rootReducer, state);
         store.dispatch = jest.fn();
 
