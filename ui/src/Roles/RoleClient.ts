@@ -20,17 +20,17 @@ import {RoleAddRequest} from './RoleAddRequest';
 import {RoleEditRequest} from './RoleEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
 
-const spaceToken = window.location.pathname.substr(1);
-
 class RoleClient implements TraitClient {
 
     async get(): Promise<AxiosResponse> {
+        const spaceToken = window.location.pathname.substr(1);
         return Axios.get(
             process.env.REACT_APP_URL + 'role/' + spaceToken
         );
     }
 
     async add(role: RoleAddRequest): Promise<AxiosResponse> {
+        const spaceToken = window.location.pathname.substr(1);
         return Axios.post(
             process.env.REACT_APP_URL + 'role/' + spaceToken,
             role,
@@ -39,6 +39,7 @@ class RoleClient implements TraitClient {
     }
 
     async edit(role: RoleEditRequest): Promise<AxiosResponse> {
+        const spaceToken = window.location.pathname.substr(1);
         return Axios.put(
             process.env.REACT_APP_URL + 'role/' + spaceToken,
             role,
