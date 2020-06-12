@@ -20,7 +20,6 @@ import Axios, {AxiosResponse} from 'axios';
 import {act, fireEvent} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import BoardClient from '../Boards/BoardClient';
 import ProductClient from '../Products/ProductClient';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {wait} from '@testing-library/dom';
@@ -41,13 +40,6 @@ describe('Products', () => {
     });
 
     describe('home page', () => {
-        it('displays the board names', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
-            await app.findByText('board one');
-            await app.findByText('board two');
-        });
-
         it('displays the product names', async () => {
             const app = renderWithRedux(<PeopleMover/>);
             await app.findByText('Product 1');
@@ -75,17 +67,8 @@ describe('Products', () => {
         });
 
         it('does not display the empty product text for a product with people', async () => {
-            BoardClient.getAllBoards = jest.fn(() => Promise.resolve({
-                data:
-                        [
-                            {
-                                id: 'b1',
-                                name: 'board one',
-                                products: [
-                                    TestUtils.productWithAssignments,
-                                ],
-                            },
-                        ],
+            ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
+                data: TestUtils.notEmptyProducts,
             } as AxiosResponse));
 
             const app = renderWithRedux(<PeopleMover/>);
@@ -97,8 +80,6 @@ describe('Products', () => {
         it('should not make an update assignment call when dragging assignment card to same product', async () => {
             await act(async () => {
                 const state = {
-                    boards: TestUtils.boards,
-                    currentBoard: TestUtils.boards[0],
                     currentModal: {modal: null},
                 };
                 const store: Store = createStore(rootReducer,
@@ -110,12 +91,12 @@ describe('Products', () => {
                 const wrapper = await renderWithRedux(component, store);
                 await TestUtils.waitForHomePageToLoad(wrapper);
 
-                AssignmentClient.updateAssignment = jest.fn(() => Promise.resolve({} as AxiosResponse));
+                AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({} as AxiosResponse));
 
                 const person1AssignmentCard = await wrapper.findByText('Person 1');
                 fireEvent.mouseDown(person1AssignmentCard);
                 fireEvent.mouseUp(person1AssignmentCard);
-                expect(AssignmentClient.updateAssignment).not.toHaveBeenCalled();
+                expect(AssignmentClient.createAssignmentForDate).not.toHaveBeenCalled();
             });
         });
 
@@ -125,11 +106,12 @@ describe('Products', () => {
                 name: 'Product 1',
                 startDate: '1/1/11',
                 endDate: '2/2/22',
-                boardId: 0,
+                spaceId: 0,
                 assignments: [
                     {
                         id: 1,
                         productId: 2,
+                        spaceId: 0,
                         person: {
                             newPerson: false,
                             spaceId: 0,
@@ -142,6 +124,7 @@ describe('Products', () => {
                     {
                         id: 900,
                         productId: 2,
+                        spaceId: 0,
                         person: {
                             newPerson: false,
                             spaceId: 0,
@@ -154,6 +137,7 @@ describe('Products', () => {
                     {
                         id: 4,
                         productId: 2,
+                        spaceId: 0,
                         person: {
                             newPerson: false,
                             spaceId: 0,
@@ -166,6 +150,7 @@ describe('Products', () => {
                     {
                         id: 3,
                         productId: 2,
+                        spaceId: 0,
                         person: {
                             newPerson: false,
                             spaceId: 0,
@@ -184,17 +169,8 @@ describe('Products', () => {
                 archived: false,
                 productTags: [],
             };
-            BoardClient.getAllBoards = jest.fn(() => Promise.resolve({
-                data:
-                        [
-                            {
-                                id: 'b1',
-                                name: 'board one',
-                                products: [
-                                    productWithManyAssignments,
-                                ],
-                            },
-                        ],
+            ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
+                data: [productWithManyAssignments],
             } as AxiosResponse,
             ));
             const app = renderWithRedux(<PeopleMover/>);
@@ -472,7 +448,6 @@ describe('Products', () => {
             const app = renderWithRedux(<PeopleMover/>);
 
             await app.findByText('Person 1');
-            await app.findByText('board one');
         });
 
         it('displays persons role on each assignment', async () => {
@@ -506,7 +481,7 @@ describe('Products', () => {
                         endDate: '01/30/2010',
                         location: {name: 'Ann Arbor'},
                         archived: false,
-                        boardId: 1,
+                        spaceId: 1,
                         dorf: '11111',
                         productTags: [TestUtils.productTag2],
                         assignments: [],
@@ -539,7 +514,7 @@ describe('Products', () => {
             expect(ProductClient.createProduct).toBeCalledTimes(1);
             expect(ProductClient.createProduct).toBeCalledWith({
                 id: -1,
-                boardId: 1,
+                spaceId: 1,
                 name: 'Some Name',
                 startDate: '2010-01-30',
                 endDate: '2020-01-30',
@@ -571,18 +546,20 @@ describe('Products', () => {
             ));
             Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
 
-            const app = renderWithRedux(<PeopleMover/>);
+            await act(async () => {
+                const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
-            fireEvent.click(newProductButton);
+                const newProductButton = await app.findByText('New Product');
+                fireEvent.click(newProductButton);
 
-            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
-            fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
-            fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
+                fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
+                fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
+                fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
 
-            fireEvent.click(app.getByText('Create'));
-            await app.findByText('board one');
-            expect(app.queryByText('Add Products')).toBeNull();
+                fireEvent.click(app.getByText('Create'));
+
+                expect(app.queryByText('Add Products')).toBeNull();
+            });
         });
     });
 
@@ -633,7 +610,8 @@ describe('Products', () => {
             const app = renderWithRedux(<PeopleMover/>);
 
             const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const archivedProductsDrawer = drawerCarets[2];
+            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
+            const archivedProductsDrawer = drawerCarets[1];
             fireEvent.click(archivedProductsDrawer);
 
             const archivedProductButton = await app.findByTestId('archivedProduct_4');
@@ -693,7 +671,7 @@ describe('Products', () => {
         });
 
         it('should put product in archived products when clicking archive product', async () => {
-            function updateGetAllBoardsResponse(): void {
+            function updateGetAllProductsResponse(): void {
                 const updatedProduct = {
                     ...TestUtils.productWithAssignments,
                     archived: true,
@@ -701,13 +679,9 @@ describe('Products', () => {
                 const updatedProducts = [
                     updatedProduct,
                 ];
-                const updatedBoards = [{
-                    ...TestUtils.boards[0],
-                    products: updatedProducts,
-                }];
-                BoardClient.getAllBoards = jest.fn(() => Promise.resolve(
+                ProductClient.getProductsForDate = jest.fn(() => Promise.resolve(
                     {
-                        data: updatedBoards,
+                        data: updatedProducts,
                     } as AxiosResponse,
                 ));
             }
@@ -718,7 +692,7 @@ describe('Products', () => {
             fireEvent.click(myProductElipsis);
 
             const archiveProductMenuOption = await app.findByText('Archive Product');
-            updateGetAllBoardsResponse();
+            updateGetAllProductsResponse();
             fireEvent.mouseDown(archiveProductMenuOption);
             fireEvent.mouseUp(archiveProductMenuOption);
             await wait(() => {
@@ -726,7 +700,8 @@ describe('Products', () => {
                 expect(app.queryByText('Product 1')).not.toBeInTheDocument();
             });
             const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const archivedProductDrawerOpener = drawerCarets[2];
+            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
+            const archivedProductDrawerOpener = drawerCarets[1];
 
             fireEvent.click(archivedProductDrawerOpener);
             await app.findByText('Product 1');

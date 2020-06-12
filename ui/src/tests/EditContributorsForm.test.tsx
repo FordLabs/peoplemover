@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import {fireEvent, RenderResult, wait} from "@testing-library/react";
-import TestUtils, {renderWithRedux} from "./TestUtils";
-import PeopleMover from "../Application/PeopleMover";
-import React from "react";
-import {Router} from "react-router-dom";
-import {createMemoryHistory} from "history";
-import SpaceClient from "../SpaceDashboard/SpaceClient";
+import {fireEvent, RenderResult, wait} from '@testing-library/react';
+import TestUtils, {renderWithRedux} from './TestUtils';
+import PeopleMover from '../Application/PeopleMover';
+import React from 'react';
+import {Router} from 'react-router-dom';
+import {createMemoryHistory} from 'history';
+import SpaceClient from '../SpaceDashboard/SpaceClient';
 
 describe('Edit Contributors Form',  () => {
     let app: RenderResult;

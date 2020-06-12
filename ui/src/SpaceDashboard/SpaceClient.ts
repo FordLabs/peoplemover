@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
-import {SpaceWithAccessTokenResponse} from "./SpaceWithAccessTokenResponse";
+import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 
 class SpaceClient {
 
@@ -25,6 +25,12 @@ class SpaceClient {
         return Axios.get(`${process.env.REACT_APP_URL}user/space`, {headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,
+        }});
+    }
+
+    static async getSpaceFromName(spaceName: string): Promise<AxiosResponse<Space>> {
+        return Axios.get(`${process.env.REACT_APP_URL}space/${spaceName}`, {headers: {
+            'Content-Type': 'application/json',
         }});
     }
 
@@ -55,7 +61,6 @@ class SpaceClient {
             }
         );
     }
-
 }
 
 export default SpaceClient;

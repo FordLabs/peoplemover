@@ -18,7 +18,7 @@
 import React, {RefObject} from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
-import {AvailableModals, fetchBoardsAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import {
     AssignmentCardRefAndAssignmentPair,
     getProductUserDroppedAssignmentOn,
@@ -30,14 +30,16 @@ import {Product} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Assignment} from './Assignment';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {AssignmentDTO} from '../Domain/AssignmentDTO';
 import AssignmentClient from './AssignmentClient';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 
 interface AssignmentCardListProps {
     container: string;
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
-    fetchBoards(): void;
+    products: Array<Product>;
+    viewingDate: Date;
+    fetchProducts(): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
@@ -45,7 +47,9 @@ function AssignmentCardList({
     container,
     product,
     productRefs,
-    fetchBoards,
+    products,
+    viewingDate,
+    fetchProducts,
     setCurrentModal,
 }: AssignmentCardListProps): JSX.Element {
 
@@ -91,6 +95,21 @@ function AssignmentCardList({
         onDrop().then();
     }
 
+    function getExistingProductPlaceholderPairsForPerson(personId: number): Array<ProductPlaceholderPair> {
+        const assignments: Array<ProductPlaceholderPair> = [];
+        products.forEach((productInRedux) => {
+            productInRedux.assignments.forEach(assignmentForProduct => {
+                if (assignmentForProduct.person.id === personId ) {
+                    assignments.push({
+                        productId: assignmentForProduct.productId,
+                        placeholder: assignmentForProduct.placeholder,
+                    });
+                }
+            });
+        });
+        return assignments;
+    }
+
     async function onDrop(): Promise<void> {
         if (draggingAssignmentRef && draggingAssignmentRef.ref.current) {
             const productUserDroppedAssignmentOn: ProductCardRefAndProductPair | null = getProductUserDroppedAssignmentOn(
@@ -102,23 +121,27 @@ function AssignmentCardList({
 
             if (productUserDroppedAssignmentOn) {
 
-                const assignment = draggingAssignmentRef.assignment;
+                const oldAssignment = draggingAssignmentRef.assignment;
                 const newProductId = productUserDroppedAssignmentOn.product.id;
-                const isDifferentProduct = assignment.productId !== newProductId;
+                const isDifferentProduct = oldAssignment.productId !== newProductId;
 
                 if (isDifferentProduct) {
+                    const productPlaceholderPairs: Array<ProductPlaceholderPair> = getExistingProductPlaceholderPairsForPerson(oldAssignment.person.id)
+                        .filter(existingAssignment => existingAssignment.productId !== oldAssignment.productId)
+                        .concat({
+                            productId: newProductId,
+                            placeholder: oldAssignment.placeholder,
+                        });
 
-                    const assignmentDTO: AssignmentDTO = {
-                        id: assignment.id,
-                        personId: assignment.person.id,
-                        productId: newProductId,
-                        placeholder: assignment.placeholder,
+                    const createAssignmentsRequest: CreateAssignmentsRequest = {
+                        requestedDate: viewingDate,
+                        person: oldAssignment.person,
+                        products: productPlaceholderPairs,
                     };
 
                     try {
-                        await AssignmentClient.createAssignment(assignmentDTO);
-                        await AssignmentClient.deleteAssignment(assignment);
-                        fetchBoards();
+                        await AssignmentClient.createAssignmentForDate(createAssignmentsRequest);
+                        fetchProducts();
                         assignmentUpdated = true;
                     } catch (error) {
                         if (error.response.status === 409) {
@@ -194,12 +217,14 @@ function AssignmentCardList({
     );
 }
 
-const mapStateToProps = ({productRefs}: GlobalStateProps) => ({
-    productRefs,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    productRefs: state.productRefs,
+    products: state.products,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchBoards: () => dispatch(fetchBoardsAction()),
+    fetchProducts: () => dispatch(fetchProductsAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 

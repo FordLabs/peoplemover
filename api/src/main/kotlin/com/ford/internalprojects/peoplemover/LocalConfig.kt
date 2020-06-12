@@ -19,9 +19,9 @@ package com.ford.internalprojects.peoplemover
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRequest
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
+import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
+import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
 import com.ford.internalprojects.peoplemover.auth.AuthClient
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardService
 import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.color.ColorService
 import com.ford.internalprojects.peoplemover.person.Person
@@ -32,10 +32,12 @@ import com.ford.internalprojects.peoplemover.role.RoleService
 import com.ford.internalprojects.peoplemover.role.SpaceRole
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceService
+import com.google.common.collect.Sets.newHashSet
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import java.time.LocalDate
 import javax.annotation.PostConstruct
 
 @Configuration
@@ -52,9 +54,6 @@ class LocalConfig {
 
     @Autowired
     private lateinit var roleService: RoleService
-
-    @Autowired
-    private lateinit var boardService: BoardService
 
     @Autowired
     private lateinit var personService: PersonService
@@ -89,8 +88,6 @@ class LocalConfig {
         val role2: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE SECOND BEST (UNDERSTUDY)", colors[1]?.id)
         val role3: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE WURST", colors[2]?.id)
 
-        val board: Board = boardService.createBoardForNewSpace("Board1", createdSpace)
-
         val jane: Person = personService.createPerson(
                 Person(
                         name = "Jane Smith",
@@ -116,11 +113,15 @@ class LocalConfig {
                 spaceName
         )
 
-        val savedProducts: List<Product> = productRepository.findAllByBoardId(board.id!!)
+        val savedProducts: List<Product> = productRepository.findAllBySpaceId(spaceId = createdSpace.id)
 
-        assignmentService.createAssignmentFromAssignmentRequest(AssignmentRequest(
-                personId = jane.id!!,
-                productId = savedProducts[0].id!!
+        assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
+                requestedDate = LocalDate.parse("2019-01-01"),
+                person = jane,
+                products = newHashSet(ProductPlaceholderPair(
+                        productId = savedProducts[0].id!!,
+                        placeholder = false
+                ))
         ))
         assignmentService.createAssignmentFromAssignmentRequest(AssignmentRequest(
                 personId = bob.id!!,

@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.report
 
 data class ReportGenerator (
-    val boardName: String,
     val productName: String,
     val personName: String,
     val personRole: String

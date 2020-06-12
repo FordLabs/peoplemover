@@ -1,1 +1,1 @@
-ALTER TABLE space CHANGE `token` `name` varchar(255);
+EXEC sp_rename 'space.token', 'name', 'COLUMN';

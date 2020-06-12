@@ -40,12 +40,13 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Trait} from '../Traits/Trait';
 import {StylesConfig} from 'react-select';
 import {Dispatch} from 'redux';
+import moment from "moment";
 
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
-    boardId?: number;
     spaceId: number;
+    viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     closeModal(): void;
@@ -54,8 +55,8 @@ interface ProductFormProps {
 function ProductForm({
     editing,
     product,
-    boardId,
     spaceId,
+    viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     closeModal,
@@ -107,7 +108,7 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return emptyProduct(boardId);
+            return {...emptyProduct(spaceId), startDate: viewingDate};
         }
         return product;
     }
@@ -355,7 +356,7 @@ function ProductForm({
                         type="date"
                         name="start"
                         id="start"
-                        value={currentProduct.startDate ? currentProduct.startDate : ''}
+                        value={currentProduct.startDate ? currentProduct.startDate : viewingDate}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('startDate', e.target.value)}/>
                 </div>
                 <div className="formItem">
@@ -426,8 +427,9 @@ function ProductForm({
         </div>
     );
 }
-const mapStateToProps = ({ allGroupedTagFilterOptions}: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

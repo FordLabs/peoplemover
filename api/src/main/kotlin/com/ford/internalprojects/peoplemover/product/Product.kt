@@ -24,7 +24,7 @@ import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import java.time.LocalDate
 import javax.persistence.*
 
-@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["board_id", "name"])])
+@Table
 @Entity
 data class Product (
     @Id
@@ -32,9 +32,6 @@ data class Product (
     var id: Int? = null,
 
     var name: String,
-
-    @Column(name = "board_id")
-    var boardId: Int,
 
     @OneToMany(mappedBy = "productId", fetch = FetchType.EAGER)
     val assignments: Set<Assignment> = HashSet(),
@@ -61,10 +58,10 @@ data class Product (
     override var spaceId: Int
 ): SpaceComponent {
 
-    constructor(id: Int?, name: String, boardId: Int, spaceId: Int):
-        this(id, name, boardId, HashSet(), HashSet(), null, null, "", null, false, "", spaceId)
+    constructor(id: Int?, name: String, spaceId: Int):
+        this(id, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceId)
 
-    constructor(name: String, boardId: Int, spaceId: Int):
-            this(null, name, boardId, HashSet(), HashSet(), null, null, "", null, false, "", spaceId)
+    constructor(name: String, spaceId: Int):
+            this(null, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceId)
 
 }

@@ -18,40 +18,41 @@
 import {combineReducers} from 'redux';
 import currentModalReducer, {CurrentModalState} from './currentModalReducer';
 import peopleReducer from './peopleReducer';
-import {currentBoardReducer} from './currentBoardReducer';
 import isUnassignedDrawerOpenReducer from './isUnassignedDrawerOpenReducer';
-import boardsReducer from './boardsReducer';
-import {Board} from '../../Boards/Board';
 import {Person} from '../../People/Person';
 import {EditMenuToOpen} from '../../ReusableComponents/EditMenuToOpen';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import sortProductsReducer from './sortProductsReducer';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
-import {unmodifiedInitialBoardsReducer} from './unmodifiedIntialBoardsReducer';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
+import currentSpaceReducer from './currentSpaceReducer';
+import {Space} from '../../SpaceDashboard/Space';
+import {viewingDateReducer} from './viewingDateReducer';
+import productsReducer from './productsReducer';
+import {Product} from '../../Products/Product';
 
 export default combineReducers({
     currentModal: currentModalReducer,
     people: peopleReducer,
     isUnassignedDrawerOpen: isUnassignedDrawerOpenReducer,
-    currentBoard: currentBoardReducer,
-    boards: boardsReducer,
-    unmodifiedInitialBoards: unmodifiedInitialBoardsReducer,
     productRefs: productRefsReducer,
     sortValueOption: sortProductsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
+    currentSpace: currentSpaceReducer,
+    viewingDate: viewingDateReducer,
+    products: productsReducer,
 });
 
 export interface GlobalStateProps {
     currentModal: CurrentModalState;
     people: Array<Person>;
     isUnassignedDrawerOpen: boolean;
-    currentBoard: Board;
-    boards: Array<Board>;
-    unmodifiedInitialBoards: Array<Board>;
     whichEditMenuOpen: EditMenuToOpen;
     productRefs: Array<ProductCardRefAndProductPair>;
     sortValueOption: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    currentSpace: Space;
+    viewingDate: Date;
+    products: Array<Product>;
 }

@@ -18,43 +18,33 @@
 import {connect} from 'react-redux';
 import {AvailableModals, closeModalAction} from '../Actions';
 import Modal from '../../Modal/Modal';
-import CreateBoardForm from '../../Boards/CreateBoardForm';
 import React from 'react';
-import EditBoardForm from '../../Boards/EditBoardForm';
 import ProductForm from '../../Products/ProductForm';
 import PersonForm from '../../People/PersonForm';
 import AssignmentForm from '../../Assignments/AssignmentForm';
 import AssignmentExistsWarning from '../../Assignments/AssignmentExistsWarning';
 import {GlobalStateProps} from '../Reducers';
-import {Board} from '../../Boards/Board';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
 import MyTagsModal from '../../Tags/MyTagsModal';
 import MyRolesModal from '../../Roles/MyRolesModal';
 import CreateSpaceForm from '../../SpaceDashboard/CreateSpaceForm';
 import {Dispatch} from 'redux';
-import EditContributorsForm from "../../SpaceDashboard/EditContributorsForm";
+import EditContributorsForm from '../../SpaceDashboard/EditContributorsForm';
+import {Product} from '../../Products/Product';
+import {Space} from '../../SpaceDashboard/Space';
 
 
-const getCurrentModal = (currentModal: CurrentModalState, currentBoard: Board, allBoards: Array<Board>): JSX.Element | null => {
-    const products = currentBoard ? currentBoard.products : [];
-    const boards = allBoards ? allBoards : [];
+const getCurrentModal = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space): JSX.Element | null => {
     const {modal, item} = currentModal;
 
     switch (modal) {
-    case AvailableModals.CREATE_BOARD:
-        return <CreateBoardForm boards={boards}/>;
-    case AvailableModals.EDIT_BOARD:
-        return <EditBoardForm boardId={item.id}
-            boardName={item.name}
-            isTheOnlyBoard={boards.length < 2}/>;
     case AvailableModals.CREATE_PRODUCT:
         return <ProductForm editing={false}
-            boardId={currentBoard!.id}
-            spaceId={currentBoard!.spaceId} />;
+            spaceId={currentSpace.id!!} />;
     case AvailableModals.EDIT_PRODUCT:
         return <ProductForm editing={true}
             product={item}
-            spaceId={currentBoard!.spaceId}/>;
+            spaceId={currentSpace.id!!} />;
     case AvailableModals.CREATE_PERSON:
         return <PersonForm editing={false}
             products={products}
@@ -87,10 +77,6 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
     const {modal} = currentModal;
 
     switch (modal) {
-    case AvailableModals.CREATE_BOARD:
-        return 'Create New Board';
-    case AvailableModals.EDIT_BOARD:
-        return 'Edit Board';
     case AvailableModals.CREATE_PRODUCT:
         return 'Create New Product';
     case AvailableModals.EDIT_PRODUCT:
@@ -116,16 +102,13 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
     }
 };
 
-const mapStateToProps = ({currentModal, currentBoard, boards}: GlobalStateProps) => ({
-    modalForm: getCurrentModal(currentModal, currentBoard, boards),
-    title: getCurrentTitle(currentModal),
+const mapStateToProps = (state: GlobalStateProps) => ({
+    modalForm: getCurrentModal(state.currentModal, state.products, state.currentSpace),
+    title: getCurrentTitle(state.currentModal),
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
 });
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Modal);
+export default connect(mapStateToProps, mapDispatchToProps)(Modal);

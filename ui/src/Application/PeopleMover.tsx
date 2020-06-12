@@ -26,52 +26,61 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import UnassignedDrawerContainer from '../Redux/Containers/UnassignedDrawerContainer';
 import {connect} from 'react-redux';
-import {fetchBoardsAction, setCurrentModalAction, setPeopleAction} from '../Redux/Actions';
+import {fetchProductsAction, setCurrentSpaceAction, setPeopleAction} from '../Redux/Actions';
 import BoardSelectionTabs from '../Boards/BoardSelectionTabs';
-import {ProductCardRefAndProductPair} from '../Products/ProductDnDHelper';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Board} from '../Boards/Board';
 import {Person} from '../People/Person';
 import PeopleClient from '../People/PeopleClient';
 import Header from './Header';
-import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import {Redirect} from 'react-router-dom';
+import {Space} from '../SpaceDashboard/Space';
+import SpaceClient from '../SpaceDashboard/SpaceClient';
+import {Product} from '../Products/Product';
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
-    currentBoard: Board;
-    boards: Array<Board>;
-    productRefs: Array<ProductCardRefAndProductPair>;
+    currentSpace: Space;
+    viewingDate: Date;
+    products: Array<Product>;
 
-    fetchBoards(): Promise<void>;
-
-    setCurrentModal(modalState: CurrentModalState): void;
-
+    fetchProducts(): Array<Product>;
+    setCurrentSpace(space: Space): Space;
     setPeople(people: Array<Person>): Array<Person>;
 }
 
 function PeopleMover({
     currentModal,
-    currentBoard,
-    boards,
-    fetchBoards,
+    currentSpace,
+    viewingDate,
+    products,
+    fetchProducts,
+    setCurrentSpace,
     setPeople,
 }: PeopleMoverProps): JSX.Element {
     const [redirect, setRedirect] = useState<JSX.Element>();
 
-    function hasBoard() {
-        return boards && boards.length > 0 && currentBoard;
+    function hasProducts() {
+        return products && products.length > 0 && currentSpace;
     }
 
     useEffect(() => {
         RenderPage().then();
     }, [currentModal]);
 
+    useEffect(() => {
+        if(hasProducts()) fetchProducts();
+    }, [viewingDate]);
+
     async function RenderPage(): Promise<void> {
         if (currentModal.modal === null) {
             try {
-                await fetchBoards();
+                const spaceName = window.location.pathname.replace('/', '');
+                await SpaceClient.getSpaceFromName(spaceName)
+                    .then(response => {
+                        setCurrentSpace(response.data);
+                    } );
+                await fetchProducts();
                 const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;
 
                 setPeople(peopleInSpace);
@@ -80,11 +89,12 @@ function PeopleMover({
             }
         }
     }
+
     if (redirect) {
         return redirect;
     }
     return (
-        !hasBoard() ? <></> : <div className="App">
+        !hasProducts() ? <></> : <div className="App">
             <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
 
                 <Header/>
@@ -96,8 +106,7 @@ function PeopleMover({
                     <div className="accordionContainer">
                         <div className="accordionHeaderContainer">
                             <UnassignedDrawerContainer/>
-                            <ReassignedDrawer/>
-                            <ProductGraveyard products={currentBoard.products}/>
+                            <ProductGraveyard/>
                         </div>
                     </div>
                 </div>
@@ -112,21 +121,16 @@ function PeopleMover({
     );
 }
 
-const mapStateToProps = ({
-    currentModal,
-    currentBoard,
-    boards,
-    productRefs,
-}: GlobalStateProps) => ({
-    currentModal,
-    currentBoard,
-    boards,
-    productRefs,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentModal: state.currentModal,
+    currentSpace: state.currentSpace,
+    viewingDate: state.viewingDate,
+    products: state.products,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchBoards: () => dispatch(fetchBoardsAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
+    fetchProducts: () => dispatch(fetchProductsAction()),
+    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
 });
 

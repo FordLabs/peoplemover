@@ -21,7 +21,7 @@ import com.ford.internalprojects.peoplemover.auth.AuthClient
 import com.ford.internalprojects.peoplemover.auth.AuthQuestJWT
 import com.ford.internalprojects.peoplemover.auth.AuthService
 import com.ford.internalprojects.peoplemover.auth.ValidateTokenRequest
-import com.ford.internalprojects.peoplemover.board.BoardService
+import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.user.exceptions.InvalidTokenException
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service
 @Service
 class SpaceService(
         private val spaceRepository: SpaceRepository,
-        private val boardService: BoardService,
+        private val productService: ProductService,
         private val authService: AuthService,
         private val authClient: AuthClient
         ) {
@@ -47,7 +47,7 @@ class SpaceService(
             val savedSpace = spaceRepository.save(
                     Space(name = spaceName, lastModifiedDate = HelperUtils.currentTimeStamp)
             )
-            boardService.createBoardForNewSpace("My Board", savedSpace)
+            productService.createDefaultProducts(savedSpace);
             return savedSpace
         }
     }
@@ -82,9 +82,7 @@ class SpaceService(
         throw InvalidTokenException()
     }
 
-    fun getLastModifiedForSpace(spaceName: String): TimestampResponse {
-        val space: Space = spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
-        return TimestampResponse(space.lastModifiedDate)
+    fun getSpace(spaceName: String): Space {
+        return spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
     }
-
 }

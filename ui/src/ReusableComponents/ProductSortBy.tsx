@@ -18,24 +18,26 @@
 import Select from 'react-select';
 import {CustomIndicator, filterByStyles, SortByOption} from './ReactSelectStyles';
 import React, {useEffect, useState} from 'react';
-import {setCurrentBoardAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {Board} from '../Boards/Board';
 import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Option} from '../CommonTypes/Option';
 import './ProductFilterOrSortBy.scss';
+import {fetchProductsAction, setCurrentSpaceAction, setPeopleAction, setProductsAction} from "../Redux/Actions";
+import {Product} from "../Products/Product";
+import {Space} from "../SpaceDashboard/Space";
+import {Person} from "../People/Person";
 
 interface ProductSortByProps {
-    currentBoard: Board;
-    setCurrentBoard(board: Board, sortValueOption: string): void;
     sortValueOption: string;
+    products: Product[];
+    setProducts(products: Product[], sortOption: string): void;
 }
 
 function ProductSortBy({
-    currentBoard,
-    setCurrentBoard,
     sortValueOption,
+    products,
+    setProducts,
 }: ProductSortByProps): JSX.Element {
 
     const [originalSortOption, setOriginalSortOption] = useState<Option>();
@@ -60,22 +62,19 @@ function ProductSortBy({
                 inputId="sortby-dropdown"
                 options={sortByOptions}
                 value={originalSortOption}
-                onChange={(value): void => setCurrentBoard(currentBoard, (value as Option).value)}
+                onChange={(value): void => setProducts(products, (value as Option).value)}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
         </React.Fragment>
     );
 }
 
-const mapStateToProps = ({
-    currentBoard,
-    sortValueOption,
-}: GlobalStateProps) => ({
-    currentBoard: currentBoard ? currentBoard : {} as Board,
-    sortValueOption: sortValueOption,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    sortValueOption: state.sortValueOption,
+    products: state.products,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentBoard: (board: Board, sortValueOption: string) => dispatch(setCurrentBoardAction(board, sortValueOption)),
+const mapDispatchToProps = (dispatch: any) => ({
+    setProducts: (products: Array<Product>, sortOption: string) => dispatch(setProductsAction(products, sortOption)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSortBy);

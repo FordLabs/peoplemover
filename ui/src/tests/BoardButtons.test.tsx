@@ -16,9 +16,9 @@
  */
 
 import React from 'react';
-import {render, RenderResult, wait} from "@testing-library/react";
-import BoardButtons from "../Boards/BoardButtons";
-import TestUtils, {renderWithRedux} from "./TestUtils";
+import {RenderResult, wait} from '@testing-library/react';
+import BoardButtons from '../Boards/BoardButtons';
+import TestUtils, {renderWithRedux} from './TestUtils';
 
 describe('BoardButtons', () => {
 

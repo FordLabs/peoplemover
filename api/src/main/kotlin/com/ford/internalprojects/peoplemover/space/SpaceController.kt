@@ -53,13 +53,12 @@ class SpaceController(private val spaceService: SpaceService, private val logger
     }
 
     @GetMapping("/api/user/space")
-    fun getSpaceForUser(@RequestHeader(name = "Authorization") accessToken: String): List<Space> {
+    fun getAllSpacesForUser(@RequestHeader(name = "Authorization") accessToken: String): List<Space> {
         return spaceService.getSpacesForUser(accessToken.replace("Bearer ", ""))
     }
 
     @GetMapping("/api/space/{spaceName}")
-    fun getLastModifiedForSpace(@PathVariable spaceName: String): TimestampResponse {
-        return spaceService.getLastModifiedForSpace(spaceName)
+    fun getSpace(@PathVariable spaceName: String): Space {
+        return spaceService.getSpace(spaceName)
     }
-
 }

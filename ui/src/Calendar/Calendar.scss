@@ -1,0 +1,101 @@
+@import '../Application/Styleguide/Colors.scss';
+
+.react-datepicker {
+  width: 364px;
+  min-height: 326px;
+  border: 2px solid $gray-5;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  left: 9px;
+  top: -6px;
+
+  .react-datepicker__month-container {
+    margin: 0 auto 12px auto;
+    align-content: center;
+    width: 100%;
+
+    .react-datepicker__month {
+      margin: 15px 0 0 0;
+
+      .react-datepicker__day {
+        padding: 11px;
+        margin: 4px;
+      }
+
+      .react-datepicker__day:hover {
+        border-radius: 1.3rem;
+      }
+
+      .react-datepicker__day--selected,
+      .react-datepicker__day--keyboard-selected {
+        color: white;
+        background: linear-gradient(90deg, #984AA1 0%, #4F5FAB 86.98%);
+        border-radius: 1.3rem;
+        font-weight: normal;
+      }
+
+      .react-datepicker__day--disabled {
+        color: $gray-3;
+      }
+    }
+
+    .react-datepicker__header {
+      background-color: unset;
+      border-bottom: unset;
+
+      .calendarContainer {
+        margin: 23px 0 16px 0;
+        display: flex;
+        justify-content: center;
+        color: $gray-1;
+
+        .calendarMonthArrows {
+          background-color: transparent;
+        }
+
+        .monthText {
+          font-style: normal;
+          font-weight: bold;
+          font-size: 14px;
+          line-height: 16px;
+          text-align: center;
+          width: 93px;
+        }
+      }
+
+      .react-datepicker__day-name {
+        margin: 0 15px;
+        color: $gray-1;
+      }
+    }
+
+    .react-datepicker__day-name,
+    .react-datepicker__day {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 14px;
+      width: 14px;
+      color: $gray-1;
+    }
+  }
+}
+
+.calendar {
+
+  .calendarCustomInput {
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 16px;
+    color: $gray-1;
+    max-width: 227px;
+    margin-left: 20px;
+    margin-top: 12px;
+    cursor: pointer;
+
+    .drawerCaret {
+      margin-left: 4px;
+    }
+  }
+}
+

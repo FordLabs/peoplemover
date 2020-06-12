@@ -30,16 +30,13 @@ const getUnassignedProduct = (products: Array<Product>): Product => {
     return unassignedProducts.length === 1 ? unassignedProducts[0] : {} as Product;
 };
 
-const mapStateToProps = ({isUnassignedDrawerOpen, currentBoard}: GlobalStateProps) => ({
-    isUnassignedDrawerOpen,
-    product: getUnassignedProduct(currentBoard ? currentBoard.products : []),
+const mapStateToProps = (state: GlobalStateProps) => ({
+    isUnassignedDrawerOpen: state.isUnassignedDrawerOpen,
+    product: getUnassignedProduct(state.products ? state.products : []),
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({
     setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
 });
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(UnassignedDrawer);
+export default connect(mapStateToProps, mapDispatchToProps)(UnassignedDrawer);

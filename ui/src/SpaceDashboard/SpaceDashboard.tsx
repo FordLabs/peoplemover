@@ -99,6 +99,7 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
 
     </div>;
 }
+
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
