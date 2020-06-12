@@ -42,7 +42,7 @@ create table product
     start_date        date,
     space_location_id int,
 
-    FOREIGN KEY (board_id) REFERENCES board (id),
+    constraint board_id__fk FOREIGN KEY (board_id) REFERENCES board (id),
     FOREIGN KEY (space_location_id) REFERENCES space_locations (id) ON DELETE SET NULL,
     constraint UQ_Product unique (board_id, name)
 );
@@ -55,7 +55,7 @@ create table space_roles
     color_id int,
 
     FOREIGN KEY (space_id) REFERENCES space (id),
-    FOREIGN KEY (color_id) REFERENCES color (id),
+    FOREIGN KEY (color_id) REFERENCES color (id) on delete set null,
     constraint UQ_Role unique (space_id, roles)
 );
 

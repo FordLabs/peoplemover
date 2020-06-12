@@ -1,8 +1,8 @@
 ALTER TABLE product
-DROP CONSTRAINT FKb2jkw4ykiljlycy09v80e9r3b;
+DROP FOREIGN KEY board_id__fk;
 
 ALTER TABLE product
-DROP CONSTRAINT UKos2grifuk9tqftgcsti9f7f9w;
+DROP INDEX UQ_PRODUCT;
 
 ALTER TABLE product
 DROP COLUMN board_id;

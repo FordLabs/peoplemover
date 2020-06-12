@@ -1,1 +1,1 @@
-alter table product alter column notes varchar(500)
+alter table product modify notes varchar(500)
