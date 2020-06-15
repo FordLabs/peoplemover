@@ -35,6 +35,7 @@ create table product
 
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
     FOREIGN KEY (space_location_id) REFERENCES space_locations (id) ON DELETE SET NULL,
+    constraint UQ_Product unique (space_id, name)
 );
 
 create table space_roles

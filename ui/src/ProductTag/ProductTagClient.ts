@@ -24,28 +24,21 @@ import {TraitClient} from '../Traits/TraitClient';
 
 class ProductTagClient implements TraitClient {
 
-    async get(): Promise<AxiosResponse<Array<ProductTag>>> {
-
-        const spaceToken = window.location.pathname.substr(1);
-
+    async get(spaceName: string): Promise<AxiosResponse<Array<ProductTag>>> {
         return Axios.get(
-            `${process.env.REACT_APP_URL}producttag/${spaceToken}`,
+            `${process.env.REACT_APP_URL}producttag/${spaceName}`,
             {headers: {'Content-Type': 'application/json'}}
         );
     }
 
-    async add(productTagAddRequest: TraitAddRequest): Promise<AxiosResponse> {
-        const spaceToken = window.location.pathname.substr(1);
-
-        return Axios.post(`${process.env.REACT_APP_URL}producttag/${spaceToken}`,
+    async add(productTagAddRequest: TraitAddRequest, spaceName: string ): Promise<AxiosResponse> {
+        return Axios.post(`${process.env.REACT_APP_URL}producttag/${spaceName}`,
             productTagAddRequest
         );
     }
 
-    async edit(productTagEditRequest: TraitEditRequest): Promise<AxiosResponse<ProductTag>> {
-        const spaceToken = window.location.pathname.substr(1);
-
-        return Axios.put(`${process.env.REACT_APP_URL}producttag/${spaceToken}`,
+    async edit(productTagEditRequest: TraitEditRequest, spaceName: string): Promise<AxiosResponse<ProductTag>> {
+        return Axios.put(`${process.env.REACT_APP_URL}producttag/${spaceName}`,
             productTagEditRequest
         );
     }

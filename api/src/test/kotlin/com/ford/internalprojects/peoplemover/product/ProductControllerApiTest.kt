@@ -81,37 +81,6 @@ class ProductControllerApiTest {
         spaceRepository.deleteAll()
     }
 
-    @Throws(Exception::class)
-    @Test
-    fun `GET should return all products`() {
-        val spaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Detroit"))
-        val product1: Product = productRepository.save(Product(
-                name = "product one",
-                dorf = "123",
-                spaceLocation = spaceLocation,
-                spaceId = space.id!!
-        ))
-        val product2: Product = productRepository.save(Product(
-                name = "product two",
-                dorf = "456",
-                spaceLocation = spaceLocation,
-                spaceId = space.id!!
-        ))
-        val result = mockMvc.perform(get("/api/product"))
-                .andExpect(status().isOk)
-                .andReturn()
-
-        val actualProducts: List<Product> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Product::class.java)
-        )
-
-        val actualProduct1: Product = actualProducts[0]
-        val actualProduct2: Product = actualProducts[1]
-        assertThat(actualProduct1).isEqualToIgnoringGivenFields(product1, "id")
-        assertThat(actualProduct2).isEqualToIgnoringGivenFields(product2, "id")
-    }
-
     @Test
     fun `POST should create new Product`() {
         val productAddRequest = ProductAddRequest(name = "product one", spaceId = space.id!!)

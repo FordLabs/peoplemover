@@ -24,27 +24,21 @@ import {TraitClient} from '../Traits/TraitClient';
 
 class LocationClient implements TraitClient {
 
-    async get(): Promise<AxiosResponse<SpaceLocation[]>> {
-        const spaceToken = window.location.pathname.substr(1);
-
+    async get(spaceName: string): Promise<AxiosResponse<SpaceLocation[]>> {
         return Axios.get(
-            process.env.REACT_APP_URL + 'location/' + spaceToken,
+            process.env.REACT_APP_URL + 'location/' + spaceName,
         );
     }
 
-    async add(locationAddRequest: TraitAddRequest): Promise<AxiosResponse> {
-        const spaceToken = window.location.pathname.substr(1);
-
+    async add(locationAddRequest: TraitAddRequest, spaceName: string): Promise<AxiosResponse> {
         return Axios.post(
-            process.env.REACT_APP_URL + 'location/' + spaceToken,
+            process.env.REACT_APP_URL + 'location/' + spaceName,
             locationAddRequest
         );
     }
 
-    async edit(locationEditRequest: TraitEditRequest): Promise<AxiosResponse<SpaceLocation>> {
-        const spaceToken = window.location.pathname.substr(1);
-
-        return Axios.put(`${process.env.REACT_APP_URL}location/${spaceToken}`,
+    async edit(locationEditRequest: TraitEditRequest, spaceName: string): Promise<AxiosResponse<SpaceLocation>> {
+        return Axios.put(`${process.env.REACT_APP_URL}location/${spaceName}`,
             locationEditRequest
         );
     }

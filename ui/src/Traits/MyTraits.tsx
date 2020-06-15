@@ -30,8 +30,10 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
+import {Space} from "../SpaceDashboard/Space";
 
 interface MyTraitsProps {
+    currentSpace: Space,
     title?: string;
     traitClient: TraitClient;
     setTraitSectionOpen: Function;
@@ -48,6 +50,7 @@ enum TraitAction {
 }
 
 function MyTraits({
+    currentSpace,
     title,
     traitClient,
     setTraitSectionOpen,
@@ -63,7 +66,7 @@ function MyTraits({
 
     useEffect(() => {
         async function setup(): Promise<void> {
-            const response = await traitClient.get();
+            const response = await traitClient.get(currentSpace.name);
             const traitResponse: Array<Trait> = response.data;
             setTraits(traitResponse);
             setEditSectionsOpen(new Array(traitResponse.length).fill(false));
@@ -218,6 +221,7 @@ function MyTraits({
                             colorSection={colorSection}
                             traitClient={traitClient}
                             traitName={traitName}
+                            currentSpace={currentSpace}
                         />
                         }
                     </React.Fragment>
@@ -228,7 +232,8 @@ function MyTraits({
                 updateCallback={updateTraits}
                 traitClient={traitClient}
                 traitName={traitName}
-                colorSection={colorSection}/>
+                colorSection={colorSection}
+                currentSpace={currentSpace}/>
             }
             {!addSectionOpen && <div className="traitRow addNewTraitRow"
                 onClick={(): void => setAddSectionOpen(true)}>
@@ -245,6 +250,7 @@ function MyTraits({
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

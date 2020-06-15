@@ -27,13 +27,6 @@ class AssignmentController(
         private val assignmentService: AssignmentService,
         private val logger: BasicLogger
 ) {
-    @GetMapping(path = ["/api/person/{personId}/assignments"])
-    fun getAssignmentsByPersonId(@PathVariable personId: Int): ResponseEntity<List<Assignment>> {
-        val assignmentsForTheGivenPersonId = assignmentService.getAssignmentsForTheGivenPersonId(personId)
-        logger.logInfoMessage("All assignments retrieved for person with id: [$personId].")
-        return ResponseEntity.ok(assignmentsForTheGivenPersonId)
-    }
-
     @GetMapping("/api/person/{personId}/assignments/date/{date}")
     fun getAssignmentsByPersonIdForDate(@PathVariable personId: Int, @PathVariable date: String): ResponseEntity<List<Assignment>> {
         return ResponseEntity.ok(assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(date)))
@@ -53,21 +46,5 @@ class AssignmentController(
                 "for person with id: [${assignmentsCreated.first().person.id}] " +
                 "with effective date: [${assignmentsCreated.first().effectiveDate}]")
         return ResponseEntity.ok(assignmentsCreated)
-    }
-
-    @PostMapping("/api/assignment")
-    fun createAssignment(@RequestBody assignmentRequest: AssignmentRequest): ResponseEntity<Assignment> {
-        val assignmentCreated: Assignment = assignmentService.createAssignmentFromAssignmentRequest(assignmentRequest)
-        logger.logInfoMessage("Assignment created with id: [${assignmentCreated.id}] " +
-                "assigning person with id: [${assignmentCreated.person.id}] to product " +
-                "with id: [${assignmentRequest.productId}].")
-        return ResponseEntity.ok(assignmentCreated)
-    }
-
-    @PutMapping(path = ["/api/assignment/{assignmentId}"])
-    fun editAssignment(@PathVariable assignmentId: Int, @RequestBody assignmentRequest: AssignmentRequest): ResponseEntity<Assignment> {
-        val updatedAssignment = assignmentService.updateAssignment(assignmentId, assignmentRequest)
-        logger.logInfoMessage("Assignment with id: [${updatedAssignment.id}] updated.")
-        return ResponseEntity.ok(updatedAssignment)
     }
 }
