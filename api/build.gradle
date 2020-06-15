@@ -77,8 +77,13 @@ cfConfig {
             "spring.datasource.password": "",
             "JBP_CONFIG_OPEN_JDK_JRE"   : "{ jre: {version: 11.+} }"
     ]
+    
+    cfService {
+        name = "MySQL for Pivotal Cloud Foundry v2"
+        plan = "ha-plan-30g"
+        instanceName = "PeopleMover Stage Database"
+    }
 }
-
 
 jacoco {
     toolVersion = "0.8.5"
