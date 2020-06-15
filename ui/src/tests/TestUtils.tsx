@@ -84,22 +84,28 @@ export const mockDate = (expected: Date): () => void => {
 };
 
 export function mockCreateRange(): () => void {
-    const _createRange = window.document.createRange;
+    if(window.document) {
+        const _createRange = window.document.createRange;
 
-    window.document.createRange = function createRange(): Range {
-        return {
-            setEnd: () => null,
-            setStart: () => null,
-            getBoundingClientRect: (): DOMRect => {
-                return {right: 0} as DOMRect;
-            },
-            commonAncestorContainer: document.createElement('div'),
-        } as unknown as Range;
-    };
+        window.document.createRange = function createRange(): Range {
+            return {
+                setEnd: () => null,
+                setStart: () => null,
+                getBoundingClientRect: (): DOMRect => {
+                    return {right: 0} as DOMRect;
+                },
+                commonAncestorContainer: document.createElement('div'),
+            } as unknown as Range;
+        };
 
-    return (): void => {
-        window.document.createRange = _createRange;
-    };
+        return (): void => {
+            window.document.createRange = _createRange;
+        };
+    } else {
+        return (): void => {
+            return;
+        };
+    }
 }
 
 class TestUtils {
