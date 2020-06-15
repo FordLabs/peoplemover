@@ -105,9 +105,6 @@ pipeline {
                                 -Pcf.domain=$peoplemover_pcf_domain \
                                 -Pcf.ccUser=$JENKINS_USER \
                                 -Pcf.ccPassword=$JENKINS_PASSWORD \
-                                -Pcf.environment.spring.datasource.username=$DB_USER \
-                                -Pcf.environment.spring.datasource.password=$DB_PASSWORD \
-                                -Pcf.environment.spring.datasource.url="jdbc:sqlserver://$peoplemover_db_ip;databaseName=PeopleMoverQA" \
                                 -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
                                 -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
                                 -Pcf.environment.authquest.url=$authquest_qa_url \
