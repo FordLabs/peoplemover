@@ -80,4 +80,17 @@
   font-size: 14px;
   line-height: 24px;
   color: $gray-1;
+  margin-bottom: 20px;
+}
+
+.landing-page-info-sign-up,
+.landing-page-info-log-in {
+  width: 120px;
+  height: 32px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.landing-page-info-sign-up {
+  margin-right: 10px;
 }

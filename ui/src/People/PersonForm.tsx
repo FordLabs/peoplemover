@@ -43,6 +43,8 @@ import {Assignment} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
+import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
+import {Space} from "../SpaceDashboard/Space";
 
 interface PersonFormProps {
     editing: boolean;
@@ -51,6 +53,8 @@ interface PersonFormProps {
     initialPersonName?: string;
     assignment?: Assignment;
     people: Array<Person>;
+    currentSpace: Space;
+    viewingDate: Date;
 
     closeModal(): void;
 
@@ -67,6 +71,8 @@ function PersonForm({
     initiallySelectedProduct,
     initialPersonName,
     people,
+    currentSpace,
+    viewingDate,
     assignment,
     closeModal,
     addPerson,
@@ -90,7 +96,7 @@ function PersonForm({
 
     useEffect(() => {
         async function setup() {
-            const rolesResponse: AxiosResponse = await RoleClient.get();
+            const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.name);
             setRoles(rolesResponse.data);
 
             if (editing && assignment) {
@@ -103,7 +109,7 @@ function PersonForm({
                     spaceId: getSpaceObjectFromPersonName(assignment.person.name),
                 };
                 setPerson(personFromAssignment);
-                const assignmentsResponse: AxiosResponse = await AssignmentClient.getAssignmentsUsingPersonId(assignment.person.id);
+                const assignmentsResponse: AxiosResponse = await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate);
                 const assignments: Array<Assignment> = assignmentsResponse.data;
                 setInitialProducts(createProductsFromAssignments(assignments));
                 setSelectedProducts(createProductsFromAssignments(assignments));
@@ -131,8 +137,15 @@ function PersonForm({
         return products.filter(p => allProductIdsFromAssignments.includes(p.id)).filter(product => product.id !== getUnassignedProduct().id);
     }
 
-    function getSelectedProductsIdsOrUnassignedProductId() {
-        return selectedProducts.length > 0 ? getProductIdsFromList(selectedProducts) : [getUnassignedProduct().id];
+    function getSelectedProductPairs(): ProductPlaceholderPair[] {
+        return selectedProducts.map((product) => {
+            const placeholderForProduct = product.assignments.find((assignmentForProduct) => assignmentForProduct.person.id === person.id)?.placeholder;
+            return {
+                productId: product.id,
+                placeholder: placeholderForProduct || false
+            } as ProductPlaceholderPair
+        });
+
     }
 
     async function handleSubmit(): Promise<void> {
@@ -145,31 +158,28 @@ function PersonForm({
             }
             if (editing) {
                 const response = await PeopleClient.updatePerson(person);
-                await AssignmentClient.updateAssignmentsUsingIds(
-                    assignment!.person.id,
-                    getProductIdsFromList(selectedProducts),
-                    getProductIdsFromList(initialProducts)
-                );
+                await AssignmentClient.createAssignmentForDate({
+                    requestedDate: viewingDate,
+                    person: assignment!.person,
+                    products: getSelectedProductPairs()
+                });
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
             } else {
                 const response = await PeopleClient.createPersonForSpace(person);
                 const newPerson: Person = response.data;
                 addPerson(newPerson);
-                await AssignmentClient.createAssignmentsUsingIds(
-                    newPerson.id,
-                    getSelectedProductsIdsOrUnassignedProductId()
+                await AssignmentClient.createAssignmentForDate(
+                    {
+                        requestedDate: viewingDate,
+                        person: newPerson,
+                        products: getSelectedProductPairs()
+                    }
                 );
 
             }
             closeModal();
         }
-    }
-
-    function getProductIdsFromList(productsList: Array<Product>): Array<number> {
-        const selectedProductIds: Array<number> = [];
-        productsList.map(product => selectedProductIds.push(product.id));
-        return selectedProductIds;
     }
 
     function removePerson() {
@@ -233,7 +243,7 @@ function PersonForm({
     function handleCreateRole(inputValue: string): void {
         setIsLoading(true);
         const roleAddRequest: RoleAddRequest = {name: inputValue};
-        RoleClient.add(roleAddRequest).then((response: AxiosResponse) => {
+        RoleClient.add(roleAddRequest, currentSpace.name).then((response: AxiosResponse) => {
             const newRole: SpaceRole = response.data;
             setRoles(roles => [...roles, newRole]);
             updatePersonField('spaceRole', newRole);
@@ -282,24 +292,24 @@ function PersonForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="name">Name</label>
                     <input className="formInput formTextInput"
-                        type="text"
-                        name="name"
-                        id="name"
-                        list="peopleList"
-                        value={person.name}
-                        onChange={changeName}
-                        autoComplete="off"
-                        placeholder={'e.g. Jane Smith'}
-                        autoFocus/>
+                           type="text"
+                           name="name"
+                           id="name"
+                           list="peopleList"
+                           value={person.name}
+                           onChange={changeName}
+                           autoComplete="off"
+                           placeholder={'e.g. Jane Smith'}
+                           autoFocus/>
                     {isPersonNameInvalid && <span className="personNameWarning">Please enter a person name.</span>}
                     <div className="isNewContainer">
                         <input className="checkbox"
-                            id="isNew"
-                            type="checkbox"
-                            checked={person.newPerson}
-                            onChange={(): void => {
-                                updatePersonField('newPerson', !person.newPerson);
-                            }}
+                               id="isNew"
+                               type="checkbox"
+                               checked={person.newPerson}
+                               onChange={(): void => {
+                                   updatePersonField('newPerson', !person.newPerson);
+                               }}
                         />
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
                     </div>
@@ -340,12 +350,12 @@ function PersonForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
                     <textarea className="formInput formTextInput notes"
-                        id="notes"
-                        name="notes"
-                        value={person.notes ? person.notes : ''}
-                        onChange={notesChanged}
-                        rows={4}
-                        cols={25}>
+                              id="notes"
+                              name="notes"
+                              value={person.notes ? person.notes : ''}
+                              onChange={notesChanged}
+                              rows={4}
+                              cols={25}>
                         {person.notes}
                     </textarea>
                     <span className="notesFieldText" data-testid="notesFieldText">
@@ -358,10 +368,10 @@ function PersonForm({
                 <div className="yesNoButtons">
                     <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
                     <input className="formButton"
-                        onClick={handleSubmit}
-                        type="button"
-                        disabled={notesFieldLength > 500}
-                        value={editing ? 'Save' : 'Create'}/>
+                           onClick={handleSubmit}
+                           type="button"
+                           disabled={notesFieldLength > 500}
+                           value={editing ? 'Save' : 'Create'}/>
                 </div>
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                     <i className="fas fa-trash"/>
@@ -374,8 +384,10 @@ function PersonForm({
     );
 }
 
-const mapStateToProps = ({people}: GlobalStateProps) => ({
-    people,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    people: state.people,
+    currentSpace: state.currentSpace,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

@@ -29,6 +29,7 @@ import {AxiosResponse} from 'axios';
 import {Trait} from '../Traits/Trait';
 import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
+import {Space} from "../SpaceDashboard/Space";
 
 
 export type LocalStorageFilters = {
@@ -42,11 +43,13 @@ export interface AllGroupedTagFilterOptions {
 }
 
 interface ProductFilterProps {
+    currentSpace: Space;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 }
 
 function ProductFilter({
+    currentSpace,
     setAllGroupedTagFilterOptions,
     allGroupedTagFilterOptions,
 }: ProductFilterProps): JSX.Element {
@@ -83,7 +86,7 @@ function ProductFilter({
     }
 
     async function buildTagOptions(tagClient: TraitClient, tagFilters: Array<string>): Promise<Array<FilterOption>> {
-        const tagsResponse: AxiosResponse<Array<Trait>> = await tagClient.get();
+        const tagsResponse: AxiosResponse<Array<Trait>> = await tagClient.get(currentSpace.name);
         const tags: Array<Trait> = tagsResponse.data;
         return tags.map((tag: Trait): FilterOption => ({
             label: tag.name,
@@ -163,14 +166,14 @@ function ProductFilter({
     );
 }
 
-const mapStateToProps = ({
-    allGroupedTagFilterOptions,
-}: GlobalStateProps) => ({
-    allGroupedTagFilterOptions,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
+    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
+        dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductFilter);

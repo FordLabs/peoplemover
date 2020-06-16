@@ -20,8 +20,6 @@ package com.ford.internalprojects.peoplemover.auth;
 
 import com.ford.internalprojects.peoplemover.assignment.Assignment;
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository;
-import com.ford.internalprojects.peoplemover.board.Board;
-import com.ford.internalprojects.peoplemover.board.BoardRepository;
 import com.ford.internalprojects.peoplemover.color.Color;
 import com.ford.internalprojects.peoplemover.color.ColorRepository;
 import com.ford.internalprojects.peoplemover.person.Person;
@@ -70,9 +68,6 @@ public class AuthConfigTest {
     private SpaceRolesRepository spaceRolesRepository;
 
     @Autowired
-    private BoardRepository boardRepository;
-
-    @Autowired
     private ProductRepository productRepository;
 
     @Autowired
@@ -94,7 +89,6 @@ public class AuthConfigTest {
     public void after() {
         assignmentRepository.deleteAll();
         personRepository.deleteAll();
-        boardRepository.deleteAll();
         productRepository.deleteAll();
 
         colorRepository.deleteAll();
@@ -114,9 +108,8 @@ public class AuthConfigTest {
         Set<String> roleNames = roles.stream().map(SpaceRole::getName).collect(toSet());
         List<String> roleColors = roles.stream().map(SpaceRole::getColor).map(Color::getColor).collect(toList());
 
-        Board savedBoard = boardRepository.findByNameIgnoreCase("Board1").get();
 
-        List<Product> products = productRepository.findAllByBoardId(savedBoard.getId());
+        List<Product> products = productRepository.findAllBySpaceId(flippingsweet.getId());
         List<String> productNames = products.stream().map(Product::getName).collect(toList());
 
         List<Person> persons = personRepository.findAllBySpaceId(flippingsweet.getId());
@@ -132,7 +125,6 @@ public class AuthConfigTest {
         assertThat(roleNames).isEqualTo(asSet("THE BEST", "THE SECOND BEST (UNDERSTUDY)", "THE WURST"));
         assertThat(roleColors).isEqualTo(colorCodes);
 
-        assertThat(savedBoard.getName()).isEqualTo("Board1");
         assertThat(productNames).isEqualTo(asList("My Product", "unassigned"));
         assertThat(personNames).containsExactlyInAnyOrder("Jane Smith", "Bob Barker", "Adam Sandler");
 

@@ -20,8 +20,6 @@ package com.ford.internalprojects.peoplemover.report
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
-import com.ford.internalprojects.peoplemover.board.Board
-import com.ford.internalprojects.peoplemover.board.BoardRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.Product
@@ -51,9 +49,6 @@ class ReportGeneratorControllerTest {
     private lateinit var spaceRepository: SpaceRepository
 
     @Autowired
-    private lateinit var boardRepository: BoardRepository
-
-    @Autowired
     private lateinit var productRepository: ProductRepository
 
     @Autowired
@@ -71,7 +66,6 @@ class ReportGeneratorControllerTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private lateinit var board: Board
     private lateinit var product: Product
     private lateinit var spaceRole: SpaceRole
     private lateinit var person1: Person
@@ -81,8 +75,7 @@ class ReportGeneratorControllerTest {
     @Before
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
-        board = boardRepository.save(Board(name = "board one", spaceId = space.id!!))
-        product = productRepository.save(Product(name = "product", boardId = board.id!!, spaceId = space.id!!))
+        product = productRepository.save(Product(name = "product", spaceId = space.id!!))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
         person1 = personRepository.save(Person(name = "Person 1", spaceRole = spaceRole, spaceId = space.id!!))
         person2 = personRepository.save(Person(name = "Person 2", spaceId = space.id!!))
@@ -96,12 +89,11 @@ class ReportGeneratorControllerTest {
         personRepository.deleteAll()
         spaceRolesRepository.deleteAll()
         productRepository.deleteAll()
-        boardRepository.deleteAll()
         spaceRepository.deleteAll()
     }
 
     @Test
-    fun `GET should return boards, people, products, and roles for a space`() {
+    fun `GET should return people, products, and roles for a space`() {
         val result = mockMvc
                 .perform(get("/api/reportgenerator/${space.name}"))
                 .andExpect(status().isOk)
@@ -115,8 +107,8 @@ class ReportGeneratorControllerTest {
         )
 
 
-        val expectedReportGenerator = ReportGenerator(board.name, product.name, person1.name, spaceRole.name)
-        val expectedReportGenerator2 = ReportGenerator(board.name, product.name, person2.name, "")
+        val expectedReportGenerator = ReportGenerator(product.name, person1.name, spaceRole.name)
+        val expectedReportGenerator2 = ReportGenerator(product.name, person2.name, "")
 
         assertThat(actualReportGenerators.size).isEqualTo(2)
         assertThat(actualReportGenerators[0]).isEqualTo(expectedReportGenerator)

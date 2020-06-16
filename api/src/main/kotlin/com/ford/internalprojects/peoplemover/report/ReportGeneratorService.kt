@@ -32,33 +32,29 @@ class ReportGeneratorService(
         spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException(spaceName)
 
         val nativeQuery = entityManager.createQuery(reportGeneratorQuery, Array<Any?>::class.java)
-                .setParameter("name", spaceName)
+
         val results = nativeQuery.resultList
 
         val reportGenerators: MutableList<ReportGenerator> = mutableListOf()
         results.forEach { result ->
             reportGenerators.add(ReportGenerator(
-                    boardName = result[0].toString(),
-                    productName = result[1].toString(),
-                    personName = result[2].toString(),
-                    personRole = result[3]?.toString() ?: ""
+                    productName = result[0].toString(),
+                    personName = result[1].toString(),
+                    personRole = result[2]?.toString() ?: ""
             ))
         }
         return reportGenerators
     }
 
     companion object {
-        private const val reportGeneratorQuery = "select b.name as BoardName, pt.name as ProductName, pn.name as PersonName, sr.name as PersonRole " +
-                "from Board b join Product pt " +
-                "on b.id=pt.boardId " +
+        private const val reportGeneratorQuery = "select pt.name as ProductName, pn.name as PersonName, sr.name as PersonRole " +
+                "from Space s join Product pt " +
+                "on s.id=pt.spaceId " +
                 "join Assignment a " +
                 "on pt.id= a.productId " +
                 "join Person pn " +
                 "on pn.id=a.person.id " +
                 "left join SpaceRole sr " +
-                "on sr.id = pn.spaceRole.id " +
-                "join Space s " +
-                "on b.spaceId=s.id and s.name=:name"
+                "on sr.id = pn.spaceRole.id "
     }
-
 }

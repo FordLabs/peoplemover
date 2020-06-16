@@ -16,11 +16,14 @@
  */
 
 import React from 'react';
-import {render, RenderResult, wait} from "@testing-library/react";
-import BoardButtons from "../Boards/BoardButtons";
-import TestUtils, {renderWithRedux} from "./TestUtils";
+import {RenderResult, wait} from '@testing-library/react';
+import BoardButtons from '../Boards/BoardButtons';
+import TestUtils, {renderWithRedux} from './TestUtils';
+import {PreloadedState} from "redux";
+import {GlobalStateProps} from "../Redux/Reducers";
 
 describe('BoardButtons', () => {
+    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
 
     beforeEach( () => {
         jest.clearAllMocks();
@@ -34,7 +37,7 @@ describe('BoardButtons', () => {
         let result: RenderResult;
 
         await wait(() => {
-            result = renderWithRedux(<BoardButtons/>);
+            result = renderWithRedux(<BoardButtons/>, undefined, initialState);
         });
 
 
@@ -53,7 +56,7 @@ describe('BoardButtons', () => {
         let result: RenderResult;
 
         await wait(() => {
-            result = renderWithRedux(<BoardButtons/>);
+            result = renderWithRedux(<BoardButtons/>, undefined, initialState);
         });
 
 

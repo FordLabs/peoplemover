@@ -40,12 +40,15 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Trait} from '../Traits/Trait';
 import {StylesConfig} from 'react-select';
 import {Dispatch} from 'redux';
+import moment from "moment";
+import {Space} from "../SpaceDashboard/Space";
 
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
-    boardId?: number;
     spaceId: number;
+    currentSpace: Space;
+    viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     closeModal(): void;
@@ -54,8 +57,9 @@ interface ProductFormProps {
 function ProductForm({
     editing,
     product,
-    boardId,
     spaceId,
+    currentSpace,
+    viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     closeModal,
@@ -96,10 +100,10 @@ function ProductForm({
 
     useEffect(() => {
 
-        LocationClient.get().then(result => {
+        LocationClient.get(currentSpace.name).then(result => {
             setAvailableLocations(result.data);
         });
-        ProductTagClient.get().then(result => setAvailableProductTags(result.data));
+        ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
         setSelectedProductTags(currentProduct.productTags);
 
@@ -107,7 +111,7 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return emptyProduct(boardId);
+            return {...emptyProduct(spaceId), startDate: viewingDate};
         }
         return product;
     }
@@ -220,7 +224,7 @@ function ProductForm({
         const productTag: TraitAddRequest = {
             name: inputValue,
         };
-        ProductTagClient.add(productTag).then((response: AxiosResponse) => {
+        ProductTagClient.add(productTag, currentSpace.name).then((response: AxiosResponse) => {
             const newProductTag: ProductTag = response.data;
             setAvailableProductTags(productTags => [...productTags, {
                 id: newProductTag.id,
@@ -238,7 +242,7 @@ function ProductForm({
         const location: TraitAddRequest = {
             name: inputValue,
         };
-        LocationClient.add(location).then((result: AxiosResponse) => {
+        LocationClient.add(location, currentSpace.name).then((result: AxiosResponse) => {
             const newLocation: SpaceLocation = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
             addGroupedTagFilterOptions(0, newLocation as Trait);
@@ -355,7 +359,7 @@ function ProductForm({
                         type="date"
                         name="start"
                         id="start"
-                        value={currentProduct.startDate ? currentProduct.startDate : ''}
+                        value={currentProduct.startDate ? currentProduct.startDate : viewingDate}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('startDate', e.target.value)}/>
                 </div>
                 <div className="formItem">
@@ -426,8 +430,10 @@ function ProductForm({
         </div>
     );
 }
-const mapStateToProps = ({ allGroupedTagFilterOptions}: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
+    viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

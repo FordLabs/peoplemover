@@ -25,7 +25,6 @@ import {createMemoryHistory} from 'history';
 import {wait, fireEvent, RenderResult} from '@testing-library/react';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
-import moment from 'moment-timezone';
 
 interface TestComponent {
     component: RenderResult;
@@ -65,21 +64,15 @@ describe('SpaceDashbord tests', () => {
         expect(component.queryByText("Space1")).not.toBeNull();
     });
 
-    describe('timezone dependent checks', () => {
-        beforeEach(() => {
-            moment.tz.setDefault('GMT');
-        });
+    it('should display space last modified date and time on a space', async () => {
+        const {component} = await createTestComponent();
+        expect(component.getByText('Last modified Tuesday, April 14, 2020 at 2:06 pm')).not.toBeNull();
+    });
 
-        it('should display space last modified date and time on a space', async () => {
-            const {component} = await createTestComponent();
-            expect(component.getByText('Last modified Tuesday, April 14, 2020 at 6:06 pm')).not.toBeNull();
-        });
-
-        it('should display today and last modified time on a space', async () => {
-            Date.now = jest.fn(() => 1586887571000);
-            const {component} = await createTestComponent();
-            expect(component.getByText('Last modified today at 6:06 pm')).not.toBeNull();
-        });
+    it('should display today and last modified time on a space', async () => {
+        Date.now = jest.fn(() => 1586887571000);
+        const {component} = await createTestComponent();
+        expect(component.getByText('Last modified today at 2:06 pm')).not.toBeNull();
     });
 
     const createTestComponent = async (tokenValid = true): Promise<TestComponent> => {

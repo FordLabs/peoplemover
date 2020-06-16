@@ -19,7 +19,6 @@ package com.ford.internalprojects.peoplemover.space
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
-import com.ford.internalprojects.peoplemover.board.Board
 import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.role.SpaceRole
 import java.sql.Timestamp
@@ -37,10 +36,6 @@ data class Space (
     @Column(unique = true, nullable = false)
     val name: String,
 
-    @OneToMany(cascade = [CascadeType.MERGE], orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "space_id")
-    val boards: Set<Board> = HashSet(),
-
     @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
     val roles: Set<SpaceRole> = HashSet(),
 
@@ -50,5 +45,5 @@ data class Space (
     var lastModifiedDate: Timestamp? = null
 ) {
     constructor(name: String):
-            this(null, name, HashSet(), HashSet(), ArrayList(), null)
+            this(null, name, HashSet(), ArrayList(), null)
 }

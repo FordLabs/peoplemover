@@ -39,7 +39,8 @@ describe('Archive Products', () => {
             const app = renderWithRedux(<PeopleMover/>);
 
             const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const archivedDrawerCaret = drawerCarets[2];
+            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
+            const archivedDrawerCaret = drawerCarets[1];
             fireEvent.click(archivedDrawerCaret);
             await app.findByText('I am archived');
         });
@@ -48,7 +49,8 @@ describe('Archive Products', () => {
             const app = renderWithRedux(<PeopleMover/>);
 
             const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const archivedDrawerCaret = drawerCarets[2];
+            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
+            const archivedDrawerCaret = drawerCarets[1];
             fireEvent.click(archivedDrawerCaret);
             await app.findByText('I am archived');
     
@@ -60,7 +62,8 @@ describe('Archive Products', () => {
             const app = renderWithRedux(<PeopleMover/>);
 
             const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const archivedDrawerCaret = drawerCarets[2];
+            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
+            const archivedDrawerCaret = drawerCarets[1];
             fireEvent.click(archivedDrawerCaret);
             fireEvent.click(app.getByTestId('archivedProduct_4'));
 

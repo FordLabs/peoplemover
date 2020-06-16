@@ -41,8 +41,9 @@ function LandingPage(): JSX.Element {
                         day, balanced, empowered, happy teams are going to be the teams with incredible results.
                     </div>
                     <div className="landing-page-info-sub-heading">Give it a shot!</div>
-                    <div className="landing-page-info-text">Send us an email at jshaddac@ford.com and we can
-                        give you a personal demo, or just set you up with your own PeopleMover space.</div>
+                    <div className="landing-page-info-text">Sign up to create your own PeopleMover space.</div>
+                    <a href={'/user/signup/'}><button className="landing-page-info-sign-up">Sign Up</button></a>
+                    <a href={'/user/login'}><button className="landing-page-info-log-in">Log In</button></a>
                 </div>
                 <img
                     className="landing-page-image"

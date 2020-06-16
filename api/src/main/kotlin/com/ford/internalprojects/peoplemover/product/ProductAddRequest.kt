@@ -29,9 +29,6 @@ data class ProductAddRequest(
         @field:NotBlank(message = "Invalid Product in Request. Did you forget to provide a name for the product?")
         var name: String,
 
-        @field:NotNull(message = "Invalid Product in Request. Did you forget to provide a boardId for the product?")
-        var boardId: Int,
-
         val productTags: Set<ProductTag> = HashSet(),
 
         val startDate: LocalDate? = null,
@@ -47,7 +44,8 @@ data class ProductAddRequest(
         @field:Size(max = 500)
         var notes: String = "",
 
-        var spaceId: Int? = null
+        @field:NotNull(message = "Invalid Product in Request. Did you forget to provide a spaceId for the product?")
+        var spaceId: Int
 ) {
         companion object {
                 @JvmStatic
@@ -55,7 +53,6 @@ data class ProductAddRequest(
                 fun toProduct(productAddRequest: ProductAddRequest): Product {
                         return Product(
                                 name = productAddRequest.name,
-                                boardId = productAddRequest.boardId,
                                 productTags = productAddRequest.productTags,
                                 startDate = productAddRequest.startDate,
                                 endDate = productAddRequest.endDate,
@@ -63,7 +60,7 @@ data class ProductAddRequest(
                                 spaceLocation = productAddRequest.spaceLocation,
                                 archived = productAddRequest.archived,
                                 notes = productAddRequest.notes,
-                                spaceId = productAddRequest.spaceId!!
+                                spaceId = productAddRequest.spaceId
                         )
                 }
         }

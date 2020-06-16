@@ -41,13 +41,13 @@ describe('the assignment form', () => {
     });
 
     it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
-        const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments, TestUtils.productWithoutAssignments];
+        const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments, TestUtils.productWithoutAssignments, TestUtils.productForHank];
 
         await act(async () => {
             const component = <AssignmentForm products={products}
                 initiallySelectedProduct={products[2]}/>;
-            const initialState = {people: TestUtils.people};
-            const wrapper = await renderWithRedux(component, undefined, initialState as PreloadedState<GlobalStateProps>);
+            const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, viewingDate: new Date(2020, 5, 5)} as GlobalStateProps;
+            const wrapper = await renderWithRedux(component, undefined, initialState);
 
             const labelElement = await wrapper.findByLabelText('Name');
             const containerToFindOptionsIn = { container: await wrapper.findByTestId('assignmentForm') };
@@ -58,9 +58,28 @@ describe('the assignment form', () => {
             const assignButton = await wrapper.findByText('Assign');
             fireEvent.click(assignButton);
 
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentsUsingIds');
+            const spy = jest.spyOn(AssignmentClient, 'createAssignmentForDate');
             expect(spy).toBeCalledTimes(1);
-            expect(spy.mock.calls[0]).toEqual([200, [3, 1], [false, false]]);
+            
+            expect(spy).toBeCalledWith({
+                requestedDate: initialState.viewingDate,
+                person: TestUtils.hank,
+                products: [
+                    {
+                        productId: TestUtils.productWithoutAssignments.id,
+                        placeholder: false,
+                    },
+                    {
+                        productId: TestUtils.productWithAssignments.id,
+                        placeholder: false,
+                    },
+                    {
+                        productId: TestUtils.productForHank.id,
+                        placeholder: TestUtils.assignmentForHank.placeholder,
+                    },
+                ],
+            });
+            
         });
     });
 });

@@ -26,6 +26,7 @@ import {TraitClient} from './TraitClient';
 import {TraitEditRequest} from './TraitEditRequest';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {RoleEditRequest} from '../Roles/RoleEditRequest';
+import {Space} from "../SpaceDashboard/Space";
 
 interface EditTraitSectionProps {
     closeCallback: () => void;
@@ -34,6 +35,7 @@ interface EditTraitSectionProps {
     colorSection: boolean;
     traitClient: TraitClient;
     traitName: string;
+    currentSpace: Space;
 }
 
 function EditTraitSection({
@@ -43,6 +45,7 @@ function EditTraitSection({
     colorSection,
     traitClient,
     traitName,
+    currentSpace
 }: EditTraitSectionProps): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
     const [enteredTrait, setEnteredTrait] = useState<TraitAddRequest>();
@@ -109,9 +112,9 @@ function EditTraitSection({
                             updatedColorId: (enteredTrait as RoleAddRequest).colorId,
                         } as RoleEditRequest;
                     }
-                    clientResponse = await traitClient.edit(editRequest);
+                    clientResponse = await traitClient.edit(editRequest, currentSpace.name);
                 } else {
-                    clientResponse = await traitClient.add(enteredTrait);
+                    clientResponse = await traitClient.add(enteredTrait, currentSpace.name);
                 }
             } catch (error) {
                 if (error.response.status === 409) {

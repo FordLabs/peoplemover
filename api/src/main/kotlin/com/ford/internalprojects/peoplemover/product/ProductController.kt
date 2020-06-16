@@ -29,13 +29,6 @@ class ProductController(
         private val productService: ProductService,
         private val logger: BasicLogger) {
 
-    @GetMapping
-    fun allProducts(): ResponseEntity<List<Product>> {
-        val products: List<Product> = productService.findAll()
-        logger.logInfoMessage("All product retrieved.")
-        return ResponseEntity.ok(products)
-    }
-
     @GetMapping("/{spaceId}/{requestedDate}")
     fun allProductsForDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<Set<Product>> {
         val date = LocalDate.parse(requestedDate)

@@ -20,8 +20,8 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
-import BoardClient from '../Boards/BoardClient';
 import {createMemoryHistory} from 'history';
+import ProductClient from '../Products/ProductClient';
 
 describe('PeopleMover', () => {
     let app: RenderResult;
@@ -53,6 +53,17 @@ describe('PeopleMover', () => {
     it('should display Filter option on startup', async () => {
         await app.findByText('Filter:');
     });
+
+    it('should display products', async () => {
+        await app.findAllByText(TestUtils.productWithAssignments.name);
+        await app.findAllByText(TestUtils.productWithoutAssignments.name);
+        await app.findAllByText(TestUtils.productForHank.name);
+    });
+
+    it('should show the Flabs branding on load', async () => {
+        await app.findByText('Powered by');
+        await app.findByText('FordLabs');
+    });
 });
 
 describe('PeopleMover Routing', () => {
@@ -61,7 +72,7 @@ describe('PeopleMover Routing', () => {
     });
 
     it('should show 404 page when bad space name is provided',  async () => {
-        BoardClient.getAllBoards = jest.fn(() => Promise.reject());
+        ProductClient.getProductsForDate = jest.fn(() => Promise.reject());
 
         const history = createMemoryHistory({ initialEntries: ['/somebadName'] });
 
