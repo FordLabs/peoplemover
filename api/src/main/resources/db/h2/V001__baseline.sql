@@ -90,6 +90,7 @@ create table product_tag
 
 create table product_tag_mapping
 (
+    id             int not null identity primary key,
     product_id     int,
     product_tag_id int,
 
@@ -97,24 +98,3 @@ create table product_tag_mapping
     FOREIGN KEY (product_tag_id) REFERENCES product_tag (id) on delete cascade,
     constraint UQ_Product_Tag_Mapping unique (product_id, product_tag_id)
 );
-
-create table users
-(
-    id int primary key,
-    uuid varchar(255),
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
