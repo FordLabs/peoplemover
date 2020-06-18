@@ -95,21 +95,6 @@ function AssignmentCardList({
         onDrop().then();
     }
 
-    function getExistingProductPlaceholderPairsForPerson(personId: number): Array<ProductPlaceholderPair> {
-        const assignments: Array<ProductPlaceholderPair> = [];
-        products.forEach((productInRedux) => {
-            productInRedux.assignments.forEach(assignmentForProduct => {
-                if (assignmentForProduct.person.id === personId ) {
-                    assignments.push({
-                        productId: assignmentForProduct.productId,
-                        placeholder: assignmentForProduct.placeholder,
-                    });
-                }
-            });
-        });
-        return assignments;
-    }
-
     async function onDrop(): Promise<void> {
         if (draggingAssignmentRef && draggingAssignmentRef.ref.current) {
             const productUserDroppedAssignmentOn: ProductCardRefAndProductPair | null = getProductUserDroppedAssignmentOn(
@@ -126,7 +111,14 @@ function AssignmentCardList({
                 const isDifferentProduct = oldAssignment.productId !== newProductId;
 
                 if (isDifferentProduct) {
-                    const productPlaceholderPairs: Array<ProductPlaceholderPair> = getExistingProductPlaceholderPairsForPerson(oldAssignment.person.id)
+                    const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(oldAssignment.person.id, viewingDate)).data;
+                    const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
+                        .map(existingAssignment => {
+                            return ({
+                                productId: existingAssignment.productId,
+                                placeholder: existingAssignment.placeholder,
+                            });
+                        })
                         .filter(existingAssignment => existingAssignment.productId !== oldAssignment.productId)
                         .concat({
                             productId: newProductId,

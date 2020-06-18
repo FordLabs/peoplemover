@@ -155,13 +155,15 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
+                                -Pcf.name=PeopleMover2 \
+                                -Pcf.host=peoplemover2 \
                                 -Pcf.ccUser=$JENKINS_USER \
                                 -Pcf.ccPassword=$JENKINS_PASSWORD \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
                                 -Pcf.domain=$peoplemover_pcf_domain \
                                 -Pcf.environment.spring.datasource.username=$DB_USER \
                                 -Pcf.environment.spring.datasource.password=$DB_PASSWORD \
-                                -Pcf.environment.spring.datasource.url="jdbc:sqlserver://$peoplemover_db_ip;databaseName=PeopleMover" \
+                                -Pcf.environment.spring.datasource.url="jdbc:sqlserver://$peoplemover_db_ip;databaseName=PeopleMoverV2" \
                                 -Pcf.environment.authquest.client_id=$authquest_prod_client_id \
                                 -Pcf.environment.authquest.client_secret=$authquest_prod_client_secret \
                                 -Pcf.environment.authquest.url=$authquest_prod_url \
@@ -231,7 +233,7 @@ def getNpmEnvironment() {
                   REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
                 """.stripIndent()
     } else if (branchName == "master") {
-        return """REACT_APP_URL=https://peoplemover.$peoplemover_pcf_org \
+        return """REACT_APP_URL=https://peoplemover2.$peoplemover_pcf_org \
                   REACT_APP_AUTHQUEST_URL=$authquest_prod_url \
                   REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_prod_client_id \
                   REACT_APP_AUTH_ENABLED=false \
