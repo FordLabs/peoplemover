@@ -1,17 +1,3 @@
-# PeopleMover UI
-
-> ![sample image](./src/LandingPage/LandingPageImage.svg)
-
-PeopleMover is about the people.
-
-Your people.
-
-And helping them be extraordinary.
-
-Most allocation applications focus so much on the projects and schedules, and seem to forget that a product is only as
-successful as its team. Our focus is on the people, and how we can make them feel as empowered as possible. At the end
-of the day, balanced, empowered, happy teams are going to be the teams with incredible results.
-
 ## Building
 
 ### Getting Started
