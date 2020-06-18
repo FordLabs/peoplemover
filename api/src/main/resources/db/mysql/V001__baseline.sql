@@ -107,3 +107,11 @@ create table product_tag_mapping
     constraint FK_Product_Tag_Mapping__Product_Tag foreign key (product_tag_id) references product_tag (id) on delete cascade,
     constraint UQ_Product_Tag_Mapping unique (product_id, product_tag_id)
 );
+
+create table users
+(
+    id int,
+    uuid varchar(255),
+
+    constraint PK_Users primary key (id)
+);
