@@ -1,8 +1,9 @@
+# PeopleMover UI
+This is the web UI for PeopleMover.
+
 ## Building
 
 ### Getting Started
-This is the web UI for PeopleMover. To find out more about the back-end server, visit the [PeopleMover Server](https://github.com/FordLabs/PeopleMover) repository.
-
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Built with
