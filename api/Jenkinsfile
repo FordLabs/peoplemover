@@ -99,8 +99,8 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
-                                -Pcf.name=api.${env.BRANCH_NAME} \
-                                -Pcf.host=api.${env.BRANCH_NAME} \
+                                -Pcf.name=${env.BRANCH_NAME} \
+                                -Pcf.host=${env.BRANCH_NAME} \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
                                 -Pcf.domain=$peoplemover_pcf_domain \
                                 -Pcf.ccUser=$JENKINS_USER \
@@ -240,7 +240,7 @@ def getNpmEnvironment() {
                   REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=false \
                 """.stripIndent()
     } else {
-        return """REACT_APP_URL=https://api.$branchName.$peoplemover_pcf_org \
+        return """REACT_APP_URL=https://$branchName.$peoplemover_pcf_org \
                   REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
                   REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_qa_client_id \
                   REACT_APP_AUTH_ENABLED=false \
@@ -260,7 +260,7 @@ def getManifest() {
     } else {
         def filename = 'ui/manifest_QA.yml'
         def data = readYaml file: filename
-        data.applications.get(0).name = "ui.${branchName}"
+        data.applications.get(0).name = "${branchName}UI"
 
         sh "rm $filename"
         writeYaml file: filename, data: data
