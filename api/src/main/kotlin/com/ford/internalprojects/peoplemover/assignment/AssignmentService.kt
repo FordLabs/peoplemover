@@ -223,4 +223,17 @@ class AssignmentService(
         )
         assignments.forEach { deleteOneAssignment(it) }
     }
+
+    fun getEffectiveDates(spaceId: Int): Set<LocalDate> {
+        spaceRepository.findByIdOrNull(spaceId) ?: throw SpaceNotExistsException()
+
+        val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
+        val allAssignments: MutableList<Assignment> = mutableListOf()
+        people.forEach { person ->
+            val assignmentsForPerson: List<Assignment> = assignmentRepository.getByPersonId(person.id!!)
+            allAssignments.addAll(assignmentsForPerson)
+        }
+
+        return allAssignments.mapNotNull { it.effectiveDate }.toSet()
+    }
 }

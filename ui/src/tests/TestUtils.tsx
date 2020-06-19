@@ -131,8 +131,12 @@ class TestUtils {
         AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn(() => Promise.resolve({
             data: [TestUtils.assignmentForPerson1],
         } as AxiosResponse));
-        AssignmentClient.getAssignmentsUsingDate = jest.fn(() => Promise.resolve({
-            data: [TestUtils.assignments],
+        AssignmentClient.getAssignmentEffectiveDates = jest.fn(() => Promise.resolve({
+            data: [
+                new Date(2020, 4, 15),
+                new Date(2020, 5, 1),
+                new Date(2020, 6, 1),
+            ],
         } as AxiosResponse));
 
         RoleClient.get = jest.fn(() => Promise.resolve({
@@ -282,7 +286,7 @@ class TestUtils {
         placeholder: false,
         person: TestUtils.person1,
         spaceId: 1,
-        effectiveDate: new Date(2018, 0, 1),
+        effectiveDate: new Date(2020, 5, 1),
     };
 
     static assignmentForHank: Assignment = {
@@ -291,7 +295,7 @@ class TestUtils {
         placeholder: true,
         person: TestUtils.hank,
         spaceId: 1,
-        effectiveDate: new Date(2019, 0, 1),
+        effectiveDate: new Date(2020, 6, 1),
     };
 
     static assignmentForUnassigned: Assignment = {
@@ -300,7 +304,7 @@ class TestUtils {
         person: TestUtils.unassignedPerson,
         placeholder: false,
         spaceId: 1,
-        effectiveDate: new Date(2017, 0, 1),
+        effectiveDate: new Date(2020, 4, 15),
     };
 
     static assignments: Array<Assignment> = [
