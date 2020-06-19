@@ -240,7 +240,7 @@ def getNpmEnvironment() {
                   REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=false \
                 """.stripIndent()
     } else {
-        return """REACT_APP_URL=https://API_$branchName.$peoplemover_pcf_org \
+        return """REACT_APP_URL=https://UI_$branchName.$peoplemover_pcf_org \
                   REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
                   REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_qa_client_id \
                   REACT_APP_AUTH_ENABLED=false \
