@@ -99,7 +99,8 @@ pipeline {
                 ]) {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
-                        sh """BRANCH_NAME_WITHOUT_UNDERSCORES=Stage ./gradlew cf-push-blue-green \
+                        sh """./gradlew cf-push-blue-green \
+                                -PbranchNameWithoutUnderscores=Stage \
                                 -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                 -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \

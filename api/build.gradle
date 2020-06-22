@@ -81,7 +81,7 @@ cfConfig {
     cfService {
         name = "MySQL for Pivotal Cloud Foundry v2"
         plan = "ha-plan-30g"
-        instanceName = "PeopleMover ${System.properties['BRANCH_NAME_WITHOUT_UNDERSCORES']} Database"
+        instanceName = "PeopleMover ${project.properties['branchNameWithoutUnderscores']} Database"
     }
 }
 
