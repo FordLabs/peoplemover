@@ -1,6 +1,7 @@
 pipeline {
     agent any
     environment {
+        BRANCH_NAME_WITHOUT_UNDERSCORES = "${env.BRANCH_NAME}".replaceAll("_", "")
         NPM_ENVIRONMENT = getNpmEnvironment()
         MANIFEST = getManifest()
     }
@@ -99,8 +100,8 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
-                                -Pcf.name=${env.BRANCH_NAME} \
-                                -Pcf.host=${env.BRANCH_NAME} \
+                                -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
+                                -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
                                 -Pcf.domain=$peoplemover_pcf_domain \
                                 -Pcf.ccUser=$JENKINS_USER \
@@ -224,7 +225,7 @@ pipeline {
 }
 
 def getNpmEnvironment() {
-    def branchName = "${env.BRANCH_NAME}"
+    def branchName = "${env.BRANCH_NAME_WITHOUT_UNDERSCORES}"
     if (branchName == "dev" || branchName == "stage") {
         return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org \
                   REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
@@ -250,7 +251,7 @@ def getNpmEnvironment() {
 }
 
 def getManifest() {
-    def branchName = "${env.BRANCH_NAME}"
+    def branchName = "${env.BRANCH_NAME_WITHOUT_UNDERSCORES}"
     if (branchName == "dev") {
         return 'manifest_QA.yml'
     } else if (branchName == "stage") {
