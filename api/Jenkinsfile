@@ -2,8 +2,8 @@ pipeline {
     agent any
     environment {
         BRANCH_NAME_WITHOUT_UNDERSCORES = "${env.BRANCH_NAME}".replaceAll("_", "")
-        NPM_ENVIRONMENT = getNpmEnvironment()
-        MANIFEST = getManifest()
+        NPM_ENVIRONMENT = getNpmEnvironment(BRANCH_NAME_WITHOUT_UNDERSCORES)
+        MANIFEST = getManifest(BRANCH_NAME_WITHOUT_UNDERSCORES)
     }
     tools {
         jdk 'openjdk-11-jdk'
@@ -224,8 +224,7 @@ pipeline {
     }
 }
 
-def getNpmEnvironment() {
-    def branchName = "${env.BRANCH_NAME_WITHOUT_UNDERSCORES}"
+def getNpmEnvironment(branchName) {
     if (branchName == "dev" || branchName == "stage") {
         return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org \
                   REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
@@ -250,8 +249,7 @@ def getNpmEnvironment() {
     }
 }
 
-def getManifest() {
-    def branchName = "${env.BRANCH_NAME_WITHOUT_UNDERSCORES}"
+def getManifest(branchName) {
     if (branchName == "dev") {
         return 'manifest_QA.yml'
     } else if (branchName == "stage") {
