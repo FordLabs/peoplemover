@@ -25,7 +25,7 @@ import javax.persistence.*
 @Entity
 data class Assignment(
         @Id
-        @GeneratedValue
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Int? = null,
 
         @OneToOne

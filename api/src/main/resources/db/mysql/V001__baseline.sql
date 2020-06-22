@@ -1,6 +1,6 @@
 create table space
 (
-    id    int          not null,
+    id    int          not null auto_increment,
     name varchar(255) not null,
     last_modified_date datetime,
     constraint PK_Space PRIMARY KEY (id),
@@ -9,7 +9,7 @@ create table space
 
 create table color
 (
-    id    int not null,
+    id    int not null auto_increment,
     color varchar(255) unique,
     constraint PK_Color primary key (id)
 );
@@ -27,7 +27,7 @@ create table space_locations
 
 create table product
 (
-    id                int not null,
+    id                int not null auto_increment,
     archived          bit not null,
     dorf              varchar(255),
     end_date          date,
@@ -44,7 +44,7 @@ create table product
 
 create table space_roles
 (
-    id       int not null,
+    id       int not null auto_increment,
     roles    varchar(255),
     space_id int,
     color_id int,
@@ -57,7 +57,7 @@ create table space_roles
 
 create table person
 (
-    id            int not null,
+    id            int not null auto_increment,
     name          varchar(255),
     notes         varchar(255),
     new_person    bit default 0 not null,
@@ -71,7 +71,7 @@ create table person
 
 create table assignment
 (
-    id                  int not null,
+    id                  int not null auto_increment,
     effective_date      date,
     placeholder         bit not null,
     product_id          int,
@@ -87,7 +87,7 @@ create table assignment
 
 create table product_tag
 (
-    id           int not null,
+    id           int not null auto_increment,
     name         varchar(255),
     space_id     int,
 
@@ -110,7 +110,7 @@ create table product_tag_mapping
 
 create table users
 (
-    id int,
+    id int auto_increment,
     uuid varchar(255),
 
     constraint PK_Users primary key (id)
