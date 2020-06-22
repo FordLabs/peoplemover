@@ -123,14 +123,18 @@ class LocalConfig {
                         placeholder = false
                 ))
         ))
-        assignmentService.createAssignmentFromAssignmentRequest(AssignmentRequest(
-                personId = bob.id!!,
-                placeholder = true,
-                productId = savedProducts[0].id!!
+        assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
+                requestedDate = LocalDate.parse("2020-06-15"),
+                person = bob,
+                products = newHashSet(ProductPlaceholderPair(
+                        productId = savedProducts[0].id!!,
+                        placeholder = true
+                ))
         ))
-        assignmentService.createAssignmentFromAssignmentRequest(AssignmentRequest(
-                personId = adam.id!!,
-                productId = savedProducts[1].id!!
+        assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
+                requestedDate = LocalDate.parse("2020-06-01"),
+                person = adam,
+                products = newHashSet()
         ))
     }
 }

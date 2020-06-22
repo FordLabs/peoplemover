@@ -202,7 +202,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return 400 when given an invalid space` () {
+    fun `GET should return 400 when retrieving assignments given an invalid space` () {
         val bogusSpaceId = 99999999
 
         mockMvc.perform(get("/api/assignment/$bogusSpaceId/$apr1"))
@@ -210,7 +210,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return 400 when given an invalid date` () {
+    fun `GET should return 400 when retrieving assignments given an invalid date` () {
         val bogusDate = "apr1"
 
         mockMvc.perform(get("/api/assignment/${space.id}/$bogusDate"))
@@ -268,6 +268,50 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
+    fun `GET should return a set of effective dates given a space id`() {
+        val savedAssignmentOne = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        val savedAssignmentTwo = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val savedAssignmentThree = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = null,
+                spaceId = space.id!!
+        ))
+
+        val response = mockMvc.perform(get("/api/assignment/dates/${space.id}"))
+                .andExpect(status().isOk)
+                .andReturn().response
+
+        val result: Set<LocalDate> = objectMapper.readValue(
+                response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, LocalDate::class.java))
+
+        assertThat(result).hasSize(2)
+        assertThat(result).contains(savedAssignmentOne.effectiveDate, savedAssignmentTwo.effectiveDate)
+        assertThat(result).doesNotContain(savedAssignmentThree.effectiveDate)
+    }
+
+    @Test
+    fun `GET should return 400 when retrieving effective dates given an invalid space` () {
+        val bogusSpaceId = 99999999
+
+        mockMvc.perform(get("/api/assignment/dates/$bogusSpaceId"))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `POST should only replace any existing assignments for a given date`() {
         val nullAssignmentToKeep: Assignment = assignmentRepository.save(Assignment(
                 person = person,
@@ -287,8 +331,8 @@ class AssignmentControllerInTimeApiTest {
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
                 products = Sets.newSet(
-                        ProductPlaceholderPair(productId = productTwo.id!!, placeholder = false),
-                        ProductPlaceholderPair(productId = productThree.id!!, placeholder = true)
+                    ProductPlaceholderPair(productId = productTwo.id!!, placeholder = false),
+                    ProductPlaceholderPair(productId = productThree.id!!, placeholder = true)
                 )
         )
 
@@ -315,8 +359,8 @@ class AssignmentControllerInTimeApiTest {
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
                 products = Sets.newSet(
-                        ProductPlaceholderPair (productId= unassignedProduct.id!!, placeholder = false ),
-                        ProductPlaceholderPair (productId= productOne.id!!, placeholder = false )
+                    ProductPlaceholderPair (productId= unassignedProduct.id!!, placeholder = false ),
+                    ProductPlaceholderPair (productId= productOne.id!!, placeholder = false )
                 )
         )
 
@@ -349,7 +393,7 @@ class AssignmentControllerInTimeApiTest {
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
                 products = Sets.newSet(
-                     ProductPlaceholderPair(productId = unassignedProduct.id!!, placeholder = false)
+                    ProductPlaceholderPair(productId = unassignedProduct.id!!, placeholder = false)
                 )
         )
 
@@ -415,7 +459,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `POST should return 400 when given an invalid person` () {
+    fun `POST should return 400 when creating assignments given an invalid person` () {
         val bogusPerson = Person(id = 99999999, name = "fake person", spaceId = space.id!!)
 
         val bogusAssignmentRequest = CreateAssignmentsRequest (
@@ -435,7 +479,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `POST should return 400 when given an invalid product`() {
+    fun `POST should return 400 when creating assignments given an invalid product`() {
         val bogusAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
