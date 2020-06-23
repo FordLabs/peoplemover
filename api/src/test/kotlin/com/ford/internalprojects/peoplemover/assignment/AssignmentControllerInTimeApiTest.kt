@@ -37,8 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 
@@ -312,6 +311,48 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
+    fun `GET should return all reassignments for the given spaceId and requested date`() {
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val assignment: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productThree.id!!,
+                effectiveDate = LocalDate.parse(apr2),
+                spaceId = space.id!!
+        ))
+
+        val reassignment = Reassignment(
+                person = person,
+                fromProductName = productOne.name,
+                toProductName = productTwo.name,
+                assignmentId = assignment.id!!
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isOne()
+        assertThat(actualReassignments).containsExactly(reassignment)
+    }
+
+    @Test
     fun `POST should only replace any existing assignments for a given date`() {
         val nullAssignmentToKeep: Assignment = assignmentRepository.save(Assignment(
                 person = person,
@@ -492,5 +533,39 @@ class AssignmentControllerInTimeApiTest {
                 .andExpect(status().isBadRequest)
 
         assertThat(assignmentRepository.count()).isZero()
+    }
+
+    @Test
+    fun `DELETE should return 200 when deleting a valid assignment`() {
+        val assignmentToDelete = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+        assertThat(assignmentRepository.count()).isOne()
+
+        mockMvc.perform(delete("/api/assignment/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(assignmentToDelete)))
+                .andExpect(status().isOk)
+
+        assertThat(assignmentRepository.count()).isZero()
+    }
+
+    @Test
+    fun `DELETE should return 200 when trying to delete an assignment that does not exist`() {
+        val assignmentNotInDb = Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        )
+        assertThat(assignmentRepository.count()).isZero()
+
+        mockMvc.perform(delete("/api/assignment/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(assignmentNotInDb)))
+                .andExpect(status().isOk)
     }
 }

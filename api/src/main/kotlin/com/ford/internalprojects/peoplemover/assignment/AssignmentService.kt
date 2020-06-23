@@ -236,4 +236,8 @@ class AssignmentService(
 
         return allAssignments.mapNotNull { it.effectiveDate }.toSet()
     }
+
+    fun getReassignmentsByDate(spaceId: Int, requestedDate: String): List<Reassignment>? {
+        return null
+    }
 }

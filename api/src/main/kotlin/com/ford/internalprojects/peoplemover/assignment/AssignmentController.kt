@@ -56,4 +56,21 @@ class AssignmentController(
                 "with effective date: [${assignmentsCreated.first().effectiveDate}]")
         return ResponseEntity.ok(assignmentsCreated)
     }
+
+    @DeleteMapping(path = ["/api/assignment/delete"])
+    fun deleteAssignment(@RequestBody assigmentToDelete: Assignment): ResponseEntity<Unit> {
+        assignmentService.deleteOneAssignment(assigmentToDelete)
+        logger.logInfoMessage("assignment deleted " +
+                "for person with id: [${assigmentToDelete.person.id}] " +
+                "for product with id: [${assigmentToDelete.productId}] " +
+                "with effective date: [${assigmentToDelete.effectiveDate}]")
+        return ResponseEntity.ok().build()
+    }
+
+    @GetMapping(path = ["/api/reassignment/{spaceId}/{requestedDate}"])
+    fun getReassignmentsByDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
+        val reassignmentsByDate = assignmentService.getReassignmentsByDate(spaceId, requestedDate)
+        logger.logInfoMessage("All reassignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
+        return ResponseEntity.ok(reassignmentsByDate)
+    }
 }
