@@ -29,7 +29,7 @@ import kotlin.collections.HashSet
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
 data class Space (
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Int? = null,
 

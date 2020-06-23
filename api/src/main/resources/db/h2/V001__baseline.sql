@@ -1,13 +1,13 @@
 create table space
 (
-    id    int          not null primary key,
+    id    int          not null identity primary key,
     name varchar(255) not null unique,
     last_modified_date datetime
 );
 
 create table color
 (
-    id    int not null primary key,
+    id    int not null identity primary key,
     color varchar(255) unique
 );
 
@@ -23,7 +23,7 @@ create table space_locations
 
 create table product
 (
-    id                int not null primary key,
+    id                int not null identity primary key,
     archived          bit not null,
     dorf              varchar(255),
     end_date          date,
@@ -40,7 +40,7 @@ create table product
 
 create table space_roles
 (
-    id       int not null primary key,
+    id       int not null identity primary key,
     roles    varchar(255),
     space_id int,
     color_id int,
@@ -52,7 +52,7 @@ create table space_roles
 
 create table person
 (
-    id            int           not null primary key,
+    id            int           not null identity primary key,
     name          varchar(255),
     notes         varchar(255),
     new_person    bit default 0 not null,
@@ -65,7 +65,7 @@ create table person
 
 create table assignment
 (
-    id                  int not null primary key,
+    id                  int not null identity primary key,
     effective_date      date,
     placeholder         bit not null,
     product_id          int,
@@ -80,7 +80,7 @@ create table assignment
 
 create table product_tag
 (
-    id           int not null primary key,
+    id           int not null identity primary key,
     name         varchar(255),
     space_id     int,
 
@@ -90,6 +90,7 @@ create table product_tag
 
 create table product_tag_mapping
 (
+    id             int not null identity primary key,
     product_id     int,
     product_tag_id int,
 
@@ -97,24 +98,3 @@ create table product_tag_mapping
     FOREIGN KEY (product_tag_id) REFERENCES product_tag (id) on delete cascade,
     constraint UQ_Product_Tag_Mapping unique (product_id, product_tag_id)
 );
-
-create table users
-(
-    id int primary key,
-    uuid varchar(255),
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

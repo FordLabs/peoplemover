@@ -17,15 +17,12 @@
 
 package com.ford.internalprojects.peoplemover.user
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name="users")
 data class User (
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Int? = null,
 

@@ -28,7 +28,7 @@ import javax.persistence.*
 @Entity
 data class Product (
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 
     var name: String,

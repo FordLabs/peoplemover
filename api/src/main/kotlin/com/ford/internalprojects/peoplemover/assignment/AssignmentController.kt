@@ -27,9 +27,11 @@ class AssignmentController(
         private val assignmentService: AssignmentService,
         private val logger: BasicLogger
 ) {
-    @GetMapping("/api/person/{personId}/assignments/date/{date}")
-    fun getAssignmentsByPersonIdForDate(@PathVariable personId: Int, @PathVariable date: String): ResponseEntity<List<Assignment>> {
-        return ResponseEntity.ok(assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(date)))
+    @GetMapping("/api/person/{personId}/assignments/date/{requestedDate}")
+    fun getAssignmentsByPersonIdForDate(@PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
+        val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(requestedDate))
+        logger.logInfoMessage("All assignments retrieved for person with id: [$personId] on date: [$requestedDate].")
+        return ResponseEntity.ok(assignmentsForPerson)
     }
 
     @GetMapping(path = ["/api/assignment/{spaceId}/{requestedDate}"])
@@ -37,6 +39,13 @@ class AssignmentController(
         val assignmentsByDate = assignmentService.getAssignmentsByDate(spaceId, requestedDate)
         logger.logInfoMessage("All assignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
         return ResponseEntity.ok(assignmentsByDate)
+    }
+
+    @GetMapping(path = ["/api/assignment/dates/{spaceId}"])
+    fun getAllEffectiveDates(@PathVariable spaceId: Int): ResponseEntity<Set<LocalDate>> {
+        val dates = assignmentService.getEffectiveDates(spaceId)
+        logger.logInfoMessage("All effective dates retrieved for space with id: [$spaceId].")
+        return ResponseEntity.ok(dates)
     }
 
     @PostMapping(path = ["/api/assignment/create"])

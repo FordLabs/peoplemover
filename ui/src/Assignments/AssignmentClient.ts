@@ -33,9 +33,8 @@ class AssignmentClient {
         );
     }
 
-    static async getAssignmentsUsingDate(spaceId: number, date: Date): Promise<AxiosResponse> {
-        const dateAsString = moment(date).format('YYYY-MM-DD');
-        return Axios.get(process.env.REACT_APP_URL + 'assignment/' + spaceId + '/' + dateAsString,
+    static async getAssignmentEffectiveDates(spaceId: number): Promise<AxiosResponse> {
+        return Axios.get(process.env.REACT_APP_URL + 'assignment/dates/' + spaceId,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }

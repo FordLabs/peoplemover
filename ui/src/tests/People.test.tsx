@@ -27,11 +27,10 @@ import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from '../People/Person';
 import {Product} from '../Products/Product';
-import {Assignment} from '../Assignments/Assignment';
 import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import ProductClient from '../Products/ProductClient';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
+import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 
 describe('people actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
@@ -466,24 +465,6 @@ describe('people actions', () => {
             fireEvent.click(editPersonButton);
         });
 
-        function updateResponseForGetAllAssignments(assignmentRequest: CreateAssignmentsRequest): void {
-            (AssignmentClient.createAssignmentForDate as Function) = jest.fn(() => Promise.resolve({data: [assignmentRequest]}));
-
-            const assignments: Array<Assignment> = [];
-            let count = 0;
-            assignmentRequest.products.forEach((product: ProductPlaceholderPair) => {
-                assignments.push({
-                    id: count++,
-                    spaceId: assignmentRequest.person.spaceId,
-                    person: assignmentRequest.person,
-                    placeholder: product.placeholder,
-                    productId: product.productId,
-                });
-            });
-
-            (AssignmentClient.getAssignmentsUsingDate as Function) = jest.fn(() => Promise.resolve({data: [assignments]}));
-        }
-
         it('should show Edit Person Modal when you click on edit person option', async () => {
             const editPersonButton = await app.findByText('Edit Person');
 
@@ -501,8 +482,6 @@ describe('people actions', () => {
                     const markAsPlaceholderButton = await app.findByText('Mark as Placeholder');
                     fireEvent.mouseDown(markAsPlaceholderButton);
                     fireEvent.mouseUp(markAsPlaceholderButton);
-
-                    updateResponseForGetAllAssignments(assignmentToCreate);
                 });
             };
 
@@ -536,8 +515,6 @@ describe('people actions', () => {
                     }],
                 };
 
-                updateResponseForGetAllAssignments(assignmentToCreate);
-
                 person1Card = await app.findByTestId('assignmentCard1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
                 expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate);
@@ -554,8 +531,6 @@ describe('people actions', () => {
                 ...assignmentToCreate,
                 products: [],
             };
-
-            updateResponseForGetAllAssignments(unassignedAssignmentToCreate);
 
             await wait(() => {
                 expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate);

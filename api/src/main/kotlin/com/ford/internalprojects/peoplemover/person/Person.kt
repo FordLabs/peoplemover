@@ -25,7 +25,7 @@ import javax.persistence.*
 @Entity
 data class Person(
         @Id
-        @GeneratedValue
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Int? = null,
 
         val name: String,

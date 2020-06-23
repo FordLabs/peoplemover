@@ -22,7 +22,7 @@ import javax.persistence.*
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["color"])])
 data class Color (
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Int? = null,
 
