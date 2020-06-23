@@ -100,7 +100,7 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
-                                -PbranchNameWithoutUnderscores=Stage \
+                                -PbranchNameWithoutUnderscores=Branch \
                                 -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                 -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
@@ -128,6 +128,7 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
+                                -PbranchNameWithoutUnderscores=Stage \
                                 -Pcf.name=StagePeopleMover \
                                 -Pcf.host=stagepeoplemover \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
@@ -157,6 +158,7 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
+                                -PbranchNameWithoutUnderscores=Prod \
                                 -Pcf.name=PeopleMover2 \
                                 -Pcf.host=peoplemover2 \
                                 -Pcf.ccUser=$JENKINS_USER \
