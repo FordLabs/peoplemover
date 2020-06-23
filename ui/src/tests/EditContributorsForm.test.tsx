@@ -46,11 +46,13 @@ describe('Edit Contributors Form',  () => {
         fireEvent.click(userIconButton);
     });
 
-    it('Should open Edit Contributors modal on click of text',  () => {
+    it('Should open Edit Contributors modal on click of text in dropdown',  async () => {
+        fireEvent.click(await app.findByText('Invite Contributors'));
         expect(app.getByText('Edit Contributors'));
     });
 
     it('should close Edit Contributors modal on click of Cancel button', async () => {
+        fireEvent.click(await app.findByText('Invite Contributors'));
         const cancelButton = await app.findByText('Cancel');
         fireEvent.click(cancelButton);
 
@@ -58,7 +60,7 @@ describe('Edit Contributors Form',  () => {
     });
 
     it('should submit invited contributors, current space name, and access token on click of Save button', async () => {
-
+        fireEvent.click(await app.findByText('Invite Contributors'));
         SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
 
         const usersToInvite = app.getByTestId('emailTextArea');
