@@ -38,12 +38,22 @@ pipeline {
 
             }
         }
-        
 
-        stage('API Build') {
-            steps {
-                dir("api") {
-                    sh "./gradlew assemble"
+        stage('Build') {
+            parallel {
+                stage('API Build') {
+                    steps {
+                        dir("api") {
+                            sh "./gradlew assemble"
+                        }
+                    }
+                }
+                stage('UI Build') {
+                    steps {
+                        dir("ui") {
+                            sh "${env.NPM_ENVIRONMENT} npm run build"
+                        }
+                    }
                 }
             }
         }
@@ -60,14 +70,6 @@ pipeline {
                     dir("api") {
                         sh './gradlew sonarqube'
                     }
-                }
-            }
-        }
-
-        stage('UI Build') {
-            steps {
-                dir("ui") {
-                    sh "${env.NPM_ENVIRONMENT} npm run build"
                 }
             }
         }
