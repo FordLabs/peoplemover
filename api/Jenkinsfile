@@ -58,71 +58,106 @@ pipeline {
             }
         }
 
-        stage('API Analyze') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'stage'
+        stage('Analyze') {
+            parallel {
+                stage('API Analyze') {
+                    when {
+                        anyOf {
+                            branch 'master'
+                            branch 'stage'
+                        }
+                    }
+                    steps {
+                        withSonarQubeEnv('FordLabs SonarQube') {
+                            dir("api") {
+                                sh './gradlew sonarqube'
+                            }
+                        }
+                    }
                 }
-            }
-            steps {
-                withSonarQubeEnv('FordLabs SonarQube') {
-                    dir("api") {
-                        sh './gradlew sonarqube'
+
+                stage('UI Analyze') {
+                    when {
+                        anyOf {
+                            branch 'master'
+                            branch 'stage'
+                        }
+                    }
+                    steps {
+                        withSonarQubeEnv('FordLabs SonarQube') {
+                            dir("ui") {
+                                sh "npm run coverage"
+                                sh "npm run analyze"
+                            }
+                        }
                     }
                 }
             }
         }
 
-        stage('UI Analyze') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'stage'
+         stage('Deploy Branch') {
+            parallel {
+                stage('API Branch Deploy') {
+                    when {
+                        not {
+                            anyOf {
+                                branch 'master';
+                                branch 'stage'
+                            }
+                        }
+                    }
+                    steps {
+                        withCredentials([
+                            usernamePassword(credentialsId: 'flipJenkins', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
+                            usernamePassword(credentialsId: 'peopleMoverDB', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
+                        ]) {
+                            dir("api") {
+                                sh 'echo Pushing to Cloud Foundry'
+                                sh """./gradlew cf-push-blue-green \
+                                        -PbranchNameWithoutUnderscores=Branch \
+                                        -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
+                                        -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
+                                        -Pcf.ccHost=$peoplemover_pcf_cchost \
+                                        -Pcf.domain=$peoplemover_pcf_domain \
+                                        -Pcf.ccUser=$JENKINS_USER \
+                                        -Pcf.ccPassword=$JENKINS_PASSWORD \
+                                        -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
+                                        -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
+                                        -Pcf.environment.authquest.url=$authquest_qa_url \
+                                """.stripIndent()
+                            }
+                        }
+                    }
                 }
-            }
-            steps {
-                withSonarQubeEnv('FordLabs SonarQube') {
-                    dir("ui") {
-                        sh "npm run coverage"
-                        sh "npm run analyze"
+
+                stage('UI Deploy Test Instances') {
+                    when {
+                        not {
+                            anyOf {
+                                branch 'master'
+                                branch 'stage'
+                                branch 'dev'
+                            }
+                        }
+                    }
+                    steps {
+                        dir("ui") {
+                            pushToCloudFoundry(
+                                target: "$peoplemover_pcf_cchost",
+                                organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
+                                cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
+                                credentialsId: 'flipJenkins',
+                                manifestChoice: [
+                                    manifestFile: "${env.MANIFEST}",
+                                ],
+                            )
+                        }
                     }
                 }
             }
         }
 
-        stage('API Branch Deploy') {
-            when {
-                not {
-                    anyOf {
-                        branch 'master';
-                        branch 'stage'
-                    }
-                }
-            }
-            steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'flipJenkins', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
-                    usernamePassword(credentialsId: 'peopleMoverDB', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
-                ]) {
-                    dir("api") {
-                        sh 'echo Pushing to Cloud Foundry'
-                        sh """./gradlew cf-push-blue-green \
-                                -PbranchNameWithoutUnderscores=Branch \
-                                -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                                -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                                -Pcf.ccHost=$peoplemover_pcf_cchost \
-                                -Pcf.domain=$peoplemover_pcf_domain \
-                                -Pcf.ccUser=$JENKINS_USER \
-                                -Pcf.ccPassword=$JENKINS_PASSWORD \
-                                -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
-                                -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
-                                -Pcf.environment.authquest.url=$authquest_qa_url \
-                           """.stripIndent()
-                   }
-                }
-            }
-        }
+        
 
         stage('API Deploy Stage') {
             when {
@@ -179,30 +214,6 @@ pipeline {
             }
         }
 
-        stage('UI Deploy Test Instances') {
-            when {
-                not {
-                    anyOf {
-                        branch 'master'
-                        branch 'stage'
-                        branch 'dev'
-                    }
-                }
-            }
-            steps {
-                dir("ui") {
-                    pushToCloudFoundry(
-                        target: "$peoplemover_pcf_cchost",
-                        organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
-                        cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
-                        credentialsId: 'flipJenkins',
-                        manifestChoice: [
-                            manifestFile: "${env.MANIFEST}",
-                        ],
-                    )
-                }
-            }
-        }
 
         stage('UI Deploy') {
             when {
