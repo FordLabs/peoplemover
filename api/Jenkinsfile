@@ -10,13 +10,35 @@ pipeline {
         nodejs 'node'
     }
     stages {
-        stage('API Test') {
+        stage('Npm Install') {
             steps {
-                dir("api") {
-                    sh "./gradlew clean test"
+                dir("ui") {
+                    sh "npm install"
                 }
             }
         }
+
+        stage('Run Tests') {
+            parallel {
+                stage('API Test') {
+                    steps {
+                        dir("api") {
+                            sh "./gradlew clean test"
+                        }
+                    }
+                }
+
+                stage('UI Test') {
+                    steps {
+                        dir("ui") {
+                            sh "CI=true npm run test"
+                        }
+                    }
+                }
+
+            }
+        }
+        
 
         stage('API Build') {
             steps {
@@ -38,22 +60,6 @@ pipeline {
                     dir("api") {
                         sh './gradlew sonarqube'
                     }
-                }
-            }
-        }
-
-        stage('Npm Install') {
-            steps {
-                dir("ui") {
-                    sh "npm install"
-                }
-            }
-        }
-
-        stage('UI Test') {
-            steps {
-                dir("ui") {
-                    sh "CI=true npm run test"
                 }
             }
         }
