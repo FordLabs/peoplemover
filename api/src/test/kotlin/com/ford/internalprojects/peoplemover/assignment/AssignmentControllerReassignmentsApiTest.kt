@@ -137,10 +137,7 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
         assertThat(actualReassignments.size).isOne()
-        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
-        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(reassignment.fromProductName)
-        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
-        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
+        assertThat(actualReassignments).contains(reassignment)
     }
 
     @Test
@@ -188,10 +185,7 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
         assertThat(actualReassignments.size).isOne()
-        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
-        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(reassignment.fromProductName)
-        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
-        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
+        assertThat(actualReassignments).contains(reassignment)
     }
 
     @Test
@@ -234,10 +228,7 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
         assertThat(actualReassignments.size).isOne()
-        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
-        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(reassignment.fromProductName)
-        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
-        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
+        assertThat(actualReassignments).contains(reassignment)
     }
 
     @Test
@@ -267,14 +258,11 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
         assertThat(actualReassignments.size).isOne()
-        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
-        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(null)
-        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
-        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
+        assertThat(actualReassignments).contains(reassignment)
     }
 
     @Test
-    fun `GET should return handle reassignments for multiple people being reassigned`() {
+    fun `GET should handle reassignments for multiple people being reassigned`() {
 
 
         assignmentRepository.save(Assignment(
@@ -327,10 +315,6 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
         assertThat(actualReassignments.size).isEqualTo(2)
-//        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
-//        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(reassignment.fromProductName)
-//        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
-//        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
         assertThat(actualReassignments).contains(reassignmentForPerson)
         assertThat(actualReassignments).contains(reassignmentForPersonTwo)
     }
