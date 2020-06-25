@@ -23,6 +23,7 @@ import './BoardButtons.scss';
 import ProductFilter from '../ReusableComponents/ProductFilter';
 import ProductSortBy from '../ReusableComponents/ProductSortBy';
 import {Dispatch} from 'redux';
+import AccountDropdown from "../ReusableComponents/AccountDropdown";
 
 interface BoardButtonsProps {
     setCurrentModal(modalState: CurrentModalState): void;
@@ -39,11 +40,7 @@ function BoardButtons({setCurrentModal}: BoardButtonsProps): JSX.Element {
                 <ProductSortBy/>
             </div>
             {process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED === 'true' &&
-                <button data-testid="editContributorsModal" className={'editContributorsModal'}
-                    onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
-                    <i className="fas fa-user" data-testid={'userIcon'}></i>
-                    <i className="fas fa-caret-down drawerCaret"/>
-                </button>
+                <AccountDropdown/>
             }
 
         </div>
