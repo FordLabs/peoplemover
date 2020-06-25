@@ -35,10 +35,10 @@ function LandingPage(): JSX.Element {
                     <div className="landing-page-info-heading">It’s about the people. Your people.</div>
                     <div className="landing-page-info-sub-heading">And helping them be extraordinary.</div>
                     <div className="landing-page-info-text">
-                        Most allocation applications focus so much on the projects and schedules, and seem
-                        to forget that a product is only as successful as its team. Our focus is on the
-                        people, and how we can make them feel as empowered as possible. At the end of the
-                        day, balanced, empowered, happy teams are going to be the teams with incredible results.
+                        Most allocation applications focus solely on projects and schedules, and seem 
+                        to forget that a product is only as successful as its team. PeopleMover focuses on the people, 
+                        helping you create and fluidly maintain balanced teams well suited for the product at hand – 
+                        because we understand that a great team sets the stage for incredible results.
                     </div>
                     <div className="landing-page-info-sub-heading">Give it a shot!</div>
                     <div className="landing-page-info-text">Sign up to create your own PeopleMover space.</div>
