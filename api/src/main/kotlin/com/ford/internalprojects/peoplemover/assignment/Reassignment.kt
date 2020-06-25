@@ -21,7 +21,7 @@ import com.ford.internalprojects.peoplemover.person.Person
 
 class Reassignment(
         val person: Person,
-        var fromProductName: String,
+        var fromProductName: String?,
         var toProductName: String,
-        var assignmentId: Int
+        var assignment: Assignment
 )

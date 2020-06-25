@@ -237,7 +237,59 @@ class AssignmentService(
         return allAssignments.mapNotNull { it.effectiveDate }.toSet()
     }
 
-    fun getReassignmentsByDate(spaceId: Int, requestedDate: String): List<Reassignment>? {
-        return null
+    fun getReassignmentsByExactDate(spaceId: Int, requestedDate: String): List<Reassignment>? {
+        val requestedLocalDate = try {
+            LocalDate.parse(requestedDate)
+        } catch (e: DateTimeParseException) {
+            throw InvalidDateFormatException()
+        }
+
+        val assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = spaceId, requestedDate = requestedLocalDate)
+
+        val personIdsWithExactDate = assignmentsWithExactDate.map { assignment ->
+            assignment.person.id
+        }.toSet()
+
+        val assignmentsWithPreviousDate: MutableList<Assignment> = mutableListOf()
+        val previousRequestedLocalDate = requestedLocalDate.minusDays(1)
+        personIdsWithExactDate.forEach{ personId ->
+            val assignmentsForPerson: List<Assignment> =
+                    assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(
+                            personId = personId!!,
+                            effectiveDate = previousRequestedLocalDate!!
+                    )
+            assignmentsWithPreviousDate.addAll(getAllAssignmentsForPersonOnDate(personId, assignmentsForPerson))
+        }
+
+
+//        previousAssignmentsForPerson.filter { previousAssignment -> previousAssignment.productId === assignment.productId }
+//
+//        // if assignment has same productId as any assignment in previousAssignmentsForPerson
+//        // then skip this
+
+
+        val reassignments: MutableList<Reassignment> = mutableListOf()
+        assignmentsWithExactDate.forEach {assignment ->
+            val previousAssignmentsForPerson = assignmentsWithPreviousDate.filter { previousAssignment ->
+                assignment.person.id === previousAssignment.person.id
+            }
+
+            var previousAssignmentName = if(previousAssignmentsForPerson.isEmpty()) {
+                null
+            } else {
+                productRepository.findById(previousAssignmentsForPerson.get(0).productId).get().name
+            }
+
+            reassignments.add(
+                    Reassignment(
+                        person = assignment.person,
+                        fromProductName = previousAssignmentName,
+                        toProductName = productRepository.findById(assignment.productId).get().name,
+                        assignment = assignment
+                    )
+            )
+        }
+
+        return reassignments
     }
 }

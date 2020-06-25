@@ -68,9 +68,9 @@ class AssignmentController(
     }
 
     @GetMapping(path = ["/api/reassignment/{spaceId}/{requestedDate}"])
-    fun getReassignmentsByDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
-        val reassignmentsByDate = assignmentService.getReassignmentsByDate(spaceId, requestedDate)
+    fun getReassignmentsByExactDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
+        val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceId, requestedDate)
         logger.logInfoMessage("All reassignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
-        return ResponseEntity.ok(reassignmentsByDate)
+        return ResponseEntity.ok(reassignmentsByExactDate)
     }
 }

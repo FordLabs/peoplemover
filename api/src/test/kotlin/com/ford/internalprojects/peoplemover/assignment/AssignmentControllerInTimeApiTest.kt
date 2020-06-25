@@ -311,7 +311,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return all reassignments for the given spaceId and requested date`() {
+    fun `GET should return all reassignments for the given spaceId and EXACT requested date`() {
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
@@ -336,7 +336,7 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 fromProductName = productOne.name,
                 toProductName = productTwo.name,
-                assignmentId = assignment.id!!
+                assignment = assignment
         )
 
         val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
@@ -349,7 +349,140 @@ class AssignmentControllerInTimeApiTest {
         )
 
         assertThat(actualReassignments.size).isOne()
-        assertThat(actualReassignments).containsExactly(reassignment)
+        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
+        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(reassignment.fromProductName)
+        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
+        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
+    }
+
+    @Test
+    fun `GET should return reassignments for person with multiple assignments`() {
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+        val assignment: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productThree.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        val reassignment = Reassignment(
+                person = person,
+                fromProductName = productOne.name,
+                toProductName = productThree.name,
+                assignment = assignment
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isOne()
+        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
+        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(reassignment.fromProductName)
+        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
+        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
+    }
+
+    @Test
+    fun `GET should return all reassignments should handle multiple historical assignments in db`() {
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+        val assignment: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productThree.id!!,
+                effectiveDate = LocalDate.parse(apr2),
+                spaceId = space.id!!
+        ))
+
+        val reassignment = Reassignment(
+                person = person,
+                fromProductName = productTwo.name,
+                toProductName = productThree.name,
+                assignment = assignment
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr2"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isOne()
+        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
+        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(reassignment.fromProductName)
+        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
+        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
+    }
+
+    @Test
+    fun `GET should return reassignments with null fromProductName when there are no previous assignments`() {
+
+        val assignment: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val reassignment = Reassignment(
+                person = person,
+                fromProductName = null,
+                toProductName = productOne.name,
+                assignment = assignment
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$mar1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isOne()
+        assertThat(actualReassignments.get(0).assignment.id).isEqualTo(assignment.id)
+        assertThat(actualReassignments.get(0).fromProductName).isEqualTo(null)
+        assertThat(actualReassignments.get(0).toProductName).isEqualTo(reassignment.toProductName)
+        assertThat(actualReassignments.get(0).person.id).isEqualTo(assignment.person.id)
     }
 
     @Test
