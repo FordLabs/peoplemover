@@ -22,16 +22,20 @@ import React from 'react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
+import Cookies from 'universal-cookie';
 
-describe('Edit Contributors Form',  () => {
+describe('Account Dropdown',  () => {
     let app: RenderResult;
+
+    let history: any;
+
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
         process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'true';
 
-        const history = createMemoryHistory({ initialEntries: ['/teamName'] });
+        history = createMemoryHistory({ initialEntries: ['/teamName'] });
 
         await wait(async () => {
 
@@ -71,4 +75,19 @@ describe('Edit Contributors Form',  () => {
 
         expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith('teamName', ['some1@email.com', 'some2@email.com', 'some3@email.com']);
     });
+
+    it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {
+
+        const cookies = new Cookies();
+
+        cookies.set('accessToken', 'FAKE_TOKEN');
+
+        expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
+
+        fireEvent.click(await app.findByText('Sign Out'));
+
+        expect(cookies.get('accessToken')).toBeUndefined();
+        expect(history.location.pathname).toEqual('/');
+    });
+
 });
