@@ -19,7 +19,7 @@ package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.person.Person
 
-class Reassignment(
+data class Reassignment(
         val person: Person,
         var fromProductName: String?,
         var toProductName: String,

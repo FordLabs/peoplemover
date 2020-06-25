@@ -244,13 +244,13 @@ class AssignmentService(
             throw InvalidDateFormatException()
         }
 
-        val assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = spaceId, requestedDate = requestedLocalDate)
+        var assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = spaceId, requestedDate = requestedLocalDate)
 
         val personIdsWithExactDate = assignmentsWithExactDate.map { assignment ->
             assignment.person.id
         }.toSet()
 
-        val assignmentsWithPreviousDate: MutableList<Assignment> = mutableListOf()
+        var assignmentsWithPreviousDate: MutableList<Assignment> = mutableListOf()
         val previousRequestedLocalDate = requestedLocalDate.minusDays(1)
         personIdsWithExactDate.forEach{ personId ->
             val assignmentsForPerson: List<Assignment> =
@@ -261,12 +261,13 @@ class AssignmentService(
             assignmentsWithPreviousDate.addAll(getAllAssignmentsForPersonOnDate(personId, assignmentsForPerson))
         }
 
+        
+        val personIdProductIdPairsWithExactDate = assignmentsWithExactDate.map{ Pair(it.person.id, it.productId) }
+        val personIdProductIdPairsForPreviousDate = assignmentsWithPreviousDate.map{ Pair(it.person.id, it.productId) }
+        val commonPersonIdProductIdPairs = personIdProductIdPairsWithExactDate intersect personIdProductIdPairsForPreviousDate
 
-//        previousAssignmentsForPerson.filter { previousAssignment -> previousAssignment.productId === assignment.productId }
-//
-//        // if assignment has same productId as any assignment in previousAssignmentsForPerson
-//        // then skip this
-
+        assignmentsWithExactDate = assignmentsWithExactDate.filter { !commonPersonIdProductIdPairs.contains(Pair(it.person.id, it.productId)) }
+        assignmentsWithPreviousDate = assignmentsWithPreviousDate.filter { !commonPersonIdProductIdPairs.contains(Pair(it.person.id, it.productId)) }.toMutableList()
 
         val reassignments: MutableList<Reassignment> = mutableListOf()
         assignmentsWithExactDate.forEach {assignment ->
@@ -292,4 +293,5 @@ class AssignmentService(
 
         return reassignments
     }
+
 }
