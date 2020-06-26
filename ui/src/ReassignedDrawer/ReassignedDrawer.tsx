@@ -43,7 +43,7 @@ function ReassignedDrawer({
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
 
     useEffect(() => {
-        const reassignments = AssignmentClient.getReassignments(currentSpace.id!!, viewingDate.toISOString().substring(0, 10)).then( reassignmentResponse =>
+        const reassignments = AssignmentClient.getReassignments(currentSpace.id!!, viewingDate).then( reassignmentResponse =>
             setReassignments(reassignmentResponse.data)
         );
     }, [products]);

@@ -111,11 +111,11 @@ describe('the assignment client', () => {
         process.env.REACT_APP_URL = 'testUrl/';
 
         const spaceId = 1;
-        const requestedDate = '2020-06-26';
+        const requestedDate = new Date(2020, 5, 20);
 
         const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
 
-        const expectedUrl = `testUrl/reassignment/${spaceId}/${requestedDate}`;
+        const expectedUrl = `testUrl/reassignment/${spaceId}/2020-06-20`;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };
