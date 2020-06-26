@@ -22,16 +22,20 @@ import React from 'react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
+import Cookies from 'universal-cookie';
 
-describe('Edit Contributors Form',  () => {
+describe('Account Dropdown',  () => {
     let app: RenderResult;
+
+    let history: any;
+
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
         process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'true';
 
-        const history = createMemoryHistory({ initialEntries: ['/teamName'] });
+        history = createMemoryHistory({ initialEntries: ['/teamName'] });
 
         await wait(async () => {
 
@@ -46,11 +50,13 @@ describe('Edit Contributors Form',  () => {
         fireEvent.click(userIconButton);
     });
 
-    it('Should open Edit Contributors modal on click of text',  () => {
+    it('Should open Edit Contributors modal on click of text in dropdown',  async () => {
+        fireEvent.click(await app.findByText('Invite Contributors'));
         expect(app.getByText('Edit Contributors'));
     });
 
     it('should close Edit Contributors modal on click of Cancel button', async () => {
+        fireEvent.click(await app.findByText('Invite Contributors'));
         const cancelButton = await app.findByText('Cancel');
         fireEvent.click(cancelButton);
 
@@ -58,7 +64,7 @@ describe('Edit Contributors Form',  () => {
     });
 
     it('should submit invited contributors, current space name, and access token on click of Save button', async () => {
-
+        fireEvent.click(await app.findByText('Invite Contributors'));
         SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
 
         const usersToInvite = app.getByTestId('emailTextArea');
@@ -69,4 +75,19 @@ describe('Edit Contributors Form',  () => {
 
         expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith('teamName', ['some1@email.com', 'some2@email.com', 'some3@email.com']);
     });
+
+    it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {
+
+        const cookies = new Cookies();
+
+        cookies.set('accessToken', 'FAKE_TOKEN');
+
+        expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
+
+        fireEvent.click(await app.findByText('Sign Out'));
+
+        expect(cookies.get('accessToken')).toBeUndefined();
+        expect(history.location.pathname).toEqual('/');
+    });
+
 });

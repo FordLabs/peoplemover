@@ -1,22 +1,9 @@
 # PeopleMover UI
-
-> ![sample image](./src/LandingPage/LandingPageImage.svg)
-
-PeopleMover is about the people.
-
-Your people.
-
-And helping them be extraordinary.
-
-Most allocation applications focus so much on the projects and schedules, and seem to forget that a product is only as
-successful as its team. Our focus is on the people, and how we can make them feel as empowered as possible. At the end
-of the day, balanced, empowered, happy teams are going to be the teams with incredible results.
+This is the web UI for PeopleMover.
 
 ## Building
 
 ### Getting Started
-This is the web UI for PeopleMover. To find out more about the back-end server, visit the [PeopleMover Server](https://github.com/FordLabs/PeopleMover) repository.
-
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Built with

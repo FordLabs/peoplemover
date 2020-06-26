@@ -23,7 +23,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "space_locations", uniqueConstraints = [UniqueConstraint(columnNames = ["space_id", "name"])])
 data class SpaceLocation (
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Int? = null,
 

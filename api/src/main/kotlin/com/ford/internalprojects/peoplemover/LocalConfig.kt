@@ -17,7 +17,6 @@
 
 package com.ford.internalprojects.peoplemover
 
-import com.ford.internalprojects.peoplemover.assignment.AssignmentRequest
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
 import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair

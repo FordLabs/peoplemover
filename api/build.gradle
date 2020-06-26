@@ -35,6 +35,8 @@ repositories {
 dependencies {
     implementation name: 'libauthquest-1.0.3'
 
+    runtime 'mysql:mysql-connector-java'
+
     compile 'com.google.guava:guava:28.2-jre'
     compile 'org.springframework.cloud:spring-cloud-spring-service-connector:2.0.7.RELEASE'
     compile 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.7.RELEASE'
@@ -75,8 +77,13 @@ cfConfig {
             "spring.datasource.password": "",
             "JBP_CONFIG_OPEN_JDK_JRE"   : "{ jre: {version: 11.+} }"
     ]
+    
+    cfService {
+        name = "MySQL for Pivotal Cloud Foundry v2"
+        plan = "ha-plan-30g"
+        instanceName = "PeopleMover ${project.properties['branchNameWithoutUnderscores']} Database"
+    }
 }
-
 
 jacoco {
     toolVersion = "0.8.5"

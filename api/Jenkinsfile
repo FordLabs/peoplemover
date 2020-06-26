@@ -1,8 +1,9 @@
 pipeline {
     agent any
     environment {
-        NPM_ENVIRONMENT = getNpmEnvironment()
-        MANIFEST = getManifest()
+        BRANCH_NAME_WITHOUT_UNDERSCORES = "${env.BRANCH_NAME}".replaceAll("_", "")
+        NPM_ENVIRONMENT = getNpmEnvironment(BRANCH_NAME_WITHOUT_UNDERSCORES)
+        MANIFEST = getManifest(BRANCH_NAME_WITHOUT_UNDERSCORES)
     }
     tools {
         jdk 'openjdk-11-jdk'
@@ -99,15 +100,13 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
-                                -Pcf.name=API_${env.BRANCH_NAME} \
-                                -Pcf.host=API_${env.BRANCH_NAME} \
+                                -PbranchNameWithoutUnderscores=Branch \
+                                -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
+                                -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
                                 -Pcf.domain=$peoplemover_pcf_domain \
                                 -Pcf.ccUser=$JENKINS_USER \
                                 -Pcf.ccPassword=$JENKINS_PASSWORD \
-                                -Pcf.environment.spring.datasource.username=$DB_USER \
-                                -Pcf.environment.spring.datasource.password=$DB_PASSWORD \
-                                -Pcf.environment.spring.datasource.url="jdbc:sqlserver://$peoplemover_db_ip;databaseName=PeopleMoverQA" \
                                 -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
                                 -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
                                 -Pcf.environment.authquest.url=$authquest_qa_url \
@@ -129,15 +128,13 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
+                                -PbranchNameWithoutUnderscores=Stage \
                                 -Pcf.name=StagePeopleMover \
                                 -Pcf.host=stagepeoplemover \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
                                 -Pcf.domain=$peoplemover_pcf_domain \
                                 -Pcf.ccUser=$JENKINS_USER \
                                 -Pcf.ccPassword=$JENKINS_PASSWORD \
-                                -Pcf.environment.spring.datasource.username=$DB_USER \
-                                -Pcf.environment.spring.datasource.password=$DB_PASSWORD \
-                                -Pcf.environment.spring.datasource.url="jdbc:sqlserver://$peoplemover_db_ip;databaseName=PeopleMoverQA" \
                                 -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
                                 -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
                                 -Pcf.environment.authquest.url=$authquest_qa_url \
@@ -158,15 +155,13 @@ pipeline {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh """./gradlew cf-push-blue-green \
+                                -PbranchNameWithoutUnderscores=Prod \
                                 -Pcf.name=PeopleMover2 \
                                 -Pcf.host=peoplemover2 \
                                 -Pcf.ccUser=$JENKINS_USER \
                                 -Pcf.ccPassword=$JENKINS_PASSWORD \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
                                 -Pcf.domain=$peoplemover_pcf_domain \
-                                -Pcf.environment.spring.datasource.username=$DB_USER \
-                                -Pcf.environment.spring.datasource.password=$DB_PASSWORD \
-                                -Pcf.environment.spring.datasource.url="jdbc:sqlserver://$peoplemover_db_ip;databaseName=PeopleMoverV2" \
                                 -Pcf.environment.authquest.client_id=$authquest_prod_client_id \
                                 -Pcf.environment.authquest.client_secret=$authquest_prod_client_secret \
                                 -Pcf.environment.authquest.url=$authquest_prod_url \
@@ -226,8 +221,7 @@ pipeline {
     }
 }
 
-def getNpmEnvironment() {
-    def branchName = "${env.BRANCH_NAME}"
+def getNpmEnvironment(branchName) {
     if (branchName == "dev" || branchName == "stage") {
         return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org \
                   REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
@@ -243,12 +237,16 @@ def getNpmEnvironment() {
                   REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=false \
                 """.stripIndent()
     } else {
-        return ' '
+        return """REACT_APP_URL=https://$branchName.$peoplemover_pcf_org \
+                  REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
+                  REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_qa_client_id \
+                  REACT_APP_AUTH_ENABLED=false \
+                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
+                """.stripIndent()
     }
 }
 
-def getManifest() {
-    def branchName = "${env.BRANCH_NAME}"
+def getManifest(branchName) {
     if (branchName == "dev") {
         return 'manifest_QA.yml'
     } else if (branchName == "stage") {
@@ -258,7 +256,7 @@ def getManifest() {
     } else {
         def filename = 'ui/manifest_QA.yml'
         def data = readYaml file: filename
-        data.applications.get(0).name = "UI_${branchName}"
+        data.applications.get(0).name = "${branchName}UI"
 
         sh "rm $filename"
         writeYaml file: filename, data: data

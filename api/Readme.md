@@ -1,5 +1,5 @@
 # PeopleMover Server
-This is the back-end server for PeopleMover. To find out more about PeopleMover, visit the [PeopleMoverUI](https://github.com/FordLabs/PeopleMoverUI) repository.
+This is the back-end server for PeopleMover.
 
 ## Building
 

@@ -24,7 +24,7 @@ import javax.persistence.*
 @Entity
 data class ProductTag (
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
     @Column(name = "space_id")
