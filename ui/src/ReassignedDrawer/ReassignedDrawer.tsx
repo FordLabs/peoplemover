@@ -22,10 +22,31 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Reassignment} from './Reassignment';
+import {Product} from "../Products/Product";
+import {ProductCardRefAndProductPair} from "../Products/ProductDnDHelper";
+import {CurrentModalState} from "../Redux/Reducers/currentModalReducer";
+import AssignmentClient from "../Assignments/AssignmentClient";
+import {Space} from "../SpaceDashboard/Space";
 
-function ReassignedDrawer(): JSX.Element {
+interface ReassignedDrawerProps {
+    products: Array<Product>;
+    viewingDate: Date;
+    currentSpace: Space;
+}
+
+function ReassignedDrawer({
+    products,
+    viewingDate,
+    currentSpace,
+}: ReassignedDrawerProps): JSX.Element {
     const [showDrawer, setShowDrawer] = useState(true);
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
+
+    useEffect(() => {
+        const reassignments = AssignmentClient.getReassignments(currentSpace.id!!, viewingDate.toISOString().substring(0, 10)).then( reassignmentResponse =>
+            setReassignments(reassignmentResponse.data)
+        );
+    }, [products]);
 
     const listOfHTMLReassignments: Array<JSX.Element> = reassignments.map((reassignment: Reassignment, index: number) => (
         mapsReassignments(reassignment, index)
@@ -45,10 +66,10 @@ function ReassignedDrawer(): JSX.Element {
 
 function mapsReassignments(reassignment: Reassignment, index: number): JSX.Element {
     let oneWayReassignment: string | undefined;
-    if (!reassignment.toProduct) {
-        oneWayReassignment = `${reassignment.fromProduct!} assignment cancelled`;
-    } else if (!reassignment.fromProduct) {
-        oneWayReassignment = `Assigned to ${reassignment.toProduct}`;
+    if (!reassignment.toProductName) {
+        oneWayReassignment = `${reassignment.fromProductName!} assignment cancelled`;
+    } else if (!reassignment.fromProductName) {
+        oneWayReassignment = `Assigned to ${reassignment.toProductName}`;
 
     }
 
@@ -56,7 +77,7 @@ function mapsReassignments(reassignment: Reassignment, index: number): JSX.Eleme
         <div className="name">{reassignment.person.name}</div>
         <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
         {!oneWayReassignment &&
-        <div className="additionalInfo">{reassignment.fromProduct!} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProduct!}</div>
+        <div className="additionalInfo">{reassignment.fromProductName!} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName!}</div>
         }
         {oneWayReassignment &&
         <div className="additionalInfo">{oneWayReassignment}</div>
@@ -64,7 +85,11 @@ function mapsReassignments(reassignment: Reassignment, index: number): JSX.Eleme
     </div>;
 }
 
-const mapStateToProps = ({}: GlobalStateProps) => ({});
+const mapStateToProps = (state: GlobalStateProps) => ({
+    products: state.products,
+    viewingDate: state.viewingDate,
+    currentSpace: state.currentSpace,
+});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({});
 

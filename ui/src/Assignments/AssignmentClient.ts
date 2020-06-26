@@ -41,8 +41,19 @@ class AssignmentClient {
     }
 
 
-    static async deleteAssignment(assignmentToDelete: Assignment) {
-        return;
+    static async deleteAssignment(assignmentToDelete: Assignment): Promise<AxiosResponse> {
+        return Axios.delete(`${process.env.REACT_APP_URL}assignment/delete`,
+            {
+                headers: { 'Content-Type': 'application/json'},
+                data: {'assignmentToDelete': assignmentToDelete}
+            }
+        );
+    }
+
+    static async getReassignments(spaceId: number, requestedDate: string): Promise<AxiosResponse> {
+        return Axios.get(`${process.env.REACT_APP_URL}reassignment/` + spaceId + '/' + requestedDate,
+            {headers: { 'Content-Type': 'application/json'}}
+        );
     }
 }
 

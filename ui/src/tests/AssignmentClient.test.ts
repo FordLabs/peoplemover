@@ -90,18 +90,38 @@ describe('the assignment client', () => {
     });
 
     it('should delete assignment given assignment', async() => {
-        Axios.get = jest.fn();
+        Axios.delete = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 
         const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
 
-        const expectedUrl = 'testUrl/assignment/create';
+        const expectedUrl = 'testUrl/assignment/delete';
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
+            data: {'assignmentToDelete': expectedAssignmentToDelete}
         };
 
         await AssignmentClient.deleteAssignment(expectedAssignmentToDelete);
 
-        expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedAssignmentToDelete, expectedConfig);
+        expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    });
+
+    it('should get reassignments given assignment', async() => {
+        Axios.get = jest.fn();
+        process.env.REACT_APP_URL = 'testUrl/';
+
+        const spaceId = 1;
+        const requestedDate = '2020-06-26';
+
+        const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
+
+        const expectedUrl = `testUrl/reassignment/${spaceId}/${requestedDate}`;
+        const expectedConfig = {
+            headers: {'Content-Type': 'application/json'},
+        };
+
+        await AssignmentClient.getReassignments(spaceId, requestedDate);
+
+        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 });

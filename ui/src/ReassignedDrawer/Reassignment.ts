@@ -20,7 +20,7 @@ import {Assignment} from "../Assignments/Assignment";
 
 export interface Reassignment {
     person: Person;
-    fromProduct?: string;
-    toProduct: string;
+    fromProductName?: string;
+    toProductName: string;
     assignment: Assignment;
 }
