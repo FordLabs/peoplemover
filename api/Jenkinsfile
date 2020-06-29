@@ -226,15 +226,15 @@ def getNpmEnvironment(branchName) {
         return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org \
                   REACT_APP_AUTHQUEST_URL=$authquest_qa_url \
                   REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_qa_client_id \
-                  REACT_APP_AUTH_ENABLED=false \
+                  REACT_APP_AUTH_ENABLED=true \
                   REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
                 """.stripIndent()
     } else if (branchName == "master") {
         return """REACT_APP_URL=https://peoplemover2.$peoplemover_pcf_org \
                   REACT_APP_AUTHQUEST_URL=$authquest_prod_url \
                   REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_prod_client_id \
-                  REACT_APP_AUTH_ENABLED=false \
-                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=false \
+                  REACT_APP_AUTH_ENABLED=true \
+                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
                 """.stripIndent()
     } else {
         return """REACT_APP_URL=https://$branchName.$peoplemover_pcf_org \
