@@ -318,4 +318,49 @@ class AssignmentControllerReassignmentsApiTest {
         assertThat(actualReassignments).contains(reassignmentForPerson)
         assertThat(actualReassignments).contains(reassignmentForPersonTwo)
     }
+
+    @Test
+    fun `GET should handle one assignment being cancelled when a person is on multiple assignments`() {
+
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val assignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        val reassignmentForPerson = Reassignment(
+                person = person,
+                fromProductName = productOne.name,
+                toProductName = null,
+                assignment = null
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isEqualTo(1)
+        assertThat(actualReassignments).contains(reassignmentForPerson)
+    }
 }
