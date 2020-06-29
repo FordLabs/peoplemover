@@ -30,11 +30,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.internal.util.collections.Sets
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -70,6 +68,7 @@ class AssignmentControllerReassignmentsApiTest {
     private lateinit var productOne: Product
     private lateinit var productTwo: Product
     private lateinit var productThree: Product
+    private lateinit var productFour: Product
     private lateinit var unassignedProduct: Product
     private lateinit var person: Person
     private lateinit var personTwo: Person
@@ -84,6 +83,7 @@ class AssignmentControllerReassignmentsApiTest {
         productOne = productRepository.save(Product(name = "Justice League", spaceId = space.id!!))
         productTwo = productRepository.save(Product(name = "Avengers", spaceId = space.id!!))
         productThree = productRepository.save(Product(name = "Misfits", spaceId = space.id!!))
+        productFour = productRepository.save(Product(name = "Fantastic 4", spaceId = space.id!!))
         unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = space.id!!))
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
         personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceId = space.id!!))
@@ -123,8 +123,7 @@ class AssignmentControllerReassignmentsApiTest {
         val reassignment = Reassignment(
                 person = person,
                 fromProductName = productOne.name,
-                toProductName = productTwo.name,
-                assignment = assignment
+                toProductName = productTwo.name
         )
 
         val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
@@ -141,7 +140,7 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
-    fun `GET should return handle reassignment logic for person with multiple assignments changing only one of the assignments`() {
+    fun `GET should handle reassignment logic for person with multiple assignments changing only one of the assignments`() {
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
@@ -171,8 +170,7 @@ class AssignmentControllerReassignmentsApiTest {
         val reassignment = Reassignment(
                 person = person,
                 fromProductName = productOne.name,
-                toProductName = productThree.name,
-                assignment = assignment
+                toProductName = productThree.name
         )
 
         val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
@@ -214,8 +212,7 @@ class AssignmentControllerReassignmentsApiTest {
         val reassignment = Reassignment(
                 person = person,
                 fromProductName = productTwo.name,
-                toProductName = productThree.name,
-                assignment = assignment
+                toProductName = productThree.name
         )
 
         val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr2"))
@@ -232,7 +229,7 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
-    fun `GET should return reassignments with null fromProductName when there are no previous assignments`() {
+    fun `GET should return reassignments with empty string fromProductName when there are no previous assignments`() {
 
         val assignment: Assignment = assignmentRepository.save(Assignment(
                 person = person,
@@ -243,9 +240,8 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignment = Reassignment(
                 person = person,
-                fromProductName = null,
-                toProductName = productOne.name,
-                assignment = assignment
+                fromProductName = "",
+                toProductName = productOne.name
         )
 
         val result = mockMvc.perform(get("/api/reassignment/${space.id}/$mar1"))
@@ -294,15 +290,13 @@ class AssignmentControllerReassignmentsApiTest {
         val reassignmentForPerson = Reassignment(
                 person = person,
                 fromProductName = productOne.name,
-                toProductName = productTwo.name,
-                assignment = assignmentForPerson
+                toProductName = productTwo.name
         )
 
         val reassignmentForPersonTwo = Reassignment(
                 person = personTwo,
                 fromProductName = productTwo.name,
-                toProductName = productOne.name,
-                assignment = assignmentForPersonTwo
+                toProductName = productOne.name
         )
 
         val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
@@ -321,8 +315,118 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should handle one assignment being cancelled when a person is on multiple assignments`() {
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
 
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
 
+        assignmentRepository.save(Assignment(
+                person = personTwo,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        val reassignmentForPerson = Reassignment(
+                person = person,
+                fromProductName = productOne.name,
+                toProductName = ""
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isEqualTo(1)
+        assertThat(actualReassignments).contains(reassignmentForPerson)
+    }
+
+    @Test
+    fun `GET should handle one assignment being cancelled when a person is on multiple assignments and there is more than one reassignment`() {
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = personTwo,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        val assignmentForPersonTwo: Assignment = assignmentRepository.save(Assignment(
+                person = personTwo,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        val reassignmentForPerson = Reassignment(
+                person = person,
+                fromProductName = productOne.name,
+                toProductName = ""
+        )
+
+        val reassignmentForPersonTwo = Reassignment(
+                person = personTwo,
+                fromProductName = productTwo.name,
+                toProductName = productOne.name
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isEqualTo(2)
+        assertThat(actualReassignments).contains(reassignmentForPerson)
+        assertThat(actualReassignments).contains(reassignmentForPersonTwo)
+    }
+
+    @Test
+    fun `GET should handle one assignment being cancelled and one being reassinged when a person is on multiple assignments and there is more than one reassignment`() {
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
@@ -339,17 +443,88 @@ class AssignmentControllerReassignmentsApiTest {
 
         val assignmentForPerson: Assignment = assignmentRepository.save(Assignment(
                 person = person,
+                productId = productThree.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = personTwo,
                 productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val assignmentForPersonTwo: Assignment = assignmentRepository.save(Assignment(
+                person = personTwo,
+                productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
 
         val reassignmentForPerson = Reassignment(
                 person = person,
-                fromProductName = productOne.name,
-                toProductName = null,
-                assignment = null
+                fromProductName = productOne.name + " & " + productTwo.name,
+                toProductName = productThree.name
         )
+
+        val reassignmentForPersonTwo = Reassignment(
+                person = personTwo,
+                fromProductName = productTwo.name,
+                toProductName = productOne.name
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isEqualTo(2)
+        assertThat(actualReassignments).contains(reassignmentForPerson)
+        assertThat(actualReassignments).contains(reassignmentForPersonTwo)
+    }
+
+    @Test
+    fun `GET should handle when one person is moved from two products to another two products `() {
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val assignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productThree.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        val assignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productFour.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+
+        val reassignmentForPerson = Reassignment(
+                person = person,
+                fromProductName = productOne.name + " & " + productTwo.name,
+                toProductName = productThree.name + " & " + productFour.name
+        )
+
 
         val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
                 .andExpect(status().isOk)

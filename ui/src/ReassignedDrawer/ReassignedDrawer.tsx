@@ -23,8 +23,6 @@ import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Reassignment} from './Reassignment';
 import {Product} from "../Products/Product";
-import {ProductCardRefAndProductPair} from "../Products/ProductDnDHelper";
-import {CurrentModalState} from "../Redux/Reducers/currentModalReducer";
 import AssignmentClient from "../Assignments/AssignmentClient";
 import {Space} from "../SpaceDashboard/Space";
 
