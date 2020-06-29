@@ -20,13 +20,10 @@ import {CustomIndicator, filterByStyles, SortByOption} from './ReactSelectStyles
 import React, {useEffect, useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Dispatch} from 'redux';
 import {Option} from '../CommonTypes/Option';
 import './ProductFilterOrSortBy.scss';
-import {fetchProductsAction, setCurrentSpaceAction, setPeopleAction, setProductsAction} from "../Redux/Actions";
-import {Product} from "../Products/Product";
-import {Space} from "../SpaceDashboard/Space";
-import {Person} from "../People/Person";
+import {setProductsAction} from '../Redux/Actions';
+import {Product} from '../Products/Product';
 
 interface ProductSortByProps {
     sortValueOption: string;

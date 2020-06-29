@@ -23,7 +23,7 @@ import './BoardButtons.scss';
 import ProductFilter from '../ReusableComponents/ProductFilter';
 import ProductSortBy from '../ReusableComponents/ProductSortBy';
 import {Dispatch} from 'redux';
-import AccountDropdown from "../ReusableComponents/AccountDropdown";
+import AccountDropdown from '../ReusableComponents/AccountDropdown';
 
 interface BoardButtonsProps {
     setCurrentModal(modalState: CurrentModalState): void;

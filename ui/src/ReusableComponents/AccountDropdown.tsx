@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import './AccountDropdown.scss';
-import {Dispatch} from "redux";
-import {CurrentModalState} from "../Redux/Reducers/currentModalReducer";
-import {AvailableModals, setCurrentModalAction} from "../Redux/Actions";
-import {connect} from "react-redux";
-import Cookies from "universal-cookie";
-import {Redirect} from "react-router-dom";
+import {Dispatch} from 'redux';
+import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {connect} from 'react-redux';
+import Cookies from 'universal-cookie';
+import {Redirect} from 'react-router-dom';
 
 interface AccountDropdownProps {
     setCurrentModal(modalState: CurrentModalState): void;

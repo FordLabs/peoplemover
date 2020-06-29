@@ -19,8 +19,8 @@ import React from 'react';
 import {RenderResult, wait} from '@testing-library/react';
 import BoardButtons from '../Boards/BoardButtons';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import {PreloadedState} from "redux";
-import {GlobalStateProps} from "../Redux/Reducers";
+import {PreloadedState} from 'redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('BoardButtons', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;

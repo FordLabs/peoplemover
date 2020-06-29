@@ -29,7 +29,7 @@ import {AxiosResponse} from 'axios';
 import {Trait} from '../Traits/Trait';
 import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
-import {Space} from "../SpaceDashboard/Space";
+import {Space} from '../SpaceDashboard/Space';
 
 
 export type LocalStorageFilters = {

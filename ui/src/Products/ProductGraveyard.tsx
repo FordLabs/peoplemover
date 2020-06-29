@@ -21,8 +21,8 @@ import './ProductGraveyard.scss';
 import ArchivedProduct from './ArchivedProduct';
 import {Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
-import {connect} from "react-redux";
-import {GlobalStateProps} from "../Redux/Reducers";
+import {connect} from 'react-redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 interface ProductGraveyardProps{
     products: Array<Product>;

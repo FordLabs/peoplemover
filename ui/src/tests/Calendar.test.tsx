@@ -22,7 +22,7 @@ import {findByText, fireEvent, queryByText, wait} from '@testing-library/react';
 import ProductClient from '../Products/ProductClient';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import AssignmentClient from "../Assignments/AssignmentClient";
+import AssignmentClient from '../Assignments/AssignmentClient';
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;
