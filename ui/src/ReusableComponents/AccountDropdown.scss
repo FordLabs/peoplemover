@@ -18,12 +18,15 @@
 .account-dropdown-options {
   text-align: left;
   margin-bottom: 8px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 }
 
 .dropdown-container {
   position: absolute;
   background-color: white;
-  height: 104px;
   width: 140px;
   border-radius: 6px;
   border: 1px solid #EDEBEB;
