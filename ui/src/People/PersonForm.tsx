@@ -44,7 +44,7 @@ import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
-import {Space} from "../SpaceDashboard/Space";
+import {Space} from '../SpaceDashboard/Space';
 
 interface PersonFormProps {
     editing: boolean;

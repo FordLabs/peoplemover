@@ -26,7 +26,7 @@ import {TraitClient} from './TraitClient';
 import {TraitEditRequest} from './TraitEditRequest';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {RoleEditRequest} from '../Roles/RoleEditRequest';
-import {Space} from "../SpaceDashboard/Space";
+import {Space} from '../SpaceDashboard/Space';
 
 interface EditTraitSectionProps {
     closeCallback: () => void;

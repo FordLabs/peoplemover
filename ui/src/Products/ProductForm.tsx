@@ -40,8 +40,8 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Trait} from '../Traits/Trait';
 import {StylesConfig} from 'react-select';
 import {Dispatch} from 'redux';
-import moment from "moment";
-import {Space} from "../SpaceDashboard/Space";
+import moment from 'moment';
+import {Space} from '../SpaceDashboard/Space';
 
 interface ProductFormProps {
     editing: boolean;
