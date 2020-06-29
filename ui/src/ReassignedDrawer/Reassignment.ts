@@ -16,11 +16,9 @@
  */
 
 import {Person} from '../People/Person';
-import {Assignment} from "../Assignments/Assignment";
 
 export interface Reassignment {
     person: Person;
     fromProductName?: string;
     toProductName: string;
-    assignment: Assignment;
 }
