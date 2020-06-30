@@ -81,7 +81,7 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
 
     return <div>
 
-        <Header hideBoardButtons={true}/>
+        <Header hideSpaceButtons={true}/>
 
         <CurrentModal/>
 
