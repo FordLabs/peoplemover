@@ -3,8 +3,6 @@ import product from '../fixtures/product';
 
 describe('Product', () => {
     beforeEach(() => {
-        // now this runs prior to every test
-        // across all files no matter what
         const todaysDate = Cypress.moment().format('yyyy-MM-DD');
         cy.resetBoard(product.name, todaysDate);
     })

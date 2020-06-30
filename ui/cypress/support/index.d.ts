@@ -13,8 +13,6 @@ declare namespace Cypress {
     interface Chainable {
         resetBoard(productName: string, date?: Date): Chainable<any>;
 
-        goToTestBoard(): Chainable<any>;
-
         resetProduct(productName: string): Chainable<any>;
 
         resetProductTags(productTags: Array<string>): Chainable<any>;

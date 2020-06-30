@@ -13,13 +13,6 @@ import testProduct from '../fixtures/product';
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 const spaceId = Cypress.env('SPACE_ID');
 
-Cypress.Commands.add('goToTestBoard', () => {
-    cy.visit(`/${spaceId}`);
-
-    cy.get('[data-testid=productCardContainer]')
-        .should('exist');
-});
-
 Cypress.Commands.add('resetBoard', (productName, date = Cypress.moment().format('yyyy-MM-DD')) => {
     cy.log('Clean up board if necessary.');
     cy.resetProduct(testProduct.name);

@@ -12,11 +12,14 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-import product from '../fixtures/product';
-
+const spaceId = Cypress.env('SPACE_ID');
 
 import './commands';
 
+// before ALL tests
 beforeEach(() => {
-    cy.goToTestBoard();
+    cy.visit(`/${spaceId}`);
+
+    cy.get('[data-testid=productCardContainer]')
+        .should('exist');
 })
