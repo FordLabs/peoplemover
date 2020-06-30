@@ -37,8 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 
@@ -492,5 +491,39 @@ class AssignmentControllerInTimeApiTest {
                 .andExpect(status().isBadRequest)
 
         assertThat(assignmentRepository.count()).isZero()
+    }
+
+    @Test
+    fun `DELETE should return 200 when deleting a valid assignment`() {
+        val assignmentToDelete = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+        assertThat(assignmentRepository.count()).isOne()
+
+        mockMvc.perform(delete("/api/assignment/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(assignmentToDelete)))
+                .andExpect(status().isOk)
+
+        assertThat(assignmentRepository.count()).isZero()
+    }
+
+    @Test
+    fun `DELETE should return 200 when trying to delete an assignment that does not exist`() {
+        val assignmentNotInDb = Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        )
+        assertThat(assignmentRepository.count()).isZero()
+
+        mockMvc.perform(delete("/api/assignment/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(assignmentNotInDb)))
+                .andExpect(status().isOk)
     }
 }

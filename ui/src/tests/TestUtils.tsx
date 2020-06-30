@@ -138,6 +138,9 @@ class TestUtils {
                 new Date(2020, 6, 1),
             ],
         } as AxiosResponse));
+        AssignmentClient.getReassignments = jest.fn(() => Promise.resolve({
+            data: [],
+        } as AxiosResponse));
 
         RoleClient.get = jest.fn(() => Promise.resolve({
             data: [
