@@ -10,15 +10,13 @@
 //
 //
 import testProduct from '../fixtures/product';
-const BASE_API_URL = 'http://localhost:8080/api';
-const spaceId = 'flippingsweet';
+const BASE_API_URL = Cypress.env('BASE_API_URL');
+const spaceId = Cypress.env('SPACE_ID');
 
 Cypress.Commands.add('goToTestBoard', () => {
     cy.visit(`/${spaceId}`);
 
     cy.get('[data-testid=productCardContainer]')
-        .should('have.length', 1)
-        .contains('My Product')
         .should('exist');
 });
 
@@ -69,4 +67,3 @@ Cypress.Commands.add('resetLocation', (locationName) => {
             }
         });
 });
-

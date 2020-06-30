@@ -2,7 +2,12 @@
 import product from '../fixtures/product';
 
 describe('Product', () => {
-    const PRODUCT_CARD_SELECTOR = '[data-testid=productCardContainer]';
+    beforeEach(() => {
+        // now this runs prior to every test
+        // across all files no matter what
+        const todaysDate = Cypress.moment().format('yyyy-MM-DD');
+        cy.resetBoard(product.name, todaysDate);
+    })
 
     it('Create a new Product', () => {
         cy.server();
@@ -19,7 +24,7 @@ describe('Product', () => {
             expect(xhr?.response?.body.name).to.equal(product.name);
         });
 
-        cy.contains(product.name).parentsUntil(PRODUCT_CARD_SELECTOR)
+        cy.contains(product.name).parentsUntil('[data-testid=productCardContainer]')
             .should('contain', product.name)
             .should('contain', product.location)
             .should('contain', product.tags[0])
@@ -33,7 +38,7 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
     cy.get('[data-testid=productForm]').as('productForm');
     cy.get('@productForm').should('be.visible');
 
-    cy.get('[data-testid=productFormNameField]').focus().type(name);
+    cy.get('[data-testid=productFormNameField]').focus().type(name).should('have.value', name);
 
     cy.get('@productForm').find('[id=location]').focus().type(location + '{enter}');
 
@@ -53,9 +58,9 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
         .type(nextPhaseDate)
         .should('have.value', nextPhaseDate);
 
-    cy.get('[data-testid=productFormDorfField]').focus().type(dorfCode);
+    cy.get('[data-testid=productFormDorfField]').focus().type(dorfCode).should('have.value', dorfCode);
     cy.get('[data-testid=productFormArchivedCheckbox]').should('not.be.visible');
-    cy.get('[data-testid=productFormNotesField]').focus().type(notes);
+    cy.get('[data-testid=productFormNotesField]').focus().type(notes).should('have.value', notes);
 };
 
 const submitProductForm = () => {
