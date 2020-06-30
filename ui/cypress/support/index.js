@@ -12,9 +12,16 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
+import product from '../fixtures/product';
 
-// Import commands.js using ES2015 syntax:
-import './commands'
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+import './commands';
+
+beforeEach(() => {
+    // now this runs prior to every test
+    // across all files no matter what
+    const todaysDate = Cypress.moment().format('yyyy-MM-DD');
+    cy.resetBoard(product.name, todaysDate);
+
+    cy.goToTestBoard();
+})

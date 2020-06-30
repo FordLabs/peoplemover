@@ -302,6 +302,7 @@ function ProductForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="name">Name</label>
                     <input className="formInput formTextInput"
+                        data-testid="productFormNameField"
                         type="text"
                         name="name"
                         id="name"
@@ -356,6 +357,7 @@ function ProductForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="start">Start Date</label>
                     <input className="formInput formTextInput"
+                        data-testid="productFormStartDateField"
                         type="date"
                         name="start"
                         id="start"
@@ -365,6 +367,7 @@ function ProductForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="end">Next Phase Date</label>
                     <input className="formInput formTextInput"
+                        data-testid="productFormNextPhaseDateField"
                         type="date"
                         name="end"
                         id="end"
@@ -374,6 +377,7 @@ function ProductForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="dorf">Dorf</label>
                     <input className="formInput formTextInput"
+                        data-testid="productFormDorfField"
                         type="text"
                         name="dorf"
                         id="dorf"
@@ -383,6 +387,7 @@ function ProductForm({
                 {editing && (
                     <div className="formItem inlineLabelContainer">
                         <input className="formInput checkbox"
+                            data-testid="productFormArchivedCheckbox"
                             type="checkbox"
                             name="archived"
                             id="archived"
@@ -395,6 +400,7 @@ function ProductForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
                     <textarea
+                        data-testid="productFormNotesField"
                         className="formInput formTextInput notes"
                         id="notes"
                         name="notes"
@@ -412,8 +418,9 @@ function ProductForm({
                     </span>
                 </div>
                 <div className="yesNoButtons">
-                    <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
+                    <button className="formButton cancelFormButton" onClick={closeModal} data-testid="productFormCancelButton">Cancel</button>
                     <input className="formButton"
+                        data-testid="productFormSubmitButton"
                         onClick={handleSubmit}
                         type="button"
                         disabled={notesFieldLength > 500}

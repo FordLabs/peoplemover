@@ -9,17 +9,64 @@
 // ***********************************************
 //
 //
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+import testProduct from '../fixtures/product';
+const BASE_API_URL = 'http://localhost:8080/api';
+const spaceId = 'flippingsweet';
+
+Cypress.Commands.add('goToTestBoard', () => {
+    cy.visit(`/${spaceId}`);
+
+    cy.get('[data-testid=productCardContainer]')
+        .should('have.length', 1)
+        .contains('My Product')
+        .should('exist');
+});
+
+Cypress.Commands.add('resetBoard', (productName, date = Cypress.moment().format('yyyy-MM-DD')) => {
+    cy.log('Clean up board if necessary.');
+    cy.resetProduct(testProduct.name);
+    cy.resetProductTags(testProduct.tags);
+    cy.resetLocation(testProduct.location);
+    cy.log('Board Cleaned.');
+});
+
+Cypress.Commands.add('resetProduct', (productName, date = Cypress.moment().format('yyyy-MM-DD')) => {
+    const BASE_PRODUCT_URL =  `${BASE_API_URL}/product`;
+
+    cy.request('GET', `${BASE_PRODUCT_URL}/1/${date}`)
+        .then(({ body: allProducts = [] }) => {
+            const productData = allProducts.find(product => product.name === productName);
+            if (productData) {
+                cy.request('DELETE', `${BASE_PRODUCT_URL}/${productData.id}`);
+                cy.log('Removed Product: ' + productData.name);
+            }
+        });
+});
+
+Cypress.Commands.add('resetProductTags', (tags = []) => {
+    const BASE_PRODUCT_TAGS_URL = `${BASE_API_URL}/producttag/${spaceId}`;
+
+    cy.request('GET',  BASE_PRODUCT_TAGS_URL)
+        .then(({ body: allTags = [] }) => {
+            allTags.forEach(tagData => {
+                if (tags.includes(tagData.name)) {
+                    cy.request('DELETE', `${BASE_PRODUCT_TAGS_URL}/${tagData.id}`);
+                    cy.log('Removed Product Tag: ' + tagData.name);
+                }
+            });
+        });
+});
+
+Cypress.Commands.add('resetLocation', (locationName) => {
+    const BASE_LOCATION_URL = `${BASE_API_URL}/location/${spaceId}`;
+
+    cy.request('GET',  BASE_LOCATION_URL)
+        .then(({ body: allLocations = [] }) => {
+            const locationData = allLocations.find(location => location.name === locationName);
+            if (locationData) {
+                cy.request('DELETE', `${BASE_LOCATION_URL}/${locationData.id}`);
+                cy.log('Removed Location: ' + locationData.name);
+            }
+        });
+});
+

@@ -96,7 +96,7 @@ function ProductList({
                 }
                 return <div key={product.id}/>;
             })}
-            <div className="newProduct productCardContainer" onClick={() => setCurrentModal({modal: AvailableModals.CREATE_PRODUCT})}>
+            <div className="newProduct productCardContainer" onClick={() => setCurrentModal({modal: AvailableModals.CREATE_PRODUCT})} data-cy="newProductButton">
                 <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
                 <h2 className="newProductText">New Product</h2>
             </div>
