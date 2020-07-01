@@ -64,7 +64,6 @@ pipeline {
                     when {
                         anyOf {
                             branch 'master'
-                            branch 'stage'
                         }
                     }
                     steps {
@@ -80,7 +79,6 @@ pipeline {
                     when {
                         anyOf {
                             branch 'master'
-                            branch 'stage'
                         }
                     }
                     steps {
