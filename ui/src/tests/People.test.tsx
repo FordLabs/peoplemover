@@ -31,6 +31,7 @@ import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import ProductClient from '../Products/ProductClient';
 import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
+import moment from "moment";
 
 describe('people actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
@@ -249,8 +250,10 @@ describe('people actions', () => {
             newPerson: true,
         };
 
+        const viewingDate =  new Date(2020, 5, 5);
+
         const initialState: PreloadedState<GlobalStateProps> = {
-            viewingDate: new Date(2020, 5, 5),
+            viewingDate: viewingDate,
         } as GlobalStateProps;
 
         const checkForCreatedPerson = async (): Promise<void> => {
@@ -259,7 +262,7 @@ describe('people actions', () => {
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: initialState.viewingDate,
+                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: expectedPerson,
                 products: [],
             });
@@ -449,7 +452,7 @@ describe('people actions', () => {
         let app: RenderResult;
 
         let assignmentToCreate: CreateAssignmentsRequest = {
-            requestedDate: new Date(TestUtils.originDateString),
+            requestedDate: TestUtils.originDateString,
             person: TestUtils.person1,
             products: [{
                 productId: TestUtils.productWithAssignments.id,
@@ -458,7 +461,7 @@ describe('people actions', () => {
         };
 
         beforeEach(async () => {
-            const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(TestUtils.originDateString)} as GlobalStateProps;
+            const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(2019, 0, 1)} as GlobalStateProps;
             app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
             const editPersonButton = await app.findByTestId('editPersonIconContainer-1');

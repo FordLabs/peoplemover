@@ -18,7 +18,7 @@
 import {Person} from '../People/Person';
 
 export interface CreateAssignmentsRequest {
-    requestedDate: Date;
+    requestedDate: string;
     person: Person;
     products: Array<ProductPlaceholderPair>;
 }

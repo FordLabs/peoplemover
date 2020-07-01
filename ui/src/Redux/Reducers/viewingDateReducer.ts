@@ -21,7 +21,7 @@ import {AvailableActions} from '../Actions';
 
 export const viewingDateReducer = (
     state: Date = new Date(),
-    action: {type: AvailableActions; date: Date}
+    action: {type: AvailableActions; date: Date},
 ): Date => {
     if (action.type === AvailableActions.SET_VIEWING_DATE) {
         return action.date;

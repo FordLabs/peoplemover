@@ -52,6 +52,7 @@ function Calendar({
                 ref={calendarRef}
                 selected={viewingDate}
                 highlightDates={[{'react-datepicker__day--highlighted': daysHighlighted}]}
+                onSelect={(): void => setIsCalendarOpen(false)}
                 onChange={onChange}
                 onClickOutside={(): void => {
                     setTimeout(() => setIsCalendarOpen(false), 250);
