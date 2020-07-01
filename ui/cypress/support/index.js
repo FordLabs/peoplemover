@@ -18,8 +18,10 @@ import './commands';
 
 // before ALL tests
 beforeEach(() => {
+    cy.resetBoard();
+
     cy.visit(`/${spaceId}`);
 
     cy.get('[data-testid=productCardContainer]')
-        .should('exist');
+        .should('have.length', 1);
 })

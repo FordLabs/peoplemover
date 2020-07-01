@@ -2,11 +2,6 @@
 import product from '../fixtures/product';
 
 describe('Product', () => {
-    beforeEach(() => {
-        const todaysDate = Cypress.moment().format('yyyy-MM-DD');
-        cy.resetBoard(product.name, todaysDate);
-    })
-
     it('Create a new Product', () => {
         cy.server();
         cy.route('POST', '/api/product').as('postNewProduct');
