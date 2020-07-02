@@ -48,6 +48,7 @@ function BoardSelectionTabs({
                 My Roles
             </button>
             <button type="button" className="squareButton createButton"
+                data-testid="addPersonButton"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
                 <i className="fa fa-plus fa-sm"/>
                 Add Person
