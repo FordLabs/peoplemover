@@ -43,6 +43,7 @@ function BoardSelectionTabs({
                 My Tags
             </button>
             <button className="selectionTabButton tab"
+                data-testid="myRolesButton"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
                 <div className="fas fa-id-badge myRolesIcon" data-testid="myRolesIcon"/>
                 My Roles

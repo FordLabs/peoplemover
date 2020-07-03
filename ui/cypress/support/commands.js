@@ -14,6 +14,7 @@ const BASE_API_URL = Cypress.env('BASE_API_URL');
 const spaceId = Cypress.env('SPACE_ID');
 const BASE_PRODUCT_URL =  `${BASE_API_URL}/product`;
 const BASE_PERSON_URL =  `${BASE_API_URL}/person`;
+const BASE_ROLE_URL =  `${BASE_API_URL}/role`;
 
 Cypress.Commands.add('resetBoard', () => {
     cy.log('Reset Board.');
@@ -31,9 +32,19 @@ Cypress.Commands.add('resetBoard', () => {
 
     cy.request('GET', `${BASE_PERSON_URL}/${spaceId}`)
         .then(({ body: allPeople = [] }) => {
+
             const person = allPeople.find(person => person.name === testPerson.name);
             if (person) {
+                console.log(person);
                 deletePerson(person.id);
+            }
+        });
+
+    cy.request('GET', `${BASE_ROLE_URL}/${spaceId}`)
+        .then(({ body: allRoles = [] }) => {
+            const role = allRoles.find(role => role.name === testPerson.role);
+            if (role) {
+                deleteRole(role.id);
             }
         });
 });
@@ -62,3 +73,16 @@ const deleteLocation = (spaceLocation) => {
 const deletePerson = (personId) => {
     cy.request('DELETE', `${BASE_PERSON_URL}/${personId}`);
 };
+
+const deleteRole = (roleId) => {
+    cy.request('DELETE', `${BASE_ROLE_URL}/${roleId}`);
+};
+
+Cypress.Commands.add('getModal', () => {
+    return cy.get('[data-testid=modalPopupContainer]');
+});
+
+Cypress.Commands.add('closeModal', () => {
+    cy.get('[data-testid=modalCloseButton]').click();
+    cy.getModal().should('not.be.visible');
+});

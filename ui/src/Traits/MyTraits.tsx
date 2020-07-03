@@ -197,7 +197,7 @@ function MyTraits({
                 }
                 return (
                     <React.Fragment key={index}>
-                        {!editSectionsOpen[index] && <div className="traitRow">
+                        {!editSectionsOpen[index] && <div className="traitRow" data-testid="traitRow">
                             { colorSection &&
                                 <span data-testid="myRolesCircle"
                                     style={{'backgroundColor': colorToUse}}
@@ -241,7 +241,7 @@ function MyTraits({
                     className="myTraitsCircle addNewTraitUnfilledCircle">
                     <i className="fa fa-plus orangeIcon addTraitIcon"/>
                 </span>
-                <span className="traitName addNewTraitText">Add New {toTitleCase(traitName)}</span>
+                <span className="traitName addNewTraitText" data-testid={`addNew${toTitleCase(traitName)}`}>Add New {toTitleCase(traitName)}</span>
             </div>
             }
             {confirmDeleteModal}

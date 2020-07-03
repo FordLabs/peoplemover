@@ -183,6 +183,7 @@ function EditTraitSection({
                 <button className="formButton cancelFormButton" onClick={closeCallback}>Cancel</button>
                 <button
                     className="formButton saveFormButton"
+                    data-testid="saveTraitsButton"
                     disabled={enteredTrait ? enteredTrait.name === '' : true}
                     onClick={handleSubmit}>Save</button>
             </div>
