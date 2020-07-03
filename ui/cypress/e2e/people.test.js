@@ -10,8 +10,7 @@ describe('People', () => {
 
         cy.get('[data-testid=addPersonButton]').click();
 
-        cy.get('[data-testid=modalPopupContainer]')
-            .should('contain', 'Create New Person');
+        cy.getModal().should('contain', 'Create New Person');
 
         populatePersonForm(person);
 

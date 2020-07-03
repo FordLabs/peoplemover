@@ -8,6 +8,8 @@ describe('Product', () => {
 
         cy.get('[data-cy=newProductButton]').click();
 
+        cy.getModal().should('contain', 'Create New Product');
+
         populateProductForm(product);
 
         submitProductForm();
