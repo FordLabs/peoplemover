@@ -9,7 +9,7 @@ const blue = 'rgb(0, 255, 255)';
 const expectedCircleColors = [yellow, pink, blue];
 
 describe('Roles', () => {
-    it('Add New Role', () => {
+    it('Add a new role', () => {
         cy.server();
         cy.route('POST', `/api/role/${spaceId}`).as('postNewRole');
 
@@ -29,7 +29,6 @@ describe('Roles', () => {
             .then(($circles) => {
                 $circles.eq(1).click();
             });
-
 
         cy.get('[data-testid=saveTraitsButton]').click();
 

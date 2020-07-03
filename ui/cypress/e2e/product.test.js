@@ -2,7 +2,7 @@
 import product from '../fixtures/product';
 
 describe('Product', () => {
-    it('Create a new Product', () => {
+    it('Create a new product', () => {
         cy.server();
         cy.route('POST', '/api/product').as('postNewProduct');
 
@@ -60,5 +60,5 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
 
 const submitProductForm = () => {
     cy.get('[data-testid=productFormSubmitButton]').click();
-    cy.get('[data-testid=productForm]').should('not.be.visible');
+    cy.get('@productForm').should('not.be.visible');
 };

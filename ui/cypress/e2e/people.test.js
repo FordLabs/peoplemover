@@ -4,7 +4,7 @@ import person from '../fixtures/person';
 const spaceId = Cypress.env('SPACE_ID');
 
 describe('People', () => {
-    it('Add a Person', () => {
+    it('Add a new person', () => {
         cy.server();
         cy.route('POST', `/api/person/${spaceId}`).as('postNewPerson');
 
@@ -21,18 +21,17 @@ describe('People', () => {
             expect(xhr?.response?.body.name).to.equal(person.name);
         }).then(xhr => {
             const personId = xhr?.response?.body.id;
+
             cy.contains(person.assignTo)
                 .parentsUntil('[data-testid=productCardContainer]')
                 .find(`[data-testid=assignmentCard${personId}]`)
-                .as('personCard');
-
-            cy.get('@personCard')
                 .should('contain', person.name)
-                .should('contain', person.role);
-
-            cy.get('@personCard')
-                .find('[data-testid=newBadge]')
-                .should('be.visible');
+                .should('contain', person.role)
+                .then(($personCard) => {
+                    cy.get($personCard)
+                        .find('[data-testid=newBadge]')
+                        .should('be.visible');
+                });
         });
     });
 });
@@ -59,5 +58,5 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
 
 const submitPersonForm = () => {
     cy.get('[data-testid=personFormSubmitButton]').should('have.value', 'Create').click();
-    cy.get('[data-testid=personForm]').should('not.be.visible');
+    cy.get('@personForm').should('not.be.visible');
 };
