@@ -9,6 +9,8 @@ const blue = 'rgb(0, 255, 255)';
 const expectedCircleColors = [yellow, pink, blue];
 
 describe('Roles', () => {
+    const mockRole = person.role;
+
     beforeEach(() => {
         cy.resetRoles();
 
@@ -23,9 +25,11 @@ describe('Roles', () => {
 
         cy.getModal().should('contain', 'My Roles');
 
+        cy.get('[data-testid=givenroleName]').contains(mockRole).should('not.exist');
+
         cy.get('[data-testid=addNewRole]').click();
 
-        cy.get('[data-testid=traitName]').focus().type(person.role);
+        cy.get('[data-testid=traitName]').focus().type(mockRole);
 
         cy.get('[data-testid=selectRoleCircle]')
             .should('have.length', 3)
@@ -40,10 +44,10 @@ describe('Roles', () => {
 
         cy.wait('@postNewRole').should(xhr => {
             expect(xhr?.status).to.equal(200);
-            expect(xhr?.response?.body.name).to.equal(person.role);
+            expect(xhr?.response?.body.name).to.equal(mockRole);
         });
 
-        cy.contains(person.role).parent('[data-testid=traitRow]').should(($lis) => {
+        cy.contains(mockRole).parent('[data-testid=traitRow]').should(($lis) => {
             expect($lis).to.have.descendants('[data-testid=roleEditIcon]');
             expect($lis).to.have.descendants('[data-testid=roleDeleteIcon]');
             expect($lis).to.have.descendants('[data-testid=myRolesCircle]');

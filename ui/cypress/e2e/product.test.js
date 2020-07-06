@@ -12,6 +12,8 @@ describe('Product', () => {
         cy.server();
         cy.route('POST', '/api/product').as('postNewProduct');
 
+        cy.get(product.name).should('not.exist');
+
         cy.get('[data-cy=newProductButton]').click();
 
         cy.getModal().should('contain', 'Create New Product');

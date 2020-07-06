@@ -14,6 +14,8 @@ describe('People', () => {
         cy.server();
         cy.route('POST', `/api/person/${spaceId}`).as('postNewPerson');
 
+        cy.contains(person.name).should('not.exist');
+
         cy.get('[data-testid=addPersonButton]').click();
 
         cy.getModal().should('contain', 'Create New Person');
