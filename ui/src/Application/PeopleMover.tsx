@@ -37,6 +37,7 @@ import {Redirect} from 'react-router-dom';
 import {Space} from '../SpaceDashboard/Space';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
 import {Product} from '../Products/Product';
+import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
@@ -107,6 +108,7 @@ function PeopleMover({
                         <div className="accordionHeaderContainer">
                             <UnassignedDrawerContainer/>
                             <ProductGraveyard/>
+                            <ReassignedDrawer/>
                         </div>
                     </div>
                 </div>

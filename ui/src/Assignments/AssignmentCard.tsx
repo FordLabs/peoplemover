@@ -30,6 +30,7 @@ import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
+import moment from "moment";
 
 interface AssignmentCardProps {
     viewingDate: Date;
@@ -99,7 +100,7 @@ function AssignmentCard({
         } as ProductPlaceholderPair));
 
         const assignmentToUpdate: CreateAssignmentsRequest = {
-            requestedDate: viewingDate,
+            requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
             person: assignment.person,
             products: productPlaceholderPairs,
         };
@@ -120,7 +121,7 @@ function AssignmentCard({
             } as ProductPlaceholderPair));
 
         const assignmentToUpdate: CreateAssignmentsRequest = {
-            requestedDate: viewingDate,
+            requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
             person: assignment.person,
             products: productPlaceholderPairs,
         };

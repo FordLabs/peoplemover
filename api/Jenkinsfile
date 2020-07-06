@@ -64,7 +64,7 @@ pipeline {
                     when {
                         anyOf {
                             branch 'master'
-                            branch 'stage'
+
                         }
                     }
                     steps {
@@ -80,7 +80,7 @@ pipeline {
                     when {
                         anyOf {
                             branch 'master'
-                            branch 'stage'
+
                         }
                     }
                     steps {
@@ -114,6 +114,7 @@ pipeline {
                             dir("api") {
                                 sh 'echo Pushing to Cloud Foundry'
                                 sh """./gradlew cf-push-blue-green \
+                                        -PbranchNameWithoutUnderscores=Branch \
                                         -PbranchNameWithoutUnderscores=Branch \
                                         -PbranchNameWithoutUnderscores=Branch \
                                 -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
@@ -172,7 +173,7 @@ pipeline {
                         ]) {
                             dir("api") {
                                 sh 'echo Pushing to Cloud Foundry'
-                                sh """./gradlew cf-push-blue-green \
+                                sh """./gradlew cf-push-blue-green \-PbranchNameWithoutUnderscores=Stage \
                                         -PbranchNameWithoutUnderscores=Stage \
                                         -PbranchNameWithoutUnderscores=Stage \
                                 -Pcf.name=StagePeopleMover \

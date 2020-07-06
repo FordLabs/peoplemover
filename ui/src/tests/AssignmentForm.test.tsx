@@ -27,6 +27,7 @@ import {setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
 import selectEvent from 'react-select-event';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, SpaceRole} from '../Roles/Role';
+import moment from "moment";
 
 describe('AssignmentForm', () => {
     beforeEach(() => {
@@ -35,8 +36,9 @@ describe('AssignmentForm', () => {
     });
 
     describe('in create mode', () => {
+        const viewingDate = new Date(2020, 5,5);
         const initialState: PreloadedState<GlobalStateProps> = {
-            viewingDate: new Date(2020, 5,5),
+            viewingDate: viewingDate
         } as GlobalStateProps;
 
         async function openAssignPersonForm(app: RenderResult): Promise<void> {
@@ -72,7 +74,7 @@ describe('AssignmentForm', () => {
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: initialState.viewingDate,
+                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: TestUtils.person1,
                 products: [{
                     productId: TestUtils.assignmentForPerson1.productId,
@@ -93,7 +95,7 @@ describe('AssignmentForm', () => {
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: initialState.viewingDate,
+                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: TestUtils.person1,
                 products: [{
                     productId: TestUtils.assignmentForPerson1.productId,
@@ -115,7 +117,7 @@ describe('AssignmentForm', () => {
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: initialState.viewingDate,
+                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: TestUtils.person1,
                 products: [{
                     productId: TestUtils.assignmentForPerson1.productId,

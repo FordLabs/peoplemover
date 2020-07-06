@@ -15,15 +15,12 @@
  * limitations under the License.
  */
 
-import {Person} from '../People/Person';
+package com.ford.internalprojects.peoplemover.assignment
 
-export interface CreateAssignmentsRequest {
-    requestedDate: string;
-    person: Person;
-    products: Array<ProductPlaceholderPair>;
-}
+import com.ford.internalprojects.peoplemover.person.Person
 
-export interface ProductPlaceholderPair {
-    productId: number;
-    placeholder: boolean;
-}
+data class Reassignment(
+        val person: Person,
+        var fromProductName: String?,
+        var toProductName: String?
+)

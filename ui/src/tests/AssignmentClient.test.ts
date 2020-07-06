@@ -19,6 +19,9 @@ import Axios, {AxiosResponse} from 'axios';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import TestUtils from './TestUtils';
+import {Assignment} from "../Assignments/Assignment";
+import {Person} from "../People/Person";
+import moment from "moment";
 
 describe('the assignment client', () => {
     beforeEach(() => {
@@ -52,7 +55,7 @@ describe('the assignment client', () => {
         };
 
         const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
-            requestedDate: date,
+            requestedDate: moment(date).format('YYYY-MM-DD'),
             person: TestUtils.person1,
             products: [productPlaceholderPair],
 
@@ -83,6 +86,42 @@ describe('the assignment client', () => {
         };
 
         await AssignmentClient.getAssignmentEffectiveDates(spaceId);
+
+        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    });
+
+    it('should delete assignment given assignment', async() => {
+        Axios.delete = jest.fn();
+        process.env.REACT_APP_URL = 'testUrl/';
+
+        const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
+
+        const expectedUrl = 'testUrl/assignment/delete';
+        const expectedConfig = {
+            headers: {'Content-Type': 'application/json'},
+            data: {'assignmentToDelete': expectedAssignmentToDelete}
+        };
+
+        await AssignmentClient.deleteAssignment(expectedAssignmentToDelete);
+
+        expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    });
+
+    it('should get reassignments given assignment', async() => {
+        Axios.get = jest.fn();
+        process.env.REACT_APP_URL = 'testUrl/';
+
+        const spaceId = 1;
+        const requestedDate = new Date(2020, 5, 20);
+
+        const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
+
+        const expectedUrl = `testUrl/reassignment/${spaceId}/2020-06-20`;
+        const expectedConfig = {
+            headers: {'Content-Type': 'application/json'},
+        };
+
+        await AssignmentClient.getReassignments(spaceId, requestedDate);
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });

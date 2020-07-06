@@ -45,6 +45,7 @@ import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
+import moment from "moment";
 
 interface PersonFormProps {
     editing: boolean;
@@ -159,7 +160,7 @@ function PersonForm({
             if (editing) {
                 const response = await PeopleClient.updatePerson(person);
                 await AssignmentClient.createAssignmentForDate({
-                    requestedDate: viewingDate,
+                    requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                     person: assignment!.person,
                     products: getSelectedProductPairs()
                 });
@@ -171,7 +172,7 @@ function PersonForm({
                 addPerson(newPerson);
                 await AssignmentClient.createAssignmentForDate(
                     {
-                        requestedDate: viewingDate,
+                        requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                         person: newPerson,
                         products: getSelectedProductPairs()
                     }

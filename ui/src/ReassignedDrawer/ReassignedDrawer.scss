@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,15 +15,31 @@
  * limitations under the License.
  */
 
-import {Person} from '../People/Person';
+.reassignmentContainer {
+  margin: 0 20px;
 
-export interface CreateAssignmentsRequest {
-    requestedDate: string;
-    person: Person;
-    products: Array<ProductPlaceholderPair>;
-}
+  .reassignmentSection {
+    margin-bottom: 14px;
 
-export interface ProductPlaceholderPair {
-    productId: number;
-    placeholder: boolean;
+    div {
+      margin: 2px 0;
+    }
+
+    .name {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 16px;
+    }
+
+    .additionalInfo {
+      font-weight: normal;
+      font-size: 10px;
+      line-height: 11px;
+    }
+
+    .role{
+      font-style: italic;
+    }
+  }
 }

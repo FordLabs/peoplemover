@@ -45,6 +45,11 @@
         }
       }
 
+      .react-datepicker__day--selected,
+      .react-datepicker__day--keyboard-selected {
+        background: transparent;
+      }
+
       .react-datepicker__day--highlighted {
         color: white;
         background: $logo-gradient;
@@ -63,29 +68,6 @@
           width: 80%;
           top: -1px;
           left: -1px;
-        }
-      }
-
-      .react-datepicker__day--selected,
-      .react-datepicker__day--keyboard-selected {
-        background: $logo-gradient;
-        border-radius: 50%;
-        position: relative;
-        color: white;
-
-        &::before {
-          content: "";
-          background: transparent;
-          border: 2px solid white;
-          position: absolute;
-          border-radius: 50%;
-          margin: auto;
-          height: 80%;
-          width: 80%;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
         }
       }
 

@@ -17,13 +17,8 @@
 
 import {Person} from '../People/Person';
 
-export interface CreateAssignmentsRequest {
-    requestedDate: string;
+export interface Reassignment {
     person: Person;
-    products: Array<ProductPlaceholderPair>;
-}
-
-export interface ProductPlaceholderPair {
-    productId: number;
-    placeholder: boolean;
+    fromProductName?: string;
+    toProductName: string;
 }

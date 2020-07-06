@@ -32,6 +32,7 @@ import {Assignment} from './Assignment';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import AssignmentClient from './AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
+import moment from "moment";
 
 interface AssignmentCardListProps {
     container: string;
@@ -126,7 +127,7 @@ function AssignmentCardList({
                         });
 
                     const createAssignmentsRequest: CreateAssignmentsRequest = {
-                        requestedDate: viewingDate,
+                        requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                         person: oldAssignment.person,
                         products: productPlaceholderPairs,
                     };

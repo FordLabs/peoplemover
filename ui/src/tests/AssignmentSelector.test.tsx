@@ -23,6 +23,7 @@ import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from './TestUtils';
 import selectEvent from 'react-select-event';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
+import moment from "moment";
 
 describe('the assignment form', () => {
     beforeEach(() => {
@@ -42,11 +43,12 @@ describe('the assignment form', () => {
 
     it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments, TestUtils.productWithoutAssignments, TestUtils.productForHank];
+        const viewingDate = new Date(2020, 5, 5);
 
         await act(async () => {
             const component = <AssignmentForm products={products}
                 initiallySelectedProduct={products[2]}/>;
-            const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, viewingDate: new Date(2020, 5, 5)} as GlobalStateProps;
+            const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, viewingDate: viewingDate} as GlobalStateProps;
             const wrapper = await renderWithRedux(component, undefined, initialState);
 
             const labelElement = await wrapper.findByLabelText('Name');
@@ -62,7 +64,7 @@ describe('the assignment form', () => {
             expect(spy).toBeCalledTimes(1);
             
             expect(spy).toBeCalledWith({
-                requestedDate: initialState.viewingDate,
+                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: TestUtils.hank,
                 products: [
                     {
