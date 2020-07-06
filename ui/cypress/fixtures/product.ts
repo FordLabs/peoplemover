@@ -1,4 +1,14 @@
-const product = {
+export interface Product {
+    name: string;
+    location: string;
+    tags: Array<string>;
+    startDate: string;
+    nextPhaseDate: string;
+    dorfCode: string;
+    notes: string;
+}
+
+const product: Product = {
     name: 'Automated Test Product',
     location: 'Michigan',
     tags: ['Tag 1', 'Tag 2'],

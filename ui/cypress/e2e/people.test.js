@@ -5,7 +5,7 @@ const spaceId = Cypress.env('SPACE_ID');
 
 describe('People', () => {
     beforeEach(() => {
-        cy.resetPerson();
+        cy.resetPerson(person);
 
         cy.visitBoard();
     });

@@ -4,8 +4,6 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-import testProduct from '../fixtures/product';
-import testPerson from '../fixtures/person';
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 const spaceId = Cypress.env('SPACE_ID');
 const BASE_PRODUCT_URL =  `${BASE_API_URL}/product`;
@@ -28,35 +26,35 @@ Cypress.Commands.add('closeModal', () => {
     cy.getModal().should('not.be.visible');
 });
 
-Cypress.Commands.add('resetProduct', () => {
+Cypress.Commands.add('resetProduct', (mockProduct) => {
     cy.log('Delete mock product and associated tags/location in db.');
 
     const todaysDate = Cypress.moment().format('yyyy-MM-DD');
     const ALL_PRODUCTS_BY_DATE_URL = `${BASE_PRODUCT_URL}/1/${todaysDate}`;
     cy.request('GET', ALL_PRODUCTS_BY_DATE_URL)
         .then(({ body: allProducts = [] }) => {
-            const product = allProducts.find(product => product.name === testProduct.name);
+            const product = allProducts.find(product => product.name === mockProduct.name);
             if (product) {
                 deleteProductById(product.id);
 
                 product.productTags.forEach(tagData => {
-                    if (testProduct.tags.includes(tagData.name)) {
+                    if (mockProduct.tags.includes(tagData.name)) {
                         deleteTagById(tagData.id);
                     }
                 });
 
-                if (product.spaceLocation.name === testProduct.location) {
+                if (product.spaceLocation.name === mockProduct.location) {
                     deleteLocationById(product.spaceLocation.id);
                 }
             }
         });
 });
 
-Cypress.Commands.add('resetPerson', () => {
+Cypress.Commands.add('resetPerson', (mockPerson) => {
     const ALL_PEOPLE_BY_SPACE_URL = `${BASE_PERSON_URL}/${spaceId}`;
     cy.request('GET', ALL_PEOPLE_BY_SPACE_URL)
         .then(({ body: allPeople = [] }) => {
-            const person = allPeople.find(person => person.name === testPerson.name);
+            const person = allPeople.find(person => person.name === mockPerson.name);
             if (person) {
                 deletePersonById(person.id);
                 if (person.spaceRole) {
@@ -66,11 +64,11 @@ Cypress.Commands.add('resetPerson', () => {
         });
 });
 
-Cypress.Commands.add('resetRoles', () => {
+Cypress.Commands.add('resetRole', (mockRole) => {
     const ALL_ROLES_BY_SPACE_URL =  `${BASE_ROLE_URL}/${spaceId}`;
     cy.request('GET', ALL_ROLES_BY_SPACE_URL)
         .then(({ body: allRoles = [] }) => {
-            const role = allRoles.find(role => role.name === testPerson.role);
+            const role = allRoles.find(role => role.name === mockRole);
             if (role) {
                 deleteRoleById(role.id);
             }
