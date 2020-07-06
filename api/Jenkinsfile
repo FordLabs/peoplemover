@@ -64,7 +64,6 @@ pipeline {
                     when {
                         anyOf {
                             branch 'master'
-
                         }
                     }
                     steps {
@@ -80,7 +79,6 @@ pipeline {
                     when {
                         anyOf {
                             branch 'master'
-
                         }
                     }
                     steps {
@@ -115,9 +113,7 @@ pipeline {
                                 sh 'echo Pushing to Cloud Foundry'
                                 sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Branch \
-                                        -PbranchNameWithoutUnderscores=Branch \
-                                        -PbranchNameWithoutUnderscores=Branch \
-                                -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
+                                        -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                         -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                         -Pcf.ccHost=$peoplemover_pcf_cchost \
                                         -Pcf.domain=$peoplemover_pcf_domain \
@@ -173,10 +169,9 @@ pipeline {
                         ]) {
                             dir("api") {
                                 sh 'echo Pushing to Cloud Foundry'
-                                sh """./gradlew cf-push-blue-green \-PbranchNameWithoutUnderscores=Stage \
+                                sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Stage \
-                                        -PbranchNameWithoutUnderscores=Stage \
-                                -Pcf.name=StagePeopleMover \
+                                        -Pcf.name=StagePeopleMover \
                                         -Pcf.host=stagepeoplemover \
                                         -Pcf.ccHost=$peoplemover_pcf_cchost \
                                         -Pcf.domain=$peoplemover_pcf_domain \
@@ -203,12 +198,12 @@ pipeline {
                                 sh 'echo Pushing to Cloud Foundry'
                                 sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Prod \
-                                -Pcf.name=PeopleMover2 \
-                                -Pcf.host=peoplemover2 \
-                                -Pcf.ccUser=$JENKINS_USER \
-                                -Pcf.ccPassword=$JENKINS_PASSWORD \
-                                -Pcf.ccHost=$peoplemover_pcf_cchost \
-                                -Pcf.domain=$peoplemover_pcf_domain \
+                                        -Pcf.name=PeopleMover2 \
+                                        -Pcf.host=peoplemover2 \
+                                        -Pcf.ccUser=$JENKINS_USER \
+                                        -Pcf.ccPassword=$JENKINS_PASSWORD \
+                                        -Pcf.ccHost=$peoplemover_pcf_cchost \
+                                        -Pcf.domain=$peoplemover_pcf_domain \
                                         -Pcf.environment.authquest.client_id=$authquest_prod_client_id \
                                         -Pcf.environment.authquest.client_secret=$authquest_prod_client_secret \
                                         -Pcf.environment.authquest.url=$authquest_prod_url \
