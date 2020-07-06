@@ -363,7 +363,7 @@ function ProductForm({
                         onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('startDate', e.target.value)}/>
                 </div>
                 <div className="formItem">
-                    <label className="formItemLabel" htmlFor="end">Next Phase Date</label>
+                    <label className="formItemLabel" htmlFor="end">End Date</label>
                     <input className="formInput formTextInput"
                         type="date"
                         name="end"
