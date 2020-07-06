@@ -12,16 +12,5 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-const spaceId = Cypress.env('SPACE_ID');
 
 import './commands';
-
-// before ALL tests
-beforeEach(() => {
-    cy.resetBoard();
-
-    cy.visit(`/${spaceId}`);
-
-    cy.get('[data-testid=productCardContainer]')
-        .should('have.length', 1);
-})

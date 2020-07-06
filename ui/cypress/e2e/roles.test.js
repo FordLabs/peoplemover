@@ -9,6 +9,12 @@ const blue = 'rgb(0, 255, 255)';
 const expectedCircleColors = [yellow, pink, blue];
 
 describe('Roles', () => {
+    beforeEach(() => {
+        cy.resetRoles();
+
+        cy.visitBoard();
+    });
+
     it('Add a new role', () => {
         cy.server();
         cy.route('POST', `/api/role/${spaceId}`).as('postNewRole');

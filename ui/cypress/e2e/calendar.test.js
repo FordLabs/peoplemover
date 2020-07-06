@@ -1,6 +1,10 @@
 /// <reference types="Cypress" />
 
 describe('Calendar', () => {
+    beforeEach(() => {
+        cy.visitBoard();
+    });
+
     it('Calendar should show current month and day', () => {
         cy.get('[data-cy=calendarToggle]').as('calendarToggle');
         const expectedCurrentDate = Cypress.moment().format('MMMM D, YYYY');

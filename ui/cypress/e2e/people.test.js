@@ -4,6 +4,12 @@ import person from '../fixtures/person';
 const spaceId = Cypress.env('SPACE_ID');
 
 describe('People', () => {
+    beforeEach(() => {
+        cy.resetPerson();
+
+        cy.visitBoard();
+    });
+
     it('Add a new person', () => {
         cy.server();
         cy.route('POST', `/api/person/${spaceId}`).as('postNewPerson');

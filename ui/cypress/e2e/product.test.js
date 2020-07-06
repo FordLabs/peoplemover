@@ -2,6 +2,12 @@
 import product from '../fixtures/product';
 
 describe('Product', () => {
+    beforeEach(() => {
+        cy.resetProduct();
+
+        cy.visitBoard();
+    });
+
     it('Create a new product', () => {
         cy.server();
         cy.route('POST', '/api/product').as('postNewProduct');
