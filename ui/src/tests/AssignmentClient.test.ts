@@ -21,6 +21,7 @@ import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/C
 import TestUtils from './TestUtils';
 import {Assignment} from "../Assignments/Assignment";
 import {Person} from "../People/Person";
+import moment from "moment";
 
 describe('the assignment client', () => {
     beforeEach(() => {
@@ -54,7 +55,7 @@ describe('the assignment client', () => {
         };
 
         const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
-            requestedDate: date,
+            requestedDate: moment(date).format('YYYY-MM-DD'),
             person: TestUtils.person1,
             products: [productPlaceholderPair],
 
