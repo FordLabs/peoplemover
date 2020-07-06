@@ -501,7 +501,7 @@ describe('Products', () => {
             await selectEvent.select(tagsLabelElement, /FordX/, containerToFindOptionsIn);
 
             fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
-            fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
+            fireEvent.change(app.getByLabelText('End Date'), {target: {value: '2020-01-30'}});
 
             const locationLabelElement = await app.findByLabelText('Location');
             await selectEvent.select(locationLabelElement, /Ann Arbor/, containerToFindOptionsIn);
@@ -554,7 +554,7 @@ describe('Products', () => {
 
                 fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
                 fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
-                fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
+                fireEvent.change(app.getByLabelText('End Date'), {target: {value: '2020-01-30'}});
 
                 fireEvent.click(app.getByText('Create'));
 
