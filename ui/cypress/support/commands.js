@@ -46,7 +46,7 @@ Cypress.Commands.add('resetProduct', (mockProduct) => {
                     }
                 });
 
-                if (product.spaceLocation.name === mockProduct.location) {
+                if (product.spaceLocation && (product.spaceLocation.name === mockProduct.location)) {
                     deleteLocationTagById(product.spaceLocation.id);
                 }
             }

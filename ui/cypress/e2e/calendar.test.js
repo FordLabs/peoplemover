@@ -6,7 +6,7 @@ describe('Calendar', () => {
     });
 
     it('Calendar should show current month and day', () => {
-        cy.get('[data-cy=calendarToggle]').as('calendarToggle');
+        cy.get('[data-testid=calendarToggle]').as('calendarToggle');
         const expectedCurrentDate = Cypress.moment().format('MMMM D, YYYY');
         cy.get('@calendarToggle').should('contain', expectedCurrentDate);
 
