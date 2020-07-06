@@ -124,7 +124,7 @@ describe('PeopleMover My Tags', () => {
             let editIcons: Array<HTMLElement>;
 
             beforeEach(async () => {
-                editIcons = await app.findAllByTestId('product tagEditIcon');
+                editIcons = await app.findAllByTestId('producttagEditIcon');
                 productTagIcon = editIcons[0];
                 fireEvent.click(productTagIcon);
 
@@ -221,7 +221,7 @@ describe('PeopleMover My Tags', () => {
             const deleteProductTagWarning = 'Deleting this product tag will remove it from any person or product that has been given this product tag.';
 
             beforeEach(async () => {
-                const deleteIcons = await app.findAllByTestId('product tagDeleteIcon');
+                const deleteIcons = await app.findAllByTestId('producttagDeleteIcon');
                 productTagDeleteIcon = deleteIcons[0];
 
                 fireEvent.click(productTagDeleteIcon);
@@ -351,7 +351,7 @@ describe('PeopleMover My Tags', () => {
             const myFirstLocationPencil = locationEditIcons[0];
             fireEvent.click(myFirstLocationPencil);
 
-            const productTagEditIcons = await app.findAllByTestId('product tagEditIcon');
+            const productTagEditIcons = await app.findAllByTestId('producttagEditIcon');
 
             const myFirstProductTagPencil = productTagEditIcons[0];
             fireEvent.click(myFirstProductTagPencil);

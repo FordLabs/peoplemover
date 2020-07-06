@@ -161,7 +161,7 @@ describe('filter products', () => {
 
         it('should show the edited product tag from my tags modal', async () => {
 
-            let editIcons: Array<HTMLElement> = await app.findAllByTestId('product tagEditIcon');
+            let editIcons: Array<HTMLElement> = await app.findAllByTestId('producttagEditIcon');
             let productTagIcon: HTMLElement = editIcons[0];
             fireEvent.click(productTagIcon);
             await app.findByText('Save');
@@ -187,7 +187,7 @@ describe('filter products', () => {
         it('should remove filter option when product tag is deleted from my tags modal', async () => {
             let productTagDeleteIcon: HTMLElement;
             const deleteProductTagWarning = 'Deleting this product tag will remove it from any person or product that has been given this product tag.';
-            const deleteIcons = await app.findAllByTestId('product tagDeleteIcon');
+            const deleteIcons = await app.findAllByTestId('producttagDeleteIcon');
             productTagDeleteIcon = deleteIcons[0];
 
             fireEvent.click(productTagDeleteIcon);

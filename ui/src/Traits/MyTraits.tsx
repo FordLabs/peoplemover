@@ -195,6 +195,7 @@ function MyTraits({
                     const spaceRole: SpaceRole = trait as SpaceRole;
                     colorToUse = spaceRole.color ? spaceRole.color.color : '#FFFFFF';
                 }
+                const testIdTraitName = traitName.replace(' ', '');
                 return (
                     <React.Fragment key={index}>
                         {!editSectionsOpen[index] && <div className="traitRow" data-testid="traitRow">
@@ -205,11 +206,11 @@ function MyTraits({
                                 />
                             }
 
-                            <span className="traitName" data-testid={`given${traitName}Name`}>{trait.name}</span>
+                            <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
                             <div className="traitIcons">
-                                <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${traitName}EditIcon`}
+                                <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
                                     onClick={(): void => toggleEditSection(index)}/>
-                                <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${traitName}DeleteIcon`}
+                                <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
                                     onClick={(): void => showDeleteConfirmationModal(trait)}/>
                             </div>
                         </div>
@@ -241,7 +242,7 @@ function MyTraits({
                     className="myTraitsCircle addNewTraitUnfilledCircle">
                     <i className="fa fa-plus orangeIcon addTraitIcon"/>
                 </span>
-                <span className="traitName addNewTraitText" data-testid={`addNew${toTitleCase(traitName)}`}>Add New {toTitleCase(traitName)}</span>
+                <span className="traitName addNewTraitText" data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>Add New {toTitleCase(traitName)}</span>
             </div>
             }
             {confirmDeleteModal}

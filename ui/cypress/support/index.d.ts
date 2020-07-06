@@ -9,6 +9,8 @@ declare namespace Cypress {
         resetProduct(product: Product): Chainable<any>;
         resetPerson(person: Person): Chainable<any>;
         resetRole(role: string): Chainable<any>;
+        resetLocationTags(): Chainable<any>;
+        resetProductTags(): Chainable<any>;
 
         getModal(): Chainable<any>;
         closeModal(): Chainable<any>;
