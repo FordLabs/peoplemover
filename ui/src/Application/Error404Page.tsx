@@ -24,7 +24,7 @@ import Branding from '../ReusableComponents/Branding';
 function Error404Page(): JSX.Element {
     return (
         <div className="Error404PageContainer">
-            <Header hideBoardButtons={true}/>
+            <Header hideAllButtons={true}/>
             <div className="ErrorImageAndTextContainer">
                 <h1 className="oopsText">Oops!</h1>
                 <img src={AnimatedImageSrc} alt="" className="animatedImage"/>

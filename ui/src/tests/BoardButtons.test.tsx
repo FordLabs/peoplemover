@@ -32,7 +32,7 @@ describe('BoardButtons', () => {
 
 
     it('should not show invite users to space button when the feature flag is toggled off', async () => {
-        process.env. REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'false';
+        process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'false';
 
         let result: RenderResult;
 
@@ -40,9 +40,10 @@ describe('BoardButtons', () => {
             result = renderWithRedux(<BoardButtons/>, undefined, initialState);
         });
 
+        result.getByTestId('editContributorsModal').click();
 
         try {
-            expect(result.getByTestId('editContributorsModal'));
+            expect(result.getByTestId('invite-contributors'));
             expect(true).toBeFalsy();
         } catch (e) {
             expect(true).toBeTruthy();
@@ -51,7 +52,7 @@ describe('BoardButtons', () => {
     });
 
     it('should show invite users to space button when the feature flag is toggled on', async () => {
-        process.env. REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'true';
+        process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'true';
 
         let result: RenderResult;
 
@@ -59,9 +60,9 @@ describe('BoardButtons', () => {
             result = renderWithRedux(<BoardButtons/>, undefined, initialState);
         });
 
+        result.getByTestId('editContributorsModal').click();
 
-        expect(result.getByTestId('editContributorsModal')).not.toBeNull();
-
+        expect(result.getByTestId('invite-contributors')).not.toBeNull();
     });
 
 

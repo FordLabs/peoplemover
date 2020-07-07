@@ -27,22 +27,25 @@ import AccountDropdown from '../ReusableComponents/AccountDropdown';
 
 interface BoardButtonsProps {
     setCurrentModal(modalState: CurrentModalState): void;
+    hideSpaceButtons?: boolean;
 }
 
-function BoardButtons({setCurrentModal}: BoardButtonsProps): JSX.Element {
+function BoardButtons({setCurrentModal, hideSpaceButtons}: BoardButtonsProps): JSX.Element {
 
     return (
         <div className="boardButtons">
-            <div className={'filterByDropDownContainer'} data-testid={'filterByDropDownContainer'}>
-                <ProductFilter/>
-            </div>
-            <div className={'sortByDropDownContainer'}>
-                <ProductSortBy/>
-            </div>
-            {process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED === 'true' &&
-                <AccountDropdown/>
-            }
+            {!hideSpaceButtons &&
+                <>
+                    <div className={'filterByDropDownContainer'} data-testid={'filterByDropDownContainer'}>
+                        <ProductFilter/>
+                    </div>
 
+                    < div className={'sortByDropDownContainer'}>
+                        <ProductSortBy/>
+                    </div>
+                </>
+            }
+            <AccountDropdown hideSpaceButtons={hideSpaceButtons}/>
         </div>
     );
 }

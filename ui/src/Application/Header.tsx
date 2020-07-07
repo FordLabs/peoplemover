@@ -19,10 +19,11 @@ import BoardButtons from '../Boards/BoardButtons';
 import React from 'react';
 
 interface HeaderProps {
-    hideBoardButtons?: boolean;
+    hideSpaceButtons?: boolean;
+    hideAllButtons?: boolean;
 }
 
-function Header({hideBoardButtons}: HeaderProps): JSX.Element {
+function Header({hideSpaceButtons, hideAllButtons}: HeaderProps): JSX.Element {
     return (
         <header>
             <div className="logo-title-container">
@@ -32,7 +33,7 @@ function Header({hideBoardButtons}: HeaderProps): JSX.Element {
                 <h1 className="page-title">PEOPLEMOVER</h1>
             </div>
 
-            {!hideBoardButtons && <BoardButtons/>}
+            {!hideAllButtons && <BoardButtons hideSpaceButtons={hideSpaceButtons}/>}
 
         </header>
     );
