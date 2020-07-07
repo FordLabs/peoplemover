@@ -104,8 +104,8 @@ describe('Products', () => {
             const productWithManyAssignments: Product = {
                 id: 2,
                 name: 'Product 1',
-                startDate: '1/1/11',
-                endDate: '2/2/22',
+                startDate: '2011-01-01',
+                endDate: '2022-02-02',
                 spaceId: 0,
                 assignments: [
                     {
@@ -477,8 +477,8 @@ describe('Products', () => {
                     data: {
                         id: 919,
                         name: 'Some Name',
-                        startDate: '01/30/2010',
-                        endDate: '01/30/2010',
+                        startDate: '2010-01-30',
+                        endDate: '2010-01-30',
                         location: {name: 'Ann Arbor'},
                         archived: false,
                         spaceId: 1,
@@ -533,8 +533,8 @@ describe('Products', () => {
                     data: {
                         id: 919,
                         name: 'Some Name',
-                        startDate: '01/30/2010',
-                        endDate: '01/30/2020',
+                        startDate: '2010-01-30',
+                        endDate: '2010-01-30',
                         location: 'Ann Arbor',
                         archived: false,
                         boardId: 1,
