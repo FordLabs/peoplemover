@@ -29,6 +29,6 @@ interface ProductRepository : PeopleMoverRepository<Product, Int> {
     fun findProductByNameAndSpaceId(name: String, spaceId: Int): Product?
 
     @Query("SELECT p FROM Product p WHERE p.spaceId = ?1 " +
-            "AND (p.startDate = NULL OR p.startDate <= ?2) AND (p.endDate = NULL or p.endDate >= ?2)")
+            "AND (p.startDate = NULL OR p.startDate <= ?2)")
     fun findAllBySpaceIdAndDate(spaceId: Int, date: LocalDate): Set<Product>
 }

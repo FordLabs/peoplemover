@@ -26,12 +26,14 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {FilterOption} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
 import {Space} from '../SpaceDashboard/Space';
+import moment from "moment";
 
 interface ProductListProps {
     currentSpace: Space;
     products: Array<Product>;
     setCurrentModal(modalState: CurrentModalState): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    viewingDate: Date;
 }
 
 export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOption>): Array<string> {
@@ -44,6 +46,7 @@ function ProductList({
     products,
     setCurrentModal,
     allGroupedTagFilterOptions,
+    viewingDate,
 }: ProductListProps ): JSX.Element {
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
 
@@ -57,7 +60,9 @@ function ProductList({
     }, [allGroupedTagFilterOptions]);
 
     function isActiveProduct(product: Product): boolean {
-        return product.name.toLowerCase() !== 'unassigned' && !product.archived;
+        return product.name.toLowerCase() !== 'unassigned'
+            && !product.archived
+            && (product.endDate == null || product.endDate >= moment(viewingDate).format('YYYY-MM-DD'));
     }
 
     function permittedByFilters(product: Product): boolean {
@@ -108,6 +113,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     products: state.products,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
