@@ -61,12 +61,17 @@ class SpaceControllerApiTest {
     private lateinit var authClient: AuthClient
 
     @Autowired
+    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
+
 
     @After
     fun tearDown() {
         productRepository.deleteAll()
         spaceRepository.deleteAll()
+        userSpaceMappingRepository.deleteAll()
     }
 
     @Test
@@ -123,6 +128,10 @@ class SpaceControllerApiTest {
         assertThat(actualSpaceWithAccessTokenResponse.space.name).isEqualTo(request.spaceName)
         assertThat(actualSpaceWithAccessTokenResponse.accessToken).isEqualTo(updatedToken)
         assertThat(spaceRepository.findAll().first().name).isEqualTo(request.spaceName)
+        val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAll()
+        assertThat(userSpaceMappings).hasSize(1)
+        assertThat(userSpaceMappings[0].userId).isEqualTo("userId")
+        assertThat(userSpaceMappings[0].spaceId).isEqualTo(actualSpaceWithAccessTokenResponse.space.id)
         verify(authService).validateAccessToken(validateTokenRequest)
         verify(authClient).updateUserScopes(jwtToken.user_id!!, listOf(request.spaceName))
         verify(authClient).createScope(listOf(request.spaceName))
