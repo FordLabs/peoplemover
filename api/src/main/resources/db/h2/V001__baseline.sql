@@ -98,3 +98,13 @@ create table product_tag_mapping
     FOREIGN KEY (product_tag_id) REFERENCES product_tag (id) on delete cascade,
     constraint UQ_Product_Tag_Mapping unique (product_id, product_tag_id)
 );
+
+create table user_space_mapping
+(
+    id          int not null identity primary key,
+    user_id     varchar(255),
+    space_id    varchar(255),
+
+    FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
+    constraint UQ_User_Space_Mapping unique (user_id, space_id)
+);

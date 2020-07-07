@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.user
+package com.ford.internalprojects.peoplemover.auth.exceptions
 
-import org.springframework.data.repository.CrudRepository
-import org.springframework.stereotype.Repository
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
-@Repository
-interface UserRepository : CrudRepository<User, Int>
+@ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+class InvalidTokenException : RuntimeException()
