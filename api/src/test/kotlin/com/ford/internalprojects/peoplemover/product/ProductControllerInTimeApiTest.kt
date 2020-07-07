@@ -116,6 +116,23 @@ class ProductControllerInTimeApiTest {
     }
 
     @Test
+    fun `GET should return all products even after end date has passed` () {
+        val result = mockMvc.perform(get("/api/product/${space.id}/$sep1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualProducts: List<Product> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Product::class.java)
+        )
+
+        val actualProduct1: Product = actualProducts[0]
+        val actualProduct2: Product = actualProducts[1]
+        assertThat(actualProduct1).isEqualTo(product1)
+        assertThat(actualProduct2).isEqualTo(product2)
+    }
+
+    @Test
     fun `GET should return only first product given date when only first product is active`() {
         val result = mockMvc.perform(get("/api/product/${space.id}/$apr1"))
                 .andExpect(status().isOk)
@@ -200,30 +217,11 @@ class ProductControllerInTimeApiTest {
                 objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Product::class.java)
         )
 
-        assertThat(actualProducts.size).isOne()
-        val actualProduct: Product = actualProducts[0]
-        assertThat(actualProduct).isEqualTo(nullStartProduct)
+        assertThat(actualProducts.size).isEqualTo(3)
+        assertThat(actualProducts[0]).isEqualTo(product1)
+        assertThat(actualProducts[1]).isEqualTo(product2)
+        assertThat(actualProducts[2]).isEqualTo(nullStartProduct)
     }
 
-    @Test
-    fun `GET should return only the null end date product`() {
-        val nullStartProduct: Product = productRepository.save(Product(
-                name = "product with null start date",
-                startDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
-        ))
 
-        val result = mockMvc.perform(get("/api/product/${space.id}/$sep1"))
-                .andExpect(status().isOk)
-                .andReturn()
-
-        val actualProducts: List<Product> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Product::class.java)
-        )
-
-        assertThat(actualProducts.size).isOne()
-        val actualProduct: Product = actualProducts[0]
-        assertThat(actualProduct).isEqualTo(nullStartProduct)
-    }
 }
