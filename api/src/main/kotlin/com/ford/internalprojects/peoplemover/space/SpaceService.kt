@@ -24,7 +24,7 @@ import com.ford.internalprojects.peoplemover.auth.ValidateTokenRequest
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import com.ford.internalprojects.peoplemover.user.exceptions.InvalidTokenException
+import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
