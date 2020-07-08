@@ -104,8 +104,8 @@ describe('Products', () => {
             const productWithManyAssignments: Product = {
                 id: 2,
                 name: 'Product 1',
-                startDate: '1/1/11',
-                endDate: '2/2/22',
+                startDate: '2011-01-01',
+                endDate: '2022-02-02',
                 spaceId: 0,
                 assignments: [
                     {
@@ -456,110 +456,6 @@ describe('Products', () => {
             await app.findByText('Person 1');
             await app.findByText('Software Engineer');
             expect(app.queryByText('Product Designer')).not.toBeInTheDocument();
-        });
-
-        it('closes the modal when you click the cancel button', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
-            const newProductButton = await app.findByText('New Product');
-            fireEvent.click(newProductButton);
-
-            await app.findByLabelText('Name');
-
-            fireEvent.click(app.getByTestId('modalCloseButton'));
-            await app.findByText('PEOPLEMOVER');
-            expect(app.queryByText('Product Name')).not.toBeInTheDocument();
-        });
-
-        it('calls product client to create product when new product is submitted', async () => {
-            ProductClient.createProduct = jest.fn(() => Promise.resolve(
-                {
-                    data: {
-                        id: 919,
-                        name: 'Some Name',
-                        startDate: '01/30/2010',
-                        endDate: '01/30/2010',
-                        location: {name: 'Ann Arbor'},
-                        archived: false,
-                        spaceId: 1,
-                        dorf: '11111',
-                        productTags: [TestUtils.productTag2],
-                        assignments: [],
-                    },
-                } as AxiosResponse
-            ));
-            const app = renderWithRedux(<PeopleMover/>);
-
-            const newProductButton = await app.findByText('New Product');
-            fireEvent.click(newProductButton);
-
-            await app.findByLabelText('Name');
-            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
-
-            const tagsLabelElement = await app.findByLabelText('Product Tags');
-            const containerToFindOptionsIn = { container: await app.findByTestId('productForm') };
-            await selectEvent.select(tagsLabelElement, /FordX/, containerToFindOptionsIn);
-
-            fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
-            fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
-
-            const locationLabelElement = await app.findByLabelText('Location');
-            await selectEvent.select(locationLabelElement, /Ann Arbor/, containerToFindOptionsIn);
-
-            fireEvent.change(app.getByLabelText('Dorf'), {target: {value: '11111'}});
-
-            fireEvent.click(app.getByText('Create'));
-            await TestUtils.waitForHomePageToLoad(app);
-
-            expect(ProductClient.createProduct).toBeCalledTimes(1);
-            expect(ProductClient.createProduct).toBeCalledWith({
-                id: -1,
-                spaceId: 1,
-                name: 'Some Name',
-                startDate: '2010-01-30',
-                endDate: '2020-01-30',
-                spaceLocation: TestUtils.annarbor,
-                dorf: '11111',
-                archived: false,
-                notes: '',
-                productTags: [TestUtils.productTag2],
-                assignments: [],
-            } as Product);
-        });
-
-        it('hides add product form and displays board when new product is submitted', async () => {
-            ProductClient.createProduct = jest.fn(() => Promise.resolve(
-                {
-                    data: {
-                        id: 919,
-                        name: 'Some Name',
-                        startDate: '01/30/2010',
-                        endDate: '01/30/2020',
-                        location: 'Ann Arbor',
-                        archived: false,
-                        boardId: 1,
-                        dorf: '11111',
-                        productTags: [TestUtils.productTag2],
-                        assignments: [],
-                    },
-                } as AxiosResponse
-            ));
-            Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
-
-            await act(async () => {
-                const app = renderWithRedux(<PeopleMover/>);
-
-                const newProductButton = await app.findByText('New Product');
-                fireEvent.click(newProductButton);
-
-                fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
-                fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
-                fireEvent.change(app.getByLabelText('Next Phase Date'), {target: {value: '2020-01-30'}});
-
-                fireEvent.click(app.getByText('Create'));
-
-                expect(app.queryByText('Add Products')).toBeNull();
-            });
         });
     });
 

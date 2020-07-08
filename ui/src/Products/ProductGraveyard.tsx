@@ -23,17 +23,19 @@ import {Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
+import moment from "moment";
 
 interface ProductGraveyardProps{
     products: Array<Product>;
+    viewingDate: Date;
 }
 
-function ProductGraveyard({products}: ProductGraveyardProps): JSX.Element {
+function ProductGraveyard({products, viewingDate}: ProductGraveyardProps): JSX.Element {
     const [showDrawer, setShowDrawer] = useState(false);
 
     const containee = <div className="archivedProductListContainer">
         {products.map(product => {
-            if (product.archived) {
+            if (product.archived || product.endDate! < moment(viewingDate).format('YYYY-MM-DD')) {
                 return (
                     <div key={product.id}>
                         <ArchivedProduct product={product}/>
@@ -54,6 +56,7 @@ function ProductGraveyard({products}: ProductGraveyardProps): JSX.Element {
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
+    viewingDate: state.viewingDate,
 });
 
 export default connect (mapStateToProps) (ProductGraveyard);

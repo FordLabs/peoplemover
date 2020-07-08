@@ -22,9 +22,9 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Reassignment} from './Reassignment';
-import {Product} from "../Products/Product";
-import AssignmentClient from "../Assignments/AssignmentClient";
-import {Space} from "../SpaceDashboard/Space";
+import {Product} from '../Products/Product';
+import AssignmentClient from '../Assignments/AssignmentClient';
+import {Space} from '../SpaceDashboard/Space';
 
 interface ReassignedDrawerProps {
     products: Array<Product>;

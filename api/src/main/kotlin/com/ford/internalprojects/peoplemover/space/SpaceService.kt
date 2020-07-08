@@ -17,14 +17,11 @@
 
 package com.ford.internalprojects.peoplemover.space
 
-import com.ford.internalprojects.peoplemover.auth.AuthClient
-import com.ford.internalprojects.peoplemover.auth.AuthQuestJWT
-import com.ford.internalprojects.peoplemover.auth.AuthService
-import com.ford.internalprojects.peoplemover.auth.ValidateTokenRequest
+import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import com.ford.internalprojects.peoplemover.user.exceptions.InvalidTokenException
+import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -35,7 +32,8 @@ class SpaceService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
         private val authService: AuthService,
-        private val authClient: AuthClient
+        private val authClient: AuthClient,
+        private val userSpaceMappingRepository: UserSpaceMappingRepository
         ) {
 
     fun createSpaceWithName(spaceName: String): Space {
@@ -61,6 +59,12 @@ class SpaceService(
 
                 val userUUID: String = validateResponse.body!!.user_id!!
                 authClient.updateUserScopes(userUUID, listOf(spaceName))
+                userSpaceMappingRepository.save(
+                        UserSpaceMapping(
+                                userId = userUUID,
+                                spaceId = createdSpace.id
+                        )
+                )
 
                 val refreshToken = authClient.refreshAccessToken(accessToken).orElse(null)
 

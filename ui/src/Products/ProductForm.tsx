@@ -100,9 +100,7 @@ function ProductForm({
 
     useEffect(() => {
 
-        LocationClient.get(currentSpace.name).then(result => {
-            setAvailableLocations(result.data);
-        });
+        LocationClient.get(currentSpace.name).then(result => {setAvailableLocations(result.data);});
         ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
         setSelectedProductTags(currentProduct.productTags);
@@ -365,7 +363,7 @@ function ProductForm({
                         onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('startDate', e.target.value)}/>
                 </div>
                 <div className="formItem">
-                    <label className="formItemLabel" htmlFor="end">Next Phase Date</label>
+                    <label className="formItemLabel" htmlFor="end">End Date</label>
                     <input className="formInput formTextInput"
                         data-testid="productFormNextPhaseDateField"
                         type="date"
@@ -418,7 +416,7 @@ function ProductForm({
                     </span>
                 </div>
                 <div className="yesNoButtons">
-                    <button className="formButton cancelFormButton" onClick={closeModal} data-testid="productFormCancelButton">Cancel</button>
+                    <input className="formButton cancelFormButton" onClick={closeModal} data-testid="productFormCancelButton" type="button" value="Cancel" />
                     <input className="formButton"
                         data-testid="productFormSubmitButton"
                         onClick={handleSubmit}

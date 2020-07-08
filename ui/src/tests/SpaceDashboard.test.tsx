@@ -47,6 +47,13 @@ describe('SpaceDashbord tests', () => {
         expect(history.location.pathname).toBe('/user/dashboard');
     });
 
+    it('should display signout and not invite contributors in menu', async () => {
+        const {component} = await createTestComponent();
+        await fireEvent.click(component.getByTestId('editContributorsModal'));
+        expect(component.queryByTestId('invite-contributors')).toBeNull();
+        expect(component.queryByTestId('sign-out')).not.toBeNull();
+    });
+
     it('should redirect to space when a space in the dashboard is clicked', async () => {
         const {component, fakeAccessToken, history} = await createTestComponent();
 

@@ -99,7 +99,7 @@ describe('the assignment client', () => {
         const expectedUrl = 'testUrl/assignment/delete';
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
-            data: {'assignmentToDelete': expectedAssignmentToDelete}
+            data: {'assignmentToDelete': expectedAssignmentToDelete},
         };
 
         await AssignmentClient.deleteAssignment(expectedAssignmentToDelete);
