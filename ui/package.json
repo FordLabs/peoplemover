@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/redux-mock-store": "^1.0.2",
     "axios": "^0.18.1",
     "env-cmd": "^8.0.2",
     "enzyme": "^3.11.0",
@@ -83,6 +84,7 @@
     "node-sass": "^4.13.1",
     "react-select-event": "^4.1.4",
     "react-test-renderer": "^16.12.0",
+    "redux-mock-store": "^1.5.4",
     "sonarqube-scanner": "^2.6.0",
     "source-map-loader": "^0.2.4",
     "typescript": "^3.8.3"

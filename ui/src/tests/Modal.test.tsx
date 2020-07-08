@@ -35,6 +35,13 @@ describe('Modal', () => {
         expect(mockedCloseFunction).toHaveBeenCalled();
     });
 
+    it('should close the modal when the X is clicked', () => {
+        const mockedCloseFunction = jest.fn();
+        const {getByTestId} = render(<Modal title={'Test Modal'} modalForm={<p>Hello</p>} closeModal={mockedCloseFunction}/>);
+        fireEvent.click(getByTestId('modalCloseButton'));
+        expect(mockedCloseFunction).toHaveBeenCalled();
+    });
+
     it('should not close the modal when the modal popup is clicked', () => {
         const mockedCloseFunction = jest.fn();
         const {getByTestId} = render(<Modal title={'Test Modal'} modalForm={<p>Hello</p>} closeModal={mockedCloseFunction}/>);

@@ -100,9 +100,7 @@ function ProductForm({
 
     useEffect(() => {
 
-        LocationClient.get(currentSpace.name).then(result => {
-            setAvailableLocations(result.data);
-        });
+        LocationClient.get(currentSpace.name).then(result => {setAvailableLocations(result.data);});
         ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
         setSelectedProductTags(currentProduct.productTags);
@@ -412,7 +410,7 @@ function ProductForm({
                     </span>
                 </div>
                 <div className="yesNoButtons">
-                    <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
+                    <input className="formButton cancelFormButton" onClick={closeModal} type="button" value="Cancel" />
                     <input className="formButton"
                         onClick={handleSubmit}
                         type="button"
