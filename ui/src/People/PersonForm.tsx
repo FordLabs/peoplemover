@@ -293,6 +293,7 @@ function PersonForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="name">Name</label>
                     <input className="formInput formTextInput"
+                           data-testid="personFormNameField"
                            type="text"
                            name="name"
                            id="name"
@@ -305,6 +306,7 @@ function PersonForm({
                     {isPersonNameInvalid && <span className="personNameWarning">Please enter a person name.</span>}
                     <div className="isNewContainer">
                         <input className="checkbox"
+                               data-testid="personFormIsNewCheckbox"
                                id="isNew"
                                type="checkbox"
                                checked={person.newPerson}
@@ -340,10 +342,10 @@ function PersonForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="product">Assign to</label>
                     <MultiSelect
-                        name={'product'}
+                        name="product"
                         initiallySelected={selectedProducts}
                         selectables={getSelectables()}
-                        placeholder={'unassigned'}
+                        placeholder="unassigned"
                         changeSelections={changeProductName}
                         disabled={false}
                     />
@@ -351,6 +353,7 @@ function PersonForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
                     <textarea className="formInput formTextInput notes"
+                              data-testid="personFormNotesToField"
                               id="notes"
                               name="notes"
                               value={person.notes ? person.notes : ''}
@@ -369,6 +372,7 @@ function PersonForm({
                 <div className="yesNoButtons">
                     <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
                     <input className="formButton"
+                           data-testid="personFormSubmitButton"
                            onClick={handleSubmit}
                            type="button"
                            disabled={notesFieldLength > 500}

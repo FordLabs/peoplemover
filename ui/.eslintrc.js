@@ -7,6 +7,7 @@ module.exports = {
         'jest',
         'react-hooks',
         'react-redux',
+        'cypress'
     ],
     extends: [
         'eslint:recommended',
@@ -15,6 +16,7 @@ module.exports = {
         'plugin:react/recommended',
         'fbjs',
         'plugin:react-redux/recommended',
+        'plugin:cypress/recommended'
     ],
     rules: {
         'react/jsx-uses-react': 'error',
@@ -32,6 +34,9 @@ module.exports = {
     settings: {
         react: {
             version: 'detect',
-        }
+        },
     },
+    env: {
+        'cypress/globals': true,
+    }
 };

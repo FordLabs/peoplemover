@@ -79,7 +79,7 @@ function Modal({
 
 
                 <div className="modalPopupContainer"
-                    data-testid={"modalPopupContainer"}
+                    data-testid="modalPopupContainer"
                     onClick={event => {
                         event.stopPropagation();
                     }}

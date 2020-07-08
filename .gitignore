@@ -42,3 +42,6 @@ dist/
 nbdist/
 .nb-gradle/
 .DS_Store
+
+ui/cypress/screenshots
+ui/cypress/videos
