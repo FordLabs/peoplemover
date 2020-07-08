@@ -25,6 +25,7 @@ import {createMemoryHistory} from 'history';
 import {wait, fireEvent, RenderResult} from '@testing-library/react';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
+import moment from 'moment';
 
 interface TestComponent {
     component: RenderResult;
@@ -73,13 +74,15 @@ describe('SpaceDashbord tests', () => {
 
     it('should display space last modified date and time on a space', async () => {
         const {component} = await createTestComponent();
-        expect(component.getByText('Last modified Tuesday, April 14, 2020 at 2:06 pm')).not.toBeNull();
+        const localTime = moment.utc("2020-04-14T18:06:11.791+0000").local().format('dddd, MMMM D, Y [at] h:mm a');
+        expect(component.getByText(`Last modified ${localTime}`)).not.toBeNull();
     });
 
     it('should display today and last modified time on a space', async () => {
         Date.now = jest.fn(() => 1586887571000);
         const {component} = await createTestComponent();
-        expect(component.getByText('Last modified today at 2:06 pm')).not.toBeNull();
+        const localTime = moment.utc("2020-04-14T18:06:11.791+0000").local().format('h:mm a');
+        expect(component.getByText(`Last modified today at ${localTime}`)).not.toBeNull();
     });
 
     const createTestComponent = async (tokenValid = true): Promise<TestComponent> => {
