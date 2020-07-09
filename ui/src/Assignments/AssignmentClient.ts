@@ -18,7 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {CreateAssignmentsRequest} from './CreateAssignmentRequest';
 import moment from 'moment';
-import {Assignment} from "./Assignment";
+import {Assignment} from './Assignment';
 
 class AssignmentClient {
     static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {
@@ -44,7 +44,7 @@ class AssignmentClient {
         return Axios.delete(`${process.env.REACT_APP_URL}assignment/delete`,
             {
                 headers: { 'Content-Type': 'application/json'},
-                data: {'assignmentToDelete': assignmentToDelete}
+                data: {'assignmentToDelete': assignmentToDelete},
             }
         );
     }

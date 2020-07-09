@@ -41,7 +41,7 @@ import {Option} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
-import moment from "moment";
+import moment from 'moment';
 
 interface AssignmentFormProps {
     products: Array<Product>;

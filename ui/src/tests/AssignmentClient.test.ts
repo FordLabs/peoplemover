@@ -19,9 +19,9 @@ import Axios, {AxiosResponse} from 'axios';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import TestUtils from './TestUtils';
-import {Assignment} from "../Assignments/Assignment";
-import {Person} from "../People/Person";
-import moment from "moment";
+import {Assignment} from '../Assignments/Assignment';
+import {Person} from '../People/Person';
+import moment from 'moment';
 
 describe('the assignment client', () => {
     beforeEach(() => {
@@ -90,7 +90,7 @@ describe('the assignment client', () => {
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
-    it('should delete assignment given assignment', async() => {
+    it('should delete assignment given assignment', async () => {
         Axios.delete = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 
@@ -107,7 +107,7 @@ describe('the assignment client', () => {
         expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
-    it('should get reassignments given assignment', async() => {
+    it('should get reassignments given assignment', async () => {
         Axios.get = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 

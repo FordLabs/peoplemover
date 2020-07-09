@@ -45,7 +45,7 @@ function EditTraitSection({
     colorSection,
     traitClient,
     traitName,
-    currentSpace
+    currentSpace,
 }: EditTraitSectionProps): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
     const [enteredTrait, setEnteredTrait] = useState<TraitAddRequest>();

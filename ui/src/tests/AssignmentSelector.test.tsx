@@ -23,7 +23,7 @@ import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from './TestUtils';
 import selectEvent from 'react-select-event';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import moment from "moment";
+import moment from 'moment';
 
 describe('the assignment form', () => {
     beforeEach(() => {

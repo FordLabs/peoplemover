@@ -33,7 +33,7 @@ import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../SpaceDashboard/Space';
 
 interface MyTraitsProps {
-    currentSpace: Space,
+    currentSpace: Space;
     title?: string;
     traitClient: TraitClient;
     setTraitSectionOpen: Function;

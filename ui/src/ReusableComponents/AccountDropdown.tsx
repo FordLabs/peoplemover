@@ -22,7 +22,7 @@ function AccountDropdown({setCurrentModal, hideSpaceButtons}: AccountDropdownPro
         return dropdownFlag;
     }
 
-    function clearAccessTokenCookie(){
+    function clearAccessTokenCookie() {
         const cookie = new Cookies();
         cookie.remove('accessToken', {path: '/'});
 

@@ -21,8 +21,8 @@ import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult, wai
 import PeopleMover from '../Application/PeopleMover';
 import RoleClient from '../Roles/RoleClient';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
-import {PreloadedState} from "redux";
-import {GlobalStateProps} from "../Redux/Reducers";
+import {PreloadedState} from 'redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('PeopleMover Role Modal', () => {
     let app: RenderResult;

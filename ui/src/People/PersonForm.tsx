@@ -45,7 +45,7 @@ import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
-import moment from "moment";
+import moment from 'moment';
 
 interface PersonFormProps {
     editing: boolean;
@@ -143,8 +143,8 @@ function PersonForm({
             const placeholderForProduct = product.assignments.find((assignmentForProduct) => assignmentForProduct.person.id === person.id)?.placeholder;
             return {
                 productId: product.id,
-                placeholder: placeholderForProduct || false
-            } as ProductPlaceholderPair
+                placeholder: placeholderForProduct || false,
+            } as ProductPlaceholderPair;
         });
 
     }
@@ -162,7 +162,7 @@ function PersonForm({
                 await AssignmentClient.createAssignmentForDate({
                     requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                     person: assignment!.person,
-                    products: getSelectedProductPairs()
+                    products: getSelectedProductPairs(),
                 });
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
@@ -174,7 +174,7 @@ function PersonForm({
                     {
                         requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                         person: newPerson,
-                        products: getSelectedProductPairs()
+                        products: getSelectedProductPairs(),
                     }
                 );
 
@@ -293,26 +293,26 @@ function PersonForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="name">Name</label>
                     <input className="formInput formTextInput"
-                           data-testid="personFormNameField"
-                           type="text"
-                           name="name"
-                           id="name"
-                           list="peopleList"
-                           value={person.name}
-                           onChange={changeName}
-                           autoComplete="off"
-                           placeholder={'e.g. Jane Smith'}
-                           autoFocus/>
+                        data-testid="personFormNameField"
+                        type="text"
+                        name="name"
+                        id="name"
+                        list="peopleList"
+                        value={person.name}
+                        onChange={changeName}
+                        autoComplete="off"
+                        placeholder={'e.g. Jane Smith'}
+                        autoFocus/>
                     {isPersonNameInvalid && <span className="personNameWarning">Please enter a person name.</span>}
                     <div className="isNewContainer">
                         <input className="checkbox"
-                               data-testid="personFormIsNewCheckbox"
-                               id="isNew"
-                               type="checkbox"
-                               checked={person.newPerson}
-                               onChange={(): void => {
-                                   updatePersonField('newPerson', !person.newPerson);
-                               }}
+                            data-testid="personFormIsNewCheckbox"
+                            id="isNew"
+                            type="checkbox"
+                            checked={person.newPerson}
+                            onChange={(): void => {
+                                updatePersonField('newPerson', !person.newPerson);
+                            }}
                         />
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
                     </div>
@@ -353,13 +353,13 @@ function PersonForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
                     <textarea className="formInput formTextInput notes"
-                              data-testid="personFormNotesToField"
-                              id="notes"
-                              name="notes"
-                              value={person.notes ? person.notes : ''}
-                              onChange={notesChanged}
-                              rows={4}
-                              cols={25}>
+                        data-testid="personFormNotesToField"
+                        id="notes"
+                        name="notes"
+                        value={person.notes ? person.notes : ''}
+                        onChange={notesChanged}
+                        rows={4}
+                        cols={25}>
                         {person.notes}
                     </textarea>
                     <span className="notesFieldText" data-testid="notesFieldText">
@@ -372,11 +372,11 @@ function PersonForm({
                 <div className="yesNoButtons">
                     <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
                     <input className="formButton"
-                           data-testid="personFormSubmitButton"
-                           onClick={handleSubmit}
-                           type="button"
-                           disabled={notesFieldLength > 500}
-                           value={editing ? 'Save' : 'Create'}/>
+                        data-testid="personFormSubmitButton"
+                        onClick={handleSubmit}
+                        type="button"
+                        disabled={notesFieldLength > 500}
+                        value={editing ? 'Save' : 'Create'}/>
                 </div>
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                     <i className="fas fa-trash"/>
