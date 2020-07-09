@@ -70,7 +70,7 @@
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
     "awesome-typescript-loader": "^5.2.1",
-    "cypress": "^4.9.0",
+    "cypress": "^4.10.0",
     "eslint": "^6.8.0",
     "eslint-config-fbjs": "^3.1.1",
     "eslint-config-standard": "^14.1.0",
@@ -95,7 +95,7 @@
     "redux-mock-store": "^1.5.4",
     "sonarqube-scanner": "^2.6.0",
     "source-map-loader": "^0.2.4",
-    "start-server-and-test": "^1.11.0",
+    "start-server-and-test": "1.10.6",
     "typescript": "^3.8.3"
   },
   "husky": {
