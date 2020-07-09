@@ -100,7 +100,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "CI=true npm test"
+      "pre-commit": "npm run lint && CI=true npm test"
     }
   },
   "jest": {
