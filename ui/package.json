@@ -34,6 +34,7 @@
     "test:e2e": "npm run e2e-setup cy:open",
     "test:e2e:ci": "npm run e2e-setup cy:run",
     "test": "npm run test:unit",
+    "coverage": "npm run test:unit:coverage",
     "eject": "react-scripts eject",
     "build": "react-scripts build",
     "lint": "eslint src/**/*.ts src/**/*.tsx",
