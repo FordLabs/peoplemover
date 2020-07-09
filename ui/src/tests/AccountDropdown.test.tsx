@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent, RenderResult, wait} from '@testing-library/react';
+import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import React from 'react';
@@ -36,56 +36,59 @@ describe('Account Dropdown',  () => {
         process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'true';
 
         history = createMemoryHistory({ initialEntries: ['/teamName'] });
-
-        await wait(async () => {
-
-            app = renderWithRedux(
-                <Router history={history}>
-                    <PeopleMover/>
-                </Router>
-            );
-
+        await act( async () => {
+            await wait(async () => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>
+                );
+            });
+            const userIconButton = await app.findByTestId('userIcon');
+            fireEvent.click(userIconButton);
         });
-        const userIconButton = await app.findByTestId('userIcon');
-        fireEvent.click(userIconButton);
     });
 
     it('Should open Edit Contributors modal on click of text in dropdown',  async () => {
-        fireEvent.click(await app.findByText('Invite Contributors'));
+        await act( async() => {
+            fireEvent.click(await app.findByText('Invite Contributors'));
+        });
         expect(app.getByText('Edit Contributors'));
     });
 
     it('should close Edit Contributors modal on click of Cancel button', async () => {
-        fireEvent.click(await app.findByText('Invite Contributors'));
-        const cancelButton = await app.findByText('Cancel');
-        fireEvent.click(cancelButton);
-
+        await act( async() => {
+            fireEvent.click(await app.findByText('Invite Contributors'));
+            const cancelButton = await app.findByText('Cancel');
+            fireEvent.click(cancelButton);
+        });
         expect(app.queryByText('Edit Contributors')).toBe(null);
     });
 
     it('should submit invited contributors, current space name, and access token on click of Save button', async () => {
-        fireEvent.click(await app.findByText('Invite Contributors'));
-        SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
+        await act( async() => {
+            fireEvent.click(await app.findByText('Invite Contributors'));
+            SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
 
-        const usersToInvite = app.getByTestId('emailTextArea');
-        fireEvent.change(usersToInvite, { target: { value: 'some1@email.com,some2@email.com,some3@email.com' } });
+            const usersToInvite = app.getByTestId('emailTextArea');
+            fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});
 
-        const saveButton = await app.findByText('Save');
-        fireEvent.click(saveButton);
-
+            const saveButton = await app.findByText('Save');
+            fireEvent.click(saveButton);
+        });
         expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith('teamName', ['some1@email.com', 'some2@email.com', 'some3@email.com']);
     });
 
     it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {
-
         const cookies = new Cookies();
+        await act( async() => {
 
-        cookies.set('accessToken', 'FAKE_TOKEN');
+            cookies.set('accessToken', 'FAKE_TOKEN');
 
-        expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
+            expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
 
-        fireEvent.click(await app.findByText('Sign Out'));
-
+            fireEvent.click(await app.findByText('Sign Out'));
+        });
         expect(cookies.get('accessToken')).toBeUndefined();
         expect(history.location.pathname).toEqual('/');
     });
