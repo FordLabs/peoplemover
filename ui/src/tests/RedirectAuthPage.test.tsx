@@ -70,7 +70,7 @@ describe('should redirect to login page', () => {
     it('should ask the backend for the accessToken if an access_code is in the url and store it in the cookies', async () => {
         Axios.post = jest.fn(() => Promise.resolve({
             data: {
-                access_token: 'TOKEN123',
+                'access_token': 'TOKEN123',
             },
         } as AxiosResponse));
 
@@ -149,7 +149,7 @@ describe('should redirect to login page', () => {
 
         AccessTokenClient.refreshAccessToken = jest.fn( () => Promise.resolve({
             data: {
-                access_token: 'NEW_TOKEN',
+                'access_token': 'NEW_TOKEN',
             },
         }  as AxiosResponse ));
 
