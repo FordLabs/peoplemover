@@ -23,6 +23,7 @@ import ProductClient from '../Products/ProductClient';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import AssignmentClient from '../Assignments/AssignmentClient';
+import moment from 'moment-timezone';
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;
@@ -71,7 +72,9 @@ describe('Calendar', () => {
         fireEvent.click(dayEighteen);
 
         await app.findByText('Viewing: May 18, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.id, new Date('2020-05-18T04:00:00.000Z'));
+
+        const localDate = moment.tz('2020-05-18', moment.tz.guess()).toDate();
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.id, localDate);
     });
 
     it('should have down caret when closed and up arrow when open', async () => {
