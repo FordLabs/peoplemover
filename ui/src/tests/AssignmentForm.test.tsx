@@ -42,9 +42,11 @@ describe('AssignmentForm', () => {
         } as GlobalStateProps;
 
         async function openAssignPersonForm(app: RenderResult): Promise<void> {
-            await TestUtils.waitForHomePageToLoad(app);
-            fireEvent.click(app.getByTestId('addPersonToProductIcon-1'));
-            await app.findByText('Assign to');
+            await act( async() => {
+                await TestUtils.waitForHomePageToLoad(app);
+                fireEvent.click(app.getByTestId('addPersonToProductIcon-1'));
+                await app.findByText('Assign to');
+            });
         }
 
         it('should not show the unassigned or archived products in the product list', async () => {
