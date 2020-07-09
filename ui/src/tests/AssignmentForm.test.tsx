@@ -42,13 +42,12 @@ describe('AssignmentForm', () => {
         } as GlobalStateProps;
 
         async function openAssignPersonForm(app: RenderResult): Promise<void> {
-            await TestUtils.waitForHomePageToLoad(app);
-            fireEvent.click(app.getByTestId('addPersonToProductIcon-1'));
-            await app.findByText('Assign to');
+                await TestUtils.waitForHomePageToLoad(app);
+                fireEvent.click(app.getByTestId('addPersonToProductIcon-1'));
+                await app.findByText('Assign to');
         }
 
         it('should not show the unassigned or archived products in the product list', async () => {
-            await act(async () => {
                 const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
                 const component = <AssignmentForm products={products}
                     initiallySelectedProduct={products[0]}/>;
@@ -59,11 +58,10 @@ describe('AssignmentForm', () => {
                 expect(options.find((option: any) => option.label === 'Product 1')).toBeTruthy();
                 expect(options.find((option: any)  => option.label === 'I am archived')).toBeFalsy();
                 expect(options.find((option: any)  => option.label === 'unassigned')).toBeFalsy();
-            });
         });
 
         it('submits an assignment with the given person and product', async () => {
-            await act( async () => {
+                await act( async () => {
                 const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
                 await openAssignPersonForm(app);
 
@@ -73,7 +71,6 @@ describe('AssignmentForm', () => {
 
                 fireEvent.click(app.getByText('Assign'));
             });
-
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
@@ -86,7 +83,7 @@ describe('AssignmentForm', () => {
         });
 
         it('submits an assignment when the enter key is pressed', async () => {
-            await act(async() => {
+           await act(async() => {
                 const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
                 await openAssignPersonForm(app);
 
