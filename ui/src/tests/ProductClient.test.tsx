@@ -18,9 +18,9 @@
 import Axios from 'axios';
 import ProductClient from '../Products/ProductClient';
 
-describe('Product Client', function () {
+describe('Product Client', function() {
 
-    it('should return the products given a date', function () {
+    it('should return the products given a date', function() {
         const spaceId = 1;
         const date = '2019-01-10';
         Axios.get = jest.fn();
