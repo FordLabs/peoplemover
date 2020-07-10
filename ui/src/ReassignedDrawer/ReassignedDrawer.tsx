@@ -80,6 +80,7 @@ function mapsReassignments(reassignment: Reassignment, index: number): JSX.Eleme
         {oneWayReassignment &&
         <div className="additionalInfo">{oneWayReassignment}</div>
         }
+        <button className="revertButton"><i className="fas fa-undo-alt"/>Revert</button>
     </div>;
 }
 
