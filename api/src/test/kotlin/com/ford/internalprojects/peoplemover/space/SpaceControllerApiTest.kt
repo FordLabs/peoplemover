@@ -223,21 +223,18 @@ class SpaceControllerApiTest {
 
     @Test
     fun `GET should return all spaces for current user`() {
+        val spaces = listOf("Reserved", "Reserved", "SpaceOne", "SpaceTwo")
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
         val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
-        spaceRepository.save(Space(name = "SpaceThree"))
-
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "userId", spaceId = space1.id))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "userId", spaceId = space2.id))
 
         val validateTokenRequest = ValidateTokenRequest(accessToken= "TOKEN")
         `when`(authService.validateAccessToken(validateTokenRequest))
                 .thenReturn(ResponseEntity.ok(AuthQuestJWT(
-                        user_id = "userId",
+                        scopes= spaces,
+                        user_id = "",
                         exp = "",
                         iss = "",
-                        sub = "",
-                        scopes = emptyList()
+                        sub = ""
                 )))
 
         val result = mockMvc.perform(get("/api/user/space")
@@ -251,8 +248,8 @@ class SpaceControllerApiTest {
         )
 
         assertThat(actualUserSpaces).hasSize(2)
-        assertThat(actualUserSpaces).contains(space1)
-        assertThat(actualUserSpaces).contains(space2)
+        assertThat(actualUserSpaces[0]).isEqualTo(space1)
+        assertThat(actualUserSpaces[1]).isEqualTo(space2)
         verify(authService).validateAccessToken(validateTokenRequest)
     }
 
