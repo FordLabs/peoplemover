@@ -50,10 +50,11 @@ function ReassignedDrawer({
         mapsReassignments(reassignment, index)
     ));
 
-    const containee: JSX.Element = <div className="reassignmentContainer">{listOfHTMLReassignments}</div>;
+    const containee: JSX.Element = <div className="reassignmentContainer" data-testid="reassignmentContainer">{listOfHTMLReassignments}</div>;
 
     return (
         <DrawerContainer drawerIcon="fas fa-user-check"
+            testId="reassignmentDrawer"
             containerTitle="Reassigned"
             containee={containee}
             isDrawerOpen={showDrawer}
@@ -71,16 +72,18 @@ function mapsReassignments(reassignment: Reassignment, index: number): JSX.Eleme
 
     }
 
-    return  <div key={index} className="reassignmentSection">
-        <div className="name">{reassignment.person.name}</div>
-        <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
-        {!oneWayReassignment &&
-        <div className="additionalInfo">{reassignment.fromProductName!} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName!}</div>
-        }
-        {oneWayReassignment &&
-        <div className="additionalInfo">{oneWayReassignment}</div>
-        }
-    </div>;
+    return  (
+        <div key={index} className="reassignmentSection" data-testid="reassignmentSection">
+            <div className="name">{reassignment.person.name}</div>
+            <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
+            {!oneWayReassignment &&
+                <div className="additionalInfo">{reassignment.fromProductName!} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName!}</div>
+            }
+            {oneWayReassignment &&
+                <div className="additionalInfo">{oneWayReassignment}</div>
+            }
+        </div>
+    );
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
