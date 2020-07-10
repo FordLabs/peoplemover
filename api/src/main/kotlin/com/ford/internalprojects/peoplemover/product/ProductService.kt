@@ -37,7 +37,7 @@ class ProductService(
     }
 
     fun findAllBySpaceIdAndDate(spaceId: Int, date: LocalDate): Set<Product> {
-        val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceId, date.toString())
+        val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceId, date)
         return productRepository.findAllBySpaceIdAndDate(spaceId, date).map {product ->
             product.copy(assignments = assignmentsForDate.filter {assignment ->
                 assignment.productId == product.id!!

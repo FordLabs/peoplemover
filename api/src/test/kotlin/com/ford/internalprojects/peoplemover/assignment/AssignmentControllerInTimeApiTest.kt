@@ -209,14 +209,6 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return 400 when retrieving assignments given an invalid date` () {
-        val bogusDate = "apr1"
-
-        mockMvc.perform(get("/api/assignment/${space.id}/$bogusDate"))
-                .andExpect(status().isBadRequest)
-    }
-
-    @Test
     fun `GET should return all assignments for the given personId and a specific date`() {
         val oldAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
                 person = person,
@@ -526,4 +518,31 @@ class AssignmentControllerInTimeApiTest {
                 .content(objectMapper.writeValueAsString(assignmentNotInDb)))
                 .andExpect(status().isOk)
     }
+
+    @Test
+    fun `DELETE should remove assignment(s) given person and date`() {
+        val originalAssignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val newAssignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = productTwo.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = space.id!!
+        ))
+
+        mockMvc.perform(delete("/api/assignment/delete/$apr1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(person)))
+                .andExpect(status().isOk)
+
+        assertThat(assignmentRepository.count()).isOne()
+        assertThat(assignmentRepository.findAll()).contains(originalAssignmentForPerson)
+        assertThat(assignmentRepository.findAll()).doesNotContain(newAssignmentForPerson)
+    }
+
 }
