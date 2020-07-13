@@ -114,7 +114,7 @@ describe('the assignment client', () => {
         const expectedUrl = 'testUrl/assignment/delete/' + TestUtils.originDateString;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
-            data: {'person': TestUtils.person1},
+            data: TestUtils.person1,
         };
         await AssignmentClient.deleteAssignmentForDate(new Date(2019, 0, 1), TestUtils.person1);
 
