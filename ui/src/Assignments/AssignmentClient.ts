@@ -45,7 +45,7 @@ class AssignmentClient {
         return Axios.delete(`${process.env.REACT_APP_URL}assignment/delete`,
             {
                 headers: { 'Content-Type': 'application/json'},
-                data: {'assignmentToDelete': assignmentToDelete}
+                data: {'assignmentToDelete': assignmentToDelete},
             }
         );
     }
@@ -55,7 +55,7 @@ class AssignmentClient {
         return Axios.delete(`${process.env.REACT_APP_URL}assignment/delete/` + dateAsString,
             {
                 headers: { 'Content-Type': 'application/json'},
-                data: {'person': person}
+                data: person,
             }
         );
     }
