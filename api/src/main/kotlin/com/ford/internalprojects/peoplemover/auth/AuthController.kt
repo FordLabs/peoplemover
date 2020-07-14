@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.auth
 
+import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
 import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import org.springframework.http.HttpStatus
@@ -29,7 +30,9 @@ import org.springframework.web.client.HttpClientErrorException
 import javax.validation.Valid
 
 @RestController
-class AuthController(val authClient: AuthClient) {
+class AuthController(val authClient: AuthClient,
+                     val userSpaceMappingRepository: UserSpaceMappingRepository,
+                     val spaceRepository: SpaceRepository) {
 
     @PostMapping(path = ["/api/access_token"])
     fun getAccessToken(@Valid @RequestBody request: AccessTokenRequest): ResponseEntity<OAuthAccessTokenResponse> {
@@ -90,6 +93,11 @@ class AuthController(val authClient: AuthClient) {
 
     @PutMapping(path = ["/api/user/invite/space"])
     fun inviteUsersToSpace(@Valid @RequestBody request: AuthInviteUsersToSpaceRequest): ResponseEntity<Void> {
+        val space = spaceRepository.findByNameIgnoreCase(request.spaceName)!!
+        request.emails.forEach {
+            val userId = authClient.getUserIdFromEmail(email = it).body!!.user_id
+            userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
+        }
         authClient.inviteUsersToScope(request.emails, request.spaceName)
         return ResponseEntity.noContent().build()
     }

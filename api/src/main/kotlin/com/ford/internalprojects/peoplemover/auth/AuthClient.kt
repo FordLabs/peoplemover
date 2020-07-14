@@ -20,6 +20,8 @@ package com.ford.internalprojects.peoplemover.auth
 import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
 import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import com.ford.labs.authquest.oauth.OAuthVerifyResponse
+import com.ford.labs.authquest.user.UserReadResponse
+import org.springframework.http.ResponseEntity
 import java.util.*
 
 interface AuthClient {
@@ -29,4 +31,5 @@ interface AuthClient {
     fun inviteUsersToScope(emails: List<String>, spaceName: String)
     fun createScope(spaces: List<String>)
     fun updateUserScopes(userUUID: String, spaces: List<String>)
+    fun getUserIdFromEmail(email: String): ResponseEntity<UserReadResponse>
 }
