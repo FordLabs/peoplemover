@@ -81,11 +81,19 @@ class AssignmentService(
     }
 
     fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
-        deleteAssignmentForDate(assignmentRequest.requestedDate, assignmentRequest.person)
+        deleteAssignmentsForDate(assignmentRequest.requestedDate, assignmentRequest.person)
         return if (assignmentRequest.products.isNullOrEmpty() || requestOnlyContainsUnassigned(assignmentRequest)) {
-            setOf(createUnassignmentForDate(assignmentRequest))
+            setOf(createUnassignmentForDate(assignmentRequest.requestedDate, assignmentRequest.person))
         } else {
             createAssignmentsForDate(assignmentRequest)
+        }
+    }
+
+    fun revertAssignmentsForDate(requestedDate: LocalDate, person: Person) {
+        deleteAssignmentsForDate(requestedDate, person)
+        val existingAssignments = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
+        if (existingAssignments.isNullOrEmpty()) {
+            createUnassignmentForDate(requestedDate, person)
         }
     }
 
@@ -94,7 +102,7 @@ class AssignmentService(
         assignmentRepository.deleteAndUpdateSpaceLastModified(assignmentToDelete)
     }
 
-    fun deleteAssignmentForDate(requestedDate: LocalDate, person: Person) {
+    fun deleteAssignmentsForDate(requestedDate: LocalDate, person: Person) {
         personRepository.findByIdOrNull(person.id!!) ?: throw PersonNotExistsException()
 
         val assignments: List<Assignment> = assignmentRepository.findAllByPersonAndEffectiveDate(
@@ -159,15 +167,15 @@ class AssignmentService(
         return (assignmentRequest.products.size == 1 && assignmentRequest.products.first().productId == unassignedProduct!!.id)
     }
 
-    private fun createUnassignmentForDate(assignmentRequest: CreateAssignmentsRequest): Assignment {
-        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", assignmentRequest.person.spaceId)
+    private fun createUnassignmentForDate(requestedDate: LocalDate, person: Person): Assignment {
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", person.spaceId)
         return assignmentRepository.save(
                 Assignment(
-                        person = assignmentRequest.person,
+                        person = person,
                         placeholder = false,
                         productId = unassignedProduct!!.id!!,
-                        spaceId = assignmentRequest.person.spaceId,
-                        effectiveDate = assignmentRequest.requestedDate
+                        spaceId = person.spaceId,
+                        effectiveDate = requestedDate
                 )
         )
     }

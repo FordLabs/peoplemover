@@ -77,7 +77,7 @@ class AssignmentController(
 
     @DeleteMapping(path = ["/api/assignment/delete/{requestedDate}"])
     fun deleteAssignmentForDate(@PathVariable requestedDate: String, @RequestBody person: Person): ResponseEntity<Unit> {
-        assignmentService.deleteAssignmentForDate(LocalDate.parse(requestedDate), person)
+        assignmentService.revertAssignmentsForDate(LocalDate.parse(requestedDate), person)
         logger.logInfoMessage("assignment deleted " +
                 "for person with id: [${person.id}] " +
                 "with effective date: [${requestedDate}]")
