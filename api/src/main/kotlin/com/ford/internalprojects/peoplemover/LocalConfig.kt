@@ -112,6 +112,11 @@ class LocalConfig {
                 spaceName
         )
 
+        val baguetteBakery: Product = productRepository.save(Product(
+                name = "Baguette Bakery",
+                spaceId = createdSpace.id
+        ))
+
         val savedProducts: List<Product> = productRepository.findAllBySpaceId(spaceId = createdSpace.id)
 
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
