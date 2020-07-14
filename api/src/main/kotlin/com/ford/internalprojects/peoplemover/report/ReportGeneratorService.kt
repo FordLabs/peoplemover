@@ -20,6 +20,7 @@ package com.ford.internalprojects.peoplemover.report
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
@@ -28,7 +29,7 @@ class ReportGeneratorService(
         private val spaceRepository: SpaceRepository,
         @field:PersistenceContext private val entityManager: EntityManager
 ) {
-    fun getReportWithNames(spaceName: String): List<ReportGenerator> {
+    fun getReportWithNames(spaceName: String, requestedDate: LocalDate): List<ReportGenerator> {
         spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException(spaceName)
 
         val nativeQuery = entityManager.createQuery(reportGeneratorQuery, Array<Any?>::class.java)

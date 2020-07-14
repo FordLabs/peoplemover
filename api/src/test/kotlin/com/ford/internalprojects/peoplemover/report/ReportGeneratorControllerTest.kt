@@ -72,6 +72,8 @@ class ReportGeneratorControllerTest {
     private lateinit var person2: Person
     private lateinit var space: Space
 
+    val mar1 = "2019-03-01"
+
     @Before
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
@@ -95,7 +97,7 @@ class ReportGeneratorControllerTest {
     @Test
     fun `GET should return people, products, and roles for a space`() {
         val result = mockMvc
-                .perform(get("/api/reportgenerator/${space.name}"))
+                .perform(get("/api/reportgenerator/${space.name}/${mar1}"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -118,7 +120,7 @@ class ReportGeneratorControllerTest {
     @Throws(Exception::class)
     @Test
     fun `GET should return 400 with invalid space name` () {
-        mockMvc.perform(get("/api/reportgenerator/fakeSpace"))
+        mockMvc.perform(get("/api/reportgenerator/fakeSpace/${mar1}"))
                 .andExpect(status().isBadRequest)
     }
 }
