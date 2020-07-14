@@ -72,7 +72,6 @@ function ReassignedDrawer({
             oneWayReassignment = `${reassignment.fromProductName} assignment cancelled`;
         } else if (!reassignment.fromProductName) {
             oneWayReassignment = `Assigned to ${reassignment.toProductName}`;
-
         }
 
         return  <div key={index} className="reassignmentSection">

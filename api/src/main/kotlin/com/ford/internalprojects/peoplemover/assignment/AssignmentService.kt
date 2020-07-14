@@ -159,7 +159,7 @@ class AssignmentService(
                     fromProductName = fromProductName,
                     toProductName = toProductName
             )
-        }
+        }.filterNot {  reassignment ->  reassignment.toProductName == "unassigned" && reassignment.fromProductName.isNullOrEmpty() }
     }
 
     private fun requestOnlyContainsUnassigned(assignmentRequest: CreateAssignmentsRequest): Boolean {

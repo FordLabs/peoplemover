@@ -258,6 +258,27 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
+    fun `GET should return no reassignment when fromProductName is empty and toProductName is unassigned`() {
+        val assignment: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = unassignedProduct.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$mar1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isZero()
+    }
+
+    @Test
     fun `GET should handle reassignments for multiple people being reassigned`() {
 
 
