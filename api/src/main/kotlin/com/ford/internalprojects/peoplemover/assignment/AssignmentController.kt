@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.assignment
 
+import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -36,7 +37,7 @@ class AssignmentController(
 
     @GetMapping(path = ["/api/assignment/{spaceId}/{requestedDate}"])
     fun getAssignmentsByDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
-        val assignmentsByDate = assignmentService.getAssignmentsByDate(spaceId, requestedDate)
+        val assignmentsByDate = assignmentService.getAssignmentsByDate(spaceId, LocalDate.parse(requestedDate))
         logger.logInfoMessage("All assignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
         return ResponseEntity.ok(assignmentsByDate)
     }
@@ -46,6 +47,13 @@ class AssignmentController(
         val dates = assignmentService.getEffectiveDates(spaceId)
         logger.logInfoMessage("All effective dates retrieved for space with id: [$spaceId].")
         return ResponseEntity.ok(dates)
+    }
+
+    @GetMapping(path = ["/api/reassignment/{spaceId}/{requestedDate}"])
+    fun getReassignmentsByExactDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
+        val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceId, LocalDate.parse(requestedDate))
+        logger.logInfoMessage("All reassignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
+        return ResponseEntity.ok(reassignmentsByExactDate)
     }
 
     @PostMapping(path = ["/api/assignment/create"])
@@ -67,10 +75,12 @@ class AssignmentController(
         return ResponseEntity.ok().build()
     }
 
-    @GetMapping(path = ["/api/reassignment/{spaceId}/{requestedDate}"])
-    fun getReassignmentsByExactDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
-        val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceId, requestedDate)
-        logger.logInfoMessage("All reassignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
-        return ResponseEntity.ok(reassignmentsByExactDate)
+    @DeleteMapping(path = ["/api/assignment/delete/{requestedDate}"])
+    fun deleteAssignmentForDate(@PathVariable requestedDate: String, @RequestBody person: Person): ResponseEntity<Unit> {
+        assignmentService.revertAssignmentsForDate(LocalDate.parse(requestedDate), person)
+        logger.logInfoMessage("assignment deleted " +
+                "for person with id: [${person.id}] " +
+                "with effective date: [${requestedDate}]")
+        return ResponseEntity.ok().build()
     }
 }

@@ -85,13 +85,6 @@ describe('Calendar', () => {
 
         fireEvent.click(datePickerOpener);
         await app.findByTestId('calendar-fa-caret-up');
-    });
-
-    it('should close calendar popout when clicking calendar input label again', async () => {
-        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-        const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
-
-        fireEvent.click(datePickerOpener);
         fireEvent.click(datePickerOpener);
 
         const calendar = await app.findByTestId('calendar');

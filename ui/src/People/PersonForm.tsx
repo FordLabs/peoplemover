@@ -370,7 +370,7 @@ function PersonForm({
                     </span>
                 </div>
                 <div className="yesNoButtons">
-                    <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
+                    <input className="formButton cancelFormButton" onClick={closeModal} type="button" value="Cancel" />
                     <input className="formButton"
                            data-testid="personFormSubmitButton"
                            onClick={handleSubmit}

@@ -19,6 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {CreateAssignmentsRequest} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {Assignment} from "./Assignment";
+import {Person} from "../People/Person";
 
 class AssignmentClient {
     static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {
@@ -44,7 +45,17 @@ class AssignmentClient {
         return Axios.delete(`${process.env.REACT_APP_URL}assignment/delete`,
             {
                 headers: { 'Content-Type': 'application/json'},
-                data: {'assignmentToDelete': assignmentToDelete}
+                data: {'assignmentToDelete': assignmentToDelete},
+            }
+        );
+    }
+
+    static async deleteAssignmentForDate(date: Date, person: Person): Promise<AxiosResponse> {
+        const dateAsString = moment(date).format('YYYY-MM-DD');
+        return Axios.delete(`${process.env.REACT_APP_URL}assignment/delete/` + dateAsString,
+            {
+                headers: { 'Content-Type': 'application/json'},
+                data: person,
             }
         );
     }
