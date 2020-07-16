@@ -28,7 +28,7 @@ import java.time.LocalDate
 class ReportGeneratorService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
-        private val assignmentService: AssignmentService,
+        private val assignmentService: AssignmentService
 ) {
     fun getReportWithNames(spaceName: String, requestedDate: LocalDate): List<ReportGenerator> {
         val space = spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException(spaceName)
