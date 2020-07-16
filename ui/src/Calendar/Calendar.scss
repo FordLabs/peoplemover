@@ -26,6 +26,10 @@
         border-radius: 50%;
       }
 
+      .react-datepicker__day:focus {
+        outline: none;
+      }
+
       .react-datepicker__day--today {
         background: transparent;
         font-weight: bold;
