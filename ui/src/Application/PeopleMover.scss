@@ -146,3 +146,9 @@
     max-width: 10vw;
     white-space: nowrap;
 }
+
+.App {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
