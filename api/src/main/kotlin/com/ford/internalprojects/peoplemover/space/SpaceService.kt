@@ -18,10 +18,10 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.*
+import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -81,7 +81,8 @@ class SpaceService(
     fun getSpacesForUser(accessToken: String): List<Space> {
         val validateResponse: ResponseEntity<AuthQuestJWT> = authService.validateAccessToken(ValidateTokenRequest(accessToken))
         validateResponse.body?.let {
-            return spaceRepository.findAllByNameIn(it.scopes)
+            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(it.user_id!!).map{ mapping -> mapping.spaceId!! }.toList()
+            return spaceRepository.findAllByIdIn(spaceIds)
         }
         throw InvalidTokenException()
     }
