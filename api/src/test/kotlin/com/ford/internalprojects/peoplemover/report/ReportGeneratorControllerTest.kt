@@ -40,6 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDate
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -72,6 +73,9 @@ class ReportGeneratorControllerTest {
     private lateinit var person2: Person
     private lateinit var space: Space
 
+    val mar1 = "2019-03-01"
+    val mar2 = "2019-03-02"
+
     @Before
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
@@ -79,8 +83,8 @@ class ReportGeneratorControllerTest {
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
         person1 = personRepository.save(Person(name = "Person 1", spaceRole = spaceRole, spaceId = space.id!!))
         person2 = personRepository.save(Person(name = "Person 2", spaceId = space.id!!))
-        assignmentRepository.save(Assignment(person = person1, productId = product.id!!, spaceId = space.id!!))
-        assignmentRepository.save(Assignment(person = person2, productId = product.id!!, spaceId = space.id!!))
+        assignmentRepository.save(Assignment(person = person1, productId = product.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar1)))
+        assignmentRepository.save(Assignment(person = person2, productId = product.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar2)))
     }
 
     @After
@@ -93,9 +97,30 @@ class ReportGeneratorControllerTest {
     }
 
     @Test
-    fun `GET should return people, products, and roles for a space`() {
+    fun `GET should return people, products, and roles for a space and omit future assignments given a date`() {
         val result = mockMvc
-                .perform(get("/api/reportgenerator/${space.name}"))
+                .perform(get("/api/reportgenerator/${space.name}/${mar1}"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReportGenerators = objectMapper.readValue<List<ReportGenerator>>(
+                result.response.contentAsString,
+                objectMapper
+                        .typeFactory
+                        .constructCollectionType(MutableList::class.java, ReportGenerator::class.java)
+        )
+
+
+        val expectedReportGenerator = ReportGenerator(product.name, person1.name, spaceRole.name)
+
+        assertThat(actualReportGenerators.size).isOne()
+        assertThat(actualReportGenerators[0]).isEqualTo(expectedReportGenerator)
+    }
+
+    @Test
+    fun `GET should return people, products, and roles for a space given a date`() {
+        val result = mockMvc
+                .perform(get("/api/reportgenerator/${space.name}/${mar2}"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -118,7 +143,7 @@ class ReportGeneratorControllerTest {
     @Throws(Exception::class)
     @Test
     fun `GET should return 400 with invalid space name` () {
-        mockMvc.perform(get("/api/reportgenerator/fakeSpace"))
+        mockMvc.perform(get("/api/reportgenerator/fakeSpace/${mar1}"))
                 .andExpect(status().isBadRequest)
     }
 }
