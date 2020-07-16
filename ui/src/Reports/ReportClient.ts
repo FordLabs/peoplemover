@@ -35,7 +35,7 @@ class ReportClient {
     }
 
     static convertToCSV(jsonData: Report[]): string {
-        const fields = ['productName', 'personRole', 'personName'];
+        const fields = ['productName', 'personName', 'personRole'];
 
         const json2csvParser = new Parser({fields});
         return json2csvParser.parse(jsonData);

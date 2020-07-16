@@ -67,10 +67,13 @@ class ReportGeneratorControllerTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private lateinit var product: Product
+    private lateinit var productA: Product
+    private lateinit var productB: Product
     private lateinit var spaceRole: SpaceRole
+    private lateinit var spaceRole2: SpaceRole
     private lateinit var person1: Person
     private lateinit var person2: Person
+    private lateinit var person3: Person
     private lateinit var space: Space
 
     val mar1 = "2019-03-01"
@@ -79,12 +82,16 @@ class ReportGeneratorControllerTest {
     @Before
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
-        product = productRepository.save(Product(name = "product", spaceId = space.id!!))
+        productA = productRepository.save(Product(name = "product a", spaceId = space.id!!))
+        productB = productRepository.save(Product(name = "product b", spaceId = space.id!!))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
+        spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceId = space.id!!))
         person1 = personRepository.save(Person(name = "Person 1", spaceRole = spaceRole, spaceId = space.id!!))
         person2 = personRepository.save(Person(name = "Person 2", spaceId = space.id!!))
-        assignmentRepository.save(Assignment(person = person1, productId = product.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar1)))
-        assignmentRepository.save(Assignment(person = person2, productId = product.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar2)))
+        person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceId = space.id!!))
+        assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar1)))
+        assignmentRepository.save(Assignment(person = person2, productId = productB.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar2)))
+        assignmentRepository.save(Assignment(person = person3, productId = productA.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar2)))
     }
 
     @After
@@ -111,14 +118,14 @@ class ReportGeneratorControllerTest {
         )
 
 
-        val expectedReportGenerator = ReportGenerator(product.name, person1.name, spaceRole.name)
+        val expectedReportGenerator = ReportGenerator(productA.name, person1.name, spaceRole.name)
 
         assertThat(actualReportGenerators.size).isOne()
         assertThat(actualReportGenerators[0]).isEqualTo(expectedReportGenerator)
     }
 
     @Test
-    fun `GET should return people, products, and roles for a space given a date`() {
+    fun `GET should alphabetically sort by product name then person name given a date`() {
         val result = mockMvc
                 .perform(get("/api/reportgenerator/${space.name}/${mar2}"))
                 .andExpect(status().isOk)
@@ -132,12 +139,14 @@ class ReportGeneratorControllerTest {
         )
 
 
-        val expectedReportGenerator = ReportGenerator(product.name, person1.name, spaceRole.name)
-        val expectedReportGenerator2 = ReportGenerator(product.name, person2.name, "")
+        val expectedReportGenerator = ReportGenerator(productA.name, person1.name, spaceRole.name)
+        val expectedReportGenerator2 = ReportGenerator(productA.name, person3.name, spaceRole2.name)
+        val expectedReportGenerator3 = ReportGenerator(productB.name, person2.name, "")
 
-        assertThat(actualReportGenerators.size).isEqualTo(2)
+        assertThat(actualReportGenerators.size).isEqualTo(3)
         assertThat(actualReportGenerators[0]).isEqualTo(expectedReportGenerator)
         assertThat(actualReportGenerators[1]).isEqualTo(expectedReportGenerator2)
+        assertThat(actualReportGenerators[2]).isEqualTo(expectedReportGenerator3)
     }
 
     @Throws(Exception::class)
