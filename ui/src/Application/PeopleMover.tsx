@@ -96,6 +96,7 @@ function PeopleMover({
     }
     return (
         !hasProducts() ? <></> : <div className="App">
+
             <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
 
                 <Header/>
