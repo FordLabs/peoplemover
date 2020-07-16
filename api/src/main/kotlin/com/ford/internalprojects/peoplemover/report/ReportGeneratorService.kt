@@ -44,6 +44,6 @@ class ReportGeneratorService(
                     personRole = assignment.person.spaceRole?.name ?: ""
             ))
         }
-        return reportGenerators
+        return reportGenerators.sortedWith(compareBy { it.personName }).sortedWith(compareBy { it.productName })
     }
 }
