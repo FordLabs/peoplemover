@@ -83,10 +83,10 @@ class ReportGeneratorControllerTest {
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
         productA = productRepository.save(Product(name = "product a", spaceId = space.id!!))
-        productB = productRepository.save(Product(name = "product b", spaceId = space.id!!))
+        productB = productRepository.save(Product(name = "Product b", spaceId = space.id!!))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
         spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceId = space.id!!))
-        person1 = personRepository.save(Person(name = "Person 1", spaceRole = spaceRole, spaceId = space.id!!))
+        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space.id!!))
         person2 = personRepository.save(Person(name = "Person 2", spaceId = space.id!!))
         person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceId = space.id!!))
         assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar1)))
@@ -125,7 +125,7 @@ class ReportGeneratorControllerTest {
     }
 
     @Test
-    fun `GET should alphabetically sort by product name then person name given a date`() {
+    fun `GET should ignore case and alphabetically sort by product name then person name given a date`() {
         val result = mockMvc
                 .perform(get("/api/reportgenerator/${space.name}/${mar2}"))
                 .andExpect(status().isOk)
