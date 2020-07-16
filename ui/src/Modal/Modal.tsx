@@ -77,25 +77,26 @@ function Modal({
                     }
                 }}>
 
+                <div className="modalDialogContainer">
+                    <div className="modalPopupContainer"
+                        data-testid="modalPopupContainer"
+                        onClick={event => {
+                            event.stopPropagation();
+                        }}
+                    >
 
-                <div className="modalPopupContainer"
-                    data-testid="modalPopupContainer"
-                    onClick={event => {
-                        event.stopPropagation();
-                    }}
-                >
+                        <input type={'text'} autoFocus={true} aria-hidden={true} className="hiddenInputField"/>
 
-                    <input type={'text'} autoFocus={true} aria-hidden={true} className="hiddenInputField"/>
-
-                    <div className="modalTitleAndCloseButtonContainer">
-                        <div className="modalTitleSpacer"/>
-                        <div className="modalTitle">{title}</div>
-                        <div className="fa fa-times fa-lg closeButton"
-                            onClick={close}
-                            data-testid="modalCloseButton"/>
+                        <div className="modalTitleAndCloseButtonContainer">
+                            <div className="modalTitleSpacer"/>
+                            <div className="modalTitle">{title}</div>
+                            <div className="fa fa-times fa-lg closeButton"
+                                onClick={close}
+                                data-testid="modalCloseButton"/>
+                        </div>
+                        {customModalForm ? customModalForm : modalForm}
+                        {confirmCloseModal}
                     </div>
-                    {customModalForm ? customModalForm : modalForm}
-                    {confirmCloseModal}
                 </div>
             </div>
         );
