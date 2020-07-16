@@ -51,9 +51,9 @@ function AccountDropdown({
 
             {dropdownFlag && <div className={'dropdown-container'}>
                 {process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED === 'true' && !hideSpaceButtons &&
-                    <div data-testid="invite-contributors" className="account-dropdown-options"
+                    <div data-testid="invite-members" className="account-dropdown-options"
                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
-                        Invite Contributors
+                        Invite Members
                     </div>
                 }
                 {!hideSpaceButtons &&

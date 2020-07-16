@@ -43,7 +43,7 @@ describe('BoardButtons', () => {
         result.getByTestId('editContributorsModal').click();
 
         try {
-            expect(result.getByTestId('invite-contributors'));
+            expect(result.getByTestId('invite-members'));
             expect(true).toBeFalsy();
         } catch (e) {
             expect(true).toBeTruthy();
@@ -62,7 +62,7 @@ describe('BoardButtons', () => {
 
         result.getByTestId('editContributorsModal').click();
 
-        expect(result.getByTestId('invite-contributors')).not.toBeNull();
+        expect(result.getByTestId('invite-members')).not.toBeNull();
     });
 
 
