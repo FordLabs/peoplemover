@@ -22,6 +22,12 @@ import LandingPageImage from './LandingPageImage.svg';
 import LandingPageBackground from './LandingPageBackground.svg';
 
 function LandingPage(): JSX.Element {
+
+    function adfsLoginButton(): JSX.Element | undefined {
+        if(process.env.REACT_APP_ADFS_ENABLED === 'true') {
+            return <button className="landing-page-info-adfs-login">Login with CDSID</button>
+        }
+    }
     return (
         <>
             <div className="landing-page-container">
@@ -44,6 +50,7 @@ function LandingPage(): JSX.Element {
                     <div className="landing-page-info-text">Sign up to create your own PeopleMover space.</div>
                     <a href={'/user/signup/'}><button className="landing-page-info-sign-up">Sign Up</button></a>
                     <a href={'/user/login'}><button className="landing-page-info-log-in">Log In</button></a>
+                    <div>{adfsLoginButton()}</div>
                 </div>
                 <img
                     className="landing-page-image"
