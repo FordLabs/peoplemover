@@ -19,14 +19,18 @@
 
 .hoverBoxContainer {
   position: absolute;
-  width: 191px;
   background-color: $white;
   border: 1px solid $scrollbar-color;
   border-radius: 4px;
-  top: 30px;
-  left: 165px;
-  z-index: 1;
+  bottom: 5px;
+  left: 5px;
+  width: 150px;
+  z-index: 10;
   color: $gray-1;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: normal;
+
+  .hoverBoxNotes {
+    margin: 8px;
+  }
 }

@@ -31,6 +31,7 @@ import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from "moment";
+import HoverBox from "../ReusableComponents/HoverBox";
 
 interface AssignmentCardProps {
     viewingDate: Date;
@@ -63,7 +64,6 @@ function AssignmentCard({
 
     function onEditMenuClosed(): void {
         setEditMenuIsOpened(false);
-        setHoverBoxIsOpened(false);
     }
 
     function toggleEditMenu(): void {
@@ -171,17 +171,17 @@ function AssignmentCard({
             data-testid={`assignmentCard${assignment.id}`}
             ref={assignmentRef}
             onMouseDown={e => startDraggingAssignment!!(assignmentRef, assignment, e)}
-            // onMouseEnter={/* open component to display notes*/}
-            // onMouseLeave={/* close component for notes*/}
+            onMouseEnter={e => setHoverBoxIsOpened(true)}
+            onMouseLeave={e => setHoverBoxIsOpened(false)}
         >
             {assignment.person.newPerson ? <NewBadge/> : null}
             <div data-testid={`assignmentCard${assignment.id}info`}
                 className={`personNameAndRoleContainer`}>
                 <p className={assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''}>
                     {assignment.person.name}
-                    {
-                        assignment.person.notes !== '' && <div className="fas fa-file"/>
-                    }
+                    {assignment.person.notes !== '' && <div className="fas fa-file notesIcon">
+                        {hoverBoxIsOpened && <HoverBox notes={assignment.person.notes!}/>}
+                    </div>}
                 </p>
                 <p className="personRole">
                     {assignment.person.spaceRole && assignment.person.spaceRole.name}
