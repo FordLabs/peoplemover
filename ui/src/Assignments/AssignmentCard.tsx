@@ -58,9 +58,12 @@ function AssignmentCard({
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     const assignmentEditRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
+    const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
+
 
     function onEditMenuClosed(): void {
         setEditMenuIsOpened(false);
+        setHoverBoxIsOpened(false);
     }
 
     function toggleEditMenu(): void {
@@ -168,12 +171,17 @@ function AssignmentCard({
             data-testid={`assignmentCard${assignment.id}`}
             ref={assignmentRef}
             onMouseDown={e => startDraggingAssignment!!(assignmentRef, assignment, e)}
+            // onMouseEnter={/* open component to display notes*/}
+            // onMouseLeave={/* close component for notes*/}
         >
             {assignment.person.newPerson ? <NewBadge/> : null}
             <div data-testid={`assignmentCard${assignment.id}info`}
                 className={`personNameAndRoleContainer`}>
                 <p className={assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''}>
                     {assignment.person.name}
+                    {
+                        assignment.person.notes !== '' && <div className="fas fa-file"/>
+                    }
                 </p>
                 <p className="personRole">
                     {assignment.person.spaceRole && assignment.person.spaceRole.name}
