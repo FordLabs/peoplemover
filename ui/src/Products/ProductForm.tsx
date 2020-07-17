@@ -373,16 +373,6 @@ function ProductForm({
                         onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('endDate', e.target.value)}/>
                 </div>
                 <div className="formItem">
-                    <label className="formItemLabel" htmlFor="dorf">Dorf</label>
-                    <input className="formInput formTextInput"
-                        data-testid="productFormDorfField"
-                        type="text"
-                        name="dorf"
-                        id="dorf"
-                        value={currentProduct.dorf}
-                        onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('dorf', e.target.value)}/>
-                </div>
-                <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
                     <textarea
                         data-testid="productFormNotesField"
