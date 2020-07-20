@@ -60,7 +60,7 @@ function AssignmentCard({
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     const assignmentEditRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
-
+    const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
 
     function onEditMenuClosed(): void {
         setEditMenuIsOpened(false);
@@ -152,6 +152,19 @@ function AssignmentCard({
             }];
     }
 
+    function onNoteHover(boxIsHovered = false): void {
+        if (boxIsHovered) {
+            const timeout = setTimeout(() => {
+                setHoverBoxIsOpened(boxIsHovered);
+            }, 500);
+
+            setHoverTimeout(timeout);
+        } else {
+            setHoverBoxIsOpened(boxIsHovered);
+            if (hoverTimeout) clearTimeout(hoverTimeout);
+        }
+    }
+
     useEffect(() => {
         let color: string | undefined;
         if (assignment.person.spaceRole && assignment.person.spaceRole.color) {
@@ -176,8 +189,8 @@ function AssignmentCard({
             <div data-testid={`assignmentCard${assignment.id}info`}
                 className="personNameAndRoleContainer">
                 <div className={`${assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
-                    onMouseEnter={e => setHoverBoxIsOpened(true)}
-                    onMouseLeave={e => setHoverBoxIsOpened(false)}>
+                    onMouseEnter={e => onNoteHover(true)}
+                    onMouseLeave={e => onNoteHover(false)}>
                     {assignment.person.name}
                     {assignment.person.notes !== '' &&
                         <div className="fas fa-file notesIcon">
