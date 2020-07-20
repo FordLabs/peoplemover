@@ -32,7 +32,7 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment }: Props): React
     }): JSX.Element  => {
         return (
             <div className="hoverBoxContainer"
-                data-testid="">
+                data-testid="hoverBoxContainer">
                 <p className="hoverBoxNotes">{notes}</p>
             </div>
         );
@@ -55,13 +55,14 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment }: Props): React
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer">
             <div className={`${assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
+                data-testid="personName"
                 onMouseEnter={e => onNoteHover(true)}
                 onMouseLeave={e => onNoteHover(false)}>
                 {assignment.person.name}
-                {assignment.person.notes !== '' &&
-                <div className="fas fa-file notesIcon">
-                    {hoverBoxIsOpened && <HoverBox notes={assignment.person.notes!}/>}
-                </div>
+                {!!assignment.person.notes &&
+                    <div className="fas fa-file notesIcon" data-testid="notesIcon">
+                        {hoverBoxIsOpened && <HoverBox notes={assignment.person.notes!}/>}
+                    </div>
                 }
             </div>
             <div className="personRole">

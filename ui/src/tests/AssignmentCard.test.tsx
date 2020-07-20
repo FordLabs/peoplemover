@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent} from '@testing-library/react';
+import {fireEvent, wait} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from '../Assignments/AssignmentCard';
 import TestUtils, {renderWithRedux} from './TestUtils';
@@ -23,21 +23,25 @@ import {Assignment} from '../Assignments/Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, SpaceRole} from '../Roles/Role';
 
-describe('the assignment card', () => {
+describe('Assignment Card', () => {
+    let assignmentToRender: Assignment;
 
-    const assignmentToRender: Assignment = {
-        id: 1,
-        person: {
-            newPerson: false,
-            spaceId: 0,
+    beforeEach(() => {
+        assignmentToRender =  {
             id: 1,
-            name: "Billiam O'Handy",
-            spaceRole: {id: 1, spaceId: 0, name: 'Software Engineer', color: {id: 1, color: '#44'}},
-        },
-        placeholder: false,
-        productId: 0,
-        spaceId: 1,
-    };
+            person: {
+                newPerson: false,
+                spaceId: 0,
+                id: 1,
+                name: "Billiam O'Handy",
+                spaceRole: {id: 1, spaceId: 0, name: 'Software Engineer', color: {id: 1, color: '#44'}},
+                notes: 'This is a note',
+            },
+            placeholder: false,
+            productId: 0,
+            spaceId: 1,
+        };
+    });
 
     it('should render the assigned persons name', () => {
         const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
@@ -51,8 +55,20 @@ describe('the assignment card', () => {
         expect(underTest.getByText('Software Engineer')).toBeInTheDocument();
     });
 
-    describe('should render the appropriate role color', () => {
+    it('should show unmark placeholder when assignment is a placeholder', () => {
+        const placeholderAssignment = {
+            ...assignmentToRender,
+            placeholder: true,
+        };
+        const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
+            assignment={placeholderAssignment}
+            isUnassignedProduct={false}/>);
 
+        fireEvent.click(getByTestId('editPersonIconContainer-1'));
+        expect(getByText('Unmark as Placeholder')).toBeInTheDocument();
+    });
+
+    describe('Role color', () => {
         const originalImpl = ThemeApplier.setBackgroundColorOnElement;
 
         beforeEach(() => {
@@ -84,8 +100,11 @@ describe('the assignment card', () => {
                 },
             };
 
-            const underTest = renderWithRedux(<AssignmentCard assignment={otherBilliam}
-                isUnassignedProduct={false}/>);
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={otherBilliam}
+                    isUnassignedProduct={false}/>
+            );
             const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer-1');
             expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
                 assignmentCardEditContainer,
@@ -93,93 +112,150 @@ describe('the assignment card', () => {
             );
         });
 
+        it('should close the EditMenu when you click the colorful div w/ triple dots if it was open when you clicked', () => {
+            const {getByText, getByTestId, queryByText} = renderWithRedux(<AssignmentCard
+                assignment={assignmentToRender}
+                isUnassignedProduct={false}
+            />);
+
+            fireEvent.click(getByTestId('editPersonIconContainer-1'));
+            expect(getByText('Edit Person')).toBeInTheDocument();
+            expect(getByText('Mark as Placeholder')).toBeInTheDocument();
+            expect(getByText('Cancel Assignment')).toBeInTheDocument();
+
+            fireEvent.click(getByTestId('editPersonIconContainer-1'));
+            expect(queryByText('Edit Person')).not.toBeInTheDocument();
+            expect(queryByText('Mark as Placeholder')).not.toBeInTheDocument();
+            expect(queryByText('Edit Assignment')).not.toBeInTheDocument();
+        });
+
+        it('should close edit menu when clicking any edit menu option', () => {
+            const {queryByText, getByText, getByTestId} = renderWithRedux(<AssignmentCard
+                assignment={assignmentToRender}
+                isUnassignedProduct={false}
+            />);
+
+            fireEvent.click(getByTestId('editPersonIconContainer-1'));
+
+            fireEvent.mouseDown(getByText('Edit Person'));
+
+            expect(queryByText('Edit Person')).not.toBeInTheDocument();
+        });
     });
 
-    it('should begin life with the EditMenu closed', () => {
-        const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
-            isUnassignedProduct={false}/>);
-        expect(underTest.queryByText('Edit Person')).not.toBeInTheDocument();
-        expect(underTest.queryByText('Edit Assignment')).not.toBeInTheDocument();
+    describe('Edit Menu', () => {
+        it('should begin life with the EditMenu closed', () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>
+            );
+            expect(underTest.queryByText('Edit Person')).not.toBeInTheDocument();
+            expect(underTest.queryByText('Edit Assignment')).not.toBeInTheDocument();
+        });
+
+        it('should open the EditMenu when you click the colorful div w/ triple dots', () => {
+            const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
+                assignment={assignmentToRender}
+                isUnassignedProduct={false}
+            />);
+            fireEvent.click(getByTestId('editPersonIconContainer-1'));
+            expect(getByText('Edit Person')).toBeInTheDocument();
+            expect(getByText('Mark as Placeholder')).toBeInTheDocument();
+            expect(getByText('Cancel Assignment')).toBeInTheDocument();
+        });
     });
 
-    it('should open the EditMenu when you click the colorful div w/ triple dots', () => {
+    describe('New Person Badge', () => {
+        it('should show the new badge if the assignment says the person is new', () => {
+            const assignmentThatIsNew: Assignment = {
+                id: 199,
+                person: {
+                    spaceId: 0,
+                    id: 1,
+                    name: 'Mary Pettigrew',
+                    spaceRole: {id: 3, spaceId: 0, name: 'Product Designer', color: {color: '1', id: 2}},
+                    newPerson: true,
+                },
+                placeholder: false,
+                productId: 0,
+                spaceId: 1,
+            };
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentThatIsNew}
+                    isUnassignedProduct={false}/>
+            );
+            expect(underTest.getByText('NEW')).toBeInTheDocument();
+        });
 
-        const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
-            assignment={assignmentToRender}
-            isUnassignedProduct={false}
-        />);
-        fireEvent.click(getByTestId('editPersonIconContainer-1'));
-        expect(getByText('Edit Person')).toBeInTheDocument();
-        expect(getByText('Mark as Placeholder')).toBeInTheDocument();
-        expect(getByText('Cancel Assignment')).toBeInTheDocument();
+        it('should not show any new badge if the assignment says the person is not new', () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>
+            );
+            expect(underTest.queryByText('NEW')).not.toBeInTheDocument();
+        });
     });
 
-    it('should show unmark placeholder when assignment is a placeholder', () => {
+    describe('Hoverable Notes', () => {
+        it('should display hover notes icon if person has valid notes', () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>
+            );
+            expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
+        });
 
-        const placeholderAssignment = {
-            ...assignmentToRender,
-            placeholder: true,
-        };
-        const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
-            assignment={placeholderAssignment}
-            isUnassignedProduct={false}/>);
+        it('should not display hover notes icon if person has no notes', () => {
+            delete assignmentToRender.person.notes;
 
-        fireEvent.click(getByTestId('editPersonIconContainer-1'));
-        expect(getByText('Unmark as Placeholder')).toBeInTheDocument();
-    });
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>
+            );
+            expect(underTest.queryByTestId('notesIcon')).toBeNull();
+        });
 
-    it('should close the EditMenu when you click the colorful div w/ triple dots if it was open when you clicked', () => {
-        const {getByText, getByTestId, queryByText} = renderWithRedux(<AssignmentCard
-            assignment={assignmentToRender}
-            isUnassignedProduct={false}
-        />);
+        it('should display hover notes when hovered over', async () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>
+            );
 
-        fireEvent.click(getByTestId('editPersonIconContainer-1'));
-        expect(getByText('Edit Person')).toBeInTheDocument();
-        expect(getByText('Mark as Placeholder')).toBeInTheDocument();
-        expect(getByText('Cancel Assignment')).toBeInTheDocument();
+            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
 
-        fireEvent.click(getByTestId('editPersonIconContainer-1'));
-        expect(queryByText('Edit Person')).not.toBeInTheDocument();
-        expect(queryByText('Mark as Placeholder')).not.toBeInTheDocument();
-        expect(queryByText('Edit Assignment')).not.toBeInTheDocument();
-    });
+            fireEvent.mouseEnter(underTest.getByTestId('personName'));
+            await wait(() => {
+                expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
+                expect(underTest.getByText('This is a note')).toBeVisible();
+            });
+        });
 
-    it('should show the new badge if the assignment says the person is new', () => {
-        const assignmentThatIsNew: Assignment = {
-            id: 199,
-            person: {
-                spaceId: 0,
-                id: 1,
-                name: 'Mary Pettigrew',
-                spaceRole: {id: 3, spaceId: 0, name: 'Product Designer', color: {color: '1', id: 2}},
-                newPerson: true,
-            },
-            placeholder: false,
-            productId: 0,
-            spaceId: 1,
-        };
-        const underTest = renderWithRedux(<AssignmentCard assignment={assignmentThatIsNew}
-            isUnassignedProduct={false}/>);
-        expect(underTest.getByText('NEW')).toBeInTheDocument();
-    });
+        it('should hide notes when user hovers away', async () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>
+            );
 
-    it('should not show any new badge if the assignment says the person is not new', () => {
-        const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
-            isUnassignedProduct={false}/>);
-        expect(underTest.queryByText('NEW')).not.toBeInTheDocument();
-    });
+            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
 
-    it('should close edit menu when clicking any edit menu option', () => {
-        const {queryByText, getByText, getByTestId} = renderWithRedux(<AssignmentCard
-            assignment={assignmentToRender}
-            isUnassignedProduct={false}
-        />);
+            fireEvent.mouseEnter(underTest.getByTestId('personName'));
+            await wait(() => {
+                expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
+                expect(underTest.getByText('This is a note')).toBeVisible();
+            });
 
-        fireEvent.click(getByTestId('editPersonIconContainer-1'));
+            fireEvent.mouseLeave(underTest.getByTestId('personName'));
 
-        fireEvent.mouseDown(getByText('Edit Person'));
-
-        expect(queryByText('Edit Person')).not.toBeInTheDocument();
+            await wait(() => {
+                expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            });
+        });
     });
 });
