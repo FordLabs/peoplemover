@@ -74,8 +74,8 @@ class AssignmentService(
     }
 
     fun getReassignmentsByExactDate(spaceId: Int, requestedDate: LocalDate): List<Reassignment>? {
-        var assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = spaceId, requestedDate = requestedDate)
-        var assignmentsWithPreviousDate: MutableList<Assignment> = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedDate)
+        var assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = spaceId, requestedDate = requestedDate).sortedWith(compareByDescending { it.id })
+        var assignmentsWithPreviousDate = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedDate)
 
         return createReassignments(assignmentsWithExactDate, assignmentsWithPreviousDate)
     }
@@ -121,7 +121,7 @@ class AssignmentService(
         }
     }
 
-    private fun getAssignmentsWithPreviousDate(assignmentsWithExactDate: List<Assignment>, requestedLocalDate: LocalDate): MutableList<Assignment> {
+    private fun getAssignmentsWithPreviousDate(assignmentsWithExactDate: List<Assignment>, requestedLocalDate: LocalDate): List<Assignment> {
         val personIdsWithExactDate = assignmentsWithExactDate.map { assignment -> assignment.person.id }.toSet()
 
         var assignmentsWithPreviousDate: MutableList<Assignment> = mutableListOf()
@@ -137,7 +137,7 @@ class AssignmentService(
         return assignmentsWithPreviousDate
     }
 
-    private fun createReassignments(assignmentsWithExactDate: List<Assignment>, assignmentsWithPreviousDate: MutableList<Assignment>): List<Reassignment> {
+    private fun createReassignments(assignmentsWithExactDate: List<Assignment>, assignmentsWithPreviousDate: List<Assignment>): List<Reassignment> {
         val pair = removeDuplicatePersonsAndProducts(assignmentsWithExactDate, assignmentsWithPreviousDate)
         val assignmentsWithExactDateWithoutDuplicates = pair.first
         val assignmentsWithPreviousDateWithoutDuplicates = pair.second
@@ -205,7 +205,7 @@ class AssignmentService(
         return createdAssignments
     }
 
-    private fun removeDuplicatePersonsAndProducts(assignmentsWithExactDate: List<Assignment>, assignmentsWithPreviousDate: MutableList<Assignment>): Pair<List<Assignment>, MutableList<Assignment>> {
+    private fun removeDuplicatePersonsAndProducts(assignmentsWithExactDate: List<Assignment>, assignmentsWithPreviousDate: List<Assignment>): Pair<List<Assignment>, MutableList<Assignment>> {
         var assignmentsWithExactDate1 = assignmentsWithExactDate
         var assignmentsWithPreviousDate1 = assignmentsWithPreviousDate
         val personIdProductIdPairsWithExactDate = assignmentsWithExactDate1.map { Pair(it.person.id, it.productId) }

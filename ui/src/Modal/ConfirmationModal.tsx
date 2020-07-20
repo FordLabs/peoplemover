@@ -47,49 +47,49 @@ function ConfirmationModal({
 
     return (
         <div className="modalContainer">
+            <div className="modalDialogContainer">
+                <div className="modalPopupContainer">
 
-            <div className="modalPopupContainer">
+                    <div className="modalTitleAndCloseButtonContainer">
+                        <div className="modalTitleSpacer"/>
+                        <div className="modalTitle">Are you sure?</div>
+                        <div className="fa fa-times fa-lg closeButton" onClick={close}/>
+                    </div>
 
-                <div className="modalTitleAndCloseButtonContainer">
-                    <div className="modalTitleSpacer"/>
-                    <div className="modalTitle">Are you sure?</div>
-                    <div className="fa fa-times fa-lg closeButton" onClick={close}/>
-                </div>
+                    <div className="confirmationModalContent">
 
-                <div className="confirmationModalContent">
+                        <div>{warningMessage}</div>
 
-                    <div>{warningMessage}</div>
-
-                    {(canArchive && !isArchived) && <div>
-                        <br/>
-                        You can also choose to archive this product to be able to access it later.
-                    </div>}
-                    {(confirmClose) && <div>
-                        <br/>
-                        Are you sure you want to close the window?
-                    </div>}
-
-                </div>
-
-                <div className={`yesNoButtons confirmationControlButtons confirmationModalControls${canArchive ? ' archiveable' : ''}`}>
-
-                    <button className="formButton cancelFormButton" data-testid="confirmationModalCancel"
-                        onClick={close}>Cancel</button>
-
-                    <div className={`archiveAndDeleteContainer${canArchive && !isArchived ? ' archiveable' : ''}`}>
-                        {canArchive && !isArchived && (<button
-                            className="formButton confirmationModalDelete"
-                            data-testid="confirmationModalArchive"
-                            onClick={archiveCallback}>Archive</button>)}
-
-                        <button className="formButton confirmationModalDelete"
-                            onClick={submit}
-                            data-testid="confirmDeleteButton">{submitButtonLabel ? submitButtonLabel : 'Delete'}
-                        </button>
+                        {(canArchive && !isArchived) && <div>
+                            <br/>
+                            You can also choose to archive this product to be able to access it later.
+                        </div>}
+                        {(confirmClose) && <div>
+                            <br/>
+                            Are you sure you want to close the window?
+                        </div>}
 
                     </div>
-                </div>
 
+                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls${canArchive ? ' archiveable' : ''}`}>
+
+                        <button className="formButton cancelFormButton" data-testid="confirmationModalCancel"
+                            onClick={close}>Cancel</button>
+
+                        <div className={`archiveAndDeleteContainer${canArchive && !isArchived ? ' archiveable' : ''}`}>
+                            {canArchive && !isArchived && (<button
+                                className="formButton confirmationModalDelete"
+                                data-testid="confirmationModalArchive"
+                                onClick={archiveCallback}>Archive</button>)}
+
+                            <button className="formButton confirmationModalDelete"
+                                onClick={submit}
+                                data-testid="confirmDeleteButton">{submitButtonLabel ? submitButtonLabel : 'Delete'}
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

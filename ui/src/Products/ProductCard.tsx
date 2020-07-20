@@ -34,6 +34,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
+import moment from "moment";
 
 interface ProductCardProps {
     container: string;
@@ -43,6 +44,7 @@ interface ProductCardProps {
 
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
 
+    viewingDate: Date;
     whichEditMenuOpen: EditMenuToOpen;
 
     setWhichEditMenuOpen(whichEditMenuOption: EditMenuToOpen | null): void;
@@ -57,6 +59,7 @@ function ProductCard({
     product,
     registerProductRef,
     unregisterProductRef,
+    viewingDate,
     whichEditMenuOpen,
     setWhichEditMenuOpen,
     setCurrentModal,
@@ -126,7 +129,7 @@ function ProductCard({
     }
 
     function archiveProduct(): Promise<AxiosResponse> {
-        const archivedProduct = {...product, archived: true};
+        const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
         return ProductClient.editProduct(archivedProduct);
     }
 
@@ -189,6 +192,7 @@ function ProductCard({
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
+    viewingDate: state.viewingDate,
     whichEditMenuOpen: state.whichEditMenuOpen,
 });
 

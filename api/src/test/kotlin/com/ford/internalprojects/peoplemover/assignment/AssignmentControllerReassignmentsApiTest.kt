@@ -279,7 +279,7 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
-    fun `GET should handle reassignments for multiple people being reassigned`() {
+    fun `GET should handle reassignments for multiple people being reassigned and sort in reverse chronological order`() {
 
 
         assignmentRepository.save(Assignment(
@@ -330,8 +330,8 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
         assertThat(actualReassignments.size).isEqualTo(2)
-        assertThat(actualReassignments).contains(reassignmentForPerson)
-        assertThat(actualReassignments).contains(reassignmentForPersonTwo)
+        assertThat(actualReassignments[0]).isEqualTo(reassignmentForPerson)
+        assertThat(actualReassignments[1]).isEqualTo(reassignmentForPersonTwo)
     }
 
     @Test
@@ -447,7 +447,7 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
-    fun `GET should handle one assignment being cancelled and one being reassinged when a person is on multiple assignments and there is more than one reassignment`() {
+    fun `GET should handle one assignment being cancelled and one being reassigned when a person is on multiple assignments and there is more than one reassignment`() {
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
@@ -543,7 +543,7 @@ class AssignmentControllerReassignmentsApiTest {
         val reassignmentForPerson = Reassignment(
                 person = person,
                 fromProductName = productOne.name + " & " + productTwo.name,
-                toProductName = productThree.name + " & " + productFour.name
+                toProductName = productFour.name + " & " + productThree.name
         )
 
 

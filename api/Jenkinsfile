@@ -248,6 +248,7 @@ def getNpmEnvironment(branchName) {
                   REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_qa_client_id \
                   REACT_APP_AUTH_ENABLED=true \
                   REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
+                  REACT_APP_ADFS_ENABLED=false \
                 """.stripIndent()
     } else if (branchName == "master") {
         return """REACT_APP_URL=https://peoplemover2.$peoplemover_pcf_org \
@@ -255,6 +256,7 @@ def getNpmEnvironment(branchName) {
                   REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_prod_client_id \
                   REACT_APP_AUTH_ENABLED=true \
                   REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
+                  REACT_APP_ADFS_ENABLED=false \
                 """.stripIndent()
     } else {
         return """REACT_APP_URL=https://$branchName.$peoplemover_pcf_org \
@@ -262,6 +264,7 @@ def getNpmEnvironment(branchName) {
                   REACT_APP_AUTHQUEST_CLIENT_ID=$authquest_qa_client_id \
                   REACT_APP_AUTH_ENABLED=false \
                   REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
+                  REACT_APP_ADFS_ENABLED=false \
                 """.stripIndent()
     }
 }

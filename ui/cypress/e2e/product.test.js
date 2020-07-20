@@ -35,7 +35,7 @@ describe('Product', () => {
     });
 });
 
-const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDate, dorfCode, notes }) => {
+const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDate, notes }) => {
     cy.log('Populate Product Form');
 
     cy.get('[data-testid=productForm]').as('productForm');
@@ -61,8 +61,6 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
         .type(nextPhaseDate)
         .should('have.value', nextPhaseDate);
 
-    cy.get('[data-testid=productFormDorfField]').focus().type(dorfCode).should('have.value', dorfCode);
-    cy.get('[data-testid=productFormArchivedCheckbox]').should('not.be.visible');
     cy.get('[data-testid=productFormNotesField]').focus().type(notes).should('have.value', notes);
 };
 
