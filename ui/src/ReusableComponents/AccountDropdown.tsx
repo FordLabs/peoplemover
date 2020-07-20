@@ -6,9 +6,9 @@ import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import Cookies from 'universal-cookie';
 import {Redirect} from 'react-router-dom';
-import ReportClient from "../Reports/ReportClient";
-import {Space} from "../SpaceDashboard/Space";
-import {GlobalStateProps} from "../Redux/Reducers";
+import ReportClient from '../Reports/ReportClient';
+import {Space} from '../SpaceDashboard/Space';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 interface AccountDropdownProps {
     currentSpace: Space;
@@ -58,7 +58,7 @@ function AccountDropdown({
                 }
                 {!hideSpaceButtons &&
                     <div data-testid="download-report" className="account-dropdown-options"
-                        onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, viewingDate) } }>
+                        onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, viewingDate); } }>
                         Download Report
                     </div>
                 }

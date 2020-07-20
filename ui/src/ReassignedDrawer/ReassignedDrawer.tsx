@@ -24,8 +24,8 @@ import {Reassignment} from './Reassignment';
 import {Product} from '../Products/Product';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../SpaceDashboard/Space';
-import {Person} from "../People/Person";
-import {fetchProductsAction} from "../Redux/Actions";
+import {Person} from '../People/Person';
+import {fetchProductsAction} from '../Redux/Actions';
 
 interface ReassignedDrawerProps {
     products: Array<Product>;
@@ -87,7 +87,7 @@ function ReassignedDrawer({
                 <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}><i className="fas fa-undo-alt"/>Revert</button>
             </div>
         );
-}
+    }
 
     async function revert(person: Person): Promise<void> {
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person).then(fetchProducts);

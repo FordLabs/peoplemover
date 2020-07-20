@@ -19,7 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {CreateAssignmentsRequest} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {Assignment} from './Assignment';
-import {Person} from "../People/Person";
+import {Person} from '../People/Person';
 
 class AssignmentClient {
     static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {

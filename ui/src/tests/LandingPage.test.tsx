@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
-import {render} from "@testing-library/react";
-import LandingPage from "../LandingPage/LandingPage";
-import * as React from "react";
+import {render} from '@testing-library/react';
+import LandingPage from '../LandingPage/LandingPage';
+import * as React from 'react';
 
-describe("Landing Page", () => {
-    it('should display Login with ADFS button when enabled', function () {
+describe('Landing Page', () => {
+    it('should display Login with ADFS button when enabled', function() {
         process.env.REACT_APP_ADFS_ENABLED = 'true';
         const {queryByText} = render(<LandingPage/>);
-        expect(queryByText("Login with CDSID")).not.toBeNull();
+        expect(queryByText('Login with CDSID')).not.toBeNull();
     });
 
-    it('should hide Login with ADFS button when disabled', function () {
+    it('should hide Login with ADFS button when disabled', function() {
         process.env.REACT_APP_ADFS_ENABLED = 'false';
         const {queryByText} = render(<LandingPage/>);
-        expect(queryByText("Login with CDSID")).toBeNull();
+        expect(queryByText('Login with CDSID')).toBeNull();
     });
 });

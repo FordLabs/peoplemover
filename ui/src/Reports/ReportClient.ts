@@ -19,7 +19,7 @@ import Axios from 'axios';
 import {Report} from './Report';
 import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
-import moment from "moment";
+import moment from 'moment';
 
 class ReportClient {
 
