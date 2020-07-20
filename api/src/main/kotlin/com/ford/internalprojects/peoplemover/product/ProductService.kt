@@ -90,15 +90,10 @@ class ProductService(
     }
 
     fun createDefaultProducts(space: Space) {
-        val myProduct = Product(
-            name = "My Product",
-            spaceId = space.id!!
-        )
         val unassignedProduct = Product(
                 name = "unassigned",
-                spaceId = space.id
+                spaceId = space.id!!
         )
-        create(myProduct)
         create(unassignedProduct)
     }
 }
