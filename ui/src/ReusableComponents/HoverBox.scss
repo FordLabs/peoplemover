@@ -20,17 +20,19 @@
 .hoverBoxContainer {
   position: absolute;
   background-color: $white;
-  border: 1px solid $scrollbar-color;
+  border: 2px solid $gray-5;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
   border-radius: 4px;
   bottom: 5px;
   left: 5px;
-  width: 150px;
+  width: 173px;
   z-index: 10;
   color: $gray-1;
   font-size: 12px;
   font-weight: normal;
 
   .hoverBoxNotes {
-    margin: 8px;
+    margin: 16px 20px;
+    line-height: 18px;
   }
 }

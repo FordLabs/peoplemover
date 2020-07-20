@@ -171,21 +171,23 @@ function AssignmentCard({
             data-testid={`assignmentCard${assignment.id}`}
             ref={assignmentRef}
             onMouseDown={e => startDraggingAssignment!!(assignmentRef, assignment, e)}
-            onMouseEnter={e => setHoverBoxIsOpened(true)}
-            onMouseLeave={e => setHoverBoxIsOpened(false)}
         >
             {assignment.person.newPerson ? <NewBadge/> : null}
             <div data-testid={`assignmentCard${assignment.id}info`}
-                className={`personNameAndRoleContainer`}>
-                <p className={assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''}>
+                className="personNameAndRoleContainer">
+                <div className={`${assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
+                    onMouseEnter={e => setHoverBoxIsOpened(true)}
+                    onMouseLeave={e => setHoverBoxIsOpened(false)}>
                     {assignment.person.name}
-                    {assignment.person.notes !== '' && <div className="fas fa-file notesIcon">
-                        {hoverBoxIsOpened && <HoverBox notes={assignment.person.notes!}/>}
-                    </div>}
-                </p>
-                <p className="personRole">
+                    {assignment.person.notes !== '' &&
+                        <div className="fas fa-file notesIcon">
+                            {hoverBoxIsOpened && <HoverBox notes={assignment.person.notes!}/>}
+                        </div>
+                    }
+                </div>
+                <div className="personRole">
                     {assignment.person.spaceRole && assignment.person.spaceRole.name}
-                </p>
+                </div>
             </div>
             <div
                 ref={assignmentEditRef}

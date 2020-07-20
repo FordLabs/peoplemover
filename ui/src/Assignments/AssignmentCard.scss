@@ -82,12 +82,6 @@
   border-color: $white;
 }
 
-.personContainer p {
-  margin: 2px;
-  user-select: none;
-  max-width: 132px;
-}
-
 .personNameAndRoleContainer {
   width: 142px;
   border-top-left-radius: 2px;
@@ -102,6 +96,13 @@ div.DefaultColor {
 
 div.Placeholder {
   background-color: $white;
+}
+
+.personName,
+.personRole {
+  margin: 2px;
+  user-select: none;
+  max-width: 132px;
 }
 
 .personRole {
@@ -127,17 +128,20 @@ div.Placeholder {
   border: 1px solid $gray-5;
 }
 
-.borderedPeople:hover{
+.borderedPeople:hover {
   border: 1px solid #FFFFFF;
 }
 
-.borderedPeople .personRoleColor{
+.borderedPeople .personRoleColor {
   border-top-right-radius: 1px;
   border-bottom-right-radius: 1px;
 }
 
 .notesIcon {
   position: relative;
+  color: #4F5FAB;
+  margin-left: 4px;
+  font-size: 12px;
 }
 
 .chrisBoyer{
