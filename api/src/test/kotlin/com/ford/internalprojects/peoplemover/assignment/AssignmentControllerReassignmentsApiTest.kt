@@ -258,7 +258,28 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
-    fun `GET should handle reassignments for multiple people being reassigned`() {
+    fun `GET should return no reassignment when fromProductName is empty and toProductName is unassigned`() {
+        val assignment: Assignment = assignmentRepository.save(Assignment(
+                person = person,
+                productId = unassignedProduct.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = space.id!!
+        ))
+
+        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$mar1"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isZero()
+    }
+
+    @Test
+    fun `GET should handle reassignments for multiple people being reassigned and sort in reverse chronological order`() {
 
 
         assignmentRepository.save(Assignment(
@@ -309,8 +330,8 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
         assertThat(actualReassignments.size).isEqualTo(2)
-        assertThat(actualReassignments).contains(reassignmentForPerson)
-        assertThat(actualReassignments).contains(reassignmentForPersonTwo)
+        assertThat(actualReassignments[0]).isEqualTo(reassignmentForPerson)
+        assertThat(actualReassignments[1]).isEqualTo(reassignmentForPersonTwo)
     }
 
     @Test
@@ -426,7 +447,7 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
-    fun `GET should handle one assignment being cancelled and one being reassinged when a person is on multiple assignments and there is more than one reassignment`() {
+    fun `GET should handle one assignment being cancelled and one being reassigned when a person is on multiple assignments and there is more than one reassignment`() {
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
@@ -522,7 +543,7 @@ class AssignmentControllerReassignmentsApiTest {
         val reassignmentForPerson = Reassignment(
                 person = person,
                 fromProductName = productOne.name + " & " + productTwo.name,
-                toProductName = productThree.name + " & " + productFour.name
+                toProductName = productFour.name + " & " + productThree.name
         )
 
 

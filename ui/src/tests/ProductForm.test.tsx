@@ -52,7 +52,6 @@ describe('ProductForm', function() {
 
         fireEvent.change(app.getByLabelText('Start Date'), {target: {value: '2010-01-30'}});
         fireEvent.change(app.getByLabelText('End Date'), {target: {value: '2020-01-30'}});
-        fireEvent.change(app.getByLabelText('Dorf'), {target: {value: '11111'}});
 
         fireEvent.click(app.getByText('Create'));
 
@@ -64,8 +63,8 @@ describe('ProductForm', function() {
             startDate: '2010-01-30',
             endDate: '2020-01-30',
             spaceLocation: TestUtils.annarbor,
-            dorf: '11111',
             archived: false,
+            dorf: '',
             notes: '',
             productTags: [TestUtils.productTag2],
             assignments: [],

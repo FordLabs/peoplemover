@@ -145,7 +145,7 @@ function ProductForm({
     }
 
     function archiveProduct(): Promise<void> {
-        const archivedProduct = {...currentProduct, archived: true};
+        const archivedProduct = {...currentProduct, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
         return ProductClient.editProduct(archivedProduct).then(closeModal);
     }
 
@@ -372,29 +372,6 @@ function ProductForm({
                         value={currentProduct.endDate ? currentProduct.endDate : ''}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('endDate', e.target.value)}/>
                 </div>
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="dorf">Dorf</label>
-                    <input className="formInput formTextInput"
-                        data-testid="productFormDorfField"
-                        type="text"
-                        name="dorf"
-                        id="dorf"
-                        value={currentProduct.dorf}
-                        onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('dorf', e.target.value)}/>
-                </div>
-                {editing && (
-                    <div className="formItem inlineLabelContainer">
-                        <input className="formInput checkbox"
-                            data-testid="productFormArchivedCheckbox"
-                            type="checkbox"
-                            name="archived"
-                            id="archived"
-                            checked={currentProduct.archived}
-                            onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('archived', e.target.checked)}/>
-                        <label className="formItemLabel nomargin"
-                            htmlFor="archived">Archived</label>
-                    </div>
-                )}
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
                     <textarea

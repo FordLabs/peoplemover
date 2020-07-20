@@ -18,9 +18,12 @@
 package com.ford.internalprojects.peoplemover.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.space.Space
+import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
 import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import com.ford.labs.authquest.oauth.OAuthVerifyResponse
+import com.ford.labs.authquest.user.UserReadResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -45,6 +49,12 @@ class AuthControllerE2ETest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
+    @Autowired
+    lateinit var spaceRepository: SpaceRepository
 
     @MockBean
     lateinit var authClient: AuthClient
@@ -63,6 +73,10 @@ class AuthControllerE2ETest {
         val emails = listOf("EMAIL_1", "EMAIL_2")
         val spaceName = "spaceName"
 
+        `when`(authClient.getUserIdFromEmail("EMAIL_1")).thenReturn(ResponseEntity.ok(UserReadResponse("uuid1")))
+        `when`(authClient.getUserIdFromEmail("EMAIL_2")).thenReturn(ResponseEntity.ok(UserReadResponse("uuid2")))
+        spaceRepository.save(Space(id = 1, name = spaceName))
+
         val request = AuthInviteUsersToSpaceRequest(
                 spaceName = spaceName,
                 emails = emails
@@ -74,8 +88,12 @@ class AuthControllerE2ETest {
         ).andExpect(
                 status().isNoContent
         )
+        val savedIds: List<String> = userSpaceMappingRepository.findAll().map { it.userId!! }
 
         verify(authClient).inviteUsersToScope(emails, spaceName)
+        assertThat(userSpaceMappingRepository.count()).isEqualTo(2)
+        assertThat(savedIds).contains("uuid1")
+        assertThat(savedIds).contains("uuid2")
     }
 
     @Test

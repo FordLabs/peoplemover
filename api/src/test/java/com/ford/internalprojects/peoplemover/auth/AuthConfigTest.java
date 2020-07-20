@@ -125,12 +125,12 @@ public class AuthConfigTest {
         assertThat(roleNames).isEqualTo(asSet("THE BEST", "THE SECOND BEST (UNDERSTUDY)", "THE WURST"));
         assertThat(roleColors).isEqualTo(colorCodes);
 
-        assertThat(productNames).isEqualTo(asList("My Product", "unassigned"));
+        assertThat(productNames).isEqualTo(asList("unassigned", "My Product", "Baguette Bakery"));
         assertThat(personNames).containsExactlyInAnyOrder("Jane Smith", "Bob Barker", "Adam Sandler");
 
-        assertThat(janeAssignment.getProductId()).isEqualTo(products.get(0).getId());
-        assertThat(bobAssignment.getProductId()).isEqualTo(products.get(0).getId());
-        assertThat(adamAssignment.getProductId()).isEqualTo(products.get(1).getId());
+        assertThat(janeAssignment.getProductId()).isEqualTo(products.get(1).getId());
+        assertThat(bobAssignment.getProductId()).isEqualTo(products.get(1).getId());
+        assertThat(adamAssignment.getProductId()).isEqualTo(products.get(0).getId());
     }
 
 }

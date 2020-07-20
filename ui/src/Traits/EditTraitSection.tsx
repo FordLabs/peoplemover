@@ -96,9 +96,15 @@ function EditTraitSection({
         });
     }
 
+    function handleEnterSubmit(event: React.KeyboardEvent) {
+        if (event.key === 'Enter') {
+            handleSubmit().then();
+        }
+    }
+
     async function handleSubmit(): Promise<void> {
         setDuplicateErrorMessage(false);
-        if (enteredTrait) {
+        if (enteredTrait && enteredTrait.name !== '') {
             let clientResponse: AxiosResponse;
             try {
                 if (trait) {
@@ -159,6 +165,7 @@ function EditTraitSection({
                 data-testid="traitName"
                 value={enteredTrait ? enteredTrait.name : ''}
                 onChange={updateEnteredRoleText}
+                onKeyPress={event => handleEnterSubmit(event)}
                 autoFocus/>
             {duplicateErrorMessage &&
             <div className="duplicateErrorMessage"> A {traitName} with this name already exists.<br/> Enter a different name. </div>

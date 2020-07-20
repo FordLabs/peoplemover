@@ -28,7 +28,6 @@ import thunk from 'redux-thunk';
 import {Route, Switch} from 'react-router';
 import {BrowserRouter as Router, Redirect} from 'react-router-dom';
 import Error404Page from './Application/Error404Page';
-import ReportPage from './Reports/ReportPage';
 import LandingPage from './LandingPage/LandingPage';
 import RedirectAuthPage from './ReusableComponents/RedirectAuthPage';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
@@ -85,10 +84,6 @@ ReactDOM.render(
 
                 <Route path="/error/404">
                     <Error404Page/>
-                </Route>
-
-                <Route exact path="/:teamName/report">
-                    <ReportPage/>
                 </Route>
 
                 <Route>

@@ -186,6 +186,31 @@ describe('PeopleMover Role Modal', () => {
             await findByText(modalContainer, expectedNewRoleName);
         });
 
+        it('should save role with the given name and color when you hit the Enter key', async () => {
+            const expectedNewRoleName = 'Architecture';
+            (RoleClient.add as Function) = jest.fn(() => Promise.resolve(
+                {data: {name: expectedNewRoleName, id: 1, spaceId: -1, color: {color: '1', id: 2}}}
+            ));
+
+            const addNewRoleButton = await app.findByText('Add New Role');
+            fireEvent.click(addNewRoleButton);
+
+            const roleNameField = await app.findByTestId('traitName');
+            fireEvent.change(roleNameField, {target: {value: expectedNewRoleName}});
+
+            const circles: Array<HTMLElement> = await app.findAllByTestId('selectRoleCircle');
+            fireEvent.click(circles[1]);
+
+            fireEvent.keyPress(roleNameField, { key: 'Enter', code: 13, charCode: 13});
+
+            await wait(() => {
+                expect(app.queryByText('Cancel')).not.toBeInTheDocument();
+            });
+
+            const modalContainer = await app.findByTestId('modalContainer');
+            await findByText(modalContainer, expectedNewRoleName);
+        });
+
         it('should not allow saving empty role', async () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
