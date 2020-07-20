@@ -70,7 +70,7 @@ function PeopleMover({
     }, [currentModal]);
 
     useEffect(() => {
-        if(hasProducts()) fetchProducts();
+        if (hasProducts()) {fetchProducts();}
     }, [viewingDate]);
 
     async function RenderPage(): Promise<void> {
@@ -96,6 +96,7 @@ function PeopleMover({
     }
     return (
         !hasProducts() ? <></> : <div className="App">
+
             <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
 
                 <Header/>

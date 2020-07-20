@@ -20,22 +20,26 @@ import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import './ReassignedDrawer.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Dispatch} from 'redux';
 import {Reassignment} from './Reassignment';
 import {Product} from '../Products/Product';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../SpaceDashboard/Space';
+import {Person} from "../People/Person";
+import {fetchProductsAction} from "../Redux/Actions";
 
 interface ReassignedDrawerProps {
     products: Array<Product>;
     viewingDate: Date;
     currentSpace: Space;
+
+    fetchProducts(): Array<Product>;
 }
 
 function ReassignedDrawer({
     products,
     viewingDate,
     currentSpace,
+    fetchProducts,
 }: ReassignedDrawerProps): JSX.Element {
     const [showDrawer, setShowDrawer] = useState(true);
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
@@ -61,29 +65,33 @@ function ReassignedDrawer({
             setIsDrawerOpen={setShowDrawer}
             numberForCountBadge={reassignments.length}/>
     );
+
+    function mapsReassignments(reassignment: Reassignment, index: number): JSX.Element {
+        let oneWayReassignment: string | undefined;
+        if (!reassignment.toProductName) {
+            oneWayReassignment = `${reassignment.fromProductName} assignment cancelled`;
+        } else if (!reassignment.fromProductName) {
+            oneWayReassignment = `Assigned to ${reassignment.toProductName}`;
+        }
+
+        return  (
+            <div key={index} className="reassignmentSection" data-testid="reassignmentSection">
+                <div className="name">{reassignment.person.name}</div>
+                <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
+                {!oneWayReassignment &&
+                    <div className="additionalInfo">{reassignment.fromProductName} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName}</div>
+                }
+                {oneWayReassignment &&
+                    <div className="additionalInfo">{oneWayReassignment}</div>
+                }
+                <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}><i className="fas fa-undo-alt"/>Revert</button>
+            </div>
+        );
 }
 
-function mapsReassignments(reassignment: Reassignment, index: number): JSX.Element {
-    let oneWayReassignment: string | undefined;
-    if (!reassignment.toProductName) {
-        oneWayReassignment = `${reassignment.fromProductName!} assignment cancelled`;
-    } else if (!reassignment.fromProductName) {
-        oneWayReassignment = `Assigned to ${reassignment.toProductName}`;
-
+    async function revert(person: Person): Promise<void> {
+        await AssignmentClient.deleteAssignmentForDate(viewingDate, person).then(fetchProducts);
     }
-
-    return  (
-        <div key={index} className="reassignmentSection" data-testid="reassignmentSection">
-            <div className="name">{reassignment.person.name}</div>
-            <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
-            {!oneWayReassignment &&
-                <div className="additionalInfo">{reassignment.fromProductName!} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName!}</div>
-            }
-            {oneWayReassignment &&
-                <div className="additionalInfo">{oneWayReassignment}</div>
-            }
-        </div>
-    );
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
@@ -92,6 +100,8 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({});
+const mapDispatchToProps = (dispatch: any) => ({
+    fetchProducts: () => dispatch(fetchProductsAction()),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReassignedDrawer);

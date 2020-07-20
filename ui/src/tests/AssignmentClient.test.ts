@@ -19,9 +19,8 @@ import Axios, {AxiosResponse} from 'axios';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import TestUtils from './TestUtils';
-import {Assignment} from "../Assignments/Assignment";
-import {Person} from "../People/Person";
-import moment from "moment";
+import {Assignment} from '../Assignments/Assignment';
+import moment from 'moment';
 
 describe('the assignment client', () => {
     beforeEach(() => {
@@ -90,7 +89,7 @@ describe('the assignment client', () => {
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
-    it('should delete assignment given assignment', async() => {
+    it('should delete assignment given assignment', async () => {
         Axios.delete = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 
@@ -103,6 +102,20 @@ describe('the assignment client', () => {
         };
 
         await AssignmentClient.deleteAssignment(expectedAssignmentToDelete);
+
+        expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    });
+
+    it('should delete assignment given person for a specific date', async () => {
+        Axios.delete = jest.fn();
+        process.env.REACT_APP_URL = 'testUrl/';
+
+        const expectedUrl = 'testUrl/assignment/delete/' + TestUtils.originDateString;
+        const expectedConfig = {
+            headers: {'Content-Type': 'application/json'},
+            data: TestUtils.person1,
+        };
+        await AssignmentClient.deleteAssignmentForDate(new Date(2019, 0, 1), TestUtils.person1);
 
         expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });

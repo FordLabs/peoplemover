@@ -21,8 +21,8 @@ import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult, wai
 import PeopleMover from '../Application/PeopleMover';
 import RoleClient from '../Roles/RoleClient';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
-import {PreloadedState} from "redux";
-import {GlobalStateProps} from "../Redux/Reducers";
+import {PreloadedState} from 'redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('PeopleMover Role Modal', () => {
     let app: RenderResult;
@@ -177,6 +177,31 @@ describe('PeopleMover Role Modal', () => {
 
             const saveButton = await app.findByText('Save');
             fireEvent.click(saveButton);
+
+            await wait(() => {
+                expect(app.queryByText('Cancel')).not.toBeInTheDocument();
+            });
+
+            const modalContainer = await app.findByTestId('modalContainer');
+            await findByText(modalContainer, expectedNewRoleName);
+        });
+
+        it('should save role with the given name and color when you hit the Enter key', async () => {
+            const expectedNewRoleName = 'Architecture';
+            (RoleClient.add as Function) = jest.fn(() => Promise.resolve(
+                {data: {name: expectedNewRoleName, id: 1, spaceId: -1, color: {color: '1', id: 2}}}
+            ));
+
+            const addNewRoleButton = await app.findByText('Add New Role');
+            fireEvent.click(addNewRoleButton);
+
+            const roleNameField = await app.findByTestId('traitName');
+            fireEvent.change(roleNameField, {target: {value: expectedNewRoleName}});
+
+            const circles: Array<HTMLElement> = await app.findAllByTestId('selectRoleCircle');
+            fireEvent.click(circles[1]);
+
+            fireEvent.keyPress(roleNameField, { key: 'Enter', code: 13, charCode: 13});
 
             await wait(() => {
                 expect(app.queryByText('Cancel')).not.toBeInTheDocument();

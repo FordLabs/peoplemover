@@ -37,7 +37,7 @@ class ProductService(
     }
 
     fun findAllBySpaceIdAndDate(spaceId: Int, date: LocalDate): Set<Product> {
-        val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceId, date.toString())
+        val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceId, date)
         return productRepository.findAllBySpaceIdAndDate(spaceId, date).map {product ->
             product.copy(assignments = assignmentsForDate.filter {assignment ->
                 assignment.productId == product.id!!
@@ -90,15 +90,10 @@ class ProductService(
     }
 
     fun createDefaultProducts(space: Space) {
-        val myProduct = Product(
-            name = "My Product",
-            spaceId = space.id!!
-        )
         val unassignedProduct = Product(
                 name = "unassigned",
-                spaceId = space.id
+                spaceId = space.id!!
         )
-        create(myProduct)
         create(unassignedProduct)
     }
 }

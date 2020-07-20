@@ -40,6 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDate
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -66,21 +67,31 @@ class ReportGeneratorControllerTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private lateinit var product: Product
+    private lateinit var productA: Product
+    private lateinit var productB: Product
     private lateinit var spaceRole: SpaceRole
+    private lateinit var spaceRole2: SpaceRole
     private lateinit var person1: Person
     private lateinit var person2: Person
+    private lateinit var person3: Person
     private lateinit var space: Space
+
+    val mar1 = "2019-03-01"
+    val mar2 = "2019-03-02"
 
     @Before
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
-        product = productRepository.save(Product(name = "product", spaceId = space.id!!))
+        productA = productRepository.save(Product(name = "product a", spaceId = space.id!!))
+        productB = productRepository.save(Product(name = "Product b", spaceId = space.id!!))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
-        person1 = personRepository.save(Person(name = "Person 1", spaceRole = spaceRole, spaceId = space.id!!))
+        spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceId = space.id!!))
+        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space.id!!))
         person2 = personRepository.save(Person(name = "Person 2", spaceId = space.id!!))
-        assignmentRepository.save(Assignment(person = person1, productId = product.id!!, spaceId = space.id!!))
-        assignmentRepository.save(Assignment(person = person2, productId = product.id!!, spaceId = space.id!!))
+        person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceId = space.id!!))
+        assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar1)))
+        assignmentRepository.save(Assignment(person = person2, productId = productB.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar2)))
+        assignmentRepository.save(Assignment(person = person3, productId = productA.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar2)))
     }
 
     @After
@@ -93,9 +104,9 @@ class ReportGeneratorControllerTest {
     }
 
     @Test
-    fun `GET should return people, products, and roles for a space`() {
+    fun `GET should return people, products, and roles for a space and omit future assignments given a date`() {
         val result = mockMvc
-                .perform(get("/api/reportgenerator/${space.name}"))
+                .perform(get("/api/reportgenerator/${space.name}/${mar1}"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -107,18 +118,41 @@ class ReportGeneratorControllerTest {
         )
 
 
-        val expectedReportGenerator = ReportGenerator(product.name, person1.name, spaceRole.name)
-        val expectedReportGenerator2 = ReportGenerator(product.name, person2.name, "")
+        val expectedReportGenerator = ReportGenerator(productA.name, person1.name, spaceRole.name)
 
-        assertThat(actualReportGenerators.size).isEqualTo(2)
+        assertThat(actualReportGenerators.size).isOne()
+        assertThat(actualReportGenerators[0]).isEqualTo(expectedReportGenerator)
+    }
+
+    @Test
+    fun `GET should ignore case and alphabetically sort by product name then person name given a date`() {
+        val result = mockMvc
+                .perform(get("/api/reportgenerator/${space.name}/${mar2}"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReportGenerators = objectMapper.readValue<List<ReportGenerator>>(
+                result.response.contentAsString,
+                objectMapper
+                        .typeFactory
+                        .constructCollectionType(MutableList::class.java, ReportGenerator::class.java)
+        )
+
+
+        val expectedReportGenerator = ReportGenerator(productA.name, person1.name, spaceRole.name)
+        val expectedReportGenerator2 = ReportGenerator(productA.name, person3.name, spaceRole2.name)
+        val expectedReportGenerator3 = ReportGenerator(productB.name, person2.name, "")
+
+        assertThat(actualReportGenerators.size).isEqualTo(3)
         assertThat(actualReportGenerators[0]).isEqualTo(expectedReportGenerator)
         assertThat(actualReportGenerators[1]).isEqualTo(expectedReportGenerator2)
+        assertThat(actualReportGenerators[2]).isEqualTo(expectedReportGenerator3)
     }
 
     @Throws(Exception::class)
     @Test
     fun `GET should return 400 with invalid space name` () {
-        mockMvc.perform(get("/api/reportgenerator/fakeSpace"))
+        mockMvc.perform(get("/api/reportgenerator/fakeSpace/${mar1}"))
                 .andExpect(status().isBadRequest)
     }
 }

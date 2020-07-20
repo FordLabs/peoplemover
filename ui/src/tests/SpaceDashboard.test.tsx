@@ -51,7 +51,7 @@ describe('SpaceDashbord tests', () => {
     it('should display signout and not invite contributors in menu', async () => {
         const {component} = await createTestComponent();
         await fireEvent.click(component.getByTestId('editContributorsModal'));
-        expect(component.queryByTestId('invite-contributors')).toBeNull();
+        expect(component.queryByTestId('invite-members')).toBeNull();
         expect(component.queryByTestId('sign-out')).not.toBeNull();
     });
 
@@ -69,19 +69,19 @@ describe('SpaceDashbord tests', () => {
 
     it('should display space name on a space', async () => {
         const {component} = await createTestComponent();
-        expect(component.queryByText("Space1")).not.toBeNull();
+        expect(component.queryByText('Space1')).not.toBeNull();
     });
 
     it('should display space last modified date and time on a space', async () => {
         const {component} = await createTestComponent();
-        const localTime = moment.utc("2020-04-14T18:06:11.791+0000").local().format('dddd, MMMM D, Y [at] h:mm a');
+        const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('dddd, MMMM D, Y [at] h:mm a');
         expect(component.getByText(`Last modified ${localTime}`)).not.toBeNull();
     });
 
     it('should display today and last modified time on a space', async () => {
         Date.now = jest.fn(() => 1586887571000);
         const {component} = await createTestComponent();
-        const localTime = moment.utc("2020-04-14T18:06:11.791+0000").local().format('h:mm a');
+        const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('h:mm a');
         expect(component.getByText(`Last modified today at ${localTime}`)).not.toBeNull();
     });
 

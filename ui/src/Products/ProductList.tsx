@@ -26,7 +26,7 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {FilterOption} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
 import {Space} from '../SpaceDashboard/Space';
-import moment from "moment";
+import moment from 'moment';
 
 interface ProductListProps {
     currentSpace: Space;

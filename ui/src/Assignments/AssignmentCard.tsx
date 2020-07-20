@@ -30,7 +30,7 @@ import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
-import moment from "moment";
+import moment from 'moment';
 
 interface AssignmentCardProps {
     viewingDate: Date;

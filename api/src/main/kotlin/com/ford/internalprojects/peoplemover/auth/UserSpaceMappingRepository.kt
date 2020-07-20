@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UserSpaceMappingRepository : JpaRepository<UserSpaceMapping, Int> {
+    fun findAllByUserId(userId: String): List<UserSpaceMapping>
 }

@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import './BoardButtons.scss';
@@ -30,7 +30,7 @@ interface BoardButtonsProps {
     hideSpaceButtons?: boolean;
 }
 
-function BoardButtons({setCurrentModal, hideSpaceButtons}: BoardButtonsProps): JSX.Element {
+function BoardButtons({hideSpaceButtons}: BoardButtonsProps): JSX.Element {
 
     return (
         <div className="boardButtons">
