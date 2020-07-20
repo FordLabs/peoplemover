@@ -316,7 +316,7 @@ describe('people actions', () => {
             const wrapper = await renderWithReduxEnzyme(component, undefined, initialState);
 
             const productSelect = await wrapper.find('Select');
-            const selectProps: any = productSelect.at(1).instance().props;
+            const selectProps: React.ComponentProps<typeof Object> = productSelect.at(1).instance().props;
             const options: Array<Option> = selectProps.options;
 
             expect(options.find(option => option.label === 'Product 1')).toBeTruthy();
@@ -436,7 +436,7 @@ describe('people actions', () => {
             const wrapper = await renderWithReduxEnzyme(component, store);
 
             const selectDropdown = await wrapper.find('Select');
-            const dropDown: any = selectDropdown.at(1).instance();
+            const dropDown: React.ComponentProps<typeof Object> = selectDropdown.at(1).instance();
             dropDown.selectOption({label: 'unassigned', value: 'unassigned'});
 
             const saveButton = await wrapper.find('input[value=\'Save\']');

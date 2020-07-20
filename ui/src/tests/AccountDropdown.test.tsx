@@ -21,13 +21,14 @@ import PeopleMover from '../Application/PeopleMover';
 import React from 'react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
+import {MemoryHistory} from 'history/createMemoryHistory';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
 import Cookies from 'universal-cookie';
 
 describe('Account Dropdown',  () => {
     let app: RenderResult;
 
-    let history: any;
+    let history: MemoryHistory;
 
     beforeEach(async () => {
         jest.clearAllMocks();

@@ -25,6 +25,7 @@ import {wait} from '@testing-library/react';
 
 describe('filter products', () => {
     class MockLocalStorage {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         store: any = {};
 
         getItem(key: string): string | null {
@@ -44,7 +45,7 @@ describe('filter products', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-        (localStorage as any) = new MockLocalStorage();
+        (localStorage as unknown) = new MockLocalStorage();
     });
 
     it('should show the local storage filter options when app starts', async () => {
@@ -77,7 +78,7 @@ describe('filter products', () => {
         const instancesOfSaline = await app.findAllByText(updatedLocation);
         expect(instancesOfSaline.length).toEqual(2);
 
-        const tagFiltersAfterUpdate: LocalStorageFilters = JSON.parse(localStorage.getItem('filters')!);
+        const tagFiltersAfterUpdate: LocalStorageFilters = JSON.parse(localStorage.getItem('filters') || '');
         expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(TestUtils.detroit.name);
         expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(updatedLocation);
         expect(tagFiltersAfterUpdate.locationTagsFilters).not.toContain(TestUtils.annarbor.name);

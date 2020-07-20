@@ -54,10 +54,11 @@ describe('AssignmentForm', () => {
 
             const app = renderWithReduxEnzyme(component);
             const productSelect = await app.find('Select#product');
-            const options = (productSelect.instance().props as any).options;
-            expect(options.find((option: any) => option.label === 'Product 1')).toBeTruthy();
-            expect(options.find((option: any)  => option.label === 'I am archived')).toBeFalsy();
-            expect(options.find((option: any)  => option.label === 'unassigned')).toBeFalsy();
+            const options = (productSelect.instance().props as React.ComponentProps<typeof Object>).options;
+            interface Option {label: string}
+            expect(options.find((option: Option) => option.label === 'Product 1')).toBeTruthy();
+            expect(options.find((option: Option)  => option.label === 'I am archived')).toBeFalsy();
+            expect(options.find((option: Option)  => option.label === 'unassigned')).toBeFalsy();
         });
 
         it('submits an assignment with the given person and product', async () => {

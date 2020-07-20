@@ -31,7 +31,7 @@ interface TestComponent {
     component: RenderResult;
     fakeAccessToken: string;
     cookies: Cookies;
-    history: any;
+    history: History;
 }
 
 describe('SpaceDashbord tests', () => {

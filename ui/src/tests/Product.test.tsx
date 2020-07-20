@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import Axios, {AxiosResponse} from 'axios';
+import {AxiosResponse} from 'axios';
 import {act, fireEvent} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
@@ -412,7 +412,8 @@ describe('Products', () => {
             fireEvent.mouseUp(editProductOption);
 
             const notesFieldText = await app.findByTestId('notesFieldText');
-            expect(notesFieldText.innerHTML).toContain(TestUtils.productWithAssignments.notes!.length);
+            const expectedNotes = TestUtils.productWithAssignments.notes || '';
+            expect(notesFieldText.innerHTML).toContain(expectedNotes.length);
         });
 
         it('should show length of note and disable save when note is too long', async () => {
