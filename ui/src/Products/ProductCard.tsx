@@ -34,7 +34,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
-import moment from "moment";
+import moment from 'moment';
 
 interface ProductCardProps {
     container: string;
