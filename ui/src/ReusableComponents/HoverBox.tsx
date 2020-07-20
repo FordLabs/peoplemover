@@ -17,20 +17,17 @@
 
 import React, {useEffect} from 'react';
 import './HoverBox.scss';
-import {connect} from "react-redux";
 
 interface HoverBoxProps {
     notes: string;
 }
 
 function HoverBox({notes}: HoverBoxProps): JSX.Element {
-
-    return (<div
-        className="hoverBoxContainer"
-        data-testid=""
-    >
-        <p className="hoverBoxNotes">{notes}</p>
-    </div>
+    return (
+        <div className="hoverBoxContainer"
+            data-testid="">
+            <p className="hoverBoxNotes">{notes}</p>
+        </div>
     );
 }
 
