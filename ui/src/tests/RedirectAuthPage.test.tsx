@@ -70,7 +70,7 @@ describe('should redirect to login page', () => {
     it('should ask the backend for the accessToken if an access_code is in the url and store it in the cookies', async () => {
         Axios.post = jest.fn(() => Promise.resolve({
             data: {
-                access_token: 'TOKEN123',
+                'access_token': 'TOKEN123',
             },
         } as AxiosResponse));
 
@@ -100,7 +100,7 @@ describe('should redirect to login page', () => {
     });
 
 
-    it('should check if accessToken is valid if one exists in the cookies', async() => {
+    it('should check if accessToken is valid if one exists in the cookies', async () => {
 
         (window.location as any) = {
             href: 'http://localhost:8080/api/',
@@ -133,7 +133,7 @@ describe('should redirect to login page', () => {
         cookies.remove('accessToken');
     });
 
-    it('should refresh access token after access token is successfully validated', async() => {
+    it('should refresh access token after access token is successfully validated', async () => {
         const fakeAccessToken = 'FAKE_TOKEN123';
 
         const cookies = new Cookies();
@@ -149,7 +149,7 @@ describe('should redirect to login page', () => {
 
         AccessTokenClient.refreshAccessToken = jest.fn( () => Promise.resolve({
             data: {
-                access_token: 'NEW_TOKEN',
+                'access_token': 'NEW_TOKEN',
             },
         }  as AxiosResponse ));
 

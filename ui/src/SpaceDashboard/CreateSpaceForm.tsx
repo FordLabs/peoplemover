@@ -48,7 +48,7 @@ function CreateSpaceForm({
     }
 
     function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
-        setSpaceName(event.target.value.split(" ").join(""));
+        setSpaceName(event.target.value.split(' ').join(''));
     }
 
     return  <div className={'createSpaceContainer'}>

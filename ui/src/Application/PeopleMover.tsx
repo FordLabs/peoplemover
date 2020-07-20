@@ -70,7 +70,7 @@ function PeopleMover({
     }, [currentModal]);
 
     useEffect(() => {
-        if(hasProducts()) fetchProducts();
+        if (hasProducts()) {fetchProducts();}
     }, [viewingDate]);
 
     async function RenderPage(): Promise<void> {

@@ -23,7 +23,7 @@ import {Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import moment from "moment";
+import moment from 'moment';
 
 interface ProductGraveyardProps{
     products: Array<Product>;
@@ -59,4 +59,4 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: state.viewingDate,
 });
 
-export default connect (mapStateToProps) (ProductGraveyard);
+export default connect(mapStateToProps)(ProductGraveyard);
