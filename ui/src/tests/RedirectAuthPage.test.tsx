@@ -25,6 +25,7 @@ import {wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 
+interface MockLocation { href: string }
 
 describe('should redirect to login page', () => {
     process.env.REACT_APP_AUTHQUEST_CLIENT_ID = 'AQ:client-id';
@@ -34,21 +35,21 @@ describe('should redirect to login page', () => {
     const redirectUri = encodeURIComponent(window.location.href);
     const authquestClientID = encodeURIComponent(process.env.REACT_APP_AUTHQUEST_CLIENT_ID as string);
 
-    let originalWindow: any;
+    let originalWindow: Window;
 
     beforeEach(() => {
         originalWindow = window;
         delete window.location;
-        (window as any) = Object.create(window);
+        (window as Window) = Object.create(window);
 
     });
 
     afterEach(() => {
-        (window as any) = originalWindow;
+        (window as Window) = originalWindow;
     });
 
     it('should redirect users to AuthQuest login page when hitting /login', () => {
-        (window.location as any) = {
+        (window.location as MockLocation) = {
             href: 'http://localhost/',
         };
 
@@ -58,7 +59,7 @@ describe('should redirect to login page', () => {
     });
 
     it('should redirect users to AuthQuest signup page when hitting /signup', () => {
-        (window.location as any) = {
+        (window.location as MockLocation) = {
             href: 'http://localhost/',
         };
 
@@ -70,16 +71,15 @@ describe('should redirect to login page', () => {
     it('should ask the backend for the accessToken if an access_code is in the url and store it in the cookies', async () => {
         Axios.post = jest.fn(() => Promise.resolve({
             data: {
-                access_token: 'TOKEN123',
+                'access_token': 'TOKEN123',
             },
         } as AxiosResponse));
 
-        (window.location as any) = {
+        (window.location as MockLocation) = {
             href: 'http://localhost?access_code=123ABC',
         };
 
         await wait( () => {
-
             const history = createMemoryHistory({ initialEntries: ['/login'] });
 
             mount(
@@ -100,9 +100,8 @@ describe('should redirect to login page', () => {
     });
 
 
-    it('should check if accessToken is valid if one exists in the cookies', async() => {
-
-        (window.location as any) = {
+    it('should check if accessToken is valid if one exists in the cookies', async () => {
+        (window.location as MockLocation) = {
             href: 'http://localhost:8080/api/',
         };
 
@@ -133,7 +132,7 @@ describe('should redirect to login page', () => {
         cookies.remove('accessToken');
     });
 
-    it('should refresh access token after access token is successfully validated', async() => {
+    it('should refresh access token after access token is successfully validated', async () => {
         const fakeAccessToken = 'FAKE_TOKEN123';
 
         const cookies = new Cookies();
@@ -149,7 +148,7 @@ describe('should redirect to login page', () => {
 
         AccessTokenClient.refreshAccessToken = jest.fn( () => Promise.resolve({
             data: {
-                access_token: 'NEW_TOKEN',
+                'access_token': 'NEW_TOKEN',
             },
         }  as AxiosResponse ));
 
@@ -179,8 +178,7 @@ describe('should redirect to login page', () => {
     // even though if cookies.remove() is called the implementation will fail.
     // Keep this in mind!
     it('should clear access_token from the cookies if the token is not valid', async () => {
-
-        (window.location as any) = {
+        (window.location as MockLocation) = {
             href: 'http://localhost/',
         };
 

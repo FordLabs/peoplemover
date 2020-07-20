@@ -27,7 +27,7 @@ import {setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
 import selectEvent from 'react-select-event';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, SpaceRole} from '../Roles/Role';
-import moment from "moment";
+import moment from 'moment';
 
 describe('AssignmentForm', () => {
     beforeEach(() => {
@@ -36,39 +36,40 @@ describe('AssignmentForm', () => {
     });
 
     describe('in create mode', () => {
-        const viewingDate = new Date(2020, 5,5);
+        const viewingDate = new Date(2020, 5, 5);
         const initialState: PreloadedState<GlobalStateProps> = {
-            viewingDate: viewingDate
+            viewingDate: viewingDate,
         } as GlobalStateProps;
 
         async function openAssignPersonForm(app: RenderResult): Promise<void> {
-                await TestUtils.waitForHomePageToLoad(app);
-                fireEvent.click(app.getByTestId('addPersonToProductIcon-1'));
-                await app.findByText('Assign to');
+            await TestUtils.waitForHomePageToLoad(app);
+            fireEvent.click(app.getByTestId('addPersonToProductIcon-1'));
+            await app.findByText('Assign to');
         }
 
         it('should not show the unassigned or archived products in the product list', async () => {
-                const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
-                const component = <AssignmentForm products={products}
-                    initiallySelectedProduct={products[0]}/>;
+            const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
+            const component = <AssignmentForm products={products}
+                initiallySelectedProduct={products[0]}/>;
 
-                const app = renderWithReduxEnzyme(component);
-                const productSelect = await app.find('Select#product');
-                const options = (productSelect.instance().props as any).options;
-                expect(options.find((option: any) => option.label === 'Product 1')).toBeTruthy();
-                expect(options.find((option: any)  => option.label === 'I am archived')).toBeFalsy();
-                expect(options.find((option: any)  => option.label === 'unassigned')).toBeFalsy();
+            const app = renderWithReduxEnzyme(component);
+            const productSelect = await app.find('Select#product');
+            const options = (productSelect.instance().props as React.ComponentProps<typeof Object>).options;
+            interface Option {label: string}
+            expect(options.find((option: Option) => option.label === 'Product 1')).toBeTruthy();
+            expect(options.find((option: Option)  => option.label === 'I am archived')).toBeFalsy();
+            expect(options.find((option: Option)  => option.label === 'unassigned')).toBeFalsy();
         });
 
         it('submits an assignment with the given person and product', async () => {
-                const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-                await openAssignPersonForm(app);
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+            await openAssignPersonForm(app);
 
-                const labelElement = await app.findByLabelText('Name');
-                const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
-                await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
+            const labelElement = await app.findByLabelText('Name');
+            const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
+            await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
 
-                fireEvent.click(app.getByText('Assign'));
+            fireEvent.click(app.getByText('Assign'));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
@@ -81,14 +82,14 @@ describe('AssignmentForm', () => {
         });
 
         it('submits an assignment when the enter key is pressed', async () => {
-           const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-           await openAssignPersonForm(app);
+            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+            await openAssignPersonForm(app);
 
-           const labelElement = await app.findByLabelText('Name');
-           const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
-           await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
+            const labelElement = await app.findByLabelText('Name');
+            const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
+            await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
 
-           fireEvent.keyDown(app.getByText('Assign'), {key: 'Enter', code: 13});
+            fireEvent.keyDown(app.getByText('Assign'), {key: 'Enter', code: 13});
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({

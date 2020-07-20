@@ -20,7 +20,6 @@ import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import './ReassignedDrawer.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Dispatch} from 'redux';
 import {Reassignment} from './Reassignment';
 import {Product} from '../Products/Product';
 import AssignmentClient from '../Assignments/AssignmentClient';
@@ -55,10 +54,11 @@ function ReassignedDrawer({
         mapsReassignments(reassignment, index)
     ));
 
-    const containee: JSX.Element = <div className="reassignmentContainer">{listOfHTMLReassignments}</div>;
+    const containee: JSX.Element = <div className="reassignmentContainer" data-testid="reassignmentContainer">{listOfHTMLReassignments}</div>;
 
     return (
         <DrawerContainer drawerIcon="fas fa-user-check"
+            testId="reassignmentDrawer"
             containerTitle="Reassigned"
             containee={containee}
             isDrawerOpen={showDrawer}
@@ -74,18 +74,20 @@ function ReassignedDrawer({
             oneWayReassignment = `Assigned to ${reassignment.toProductName}`;
         }
 
-        return  <div key={index} className="reassignmentSection">
-            <div className="name">{reassignment.person.name}</div>
-            <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
-            {!oneWayReassignment &&
-            <div className="additionalInfo">{reassignment.fromProductName} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName}</div>
-            }
-            {oneWayReassignment &&
-            <div className="additionalInfo">{oneWayReassignment}</div>
-            }
-            <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}><i className="fas fa-undo-alt"/>Revert</button>
-        </div>;
-    }
+        return  (
+            <div key={index} className="reassignmentSection" data-testid="reassignmentSection">
+                <div className="name">{reassignment.person.name}</div>
+                <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
+                {!oneWayReassignment &&
+                    <div className="additionalInfo">{reassignment.fromProductName} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName}</div>
+                }
+                {oneWayReassignment &&
+                    <div className="additionalInfo">{oneWayReassignment}</div>
+                }
+                <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}><i className="fas fa-undo-alt"/>Revert</button>
+            </div>
+        );
+}
 
     async function revert(person: Person): Promise<void> {
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person).then(fetchProducts);

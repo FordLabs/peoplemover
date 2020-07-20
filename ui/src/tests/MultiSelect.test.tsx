@@ -60,7 +60,7 @@ describe('the multi-select component', () => {
             changeSelections={makeTestPass}/>);
 
         expect(wrapper.find('.MultiSelect__placeholder').length).toEqual(0);
-        (wrapper.find('Select').instance() as any).selectOption({label: 'eee', value: 'eee'});
+        (wrapper.find('Select').instance() as React.ComponentProps<typeof Object>).selectOption({label: 'eee', value: 'eee'});
         expect(testShouldPass).toBeTruthy();
     });
 

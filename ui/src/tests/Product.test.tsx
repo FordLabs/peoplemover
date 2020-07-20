@@ -16,21 +16,22 @@
  */
 
 import React from 'react';
-import Axios, {AxiosResponse} from 'axios';
+import {AxiosResponse} from 'axios';
 import {act, fireEvent} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from '../Products/ProductClient';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {wait} from '@testing-library/dom';
-import {applyMiddleware, compose, createStore, Store} from 'redux';
-import rootReducer from '../Redux/Reducers';
+import {applyMiddleware, compose, createStore, PreloadedState, Store} from 'redux';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import thunk from 'redux-thunk';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {Product} from '../Products/Product';
 import {Person} from '../People/Person';
 import LocationClient from '../Locations/LocationClient';
 import selectEvent from 'react-select-event';
+import moment from "moment";
 
 describe('Products', () => {
 
@@ -411,7 +412,8 @@ describe('Products', () => {
             fireEvent.mouseUp(editProductOption);
 
             const notesFieldText = await app.findByTestId('notesFieldText');
-            expect(notesFieldText.innerHTML).toContain(TestUtils.productWithAssignments.notes!.length);
+            const expectedNotes = TestUtils.productWithAssignments.notes || '';
+            expect(notesFieldText.innerHTML).toContain(expectedNotes.length);
         });
 
         it('should show length of note and disable save when note is too long', async () => {
@@ -522,7 +524,9 @@ describe('Products', () => {
             it('should use the product client to archive products', async () => {
                 ProductClient.editProduct = jest.fn(() => Promise.resolve({} as AxiosResponse));
 
-                const app = renderWithRedux(<PeopleMover/>);
+                const viewingDate = new Date(2020, 6, 17);
+                const initialState: PreloadedState<GlobalStateProps> = { viewingDate: viewingDate } as GlobalStateProps;
+                const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
                 const editProduct3Button = await app.findByTestId('editProductIcon_3');
                 fireEvent.click(editProduct3Button);
@@ -535,9 +539,9 @@ describe('Products', () => {
                 fireEvent.click(archiveButton);
 
                 expect(ProductClient.editProduct).toBeCalledTimes(1);
-                const cloneWithArchivedTrue = JSON.parse(JSON.stringify(TestUtils.productWithoutAssignments));
-                cloneWithArchivedTrue.archived = true;
-                expect(ProductClient.editProduct).toBeCalledWith(cloneWithArchivedTrue);
+                const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestUtils.productWithoutAssignments));
+                cloneWithEndDateSet.endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
+                expect(ProductClient.editProduct).toBeCalledWith(cloneWithEndDateSet);
             });
         });
     });

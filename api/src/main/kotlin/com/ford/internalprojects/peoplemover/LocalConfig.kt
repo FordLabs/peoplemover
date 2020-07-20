@@ -21,6 +21,8 @@ import com.ford.internalprojects.peoplemover.assignment.AssignmentService
 import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
 import com.ford.internalprojects.peoplemover.auth.AuthClient
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.color.ColorService
 import com.ford.internalprojects.peoplemover.person.Person
@@ -63,6 +65,9 @@ class LocalConfig {
     @Autowired
     private lateinit var productRepository: ProductRepository
 
+    @Autowired
+    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
     @Value("\${authquest.client_id}")
     private lateinit var clientId: String
 
@@ -73,6 +78,8 @@ class LocalConfig {
     fun onAppStartup() {
         val spaceName = "flippingsweet"
         val createdSpace: Space = spaceService.createSpaceWithName(spaceName)
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "AQ-866ed9fa-06ca-41e7-b256-30770b98195f", spaceId = createdSpace.id))
 
         try {
             authClient.createScope(listOf(spaceName))
@@ -111,7 +118,10 @@ class LocalConfig {
                 ),
                 spaceName
         )
-
+        val myProduct: Product = productRepository.save(Product(
+                name = "My Product",
+                spaceId = createdSpace.id
+        ))
         val baguetteBakery: Product = productRepository.save(Product(
                 name = "Baguette Bakery",
                 spaceId = createdSpace.id
@@ -123,7 +133,7 @@ class LocalConfig {
                 requestedDate = LocalDate.parse("2019-01-01"),
                 person = jane,
                 products = newHashSet(ProductPlaceholderPair(
-                        productId = savedProducts[0].id!!,
+                        productId = savedProducts[1].id!!,
                         placeholder = false
                 ))
         ))
@@ -131,7 +141,7 @@ class LocalConfig {
                 requestedDate = LocalDate.parse("2020-06-15"),
                 person = bob,
                 products = newHashSet(ProductPlaceholderPair(
-                        productId = savedProducts[0].id!!,
+                        productId = savedProducts[1].id!!,
                         placeholder = true
                 ))
         ))

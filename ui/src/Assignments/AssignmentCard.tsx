@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ReactElement, RefObject, useEffect, useState} from 'react';
+import React, {RefObject, useEffect, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
