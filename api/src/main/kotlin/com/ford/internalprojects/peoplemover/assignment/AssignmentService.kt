@@ -17,9 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.assignment
 
-import com.ford.internalprojects.peoplemover.assignment.exceptions.AssignmentAlreadyExistsException
 import com.ford.internalprojects.peoplemover.assignment.exceptions.AssignmentNotExistsException
-import com.ford.internalprojects.peoplemover.assignment.exceptions.InvalidDateFormatException
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
@@ -31,7 +29,6 @@ import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsExce
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.time.format.DateTimeParseException
 import javax.transaction.Transactional
 
 @Service
@@ -41,37 +38,63 @@ class AssignmentService(
         private val productRepository: ProductRepository,
         private val spaceRepository: SpaceRepository
 ) {
-    fun deleteAssignmentIfPersonIsUnassigned(personId: Int, productIdForCreatedAssignment: Int) {
-        val assignmentsForPerson: List<Assignment> = getAssignmentsForTheGivenPersonId(personId)
-        assignmentsForPerson.forEach { assignment ->
-            productRepository.findByIdOrNull(assignment.productId)
-                    ?.let { product ->
-                        val thisIsNotNewlyCreatedAssignment = product.id != productIdForCreatedAssignment
-                        if (thisIsNotNewlyCreatedAssignment && product.name == "unassigned") {
-                            deleteOneAssignment(assignment)
-                        }
-                    }
+    fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<Assignment> {
+        val allAssignmentsBeforeOrOnDate = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
+        return getAllAssignmentsForPersonOnDate(personId, allAssignmentsBeforeOrOnDate)
+    }
+
+    fun getAssignmentsForTheGivenPersonId(personId: Int): List<Assignment> {
+        return assignmentRepository.getByPersonId(personId)
+    }
+
+    fun getAssignmentsByDate(spaceId: Int, requestedDate: LocalDate): List<Assignment> {
+        spaceRepository.findByIdOrNull(spaceId) ?: throw SpaceNotExistsException()
+
+        val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
+        val allAssignments: MutableList<Assignment> = mutableListOf()
+        people.forEach { person ->
+            val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
+            allAssignments.addAll(getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson))
+        }
+
+        return allAssignments
+    }
+
+    fun getEffectiveDates(spaceId: Int): Set<LocalDate> {
+        spaceRepository.findByIdOrNull(spaceId) ?: throw SpaceNotExistsException()
+
+        val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
+        val allAssignments: MutableList<Assignment> = mutableListOf()
+        people.forEach { person ->
+            val assignmentsForPerson: List<Assignment> = assignmentRepository.getByPersonId(person.id!!)
+            allAssignments.addAll(assignmentsForPerson)
+        }
+
+        return allAssignments.mapNotNull { it.effectiveDate }.toSet()
+    }
+
+    fun getReassignmentsByExactDate(spaceId: Int, requestedDate: LocalDate): List<Reassignment>? {
+        var assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = spaceId, requestedDate = requestedDate).sortedWith(compareByDescending { it.id })
+        var assignmentsWithPreviousDate = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedDate)
+
+        return createReassignments(assignmentsWithExactDate, assignmentsWithPreviousDate)
+    }
+
+    fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
+        deleteAssignmentsForDate(assignmentRequest.requestedDate, assignmentRequest.person)
+        return if (assignmentRequest.products.isNullOrEmpty() || requestOnlyContainsUnassigned(assignmentRequest)) {
+            setOf(createUnassignmentForDate(assignmentRequest.requestedDate, assignmentRequest.person))
+        } else {
+            createAssignmentsForDate(assignmentRequest)
         }
     }
 
-    @Throws(AssignmentNotExistsException::class, ProductNotExistsException::class)
-    fun updateAssignment(assignmentToUpdate: Assignment) {
-        assignmentRepository.findByIdOrNull(assignmentToUpdate.id!!) ?: throw AssignmentNotExistsException()
-        productRepository.findByIdOrNull(assignmentToUpdate.productId) ?: throw ProductNotExistsException()
-
-        assignmentRepository.saveAndUpdateSpaceLastModified(assignmentToUpdate)
-    }
-
-    fun updateAssignment(assignmentId: Int, assignmentRequest: AssignmentRequest): Assignment {
-        val assignmentToBeUpdated: Assignment = assignmentRepository.findByIdOrNull(assignmentId)
-                ?: throw AssignmentNotExistsException()
-        assignmentToBeUpdated.placeholder = assignmentRequest.placeholder
-
-        return assignmentRepository.saveAndUpdateSpaceLastModified(assignmentToBeUpdated)
-    }
-
-    fun updateAssignments(assignments: Set<Assignment>) {
-        assignmentRepository.saveAll(assignments)
+    fun revertAssignmentsForDate(requestedDate: LocalDate, person: Person) {
+        deleteAssignmentsForDate(requestedDate, person)
+        val existingAssignments = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
+        if (existingAssignments.isNullOrEmpty()) {
+            createUnassignmentForDate(requestedDate, person)
+        }
     }
 
     @Transactional
@@ -79,74 +102,14 @@ class AssignmentService(
         assignmentRepository.deleteAndUpdateSpaceLastModified(assignmentToDelete)
     }
 
-    @Transactional
-    fun deleteForProductId(productId: Int) {
-        assignmentRepository.deleteByProductId(productId)
-    }
+    fun deleteAssignmentsForDate(requestedDate: LocalDate, person: Person) {
+        personRepository.findByIdOrNull(person.id!!) ?: throw PersonNotExistsException()
 
-    fun getAssignmentsForTheGivenPersonId(personId: Int): List<Assignment> {
-        return assignmentRepository.getByPersonId(personId)
-    }
-
-    fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<Assignment> {
-        val allAssignmentsBeforeOrOnDate = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
-        return getAllAssignmentsForPersonOnDate(personId, allAssignmentsBeforeOrOnDate)
-    }
-
-    fun deleteAllAssignments(personId: Int) {
-        val assignments: List<Assignment> = getAssignmentsForTheGivenPersonId(personId)
-        assignments.forEach { deleteOneAssignment(it) }
-    }
-
-    fun createAssignmentFromAssignmentRequest(assignmentRequest: AssignmentRequest): Assignment {
-        val person: Person = getPersonIfValidAssignmentRequest(assignmentRequest)
-        val assignment = Assignment(
-                person = person,
-                placeholder = assignmentRequest.placeholder,
-                productId = assignmentRequest.productId,
-                spaceId = person.spaceId
+        val assignments: List<Assignment> = assignmentRepository.findAllByPersonAndEffectiveDate(
+                person,
+                requestedDate
         )
-        return createAssignment(assignment)
-    }
-
-    @Transactional
-    fun createAssignment(assignment: Assignment): Assignment {
-        val createdAssignment: Assignment = assignmentRepository.saveAndUpdateSpaceLastModified(assignment)
-        deleteAssignmentIfPersonIsUnassigned(assignment.person.id!!, createdAssignment.productId)
-        return createdAssignment
-    }
-
-    private fun getPersonIfValidAssignmentRequest(assignmentRequest: AssignmentRequest): Person {
-        productRepository.findByIdOrNull(assignmentRequest.productId)
-                ?: throw ProductNotExistsException()
-        throwIfAssignmentAlreadyExists(assignmentRequest.productId, assignmentRequest.personId)
-        return personRepository.findByIdOrNull(assignmentRequest.personId)
-                ?: throw PersonNotExistsException()
-    }
-
-    @Throws(AssignmentAlreadyExistsException::class)
-    private fun throwIfAssignmentAlreadyExists(productId: Int, personId: Int) {
-        val assignmentAlreadyExists: Boolean = assignmentRepository.getByPersonId(personId)
-                .any { assignment -> assignment.productId == productId }
-
-        if (assignmentAlreadyExists) {
-            throw AssignmentAlreadyExistsException()
-        }
-    }
-
-    fun getAssignmentsByDate(spaceId: Int, requestedDate: String): List<Assignment> {
-        spaceRepository.findByIdOrNull(spaceId) ?: throw SpaceNotExistsException()
-
-        val requestedLocalDate = parseLocalDate(requestedDate)
-
-        val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
-        val allAssignments: MutableList<Assignment> = mutableListOf()
-        people.forEach { person ->
-            val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedLocalDate)
-            allAssignments.addAll(getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson))
-        }
-
-        return allAssignments
+        assignments.forEach { deleteOneAssignment(it) }
     }
 
     private fun getAllAssignmentsForPersonOnDate(personId: Int, sortedAssignmentsForPerson: List<Assignment>): List<Assignment> {
@@ -158,29 +121,61 @@ class AssignmentService(
         }
     }
 
+    private fun getAssignmentsWithPreviousDate(assignmentsWithExactDate: List<Assignment>, requestedLocalDate: LocalDate): List<Assignment> {
+        val personIdsWithExactDate = assignmentsWithExactDate.map { assignment -> assignment.person.id }.toSet()
+
+        var assignmentsWithPreviousDate: MutableList<Assignment> = mutableListOf()
+        val previousRequestedLocalDate = requestedLocalDate.minusDays(1)
+        personIdsWithExactDate.forEach { personId ->
+            val assignmentsForPerson: List<Assignment> =
+                    assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(
+                            personId = personId!!,
+                            effectiveDate = previousRequestedLocalDate!!
+                    )
+            assignmentsWithPreviousDate.addAll(getAllAssignmentsForPersonOnDate(personId, assignmentsForPerson))
+        }
+        return assignmentsWithPreviousDate
+    }
+
+    private fun createReassignments(assignmentsWithExactDate: List<Assignment>, assignmentsWithPreviousDate: List<Assignment>): List<Reassignment> {
+        val pair = removeDuplicatePersonsAndProducts(assignmentsWithExactDate, assignmentsWithPreviousDate)
+        val assignmentsWithExactDateWithoutDuplicates = pair.first
+        val assignmentsWithPreviousDateWithoutDuplicates = pair.second
+
+        val peopleFromAssignments: Set<Person> = getUniqueSetOfPeopleFromAssignments(assignmentsWithExactDateWithoutDuplicates, assignmentsWithPreviousDateWithoutDuplicates).toSet()
+
+        return peopleFromAssignments.map { person ->
+            val exactAssignmentsForPerson = assignmentsWithExactDateWithoutDuplicates.filter { assignment ->
+                person.id === assignment.person.id
+            }
+            val previousAssignmentsForPerson = assignmentsWithPreviousDateWithoutDuplicates.filter { assignment ->
+                person.id === assignment.person.id
+            }
+
+            val toProductName: String = exactAssignmentsForPerson.map { assignment ->  productRepository.findById(assignment.productId).get().name}.joinToString(" & ")
+            val fromProductName: String = previousAssignmentsForPerson.map { assignment ->  productRepository.findById(assignment.productId).get().name}.joinToString(" & ")
+            Reassignment(
+                    person = person,
+                    fromProductName = fromProductName,
+                    toProductName = toProductName
+            )
+        }.filterNot {  reassignment ->  reassignment.toProductName == "unassigned" && reassignment.fromProductName.isNullOrEmpty() }
+    }
+
     private fun requestOnlyContainsUnassigned(assignmentRequest: CreateAssignmentsRequest): Boolean {
         val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", assignmentRequest.person.spaceId)
         return (assignmentRequest.products.size == 1 && assignmentRequest.products.first().productId == unassignedProduct!!.id)
     }
 
-    fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
-        deleteAllAssignmentsForDate(assignmentRequest)
-        return if (assignmentRequest.products.isNullOrEmpty() || requestOnlyContainsUnassigned(assignmentRequest)) {
-            setOf(createUnassignmentForDate(assignmentRequest))
-        } else {
-            createAssignmentsForDate(assignmentRequest)
-        }
-    }
-
-    private fun createUnassignmentForDate(assignmentRequest: CreateAssignmentsRequest): Assignment {
-        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", assignmentRequest.person.spaceId)
+    private fun createUnassignmentForDate(requestedDate: LocalDate, person: Person): Assignment {
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", person.spaceId)
         return assignmentRepository.save(
                 Assignment(
-                        person = assignmentRequest.person,
+                        person = person,
                         placeholder = false,
                         productId = unassignedProduct!!.id!!,
-                        spaceId = assignmentRequest.person.spaceId,
-                        effectiveDate = assignmentRequest.requestedDate
+                        spaceId = person.spaceId,
+                        effectiveDate = requestedDate
                 )
         )
     }
@@ -210,61 +205,16 @@ class AssignmentService(
         return createdAssignments
     }
 
-    private fun deleteAllAssignmentsForDate(assignmentRequest: CreateAssignmentsRequest) {
-        personRepository.findByIdOrNull(assignmentRequest.person.id!!) ?: throw PersonNotExistsException()
+    private fun removeDuplicatePersonsAndProducts(assignmentsWithExactDate: List<Assignment>, assignmentsWithPreviousDate: List<Assignment>): Pair<List<Assignment>, MutableList<Assignment>> {
+        var assignmentsWithExactDate1 = assignmentsWithExactDate
+        var assignmentsWithPreviousDate1 = assignmentsWithPreviousDate
+        val personIdProductIdPairsWithExactDate = assignmentsWithExactDate1.map { Pair(it.person.id, it.productId) }
+        val personIdProductIdPairsForPreviousDate = assignmentsWithPreviousDate1.map { Pair(it.person.id, it.productId) }
+        val commonPersonIdProductIdPairs = personIdProductIdPairsWithExactDate intersect personIdProductIdPairsForPreviousDate
 
-        val assignments: List<Assignment> = assignmentRepository.findAllByPersonAndEffectiveDate(
-                assignmentRequest.person,
-                assignmentRequest.requestedDate
-        )
-        assignments.forEach { deleteOneAssignment(it) }
-    }
-
-    fun getEffectiveDates(spaceId: Int): Set<LocalDate> {
-        spaceRepository.findByIdOrNull(spaceId) ?: throw SpaceNotExistsException()
-
-        val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
-        val allAssignments: MutableList<Assignment> = mutableListOf()
-        people.forEach { person ->
-            val assignmentsForPerson: List<Assignment> = assignmentRepository.getByPersonId(person.id!!)
-            allAssignments.addAll(assignmentsForPerson)
-        }
-
-        return allAssignments.mapNotNull { it.effectiveDate }.toSet()
-    }
-
-    fun getReassignmentsByExactDate(spaceId: Int, requestedDate: String): List<Reassignment>? {
-        val requestedLocalDate = parseLocalDate(requestedDate)
-
-        var assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = spaceId, requestedDate = requestedLocalDate)
-        var assignmentsWithPreviousDate: MutableList<Assignment> = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedLocalDate)
-
-        return createReassignments(assignmentsWithExactDate, assignmentsWithPreviousDate)
-    }
-
-    private fun createReassignments(assignmentsWithExactDate: List<Assignment>, assignmentsWithPreviousDate: MutableList<Assignment>): List<Reassignment> {
-        val pair = removeDuplicatePersonsAndProducts(assignmentsWithExactDate, assignmentsWithPreviousDate)
-        val assignmentsWithExactDateWithoutDuplicates = pair.first
-        val assignmentsWithPreviousDateWithoutDuplicates = pair.second
-
-        val peopleFromAssignments: Set<Person> = getUniqueSetOfPeopleFromAssignments(assignmentsWithExactDateWithoutDuplicates, assignmentsWithPreviousDateWithoutDuplicates).toSet()
-
-        return peopleFromAssignments.map { person ->
-            val exactAssignmentsForPerson = assignmentsWithExactDateWithoutDuplicates.filter { assignment ->
-                person.id === assignment.person.id
-            }
-            val previousAssignmentsForPerson = assignmentsWithPreviousDateWithoutDuplicates.filter { assignment ->
-                person.id === assignment.person.id
-            }
-
-            val toProductName: String = exactAssignmentsForPerson.map { assignment ->  productRepository.findById(assignment.productId).get().name}.joinToString(" & ")
-            val fromProductName: String = previousAssignmentsForPerson.map { assignment ->  productRepository.findById(assignment.productId).get().name}.joinToString(" & ")
-            Reassignment(
-                    person = person,
-                    fromProductName = fromProductName,
-                    toProductName = toProductName
-            )
-        }
+        assignmentsWithExactDate1 = assignmentsWithExactDate1.filter { !commonPersonIdProductIdPairs.contains(Pair(it.person.id, it.productId)) }
+        assignmentsWithPreviousDate1 = assignmentsWithPreviousDate1.filter { !commonPersonIdProductIdPairs.contains(Pair(it.person.id, it.productId)) }.toMutableList()
+        return Pair(assignmentsWithExactDate1, assignmentsWithPreviousDate1)
     }
 
     private fun getUniqueSetOfPeopleFromAssignments(assignmentsWithExactDateWithoutDuplicates: List<Assignment>, assignmentsWithPreviousDateWithoutDuplicates: MutableList<Assignment>): MutableList<Person> {
@@ -282,39 +232,16 @@ class AssignmentService(
         return peopleFromAssignments
     }
 
-    private fun removeDuplicatePersonsAndProducts(assignmentsWithExactDate: List<Assignment>, assignmentsWithPreviousDate: MutableList<Assignment>): Pair<List<Assignment>, MutableList<Assignment>> {
-        var assignmentsWithExactDate1 = assignmentsWithExactDate
-        var assignmentsWithPreviousDate1 = assignmentsWithPreviousDate
-        val personIdProductIdPairsWithExactDate = assignmentsWithExactDate1.map { Pair(it.person.id, it.productId) }
-        val personIdProductIdPairsForPreviousDate = assignmentsWithPreviousDate1.map { Pair(it.person.id, it.productId) }
-        val commonPersonIdProductIdPairs = personIdProductIdPairsWithExactDate intersect personIdProductIdPairsForPreviousDate
-
-        assignmentsWithExactDate1 = assignmentsWithExactDate1.filter { !commonPersonIdProductIdPairs.contains(Pair(it.person.id, it.productId)) }
-        assignmentsWithPreviousDate1 = assignmentsWithPreviousDate1.filter { !commonPersonIdProductIdPairs.contains(Pair(it.person.id, it.productId)) }.toMutableList()
-        return Pair(assignmentsWithExactDate1, assignmentsWithPreviousDate1)
+    fun deleteAllAssignments(personId: Int) {
+        val assignments: List<Assignment> = getAssignmentsForTheGivenPersonId(personId)
+        assignments.forEach { deleteOneAssignment(it) }
     }
 
-    private fun getAssignmentsWithPreviousDate(assignmentsWithExactDate: List<Assignment>, requestedLocalDate: LocalDate): MutableList<Assignment> {
-        val personIdsWithExactDate = assignmentsWithExactDate.map { assignment -> assignment.person.id }.toSet()
+    @Throws(AssignmentNotExistsException::class, ProductNotExistsException::class)
+    fun updateAssignment(assignmentToUpdate: Assignment) {
+        assignmentRepository.findByIdOrNull(assignmentToUpdate.id!!) ?: throw AssignmentNotExistsException()
+        productRepository.findByIdOrNull(assignmentToUpdate.productId) ?: throw ProductNotExistsException()
 
-        var assignmentsWithPreviousDate: MutableList<Assignment> = mutableListOf()
-        val previousRequestedLocalDate = requestedLocalDate.minusDays(1)
-        personIdsWithExactDate.forEach { personId ->
-            val assignmentsForPerson: List<Assignment> =
-                    assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(
-                            personId = personId!!,
-                            effectiveDate = previousRequestedLocalDate!!
-                    )
-            assignmentsWithPreviousDate.addAll(getAllAssignmentsForPersonOnDate(personId, assignmentsForPerson))
-        }
-        return assignmentsWithPreviousDate
-    }
-
-    private fun parseLocalDate(requestedDate: String): LocalDate {
-        try {
-            return LocalDate.parse(requestedDate)
-        } catch (e: DateTimeParseException) {
-            throw InvalidDateFormatException()
-        }
+        assignmentRepository.saveAndUpdateSpaceLastModified(assignmentToUpdate)
     }
 }

@@ -21,13 +21,14 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 
 @RestController
 class ReportGeneratorController(private val reportGeneratorService: ReportGeneratorService) {
 
-    @GetMapping("/api/reportgenerator/{spaceName}")
-    fun getReportWithNames(@PathVariable spaceName: String): ResponseEntity<List<ReportGenerator>> {
-        return ResponseEntity.ok(reportGeneratorService.getReportWithNames(spaceName))
+    @GetMapping("/api/reportgenerator/{spaceName}/{requestedDate}")
+    fun getReportWithNames(@PathVariable spaceName: String, @PathVariable requestedDate: String): ResponseEntity<List<ReportGenerator>> {
+        return ResponseEntity.ok(reportGeneratorService.getReportWithNames(spaceName, LocalDate.parse(requestedDate)))
     }
 
 }

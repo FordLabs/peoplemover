@@ -51,7 +51,7 @@ describe('SpaceDashbord tests', () => {
     it('should display signout and not invite contributors in menu', async () => {
         const {component} = await createTestComponent();
         await fireEvent.click(component.getByTestId('editContributorsModal'));
-        expect(component.queryByTestId('invite-contributors')).toBeNull();
+        expect(component.queryByTestId('invite-members')).toBeNull();
         expect(component.queryByTestId('sign-out')).not.toBeNull();
     });
 

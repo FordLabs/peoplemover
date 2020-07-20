@@ -19,30 +19,26 @@ import Axios from 'axios';
 import {Report} from './Report';
 import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
+import moment from "moment";
 
 class ReportClient {
 
-    static async getReportsWithNames(): Promise<void> {
-        const spaceName = this.getSpaceName();
-        if (!spaceName || spaceName.length <= 1) {
-            return Promise.reject();
-        }
-        const response = await Axios.get(`${process.env.REACT_APP_URL}reportgenerator/${spaceName}`);
-        const jsonAsCsv = ReportClient.convertToCSV(response.data);
-        fileDownload(jsonAsCsv, `${spaceName}_${new Date().toISOString().split('T')[0]}.csv`);
-
-        return Promise.resolve();
+    static async getReportsWithNames(spaceName: string, date: Date): Promise<void> {
+        const dateAsString = moment(date).format('YYYY-MM-DD');
+        return Axios.get(
+            process.env.REACT_APP_URL + `reportgenerator/${spaceName}/${dateAsString}`,
+            {headers: { 'Content-Type': 'application/json'}}
+        ).then( response => {
+            const jsonAsCsv = ReportClient.convertToCSV(response.data);
+            fileDownload(jsonAsCsv, `${spaceName}_${date.toISOString().split('T')[0]}.csv`);
+        });
     }
 
     static convertToCSV(jsonData: Report[]): string {
-        const fields = ['boardName', 'personName', 'personRole', 'productName'];
+        const fields = ['productName', 'personName', 'personRole'];
 
         const json2csvParser = new Parser({fields});
         return json2csvParser.parse(jsonData);
-    }
-
-    static getSpaceName(): string {
-        return window.location.pathname.split('/')[1];
     }
 }
 

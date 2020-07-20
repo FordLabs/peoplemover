@@ -30,7 +30,7 @@ describe('current space reducer', () => {
         lastModifiedDate: '2019-01-01',
     };
 
-    it('should set current space given space', function () {
+    it('should set current space given space', function() {
         const actualSpace = currentSpaceReducer(
             {} as Space,
             {

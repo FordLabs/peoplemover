@@ -17,44 +17,34 @@
 
 package com.ford.internalprojects.peoplemover.report
 
+import com.ford.internalprojects.peoplemover.assignment.AssignmentService
+import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.stereotype.Service
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import java.time.LocalDate
 
 @Service
 class ReportGeneratorService(
         private val spaceRepository: SpaceRepository,
-        @field:PersistenceContext private val entityManager: EntityManager
+        private val productService: ProductService,
+        private val assignmentService: AssignmentService
 ) {
-    fun getReportWithNames(spaceName: String): List<ReportGenerator> {
-        spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException(spaceName)
+    fun getReportWithNames(spaceName: String, requestedDate: LocalDate): List<ReportGenerator> {
+        val space = spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException(spaceName)
 
-        val nativeQuery = entityManager.createQuery(reportGeneratorQuery, Array<Any?>::class.java)
-
-        val results = nativeQuery.resultList
+        val assignments = assignmentService.getAssignmentsByDate(space.id!!, requestedDate)
+        val products = productService.findAllBySpaceIdAndDate(space.id, requestedDate)
 
         val reportGenerators: MutableList<ReportGenerator> = mutableListOf()
-        results.forEach { result ->
+        assignments.forEach { assignment ->
             reportGenerators.add(ReportGenerator(
-                    productName = result[0].toString(),
-                    personName = result[1].toString(),
-                    personRole = result[2]?.toString() ?: ""
+                    productName = products.find { it.id == assignment.productId }!!.name,
+                    personName = assignment.person.name,
+                    personRole = assignment.person.spaceRole?.name ?: ""
             ))
         }
-        return reportGenerators
-    }
-
-    companion object {
-        private const val reportGeneratorQuery = "select pt.name as ProductName, pn.name as PersonName, sr.name as PersonRole " +
-                "from Space s join Product pt " +
-                "on s.id=pt.spaceId " +
-                "join Assignment a " +
-                "on pt.id= a.productId " +
-                "join Person pn " +
-                "on pn.id=a.person.id " +
-                "left join SpaceRole sr " +
-                "on sr.id = pn.spaceRole.id "
+        return reportGenerators.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.personName })
+                .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.productName })
     }
 }

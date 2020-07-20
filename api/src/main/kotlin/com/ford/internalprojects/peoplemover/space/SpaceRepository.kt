@@ -24,4 +24,5 @@ import org.springframework.stereotype.Repository
 interface SpaceRepository : CrudRepository<Space, Int> {
     fun findByNameIgnoreCase(name: String): Space?
     fun findAllByNameIn(names: List<String>): List<Space>
+    fun findAllByIdIn(ids: List<Int>): List<Space>
 }

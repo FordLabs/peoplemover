@@ -13,21 +13,21 @@
   }
 }
 
-.account-dropdown-container {
-}
 .account-dropdown-options {
   text-align: left;
-  margin-bottom: 8px;
+  padding: 4px 6px;
+}
 
-  &:last-of-type {
-    margin-bottom: 0;
-  }
+.account-dropdown-options:hover {
+  background-color: $gray-6;
+  color: $purple;
+  border-radius: 2px;
 }
 
 .dropdown-container {
   position: absolute;
   background-color: white;
-  width: 140px;
+  width: 150px;
   border-radius: 6px;
   border: 1px solid #EDEBEB;
 
