@@ -36,10 +36,26 @@ describe('People', () => {
                 .should('contain', person.name)
                 .should('contain', person.role)
                 .then(($personCard) => {
-                    cy.get($personCard)
-                        .find('[data-testid=newBadge]')
-                        .should('be.visible');
+                    if (person.isNew) {
+                        cy.get($personCard)
+                            .find('[data-testid=newBadge]')
+                            .should('be.visible');
+                    }
                 });
+
+            cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
+
+            cy.get('@reassignmentDrawer')
+                .should('contain', 'Reassigned')
+                .find('[data-testid=countBadge]').should('have.text', '1');
+
+            cy.get('@reassignmentDrawer')
+                .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
+                .should('have.length', 1)
+                .eq(0)
+                .should('contain', person.name)
+                .should('contain', person.role)
+                .should('contain', `Assigned to ${person.assignTo}`);
         });
     });
 });
@@ -53,9 +69,11 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
         .type(name)
         .should('have.value', name);
 
-    cy.get('[data-testid=personFormIsNewCheckbox]')
-        .check()
-        .should('be.checked');
+    if (isNew) {
+        cy.get('[data-testid=personFormIsNewCheckbox]')
+            .check()
+            .should('be.checked');
+    }
 
     cy.get('@personForm').find('[id=role]').focus().type(role + '{enter}');
 

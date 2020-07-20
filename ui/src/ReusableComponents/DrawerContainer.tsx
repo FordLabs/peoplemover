@@ -27,6 +27,7 @@ interface DrawerContainerProps {
     containee: JSX.Element;
     isDrawerOpen: boolean;
     setIsDrawerOpen(isOpen: boolean): void;
+    testId?: string;
 }
 
 function DrawerContainer({
@@ -36,6 +37,7 @@ function DrawerContainer({
     containee,
     isDrawerOpen,
     setIsDrawerOpen,
+    testId,
 }: DrawerContainerProps): JSX.Element {
     function canRenderCountBadge(): boolean {
         if (numberForCountBadge) {
@@ -45,7 +47,7 @@ function DrawerContainer({
     }
 
     return (
-        <div className={isDrawerOpen ? 'drawerContainer drawerBottomBorder' : 'drawerContainer'}>
+        <div className={isDrawerOpen ? 'drawerContainer drawerBottomBorder' : 'drawerContainer'} data-testid={testId}>
             <div className={isDrawerOpen ? 'drawerHeader' : 'drawerHeader drawerBottomBorder'}
                 onClick={() => setIsDrawerOpen(!isDrawerOpen)}
                 data-testid="drawerCaret">
