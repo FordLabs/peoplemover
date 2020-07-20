@@ -82,13 +82,6 @@
   border-color: $white;
 }
 
-.personNameAndRoleContainer {
-  width: 142px;
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
-  padding: 4px 8px;
-}
-
 div.DefaultColor {
   background-color: $white;
   border-radius: 2px;
@@ -96,19 +89,6 @@ div.DefaultColor {
 
 div.Placeholder {
   background-color: $white;
-}
-
-.personName,
-.personRole {
-  margin: 2px;
-  user-select: none;
-  max-width: 132px;
-}
-
-.personRole {
-  font-size: 10px;
-  line-height: 11px;
-  font-weight: normal;
 }
 
 .personEditIcon {
@@ -137,13 +117,6 @@ div.Placeholder {
   border-bottom-right-radius: 1px;
 }
 
-.notesIcon {
-  position: relative;
-  color: #4F5FAB;
-  margin-left: 4px;
-  font-size: 12px;
-}
-
-.chrisBoyer{
+.chrisBoyer {
   cursor: url(https://emoji.slack-edge.com/T56ARKB1Q/cboyer17/6d69a2301aef49de.png), auto;
 }

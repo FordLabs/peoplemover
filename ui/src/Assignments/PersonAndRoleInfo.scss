@@ -17,6 +17,33 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
+.personNameAndRoleContainer {
+  width: 142px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  padding: 4px 8px;
+
+  .notesIcon {
+    position: relative;
+    color: $purple;
+    margin-left: 4px;
+    font-size: 12px;
+  }
+
+  .personName,
+  .personRole {
+    margin: 2px;
+    user-select: none;
+    max-width: 132px;
+  }
+
+  .personRole {
+    font-size: 10px;
+    line-height: 11px;
+    font-weight: normal;
+  }
+}
+
 .hoverBoxContainer {
   position: absolute;
   background-color: $white;

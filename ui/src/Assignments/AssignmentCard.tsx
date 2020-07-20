@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useEffect, useState} from 'react';
+import React, {ReactElement, RefObject, useEffect, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
@@ -30,8 +30,8 @@ import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
-import moment from "moment";
-import HoverBox from "../ReusableComponents/HoverBox";
+import moment from 'moment';
+import PersonAndRoleInfo from './PersonAndRoleInfo';
 
 interface AssignmentCardProps {
     viewingDate: Date;
@@ -55,12 +55,9 @@ function AssignmentCard({
     setCurrentModal,
     fetchProducts,
 }: AssignmentCardProps): JSX.Element {
-
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     const assignmentEditRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
-    const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
-    const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
 
     function onEditMenuClosed(): void {
         setEditMenuIsOpened(false);
@@ -152,19 +149,6 @@ function AssignmentCard({
             }];
     }
 
-    function onNoteHover(boxIsHovered = false): void {
-        if (boxIsHovered) {
-            const timeout = setTimeout(() => {
-                setHoverBoxIsOpened(boxIsHovered);
-            }, 500);
-
-            setHoverTimeout(timeout);
-        } else {
-            setHoverBoxIsOpened(boxIsHovered);
-            if (hoverTimeout) clearTimeout(hoverTimeout);
-        }
-    }
-
     useEffect(() => {
         let color: string | undefined;
         if (assignment.person.spaceRole && assignment.person.spaceRole.color) {
@@ -177,7 +161,6 @@ function AssignmentCard({
         }
     }, [assignment]);
 
-
     return (
         <div
             className={`personContainer ${container === 'productDrawerContainer' ? 'borderedPeople' : ''} ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}`}
@@ -186,25 +169,10 @@ function AssignmentCard({
             onMouseDown={e => startDraggingAssignment!!(assignmentRef, assignment, e)}
         >
             {assignment.person.newPerson ? <NewBadge/> : null}
-            <div data-testid={`assignmentCard${assignment.id}info`}
-                className="personNameAndRoleContainer">
-                <div className={`${assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
-                    onMouseEnter={e => onNoteHover(true)}
-                    onMouseLeave={e => onNoteHover(false)}>
-                    {assignment.person.name}
-                    {assignment.person.notes !== '' &&
-                        <div className="fas fa-file notesIcon">
-                            {hoverBoxIsOpened && <HoverBox notes={assignment.person.notes!}/>}
-                        </div>
-                    }
-                </div>
-                <div className="personRole">
-                    {assignment.person.spaceRole && assignment.person.spaceRole.name}
-                </div>
-            </div>
+            <PersonAndRoleInfo assignment={assignment} />
             <div
                 ref={assignmentEditRef}
-                className={`personRoleColor`}
+                className="personRoleColor"
                 data-testid={`editPersonIconContainer-${assignment.id}`}
                 onClick={toggleEditMenu}>
                 <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>
