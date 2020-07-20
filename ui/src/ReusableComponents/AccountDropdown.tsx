@@ -62,12 +62,6 @@ function AccountDropdown({
                         Download Report
                     </div>
                 }
-                {!hideSpaceButtons &&
-                    <div data-testid="download-report" className="account-dropdown-options"
-                        onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, viewingDate) } }>
-                        Download Report
-                    </div>
-                }
                 <div data-testid="sign-out" className="account-dropdown-options" onClick={() => clearAccessTokenCookie()}>
                     Sign Out
                 </div>
