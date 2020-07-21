@@ -90,7 +90,7 @@ function ProductFilter({
         const tags: Array<Trait> = tagsResponse.data;
         return tags.map((tag: Trait): FilterOption => ({
             label: tag.name,
-            value: tag.id.toString(),
+            value: tag.id + '_' + tag.name,
             selected: tagFilters.includes(tag.name),
         }));
     }

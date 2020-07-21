@@ -133,7 +133,7 @@ describe('filter products', () => {
                 expect(ProductTagClient.add).toBeCalledTimes(1);
 
                 const productForm = await app.findByTestId('productForm');
-                expect(productForm).toHaveFormValues({productTags: '9'});
+                expect(productForm).toHaveFormValues({productTags: '9_Fin Tech'});
             });
             fireEvent.click(await app.findByTestId('modalCloseButton'));
             const productTag = await app.findByLabelText('Filter:');

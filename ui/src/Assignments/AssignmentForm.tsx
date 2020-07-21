@@ -173,7 +173,7 @@ function AssignmentForm({
     function createOption(name: string, id: number): Option {
         return ({
             label: name,
-            value: id.toString(),
+            value: id.toString() + '_' + name,
         });
     }
 
