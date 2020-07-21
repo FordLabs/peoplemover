@@ -323,7 +323,7 @@ describe('Products', () => {
 
                 const productForm = await app.findByTestId('productForm');
 
-                expect(productForm).toHaveFormValues({productTags: ['9', '10']});
+                expect(productForm).toHaveFormValues({productTags: ['9_Fin Tech', '10_Some tag']});
             });
         });
 

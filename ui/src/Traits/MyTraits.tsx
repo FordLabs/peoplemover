@@ -131,16 +131,16 @@ function MyTraits({
         case TraitAction.ADD:
             options = [
                 ...allGroupedTagFilterOptions[index].options,
-                {label: trait.name, value: trait.id.toString(), selected: false},
+                {label: trait.name, value: trait.id.toString() + '_' + trait.name, selected: false},
             ];
             break;
         case TraitAction.EDIT:
             options = allGroupedTagFilterOptions[index].options.map(val =>
-                val.value !== trait.id.toString() ?
+                !val.value.includes(trait.id.toString() + '_') ?
                     val :
                     {
                         label: trait.name,
-                        value: trait.id.toString(),
+                        value: trait.id.toString() + '_' + trait.name,
                         selected: val.selected,
                     }
             );

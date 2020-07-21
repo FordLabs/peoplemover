@@ -193,7 +193,7 @@ function ProductForm({
 
     function optionToSpaceLocation(option: Option): SpaceLocation {
         return {
-            id: Number.parseInt(option.value, 10),
+            id: Number.parseInt(option.value.split('_')[0], 10),
             name: option.label,
             spaceId,
         };
@@ -206,10 +206,10 @@ function ProductForm({
         };
     }
 
-    function createTagOption(label: string, value: number): Option {
+    function createTagOption(label: string, id: number): Option {
         return {
             label: label,
-            value: value.toString(),
+            value: id.toString() + '_' + label,
         };
     }
 
@@ -255,7 +255,7 @@ function ProductForm({
     function addGroupedTagFilterOptions(tagFilterIndex: number, trait: Trait): void {
         const addedFilterOption: FilterOption = {
             label: trait.name,
-            value: trait.id.toString(),
+            value: trait.id.toString() + '_' + trait.name,
             selected: false,
         };
         const updatedTagFilterOptions: AllGroupedTagFilterOptions =  {
