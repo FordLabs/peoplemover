@@ -31,7 +31,7 @@ import {Product} from '../Products/Product';
 import {Person} from '../People/Person';
 import LocationClient from '../Locations/LocationClient';
 import selectEvent from 'react-select-event';
-import moment from "moment";
+import moment from 'moment';
 
 describe('Products', () => {
 

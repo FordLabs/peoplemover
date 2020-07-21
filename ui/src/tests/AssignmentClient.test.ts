@@ -120,7 +120,7 @@ describe('the assignment client', () => {
         expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
-    it('should get reassignments given assignment', async() => {
+    it('should get reassignments given assignment', async () => {
         Axios.get = jest.fn();
         process.env.REACT_APP_URL = 'testUrl/';
 

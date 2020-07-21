@@ -1,0 +1,65 @@
+/*!
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Application/Styleguide/Colors.scss';
+
+.personNameAndRoleContainer {
+  width: 142px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  padding: 4px 8px;
+
+  .notesIcon {
+    position: relative;
+    color: $purple;
+    margin-left: 4px;
+    font-size: 12px;
+  }
+
+  .personName,
+  .personRole {
+    margin: 2px;
+    user-select: none;
+    max-width: 132px;
+  }
+
+  .personRole {
+    font-size: 10px;
+    line-height: 11px;
+    font-weight: normal;
+  }
+}
+
+.hoverBoxContainer {
+  position: absolute;
+  background-color: $white;
+  border: 2px solid $gray-5;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  top: 5px;
+  left: 5px;
+  width: 173px;
+  z-index: 10;
+  color: $gray-1;
+  font-size: 12px;
+  font-weight: normal;
+
+  .hoverBoxNotes {
+    margin: 16px 20px;
+    line-height: 18px;
+  }
+}

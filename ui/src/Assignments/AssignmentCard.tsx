@@ -31,6 +31,7 @@ import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
+import PersonAndRoleInfo from './PersonAndRoleInfo';
 
 interface AssignmentCardProps {
     viewingDate: Date;
@@ -54,7 +55,6 @@ function AssignmentCard({
     setCurrentModal,
     fetchProducts,
 }: AssignmentCardProps): JSX.Element {
-
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     const assignmentEditRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
@@ -161,7 +161,6 @@ function AssignmentCard({
         }
     }, [assignment]);
 
-
     return (
         <div
             className={`personContainer ${container === 'productDrawerContainer' ? 'borderedPeople' : ''} ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}`}
@@ -170,18 +169,10 @@ function AssignmentCard({
             onMouseDown={e => startDraggingAssignment!!(assignmentRef, assignment, e)}
         >
             {assignment.person.newPerson ? <NewBadge/> : null}
-            <div data-testid={`assignmentCard${assignment.id}info`}
-                className={`personNameAndRoleContainer`}>
-                <p className={assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''}>
-                    {assignment.person.name}
-                </p>
-                <p className="personRole">
-                    {assignment.person.spaceRole && assignment.person.spaceRole.name}
-                </p>
-            </div>
+            <PersonAndRoleInfo assignment={assignment} />
             <div
                 ref={assignmentEditRef}
-                className={`personRoleColor`}
+                className="personRoleColor"
                 data-testid={`editPersonIconContainer-${assignment.id}`}
                 onClick={toggleEditMenu}>
                 <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>
