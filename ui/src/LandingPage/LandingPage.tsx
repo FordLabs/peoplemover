@@ -25,7 +25,7 @@ function LandingPage(): JSX.Element {
 
     function adfsLoginButton(): JSX.Element | undefined {
         if (process.env.REACT_APP_ADFS_ENABLED === 'true') {
-            return <button className="landing-page-info-adfs-login">Login with CDSID</button>;
+            return <a href={'/adfs/test/route'}><button className="landing-page-info-adfs-login">Login with CDSID</button></a>;
         }
     }
     return (

@@ -5,12 +5,12 @@ import {AuthenticatedRoute} from "../AuthenticatedRoute";
 import {createMemoryHistory, LocationState, MemoryHistory} from "history";
 
 describe("AuthenticatedRoute", function () {
-    let originalWindow: any;
+    let originalWindow: Window;
 
     beforeEach(() => {
         originalWindow = window;
         delete window.location;
-        (window as any) = Object.create(window);
+        (window as Window) = Object.create(window);
         window.sessionStorage.clear();
     });
 

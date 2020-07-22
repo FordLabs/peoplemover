@@ -32,6 +32,8 @@ import LandingPage from './LandingPage/LandingPage';
 import RedirectAuthPage from './ReusableComponents/RedirectAuthPage';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import ValidationGuard from './Validation/ValidationGuard';
+import OAuthRedirect from "./ReusableComponents/OAuthRedirect";
+import {AuthenticatedRoute} from "./AuthenticatedRoute";
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -71,6 +73,14 @@ ReactDOM.render(
                 <Route exact path="/user/login">
                     <RedirectAuthPage isSignup={false}/>
                 </Route>
+
+                <Route exact path={"/adfs/catch"}>
+                    <OAuthRedirect redirectUrl={"/user/dashboard"}/>
+                </Route>
+
+                <AuthenticatedRoute exact path={"/adfs/test/route"}>
+                    <div>Hello, World!</div>
+                </AuthenticatedRoute>
 
                 <Route exact path="/user/dashboard">
                     <SpaceDashboard/>
