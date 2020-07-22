@@ -257,5 +257,21 @@ describe('Assignment Card', () => {
                 expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
             });
         });
+
+        it('should not show hover box when assignment card is unassigned', async () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={true}/>
+            );
+
+            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
+
+            fireEvent.mouseEnter(underTest.getByTestId('personName'));
+            await wait(() => {
+                expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            });
+        });
     });
 });

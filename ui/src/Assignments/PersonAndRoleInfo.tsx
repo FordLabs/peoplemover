@@ -19,11 +19,12 @@ import React, {ReactElement, useState} from 'react';
 import {Assignment} from './Assignment';
 import './PersonAndRoleInfo.scss';
 
-interface  Props {
+interface Props {
     assignment: Assignment;
+    showHoverBox: boolean;
 }
 
-const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment }: Props): ReactElement => {
+const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, showHoverBox}: Props): ReactElement => {
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
 
@@ -39,7 +40,7 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment }: Props): React
     };
 
     const onNoteHover = (boxIsHovered = false): void => {
-        if (boxIsHovered) {
+        if (boxIsHovered && showHoverBox) {
             const timeout = setTimeout(() => {
                 setHoverBoxIsOpened(boxIsHovered);
             }, 500);
@@ -61,7 +62,7 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment }: Props): React
                 {assignment.person.name}
                 {!!assignment.person.notes &&
                     <div className="fas fa-file notesIcon" data-testid="notesIcon">
-                        {hoverBoxIsOpened && <HoverBox notes={assignment.person.notes!}/>}
+                        {hoverBoxIsOpened && showHoverBox && <HoverBox notes={assignment.person.notes!}/>}
                     </div>
                 }
             </div>
