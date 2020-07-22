@@ -89,6 +89,16 @@ class AssignmentService(
         }
     }
 
+    fun changeEffectiveDateForOneAssignment(assignment: Assignment, updatedDate: LocalDate) {
+        val updatedAssignment = assignment.copy(id = null, effectiveDate = updatedDate)
+        deleteOneAssignment(assignment)
+
+        val allAssignments = assignmentRepository.findAllByPersonAndEffectiveDate(assignment.person, assignment.effectiveDate!!)
+                .map{ it.copy(id = null, effectiveDate = updatedDate) }
+                .plus(updatedAssignment)
+        assignmentRepository.saveAll(allAssignments)
+    }
+
     fun revertAssignmentsForDate(requestedDate: LocalDate, person: Person) {
         deleteAssignmentsForDate(requestedDate, person)
         val existingAssignments = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)

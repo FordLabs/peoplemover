@@ -63,6 +63,11 @@ class ProductService(
             if (foundProduct.id != productEditRequest.id) {
                 throw ProductAlreadyExistsException()
             }
+            if (foundProduct.startDate!! < productEditRequest.startDate!!) {
+                foundProduct.assignments.forEach{
+                    assignmentService.changeEffectiveDateForOneAssignment(it, productEditRequest.startDate)
+                }
+            }
         }
 
         val product: Product = ProductEditRequest.toProduct(productEditRequest)
