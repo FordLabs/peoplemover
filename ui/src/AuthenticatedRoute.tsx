@@ -33,7 +33,7 @@ function RedirectToADFS(){
     let oauthUri: string = process.env.REACT_APP_ADFS_URL_TEMPLATE!!;
     const clientId: string = process.env.REACT_APP_ADFS_CLIENT_ID!!;
     const resource: string = process.env.REACT_APP_ADFS_RESOURCE!!;
-    const redirectUri: string = `${window.location.origin}/oauth/redirect`!!;
+    const redirectUri: string = `${window.location.origin}/adfs/catch`!!;
 
     oauthUri = oauthUri.replace('%s', clientId);
     oauthUri = oauthUri.replace('%s', resource);
