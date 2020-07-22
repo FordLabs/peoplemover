@@ -89,14 +89,17 @@ class AssignmentService(
         }
     }
 
-    fun changeEffectiveDateForOneAssignment(assignment: Assignment, updatedDate: LocalDate) {
-        val updatedAssignment = assignment.copy(id = null, effectiveDate = updatedDate)
+    fun changeProductStartDateForOneAssignment(assignment: Assignment, updatedDate: LocalDate) {
+        val currentAssignments = getAssignmentsForTheGivenPersonIdAndDate(assignment.person.id!!, updatedDate)
         deleteOneAssignment(assignment)
 
-        val allAssignments = assignmentRepository.findAllByPersonAndEffectiveDate(assignment.person, assignment.effectiveDate!!)
-                .map{ it.copy(id = null, effectiveDate = updatedDate) }
-                .plus(updatedAssignment)
-        assignmentRepository.saveAll(allAssignments)
+        if (currentAssignments.contains(assignment)) {
+            val updatedAssignment = assignment.copy(id = null, effectiveDate = updatedDate)
+            val allAssignments = assignmentRepository.findAllByPersonAndEffectiveDate(assignment.person, assignment.effectiveDate!!)
+                    .map { it.copy(id = null, effectiveDate = updatedDate) }
+                    .plus(updatedAssignment)
+            assignmentRepository.saveAll(allAssignments)
+        }
     }
 
     fun revertAssignmentsForDate(requestedDate: LocalDate, person: Person) {

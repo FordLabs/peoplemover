@@ -289,5 +289,31 @@ class ProductControllerInTimeApiTest {
         assertThat(actualAssignments[2]).isEqualToIgnoringGivenFields(expectedNewAssignment, "id")
     }
 
+    @Test
+    fun `PUT should delete old assignment when moving start date of product to future date while person is on a different`() {
+        assignmentRepository.save(Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
+        val currentAssignment = assignmentRepository.save(Assignment(person= person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1)))
+
+        val newProductStartDate = LocalDate.parse(may2)
+
+        val productEditRequest = ProductEditRequest(
+                name = product1.name,
+                spaceId = space.id!!,
+                id = product1.id!!,
+                startDate = newProductStartDate
+        )
+
+        mockMvc.perform(put("/api/product/${product1.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productEditRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualAssignments = assignmentRepository.findAll().toList()
+
+        assertThat(assignmentRepository.count()).isOne()
+        assertThat(actualAssignments.first()).isEqualTo(currentAssignment)
+    }
+
 
 }

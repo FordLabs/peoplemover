@@ -65,7 +65,7 @@ class ProductService(
             }
             if (foundProduct.startDate!! < productEditRequest.startDate!!) {
                 foundProduct.assignments.forEach{
-                    assignmentService.changeEffectiveDateForOneAssignment(it, productEditRequest.startDate)
+                    assignmentService.changeProductStartDateForOneAssignment(it, productEditRequest.startDate)
                 }
             }
         }
