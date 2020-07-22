@@ -16,7 +16,7 @@
  */
 
 import React, {useState} from 'react';
-import {Redirect} from "react-router";
+import {Redirect} from 'react-router';
 
 interface OAuthRedirectProps {
     redirectUrl: string;
