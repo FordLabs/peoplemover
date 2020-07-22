@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2019 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {Router} from "react-router";
 import * as React from "react";
 import {render, RenderResult} from "@testing-library/react";
@@ -28,7 +45,7 @@ describe("AuthenticatedRoute", function () {
     it('should redirect to Auth provider when not Authenticated', function () {
         window.location = {href: '', origin: 'http://localhost'} as Location;
         renderComponent({authenticated: false});
-        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/oauth/redirect';
+        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
         expect(window.location.href).toEqual(route);
     });
 
@@ -36,7 +53,7 @@ describe("AuthenticatedRoute", function () {
         window.location = {href: '', origin: 'http://localhost'} as Location;
         window.sessionStorage.setItem('accessToken', 'null');
         renderComponent({authenticated: false});
-        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/oauth/redirect';
+        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
         expect(window.location.href).toEqual(route);
     });
 
