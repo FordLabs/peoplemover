@@ -45,7 +45,7 @@ describe("AuthenticatedRoute", function () {
     it('should redirect to Auth provider when not Authenticated', function () {
         window.location = {href: '', origin: 'http://localhost'} as Location;
         renderComponent({authenticated: false});
-        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/oauth/redirect';
+        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
         expect(window.location.href).toEqual(route);
     });
 
@@ -53,7 +53,7 @@ describe("AuthenticatedRoute", function () {
         window.location = {href: '', origin: 'http://localhost'} as Location;
         window.sessionStorage.setItem('accessToken', 'null');
         renderComponent({authenticated: false});
-        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/oauth/redirect';
+        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
         expect(window.location.href).toEqual(route);
     });
 
