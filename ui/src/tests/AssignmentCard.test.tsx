@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent, wait} from '@testing-library/react';
+import {act, fireEvent, wait} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from '../Assignments/AssignmentCard';
 import TestUtils, {renderWithRedux} from './TestUtils';
@@ -231,9 +231,10 @@ describe('Assignment Card', () => {
 
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
 
-            fireEvent.mouseEnter(underTest.getByTestId('personName'));
-
-            jest.advanceTimersByTime(500);
+            act(() => {
+                fireEvent.mouseEnter(underTest.getByTestId('personName'));
+                jest.advanceTimersByTime(500);
+            });
 
             expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
             expect(underTest.getByText('This is a note')).toBeVisible();
@@ -248,16 +249,18 @@ describe('Assignment Card', () => {
 
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
 
-            fireEvent.mouseEnter(underTest.getByTestId('personName'));
-
-            jest.advanceTimersByTime(500);
+            act(() => {
+                fireEvent.mouseEnter(underTest.getByTestId('personName'));
+                jest.advanceTimersByTime(500);
+            });
 
             expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
             expect(underTest.getByText('This is a note')).toBeVisible();
 
-            fireEvent.mouseLeave(underTest.getByTestId('personName'));
-
-            jest.advanceTimersByTime(500);
+            act(() => {
+                fireEvent.mouseLeave(underTest.getByTestId('personName'));
+                jest.advanceTimersByTime(500);
+            });
 
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
         });
@@ -272,9 +275,10 @@ describe('Assignment Card', () => {
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
             expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
 
-            fireEvent.mouseEnter(underTest.getByTestId('personName'));
-
-            jest.advanceTimersByTime(500);
+            act(() => {
+                fireEvent.mouseEnter(underTest.getByTestId('personName'));
+                jest.advanceTimersByTime(500);
+            });
 
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
         });
