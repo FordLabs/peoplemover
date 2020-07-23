@@ -70,7 +70,9 @@ class AssignmentService(
             allAssignments.addAll(assignmentsForPerson)
         }
 
-        return allAssignments.mapNotNull { it.effectiveDate }.toSet()
+        val uniqueEffectiveDates = allAssignments.mapNotNull { it.effectiveDate }.toSet()
+
+        return uniqueEffectiveDates.filterNot { effectiveDate -> getReassignmentsByExactDate(spaceId, effectiveDate).isNullOrEmpty() }.toSet()
     }
 
     fun getReassignmentsByExactDate(spaceId: Int, requestedDate: LocalDate): List<Reassignment>? {

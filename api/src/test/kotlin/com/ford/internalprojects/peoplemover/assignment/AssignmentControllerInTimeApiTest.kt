@@ -274,13 +274,6 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val savedAssignmentThree = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = null,
-                spaceId = space.id!!
-        ))
-
         val response = mockMvc.perform(get("/api/assignment/dates/${space.id}"))
                 .andExpect(status().isOk)
                 .andReturn().response
@@ -289,9 +282,9 @@ class AssignmentControllerInTimeApiTest {
                 response.contentAsString,
                 objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, LocalDate::class.java))
 
-        assertThat(result).hasSize(2)
-        assertThat(result).contains(savedAssignmentOne.effectiveDate, savedAssignmentTwo.effectiveDate)
-        assertThat(result).doesNotContain(savedAssignmentThree.effectiveDate)
+        assertThat(result.count()).isOne()
+        assertThat(result).contains(savedAssignmentTwo.effectiveDate)
+        assertThat(result).doesNotContain(savedAssignmentOne.effectiveDate)
     }
 
     @Test
