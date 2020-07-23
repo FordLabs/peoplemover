@@ -20,6 +20,7 @@ import * as React from "react";
 import {render, RenderResult} from "@testing-library/react";
 import {AuthenticatedRoute} from "../AuthenticatedRoute";
 import {createMemoryHistory, LocationState, MemoryHistory} from "history";
+import Cookies from "universal-cookie";
 
 describe("AuthenticatedRoute", function () {
     let originalWindow: Window;
@@ -28,7 +29,7 @@ describe("AuthenticatedRoute", function () {
         originalWindow = window;
         delete window.location;
         (window as Window) = Object.create(window);
-        window.sessionStorage.clear();
+        new Cookies().remove('accessToken');
     });
 
     afterEach(() => {
@@ -49,9 +50,9 @@ describe("AuthenticatedRoute", function () {
         expect(window.location.href).toEqual(route);
     });
 
-    it('should redirect to Auth provider when token is null string', function () {
+    it('should redirect to Auth provider when token is undefined string', function () {
         window.location = {href: '', origin: 'http://localhost'} as Location;
-        window.sessionStorage.setItem('accessToken', 'null');
+        window.sessionStorage.setItem('accessToken', 'undefined');
         renderComponent({authenticated: false});
         const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
         expect(window.location.href).toEqual(route);
@@ -64,7 +65,7 @@ describe("AuthenticatedRoute", function () {
         process.env.REACT_APP_ADFS_CLIENT_ID = 'urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa';
         process.env.REACT_APP_ADFS_RESOURCE = 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb';
         if(authenticated) {
-            window.sessionStorage.setItem('accessToken', 'TOTALLY_REAL_ACCESS_TOKEN');
+            new Cookies().set('accessToken', 'TOTALLY_REAL_ACCESS_TOKEN', {path: '/'});
         }
 
         const component = render(
