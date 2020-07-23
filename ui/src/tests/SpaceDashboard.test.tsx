@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
 import SpaceDashboard from '../SpaceDashboard/SpaceDashboard';
 import React from 'react';
@@ -29,6 +30,7 @@ import moment from 'moment';
 interface TestComponent {
     component: RenderResult;
     fakeAccessToken: string;
+    cookies: Cookies;
     history: History;
 }
 
@@ -85,7 +87,8 @@ describe('SpaceDashbord tests', () => {
 
     const createTestComponent = async (tokenValid = true): Promise<TestComponent> => {
         const fakeAccessToken = 'FAKE_TOKEN123';
-        window.sessionStorage.setItem('accessToken', fakeAccessToken);
+        const cookies = new Cookies();
+        cookies.set('accessToken', fakeAccessToken);
         const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
         SpaceClient.getSpacesForUser = jest.fn(() => Promise.resolve({
             data: [{name: 'Space1', lastModifiedDate: '2020-04-14T18:06:11.791+0000'}],
@@ -106,6 +109,6 @@ describe('SpaceDashbord tests', () => {
             );
         });
 
-        return {component, fakeAccessToken, history};
+        return {component, fakeAccessToken, cookies, history};
     };
 });

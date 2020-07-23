@@ -46,13 +46,16 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
     }
 
     async function refreshUserSpaces(): Promise<void> {
-        const accessToken = window.sessionStorage.getItem('accessToken')!!;
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
         const spaces = (await SpaceClient.getSpacesForUser(accessToken)).data;
         setUserSpaces(spaces);
     }
 
     function validateToken(): Promise<void> {
-        const accessToken = window.sessionStorage.getItem('accessToken')!!;
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
+
         return AccessTokenClient.validateAccessToken(accessToken).then();
     }
 

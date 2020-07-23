@@ -31,7 +31,8 @@ function RedirectAuthPage({isSignup}: Props): JSX.Element {
     const [redirectPage, setRedirectPage] = useState<JSX.Element>(<></>);
 
     function redirectToLoginPage(): void {
-        window.sessionStorage.removeItem('accessToken');
+        const cookies = new Cookies();
+        cookies.remove('accessToken', {path: '/'});
 
         const redirectUri = encodeURIComponent(window.location.href);
         const authquestClientID = encodeURIComponent(process.env.REACT_APP_AUTHQUEST_CLIENT_ID as string);
@@ -42,12 +43,14 @@ function RedirectAuthPage({isSignup}: Props): JSX.Element {
     }
 
     function userVisitsPageWithTokenFlow(accessToken: string): void {
+        const cookies = new Cookies();
+
         AccessTokenClient.validateAccessToken(accessToken)
             .then(() => {
 
                 AccessTokenClient.refreshAccessToken(accessToken).then((response) => {
                     const refreshToken: AccessTokenResponse = response.data;
-                    window.sessionStorage.setItem('accessToken', refreshToken.access_token);
+                    cookies.set('accessToken', refreshToken.access_token, {path: '/'});
 
                     setRedirectPage(<Redirect to={'/user/dashboard'}/>);
                 }).catch((err) => {
@@ -71,7 +74,7 @@ function RedirectAuthPage({isSignup}: Props): JSX.Element {
                 const accessTokenResponse: AccessTokenResponse = response.data;
                 const accessToken = accessTokenResponse.access_token;
 
-                window.sessionStorage.setItem('accessToken', accessToken);
+                cookies.set('accessToken', accessToken, {path: '/'});
 
                 setRedirectPage(<Redirect to={'/user/dashboard'}/>);
             }).catch(err => {
@@ -81,7 +84,9 @@ function RedirectAuthPage({isSignup}: Props): JSX.Element {
     }
 
     useEffect(() => {
-        const accessToken = window.sessionStorage.getItem('accessToken');
+
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
 
         if (accessToken) {
             userVisitsPageWithTokenFlow(accessToken);

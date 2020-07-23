@@ -34,7 +34,8 @@ function AccountDropdown({
     }
 
     function clearAccessTokenCookie() {
-        window.sessionStorage.removeItem('accessToken');
+        const cookie = new Cookies();
+        cookie.remove('accessToken', {path: '/'});
 
         setRedirect(<Redirect to="/"/>);
     }

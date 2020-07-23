@@ -19,6 +19,7 @@ import React from 'react';
 import RedirectAuthPage from '../ReusableComponents/RedirectAuthPage';
 import {mount} from 'enzyme';
 import Axios, {AxiosResponse} from 'axios';
+import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
@@ -40,6 +41,7 @@ describe('should redirect to login page', () => {
         originalWindow = window;
         delete window.location;
         (window as Window) = Object.create(window);
+
     });
 
     afterEach(() => {
@@ -66,7 +68,7 @@ describe('should redirect to login page', () => {
         expect(window.location.href).toEqual(`${process.env.REACT_APP_AUTHQUEST_URL}/signup?redirect_uri=${redirectUri}&client_id=${authquestClientID}`);
     });
 
-    it('should ask the backend for the accessToken if an access_code is in the url and store it in session storage', async () => {
+    it('should ask the backend for the accessToken if an access_code is in the url and store it in the cookies', async () => {
         Axios.post = jest.fn(() => Promise.resolve({
             data: {
                 'access_token': 'TOKEN123',
@@ -88,19 +90,26 @@ describe('should redirect to login page', () => {
 
         });
 
-        const accessToken = window.sessionStorage.getItem('accessToken');
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
+
         expect(Axios.post).toHaveBeenCalledWith(`${process.env.REACT_APP_URL}access_token`, {accessCode: '123ABC'});
         expect(accessToken).toEqual('TOKEN123');
+
+        cookies.remove('accessToken');
     });
 
 
-    it('should check if accessToken is valid if one exists in session storage', async () => {
+    it('should check if accessToken is valid if one exists in the cookies', async () => {
         (window.location as MockLocation) = {
             href: 'http://localhost:8080/api/',
         };
 
         const fakeAccessToken = 'FAKE_TOKEN123';
-        window.sessionStorage.setItem('accessToken', fakeAccessToken);
+
+        const cookies = new Cookies();
+        cookies.set('accessToken', fakeAccessToken);
+
         const originalFunc = AccessTokenClient.validateAccessToken.bind({});
 
         AccessTokenClient.validateAccessToken = jest.fn(() => Promise.resolve({
@@ -120,11 +129,14 @@ describe('should redirect to login page', () => {
         expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
 
         AccessTokenClient.validateAccessToken = originalFunc;
+        cookies.remove('accessToken');
     });
 
     it('should refresh access token after access token is successfully validated', async () => {
         const fakeAccessToken = 'FAKE_TOKEN123';
-        window.sessionStorage.setItem('accessToken', fakeAccessToken);
+
+        const cookies = new Cookies();
+        cookies.set('accessToken', fakeAccessToken);
 
         const originalFunc = AccessTokenClient.validateAccessToken.bind({});
 
@@ -153,20 +165,27 @@ describe('should redirect to login page', () => {
 
         expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
         expect(AccessTokenClient.refreshAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-        expect(window.sessionStorage.getItem('accessToken')).toEqual('NEW_TOKEN');
+        expect(cookies.get('accessToken')).toEqual('NEW_TOKEN');
 
         AccessTokenClient.validateAccessToken = originalFunc;
         AccessTokenClient.refreshAccessToken = origRefreshFunc;
+
+        cookies.remove('accessToken');
     });
 
-    it('should clear access_token from session storage if the token is not valid', async () => {
+    // We are trying to test setting and removing cookies on the root path only. The 'universal-cookies' library
+    // we are using will make this test pass if cookies.remove is called with {path: '/'} or cookies.remove()
+    // even though if cookies.remove() is called the implementation will fail.
+    // Keep this in mind!
+    it('should clear access_token from the cookies if the token is not valid', async () => {
         (window.location as MockLocation) = {
             href: 'http://localhost/',
         };
 
         const fakeAccessToken = 'INVALID_TOKEN';
 
-        window.sessionStorage.setItem('accessToken', fakeAccessToken);
+        const cookies = new Cookies();
+        cookies.set('accessToken', fakeAccessToken, {path: '/'});
 
         const originalFunc = AccessTokenClient.validateAccessToken.bind({});
 
@@ -185,9 +204,11 @@ describe('should redirect to login page', () => {
         });
 
         expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-        expect(window.sessionStorage.getItem('accessToken')).toBeNull();
+        expect(cookies.get('accessToken')).toBeUndefined();
 
         AccessTokenClient.validateAccessToken = originalFunc;
+
+        cookies.remove('accessToken');
     });
 
 

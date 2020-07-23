@@ -37,8 +37,11 @@ function CreateSpaceForm({
     const [spaceName, setSpaceName] = useState<string>('');
 
     async function addSpace(): Promise<void> {
-        const accessToken = window.sessionStorage.getItem('accessToken')!!;
-        await SpaceClient.createSpaceForUser(spaceName, accessToken);
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
+
+        const spaceWithAccessTokenResponse = (await SpaceClient.createSpaceForUser(spaceName, accessToken)).data;
+        cookies.set('accessToken', spaceWithAccessTokenResponse.accessToken, {path: '/'});
 
         onSubmit();
         closeModal();
