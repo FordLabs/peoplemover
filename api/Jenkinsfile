@@ -122,6 +122,15 @@ pipeline {
                                         -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
                                         -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
                                         -Pcf.environment.authquest.url=$authquest_qa_url \
+                                        -Pcf.environment.react.app.url=https://$branchName.$peoplemover_pcf_org \
+                                        -Pcf.environment.react.app.authquest_url=$authquest_qa_url \
+                                        -Pcf.environment.react.app.authquest_client_id=$authquest_qa_client_id \
+                                        -Pcf.environment.react.app.auth_enabled=false \
+                                        -Pcf.environment.react.app.invite_users_to_space_enabled=true \
+                                        -Pcf.environment.react.app.adfs_enabled=true \
+                                        -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
+                                        -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
+                                        -Pcf.environment.react.app.adfs_resource=$adfs_resource \
                                 """.stripIndent()
                             }
                         }
@@ -180,6 +189,12 @@ pipeline {
                                         -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
                                         -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
                                         -Pcf.environment.authquest.url=$authquest_qa_url \
+                                        -Pcf.environment.react.app.url=https://stagepeoplemover.$peoplemover_pcf_org \
+                                        -Pcf.environment.react.app.authquest_url=$authquest_qa_url \
+                                        -Pcf.environment.react.app.authquest_client_id=$authquest_qa_client_id \
+                                        -Pcf.environment.react.app.auth_enabled=true \
+                                        -Pcf.environment.react.app.invite_users_to_space_enabled=true \
+                                        -Pcf.environment.react.app.adfs_enabled=false \
                                 """.stripIndent()
                             }
                         }
@@ -207,6 +222,12 @@ pipeline {
                                         -Pcf.environment.authquest.client_id=$authquest_prod_client_id \
                                         -Pcf.environment.authquest.client_secret=$authquest_prod_client_secret \
                                         -Pcf.environment.authquest.url=$authquest_prod_url \
+                                        -Pcf.environment.react.app.url=https://peoplemover2.$peoplemover_pcf_org \
+                                        -Pcf.environment.react.app.authquest_url=$authquest_prod_url \
+                                        -Pcf.environment.react.app.authquest_client_id=$authquest_prod_client_id \
+                                        -Pcf.environment.react.app.auth_enabled=true \
+                                        -Pcf.environment.react.app.invite_users_to_space_enabled=true \
+                                        -Pcf.environment.react.app.adfs_enabled=false \
                                 """.stripIndent()
                             }
                         }
