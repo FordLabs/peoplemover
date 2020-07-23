@@ -9,7 +9,7 @@ class EnvironmentConfiguration {
     var authquest_url: String = ""
     var authquest_client_id: String = ""
     var auth_enabled: Boolean = false
-    var invite_users_to_space: Boolean = false
+    var invite_users_to_space_enabled: Boolean = false
     var adfs_enabled: Boolean = false
     var adfs_url_template: String = ""
     var adfs_client_id: String = ""
