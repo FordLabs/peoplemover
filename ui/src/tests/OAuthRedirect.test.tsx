@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import {render} from "@testing-library/react";
-import OAuthRedirect from "../ReusableComponents/OAuthRedirect";
-import * as React from "react";
-import {MemoryRouter, Router} from "react-router";
-import {createMemoryHistory} from "history";
+import {render} from '@testing-library/react';
+import OAuthRedirect from '../ReusableComponents/OAuthRedirect';
+import * as React from 'react';
+import {MemoryRouter, Router} from 'react-router';
+import {createMemoryHistory} from 'history';
 
-describe("OAuthRedirect", function () {
+describe('OAuthRedirect', function() {
     let originalWindow: any;
 
     beforeEach(() => {
@@ -35,11 +35,11 @@ describe("OAuthRedirect", function () {
         (window as any) = originalWindow;
     });
 
-    it('should save access token', function () {
+    it('should save access token', function() {
         const expectedToken = 'EXPECTED_TOKEN';
         window.location = {
             href: `http://localhost/#access_token=${expectedToken}`,
-            hash: `#access_token=${expectedToken}`
+            hash: `#access_token=${expectedToken}`,
         } as Location;
 
         render(
@@ -51,11 +51,11 @@ describe("OAuthRedirect", function () {
         expect(token).toEqual(expectedToken);
     });
 
-    it('should redirect to specified page', function () {
+    it('should redirect to specified page', function() {
         const expectedToken = 'EXPECTED_TOKEN';
         window.location = {
             href: `http://localhost/#access_token=${expectedToken}`,
-            hash: `#access_token=${expectedToken}`
+            hash: `#access_token=${expectedToken}`,
         } as Location;
 
         const history = createMemoryHistory({ initialEntries: ['/login'] });
