@@ -80,17 +80,16 @@ describe('Account Dropdown',  () => {
         expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith('teamName', ['some1@email.com', 'some2@email.com', 'some3@email.com']);
     });
 
-    it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {
-        const cookies = new Cookies();
+    it('should remove accessToken from session storage and redirect to homepage on click of sign out', async () => {
         await act( async () => {
 
-            cookies.set('accessToken', 'FAKE_TOKEN');
+            window.sessionStorage.setItem('accessToken', 'FAKE_TOKEN');
 
-            expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
+            expect(window.sessionStorage.getItem('accessToken')!!).toEqual('FAKE_TOKEN');
 
             fireEvent.click(await app.findByText('Sign Out'));
         });
-        expect(cookies.get('accessToken')).toBeUndefined();
+        expect(window.sessionStorage.getItem('accessToken')!!).toBeNull();
         expect(history.location.pathname).toEqual('/');
     });
 

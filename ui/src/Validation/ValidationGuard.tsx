@@ -31,9 +31,7 @@ function ValidationGuard({children}: ValidationGuard): JSX.Element {
         if (process.env.REACT_APP_AUTH_ENABLED === 'false') {
             setRenderedElement(children);
         } else {
-            const cookie = new Cookies();
-            const accessToken = cookie.get('accessToken');
-
+            const accessToken = window.sessionStorage.getItem('accessToken')!!;
             const spaceName = window.location.pathname.replace('/', '');
 
             AccessTokenClient.userCanAccessSpace(accessToken, spaceName)
