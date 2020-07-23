@@ -21,12 +21,13 @@ import './PersonAndRoleInfo.scss';
 
 interface Props {
     assignment: Assignment;
-    showHoverBox: boolean;
+    isUnassignedProduct: boolean;
 }
 
-const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, showHoverBox}: Props): ReactElement => {
+const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, isUnassignedProduct}: Props): ReactElement => {
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
+    const showHoverBox = hoverBoxIsOpened && isUnassignedProduct;
 
     const HoverBox = ({notes}: {
         notes: string;
@@ -40,7 +41,7 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, showHoverBox}: 
     };
 
     const onNoteHover = (boxIsHovered = false): void => {
-        if (boxIsHovered && showHoverBox) {
+        if (boxIsHovered) {
             const timeout = setTimeout(() => {
                 setHoverBoxIsOpened(boxIsHovered);
             }, 500);
@@ -62,7 +63,7 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, showHoverBox}: 
                 {assignment.person.name}
                 {!!assignment.person.notes &&
                     <div className="fas fa-file notesIcon" data-testid="notesIcon">
-                        {hoverBoxIsOpened && showHoverBox && <HoverBox notes={assignment.person.notes!}/>}
+                        {showHoverBox && <HoverBox notes={assignment.person.notes}/>}
                     </div>
                 }
             </div>

@@ -23,6 +23,8 @@ import {Assignment} from '../Assignments/Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, SpaceRole} from '../Roles/Role';
 
+jest.useFakeTimers();
+
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
 
@@ -220,7 +222,7 @@ describe('Assignment Card', () => {
             expect(underTest.queryByTestId('notesIcon')).toBeNull();
         });
 
-        it('should display hover notes when hovered over', async () => {
+        it('should display hover notes when hovered over', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
@@ -230,13 +232,14 @@ describe('Assignment Card', () => {
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
 
             fireEvent.mouseEnter(underTest.getByTestId('personName'));
-            await wait(() => {
-                expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
-                expect(underTest.getByText('This is a note')).toBeVisible();
-            });
+
+            jest.advanceTimersByTime(500);
+
+            expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
+            expect(underTest.getByText('This is a note')).toBeVisible();
         });
 
-        it('should hide notes when user hovers away', async () => {
+        it('should hide notes when user hovers away', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
@@ -246,19 +249,20 @@ describe('Assignment Card', () => {
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
 
             fireEvent.mouseEnter(underTest.getByTestId('personName'));
-            await wait(() => {
-                expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
-                expect(underTest.getByText('This is a note')).toBeVisible();
-            });
+
+            jest.advanceTimersByTime(500);
+
+            expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
+            expect(underTest.getByText('This is a note')).toBeVisible();
 
             fireEvent.mouseLeave(underTest.getByTestId('personName'));
 
-            await wait(() => {
-                expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
-            });
+            jest.advanceTimersByTime(500);
+
+            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
         });
 
-        it('should not show hover box when assignment card is unassigned', async () => {
+        it('should not show hover box when assignment card is unassigned', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
@@ -269,9 +273,10 @@ describe('Assignment Card', () => {
             expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
 
             fireEvent.mouseEnter(underTest.getByTestId('personName'));
-            await wait(() => {
-                expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
-            });
+
+            jest.advanceTimersByTime(500);
+
+            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
         });
     });
 });
