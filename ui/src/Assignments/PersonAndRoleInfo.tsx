@@ -27,7 +27,7 @@ interface Props {
 const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, isUnassignedProduct}: Props): ReactElement => {
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
-    const showHoverBox = hoverBoxIsOpened && isUnassignedProduct;
+    const showHoverBox = hoverBoxIsOpened && !isUnassignedProduct;
 
     const HoverBox = ({notes}: {
         notes: string;
