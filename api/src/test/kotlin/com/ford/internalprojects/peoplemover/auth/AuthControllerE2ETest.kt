@@ -34,12 +34,14 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.client.HttpClientErrorException
 import java.util.*
 
 @RunWith(SpringRunner::class)
@@ -180,14 +182,15 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `POST validate access token - should return null if access token is invalid`() {
+    fun `POST validate access token - should return FORBIDDEN if access token is invalid`() {
         val request = ValidateTokenRequest(accessToken = "INVALID_ACCESS_TOKEN")
 
-        `when`(authClient.validateAccessToken(request.accessToken)).thenReturn(Optional.empty())
+        `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(HttpStatus.FORBIDDEN))
 
         mockMvc.perform(post("/api/access_token/validate")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
+                .andExpect(status().isForbidden)
     }
 
     @Test

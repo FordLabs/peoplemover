@@ -32,7 +32,9 @@ import javax.validation.Valid
 @RestController
 class AuthController(val authClient: AuthClient,
                      val userSpaceMappingRepository: UserSpaceMappingRepository,
-                     val spaceRepository: SpaceRepository) {
+                     val spaceRepository: SpaceRepository//,
+//                    val decoder: JwtDecoder
+) {
 
     @PostMapping(path = ["/api/access_token"])
     fun getAccessToken(@Valid @RequestBody request: AccessTokenRequest): ResponseEntity<OAuthAccessTokenResponse> {
@@ -44,27 +46,13 @@ class AuthController(val authClient: AuthClient,
     }
 
     @PostMapping(path = ["/api/access_token/validate"])
-    fun validateAccessToken(@RequestBody request: ValidateTokenRequest): ResponseEntity<AuthQuestJWT> {
-        try {
-            val response = authClient.validateAccessToken(request.accessToken)
-
-            if (response.isPresent) {
-                return ResponseEntity.ok(
-                        AuthQuestJWT(
-                                exp = response.get().exp.toString(),
-                                iss = response.get().iss,
-                                scopes = response.get().scopes,
-                                sub = response.get().sub,
-                                user_id = response.get().user_id
-                        )
-                )
-            }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-
+    fun validateAccessToken(@RequestBody request: ValidateTokenRequest): ResponseEntity<Unit> {
+        return try {
+            authClient.validateAccessToken(request.accessToken)
+            ResponseEntity.ok().build()
         } catch (e: HttpClientErrorException) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+            ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
-
     }
 
     @PostMapping(path = ["/api/access_token/refresh"])
