@@ -15,32 +15,32 @@
  * limitations under the License.
  */
 
-import {render} from "@testing-library/react";
-import OAuthRedirect from "../ReusableComponents/OAuthRedirect";
-import * as React from "react";
-import {MemoryRouter, Router} from "react-router";
-import {createMemoryHistory} from "history";
-import Cookies from "universal-cookie";
+import {render} from '@testing-library/react';
+import OAuthRedirect from '../ReusableComponents/OAuthRedirect';
+import * as React from 'react';
+import {MemoryRouter, Router} from 'react-router';
+import {createMemoryHistory} from 'history';
+import Cookies from 'universal-cookie';
 
-describe("OAuthRedirect", function () {
-    let originalWindow: any;
+describe('OAuthRedirect', function() {
+    let originalWindow: Window;
 
     beforeEach(() => {
         originalWindow = window;
         delete window.location;
-        (window as any) = Object.create(window);
+        (window as Window) = Object.create(window);
         new Cookies().remove('accessToken');
     });
 
     afterEach(() => {
-        (window as any) = originalWindow;
+        (window as Window) = originalWindow;
     });
 
-    it('should save access token', function () {
+    it('should save access token', function() {
         const expectedToken = 'EXPECTED_TOKEN';
         window.location = {
             href: `http://localhost/#access_token=${expectedToken}`,
-            hash: `#access_token=${expectedToken}`
+            hash: `#access_token=${expectedToken}`,
         } as Location;
 
         render(
@@ -51,11 +51,11 @@ describe("OAuthRedirect", function () {
         expect(new Cookies().get('accessToken')).toEqual(expectedToken);
     });
 
-    it('should redirect to specified page', function () {
+    it('should redirect to specified page', function() {
         const expectedToken = 'EXPECTED_TOKEN';
         window.location = {
             href: `http://localhost/#access_token=${expectedToken}`,
-            hash: `#access_token=${expectedToken}`
+            hash: `#access_token=${expectedToken}`,
         } as Location;
 
         const history = createMemoryHistory({ initialEntries: ['/login'] });

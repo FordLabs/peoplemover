@@ -169,7 +169,7 @@ function AssignmentCard({
             onMouseDown={e => startDraggingAssignment!!(assignmentRef, assignment, e)}
         >
             {assignment.person.newPerson ? <NewBadge/> : null}
-            <PersonAndRoleInfo assignment={assignment} />
+            <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={isUnassignedProduct} />
             <div
                 ref={assignmentEditRef}
                 className="personRoleColor"

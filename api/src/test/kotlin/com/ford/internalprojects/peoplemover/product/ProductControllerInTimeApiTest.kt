@@ -32,9 +32,11 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 
@@ -69,6 +71,7 @@ class ProductControllerInTimeApiTest {
     val apr1 = "2019-04-01"
     val apr2 = "2019-04-02"
     val may1 = "2019-05-01"
+    val may2 = "2019-05-02"
     val jun1 = "2019-06-01"
     val sep1 = "2019-09-01"
 
@@ -221,6 +224,95 @@ class ProductControllerInTimeApiTest {
         assertThat(actualProducts[0]).isEqualTo(product1)
         assertThat(actualProducts[1]).isEqualTo(product2)
         assertThat(actualProducts[2]).isEqualTo(nullStartProduct)
+    }
+
+    @Test
+    fun `PUT should update assignments when moving start date to future date`() {
+        assignmentRepository.save(Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
+
+        val newProductStartDate = LocalDate.parse(apr2)
+
+        val productEditRequest = ProductEditRequest(
+                name = product1.name,
+                spaceId = space.id!!,
+                id = product1.id!!,
+                startDate = newProductStartDate
+        )
+
+        val result = mockMvc.perform(put("/api/product/${product1.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productEditRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val expectedAssignment = Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
+        val actualAssignment = assignmentRepository.findAll().first()
+
+        assertThat(assignmentRepository.count()).isOne()
+        assertThat(actualAssignment).isEqualToIgnoringGivenFields(expectedAssignment, "id")
+
+        val actualProduct: Product = objectMapper.readValue(
+                result.response.contentAsString,
+                Product::class.java
+        )
+
+        assertThat(actualProduct.startDate).isEqualTo(newProductStartDate)
+    }
+
+    @Test
+    fun `PUT should not alter other assignments when moving start date to future date`() {
+        val untouchedAssignment = assignmentRepository.save(Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1)))
+        assignmentRepository.save(Assignment(person= person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1)))
+
+        val newProductStartDate = LocalDate.parse(may2)
+
+        val productEditRequest = ProductEditRequest(
+                name = product2.name,
+                spaceId = space.id!!,
+                id = product2.id!!,
+                startDate = newProductStartDate
+        )
+
+        val result = mockMvc.perform(put("/api/product/${product2.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productEditRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val expectedSameAssignment = Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
+        val expectedNewAssignment = Assignment(person= person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
+        val actualAssignments = assignmentRepository.findAll().toList()
+
+        assertThat(assignmentRepository.count()).isEqualTo(3)
+        assertThat(actualAssignments[0]).isEqualTo(untouchedAssignment)
+        assertThat(actualAssignments[1]).isEqualToIgnoringGivenFields(expectedSameAssignment, "id")
+        assertThat(actualAssignments[2]).isEqualToIgnoringGivenFields(expectedNewAssignment, "id")
+    }
+
+    @Test
+    fun `PUT should delete old assignment when moving start date of product to future date while person is on a different`() {
+        assignmentRepository.save(Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
+        val currentAssignment = assignmentRepository.save(Assignment(person= person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1)))
+
+        val newProductStartDate = LocalDate.parse(may2)
+
+        val productEditRequest = ProductEditRequest(
+                name = product1.name,
+                spaceId = space.id!!,
+                id = product1.id!!,
+                startDate = newProductStartDate
+        )
+
+        mockMvc.perform(put("/api/product/${product1.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productEditRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualAssignments = assignmentRepository.findAll().toList()
+
+        assertThat(assignmentRepository.count()).isOne()
+        assertThat(actualAssignments.first()).isEqualTo(currentAssignment)
     }
 
 

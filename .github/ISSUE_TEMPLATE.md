@@ -17,7 +17,7 @@ assignees: ''
 
 > _If I do A B should happen_
 
-Contraints on this acceptance criteria:
+Constraints on this acceptance criteria:
 
 1. Constraint 1
 2. Constraint 2
