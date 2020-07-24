@@ -164,7 +164,7 @@ pipeline {
             }
         }
 
-        
+
         stage("Deploy") {
             parallel {
                 stage('API Deploy Stage') {
