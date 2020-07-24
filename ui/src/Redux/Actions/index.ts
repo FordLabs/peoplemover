@@ -40,6 +40,7 @@ export enum AvailableActions {
     SET_CURRENT_SPACE,
     SET_VIEWING_DATE,
     SET_PRODUCTS,
+    SET_PRODUCT_SORT_BY,
 }
 
 export enum AvailableModals {
@@ -115,10 +116,14 @@ export const setViewingDateAction = (date: Date) => ({
     date,
 });
 
-export const setProductsAction = (products: Array<Product>, sortOption: string) => ({
+export const setProductsAction = (products: Array<Product>) => ({
     type: AvailableActions.SET_PRODUCTS,
     products,
-    sortOption,
+});
+
+export const setProductSortByAction = (productSortBy: string) => ({
+    type: AvailableActions.SET_PRODUCT_SORT_BY,
+    productSortBy,
 });
 
 export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
@@ -128,9 +133,10 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
             getState().viewingDate
         ).then(result => {
             const products: Array<Product> = result.data || [];
+            dispatch(setProductsAction(products));
 
             const savedSort = localStorage.getItem('sortBy');
             const sort = savedSort !== null && savedSort !== undefined ? savedSort : 'name';
-            dispatch(setProductsAction(products, sort));
+            dispatch(setProductSortByAction(sort));
         });
     };

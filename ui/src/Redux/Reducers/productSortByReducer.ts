@@ -17,12 +17,11 @@
 
 import {AvailableActions} from '../Actions';
 
-const sortProductsReducer = (state: string | null = null, action: {type: AvailableActions; sortOption?: string}): string | null => {
-
-    if (action.type === AvailableActions.SET_PRODUCTS && action.sortOption) {
-        localStorage.setItem('sortBy', action.sortOption);
-        return action.sortOption;
+const productSortByReducer = (state: string | null = null, action: {type: AvailableActions; productSortBy?: string}): string | null => {
+    if (action.type === AvailableActions.SET_PRODUCT_SORT_BY && action.productSortBy) {
+        localStorage.setItem('sortBy', action.productSortBy);
+        return action.productSortBy;
     }
     return state;
 };
-export default sortProductsReducer;
+export default productSortByReducer;

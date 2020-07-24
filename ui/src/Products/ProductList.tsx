@@ -25,15 +25,14 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {FilterOption} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
-import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
 
 interface ProductListProps {
-    currentSpace: Space;
     products: Array<Product>;
     setCurrentModal(modalState: CurrentModalState): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
+    productSortBy: string;
 }
 
 export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOption>): Array<string> {
@@ -42,13 +41,20 @@ export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOpt
 }
 
 function ProductList({
-    currentSpace,
     products,
     setCurrentModal,
     allGroupedTagFilterOptions,
     viewingDate,
+    productSortBy,
 }: ProductListProps ): JSX.Element {
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
+    const [sortedProducts, setSortedProducts] = useState<Array<Product>>([...products]);
+
+    useEffect(() => {
+        if (products && products.length) {
+            setSortedProducts(sortBy(products, productSortBy));
+        }
+    }, [products, productSortBy]);
 
     useEffect(() => {
         if (allGroupedTagFilterOptions.length > 0 ) {
@@ -84,9 +90,36 @@ function ProductList({
         return isProductTagFilterOn || isLocationFilterOn;
     }
 
+    function sortBy(products: Array<Product>, productSortBy: string): Array<Product> {
+        switch (productSortBy) {
+            case ('location'): return [...products].sort(sortByLocation);
+            case ('name'): return [...products].sort(sortByProductName);
+            default: return [...products];
+        }
+    }
+
+    function sortByProductName(productAName: Product, productBName: Product): number {
+        return productAName.name.toLowerCase().localeCompare(productBName.name.toLowerCase());
+    }
+
+    function sortByLocation(productA: Product, productB: Product): number {
+        const locationA = getSpaceLocationNameSafely(productA);
+        const locationB = getSpaceLocationNameSafely(productB);
+
+        const comparisonValue: number = locationA.toLowerCase().localeCompare(locationB.toLowerCase());
+        if (comparisonValue === 0) {
+            return sortByProductName(productA, productB);
+        }
+        return comparisonValue;
+    }
+
+    function getSpaceLocationNameSafely(product: Product): string {
+        return product.spaceLocation ? product.spaceLocation.name : 'ZZZZZZZZ';
+    }
+
     return (
         <div className="productListContainer" data-testid="productListContainer">
-            {products && products.map((product: Product) => {
+            {sortedProducts && sortedProducts.map((product: Product) => {
                 const productFiltersLoaded = allGroupedTagFilterOptions.length > 0;
                 if (productFiltersLoaded
                     && isActiveProduct(product)
@@ -110,10 +143,10 @@ function ProductList({
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     products: state.products,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
     viewingDate: state.viewingDate,
+    productSortBy: state.productSortBy,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

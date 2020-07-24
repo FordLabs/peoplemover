@@ -23,7 +23,7 @@ import {Person} from '../../People/Person';
 import {EditMenuToOpen} from '../../ReusableComponents/EditMenuToOpen';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
-import sortProductsReducer from './sortProductsReducer';
+import productSortByReducer from './productSortByReducer';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
@@ -37,7 +37,7 @@ export default combineReducers({
     people: peopleReducer,
     isUnassignedDrawerOpen: isUnassignedDrawerOpenReducer,
     productRefs: productRefsReducer,
-    sortValueOption: sortProductsReducer,
+    productSortBy: productSortByReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
     currentSpace: currentSpaceReducer,
     viewingDate: viewingDateReducer,
@@ -50,7 +50,7 @@ export interface GlobalStateProps {
     isUnassignedDrawerOpen: boolean;
     whichEditMenuOpen: EditMenuToOpen;
     productRefs: Array<ProductCardRefAndProductPair>;
-    sortValueOption: string;
+    productSortBy: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;
     viewingDate: Date;
