@@ -47,6 +47,8 @@ dependencies {
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.2.4.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.2.4.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.2.4.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.30'
     implementation 'com.auth0:java-jwt:3.10.0'

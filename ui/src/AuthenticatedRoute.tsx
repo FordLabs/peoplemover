@@ -17,12 +17,13 @@
 
 import {Route, RouteProps} from "react-router";
 import * as React from "react";
+import Cookies from "universal-cookie";
 
 export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
 
-    const accessToken = window.sessionStorage.getItem('accessToken');
-    const isAuthenticated = accessToken !== null && accessToken !== 'null';
+    const accessToken = new Cookies().get('accessToken');
+    const isAuthenticated = accessToken !== undefined && accessToken !== 'undefined';
 
     return (
         <Route {...rest}>{isAuthenticated ? children : <RedirectToADFS/>}</Route>
