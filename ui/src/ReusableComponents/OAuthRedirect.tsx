@@ -17,6 +17,7 @@
 
 import React, {useState} from 'react';
 import {Redirect} from 'react-router';
+import Cookies from 'universal-cookie';
 
 interface OAuthRedirectProps {
     redirectUrl: string;
@@ -25,7 +26,8 @@ interface OAuthRedirectProps {
 function OAuthRedirect({redirectUrl}: OAuthRedirectProps): JSX.Element {
     const searchParams = new URLSearchParams(window.location.hash.replace('#', ''));
     const accessToken = searchParams.get('access_token');
-    window.sessionStorage.setItem('accessToken', accessToken!!);
+    const cookies = new Cookies();
+    cookies.set('accessToken', accessToken, {path: '/'});
 
     return (<Redirect to={redirectUrl}/>);
 }

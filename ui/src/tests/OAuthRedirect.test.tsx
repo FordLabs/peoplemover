@@ -20,19 +20,20 @@ import OAuthRedirect from '../ReusableComponents/OAuthRedirect';
 import * as React from 'react';
 import {MemoryRouter, Router} from 'react-router';
 import {createMemoryHistory} from 'history';
+import Cookies from 'universal-cookie';
 
 describe('OAuthRedirect', function() {
-    let originalWindow: any;
+    let originalWindow: Window;
 
     beforeEach(() => {
         originalWindow = window;
         delete window.location;
-        (window as any) = Object.create(window);
-        window.sessionStorage.clear();
+        (window as Window) = Object.create(window);
+        new Cookies().remove('accessToken');
     });
 
     afterEach(() => {
-        (window as any) = originalWindow;
+        (window as Window) = originalWindow;
     });
 
     it('should save access token', function() {
@@ -47,8 +48,7 @@ describe('OAuthRedirect', function() {
                 <OAuthRedirect redirectUrl={'/user/dashboard'}/>
             </MemoryRouter>
         );
-        const token = window.sessionStorage.getItem('accessToken');
-        expect(token).toEqual(expectedToken);
+        expect(new Cookies().get('accessToken')).toEqual(expectedToken);
     });
 
     it('should redirect to specified page', function() {
