@@ -51,11 +51,11 @@ function ProductSortBy({
     }
     return (
         <React.Fragment>
-            <label htmlFor="sortby-dropdown" className={'dropdown-label'}>Sort By:</label>
+            <label htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
             <Select
                 styles={filterByStyles}
-                data-testid={'sortby-dropdown'}
-                className={'dropdown sortby-dropdown'}
+                id="sortby-dropdown"
+                className="dropdown sortby-dropdown"
                 inputId="sortby-dropdown"
                 options={sortByOptions}
                 value={originalSortOption}

@@ -18,21 +18,22 @@
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
-import {RenderResult, wait} from '@testing-library/react';
+import {fireEvent, RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 import ProductClient from '../Products/ProductClient';
+import selectEvent from "react-select-event";
 
 describe('PeopleMover', () => {
     let app: RenderResult;
-    beforeEach(async (done) => {
+
+    beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+
         await wait(() => {
             app = renderWithRedux(<PeopleMover/>);
         });
-
-        done();
     });
 
     it('Should contains My Tags on initial load of People Mover', async () => {
@@ -54,36 +55,66 @@ describe('PeopleMover', () => {
         await app.findByText('Filter:');
     });
 
-    it('should display products', async () => {
-        await app.findAllByText(TestUtils.productWithAssignments.name);
-        await app.findAllByText(TestUtils.productWithoutAssignments.name);
-        await app.findAllByText(TestUtils.productForHank.name);
-    });
+    // it('should display products', async () => {
+    //     await app.findAllByText(TestUtils.productWithAssignments.name);
+    //     await app.findAllByText(TestUtils.productWithoutAssignments.name);
+    //     await app.findAllByText(TestUtils.productForHank.name);
+    // });
 
     it('should show the Flabs branding on load', async () => {
         await app.findByText('Powered by');
         await app.findByText('FordLabs');
     });
-});
 
-describe('PeopleMover Routing', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
+    describe('Products', () => {
+        it('should sort products by name by default',  async () => {
+            const productNameElements = await app.findAllByTestId('productName');
+            const actualProductNames = productNameElements.map((element) => element.innerHTML);
+            expect(actualProductNames).toEqual(
+                [
+                    TestUtils.productForHank.name,
+                    TestUtils.productWithAssignments.name,
+                    TestUtils.productWithoutAssignments.name,
+                ]
+            );
+        });
+
+        it('should sort products by location',  async () => {
+            await wait(() => {
+                selectEvent.select(app.getByLabelText('Sort By:'), ['Location']);
+            });
+
+            const productNameElements = await app.findAllByTestId('productName');
+            const actualProductNames = productNameElements.map((element) => element.innerHTML);
+            expect(actualProductNames).toEqual(
+                [
+                    TestUtils.productForHank.name,
+                    TestUtils.productWithoutAssignments.name,
+                    TestUtils.productWithAssignments.name,
+                ]
+            );
+        });
     });
 
-    it('should show 404 page when bad space name is provided',  async () => {
-        ProductClient.getProductsForDate = jest.fn(() => Promise.reject());
+    describe('Routing', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
 
-        const history = createMemoryHistory({ initialEntries: ['/somebadName'] });
+        it('should show 404 page when bad space name is provided',  async () => {
+            ProductClient.getProductsForDate = jest.fn(() => Promise.reject());
 
-        renderWithRedux(
-            <Router history={history}>
-                <PeopleMover/>
-            </Router>
-        );
+            const history = createMemoryHistory({ initialEntries: ['/somebadName'] });
 
-        await wait(() => {
-            expect(history.location.pathname).toEqual('/error/404');
+            renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
+
+            await wait(() => {
+                expect(history.location.pathname).toEqual('/error/404');
+            });
         });
     });
 });

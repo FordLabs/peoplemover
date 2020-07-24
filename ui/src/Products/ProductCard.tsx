@@ -140,7 +140,7 @@ function ProductCard({
                     <div>
                         <div className="productNameEditContainer">
                             <div>
-                                <h2 className="productName">
+                                <h2 className="productName" data-testid="productName">
                                     {product.name}
                                 </h2>
                                 <p className="productTagContainer">
