@@ -122,6 +122,8 @@ pipeline {
                                         -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
                                         -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
                                         -Pcf.environment.authquest.url=$authquest_qa_url \
+                                        -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
+                                        -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                                         -Pcf.environment.react.app.url=https://${env.BRANCH_NAME_WITHOUT_UNDERSCORES}.$peoplemover_pcf_org \
                                         -Pcf.environment.react.app.authquest_url=$authquest_qa_url \
                                         -Pcf.environment.react.app.authquest_client_id=$authquest_qa_client_id \
