@@ -58,41 +58,6 @@ pipeline {
             }
         }
 
-        stage('Analyze') {
-            parallel {
-                stage('API Analyze') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                        }
-                    }
-                    steps {
-                        withSonarQubeEnv('FordLabs SonarQube') {
-                            dir("api") {
-                                sh './gradlew sonarqube'
-                            }
-                        }
-                    }
-                }
-
-                stage('UI Analyze') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                        }
-                    }
-                    steps {
-                        withSonarQubeEnv('FordLabs SonarQube') {
-                            dir("ui") {
-                                sh "npm run coverage"
-                                sh "npm run analyze"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
          stage('Deploy Branch') {
             parallel {
                 stage('API Branch Deploy') {
@@ -166,7 +131,7 @@ pipeline {
             }
         }
 
-        
+
         stage("Deploy") {
             parallel {
                 stage('API Deploy Stage') {

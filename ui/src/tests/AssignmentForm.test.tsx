@@ -90,7 +90,6 @@ describe('AssignmentForm', () => {
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
 
             fireEvent.keyDown(app.getByText('Assign'), {key: 'Enter', code: 13});
-
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
@@ -103,15 +102,18 @@ describe('AssignmentForm', () => {
         });
 
         it('submits an assignment with the given placeholder status', async () => {
-            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-            await openAssignPersonForm(app);
+            await act( async() => {
+                const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+                await openAssignPersonForm(app);
 
-            const labelElement = await app.findByLabelText('Name');
-            const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
-            await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
+                const labelElement = await app.findByLabelText('Name');
+                const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
+                await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
 
-            fireEvent.click(app.getByLabelText('Mark as Placeholder'));
-            fireEvent.click(app.getByText('Assign'));
+                fireEvent.click(app.getByLabelText('Mark as Placeholder'));
+                fireEvent.click(app.getByText('Assign'));
+            });
+
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
