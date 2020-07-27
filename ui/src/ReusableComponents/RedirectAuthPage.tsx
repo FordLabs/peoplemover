@@ -43,20 +43,9 @@ function RedirectAuthPage({isSignup}: Props): JSX.Element {
     }
 
     function userVisitsPageWithTokenFlow(accessToken: string): void {
-        const cookies = new Cookies();
 
         AccessTokenClient.validateAccessToken(accessToken)
-            .then(() => {
-
-                AccessTokenClient.refreshAccessToken(accessToken).then((response) => {
-                    const refreshToken: AccessTokenResponse = response.data;
-                    cookies.set('accessToken', refreshToken.access_token, {path: '/'});
-
-                    setRedirectPage(<Redirect to={'/user/dashboard'}/>);
-                }).catch((err) => {
-                    console.log('ERROR', err);
-                });
-            })
+            .then(() => {setRedirectPage(<Redirect to={'/user/dashboard'}/>);})
             .catch(redirectToLoginPage);
     }
 

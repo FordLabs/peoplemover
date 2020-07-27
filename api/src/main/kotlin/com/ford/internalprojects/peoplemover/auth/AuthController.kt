@@ -22,6 +22,8 @@ import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
 import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -32,8 +34,8 @@ import javax.validation.Valid
 @RestController
 class AuthController(val authClient: AuthClient,
                      val userSpaceMappingRepository: UserSpaceMappingRepository,
-                     val spaceRepository: SpaceRepository//,
-//                    val decoder: JwtDecoder
+                     val spaceRepository: SpaceRepository,
+                    val decoder: JwtDecoder
 ) {
 
     @PostMapping(path = ["/api/access_token"])
@@ -47,11 +49,17 @@ class AuthController(val authClient: AuthClient,
 
     @PostMapping(path = ["/api/access_token/validate"])
     fun validateAccessToken(@RequestBody request: ValidateTokenRequest): ResponseEntity<Unit> {
-        return try {
-            authClient.validateAccessToken(request.accessToken)
+        return try{
+            decoder.decode(request.accessToken)
             ResponseEntity.ok().build()
-        } catch (e: HttpClientErrorException) {
-            ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        }
+        catch ( e: JwtException) {
+            return try {
+                authClient.validateAccessToken(request.accessToken)
+                ResponseEntity.ok().build()
+            } catch (e: HttpClientErrorException) {
+                ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+            }
         }
     }
 

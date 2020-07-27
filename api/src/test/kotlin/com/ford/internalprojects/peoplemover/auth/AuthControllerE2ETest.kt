@@ -36,6 +36,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -51,6 +54,9 @@ class AuthControllerE2ETest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @MockBean
+    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
@@ -159,10 +165,10 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `POST validate access token - should return OK if access token is valid`() {
+    fun `POST validate access token - should return OK if access token is valid in AuthQuest`() {
         val request = ValidateTokenRequest(accessToken = "access_token")
 
-
+        `when`(jwtDecoder.decode(request.accessToken)).thenThrow(JwtException("INVALID JWT"))
         `when`(authClient.validateAccessToken("access_token")).thenReturn(Optional.of(
                 OAuthVerifyResponse(
                         "",
@@ -182,10 +188,26 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `POST validate access token - should return FORBIDDEN if access token is invalid`() {
+    fun `POST validate access token - should return OK if access token valid in ADFS`() {
+        val request = ValidateTokenRequest(accessToken = "access_token")
+
+        `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(HttpStatus.FORBIDDEN))
+        `when`(jwtDecoder.decode(request.accessToken)).thenReturn(null)
+
+        mockMvc.perform(post("/api/access_token/validate")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json"))
+                .andExpect(status().isOk)
+
+        verify(jwtDecoder).decode("access_token")
+    }
+
+    @Test
+    fun `POST validate access token - should return FORBIDDEN if access token is invalid in both validators`() {
         val request = ValidateTokenRequest(accessToken = "INVALID_ACCESS_TOKEN")
 
         `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(HttpStatus.FORBIDDEN))
+        `when`(jwtDecoder.decode(request.accessToken)).thenThrow(JwtException("INVALID JWT"))
 
         mockMvc.perform(post("/api/access_token/validate")
                 .content(objectMapper.writeValueAsString(request))
