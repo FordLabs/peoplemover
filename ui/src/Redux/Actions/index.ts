@@ -153,7 +153,12 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return ProductTagClient.get(getState().currentSpace.name,)
             .then(result => {
-                const productTags: Array<ProductTag> = result.data || [];
+                let productTags: Array<ProductTag> = result.data || [];
+                productTags = productTags.sort((a, b) => {
+                    if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
+                    if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+                    return 0;
+                });
                 dispatch(setProductTagsAction(productTags));
             });
     };

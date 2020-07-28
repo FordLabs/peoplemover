@@ -109,12 +109,12 @@ describe('PeopleMover', () => {
             expect(productGroup1).toHaveTextContent('New Product');
 
             const productGroup2 = productGroups[1];
-            expect(productGroup2).toHaveTextContent('FordX');
-            expect(productGroup2).toHaveTextContent('Product 1');
+            expect(productGroup2).toHaveTextContent('EV');
             expect(productGroup2).toHaveTextContent('New Product');
 
             const productGroup3 = productGroups[2];
-            expect(productGroup3).toHaveTextContent('EV');
+            expect(productGroup3).toHaveTextContent('FordX');
+            expect(productGroup3).toHaveTextContent('Product 1');
             expect(productGroup3).toHaveTextContent('New Product');
 
             const productGroup4 = productGroups[3];
