@@ -21,6 +21,8 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
 
+import './NewProductButton.scss';
+
 interface NewProductButtonProps {
   setCurrentModal(modalState: CurrentModalState): void;
 }

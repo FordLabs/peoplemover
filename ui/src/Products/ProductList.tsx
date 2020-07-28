@@ -29,8 +29,6 @@ import {ProductTag} from '../ProductTag/ProductTag';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 
-import './ProductList.scss';
-
 interface ProductListProps {
     products: Array<Product>;
     productTags: Array<ProductTag>;
