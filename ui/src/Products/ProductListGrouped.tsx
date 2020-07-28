@@ -23,37 +23,59 @@ import NewProductButton from './NewProductButton';
 
 import './ProductListGrouped.scss';
 
-interface Props {
+interface GroupedByListProps {
     products: Array<Product>;
     productTags: Array<ProductTag>;
 }
 
-function GroupedByList({ productTags, products }: Props): JSX.Element {
+interface ProductGroupProps {
+    tagName: string;
+    productFilterFunction: (product: Product, tagName: string) => boolean;
+}
+
+function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Element {
     function filterByProductTag(product: Product, tagName: string): boolean {
         return product.productTags.map(t => t.name).includes(tagName);
+    }
+
+    function filterByNoProductTag(product: Product): boolean {
+        return (product.productTags || []).length === 0;
+    }
+
+    function ProductGroup({tagName, productFilterFunction }: ProductGroupProps): JSX.Element {
+        return (
+            <div data-testid="productGroup" key={tagName}>
+                <div className="productTagName">{tagName}</div>
+                <div className="groupedProducts">
+                    {products.filter(product => productFilterFunction(product, tagName))
+                        .map(product => (
+                            <span key={product.id}>
+                                <ProductCard
+                                    product={product}
+                                    container="productCardContainer" />
+                            </span>
+                        ))
+                    }
+                    <NewProductButton />
+                </div>
+            </div>
+        );
     }
 
     return ( 
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
             {productTags && productTags.map((tag: ProductTag) => {
                 return (
-                    <div data-testid="productGroup" key={tag.name}>
-                        <div className="productTagName">{tag.name}</div>
-                        <div className="groupedProducts">
-                            {products.filter(product => filterByProductTag(product, tag.name))
-                                .map(product => (
-                                    <span key={product.id}>
-                                        <ProductCard
-                                            product={product}
-                                            container="productCardContainer" />
-                                    </span>
-                                ))
-                            }
-                            <NewProductButton />
-                        </div>
-                    </div>
+                    <span key={tag.id}>
+                        <ProductGroup
+                            tagName={tag.name}
+                            productFilterFunction={filterByProductTag}/>
+                    </span>
                 );
             })}
+            <ProductGroup
+                tagName="No Product Tag"
+                productFilterFunction={filterByNoProductTag}/>
         </div>
     );
 }

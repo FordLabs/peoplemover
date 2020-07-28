@@ -18,12 +18,9 @@
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {connect} from 'react-redux';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {FilterOption} from '../CommonTypes/Option';
-import {Dispatch} from 'redux';
 import moment from 'moment';
 import {ProductTag} from '../ProductTag/ProductTag';
 import GroupedByList from './ProductListGrouped';
@@ -32,7 +29,6 @@ import SortedByList from './ProductListSorted';
 interface ProductListProps {
     products: Array<Product>;
     productTags: Array<ProductTag>;
-    setCurrentModal(modalState: CurrentModalState): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
     productSortBy: string;
@@ -46,7 +42,6 @@ export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOpt
 function ProductList({
     products,
     productTags,
-    setCurrentModal,
     allGroupedTagFilterOptions,
     viewingDate,
     productSortBy,
@@ -102,7 +97,7 @@ function ProductList({
                 }
                 default:
                     return <SortedByList
-                        products={filteredAndActiveProduct} 
+                        products={filteredAndActiveProduct}
                         productSortBy={productSortBy}/>;
             }
         } else {
@@ -110,9 +105,7 @@ function ProductList({
         }
     }
 
-    return (
-        <ListOfProducts/>
-    );
+    return <ListOfProducts/>;
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
@@ -123,8 +116,4 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     productSortBy: state.productSortBy,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductList);
+export default connect(mapStateToProps)(ProductList);
