@@ -94,6 +94,38 @@ describe('PeopleMover', () => {
                 ]
             );
         });
+
+        it('should group products by product tag',  async () => {
+            await wait(() => {
+                selectEvent.select(app.getByLabelText('Sort By:'), ['Product Tag']);
+            });
+
+            const productGroups = await app.findAllByTestId('productGroup');
+
+            expect(productGroups.length).toBe(5);
+            const productGroup1 = productGroups[0];
+            expect(productGroup1).toHaveTextContent('AV');
+            expect(productGroup1).toHaveTextContent('Product 3');
+            expect(productGroup1).toHaveTextContent('New Product');
+
+            const productGroup2 = productGroups[1];
+            expect(productGroup2).toHaveTextContent('FordX');
+            expect(productGroup2).toHaveTextContent('Product 1');
+            expect(productGroup2).toHaveTextContent('New Product');
+
+            const productGroup3 = productGroups[2];
+            expect(productGroup3).toHaveTextContent('EV');
+            expect(productGroup3).toHaveTextContent('New Product');
+
+            const productGroup4 = productGroups[3];
+            expect(productGroup4).toHaveTextContent('Mache');
+            expect(productGroup4).toHaveTextContent('New Product');
+
+            const productGroup5 = productGroups[4];
+            expect(productGroup5).toHaveTextContent('No Product Tag');
+            expect(productGroup5).toHaveTextContent('Hanky Product');
+            expect(productGroup5).toHaveTextContent('New Product');
+        });
     });
 
     describe('Routing', () => {
