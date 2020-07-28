@@ -25,12 +25,13 @@ import './NewProductButton.scss';
 
 interface NewProductButtonProps {
   setCurrentModal(modalState: CurrentModalState): void;
+  modalState?: CurrentModalState;
 }
 
-function NewProductButton({setCurrentModal}: NewProductButtonProps): JSX.Element {
+function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: NewProductButtonProps): JSX.Element {
     return (
         <div className="newProduct productCardContainer"
-            onClick={() => setCurrentModal({modal: AvailableModals.CREATE_PRODUCT})}
+            onClick={() => setCurrentModal(modalState)}
             data-cy="newProductButton">
             <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
             <h2 className="newProductText">New Product</h2>

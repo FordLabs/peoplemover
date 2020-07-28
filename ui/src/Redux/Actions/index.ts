@@ -48,6 +48,7 @@ export enum AvailableActions {
 
 export enum AvailableModals {
     CREATE_PRODUCT,
+    CREATE_PRODUCT_OF_PRODUCT_TAG,
     EDIT_PRODUCT,
     CREATE_PERSON,
     EDIT_PERSON,

@@ -32,15 +32,15 @@ const currentModalReducer = (
     action: { type: AvailableActions; modal: AvailableModals; item?: any }
 ): CurrentModalState => {
     switch (action.type) {
-    case AvailableActions.SET_CURRENT_MODAL:
-        return {
-            modal: action.modal,
-            item: action.item,
-        };
-    case AvailableActions.CLOSE_MODAL:
-        return {...state, modal: null};
-    default:
-        return state;
+        case AvailableActions.SET_CURRENT_MODAL:
+            return {
+                modal: action.modal,
+                item: action.item,
+            };
+        case AvailableActions.CLOSE_MODAL:
+            return {...state, modal: null};
+        default:
+            return state;
     }
 };
 

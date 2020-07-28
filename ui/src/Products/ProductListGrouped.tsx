@@ -22,6 +22,8 @@ import {Product} from './Product';
 import NewProductButton from './NewProductButton';
 
 import './ProductListGrouped.scss';
+import {AvailableModals} from '../Redux/Actions';
+import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 
 interface GroupedByListProps {
     products: Array<Product>;
@@ -30,6 +32,7 @@ interface GroupedByListProps {
 
 interface ProductGroupProps {
     tagName: string;
+    modalState?: CurrentModalState;
     productFilterFunction: (product: Product, tagName: string) => boolean;
     useGrayBackground?: boolean;
 }
@@ -43,23 +46,28 @@ function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Eleme
         return (product.productTags || []).length === 0;
     }
 
-    function ProductGroup({tagName, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
+    function ProductGroup({tagName, modalState, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
+        const filteredProducts = products.filter(product => productFilterFunction(product, tagName));
+
         return (
-            <div data-testid="productGroup" key={tagName}>
-                <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
-                <div className="groupedProducts">
-                    {products.filter(product => productFilterFunction(product, tagName))
-                        .map(product => (
-                            <span key={product.id}>
-                                <ProductCard
-                                    product={product}
-                                    container="productCardContainer" />
-                            </span>
-                        ))
-                    }
-                    <NewProductButton />
-                </div>
-            </div>
+            filteredProducts.length === 0 ? <></> :
+                (
+                    <div data-testid="productGroup" key={tagName}>
+                        <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
+                        <div className="groupedProducts">
+                            {filteredProducts
+                                .map(product => (
+                                    <span key={product.id}>
+                                        <ProductCard
+                                            product={product}
+                                            container="productCardContainer"/>
+                                    </span>
+                                ))
+                            }
+                            <NewProductButton modalState={modalState}/>
+                        </div>
+                    </div>
+                )
         );
     }
 
@@ -70,6 +78,7 @@ function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Eleme
                     <span key={tag.id}>
                         <ProductGroup
                             tagName={tag.name}
+                            modalState={{modal: AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG, item: tag}}
                             productFilterFunction={filterByProductTag}/>
                     </span>
                 );
