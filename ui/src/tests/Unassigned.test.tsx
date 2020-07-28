@@ -137,7 +137,7 @@ describe('Unassigned Products', () => {
     });
 
     describe('edit menus', () => {
-        const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people} as GlobalStateProps;
+        const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, productTags: [TestUtils.productTag1]} as GlobalStateProps;
 
         it('should open edit person dialog when clicking on ellipsis', async () => {
             const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
@@ -169,8 +169,10 @@ describe('Unassigned Products', () => {
             const closeForm = await app.findByTestId('modalCloseButton');
             fireEvent.click(closeForm);
 
-            const editProduct1Assignment = await app.findByTestId(`editPersonIconContainer-${TestUtils.assignmentForPerson1.id}`);
-            fireEvent.click(editProduct1Assignment);
+            await wait(async () => {
+                const editProduct1Assignment = await app.findByTestId(`editPersonIconContainer-${TestUtils.assignmentForPerson1.id}`);
+                fireEvent.click(editProduct1Assignment);
+            });
 
             const editPerson1 = await app.findByText('Edit Person');
             fireEvent.mouseDown(editPerson1);

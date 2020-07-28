@@ -18,11 +18,11 @@
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
-import {fireEvent, RenderResult, wait} from '@testing-library/react';
+import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 import ProductClient from '../Products/ProductClient';
-import selectEvent from "react-select-event";
+import selectEvent from 'react-select-event';
 
 describe('PeopleMover', () => {
     let app: RenderResult;
@@ -55,11 +55,11 @@ describe('PeopleMover', () => {
         await app.findByText('Filter:');
     });
 
-    // it('should display products', async () => {
-    //     await app.findAllByText(TestUtils.productWithAssignments.name);
-    //     await app.findAllByText(TestUtils.productWithoutAssignments.name);
-    //     await app.findAllByText(TestUtils.productForHank.name);
-    // });
+    it('should display products', async () => {
+        await app.findAllByText(TestUtils.productWithAssignments.name);
+        await app.findAllByText(TestUtils.productWithoutAssignments.name);
+        await app.findAllByText(TestUtils.productForHank.name);
+    });
 
     it('should show the Flabs branding on load', async () => {
         await app.findByText('Powered by');

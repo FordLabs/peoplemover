@@ -99,7 +99,6 @@ function ProductForm({
     const [typedInLocation, setTypedInLocation] = useState<string>('');
 
     useEffect(() => {
-
         LocationClient.get(currentSpace.name).then(result => {setAvailableLocations(result.data);});
         ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 

@@ -25,6 +25,8 @@ import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter
 import {Space} from '../../SpaceDashboard/Space';
 import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
+import {ProductTag} from '../../ProductTag/ProductTag';
+import ProductTagClient from '../../ProductTag/ProductTagClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -40,6 +42,7 @@ export enum AvailableActions {
     SET_CURRENT_SPACE,
     SET_VIEWING_DATE,
     SET_PRODUCTS,
+    SET_PRODUCT_TAGS,
     SET_PRODUCT_SORT_BY,
 }
 
@@ -121,6 +124,11 @@ export const setProductsAction = (products: Array<Product>) => ({
     products,
 });
 
+export const setProductTagsAction = (productTags: Array<ProductTag>) => ({
+    type: AvailableActions.SET_PRODUCT_TAGS,
+    productTags,
+});
+
 export const setProductSortByAction = (productSortBy: string) => ({
     type: AvailableActions.SET_PRODUCT_SORT_BY,
     productSortBy,
@@ -139,4 +147,13 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
             const sort = savedSort !== null && savedSort !== undefined ? savedSort : 'name';
             dispatch(setProductSortByAction(sort));
         });
+    };
+
+export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
+    (dispatch: Dispatch, getState: Function): Promise<void> => {
+        return ProductTagClient.get(getState().currentSpace.name,)
+            .then(result => {
+                const productTags: Array<ProductTag> = result.data || [];
+                dispatch(setProductTagsAction(productTags));
+            });
     };

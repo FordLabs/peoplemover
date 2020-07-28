@@ -33,11 +33,11 @@ function ProductSortBy({
     productSortBy,
     setProductSortBy,
 }: ProductSortByProps): JSX.Element {
-
     const [originalSortOption, setOriginalSortOption] = useState<Option>();
     const sortByOptions: Array<Option> = [
         {label:'Name', value:'name'},
         {label:'Location', value:'location'},
+        {label:'Product Tag', value:'product-tag'},
     ];
     useEffect( () => {
         setOriginalSortOption(stringToOption(productSortBy));

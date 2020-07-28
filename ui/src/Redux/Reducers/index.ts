@@ -31,6 +31,8 @@ import {Space} from '../../SpaceDashboard/Space';
 import {viewingDateReducer} from './viewingDateReducer';
 import productsReducer from './productsReducer';
 import {Product} from '../../Products/Product';
+import productTagsReducer from './productTagsReducer';
+import {ProductTag} from "../../ProductTag/ProductTag";
 
 export default combineReducers({
     currentModal: currentModalReducer,
@@ -42,6 +44,7 @@ export default combineReducers({
     currentSpace: currentSpaceReducer,
     viewingDate: viewingDateReducer,
     products: productsReducer,
+    productTags: productTagsReducer,
 });
 
 export interface GlobalStateProps {
@@ -55,4 +58,5 @@ export interface GlobalStateProps {
     currentSpace: Space;
     viewingDate: Date;
     products: Array<Product>;
+    productTags: Array<ProductTag>;
 }

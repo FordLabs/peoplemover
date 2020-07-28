@@ -16,7 +16,6 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import ProductCard from './ProductCard';
 import {Product} from './Product';
 import {connect} from 'react-redux';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
@@ -26,9 +25,13 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {FilterOption} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
 import moment from 'moment';
+import {ProductTag} from '../ProductTag/ProductTag';
+import GroupedByList from './ProductListGrouped';
+import SortedByList from './ProductListSorted';
 
 interface ProductListProps {
     products: Array<Product>;
+    productTags: Array<ProductTag>;
     setCurrentModal(modalState: CurrentModalState): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
@@ -42,19 +45,13 @@ export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOpt
 
 function ProductList({
     products,
+    productTags,
     setCurrentModal,
     allGroupedTagFilterOptions,
     viewingDate,
     productSortBy,
 }: ProductListProps ): JSX.Element {
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
-    const [sortedProducts, setSortedProducts] = useState<Array<Product>>([...products]);
-
-    useEffect(() => {
-        if (products && products.length) {
-            setSortedProducts(sortBy(products, productSortBy));
-        }
-    }, [products, productSortBy]);
 
     useEffect(() => {
         if (allGroupedTagFilterOptions.length > 0 ) {
@@ -90,51 +87,35 @@ function ProductList({
         return isProductTagFilterOn || isLocationFilterOn;
     }
 
-    function sortBy(products: Array<Product>, productSortBy: string): Array<Product> {
-        switch (productSortBy) {
-            case ('location'): return [...products].sort(sortByLocation);
-            case ('name'): return [...products].sort(sortByProductName);
-            default: return [...products];
+    function ListOfProducts(): JSX.Element {
+        const productFiltersLoaded = allGroupedTagFilterOptions.length > 0;
+        if (productFiltersLoaded) {
+            const filteredAndActiveProduct = products
+                .filter(product => noFiltersApplied || permittedByFilters(product))
+                .filter(isActiveProduct);
+
+            switch (productSortBy) {
+                case 'product-tag': {
+                    return <GroupedByList 
+                        products={filteredAndActiveProduct} 
+                        productTags={productTags}/>;
+                }
+                default:
+                    return <SortedByList 
+                        products={filteredAndActiveProduct} 
+                        productSortBy={productSortBy}/>;
+            }
+        } else {
+            return <></>;
         }
-    }
-
-    function sortByProductName(productAName: Product, productBName: Product): number {
-        return productAName.name.toLowerCase().localeCompare(productBName.name.toLowerCase());
-    }
-
-    function sortByLocation(productA: Product, productB: Product): number {
-        const locationA = getSpaceLocationNameSafely(productA);
-        const locationB = getSpaceLocationNameSafely(productB);
-
-        const comparisonValue: number = locationA.toLowerCase().localeCompare(locationB.toLowerCase());
-        if (comparisonValue === 0) {
-            return sortByProductName(productA, productB);
-        }
-        return comparisonValue;
-    }
-
-    function getSpaceLocationNameSafely(product: Product): string {
-        return product.spaceLocation ? product.spaceLocation.name : 'ZZZZZZZZ';
     }
 
     return (
         <div className="productListContainer" data-testid="productListContainer">
-            {sortedProducts && sortedProducts.map((product: Product) => {
-                const productFiltersLoaded = allGroupedTagFilterOptions.length > 0;
-                if (productFiltersLoaded
-                    && isActiveProduct(product)
-                    && (noFiltersApplied || permittedByFilters(product))) {
-                    return (
-                        <div key={product.id}>
-                            <ProductCard
-                                product={product}
-                                container={'productCardContainer'}/>
-                        </div>
-                    );
-                }
-                return <div key={product.id}/>;
-            })}
-            <div className="newProduct productCardContainer" onClick={() => setCurrentModal({modal: AvailableModals.CREATE_PRODUCT})} data-cy="newProductButton">
+            <ListOfProducts/>
+            <div className="newProduct productCardContainer"
+                onClick={() => setCurrentModal({modal: AvailableModals.CREATE_PRODUCT})}
+                data-cy="newProductButton">
                 <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
                 <h2 className="newProductText">New Product</h2>
             </div>
@@ -144,6 +125,7 @@ function ProductList({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
+    productTags: state.productTags,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
     viewingDate: state.viewingDate,
     productSortBy: state.productSortBy,
