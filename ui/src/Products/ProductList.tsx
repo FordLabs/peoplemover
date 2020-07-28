@@ -29,6 +29,8 @@ import {ProductTag} from '../ProductTag/ProductTag';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 
+import './ProductList.scss';
+
 interface ProductListProps {
     products: Array<Product>;
     productTags: Array<ProductTag>;
@@ -96,12 +98,12 @@ function ProductList({
 
             switch (productSortBy) {
                 case 'product-tag': {
-                    return <GroupedByList 
-                        products={filteredAndActiveProduct} 
+                    return <GroupedByList
+                        products={filteredAndActiveProduct}
                         productTags={productTags}/>;
                 }
                 default:
-                    return <SortedByList 
+                    return <SortedByList
                         products={filteredAndActiveProduct} 
                         productSortBy={productSortBy}/>;
             }
@@ -111,15 +113,7 @@ function ProductList({
     }
 
     return (
-        <div className="productListContainer" data-testid="productListContainer">
-            <ListOfProducts/>
-            <div className="newProduct productCardContainer"
-                onClick={() => setCurrentModal({modal: AvailableModals.CREATE_PRODUCT})}
-                data-cy="newProductButton">
-                <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
-                <h2 className="newProductText">New Product</h2>
-            </div>
-        </div>
+        <ListOfProducts/>
     );
 }
 

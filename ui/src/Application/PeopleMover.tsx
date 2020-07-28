@@ -83,7 +83,7 @@ function PeopleMover({
                 await SpaceClient.getSpaceFromName(spaceName)
                     .then(response => {
                         setCurrentSpace(response.data);
-                    } );
+                    });
                 await fetchProducts();
                 await fetchProductTags();
                 const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;

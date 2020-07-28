@@ -19,6 +19,9 @@ import {ProductTag} from '../ProductTag/ProductTag';
 import ProductCard from './ProductCard';
 import React from 'react';
 import {Product} from './Product';
+import NewProductButton from './NewProductButton';
+
+import './ProductListGrouped.scss';
 
 interface Props {
     products: Array<Product>;
@@ -30,27 +33,29 @@ function GroupedByList({ productTags, products }: Props): JSX.Element {
         return product.productTags.map(t => t.name).includes(tagName);
     }
 
-    return <>
-        {
-            productTags && productTags.map((tag: ProductTag) => {
+    return ( 
+        <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
+            {productTags && productTags.map((tag: ProductTag) => {
                 return (
                     <div data-testid="productGroup" key={tag.name}>
-                        <div className="productTagBar">{tag.name}</div>
-                        {products
-                            .filter(product => filterByProductTag(product, tag.name))
-                            .map(product => (
-                                <div key={product.id}>
-                                    <ProductCard
-                                        product={product}
-                                        container="productCardContainer" />
-                                </div>
-                            ))
-                        }
+                        <div className="productTagName">{tag.name}</div>
+                        <div className="groupedProducts">
+                            {products.filter(product => filterByProductTag(product, tag.name))
+                                .map(product => (
+                                    <span key={product.id}>
+                                        <ProductCard
+                                            product={product}
+                                            container="productCardContainer" />
+                                    </span>
+                                ))
+                            }
+                            <NewProductButton />
+                        </div>
                     </div>
                 );
-            })
-        }
-    </>;
+            })}
+        </div>
+    );
 }
 
 export default GroupedByList;

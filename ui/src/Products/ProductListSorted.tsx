@@ -18,6 +18,9 @@
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import ProductCard from './ProductCard';
+import NewProductButton from './NewProductButton';
+
+import './ProductListSorted.scss';
 
 interface Props {
     products: Array<Product>;
@@ -61,17 +64,18 @@ function SortedByList({ products, productSortBy}: Props): JSX.Element {
     }
 
     return (
-        <>
+        <div className="productListSortedContainer" data-testid="productListSortedContainer">
             {sortedProducts && sortedProducts.map((product: Product) => {
                 return (
-                    <div key={product.id}>
+                    <span key={product.id}>
                         <ProductCard
                             product={product}
                             container="productCardContainer"/>
-                    </div>
+                    </span>
                 );
             })}
-        </>
+            <NewProductButton />
+        </div>
     );
 }
 

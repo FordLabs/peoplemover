@@ -15,27 +15,28 @@
  * limitations under the License.
  */
 
-$white: #FFFFFF;
+@import '../Application/Styleguide/Colors.scss';
 
-$gray-1: #403D3D;
-$gray-2: #6B6867;
-$gray-3: #999694;
-$gray-4: #BFBCBB;
-$gray-5: #EDEBEB;
-$gray-6: #F2F2F2;
+.productListGroupedContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-grow: 1;
 
-$prime-1: #5463B0;
+  .productTagName {
+    color: $gray-1;
+    background-color: $sec-6;
+    border-radius: 6px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 5px 15px;
+    margin: 16px 12px 16px 6px;
+  }
 
-
-$role-1: #9ADAD3;
-$role-2: #A8CBFA;
-$role-3: #A7EEFE;
-
-$scrollbar-color: #ABABAB;
-$font-color: #323b3e;
-$purple: #4F5FAB;
-$logo-gradient: linear-gradient(90deg, #984AA1 0%, #4F5FAB 76.03%);
-$purple-title: #984AA1;
-$error-message: #C82656;
-$sec-6: #F2E7F3;
-
+  .groupedProducts {
+    display: flex;
+  }
+}

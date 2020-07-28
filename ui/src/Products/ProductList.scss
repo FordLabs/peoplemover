@@ -15,27 +15,29 @@
  * limitations under the License.
  */
 
-$white: #FFFFFF;
+@import '../Application/Styleguide/Colors.scss';
 
-$gray-1: #403D3D;
-$gray-2: #6B6867;
-$gray-3: #999694;
-$gray-4: #BFBCBB;
-$gray-5: #EDEBEB;
-$gray-6: #F2F2F2;
+.newProduct {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  height: 30px;
+  align-items: center;
+}
 
-$prime-1: #5463B0;
+.newProduct.productCardContainer {
+  padding-bottom: 4px;
+  cursor: pointer;
+}
 
+.addProductIcon {
+  margin-left: 11px;
+  margin-right: 8px;
+  padding-bottom: 4px;
+}
 
-$role-1: #9ADAD3;
-$role-2: #A8CBFA;
-$role-3: #A7EEFE;
-
-$scrollbar-color: #ABABAB;
-$font-color: #323b3e;
-$purple: #4F5FAB;
-$logo-gradient: linear-gradient(90deg, #984AA1 0%, #4F5FAB 76.03%);
-$purple-title: #984AA1;
-$error-message: #C82656;
-$sec-6: #F2E7F3;
-
+.newProductText {
+  font-size: 14px;
+  color: $gray-1;
+  padding-bottom: 2px;
+}
