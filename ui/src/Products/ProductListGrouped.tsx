@@ -31,6 +31,7 @@ interface GroupedByListProps {
 interface ProductGroupProps {
     tagName: string;
     productFilterFunction: (product: Product, tagName: string) => boolean;
+    useGrayBackground?: boolean;
 }
 
 function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Element {
@@ -42,10 +43,10 @@ function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Eleme
         return (product.productTags || []).length === 0;
     }
 
-    function ProductGroup({tagName, productFilterFunction }: ProductGroupProps): JSX.Element {
+    function ProductGroup({tagName, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
         return (
             <div data-testid="productGroup" key={tagName}>
-                <div className="productTagName">{tagName}</div>
+                <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
                 <div className="groupedProducts">
                     {products.filter(product => productFilterFunction(product, tagName))
                         .map(product => (
@@ -75,6 +76,7 @@ function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Eleme
             })}
             <ProductGroup
                 tagName="No Product Tag"
+                useGrayBackground
                 productFilterFunction={filterByNoProductTag}/>
         </div>
     );
