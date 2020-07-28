@@ -39,10 +39,7 @@ function ValidationGuard({children}: ValidationGuard): JSX.Element {
 
             AccessTokenClient.userCanAccessSpace(accessToken, spaceName)
                 .then(() => setRenderedElement(children))
-                .catch(() => {
-                    cookie.remove('accessToken');
-                    setRenderedElement(<Redirect to={'/user/login'}/>)
-                });
+                .catch(() => setRenderedElement(<Redirect to={'/user/login'}/>));
         }
     }, []);
 
