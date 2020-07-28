@@ -109,7 +109,7 @@ class SpaceControllerApiTest {
                 scopes = listOf(),
                 exp = null,
                 iss = null,
-                sub = null
+                sub = "authquestId"
         )
 
         `when`(authService.validateAccessToken(validateTokenRequest)).thenReturn(ResponseEntity.ok(jwtToken))
@@ -135,10 +135,10 @@ class SpaceControllerApiTest {
         assertThat(spaceRepository.findAll().first().name).isEqualTo(request.spaceName)
         val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAll()
         assertThat(userSpaceMappings).hasSize(1)
-        assertThat(userSpaceMappings[0].userId).isEqualTo("userId")
+        assertThat(userSpaceMappings[0].userId).isEqualTo("authquestId")
         assertThat(userSpaceMappings[0].spaceId).isEqualTo(actualSpaceWithAccessTokenResponse.space.id)
         verify(authService).validateAccessToken(validateTokenRequest)
-        verify(authClient).updateUserScopes(jwtToken.user_id!!, listOf(request.spaceName))
+        verify(authClient).updateUserScopes(jwtToken.sub!!, listOf(request.spaceName))
         verify(authClient).createScope(listOf(request.spaceName))
     }
 
@@ -237,10 +237,10 @@ class SpaceControllerApiTest {
         val validateTokenRequest = ValidateTokenRequest(accessToken= "TOKEN")
         `when`(authService.validateAccessToken(validateTokenRequest))
                 .thenReturn(ResponseEntity.ok(AuthQuestJWT(
-                        user_id = "userId",
+                        user_id = "",
                         exp = "",
                         iss = "",
-                        sub = "",
+                        sub = "userId",
                         scopes = emptyList()
                 )))
 

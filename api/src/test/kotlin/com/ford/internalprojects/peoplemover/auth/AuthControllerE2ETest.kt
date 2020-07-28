@@ -81,8 +81,13 @@ class AuthControllerE2ETest {
         val emails = listOf("EMAIL_1", "EMAIL_2")
         val spaceName = "spaceName"
 
-        `when`(authClient.getUserIdFromEmail("EMAIL_1")).thenReturn(ResponseEntity.ok(UserReadResponse("uuid1")))
-        `when`(authClient.getUserIdFromEmail("EMAIL_2")).thenReturn(ResponseEntity.ok(UserReadResponse("uuid2")))
+        val userReadResponse1 = UserReadResponse()
+        val userReadResponse2 = UserReadResponse()
+        userReadResponse1.user_id = "uuid1"
+        userReadResponse2.user_id = "uuid2"
+
+        `when`(authClient.getUserIdFromEmail("EMAIL_1")).thenReturn(ResponseEntity.ok(userReadResponse1))
+        `when`(authClient.getUserIdFromEmail("EMAIL_2")).thenReturn(ResponseEntity.ok(userReadResponse2))
         spaceRepository.save(Space(id = 1, name = spaceName))
 
         val request = AuthInviteUsersToSpaceRequest(

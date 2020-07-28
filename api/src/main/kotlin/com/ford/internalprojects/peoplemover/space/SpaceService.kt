@@ -57,7 +57,7 @@ class SpaceService(
 
                 authClient.createScope(listOf(spaceName))
 
-                val userUUID: String = validateResponse.body!!.user_id!!
+                val userUUID: String = validateResponse.body!!.sub!!
                 authClient.updateUserScopes(userUUID, listOf(spaceName))
                 userSpaceMappingRepository.save(
                         UserSpaceMapping(
@@ -81,7 +81,7 @@ class SpaceService(
     fun getSpacesForUser(accessToken: String): List<Space> {
         val validateResponse: ResponseEntity<AuthQuestJWT> = authService.validateAccessToken(ValidateTokenRequest(accessToken))
         validateResponse.body?.let {
-            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(it.user_id!!).map{ mapping -> mapping.spaceId!! }.toList()
+            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(it.sub!!).map{ mapping -> mapping.spaceId!! }.toList()
             return spaceRepository.findAllByIdIn(spaceIds)
         }
         throw InvalidTokenException()
