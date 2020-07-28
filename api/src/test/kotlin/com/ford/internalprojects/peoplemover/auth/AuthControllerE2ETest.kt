@@ -25,6 +25,7 @@ import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import com.ford.labs.authquest.user.UserReadResponse
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
@@ -75,6 +76,12 @@ class AuthControllerE2ETest {
 
     @Value("\${authquest.client_secret}")
     lateinit var clientSecret: String
+
+    @Before
+    fun setUp() {
+        userSpaceMappingRepository.deleteAll()
+        spaceRepository.deleteAll()
+    }
 
     @Test
     fun `PUT should return NO_CONTENT with a valid invite scope request`() {
@@ -242,38 +249,37 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `POST should return 200 ok if space name is found in access token scopes`() {
+    fun `POST should return 200 ok if space name is found in database for user`() {
 
         val accessToken = "fake_access_token"
-        val authVerifyResponse = OAuthVerifyResponse("USER_ID", listOf("SpaceOne", "SpaceTwo"), 1, "", "")
+        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "USER_ID")
 
-        `when`(authClient.validateAccessToken(accessToken)).thenReturn(
-                Optional.of(authVerifyResponse)
-        )
+        val savedSpace = spaceRepository.save(Space("spaceThree"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id))
+        `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(authVerifyResponse))
 
         val request = AuthCheckScopesRequest.builder()
                 .accessToken(accessToken)
-                .spaceName("spaceOne")
+                .spaceName("spaceThree")
                 .build()
 
         mockMvc.perform(post("/api/access_token/authenticate")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
                 .andExpect(status().isOk)
-
-        verify(authClient).validateAccessToken(accessToken)
     }
 
     @Test
-    fun `POST should return 403 if space name is not found in access token scopes`() {
+    fun `POST should return 403 if space not mapped to user`() {
         val accessToken = "fake_access_token"
 
+        val savedSpace = spaceRepository.save(Space("spaceThree"))
         `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(
-                OAuthVerifyResponse("USER_ID",
+                OAuthVerifyResponse("",
                         listOf("SpaceOne", "SpaceTwo"),
                         1,
                         "",
-                        ""
+                        "USER_ID"
                 )
         ))
 

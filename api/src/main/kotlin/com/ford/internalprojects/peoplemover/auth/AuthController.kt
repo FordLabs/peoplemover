@@ -21,6 +21,7 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
 import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtException
@@ -58,7 +59,7 @@ class AuthController(val authClient: AuthClient,
                 authClient.validateAccessToken(request.accessToken)
                 ResponseEntity.ok().build()
             } catch (e: HttpClientErrorException) {
-                ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+                ResponseEntity.status(FORBIDDEN).build()
             }
         }
     }
@@ -78,13 +79,17 @@ class AuthController(val authClient: AuthClient,
         val validateTokenResponse = authClient.validateAccessToken(request.accessToken)
 
         if (validateTokenResponse.isPresent) {
-            val lowercaseSpaceNames = validateTokenResponse.get().scopes.map { it.toLowerCase() }
-            if (lowercaseSpaceNames.contains(request.spaceName.toLowerCase())) {
-                return ResponseEntity.ok().build()
+            val spaceToSearch = spaceRepository.findByNameIgnoreCase(request.spaceName)
+            val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.get().sub, spaceToSearch!!.id!!)
+            return if (mapping.isPresent) {
+                ResponseEntity.ok().build()
+            } else {
+                ResponseEntity.status(FORBIDDEN).build()
             }
+
         }
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        return ResponseEntity.status(FORBIDDEN).build()
     }
 
     @PutMapping(path = ["/api/user/invite/space"])
