@@ -121,37 +121,4 @@ public class AuthService {
 
         return authRestTemplate.postForObject("/api/oauth/access_token/refresh", request, AuthQuestAccessTokenResponse.class);
     }
-
-    public AuthRoleResponse updateUserRole(UserRoleRequest roleRequest) {
-        var request = AuthRoleRequest.builder()
-                .client_secret(clientSecret)
-                .client_id(clientId)
-                .access_token(roleRequest.getToken())
-                .role(roleRequest.getSpaceName())
-                .build();
-
-        return authRestTemplate.exchange("/api/client/user/role", HttpMethod.PUT, new HttpEntity<>(request), AuthRoleResponse.class).getBody();
-    }
-
-    public boolean authenticateScope(AuthQuestJWT decodedToken, String spaceName) {
-        var scopes = decodedToken.getScopes().stream().map(String::toLowerCase).collect(Collectors.toList());
-        return scopes.contains(spaceName.toLowerCase());
-    }
-
-    public ResponseEntity<Void> inviteUsersToScope(String spaceName, List<String> emails) {
-
-        AuthQuestInviteScopesRequest request = AuthQuestInviteScopesRequest.builder()
-                .client_id(clientId)
-                .client_secret(clientSecret)
-                .user_emails(emails)
-                .scope(spaceName)
-        .build();
-
-        return authRestTemplate.exchange(
-                "/api/invite/scope",
-                HttpMethod.PUT,
-                new HttpEntity<>(request),
-                Void.class
-        );
-    }
 }

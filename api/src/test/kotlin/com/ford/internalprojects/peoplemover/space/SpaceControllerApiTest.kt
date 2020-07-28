@@ -182,7 +182,6 @@ class SpaceControllerApiTest {
 
         assertThat(spaceRepository.count()).isZero()
         verify(authService).validateAccessToken(validateTokenRequest)
-        verify(authService, never()).updateUserRole(any())
     }
 
     @Test

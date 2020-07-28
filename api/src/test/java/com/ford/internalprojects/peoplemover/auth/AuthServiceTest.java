@@ -100,36 +100,4 @@ public class AuthServiceTest {
         assertThat(actual).isEqualTo(response);
 
     }
-
-    @Test
-    public void shouldReturnTrueIfSpaceNameIsIncludedInScopes(){
-        AuthQuestJWT jwt = new AuthQuestJWT(
-                "",
-                asList("spacetwo", "spacethree"),
-                "",
-                "",
-                ""
-        );
-
-        boolean actual = authService.authenticateScope(jwt, "SpaceTwo");
-
-        assertThat(actual).isTrue();
-    }
-
-    @Test
-    public void shouldReturnFalseIfSpaceNameIsNotIncludedInScopes() {
-        AuthQuestJWT jwt = new AuthQuestJWT(
-                "",
-                asList("spacetwo", "spacethree"),
-                "",
-                "",
-                ""
-        );
-
-        boolean actual = authService.authenticateScope(jwt, "Space");
-
-        assertThat(actual).isFalse();
-    }
-
-
 }
