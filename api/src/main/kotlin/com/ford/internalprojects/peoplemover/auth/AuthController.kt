@@ -20,6 +20,7 @@ package com.ford.internalprojects.peoplemover.auth
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
 import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
+import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
@@ -76,20 +77,25 @@ class AuthController(val authClient: AuthClient,
 
     @PostMapping(path = ["/api/access_token/authenticate"])
     fun validateAndAuthenticateAccessToken(@RequestBody request: AuthCheckScopesRequest): ResponseEntity<Void> {
-        val validateTokenResponse = authClient.validateAccessToken(request.accessToken)
-
-        if (validateTokenResponse.isPresent) {
-            val spaceToSearch = spaceRepository.findByNameIgnoreCase(request.spaceName)
-            val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.get().sub, spaceToSearch!!.id!!)
-            return if (mapping.isPresent) {
-                ResponseEntity.ok().build()
-            } else {
-                ResponseEntity.status(FORBIDDEN).build()
+        val validateTokenResponse = try {
+            val jwt = decoder.decode(request.accessToken);
+            OAuthVerifyResponse(jwt.subject, emptyList(), jwt.expiresAt!!.toEpochMilli(), jwt.issuer.toString(), jwt.subject)
+        }
+        catch ( e: JwtException) {
+            try {
+                authClient.validateAccessToken(request.accessToken).get()
+            } catch (e: HttpClientErrorException) {
+                return ResponseEntity.status(FORBIDDEN).build()
             }
-
         }
 
-        return ResponseEntity.status(FORBIDDEN).build()
+        val spaceToSearch = spaceRepository.findByNameIgnoreCase(request.spaceName)
+        val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.sub!!, spaceToSearch!!.id!!)
+        return if (mapping.isPresent) {
+            ResponseEntity.ok().build()
+        } else {
+            ResponseEntity.status(FORBIDDEN).build()
+        }
     }
 
     @PutMapping(path = ["/api/user/invite/space"])

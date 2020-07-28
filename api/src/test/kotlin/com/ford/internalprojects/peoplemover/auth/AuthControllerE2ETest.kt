@@ -36,6 +36,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
@@ -46,7 +47,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.client.HttpClientErrorException
+import java.time.Instant
 import java.util.*
+import kotlin.collections.HashMap
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -203,7 +206,7 @@ class AuthControllerE2ETest {
     fun `POST validate access token - should return OK if access token valid in ADFS`() {
         val request = ValidateTokenRequest(accessToken = "access_token")
 
-        `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(HttpStatus.FORBIDDEN))
+        `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
         `when`(jwtDecoder.decode(request.accessToken)).thenReturn(null)
 
         mockMvc.perform(post("/api/access_token/validate")
@@ -218,7 +221,7 @@ class AuthControllerE2ETest {
     fun `POST validate access token - should return FORBIDDEN if access token is invalid in both validators`() {
         val request = ValidateTokenRequest(accessToken = "INVALID_ACCESS_TOKEN")
 
-        `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(HttpStatus.FORBIDDEN))
+        `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
         `when`(jwtDecoder.decode(request.accessToken)).thenThrow(JwtException("INVALID JWT"))
 
         mockMvc.perform(post("/api/access_token/validate")
@@ -249,14 +252,46 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `POST should return 200 ok if space name is found in database for user`() {
+    fun `POST should return 200 ok if space name is found in database for user from AuthQuest`() {
 
         val accessToken = "fake_access_token"
         val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "USER_ID")
-
         val savedSpace = spaceRepository.save(Space("spaceThree"))
+
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id))
         `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(authVerifyResponse))
+        `when`(jwtDecoder.decode(accessToken)).thenThrow(JwtException("INVALID_JWT"))
+
+
+        val request = AuthCheckScopesRequest.builder()
+                .accessToken(accessToken)
+                .spaceName("spaceThree")
+                .build()
+
+        mockMvc.perform(post("/api/access_token/authenticate")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json"))
+                .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `POST should return 200 ok if space name is found in database for user from ADFS`() {
+
+        val accessToken = "fake_access_token"
+
+        val savedSpace = spaceRepository.save(Space("spaceThree"))
+
+        val headers = HashMap<String, Any>()
+        headers["typ"] = "JWT"
+        val claims = HashMap<String, Any>()
+        claims["sub"] = "USER_ID"
+        claims["expiresAt"] = Instant.now()
+        claims["iss"] = "https://localhost"
+        val fakeJwt = Jwt(accessToken, Instant.now(), Instant.now(), headers, claims)
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id))
+        `when`(authClient.validateAccessToken(accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
+        `when`(jwtDecoder.decode(accessToken)).thenReturn(fakeJwt)
 
         val request = AuthCheckScopesRequest.builder()
                 .accessToken(accessToken)
@@ -273,7 +308,8 @@ class AuthControllerE2ETest {
     fun `POST should return 403 if space not mapped to user`() {
         val accessToken = "fake_access_token"
 
-        val savedSpace = spaceRepository.save(Space("spaceThree"))
+        spaceRepository.save(Space("spaceThree"))
+        `when`(jwtDecoder.decode(accessToken)).thenThrow(JwtException("INVALID_TOKEN"))
         `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(
                 OAuthVerifyResponse("",
                         listOf("SpaceOne", "SpaceTwo"),
