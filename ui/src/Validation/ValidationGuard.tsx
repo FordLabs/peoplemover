@@ -18,6 +18,7 @@
 import React, {ReactElement, useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
+import {Redirect} from "react-router";
 
 interface ValidationGuard {
     children: ReactElement;
@@ -38,7 +39,7 @@ function ValidationGuard({children}: ValidationGuard): JSX.Element {
 
             AccessTokenClient.userCanAccessSpace(accessToken, spaceName)
                 .then(() => setRenderedElement(children))
-                .catch(() => setRenderedElement(<>403 - YOU ARE FORBIDDEN</>));
+                .catch(() => setRenderedElement(<Redirect to={'/user/login'}/>));
         }
     }, []);
 
