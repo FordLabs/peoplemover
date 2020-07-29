@@ -290,13 +290,15 @@ class AuthControllerE2ETest {
 
         val savedSpace = spaceRepository.save(Space("spaceThree"))
 
+        val issuedAt = Instant.now()
         val headers = HashMap<String, Any>()
         headers["typ"] = "JWT"
         val claims = HashMap<String, Any>()
         claims["sub"] = "USER_ID"
-        claims["expiresAt"] = Instant.now()
+        val expiresAt = Instant.now()
+        claims["expiresAt"] = expiresAt
         claims["iss"] = "https://localhost"
-        val fakeJwt = Jwt(accessToken, Instant.now(), Instant.now(), headers, claims)
+        val fakeJwt = Jwt(accessToken, issuedAt, expiresAt, headers, claims)
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id))
         `when`(authClient.validateAccessToken(accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
