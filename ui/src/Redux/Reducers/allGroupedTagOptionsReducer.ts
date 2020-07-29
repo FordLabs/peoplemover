@@ -18,7 +18,11 @@
 import {AvailableActions} from '../Actions';
 import {AllGroupedTagFilterOptions, LocalStorageFilters} from '../../ReusableComponents/ProductFilter';
 import {FilterOption} from '../../CommonTypes/Option';
-import {getSelectedTagsFromGroupedTagOptions} from '../../Products/ProductList';
+
+export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOption>): Array<string> {
+    const selectedOptions = tagFilters.filter(option => option.selected);
+    return selectedOptions.map(value => value.label);
+}
 
 function sortTags(tags: Array<FilterOption>): Array<FilterOption> {
     return tags.sort((tag1: FilterOption, tag2: FilterOption) => {

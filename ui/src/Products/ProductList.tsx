@@ -23,10 +23,10 @@ import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import {FilterOption} from '../CommonTypes/Option';
 import {Dispatch} from 'redux';
 import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
+import { getSelectedTagsFromGroupedTagOptions } from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface ProductListProps {
     currentSpace: Space;
@@ -34,11 +34,6 @@ interface ProductListProps {
     setCurrentModal(modalState: CurrentModalState): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
-}
-
-export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOption>): Array<string> {
-    const selectedOptions = tagFilters.filter(option => option.selected);
-    return selectedOptions.map(value => value.label);
 }
 
 function ProductList({
