@@ -21,17 +21,18 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
+import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.jwt.JwtDecoder
@@ -40,6 +41,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.client.HttpClientErrorException
 import java.util.*
 
 @AutoConfigureMockMvc
@@ -58,9 +60,6 @@ class SpaceControllerApiTest {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
-
-    @MockBean
-    private lateinit var authService: AuthService
 
     @MockBean
     private lateinit var authClient: AuthClient
@@ -102,22 +101,8 @@ class SpaceControllerApiTest {
         val request = SpaceCreationRequest(spaceName = "New Space")
         val accessToken = "TOKEN"
 
-        val validateTokenRequest = ValidateTokenRequest(accessToken= accessToken)
-
-        val jwtToken = AuthQuestJWT(
-                user_id = "userId",
-                scopes = listOf(),
-                exp = null,
-                iss = null,
-                sub = "authquestId"
-        )
-
-        `when`(authService.validateAccessToken(validateTokenRequest)).thenReturn(ResponseEntity.ok(jwtToken))
-        val updatedToken = "REFRESHED_TOKEN"
-        `when`(authClient.refreshAccessToken(accessToken)).thenReturn(Optional.of(OAuthRefreshTokenResponse(
-                "",
-                updatedToken
-        )))
+        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "USER_ID")
+        `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(authVerifyResponse))
 
         val result = mockMvc.perform(post("/api/user/space")
                 .content(objectMapper.writeValueAsString(request))
@@ -126,20 +111,18 @@ class SpaceControllerApiTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualSpaceWithAccessTokenResponse: SpaceWithAccessTokenResponse = objectMapper.readValue(
+        val actualSpaceResponse: SpaceResponse = objectMapper.readValue(
                 result.response.contentAsString,
-                SpaceWithAccessTokenResponse::class.java
+                SpaceResponse::class.java
         )
-        assertThat(actualSpaceWithAccessTokenResponse.space.name).isEqualTo(request.spaceName)
-        assertThat(actualSpaceWithAccessTokenResponse.accessToken).isEqualTo(updatedToken)
+        assertThat(actualSpaceResponse.space.name).isEqualTo(request.spaceName)
         assertThat(spaceRepository.findAll().first().name).isEqualTo(request.spaceName)
         val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAll()
         assertThat(userSpaceMappings).hasSize(1)
-        assertThat(userSpaceMappings[0].userId).isEqualTo("authquestId")
-        assertThat(userSpaceMappings[0].spaceId).isEqualTo(actualSpaceWithAccessTokenResponse.space.id)
-        verify(authService).validateAccessToken(validateTokenRequest)
-        verify(authClient).updateUserScopes(jwtToken.sub!!, listOf(request.spaceName))
-        verify(authClient).createScope(listOf(request.spaceName))
+        assertThat(userSpaceMappings[0].userId).isEqualTo("USER_ID")
+        assertThat(userSpaceMappings[0].spaceId).isEqualTo(actualSpaceResponse.space.id)
+        verify(authClient).validateAccessToken(accessToken)
+
     }
 
     @Test
@@ -171,8 +154,7 @@ class SpaceControllerApiTest {
     fun `POST should return 401 when token is not valid`() {
         val request = SpaceCreationRequest(spaceName = "New Space")
         val token = "TOKEN"
-        val validateTokenRequest = ValidateTokenRequest(accessToken= token)
-        `when`(authService.validateAccessToken(validateTokenRequest)).thenReturn(ResponseEntity.badRequest().build())
+        `when`(authClient.validateAccessToken(token)).thenThrow(HttpClientErrorException(FORBIDDEN))
 
         mockMvc.perform(post("/api/user/space")
                 .content(objectMapper.writeValueAsString(request))
@@ -181,7 +163,7 @@ class SpaceControllerApiTest {
                 .andExpect(status().isUnauthorized)
 
         assertThat(spaceRepository.count()).isZero()
-        verify(authService).validateAccessToken(validateTokenRequest)
+        verify(authClient).validateAccessToken(token)
     }
 
     @Test
@@ -233,18 +215,12 @@ class SpaceControllerApiTest {
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "userId", spaceId = space1.id))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "userId", spaceId = space2.id))
 
-        val validateTokenRequest = ValidateTokenRequest(accessToken= "TOKEN")
-        `when`(authService.validateAccessToken(validateTokenRequest))
-                .thenReturn(ResponseEntity.ok(AuthQuestJWT(
-                        user_id = "",
-                        exp = "",
-                        iss = "",
-                        sub = "userId",
-                        scopes = emptyList()
-                )))
+        val accessToken = "TOKEN"
+        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "userId")
+        `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(authVerifyResponse))
 
         val result = mockMvc.perform(get("/api/user/space")
-                .header("Authorization", "Bearer ${validateTokenRequest.accessToken}"))
+                .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -256,7 +232,6 @@ class SpaceControllerApiTest {
         assertThat(actualUserSpaces).hasSize(2)
         assertThat(actualUserSpaces).contains(space1)
         assertThat(actualUserSpaces).contains(space2)
-        verify(authService).validateAccessToken(validateTokenRequest)
     }
 
     @Test
@@ -277,12 +252,11 @@ class SpaceControllerApiTest {
 
     @Test
     fun `GET should return 401 when access token is invalid`() {
-        val validateTokenRequest = ValidateTokenRequest(accessToken= "INVALID_TOKEN")
-        `when`(authService.validateAccessToken(validateTokenRequest)).thenReturn(ResponseEntity.badRequest().build())
+        val accessToken = "INVALID_TOKEN"
+        `when`(authClient.validateAccessToken(accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
         mockMvc.perform(get("/api/user/space")
-                .header("Authorization", "Bearer ${validateTokenRequest.accessToken}"))
+                .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isUnauthorized)
-        verify(authService).validateAccessToken(validateTokenRequest)
     }
 
     @Test

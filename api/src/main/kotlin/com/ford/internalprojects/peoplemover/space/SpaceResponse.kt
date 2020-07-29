@@ -15,22 +15,8 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth;
+package com.ford.internalprojects.peoplemover.space
 
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class AuthRoleResponse {
-    private String access_token;
-
-    public String getAccessToken() {
-        return this.access_token;
-    }
-}
+data class SpaceResponse (
+    val space: Space
+)
