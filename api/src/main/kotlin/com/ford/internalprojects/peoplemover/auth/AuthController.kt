@@ -17,10 +17,10 @@
 
 package com.ford.internalprojects.peoplemover.auth
 
+import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
 import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
-import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
@@ -37,7 +37,7 @@ import javax.validation.Valid
 class AuthController(val authClient: AuthClient,
                      val userSpaceMappingRepository: UserSpaceMappingRepository,
                      val spaceRepository: SpaceRepository,
-                    val decoder: JwtDecoder
+                     val authService: AuthService
 ) {
 
     @PostMapping(path = ["/api/access_token"])
@@ -51,18 +51,8 @@ class AuthController(val authClient: AuthClient,
 
     @PostMapping(path = ["/api/access_token/validate"])
     fun validateAccessToken(@RequestBody request: ValidateTokenRequest): ResponseEntity<Unit> {
-        return try{
-            decoder.decode(request.accessToken)
-            ResponseEntity.ok().build()
-        }
-        catch ( e: JwtException) {
-            return try {
-                authClient.validateAccessToken(request.accessToken)
-                ResponseEntity.ok().build()
-            } catch (e: HttpClientErrorException) {
-                ResponseEntity.status(FORBIDDEN).build()
-            }
-        }
+            authService.validateToken(request.accessToken)
+            return ResponseEntity.ok().build()
     }
 
     @PostMapping(path = ["/api/access_token/refresh"])
@@ -77,17 +67,7 @@ class AuthController(val authClient: AuthClient,
 
     @PostMapping(path = ["/api/access_token/authenticate"])
     fun validateAndAuthenticateAccessToken(@RequestBody request: AuthCheckScopesRequest): ResponseEntity<Void> {
-        val validateTokenResponse = try {
-            val jwt = decoder.decode(request.accessToken);
-            OAuthVerifyResponse(jwt.subject, emptyList(), jwt.expiresAt!!.toEpochMilli(), jwt.issuer.toString(), jwt.subject)
-        }
-        catch ( e: JwtException) {
-            try {
-                authClient.validateAccessToken(request.accessToken).get()
-            } catch (e: HttpClientErrorException) {
-                return ResponseEntity.status(FORBIDDEN).build()
-            }
-        }
+        val validateTokenResponse = authService.validateToken(request.accessToken)
 
         val spaceToSearch = spaceRepository.findByNameIgnoreCase(request.spaceName)
         val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.sub!!, spaceToSearch!!.id!!)

@@ -206,8 +206,17 @@ class AuthControllerE2ETest {
     fun `POST validate access token - should return OK if access token valid in ADFS`() {
         val request = ValidateTokenRequest(accessToken = "access_token")
 
+        val headers = HashMap<String, Any>()
+        headers["typ"] = "JWT"
+        val claims = HashMap<String, Any>()
+        claims["sub"] = "USER_ID"
+        claims["expiresAt"] = Instant.now()
+        claims["iss"] = "https://localhost"
+        val fakeJwt = Jwt("access_token", Instant.now(), Instant.now(), headers, claims)
+
+
         `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
-        `when`(jwtDecoder.decode(request.accessToken)).thenReturn(null)
+        `when`(jwtDecoder.decode(request.accessToken)).thenReturn(fakeJwt)
 
         mockMvc.perform(post("/api/access_token/validate")
                 .content(objectMapper.writeValueAsString(request))
@@ -227,7 +236,7 @@ class AuthControllerE2ETest {
         mockMvc.perform(post("/api/access_token/validate")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
-                .andExpect(status().isForbidden)
+                .andExpect(status().isUnauthorized)
     }
 
     @Test
