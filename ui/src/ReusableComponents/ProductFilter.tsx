@@ -20,6 +20,7 @@ import Select from 'react-select';
 import {CustomIndicator, filterByStyles, FilterControl, FilterOptions} from './ReactSelectStyles';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
+import RoleClient from '../Roles/RoleClient';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
@@ -31,10 +32,10 @@ import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../SpaceDashboard/Space';
 
-
 export type LocalStorageFilters = {
     locationTagsFilters: Array<string>;
     productTagsFilters: Array<string>;
+    roleTagsFilters: Array<string>;
 }
 
 export interface AllGroupedTagFilterOptions {
@@ -64,7 +65,8 @@ function ProductFilter({
         if (allGroupedTagFilterOptions.length > 0) {
             const selectedLocationFilters: Array<FilterOption> = allGroupedTagFilterOptions[0].options.filter(option => option.selected);
             const selectedProductFilters: Array<FilterOption> = allGroupedTagFilterOptions[1].options.filter(option => option.selected);
-            setCheckBoxFilterValues([...selectedLocationFilters, ...selectedProductFilters]);
+            const selectedRoleFilters: Array<FilterOption> = allGroupedTagFilterOptions[2].options.filter(option => option.selected);
+            setCheckBoxFilterValues([...selectedLocationFilters, ...selectedProductFilters, ...selectedRoleFilters]);
         }
     }, [allGroupedTagFilterOptions]);
 
@@ -72,6 +74,7 @@ function ProductFilter({
         const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();
         const productTagOptions: Array<FilterOption> = await buildTagOptions(ProductTagClient, localStorageFilter.productTagsFilters);
         const locationTagOptions: Array<FilterOption> = await buildTagOptions(LocationClient, localStorageFilter.locationTagsFilters);
+        const roleTagOptions: Array<FilterOption> = await buildTagOptions(RoleClient, localStorageFilter.roleTagsFilters);
         const options: Array<AllGroupedTagFilterOptions>  = [
             {
                 label: 'Location Tags:',
@@ -80,6 +83,10 @@ function ProductFilter({
             {
                 label: 'Product Tags:',
                 options: productTagOptions,
+            },
+            {
+                label: 'Role Tags:',
+                options: roleTagOptions,
             },
         ];
         setAllGroupedTagFilterOptions(options);
@@ -101,8 +108,9 @@ function ProductFilter({
             return JSON.parse(localStorageFilters);
         }
         return {
-            locationTagsFilters:[],
-            productTagsFilters:[],
+            locationTagsFilters: [],
+            productTagsFilters: [],
+            roleTagsFilters: [],
         };
     }
 
@@ -137,20 +145,25 @@ function ProductFilter({
             selectedOptions,
             allGroupedTagFilterOptions[1]
         );
+        const updatedRoleTags: Array<FilterOption> = updateSelectedGroupedTagFilterOptions(
+            selectedOptions,
+            allGroupedTagFilterOptions[2]
+        );
         setAllGroupedTagFilterOptions([
             {...allGroupedTagFilterOptions[0], options: updatedLocationTags},
             {...allGroupedTagFilterOptions[1], options: updatedProductTags},
+            {...allGroupedTagFilterOptions[2], options: updatedRoleTags},
         ]);
     }
 
     return (
         <React.Fragment>
-            <label htmlFor="filterBy-dropdown" className={'dropdown-label'}>Filter:</label>
+            <label htmlFor="filterBy-dropdown" className="dropdown-label">Filter:</label>
             <Select
                 styles={filterByStyles}
-                name={'filter'}
-                data-testid={'filterBy-dropdown'}
-                className={'dropdown filterBy-dropdown'}
+                name="filter"
+                data-testid="filterBy-dropdown"
+                className="dropdown filterBy-dropdown"
                 inputId="filterBy-dropdown"
                 options={allGroupedTagFilterOptions}
                 value={checkBoxFilterValues}
@@ -159,7 +172,7 @@ function ProductFilter({
                 closeMenuOnSelect={false}
                 hideSelectedOptions={false}
                 onChange={(values): void => applyFilter(values as Array<FilterOption>)}
-                placeholder={''}
+                placeholder=""
                 components={{Option: FilterOptions, DropdownIndicator: CustomIndicator, Control: FilterControl}}
             />
         </React.Fragment>

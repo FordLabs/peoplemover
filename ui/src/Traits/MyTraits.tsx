@@ -158,10 +158,13 @@ function MyTraits({
         let options: Array<FilterOption> = [];
         if (traitName === 'location') {
             options = updateFilterValuesInGroupedTags(0,  trait, action);
-            setAllGroupedTagFilterOptions([{...allGroupedTagFilterOptions[0], options: options}, allGroupedTagFilterOptions[1]]);
+            setAllGroupedTagFilterOptions([{...allGroupedTagFilterOptions[0], options: options}, allGroupedTagFilterOptions[1], allGroupedTagFilterOptions[2]]);
         } else if (traitName === 'product tag') {
             options = updateFilterValuesInGroupedTags(1,  trait, action);
-            setAllGroupedTagFilterOptions([allGroupedTagFilterOptions[0], {...allGroupedTagFilterOptions[1], options: options}]);
+            setAllGroupedTagFilterOptions([allGroupedTagFilterOptions[0], {...allGroupedTagFilterOptions[1], options: options}, allGroupedTagFilterOptions[2]]);
+        } else if (traitName === 'role') {
+            options = updateFilterValuesInGroupedTags(2,  trait, action);
+            setAllGroupedTagFilterOptions([allGroupedTagFilterOptions[0], allGroupedTagFilterOptions[1], {...allGroupedTagFilterOptions[2], options: options}]);
         }
     }
 
@@ -242,7 +245,10 @@ function MyTraits({
                     className="myTraitsCircle addNewTraitUnfilledCircle">
                     <i className="fa fa-plus orangeIcon addTraitIcon"/>
                 </span>
-                <span className="traitName addNewTraitText" data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>Add New {toTitleCase(traitName)}</span>
+                <span className="traitName addNewTraitText"
+                   data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>
+                    Add New {toTitleCase(traitName)}
+                </span>
             </div>
             }
             {confirmDeleteModal}
