@@ -22,17 +22,18 @@ import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 import ProductClient from '../Products/ProductClient';
+import selectEvent from 'react-select-event';
 
 describe('PeopleMover', () => {
     let app: RenderResult;
-    beforeEach(async (done) => {
+
+    beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+
         await wait(() => {
             app = renderWithRedux(<PeopleMover/>);
         });
-
-        done();
     });
 
     it('Should contains My Tags on initial load of People Mover', async () => {
@@ -64,26 +65,80 @@ describe('PeopleMover', () => {
         await app.findByText('Powered by');
         await app.findByText('FordLabs');
     });
-});
 
-describe('PeopleMover Routing', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
+    describe('Products', () => {
+        it('should sort products by name by default',  async () => {
+            const productNameElements = await app.findAllByTestId('productName');
+            const actualProductNames = productNameElements.map((element) => element.innerHTML);
+            expect(actualProductNames).toEqual(
+                [
+                    TestUtils.productForHank.name,
+                    TestUtils.productWithAssignments.name,
+                    TestUtils.productWithoutAssignments.name,
+                ]
+            );
+        });
+
+        it('should sort products by location',  async () => {
+            await wait(() => {
+                selectEvent.select(app.getByLabelText('Sort By:'), ['Location']);
+            });
+
+            const productNameElements = await app.findAllByTestId('productName');
+            const actualProductNames = productNameElements.map((element) => element.innerHTML);
+            expect(actualProductNames).toEqual(
+                [
+                    TestUtils.productForHank.name,
+                    TestUtils.productWithoutAssignments.name,
+                    TestUtils.productWithAssignments.name,
+                ]
+            );
+        });
+
+        it('should group products by product tag',  async () => {
+            await wait(() => {
+                selectEvent.select(app.getByLabelText('Sort By:'), ['Product Tag']);
+            });
+
+            const productGroups = await app.findAllByTestId('productGroup');
+
+            expect(productGroups.length).toBe(3);
+            const productGroup1 = productGroups[0];
+            expect(productGroup1).toHaveTextContent('AV');
+            expect(productGroup1).toHaveTextContent('Product 3');
+            expect(productGroup1).toHaveTextContent('New Product');
+
+            const productGroup2 = productGroups[1];
+            expect(productGroup2).toHaveTextContent('FordX');
+            expect(productGroup2).toHaveTextContent('Product 1');
+            expect(productGroup2).toHaveTextContent('New Product');
+
+            const productGroup3 = productGroups[2];
+            expect(productGroup3).toHaveTextContent('No Product Tag');
+            expect(productGroup3).toHaveTextContent('Hanky Product');
+            expect(productGroup3).toHaveTextContent('New Product');
+        });
     });
 
-    it('should show 404 page when bad space name is provided',  async () => {
-        ProductClient.getProductsForDate = jest.fn(() => Promise.reject());
+    describe('Routing', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
 
-        const history = createMemoryHistory({ initialEntries: ['/somebadName'] });
+        it('should show 404 page when bad space name is provided',  async () => {
+            ProductClient.getProductsForDate = jest.fn(() => Promise.reject());
 
-        renderWithRedux(
-            <Router history={history}>
-                <PeopleMover/>
-            </Router>
-        );
+            const history = createMemoryHistory({ initialEntries: ['/somebadName'] });
 
-        await wait(() => {
-            expect(history.location.pathname).toEqual('/error/404');
+            renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
+
+            await wait(() => {
+                expect(history.location.pathname).toEqual('/error/404');
+            });
         });
     });
 });

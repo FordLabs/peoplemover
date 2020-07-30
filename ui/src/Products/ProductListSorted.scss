@@ -15,27 +15,10 @@
  * limitations under the License.
  */
 
-$white: #FFFFFF;
-
-$gray-1: #403D3D;
-$gray-2: #6B6867;
-$gray-3: #999694;
-$gray-4: #BFBCBB;
-$gray-5: #EDEBEB;
-$gray-6: #F2F2F2;
-
-$prime-1: #5463B0;
-
-
-$role-1: #9ADAD3;
-$role-2: #A8CBFA;
-$role-3: #A7EEFE;
-
-$scrollbar-color: #ABABAB;
-$font-color: #323b3e;
-$purple: #4F5FAB;
-$logo-gradient: linear-gradient(90deg, #984AA1 0%, #4F5FAB 76.03%);
-$purple-title: #984AA1;
-$error-message: #C82656;
-$sec-6: #F2E7F3;
-
+.productListSortedContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-grow: 1
+}

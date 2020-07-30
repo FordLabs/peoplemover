@@ -104,7 +104,6 @@ function ProductForm({
     const [endDate, setEndDate] = useState<Date | null>(currentProduct.endDate ? moment(currentProduct.endDate).toDate() : null);
 
     useEffect(() => {
-
         LocationClient.get(currentSpace.name).then(result => {setAvailableLocations(result.data);});
         ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
