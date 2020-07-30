@@ -25,6 +25,7 @@ import LocationClient from '../Locations/LocationClient';
 import {closeModalAction, setAllGroupedTagFilterOptions} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import DatePicker from 'react-datepicker';
+import MaskedInput from 'react-text-mask';
 import 'react-datepicker/dist/react-datepicker.css';
 import {JSX} from '@babel/types';
 import {emptyProduct, Product} from './Product';
@@ -298,6 +299,25 @@ function ProductForm({
         setNotesFieldLength(e.target.value.length);
     }
 
+    // const StartDateDatePicker = ({ value, onClick }) => (
+    //     <div>
+    //         <input onClick={onClick} >{value}</input>
+    //         <i className="far fa-calendar-alt" />
+    //         <MaskedInput
+    //             mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+    //         />
+    //     </div>
+    // );
+
+    // const StartDateDatePicker = () => (
+    //     <div>
+    //         <MaskedInput
+    //             mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+    //         />
+    //         <i className="far fa-calendar-alt" />
+    //     </div>
+    // );
+
     return (
         <div className="formContainer">
             <form className="form" data-testid="productForm">
@@ -364,10 +384,23 @@ function ProductForm({
                         id="start"
                         selected={startDate}
                         onChange={date => {
-                            setStartDate(date ? date : moment(viewingDate).toDate());
-                            updateProductField('startDate', date ? moment(date).format('YYYY-MM-DD') : moment(viewingDate).format('YYYY-MM-DD'));
+                            if (date) {
+                                setStartDate(date);
+                                updateProductField('startDate', moment(date).format('YYYY-MM-DD'));
+                            } else {
+                                setStartDate(moment(currentProduct.startDate).toDate());
+                                updateProductField('startDate', moment(currentProduct.startDate).format('YYYY-MM-DD'));
+                            }
                         }}
-                        isClearable
+                        customInput={
+                            <React.Fragment>
+                                <MaskedInput
+                                    className="formInput formTextInput"
+                                    mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                                />
+                                <i className="far fa-calendar-alt" />
+                            </React.Fragment>
+                        }
                     />
                 </div>
                 <div className="formItem" data-testid="productFormNextPhaseDateField">
@@ -381,8 +414,13 @@ function ProductForm({
                             setEndDate(date ? date : null);
                             updateProductField('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
                         }}
+                        customInput={
+                            <MaskedInput
+                                mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                            />
+                        }
                         isClearable
-                        placeholderText="MM-DD-YYYY"
+                        placeholderText="MM/DD/YYYY"
                     />
                 </div>
                 <div className="formItem">
