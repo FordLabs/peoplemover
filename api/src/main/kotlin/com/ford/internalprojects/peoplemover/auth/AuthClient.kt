@@ -30,6 +30,5 @@ interface AuthClient {
     fun refreshAccessToken(accessToken: String): Optional<OAuthRefreshTokenResponse>
     fun inviteUsersToScope(emails: List<String>, spaceName: String)
     fun createScope(spaces: List<String>)
-    fun updateUserScopes(userUUID: String, spaces: List<String>)
     fun getUserIdFromEmail(email: String): ResponseEntity<UserReadResponse>
 }
