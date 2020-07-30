@@ -299,25 +299,6 @@ function ProductForm({
         setNotesFieldLength(e.target.value.length);
     }
 
-    // const StartDateDatePicker = ({ value, onClick }) => (
-    //     <div>
-    //         <input onClick={onClick} >{value}</input>
-    //         <i className="far fa-calendar-alt" />
-    //         <MaskedInput
-    //             mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
-    //         />
-    //     </div>
-    // );
-
-    // const StartDateDatePicker = () => (
-    //     <div>
-    //         <MaskedInput
-    //             mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
-    //         />
-    //         <i className="far fa-calendar-alt" />
-    //     </div>
-    // );
-
     return (
         <div className="formContainer">
             <form className="form" data-testid="productForm">
@@ -393,15 +374,12 @@ function ProductForm({
                             }
                         }}
                         customInput={
-                            <React.Fragment>
-                                <MaskedInput
-                                    className="formInput formTextInput"
-                                    mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
-                                />
-                                <i className="far fa-calendar-alt" />
-                            </React.Fragment>
+                            <MaskedInput
+                                mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                            />
                         }
                     />
+                    <i className="far fa-calendar-alt calendar-icon" />
                 </div>
                 <div className="formItem" data-testid="productFormNextPhaseDateField">
                     <label className="formItemLabel" htmlFor="end">End Date</label>
@@ -422,6 +400,7 @@ function ProductForm({
                         isClearable
                         placeholderText="MM/DD/YYYY"
                     />
+                    {!endDate && <i className="far fa-calendar-alt calendar-icon" />}
                 </div>
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
