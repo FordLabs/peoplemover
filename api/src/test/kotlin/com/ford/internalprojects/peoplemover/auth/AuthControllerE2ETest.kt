@@ -25,6 +25,7 @@ import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import com.ford.labs.authquest.user.UserReadResponse
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
@@ -34,13 +35,21 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.client.HttpClientErrorException
+import java.time.Instant
 import java.util.*
+import kotlin.collections.HashMap
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -49,6 +58,9 @@ class AuthControllerE2ETest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @MockBean
+    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
@@ -68,13 +80,24 @@ class AuthControllerE2ETest {
     @Value("\${authquest.client_secret}")
     lateinit var clientSecret: String
 
+    @Before
+    fun setUp() {
+        userSpaceMappingRepository.deleteAll()
+        spaceRepository.deleteAll()
+    }
+
     @Test
     fun `PUT should return NO_CONTENT with a valid invite scope request`() {
         val emails = listOf("EMAIL_1", "EMAIL_2")
         val spaceName = "spaceName"
 
-        `when`(authClient.getUserIdFromEmail("EMAIL_1")).thenReturn(ResponseEntity.ok(UserReadResponse("uuid1")))
-        `when`(authClient.getUserIdFromEmail("EMAIL_2")).thenReturn(ResponseEntity.ok(UserReadResponse("uuid2")))
+        val userReadResponse1 = UserReadResponse()
+        val userReadResponse2 = UserReadResponse()
+        userReadResponse1.user_id = "uuid1"
+        userReadResponse2.user_id = "uuid2"
+
+        `when`(authClient.getUserIdFromEmail("EMAIL_1")).thenReturn(ResponseEntity.ok(userReadResponse1))
+        `when`(authClient.getUserIdFromEmail("EMAIL_2")).thenReturn(ResponseEntity.ok(userReadResponse2))
         spaceRepository.save(Space(id = 1, name = spaceName))
 
         val request = AuthInviteUsersToSpaceRequest(
@@ -157,10 +180,10 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `POST validate access token - should return OK if access token is valid`() {
+    fun `POST validate access token - should return OK if access token is valid in AuthQuest`() {
         val request = ValidateTokenRequest(accessToken = "access_token")
 
-
+        `when`(jwtDecoder.decode(request.accessToken)).thenThrow(JwtException("INVALID JWT"))
         `when`(authClient.validateAccessToken("access_token")).thenReturn(Optional.of(
                 OAuthVerifyResponse(
                         "",
@@ -180,14 +203,40 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `POST validate access token - should return null if access token is invalid`() {
-        val request = ValidateTokenRequest(accessToken = "INVALID_ACCESS_TOKEN")
+    fun `POST validate access token - should return OK if access token valid in ADFS`() {
+        val request = ValidateTokenRequest(accessToken = "access_token")
 
-        `when`(authClient.validateAccessToken(request.accessToken)).thenReturn(Optional.empty())
+        val headers = HashMap<String, Any>()
+        headers["typ"] = "JWT"
+        val claims = HashMap<String, Any>()
+        claims["sub"] = "USER_ID"
+        claims["expiresAt"] = Instant.now()
+        claims["iss"] = "https://localhost"
+        val fakeJwt = Jwt("access_token", Instant.now(), Instant.now(), headers, claims)
+
+
+        `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
+        `when`(jwtDecoder.decode(request.accessToken)).thenReturn(fakeJwt)
 
         mockMvc.perform(post("/api/access_token/validate")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
+                .andExpect(status().isOk)
+
+        verify(jwtDecoder).decode("access_token")
+    }
+
+    @Test
+    fun `POST validate access token - should return FORBIDDEN if access token is invalid in both validators`() {
+        val request = ValidateTokenRequest(accessToken = "INVALID_ACCESS_TOKEN")
+
+        `when`(authClient.validateAccessToken(request.accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
+        `when`(jwtDecoder.decode(request.accessToken)).thenThrow(JwtException("INVALID JWT"))
+
+        mockMvc.perform(post("/api/access_token/validate")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json"))
+                .andExpect(status().isUnauthorized)
     }
 
     @Test
@@ -212,38 +261,72 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `POST should return 200 ok if space name is found in access token scopes`() {
+    fun `POST should return 200 ok if space name is found in database for user from AuthQuest`() {
 
         val accessToken = "fake_access_token"
-        val authVerifyResponse = OAuthVerifyResponse("USER_ID", listOf("SpaceOne", "SpaceTwo"), 1, "", "")
+        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "USER_ID")
+        val savedSpace = spaceRepository.save(Space("spaceThree"))
 
-        `when`(authClient.validateAccessToken(accessToken)).thenReturn(
-                Optional.of(authVerifyResponse)
-        )
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id))
+        `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(authVerifyResponse))
+        `when`(jwtDecoder.decode(accessToken)).thenThrow(JwtException("INVALID_JWT"))
+
 
         val request = AuthCheckScopesRequest.builder()
                 .accessToken(accessToken)
-                .spaceName("spaceOne")
+                .spaceName("spaceThree")
                 .build()
 
         mockMvc.perform(post("/api/access_token/authenticate")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
                 .andExpect(status().isOk)
-
-        verify(authClient).validateAccessToken(accessToken)
     }
 
     @Test
-    fun `POST should return 403 if space name is not found in access token scopes`() {
+    fun `POST should return 200 ok if space name is found in database for user from ADFS`() {
+
         val accessToken = "fake_access_token"
 
+        val savedSpace = spaceRepository.save(Space("spaceThree"))
+
+        val issuedAt = Instant.now()
+        val headers = HashMap<String, Any>()
+        headers["typ"] = "JWT"
+        val claims = HashMap<String, Any>()
+        claims["sub"] = "USER_ID"
+        val expiresAt = Instant.now()
+        claims["expiresAt"] = expiresAt
+        claims["iss"] = "https://localhost"
+        val fakeJwt = Jwt(accessToken, issuedAt, expiresAt, headers, claims)
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id))
+        `when`(authClient.validateAccessToken(accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
+        `when`(jwtDecoder.decode(accessToken)).thenReturn(fakeJwt)
+
+        val request = AuthCheckScopesRequest.builder()
+                .accessToken(accessToken)
+                .spaceName("spaceThree")
+                .build()
+
+        mockMvc.perform(post("/api/access_token/authenticate")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json"))
+                .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `POST should return 403 if space not mapped to user`() {
+        val accessToken = "fake_access_token"
+
+        spaceRepository.save(Space("spaceThree"))
+        `when`(jwtDecoder.decode(accessToken)).thenThrow(JwtException("INVALID_TOKEN"))
         `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(
-                OAuthVerifyResponse("USER_ID",
+                OAuthVerifyResponse("",
                         listOf("SpaceOne", "SpaceTwo"),
                         1,
                         "",
-                        ""
+                        "USER_ID"
                 )
         ))
 
