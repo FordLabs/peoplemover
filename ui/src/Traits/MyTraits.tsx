@@ -155,17 +155,24 @@ function MyTraits({
     }
 
     function updateGroupedTagFilterOptions(traitName: string, trait: Trait, action: TraitAction ): void {
-        let options: Array<FilterOption> = [];
+        const groupedFilterOptions = [...allGroupedTagFilterOptions];
         if (traitName === 'location') {
-            options = updateFilterValuesInGroupedTags(0,  trait, action);
-            setAllGroupedTagFilterOptions([{...allGroupedTagFilterOptions[0], options: options}, allGroupedTagFilterOptions[1], allGroupedTagFilterOptions[2]]);
+            groupedFilterOptions[0] = {
+                ...allGroupedTagFilterOptions[0],
+                options:  updateFilterValuesInGroupedTags(0,  trait, action),
+            };
         } else if (traitName === 'product tag') {
-            options = updateFilterValuesInGroupedTags(1,  trait, action);
-            setAllGroupedTagFilterOptions([allGroupedTagFilterOptions[0], {...allGroupedTagFilterOptions[1], options: options}, allGroupedTagFilterOptions[2]]);
+            groupedFilterOptions[1] = {
+                ...allGroupedTagFilterOptions[1],
+                options: updateFilterValuesInGroupedTags(1,  trait, action),
+            };
         } else if (traitName === 'role') {
-            options = updateFilterValuesInGroupedTags(2,  trait, action);
-            setAllGroupedTagFilterOptions([allGroupedTagFilterOptions[0], allGroupedTagFilterOptions[1], {...allGroupedTagFilterOptions[2], options: options}]);
+            groupedFilterOptions[2] = {
+                ...allGroupedTagFilterOptions[2],
+                options:  updateFilterValuesInGroupedTags(2,  trait, action),
+            };
         }
+        setAllGroupedTagFilterOptions(groupedFilterOptions);
     }
 
     function showDeleteConfirmationModal(traitToDelete: Trait): void {
@@ -246,7 +253,7 @@ function MyTraits({
                     <i className="fa fa-plus orangeIcon addTraitIcon"/>
                 </span>
                 <span className="traitName addNewTraitText"
-                   data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>
+                    data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>
                     Add New {toTitleCase(traitName)}
                 </span>
             </div>

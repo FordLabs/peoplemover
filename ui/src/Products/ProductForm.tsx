@@ -271,18 +271,8 @@ function ProductForm({
             ],
         };
 
-        let groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-        if (tagFilterIndex === 0) {
-            groupedTagFilterOptions = [
-                updatedTagFilterOptions,
-                allGroupedTagFilterOptions[1],
-            ];
-        } else {
-            groupedTagFilterOptions = [
-                allGroupedTagFilterOptions[0],
-                updatedTagFilterOptions,
-            ];
-        }
+        let groupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [...allGroupedTagFilterOptions];
+        groupedTagFilterOptions[tagFilterIndex] = updatedTagFilterOptions;
         setAllGroupedTagFilterOptions(groupedTagFilterOptions);
     }
 
