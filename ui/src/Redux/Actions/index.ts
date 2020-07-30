@@ -25,6 +25,8 @@ import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter
 import {Space} from '../../SpaceDashboard/Space';
 import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
+import {ProductTag} from '../../ProductTag/ProductTag';
+import ProductTagClient from '../../ProductTag/ProductTagClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -40,10 +42,13 @@ export enum AvailableActions {
     SET_CURRENT_SPACE,
     SET_VIEWING_DATE,
     SET_PRODUCTS,
+    SET_PRODUCT_TAGS,
+    SET_PRODUCT_SORT_BY,
 }
 
 export enum AvailableModals {
     CREATE_PRODUCT,
+    CREATE_PRODUCT_OF_PRODUCT_TAG,
     EDIT_PRODUCT,
     CREATE_PERSON,
     EDIT_PERSON,
@@ -115,10 +120,19 @@ export const setViewingDateAction = (date: Date) => ({
     date,
 });
 
-export const setProductsAction = (products: Array<Product>, sortOption: string) => ({
+export const setProductsAction = (products: Array<Product>) => ({
     type: AvailableActions.SET_PRODUCTS,
     products,
-    sortOption,
+});
+
+export const setProductTagsAction = (productTags: Array<ProductTag>) => ({
+    type: AvailableActions.SET_PRODUCT_TAGS,
+    productTags,
+});
+
+export const setProductSortByAction = (productSortBy: string) => ({
+    type: AvailableActions.SET_PRODUCT_SORT_BY,
+    productSortBy,
 });
 
 export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
@@ -128,9 +142,24 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
             getState().viewingDate
         ).then(result => {
             const products: Array<Product> = result.data || [];
+            dispatch(setProductsAction(products));
 
             const savedSort = localStorage.getItem('sortBy');
             const sort = savedSort !== null && savedSort !== undefined ? savedSort : 'name';
-            dispatch(setProductsAction(products, sort));
+            dispatch(setProductSortByAction(sort));
         });
+    };
+
+export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
+    (dispatch: Dispatch, getState: Function): Promise<void> => {
+        return ProductTagClient.get(getState().currentSpace.name,)
+            .then(result => {
+                let productTags: Array<ProductTag> = result.data || [];
+                productTags = productTags.sort((a, b) => {
+                    if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
+                    if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+                    return 0;
+                });
+                dispatch(setProductTagsAction(productTags));
+            });
     };

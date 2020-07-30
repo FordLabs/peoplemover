@@ -24,7 +24,7 @@ module.exports = {
         'react/prop-types': 0,
         'max-len': 0,
         'jsx-a11y/no-static-element-interactions': 0,
-        'indent': [2, 4],
+        'indent': [2, 4, { "SwitchCase": 1 }],
         '@typescript-eslint/no-use-before-define': [0, 'nofunc'],
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 0,

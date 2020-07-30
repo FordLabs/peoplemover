@@ -48,7 +48,7 @@ class SpaceController(private val spaceService: SpaceService, private val logger
     fun createUserSpace(
             @RequestBody request: SpaceCreationRequest,
             @RequestHeader(name = "Authorization") token: String
-    ): SpaceWithAccessTokenResponse {
+    ): SpaceResponse {
         return spaceService.createSpaceWithUser(token.replace("Bearer ", ""), request.spaceName)
     }
 

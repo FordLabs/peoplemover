@@ -79,7 +79,7 @@ ReactDOM.render(
                 </Route>
 
                 <AuthenticatedRoute exact path={"/adfs/test/route"}>
-                    <div>Hello, World!</div>
+                    <Redirect to={"/user/dashboard"}/>
                 </AuthenticatedRoute>
 
                 <Route exact path="/user/dashboard">

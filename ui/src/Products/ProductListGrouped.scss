@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,22 +15,33 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth;
+@import '../Application/Styleguide/Colors.scss';
 
+.productListGroupedContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-grow: 1;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+  .productTagName {
+    color: $gray-1;
+    background-color: $sec-6;
+    border-radius: 6px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 5px 15px;
+    margin: 16px 12px 16px 6px;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class AuthRoleResponse {
-    private String access_token;
-
-    public String getAccessToken() {
-        return this.access_token;
+    &.gray-background {
+      background-color: $gray-5;
     }
+  }
+
+  .groupedProducts {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }

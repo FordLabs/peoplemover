@@ -26,7 +26,7 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import UnassignedDrawerContainer from '../Redux/Containers/UnassignedDrawerContainer';
 import {connect} from 'react-redux';
-import {fetchProductsAction, setCurrentSpaceAction, setPeopleAction} from '../Redux/Actions';
+import {fetchProductsAction, fetchProductTagsAction, setCurrentSpaceAction, setPeopleAction} from '../Redux/Actions';
 import BoardSelectionTabs from '../Boards/BoardSelectionTabs';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -38,6 +38,7 @@ import {Space} from '../SpaceDashboard/Space';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
 import {Product} from '../Products/Product';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
+import {ProductTag} from '../ProductTag/ProductTag';
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
@@ -46,6 +47,7 @@ export interface PeopleMoverProps {
     products: Array<Product>;
 
     fetchProducts(): Array<Product>;
+    fetchProductTags(): Array<ProductTag>;
     setCurrentSpace(space: Space): Space;
     setPeople(people: Array<Person>): Array<Person>;
 }
@@ -56,13 +58,14 @@ function PeopleMover({
     viewingDate,
     products,
     fetchProducts,
+    fetchProductTags,
     setCurrentSpace,
     setPeople,
 }: PeopleMoverProps): JSX.Element {
     const [redirect, setRedirect] = useState<JSX.Element>();
 
-    function hasProducts() {
-        return products && products.length > 0 && currentSpace;
+    function hasProducts(): boolean {
+        return Boolean(products && products.length > 0 && currentSpace);
     }
 
     useEffect(() => {
@@ -70,7 +73,7 @@ function PeopleMover({
     }, [currentModal]);
 
     useEffect(() => {
-        if (hasProducts()) {fetchProducts();}
+        if (hasProducts()) fetchProducts();
     }, [viewingDate]);
 
     async function RenderPage(): Promise<void> {
@@ -80,8 +83,9 @@ function PeopleMover({
                 await SpaceClient.getSpaceFromName(spaceName)
                     .then(response => {
                         setCurrentSpace(response.data);
-                    } );
+                    });
                 await fetchProducts();
+                await fetchProductTags();
                 const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;
 
                 setPeople(peopleInSpace);
@@ -95,32 +99,26 @@ function PeopleMover({
         return redirect;
     }
     return (
-        !hasProducts() ? <></> : <div className="App">
-
-            <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
-
-                <Header/>
-
-                <BoardSelectionTabs/>
-
-                <div className="productAndAccordionContainer">
-                    <ProductList/>
-                    <div className="accordionContainer">
-                        <div className="accordionHeaderContainer">
-                            <UnassignedDrawerContainer/>
-                            <ProductGraveyard/>
-                            <ReassignedDrawer/>
+        !hasProducts()
+            ? <></>
+            : <div className="App">
+                <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
+                    <Header/>
+                    <BoardSelectionTabs/>
+                    <div className="productAndAccordionContainer">
+                        <ProductList/>
+                        <div className="accordionContainer">
+                            <div className="accordionHeaderContainer">
+                                <UnassignedDrawerContainer/>
+                                <ProductGraveyard/>
+                                <ReassignedDrawer/>
+                            </div>
                         </div>
                     </div>
+                    <CurrentModal/>
                 </div>
-
-                <CurrentModal/>
-
+                <Branding brand="FordLabs" message="Powered by"/>
             </div>
-
-            <Branding brand="FordLabs" message="Powered by"/>
-
-        </div>
     );
 }
 
@@ -133,6 +131,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     fetchProducts: () => dispatch(fetchProductsAction()),
+    fetchProductTags: () => dispatch(fetchProductTagsAction()),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
 });

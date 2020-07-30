@@ -19,39 +19,44 @@ import {render, RenderResult, wait} from '@testing-library/react';
 import ValidationGuard from '../Validation/ValidationGuard';
 import * as React from 'react';
 import Axios, {AxiosResponse} from 'axios';
+import {Router} from "react-router";
+import {createMemoryHistory} from "history";
 
 describe('The Validation Guard', () => {
-    it('should hide the child element when security is enabled and you are not authorized', async () => {
+    it('should redirect to login when security is enabled and you are not authorized', async () => {
         Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
-        let result = await renderComponent('true');
-        expect(result.getByText('403 - YOU ARE FORBIDDEN')).toBeInTheDocument();
+        let {history} = await renderComponent('true');
+        expect(history.location.pathname).toEqual('/user/login');
     });
 
     it('should show the child element when security is enabled and you are authorized', async () => {
         Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
-        let result = await renderComponent('true');
+        let {result} = await renderComponent('true');
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
     });
 
     it('should show the child element when security is disabled', async () => {
         Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
-        let result = await renderComponent('false');
+        let {result} = await renderComponent('false');
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
         expect(Axios.post.mock.calls.length).toBe(0);
     });
 
     async function renderComponent(securityEnabled: string): Promise<RenderResult> {
         process.env.REACT_APP_AUTH_ENABLED = securityEnabled;
+        const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
 
         let result: RenderResult;
         await wait(() => {
             result = render(
+                <Router history={history}>
                 <ValidationGuard>
                     <TestComponent/>
                 </ValidationGuard>
+                </Router>
             );
         });
-        return result;
+        return {result, history};
     }
 
     function TestComponent(): JSX.Element {

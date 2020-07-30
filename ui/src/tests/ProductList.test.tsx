@@ -16,35 +16,37 @@
  */
 
 import React from 'react';
-import {fireEvent} from '@testing-library/react';
+import {fireEvent, RenderResult} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {AxiosResponse} from 'axios';
 import ProductClient from '../Products/ProductClient';
 
 describe('Product List tests', () => {
-    beforeEach(() => {
+    let app: RenderResult;
+
+    beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-    });
 
-    it('should only have one edit menu open at a time', async () => {
         ProductClient.getProductsForDate = jest.fn(() => Promise.resolve(
             {
                 data: TestUtils.products,
             } as AxiosResponse
         ));
-        const underTest = renderWithRedux(<PeopleMover/>);
+        app = await renderWithRedux(<PeopleMover/>);
+    });
 
-        const editPerson1Button = await underTest.findByTestId('editPersonIconContainer-1');
-        const editPerson3Button = await underTest.findByTestId('editPersonIconContainer-3');
+    it('should only have one edit menu open at a time', async () => {
+        const editPerson1Button = await app.findByTestId('editPersonIconContainer-1');
+        const editPerson3Button = await app.findByTestId('editPersonIconContainer-3');
 
         fireEvent.click(editPerson1Button);
-        await underTest.findByTestId('editMenu');
+        await app.findByTestId('editMenu');
 
         fireEvent.click(editPerson3Button);
-        await underTest.findByTestId('editMenu');
+        await app.findByTestId('editMenu');
 
-        expect(underTest.getAllByTestId('editMenu').length).toEqual(1);
+        expect(app.getAllByTestId('editMenu').length).toEqual(1);
     });
 });

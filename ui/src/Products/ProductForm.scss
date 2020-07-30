@@ -30,3 +30,10 @@
   font-size: 12px;
   padding-top: 6px;
 }
+
+.react-datepicker__close-icon::after {
+  font-size: 18px !important;
+  width: 18px !important;
+  padding: 0 !important;
+  background-color: $gray-1 !important;
+}

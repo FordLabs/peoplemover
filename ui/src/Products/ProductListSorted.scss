@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,17 +15,10 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class AuthQuestValidateTokenResponse {
-    private AuthQuestJWT decoded_access_token;
+.productListSortedContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-grow: 1
 }

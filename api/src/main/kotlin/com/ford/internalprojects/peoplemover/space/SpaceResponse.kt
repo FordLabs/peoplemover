@@ -15,18 +15,8 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth;
+package com.ford.internalprojects.peoplemover.space
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class UserRoleResponse {
-    private String uuid;
-    private String roles;
-}
+data class SpaceResponse (
+    val space: Space
+)

@@ -16,32 +16,30 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import ProductCard from './ProductCard';
 import {Product} from './Product';
 import {connect} from 'react-redux';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import {Dispatch} from 'redux';
-import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
+import {ProductTag} from '../ProductTag/ProductTag';
+import GroupedByList from './ProductListGrouped';
+import SortedByList from './ProductListSorted';
 import { getSelectedTagsFromGroupedTagOptions } from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface ProductListProps {
-    currentSpace: Space;
     products: Array<Product>;
-    setCurrentModal(modalState: CurrentModalState): void;
+    productTags: Array<ProductTag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
+    productSortBy: string;
 }
 
 function ProductList({
-    currentSpace,
     products,
-    setCurrentModal,
+    productTags,
     allGroupedTagFilterOptions,
     viewingDate,
+    productSortBy,
 }: ProductListProps ): JSX.Element {
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
 
@@ -79,40 +77,38 @@ function ProductList({
         return isProductTagFilterOn || isLocationFilterOn;
     }
 
-    return (
-        <div className="productListContainer" data-testid="productListContainer">
-            {products && products.map((product: Product) => {
-                const productFiltersLoaded = allGroupedTagFilterOptions.length > 0;
-                if (productFiltersLoaded
-                    && isActiveProduct(product)
-                    && (noFiltersApplied || permittedByFilters(product))) {
-                    return (
-                        <div key={product.id}>
-                            <ProductCard
-                                product={product}
-                                container={'productCardContainer'}/>
-                        </div>
-                    );
+    function ListOfProducts(): JSX.Element {
+        const productFiltersLoaded = allGroupedTagFilterOptions.length > 0;
+        if (productFiltersLoaded) {
+            const filteredAndActiveProduct = products
+                .filter(product => noFiltersApplied || permittedByFilters(product))
+                .filter(isActiveProduct);
+
+            switch (productSortBy) {
+                case 'product-tag': {
+                    return <GroupedByList
+                        products={filteredAndActiveProduct}
+                        productTags={productTags}/>;
                 }
-                return <div key={product.id}/>;
-            })}
-            <div className="newProduct productCardContainer" onClick={() => setCurrentModal({modal: AvailableModals.CREATE_PRODUCT})} data-cy="newProductButton">
-                <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
-                <h2 className="newProductText">New Product</h2>
-            </div>
-        </div>
-    );
+                default:
+                    return <SortedByList
+                        products={filteredAndActiveProduct}
+                        productSortBy={productSortBy}/>;
+            }
+        } else {
+            return <></>;
+        }
+    }
+
+    return <ListOfProducts/>;
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     products: state.products,
+    productTags: state.productTags,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
     viewingDate: state.viewingDate,
+    productSortBy: state.productSortBy,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductList);
+export default connect(mapStateToProps)(ProductList);

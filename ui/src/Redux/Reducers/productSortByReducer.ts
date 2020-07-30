@@ -15,21 +15,13 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth;
+import {AvailableActions} from '../Actions';
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Builder
-@NoArgsConstructor
-@Data
-public class UserRoleRequest {
-    private String token;
-    private String spaceName;
-
-    public UserRoleRequest(String token, String spaceName) {
-        this.token = token;
-        this.spaceName = spaceName;
+const productSortByReducer = (state: string | null = null, action: {type: AvailableActions; productSortBy?: string}): string | null => {
+    if (action.type === AvailableActions.SET_PRODUCT_SORT_BY && action.productSortBy) {
+        localStorage.setItem('sortBy', action.productSortBy);
+        return action.productSortBy;
     }
-}
+    return state;
+};
+export default productSortByReducer;

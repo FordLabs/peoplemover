@@ -132,47 +132,6 @@ describe('should redirect to login page', () => {
         cookies.remove('accessToken');
     });
 
-    it('should refresh access token after access token is successfully validated', async () => {
-        const fakeAccessToken = 'FAKE_TOKEN123';
-
-        const cookies = new Cookies();
-        cookies.set('accessToken', fakeAccessToken);
-
-        const originalFunc = AccessTokenClient.validateAccessToken.bind({});
-
-        AccessTokenClient.validateAccessToken = jest.fn(() => Promise.resolve({
-            status: 200,
-        } as AxiosResponse));
-
-        const origRefreshFunc = AccessTokenClient.refreshAccessToken.bind({});
-
-        AccessTokenClient.refreshAccessToken = jest.fn( () => Promise.resolve({
-            data: {
-                'access_token': 'NEW_TOKEN',
-            },
-        }  as AxiosResponse ));
-
-
-        const history = createMemoryHistory({ initialEntries: ['/login'] });
-
-        await wait(() => {
-            mount(
-                <Router history={history}>
-                    <RedirectAuthPage isSignup={false} />
-                </Router>
-            );
-        });
-
-        expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-        expect(AccessTokenClient.refreshAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-        expect(cookies.get('accessToken')).toEqual('NEW_TOKEN');
-
-        AccessTokenClient.validateAccessToken = originalFunc;
-        AccessTokenClient.refreshAccessToken = origRefreshFunc;
-
-        cookies.remove('accessToken');
-    });
-
     // We are trying to test setting and removing cookies on the root path only. The 'universal-cookies' library
     // we are using will make this test pass if cookies.remove is called with {path: '/'} or cookies.remove()
     // even though if cookies.remove() is called the implementation will fail.

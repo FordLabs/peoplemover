@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,18 +15,29 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth;
+@import '../Application/Styleguide/Colors.scss';
 
-import lombok.Builder;
-import lombok.Data;
+.newProduct {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  height: 30px;
+  align-items: center;
+}
 
-import java.util.List;
+.newProduct.productCardContainer {
+  padding-bottom: 4px;
+  cursor: pointer;
+}
 
-@Data
-@Builder
-public class AuthQuestInviteScopesRequest {
-        private String client_id;
-        private String client_secret;
-        private List<String> user_emails;
-        private String scope;
+.addProductIcon {
+  margin-left: 11px;
+  margin-right: 8px;
+  padding-bottom: 4px;
+}
+
+.newProductText {
+  font-size: 14px;
+  color: $gray-1;
+  padding-bottom: 2px;
 }

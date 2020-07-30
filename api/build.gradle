@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    implementation name: 'authquest-1.0.4'
+    implementation name: 'authquest-1.0.5'
 
     runtime 'mysql:mysql-connector-java'
 

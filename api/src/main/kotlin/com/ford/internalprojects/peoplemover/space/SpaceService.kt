@@ -18,13 +18,11 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.*
-import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,7 +30,6 @@ class SpaceService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
         private val authService: AuthService,
-        private val authClient: AuthClient,
         private val userSpaceMappingRepository: UserSpaceMappingRepository
         ) {
 
@@ -50,41 +47,27 @@ class SpaceService(
         }
     }
 
-    fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceWithAccessTokenResponse {
-        val validateResponse: ResponseEntity<AuthQuestJWT> = authService.validateAccessToken(ValidateTokenRequest(accessToken))
-        if (validateResponse.statusCode == HttpStatus.OK) {
-            createSpaceWithName(spaceName).let { createdSpace ->
-
-                authClient.createScope(listOf(spaceName))
-
-                val userUUID: String = validateResponse.body!!.user_id!!
-                authClient.updateUserScopes(userUUID, listOf(spaceName))
-                userSpaceMappingRepository.save(
-                        UserSpaceMapping(
-                                userId = userUUID,
-                                spaceId = createdSpace.id
-                        )
-                )
-
-                val refreshToken = authClient.refreshAccessToken(accessToken).orElse(null)
-
-                return SpaceWithAccessTokenResponse(createdSpace, refreshToken.access_token)
-            }
-        }
-        throw InvalidTokenException()
-    }
-
     fun findAll(): List<Space> {
         return spaceRepository.findAll().toList()
     }
 
+    fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
+        val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
+         createSpaceWithName(spaceName).let { createdSpace ->
+             userSpaceMappingRepository.save(
+                     UserSpaceMapping(
+                             userId = validateResponse.sub!!,
+                             spaceId = createdSpace.id
+                     )
+             )
+             return SpaceResponse(createdSpace)
+         }
+    }
+
     fun getSpacesForUser(accessToken: String): List<Space> {
-        val validateResponse: ResponseEntity<AuthQuestJWT> = authService.validateAccessToken(ValidateTokenRequest(accessToken))
-        validateResponse.body?.let {
-            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(it.user_id!!).map{ mapping -> mapping.spaceId!! }.toList()
+            val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
+            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(validateResponse.sub).map{ mapping -> mapping.spaceId!! }.toList()
             return spaceRepository.findAllByIdIn(spaceIds)
-        }
-        throw InvalidTokenException()
     }
 
     fun getSpace(spaceName: String): Space {

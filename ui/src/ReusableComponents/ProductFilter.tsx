@@ -92,7 +92,7 @@ function ProductFilter({
         setAllGroupedTagFilterOptions(options);
     }
 
-    async function buildTagOptions(tagClient: TraitClient, tagFilters: Array<string>): Promise<Array<FilterOption>> {
+    async function buildTagOptions(tagClient: TraitClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
         const tagsResponse: AxiosResponse<Array<Trait>> = await tagClient.get(currentSpace.name);
         const tags: Array<Trait> = tagsResponse.data;
         return tags.map((tag: Trait): FilterOption => ({

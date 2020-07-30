@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,9 +16,15 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.space
+import {AvailableActions} from '../Actions';
+import {ProductTag} from '../../ProductTag/ProductTag';
 
-data class SpaceWithAccessTokenResponse (
-    val space: Space,
-    val accessToken: String
-)
+const productTagsReducer = (state: Array<ProductTag> = [], action: {type: AvailableActions; productTags: Array<ProductTag>} ): Array<ProductTag> => {
+    if (action.type === AvailableActions.SET_PRODUCT_TAGS) {
+        return [...action.productTags];
+    } else {
+        return state;
+    }
+};
+
+export default productTagsReducer;
