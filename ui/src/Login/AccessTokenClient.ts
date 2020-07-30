@@ -29,12 +29,6 @@ export class AccessTokenClient {
         });
     }
 
-    static async refreshAccessToken(accessToken: string): Promise<AxiosResponse> {
-        return Axios.post(`${process.env.REACT_APP_URL}access_token/refresh`, {
-            accessToken: accessToken,
-        });
-    }
-
     static async userCanAccessSpace(accessToken: string, spaceName: string): Promise<AxiosResponse> {
         return Axios.post(`${process.env.REACT_APP_URL}access_token/authenticate`, {
             accessToken: accessToken,
