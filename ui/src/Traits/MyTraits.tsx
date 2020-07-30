@@ -128,28 +128,28 @@ function MyTraits({
     function updateFilterValuesInGroupedTags(index: number, trait: Trait, action: TraitAction): Array<FilterOption> {
         let options: Array<FilterOption>;
         switch (action) {
-        case TraitAction.ADD:
-            options = [
-                ...allGroupedTagFilterOptions[index].options,
-                {label: trait.name, value: trait.id.toString() + '_' + trait.name, selected: false},
-            ];
-            break;
-        case TraitAction.EDIT:
-            options = allGroupedTagFilterOptions[index].options.map(val =>
-                !val.value.includes(trait.id.toString() + '_') ?
-                    val :
-                    {
-                        label: trait.name,
-                        value: trait.id.toString() + '_' + trait.name,
-                        selected: val.selected,
-                    }
-            );
-            break;
-        case TraitAction.DELETE:
-            options = allGroupedTagFilterOptions[index].options.filter(val => val.label !== trait.name);
-            break;
-        default:
-            options = [];
+            case TraitAction.ADD:
+                options = [
+                    ...allGroupedTagFilterOptions[index].options,
+                    {label: trait.name, value: trait.id.toString() + '_' + trait.name, selected: false},
+                ];
+                break;
+            case TraitAction.EDIT:
+                options = allGroupedTagFilterOptions[index].options.map(val =>
+                    !val.value.includes(trait.id.toString() + '_') ?
+                        val :
+                        {
+                            label: trait.name,
+                            value: trait.id.toString() + '_' + trait.name,
+                            selected: val.selected,
+                        }
+                );
+                break;
+            case TraitAction.DELETE:
+                options = allGroupedTagFilterOptions[index].options.filter(val => val.label !== trait.name);
+                break;
+            default:
+                options = [];
         }
         return options;
     }

@@ -24,6 +24,8 @@ import './ProductForm.scss';
 import LocationClient from '../Locations/LocationClient';
 import {closeModalAction, setAllGroupedTagFilterOptions} from '../Redux/Actions';
 import {connect} from 'react-redux';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import {JSX} from '@babel/types';
 import {emptyProduct, Product} from './Product';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
@@ -98,8 +100,10 @@ function ProductForm({
 
     const [typedInLocation, setTypedInLocation] = useState<string>('');
 
-    useEffect(() => {
+    const [startDate, setStartDate] = useState<Date>(currentProduct.startDate ? moment(currentProduct.startDate).toDate() : moment(viewingDate).toDate());
+    const [endDate, setEndDate] = useState<Date | null>(currentProduct.endDate ? moment(currentProduct.endDate).toDate() : null);
 
+    useEffect(() => {
         LocationClient.get(currentSpace.name).then(result => {setAvailableLocations(result.data);});
         ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
@@ -352,25 +356,34 @@ function ProductForm({
                         isClearable={false}
                     />
                 </div>
-                <div className="formItem">
+                <div className="formItem" data-testid="productFormStartDateField">
                     <label className="formItemLabel" htmlFor="start">Start Date</label>
-                    <input className="formInput formTextInput"
-                        data-testid="productFormStartDateField"
-                        type="date"
+                    <DatePicker
+                        className="formInput formTextInput"
                         name="start"
                         id="start"
-                        value={currentProduct.startDate ? currentProduct.startDate : viewingDate}
-                        onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('startDate', e.target.value)}/>
+                        selected={startDate}
+                        onChange={date => {
+                            setStartDate(date ? date : moment(viewingDate).toDate());
+                            updateProductField('startDate', date ? moment(date).format('YYYY-MM-DD') : moment(viewingDate).format('YYYY-MM-DD'));
+                        }}
+                        isClearable
+                    />
                 </div>
-                <div className="formItem">
+                <div className="formItem" data-testid="productFormNextPhaseDateField">
                     <label className="formItemLabel" htmlFor="end">End Date</label>
-                    <input className="formInput formTextInput"
-                        data-testid="productFormNextPhaseDateField"
-                        type="date"
+                    <DatePicker
+                        className="formInput formTextInput"
                         name="end"
                         id="end"
-                        value={currentProduct.endDate ? currentProduct.endDate : ''}
-                        onChange={(e: ChangeEvent<HTMLInputElement>): void  => updateProductField('endDate', e.target.value)}/>
+                        selected={endDate}
+                        onChange={date => {
+                            setEndDate(date ? date : null);
+                            updateProductField('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
+                        }}
+                        isClearable
+                        placeholderText="MM-DD-YYYY"
+                    />
                 </div>
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>

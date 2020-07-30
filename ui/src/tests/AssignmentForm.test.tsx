@@ -102,7 +102,7 @@ describe('AssignmentForm', () => {
         });
 
         it('submits an assignment with the given placeholder status', async () => {
-            await act( async() => {
+            await act( async () => {
                 const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
                 await openAssignPersonForm(app);
 

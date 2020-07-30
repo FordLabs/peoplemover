@@ -120,11 +120,13 @@ class LocalConfig {
         )
         val myProduct: Product = productRepository.save(Product(
                 name = "My Product",
-                spaceId = createdSpace.id
+                spaceId = createdSpace.id,
+                startDate = LocalDate.parse("2019-01-01")
         ))
         val baguetteBakery: Product = productRepository.save(Product(
                 name = "Baguette Bakery",
-                spaceId = createdSpace.id
+                spaceId = createdSpace.id,
+                startDate = LocalDate.parse("2019-01-01")
         ))
 
         val savedProducts: List<Product> = productRepository.findAllBySpaceId(spaceId = createdSpace.id)

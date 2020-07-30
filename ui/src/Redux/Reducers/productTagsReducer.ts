@@ -1,4 +1,5 @@
-/*!
+/*
+ *
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,25 +16,15 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+import {AvailableActions} from '../Actions';
+import {ProductTag} from '../../ProductTag/ProductTag';
 
-.notes {
-  box-sizing: border-box;
-  padding: 8px;
-}
+const productTagsReducer = (state: Array<ProductTag> = [], action: {type: AvailableActions; productTags: Array<ProductTag>} ): Array<ProductTag> => {
+    if (action.type === AvailableActions.SET_PRODUCT_TAGS) {
+        return [...action.productTags];
+    } else {
+        return state;
+    }
+};
 
-.notesFieldTooLong {
-  color: $error-message;
-}
-
-.notesFieldText {
-  font-size: 12px;
-  padding-top: 6px;
-}
-
-.react-datepicker__close-icon::after {
-  font-size: 18px !important;
-  width: 18px !important;
-  padding: 0 !important;
-  background-color: $gray-1 !important;
-}
+export default productTagsReducer;

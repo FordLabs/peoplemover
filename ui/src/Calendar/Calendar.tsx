@@ -49,6 +49,7 @@ function Calendar({
     return (
         <div className="calendar tab" data-testid="calendar">
             <DatePicker
+                calendarClassName="viewing-calendar"
                 ref={calendarRef}
                 selected={viewingDate}
                 highlightDates={[{'react-datepicker__day--highlighted': daysHighlighted}]}

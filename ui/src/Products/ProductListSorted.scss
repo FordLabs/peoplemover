@@ -15,25 +15,10 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
-
-.notes {
-  box-sizing: border-box;
-  padding: 8px;
-}
-
-.notesFieldTooLong {
-  color: $error-message;
-}
-
-.notesFieldText {
-  font-size: 12px;
-  padding-top: 6px;
-}
-
-.react-datepicker__close-icon::after {
-  font-size: 18px !important;
-  width: 18px !important;
-  padding: 0 !important;
-  background-color: $gray-1 !important;
+.productListSortedContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-grow: 1
 }

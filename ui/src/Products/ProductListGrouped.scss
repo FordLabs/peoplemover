@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,14 +15,33 @@
  * limitations under the License.
  */
 
-import {AvailableActions} from '../Actions';
+@import '../Application/Styleguide/Colors.scss';
 
-const sortProductsReducer = (state: string | null = null, action: {type: AvailableActions; sortOption?: string}): string | null => {
+.productListGroupedContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-grow: 1;
 
-    if (action.type === AvailableActions.SET_PRODUCTS && action.sortOption) {
-        localStorage.setItem('sortBy', action.sortOption);
-        return action.sortOption;
+  .productTagName {
+    color: $gray-1;
+    background-color: $sec-6;
+    border-radius: 6px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 5px 15px;
+    margin: 16px 12px 16px 6px;
+
+    &.gray-background {
+      background-color: $gray-5;
     }
-    return state;
-};
-export default sortProductsReducer;
+  }
+
+  .groupedProducts {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}

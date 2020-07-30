@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,25 +15,13 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+import {AvailableActions} from '../Actions';
 
-.notes {
-  box-sizing: border-box;
-  padding: 8px;
-}
-
-.notesFieldTooLong {
-  color: $error-message;
-}
-
-.notesFieldText {
-  font-size: 12px;
-  padding-top: 6px;
-}
-
-.react-datepicker__close-icon::after {
-  font-size: 18px !important;
-  width: 18px !important;
-  padding: 0 !important;
-  background-color: $gray-1 !important;
-}
+const productSortByReducer = (state: string | null = null, action: {type: AvailableActions; productSortBy?: string}): string | null => {
+    if (action.type === AvailableActions.SET_PRODUCT_SORT_BY && action.productSortBy) {
+        localStorage.setItem('sortBy', action.productSortBy);
+        return action.productSortBy;
+    }
+    return state;
+};
+export default productSortByReducer;

@@ -17,23 +17,27 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.notes {
-  box-sizing: border-box;
-  padding: 8px;
+.newProduct {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  height: 30px;
+  align-items: center;
 }
 
-.notesFieldTooLong {
-  color: $error-message;
+.newProduct.productCardContainer {
+  padding-bottom: 4px;
+  cursor: pointer;
 }
 
-.notesFieldText {
-  font-size: 12px;
-  padding-top: 6px;
+.addProductIcon {
+  margin-left: 11px;
+  margin-right: 8px;
+  padding-bottom: 4px;
 }
 
-.react-datepicker__close-icon::after {
-  font-size: 18px !important;
-  width: 18px !important;
-  padding: 0 !important;
-  background-color: $gray-1 !important;
+.newProductText {
+  font-size: 14px;
+  color: $gray-1;
+  padding-bottom: 2px;
 }

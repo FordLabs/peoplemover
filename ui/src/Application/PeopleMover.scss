@@ -25,45 +25,6 @@
     margin: 0 12px;
 }
 
-.productListContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    flex-grow: 1
-}
-
-.newProduct {
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    height: 30px;
-    align-items: center;
-}
-
-.newProduct.productCardContainer {
-    padding-bottom: 4px;
-    cursor: pointer;
-}
-
-.addProductIcon {
-    margin-left: 11px;
-    margin-right: 8px;
-    padding-bottom: 4px;
-}
-
-.newProductText {
-    font-size: 14px;
-    color: $gray-1;
-    padding-bottom: 2px;
-}
-
-.spaceNotExistsError {
-    margin-left: 50px;
-    color: deeppink;
-    font-size: xx-large;
-}
-
 .logo-image {
     height: 25px;
     width: 25px;

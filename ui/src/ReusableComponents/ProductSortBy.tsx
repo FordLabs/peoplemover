@@ -22,56 +22,52 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Option} from '../CommonTypes/Option';
 import './ProductFilterOrSortBy.scss';
-import {setProductsAction} from '../Redux/Actions';
-import {Product} from '../Products/Product';
+import {setProductSortByAction} from '../Redux/Actions';
 
 interface ProductSortByProps {
-    sortValueOption: string;
-    products: Product[];
-    setProducts(products: Product[], sortOption: string): void;
+    productSortBy: string;
+    setProductSortBy(productSortBy: string): void ;
 }
 
 function ProductSortBy({
-    sortValueOption,
-    products,
-    setProducts,
+    productSortBy,
+    setProductSortBy,
 }: ProductSortByProps): JSX.Element {
-
     const [originalSortOption, setOriginalSortOption] = useState<Option>();
     const sortByOptions: Array<Option> = [
         {label:'Name', value:'name'},
         {label:'Location', value:'location'},
+        {label:'Product Tag', value:'product-tag'},
     ];
     useEffect( () => {
-        setOriginalSortOption(stringToOption(sortValueOption));
-    }, [sortValueOption]);
+        setOriginalSortOption(stringToOption(productSortBy));
+    }, [productSortBy]);
 
     function stringToOption(value: string): Option {
         return sortByOptions.filter(option => option.value === value)[0];
     }
     return (
         <React.Fragment>
-            <label htmlFor="sortby-dropdown" className={'dropdown-label'}>Sort By:</label>
+            <label htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
             <Select
                 styles={filterByStyles}
-                data-testid={'sortby-dropdown'}
-                className={'dropdown sortby-dropdown'}
+                id="sortby-dropdown"
+                className="dropdown sortby-dropdown"
                 inputId="sortby-dropdown"
                 options={sortByOptions}
                 value={originalSortOption}
-                onChange={(value): void => setProducts(products, (value as Option).value)}
+                onChange={(value): void => setProductSortBy((value as Option).value)}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
         </React.Fragment>
     );
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
-    sortValueOption: state.sortValueOption,
-    products: state.products,
+    productSortBy: state.productSortBy,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    setProducts: (products: Array<Product>, sortOption: string) => dispatch(setProductsAction(products, sortOption)),
+    setProductSortBy: (productSortBy: string) => dispatch(setProductSortByAction(productSortBy)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSortBy);
