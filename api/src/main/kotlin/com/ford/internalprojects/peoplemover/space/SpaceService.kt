@@ -18,21 +18,18 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.*
-import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import com.ford.labs.authquest.oauth.OAuthVerifyResponse
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpClientErrorException
 
 @Service
 class SpaceService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
-        private val authClient: AuthClient,
+        private val authService: AuthService,
         private val userSpaceMappingRepository: UserSpaceMappingRepository
         ) {
 
@@ -50,40 +47,27 @@ class SpaceService(
         }
     }
 
-    fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
-        val validateResponse: OAuthVerifyResponse
-         try {
-             validateResponse = authClient.validateAccessToken(accessToken).get()
-
-                 createSpaceWithName(spaceName).let { createdSpace ->
-                     val userUUID: String = validateResponse.sub!!
-
-                     userSpaceMappingRepository.save(
-                             UserSpaceMapping(
-                                     userId = userUUID,
-                                     spaceId = createdSpace.id
-                             )
-                     )
-                     return SpaceResponse(createdSpace)
-                 }
-
-         }  catch (e: HttpClientErrorException){}
-
-        throw InvalidTokenException()
-    }
-
     fun findAll(): List<Space> {
         return spaceRepository.findAll().toList()
     }
 
+    fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
+        val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
+         createSpaceWithName(spaceName).let { createdSpace ->
+             userSpaceMappingRepository.save(
+                     UserSpaceMapping(
+                             userId = validateResponse.sub!!,
+                             spaceId = createdSpace.id
+                     )
+             )
+             return SpaceResponse(createdSpace)
+         }
+    }
+
     fun getSpacesForUser(accessToken: String): List<Space> {
-        return try {
-            val validateResponse: OAuthVerifyResponse = authClient.validateAccessToken(accessToken).get()
+            val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
             val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(validateResponse.sub).map{ mapping -> mapping.spaceId!! }.toList()
-            spaceRepository.findAllByIdIn(spaceIds)
-        } catch (e: HttpClientErrorException) {
-            throw InvalidTokenException()
-        }
+            return spaceRepository.findAllByIdIn(spaceIds)
     }
 
     fun getSpace(spaceName: String): Space {
