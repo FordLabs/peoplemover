@@ -18,11 +18,6 @@
 import Axios, {AxiosResponse} from 'axios';
 
 export class AccessTokenClient {
-    static async postAccessToken(accessCode: string):  Promise<AxiosResponse> {
-        return Axios.post(`${process.env.REACT_APP_URL}access_token`, {
-            accessCode: accessCode,
-        });
-    }
     static async validateAccessToken(accessToken: string): Promise<AxiosResponse> {
         return Axios.post(`${process.env.REACT_APP_URL}access_token/validate`, {
             accessToken: accessToken,

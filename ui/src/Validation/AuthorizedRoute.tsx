@@ -15,22 +15,18 @@
  * limitations under the License.
  */
 
-import React, {ReactElement, useEffect, useState} from 'react';
+import {Redirect, Route, RouteProps} from 'react-router';
+import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
-import {Redirect} from "react-router";
 
-interface ValidationGuard {
-    children: ReactElement;
-}
-
-function ValidationGuard({children}: ValidationGuard): JSX.Element {
-
+export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Element {
+    const {children, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     useEffect(() => {
         if (process.env.REACT_APP_AUTH_ENABLED === 'false') {
-            setRenderedElement(children);
+            setRenderedElement(<>{children}</>);
         } else {
             const cookie = new Cookies();
             const accessToken = cookie.get('accessToken');
@@ -38,12 +34,10 @@ function ValidationGuard({children}: ValidationGuard): JSX.Element {
             const spaceName = window.location.pathname.replace('/', '');
 
             AccessTokenClient.userCanAccessSpace(accessToken, spaceName)
-                .then(() => setRenderedElement(children))
+                .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
                 .catch(() => setRenderedElement(<Redirect to={'/user/login'}/>));
         }
     }, []);
 
     return <>{renderedElement}</>;
 }
-
-export default ValidationGuard;

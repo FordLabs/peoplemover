@@ -18,16 +18,24 @@
 import {Route, RouteProps} from "react-router";
 import * as React from "react";
 import Cookies from "universal-cookie";
+import {AccessTokenClient} from "./Login/AccessTokenClient";
+import {useState} from "react";
+import {useEffect} from "react";
 
 export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
+    const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
-    const accessToken = new Cookies().get('accessToken');
-    const isAuthenticated = accessToken !== undefined && accessToken !== 'undefined';
+    useEffect(() => {
+            const cookie = new Cookies();
+            const accessToken = cookie.get('accessToken');
 
-    return (
-        <Route {...rest}>{isAuthenticated ? children : <RedirectToADFS/>}</Route>
-    )
+            AccessTokenClient.validateAccessToken(accessToken)
+                .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
+                .catch(() => setRenderedElement(<RedirectToADFS/>));
+    }, []);
+
+    return <>{renderedElement}</>;
 }
 
 function RedirectToADFS(){

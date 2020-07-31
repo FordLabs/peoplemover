@@ -52,26 +52,13 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
         setUserSpaces(spaces);
     }
 
-    function validateToken(): Promise<void> {
-        const cookies = new Cookies();
-        const accessToken = cookies.get('accessToken');
-
-        return AccessTokenClient.validateAccessToken(accessToken).then();
-    }
-
     function onSpaceClicked(space: Space): void {
         setRedirectPage(<Redirect to={`/${space.name.toLowerCase()}`}/>);
     }
 
     useEffect(() => {
-        validateToken()
-            .then(() => {
                 window.history.pushState([], 'User Dashboard', '/user/dashboard');
                 refreshUserSpaces().then();
-            })
-            .catch(() => {
-                setRedirectPage(<Redirect to={'/user/login'}/>);
-            });
 
     }, []);
 

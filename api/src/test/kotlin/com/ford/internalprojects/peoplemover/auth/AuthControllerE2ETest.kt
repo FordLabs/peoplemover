@@ -25,7 +25,6 @@ import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import com.ford.labs.authquest.user.UserReadResponse
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
@@ -35,22 +34,21 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
+import org.junit.Before
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.web.client.HttpClientErrorException
 import java.time.Instant
-import java.util.*
-import kotlin.collections.HashMap
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
