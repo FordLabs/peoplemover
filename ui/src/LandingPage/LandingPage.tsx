@@ -42,7 +42,7 @@ function LandingPage(): JSX.Element {
                     </div>
                     <div className="landing-page-info-sub-heading">Give it a shot!</div>
                     <div className="landing-page-info-text">Sign up to create your own PeopleMover space.</div>
-                    <a href={'/user/login'}><button className="landing-page-info-adfs-login">Login with CDSID</button></a>
+                    <a href={'/user/login'}><button className="landing-page-info-adfs-login">Login</button></a>
                 </div>
                 <img
                     className="landing-page-image"
