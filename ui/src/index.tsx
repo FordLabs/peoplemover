@@ -29,7 +29,6 @@ import {Route, Switch} from 'react-router';
 import {BrowserRouter as Router, Redirect} from 'react-router-dom';
 import Error404Page from './Application/Error404Page';
 import LandingPage from './LandingPage/LandingPage';
-import RedirectAuthPage from './ReusableComponents/RedirectAuthPage';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import ValidationGuard from './Validation/ValidationGuard';
 import OAuthRedirect from "./ReusableComponents/OAuthRedirect";
@@ -66,19 +65,11 @@ ReactDOM.render(
                     <LandingPage/>
                 </Route>
 
-                <Route exact path="/user/signup">
-                    <RedirectAuthPage isSignup={true}/>
-                </Route>
-
-                <Route exact path="/user/login">
-                    <RedirectAuthPage isSignup={false}/>
-                </Route>
-
                 <Route exact path={"/adfs/catch"}>
                     <OAuthRedirect redirectUrl={"/user/dashboard"}/>
                 </Route>
 
-                <AuthenticatedRoute exact path={"/adfs/test/route"}>
+                <AuthenticatedRoute exact path={"/user/login"}>
                     <Redirect to={"/user/dashboard"}/>
                 </AuthenticatedRoute>
 
