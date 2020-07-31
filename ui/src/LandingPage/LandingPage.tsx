@@ -41,7 +41,7 @@ function LandingPage(): JSX.Element {
                         because we understand that a great team sets the stage for incredible results.
                     </div>
                     <div className="landing-page-info-sub-heading">Give it a shot!</div>
-                    <div className="landing-page-info-text">Sign up to create your own PeopleMover space.</div>
+                    <div className="landing-page-info-text">Login with your CDSID to create your own PeopleMover&nbsp;space.</div>
                     <a href={'/user/login'}><button className="landing-page-info-adfs-login">Login</button></a>
                 </div>
                 <img
