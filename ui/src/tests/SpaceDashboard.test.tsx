@@ -36,18 +36,6 @@ interface TestComponent {
 
 describe('SpaceDashbord tests', () => {
 
-    it('should redirect page to login page if token is invalid ', async () => {
-        const {fakeAccessToken, history} = await createTestComponent(false);
-        expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-        expect(history.location.pathname).toBe('/user/login');
-    });
-
-    it('should render space dashboard page if token is valid', async () => {
-        const {fakeAccessToken, history} = await createTestComponent();
-        expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
-        expect(history.location.pathname).toBe('/user/dashboard');
-    });
-
     it('should display signout and not invite contributors in menu', async () => {
         const {component} = await createTestComponent();
         await fireEvent.click(component.getByTestId('editContributorsModal'));
@@ -61,7 +49,6 @@ describe('SpaceDashbord tests', () => {
         const space1 = await component.findByText('Space1');
         await fireEvent.click(space1);
 
-        expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(fakeAccessToken);
         expect(SpaceClient.getSpacesForUser).toHaveBeenCalledWith(fakeAccessToken);
 
         expect(history.location.pathname).toBe('/space1');
@@ -85,7 +72,7 @@ describe('SpaceDashbord tests', () => {
         expect(component.getByText(`Last modified today at ${localTime}`)).not.toBeNull();
     });
 
-    const createTestComponent = async (tokenValid = true): Promise<TestComponent> => {
+    const createTestComponent = async (): Promise<TestComponent> => {
         const fakeAccessToken = 'FAKE_TOKEN123';
         const cookies = new Cookies();
         cookies.set('accessToken', fakeAccessToken);
@@ -94,13 +81,7 @@ describe('SpaceDashbord tests', () => {
             data: [{name: 'Space1', lastModifiedDate: '2020-04-14T18:06:11.791+0000'}],
         } as AxiosResponse));
 
-        if (tokenValid) {
-            AccessTokenClient.validateAccessToken = jest.fn(() => Promise.resolve({status: 200} as AxiosResponse));
-        } else {
-            AccessTokenClient.validateAccessToken = jest.fn(() => Promise.reject());
-        }
-
-        let component: RenderResult;
+        let component: any = null;
         await wait(() => {
             component = renderWithRedux(
                 <Router history={history}>

@@ -73,9 +73,9 @@ ReactDOM.render(
                     <Redirect to={"/user/dashboard"}/>
                 </AuthenticatedRoute>
 
-                <Route exact path="/user/dashboard">
+                <AuthenticatedRoute exact path="/user/dashboard">
                     <SpaceDashboard/>
-                </Route>
+                </AuthenticatedRoute>
 
                 <Route exact path="/:teamName">
                     <ValidationGuard>
