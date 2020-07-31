@@ -82,10 +82,13 @@ class AuthController(val authClient: AuthClient,
     fun inviteUsersToSpace(@Valid @RequestBody request: AuthInviteUsersToSpaceRequest): ResponseEntity<Void> {
         val space = spaceRepository.findByNameIgnoreCase(request.spaceName)!!
         request.emails.forEach {
-            val userId = authClient.getUserIdFromEmail(email = it).body!!.user_id
+            val userId = try {
+                authClient.getUserIdFromEmail(email = it).body!!.user_id
+            } catch (e: Exception) {
+                it.substringBefore('@').toUpperCase()
+            }
             userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
         }
-        authClient.inviteUsersToScope(request.emails, request.spaceName)
         return ResponseEntity.noContent().build()
     }
 

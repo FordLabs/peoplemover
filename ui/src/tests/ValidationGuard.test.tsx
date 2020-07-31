@@ -50,9 +50,9 @@ describe('The Validation Guard', () => {
         await wait(() => {
             result = render(
                 <Router history={history}>
-                <AuthorizedRoute>
-                    <TestComponent/>
-                </AuthorizedRoute>
+                    <AuthorizedRoute>
+                        <TestComponent/>
+                    </AuthorizedRoute>
                 </Router>
             );
         });

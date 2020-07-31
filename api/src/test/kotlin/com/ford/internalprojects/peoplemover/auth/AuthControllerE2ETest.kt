@@ -25,7 +25,6 @@ import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import com.ford.labs.authquest.user.UserReadResponse
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
@@ -35,21 +34,21 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
+import org.junit.Before
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.web.client.HttpClientErrorException
 import java.time.Instant
-import java.util.*
-import kotlin.collections.HashMap
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -87,7 +86,7 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `PUT should return NO_CONTENT with a valid invite scope request`() {
+    fun `PUT should return NO_CONTENT with a valid AuthQuest invite scope request`() {
         val emails = listOf("EMAIL_1", "EMAIL_2")
         val spaceName = "spaceName"
 
@@ -113,10 +112,37 @@ class AuthControllerE2ETest {
         )
         val savedIds: List<String> = userSpaceMappingRepository.findAll().map { it.userId!! }
 
-        verify(authClient).inviteUsersToScope(emails, spaceName)
         assertThat(userSpaceMappingRepository.count()).isEqualTo(2)
         assertThat(savedIds).contains("uuid1")
         assertThat(savedIds).contains("uuid2")
+    }
+
+    @Test
+    fun `PUT should return NO_CONTENT with a valid ADFS request`() {
+        val emails = listOf("email_1@email.com", "email_2@otheremail.com")
+        val spaceName = "spaceName"
+
+        `when`(authClient.getUserIdFromEmail("EMAIL_1@email.com")).thenThrow(HttpClientErrorException(BAD_REQUEST))
+        `when`(authClient.getUserIdFromEmail("EMAIL_2@otheremail.com")).thenThrow(HttpClientErrorException(BAD_REQUEST))
+
+        spaceRepository.save(Space(id = 1, name = spaceName))
+
+        val request = AuthInviteUsersToSpaceRequest(
+                spaceName = spaceName,
+                emails = emails
+        )
+
+        mockMvc.perform(put("/api/user/invite/space")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json")
+        ).andExpect(
+                status().isNoContent
+        )
+        val savedIds: List<String> = userSpaceMappingRepository.findAll().map { it.userId!! }
+
+        assertThat(userSpaceMappingRepository.count()).isEqualTo(2)
+        assertThat(savedIds).contains("EMAIL_1")
+        assertThat(savedIds).contains("EMAIL_2")
     }
 
     @Test

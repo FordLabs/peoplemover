@@ -1,8 +1,8 @@
 import ProductForm from '../Products/ProductForm';
 import React from 'react';
-import {findByText, fireEvent} from '@testing-library/dom';
+import {fireEvent} from '@testing-library/dom';
 import configureStore from 'redux-mock-store';
-import {act, render} from '@testing-library/react';
+import {act} from '@testing-library/react';
 import TestUtils, {mockCreateRange, renderWithRedux} from './TestUtils';
 import {Space} from '../SpaceDashboard/Space';
 import {AvailableActions} from '../Redux/Actions';

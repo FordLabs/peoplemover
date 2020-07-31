@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Redirect, Route, RouteProps} from "react-router";
+import {Redirect, Route, RouteProps} from 'react-router';
 import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';

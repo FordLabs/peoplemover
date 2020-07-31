@@ -20,11 +20,11 @@ import {Product} from './Product';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import {FilterOption} from '../CommonTypes/Option';
 import moment from 'moment';
 import {ProductTag} from '../ProductTag/ProductTag';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
+import { getSelectedTagsFromGroupedTagOptions } from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface ProductListProps {
     products: Array<Product>;
@@ -32,11 +32,6 @@ interface ProductListProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
     productSortBy: string;
-}
-
-export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOption>): Array<string> {
-    const selectedOptions = tagFilters.filter(option => option.selected);
-    return selectedOptions.map(value => value.label);
 }
 
 function ProductList({
