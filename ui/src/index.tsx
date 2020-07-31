@@ -30,7 +30,7 @@ import {BrowserRouter as Router, Redirect} from 'react-router-dom';
 import Error404Page from './Application/Error404Page';
 import LandingPage from './LandingPage/LandingPage';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
-import ValidationGuard from './Validation/ValidationGuard';
+import AuthorizedRoute from './Validation/AuthorizedRoute';
 import OAuthRedirect from "./ReusableComponents/OAuthRedirect";
 import {AuthenticatedRoute} from "./AuthenticatedRoute";
 
@@ -77,11 +77,9 @@ ReactDOM.render(
                     <SpaceDashboard/>
                 </AuthenticatedRoute>
 
-                <Route exact path="/:teamName">
-                    <ValidationGuard>
-                        <PeopleMover/>
-                    </ValidationGuard>
-                </Route>
+                <AuthorizedRoute exact path="/:teamName">
+                    <PeopleMover/>
+                </AuthorizedRoute>
 
                 <Route path="/error/404">
                     <Error404Page/>

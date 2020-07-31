@@ -16,7 +16,7 @@
  */
 
 import {render, RenderResult, wait} from '@testing-library/react';
-import ValidationGuard from '../Validation/ValidationGuard';
+import AuthorizedRoute from '../Validation/AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosResponse} from 'axios';
 import {Router} from "react-router";
@@ -50,9 +50,9 @@ describe('The Validation Guard', () => {
         await wait(() => {
             result = render(
                 <Router history={history}>
-                <ValidationGuard>
+                <AuthorizedRoute>
                     <TestComponent/>
-                </ValidationGuard>
+                </AuthorizedRoute>
                 </Router>
             );
         });

@@ -16,12 +16,11 @@
  */
 
 import Cookies from 'universal-cookie';
-import {AccessTokenClient} from '../Login/AccessTokenClient';
 import SpaceDashboard from '../SpaceDashboard/SpaceDashboard';
 import React from 'react';
 import {renderWithRedux} from './TestUtils';
 import {Router} from 'react-router';
-import {createMemoryHistory} from 'history';
+import {createMemoryHistory, MemoryHistory} from 'history';
 import {wait, fireEvent, RenderResult} from '@testing-library/react';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
