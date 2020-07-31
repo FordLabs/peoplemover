@@ -29,6 +29,16 @@ Cypress.Commands.add('closeModal', () => {
     cy.getModal().should('not.be.visible');
 });
 
+Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTextToSelect) => {
+    cy.get(parentSelector)
+        .find('[class*="-control"]')
+        .click(0, 0, { force: true })
+        .get('[class*="-menu"]')
+        .find('[class*="-option"]')
+        .contains(checkboxTextToSelect)
+        .click(0, 0, { force: true });
+});
+
 Cypress.Commands.add('resetProduct', (mockProduct) => {
     cy.log('Delete mock product and associated tags/location in db.');
 

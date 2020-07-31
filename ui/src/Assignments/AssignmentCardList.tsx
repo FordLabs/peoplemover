@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject} from 'react';
+import React, {RefObject, useEffect, useState} from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
 import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
@@ -33,13 +33,15 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import AssignmentClient from './AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
+import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import { getSelectedTagsFromGroupedTagOptions } from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface AssignmentCardListProps {
     container: string;
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
-    products: Array<Product>;
     viewingDate: Date;
+    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     fetchProducts(): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
@@ -48,8 +50,8 @@ function AssignmentCardList({
     container,
     product,
     productRefs,
-    products,
     viewingDate,
+    allGroupedTagFilterOptions,
     fetchProducts,
     setCurrentModal,
 }: AssignmentCardListProps): JSX.Element {
@@ -57,6 +59,12 @@ function AssignmentCardList({
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
+    const getSelectedRoleFilters = (): Array<string> => getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[2].options);
+    const [roleFilters, setRoleFilters] = useState<Array<string>>(getSelectedRoleFilters());
+
+    useEffect(() => {
+        setRoleFilters(getSelectedRoleFilters());
+    }, [allGroupedTagFilterOptions]);
 
     function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
         const assignments: Array<Assignment> = product.assignments;
@@ -70,6 +78,12 @@ function AssignmentCardList({
             }
             return 0;
         });
+    }
+
+    function filterAssignmentByRole(assignment: Assignment): boolean {
+        if (roleFilters.length === 0) return true;
+
+        return !!(assignment.person.spaceRole && roleFilters.includes(assignment.person.spaceRole.name));
     }
 
     function startDraggingAssignment(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void {
@@ -191,20 +205,26 @@ function AssignmentCardList({
         }
     }
 
+    function containerClass(container: string): string {
+        return container === 'productDrawerContainer' ? 'unassignedPeopleContainer' : 'productPeopleContainer';
+    }
+
     return (
         <React.Fragment>
             <div className="antiHighlightCover" ref={antiHighlightCoverRef}/>
             <div
-                className={container === 'productDrawerContainer' ? 'unassignedPeopleContainer' : 'productPeopleContainer'}
-                data-testid={container === 'productDrawerContainer' ? 'unassignedPeopleContainer' : 'productPeopleContainer'}>
-                {assignmentsSortedByPersonRoleStably().map((assignment: Assignment) =>
-                    <AssignmentCard assignment={assignment}
-                        isUnassignedProduct={product.name === 'unassigned'}
-                        startDraggingAssignment={startDraggingAssignment}
-                        key={assignment.id}
-                        container={container}
-                    />
-                )}
+                className={containerClass(container)}
+                data-testid={containerClass(container)}>
+                {assignmentsSortedByPersonRoleStably()
+                    .filter(filterAssignmentByRole)
+                    .map((assignment: Assignment) =>
+                        <AssignmentCard assignment={assignment}
+                            isUnassignedProduct={product.name === 'unassigned'}
+                            startDraggingAssignment={startDraggingAssignment}
+                            key={assignment.id}
+                            container={container}
+                        />
+                    )}
             </div>
         </React.Fragment>
     );
@@ -212,8 +232,8 @@ function AssignmentCardList({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     productRefs: state.productRefs,
-    products: state.products,
     viewingDate: state.viewingDate,
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

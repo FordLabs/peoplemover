@@ -14,5 +14,7 @@ declare namespace Cypress {
 
         getModal(): Chainable<any>;
         closeModal(): Chainable<any>;
+
+        selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: number): Chainable<any>;
     }
 }

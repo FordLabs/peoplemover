@@ -38,8 +38,9 @@ describe('filter products', () => {
     }
 
     const filters: LocalStorageFilters = {
-        locationTagsFilters: [TestUtils.annarbor.name, TestUtils.detroit.name],
+        locationTagsFilters: [TestUtils.annarbor.name],
         productTagsFilters: [TestUtils.productTag1.name],
+        roleTagsFilters: [TestUtils.roles[0].name],
     };
 
     beforeEach(() => {
@@ -53,11 +54,12 @@ describe('filter products', () => {
         const app = renderWithRedux(<PeopleMover/>);
         const filterContainer = await app.findByTestId('filterByDropDownContainer');
         await findByText(filterContainer, TestUtils.annarbor.name);
-        await findByText(filterContainer, TestUtils.detroit.name);
         await findByText(filterContainer, TestUtils.productTag1.name);
+        await findByText(filterContainer, TestUtils.roles[0].name);
     });
 
     it('should show unedited location tags in the filter as checked from local storage', async () => {
+        filters.locationTagsFilters.push(TestUtils.detroit.name)
         localStorage.setItem('filters', JSON.stringify(filters));
         const app = renderWithRedux(<PeopleMover/>);
         const myTagsButton = await app.findByText('My Tags');
@@ -89,6 +91,7 @@ describe('filter products', () => {
         const longFilters: LocalStorageFilters = {
             locationTagsFilters: [TestUtils.annarbor.name, TestUtils.detroit.name],
             productTagsFilters: [TestUtils.productTag1.name, TestUtils.productTag2.name],
+            roleTagsFilters: [],
         };
         localStorage.setItem('filters', JSON.stringify(longFilters));
         const app = renderWithRedux(<PeopleMover/>);
