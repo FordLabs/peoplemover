@@ -57,8 +57,8 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
     }
 
     useEffect(() => {
-                window.history.pushState([], 'User Dashboard', '/user/dashboard');
-                refreshUserSpaces().then();
+        window.history.pushState([], 'User Dashboard', '/user/dashboard');
+        refreshUserSpaces().then();
 
     }, []);
 
