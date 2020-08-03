@@ -18,23 +18,27 @@
 import Select from 'react-select';
 import {CustomIndicator, filterByStyles, SortByOption} from './ReactSelectStyles';
 import React, {useEffect, useState} from 'react';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Option} from '../CommonTypes/Option';
 import './ProductFilterOrSortBy.scss';
 import {setProductSortByAction} from '../Redux/Actions';
 
+interface SortByOption {
+    label: string;
+    value: SortByType;
+}
+
 interface ProductSortByProps {
-    productSortBy: string;
-    setProductSortBy(productSortBy: string): void ;
+    productSortBy: SortByType;
+    setProductSortBy(productSortBy: SortByType): void;
 }
 
 function ProductSortBy({
     productSortBy,
     setProductSortBy,
 }: ProductSortByProps): JSX.Element {
-    const [originalSortOption, setOriginalSortOption] = useState<Option>();
-    const sortByOptions: Array<Option> = [
+    const [originalSortOption, setOriginalSortOption] = useState<SortByOption>();
+    const sortByOptions: Array<SortByOption> = [
         {label:'Name', value:'name'},
         {label:'Location', value:'location'},
         {label:'Product Tag', value:'product-tag'},
@@ -43,7 +47,7 @@ function ProductSortBy({
         setOriginalSortOption(stringToOption(productSortBy));
     }, [productSortBy]);
 
-    function stringToOption(value: string): Option {
+    function stringToOption(value: string): SortByOption {
         return sortByOptions.filter(option => option.value === value)[0];
     }
     return (
@@ -57,7 +61,7 @@ function ProductSortBy({
                 inputId="sortby-dropdown"
                 options={sortByOptions}
                 value={originalSortOption}
-                onChange={(value): void => setProductSortBy((value as Option).value)}
+                onChange={(value): void => setProductSortBy((value as SortByOption).value)}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
         </React.Fragment>
     );
@@ -68,7 +72,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    setProductSortBy: (productSortBy: string) => dispatch(setProductSortByAction(productSortBy)),
+    setProductSortBy: (productSortBy: SortByType) => dispatch(setProductSortByAction(productSortBy)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSortBy);

@@ -32,7 +32,9 @@ import {viewingDateReducer} from './viewingDateReducer';
 import productsReducer from './productsReducer';
 import {Product} from '../../Products/Product';
 import productTagsReducer from './productTagsReducer';
-import {ProductTag} from "../../ProductTag/ProductTag";
+import {ProductTag} from '../../ProductTag/ProductTag';
+
+export type SortByType = 'location' | 'product-tag' | 'name'
 
 export default combineReducers({
     currentModal: currentModalReducer,
@@ -53,7 +55,7 @@ export interface GlobalStateProps {
     isUnassignedDrawerOpen: boolean;
     whichEditMenuOpen: EditMenuToOpen;
     productRefs: Array<ProductCardRefAndProductPair>;
-    productSortBy: string;
+    productSortBy: SortByType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;
     viewingDate: Date;

@@ -18,7 +18,7 @@
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import moment from 'moment';
 import {ProductTag} from '../ProductTag/ProductTag';
@@ -31,7 +31,7 @@ interface ProductListProps {
     productTags: Array<ProductTag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
-    productSortBy: string;
+    productSortBy: SortByType;
 }
 
 function ProductList({
