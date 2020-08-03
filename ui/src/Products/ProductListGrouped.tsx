@@ -15,19 +15,33 @@
  * limitations under the License.
  */
 
-import {ProductTag} from '../ProductTag/ProductTag';
+import React, {useEffect, useState} from 'react';
 import ProductCard from './ProductCard';
-import React from 'react';
 import {Product} from './Product';
 import NewProductButton from './NewProductButton';
-
-import './ProductListGrouped.scss';
 import {AvailableModals} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import {Trait} from '../Traits/Trait';
+import {GlobalStateProps, SortByType} from '../Redux/Reducers';
+import {connect} from 'react-redux';
+import {ProductTag} from '../ProductTag/ProductTag';
+import {SpaceLocation} from '../Locations/SpaceLocation';
+
+import './ProductListGrouped.scss';
 
 interface GroupedByListProps {
     products: Array<Product>;
+    productSortBy: SortByType;
     productTags: Array<ProductTag>;
+    locations: Array<SpaceLocation>;
+}
+
+interface GroupedListDataProps {
+    traitTitle: string;
+    traits: Array<Trait>;
+    modalType: AvailableModals | null;
+    filterByTraitFunction: (product: Product, tagName: string) => boolean;
+    filterByNoTraitFunction: (product: Product) => boolean;
 }
 
 interface ProductGroupProps {
@@ -37,13 +51,59 @@ interface ProductGroupProps {
     useGrayBackground?: boolean;
 }
 
-function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Element {
+function GroupedByList({ 
+    productSortBy, 
+    products,
+    productTags,
+    locations,
+}: GroupedByListProps): JSX.Element {
+    const [groupedListData, setGroupedListData] = useState<GroupedListDataProps>({
+        traitTitle: '',
+        traits: [],
+        modalType: null,
+        filterByTraitFunction: () => false,
+        filterByNoTraitFunction: () => false,
+    });
+
+    useEffect(() => {
+        switch (productSortBy) {
+            case 'location': {
+                setGroupedListData({
+                    traitTitle: 'Location',
+                    traits: [...locations],
+                    modalType: AvailableModals.CREATE_PRODUCT_OF_LOCATION,
+                    filterByTraitFunction: filterByLocation,
+                    filterByNoTraitFunction: filterByNoLocation,
+                });
+                break;
+            }
+            case 'product-tag': {
+                setGroupedListData({
+                    traitTitle: 'Product Tag',
+                    traits: [...productTags],
+                    modalType: AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG,
+                    filterByTraitFunction: filterByProductTag,
+                    filterByNoTraitFunction: filterByNoProductTag,
+                });
+            }
+        }
+    }, [productSortBy, locations, productTags]);
+
+
     function filterByProductTag(product: Product, tagName: string): boolean {
         return product.productTags.map(t => t.name).includes(tagName);
     }
 
     function filterByNoProductTag(product: Product): boolean {
         return (product.productTags || []).length === 0;
+    }
+
+    function filterByLocation(product: Product, tagName: string): boolean {
+        return (product.spaceLocation) ? product.spaceLocation.name === tagName : false;
+    }
+
+    function filterByNoLocation(product: Product): boolean {
+        return !product.spaceLocation;
     }
 
     function ProductGroup({tagName, modalState, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
@@ -55,15 +115,13 @@ function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Eleme
                     <div data-testid="productGroup" key={tagName}>
                         <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
                         <div className="groupedProducts">
-                            {filteredProducts
-                                .map(product => (
-                                    <span key={product.id}>
-                                        <ProductCard
-                                            product={product}
-                                            container="productCardContainer"/>
-                                    </span>
-                                ))
-                            }
+                            {filteredProducts.map(product => (
+                                <span key={product.id}>
+                                    <ProductCard
+                                        product={product}
+                                        container="productCardContainer"/>
+                                </span>
+                            ))}
                             <NewProductButton modalState={modalState}/>
                         </div>
                     </div>
@@ -73,22 +131,28 @@ function GroupedByList({ productTags, products }: GroupedByListProps): JSX.Eleme
 
     return ( 
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
-            {productTags && productTags.map((tag: ProductTag) => {
+            {groupedListData.traits.map((trait: Trait) => {
                 return (
-                    <span key={tag.id}>
+                    <span key={trait.id}>
                         <ProductGroup
-                            tagName={tag.name}
-                            modalState={{modal: AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG, item: tag}}
-                            productFilterFunction={filterByProductTag}/>
+                            tagName={trait.name}
+                            modalState={{modal: groupedListData.modalType, item: trait}}
+                            productFilterFunction={groupedListData.filterByTraitFunction}/>
                     </span>
                 );
             })}
             <ProductGroup
-                tagName="No Product Tag"
+                tagName={`No ${groupedListData.traitTitle}`}
                 useGrayBackground
-                productFilterFunction={filterByNoProductTag}/>
+                productFilterFunction={groupedListData.filterByNoTraitFunction}/>
         </div>
     );
 }
 
-export default GroupedByList;
+
+const mapStateToProps = (state: GlobalStateProps) => ({
+    productTags: state.productTags,
+    locations: state.locations,
+});
+
+export default connect(mapStateToProps)(GroupedByList);

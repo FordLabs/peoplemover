@@ -27,12 +27,14 @@ import productSortByReducer from './productSortByReducer';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
-import {Space} from '../../SpaceDashboard/Space';
 import {viewingDateReducer} from './viewingDateReducer';
 import productsReducer from './productsReducer';
-import {Product} from '../../Products/Product';
 import productTagsReducer from './productTagsReducer';
+import locationsReducer from './locationsReducer';
+import {Space} from '../../SpaceDashboard/Space';
+import {Product} from '../../Products/Product';
 import {ProductTag} from '../../ProductTag/ProductTag';
+import {SpaceLocation} from '../../Locations/SpaceLocation';
 
 export type SortByType = 'location' | 'product-tag' | 'name'
 
@@ -47,6 +49,7 @@ export default combineReducers({
     viewingDate: viewingDateReducer,
     products: productsReducer,
     productTags: productTagsReducer,
+    locations: locationsReducer,
 });
 
 export interface GlobalStateProps {
@@ -61,4 +64,5 @@ export interface GlobalStateProps {
     viewingDate: Date;
     products: Array<Product>;
     productTags: Array<ProductTag>;
+    locations: Array<SpaceLocation>;
 }

@@ -21,14 +21,12 @@ import {connect} from 'react-redux';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import moment from 'moment';
-import {ProductTag} from '../ProductTag/ProductTag';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 import { getSelectedTagsFromGroupedTagOptions } from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface ProductListProps {
     products: Array<Product>;
-    productTags: Array<ProductTag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
     productSortBy: SortByType;
@@ -36,7 +34,6 @@ interface ProductListProps {
 
 function ProductList({
     products,
-    productTags,
     allGroupedTagFilterOptions,
     viewingDate,
     productSortBy,
@@ -85,15 +82,16 @@ function ProductList({
                 .filter(isActiveProduct);
 
             switch (productSortBy) {
-                case 'product-tag': {
-                    return <GroupedByList
-                        products={filteredAndActiveProduct}
-                        productTags={productTags}/>;
-                }
-                default:
+                case 'name' : {
                     return <SortedByList
                         products={filteredAndActiveProduct}
                         productSortBy={productSortBy}/>;
+                }
+                default:
+                    return <GroupedByList
+                        products={filteredAndActiveProduct}
+                        productSortBy={productSortBy}/>;
+
             }
         } else {
             return <></>;
