@@ -58,80 +58,6 @@ pipeline {
             }
         }
 
-         stage('Deploy Branch') {
-            parallel {
-                stage('API Branch Deploy') {
-                    when {
-                        not {
-                            anyOf {
-                                branch 'master';
-                                branch 'stage'
-                            }
-                        }
-                    }
-                    steps {
-                        withCredentials([
-                            usernamePassword(credentialsId: 'flipJenkins', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
-                            usernamePassword(credentialsId: 'peopleMoverDB', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
-                        ]) {
-                            dir("api") {
-                                sh 'echo Pushing to Cloud Foundry'
-                                sh """./gradlew cf-push-blue-green \
-                                        -PbranchNameWithoutUnderscores=Branch \
-                                        -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                                        -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                                        -Pcf.ccHost=$peoplemover_pcf_cchost \
-                                        -Pcf.domain=$peoplemover_pcf_domain \
-                                        -Pcf.ccUser=$JENKINS_USER \
-                                        -Pcf.ccPassword=$JENKINS_PASSWORD \
-                                        -Pcf.environment.authquest.client_id=$authquest_qa_client_id \
-                                        -Pcf.environment.authquest.client_secret=$authquest_qa_client_secret \
-                                        -Pcf.environment.authquest.url=$authquest_qa_url \
-                                        -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
-                                        -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
-                                        -Pcf.environment.react.app.url=https://${env.BRANCH_NAME_WITHOUT_UNDERSCORES}.$peoplemover_pcf_org \
-                                        -Pcf.environment.react.app.authquest_url=$authquest_qa_url \
-                                        -Pcf.environment.react.app.authquest_client_id=$authquest_qa_client_id \
-                                        -Pcf.environment.react.app.auth_enabled=false \
-                                        -Pcf.environment.react.app.invite_users_to_space_enabled=true \
-                                        -Pcf.environment.react.app.adfs_enabled=true \
-                                        -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
-                                        -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
-                                        -Pcf.environment.react.app.adfs_resource=$adfs_resource \
-                                """.stripIndent()
-                            }
-                        }
-                    }
-                }
-
-                stage('UI Deploy Test Instances') {
-                    when {
-                        not {
-                            anyOf {
-                                branch 'master'
-                                branch 'stage'
-                                branch 'dev'
-                            }
-                        }
-                    }
-                    steps {
-                        dir("ui") {
-                            pushToCloudFoundry(
-                                target: "$peoplemover_pcf_cchost",
-                                organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
-                                cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
-                                credentialsId: 'flipJenkins',
-                                manifestChoice: [
-                                    manifestFile: "${env.MANIFEST}",
-                                ],
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-
         stage("Deploy") {
             parallel {
                 stage('API Deploy Stage') {
@@ -283,13 +209,5 @@ def getManifest(branchName) {
         return 'manifest_Stage.yml'
     } else if (branchName == "master"){
         return 'manifest.yml'
-    } else {
-        def filename = 'ui/manifest_QA.yml'
-        def data = readYaml file: filename
-        data.applications.get(0).name = "${branchName}UI"
-
-        sh "rm $filename"
-        writeYaml file: filename, data: data
-        return 'manifest_QA.yml'
     }
 }
