@@ -33,8 +33,6 @@ repositories {
 }
 
 dependencies {
-    implementation name: 'authquest-1.0.5'
-
     runtime 'mysql:mysql-connector-java'
 
     compile 'com.google.guava:guava:28.2-jre'

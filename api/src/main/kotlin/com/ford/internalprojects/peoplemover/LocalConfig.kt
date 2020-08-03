@@ -20,7 +20,6 @@ package com.ford.internalprojects.peoplemover
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
 import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
-import com.ford.internalprojects.peoplemover.auth.AuthClient
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.Color
@@ -35,7 +34,6 @@ import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceService
 import com.google.common.collect.Sets.newHashSet
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import java.time.LocalDate
@@ -46,9 +44,6 @@ import javax.annotation.PostConstruct
 class LocalConfig {
     @Autowired
     private lateinit var spaceService: SpaceService
-
-    @Autowired
-    private lateinit var authClient: AuthClient
 
     @Autowired
     private lateinit var colorService: ColorService
@@ -68,24 +63,12 @@ class LocalConfig {
     @Autowired
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
-    @Value("\${authquest.client_id}")
-    private lateinit var clientId: String
-
-    @Value("\${authquest.client_secret}")
-    private lateinit var clientSecret: String
-
     @PostConstruct
     fun onAppStartup() {
         val spaceName = "flippingsweet"
         val createdSpace: Space = spaceService.createSpaceWithName(spaceName)
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "AQ-866ed9fa-06ca-41e7-b256-30770b98195f", spaceId = createdSpace.id))
-
-        try {
-            authClient.createScope(listOf(spaceName))
-        } catch (exception: Exception) {
-            println(exception.message)
-        }
 
         colorService.addColors(listOf("#FFFF00", "#FF00FF", "#00FFFF"))
         val colors: List<Color?> = colorService.getColors()
