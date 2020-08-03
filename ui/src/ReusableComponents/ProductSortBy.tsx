@@ -53,6 +53,7 @@ function ProductSortBy({
                 styles={filterByStyles}
                 id="sortby-dropdown"
                 className="dropdown sortby-dropdown"
+                classNamePrefix="product-sort-by"
                 inputId="sortby-dropdown"
                 options={sortByOptions}
                 value={originalSortOption}
