@@ -73,48 +73,10 @@ class AuthControllerE2ETest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
-    @Value("\${authquest.client_id}")
-    lateinit var clientId: String
-
-    @Value("\${authquest.client_secret}")
-    lateinit var clientSecret: String
-
     @Before
     fun setUp() {
         userSpaceMappingRepository.deleteAll()
         spaceRepository.deleteAll()
-    }
-
-    @Test
-    fun `PUT should return NO_CONTENT with a valid AuthQuest invite scope request`() {
-        val emails = listOf("EMAIL_1", "EMAIL_2")
-        val spaceName = "spaceName"
-
-        val userReadResponse1 = UserReadResponse()
-        val userReadResponse2 = UserReadResponse()
-        userReadResponse1.user_id = "uuid1"
-        userReadResponse2.user_id = "uuid2"
-
-        `when`(authClient.getUserIdFromEmail("EMAIL_1")).thenReturn(ResponseEntity.ok(userReadResponse1))
-        `when`(authClient.getUserIdFromEmail("EMAIL_2")).thenReturn(ResponseEntity.ok(userReadResponse2))
-        spaceRepository.save(Space(id = 1, name = spaceName))
-
-        val request = AuthInviteUsersToSpaceRequest(
-                spaceName = spaceName,
-                emails = emails
-        )
-
-        mockMvc.perform(put("/api/user/invite/space")
-                .content(objectMapper.writeValueAsString(request))
-                .contentType("application/json")
-        ).andExpect(
-                status().isNoContent
-        )
-        val savedIds: List<String> = userSpaceMappingRepository.findAll().map { it.userId!! }
-
-        assertThat(userSpaceMappingRepository.count()).isEqualTo(2)
-        assertThat(savedIds).contains("uuid1")
-        assertThat(savedIds).contains("uuid2")
     }
 
     @Test
