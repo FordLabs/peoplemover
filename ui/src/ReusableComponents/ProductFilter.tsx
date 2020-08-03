@@ -165,6 +165,7 @@ function ProductFilter({
                 data-testid="filterBy-dropdown"
                 className="dropdown filterBy-dropdown"
                 inputId="filterBy-dropdown"
+                classNamePrefix="product-filter"
                 options={allGroupedTagFilterOptions}
                 value={checkBoxFilterValues}
                 isMulti

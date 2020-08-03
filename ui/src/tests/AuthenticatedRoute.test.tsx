@@ -21,7 +21,7 @@ import {act, render, RenderResult, wait, waitForDomChange} from '@testing-librar
 import {AuthenticatedRoute} from '../AuthenticatedRoute';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
-import Axios, {AxiosResponse} from "axios";
+import Axios, {AxiosResponse} from 'axios';
 
 describe('AuthenticatedRoute', function() {
     let originalWindow: Window;
@@ -47,13 +47,13 @@ describe('AuthenticatedRoute', function() {
         });
     });
 
-    it('should redirect to Auth provider when not Authenticated', async() => {
+    it('should redirect to Auth provider when not Authenticated', async () => {
         Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
         window.location = {href: '', origin: 'http://localhost'} as Location;
         renderComponent({authenticated: false});
         const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
 
-        await wait (() => {
+        await wait(() => {
             expect(window.location.href).toEqual(route);
         });
     });

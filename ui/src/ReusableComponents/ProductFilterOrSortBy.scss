@@ -23,12 +23,20 @@
   color: $gray-1;
 }
 
-.sortby-dropdown{
+.sortby-dropdown {
   min-width: 100px;
+
+  .product-sort-by__control {
+    cursor: pointer;
+  }
 }
 
-.filterBy-dropdown{
+.filterBy-dropdown {
   min-width: 0;
+
+  .product-filter__control {
+    cursor: pointer;
+  }
 }
 
 .sortby-option {
@@ -37,6 +45,7 @@
   padding: 0 4px;
   display: flex;
   align-items:center;
+  cursor: pointer;
 }
 
 .dropdown-label {
@@ -49,7 +58,7 @@
   min-width: 50px;
 }
 
-.sortby-option-check{
+.sortby-option-check {
   margin-left: auto;
 }
 
@@ -57,6 +66,7 @@
   margin-top: 6px;
   display: flex;
   align-items: flex-start;
+  cursor: pointer;
 }
 
 .filter-option > .checkbox {

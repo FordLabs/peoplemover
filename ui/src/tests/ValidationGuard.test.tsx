@@ -19,8 +19,8 @@ import {render, RenderResult, wait} from '@testing-library/react';
 import AuthorizedRoute from '../Validation/AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosResponse} from 'axios';
-import {Router} from "react-router";
-import {createMemoryHistory} from "history";
+import {Router} from 'react-router';
+import {createMemoryHistory} from 'history';
 
 describe('The Validation Guard', () => {
     it('should redirect to login when security is enabled and you are not authorized', async () => {
