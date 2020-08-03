@@ -17,20 +17,16 @@
 
 package com.ford.internalprojects.peoplemover.auth
 
-import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
 import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
-import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.client.HttpClientErrorException
 import javax.validation.Valid
 
 @RestController
