@@ -31,9 +31,24 @@
   padding-top: 6px;
 }
 
+.react-datepicker__close-icon {
+  padding: 0 5px 0 0 !important;
+}
+
 .react-datepicker__close-icon::after {
   font-size: 18px !important;
   width: 18px !important;
   padding: 0 !important;
-  background-color: $gray-1 !important;
+  background-color: $white !important;
+  color: $gray-1 !important;
+  content: 'x' !important;
+  font-weight: bold;
+}
+
+.calendar-icon {
+  position: relative;
+  top: -24px;
+  left: 194px;
+  height: 0;
+  width: 0;
 }

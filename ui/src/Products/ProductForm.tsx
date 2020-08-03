@@ -25,6 +25,7 @@ import LocationClient from '../Locations/LocationClient';
 import {closeModalAction, setAllGroupedTagFilterOptions} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import DatePicker from 'react-datepicker';
+import MaskedInput from 'react-text-mask';
 import 'react-datepicker/dist/react-datepicker.css';
 import {JSX} from '@babel/types';
 import {emptyProduct, Product} from './Product';
@@ -354,11 +355,21 @@ function ProductForm({
                         id="start"
                         selected={startDate}
                         onChange={date => {
-                            setStartDate(date ? date : moment(viewingDate).toDate());
-                            updateProductField('startDate', date ? moment(date).format('YYYY-MM-DD') : moment(viewingDate).format('YYYY-MM-DD'));
+                            if (date) {
+                                setStartDate(date);
+                                updateProductField('startDate', moment(date).format('YYYY-MM-DD'));
+                            } else {
+                                setStartDate(moment(currentProduct.startDate).toDate());
+                                updateProductField('startDate', moment(currentProduct.startDate).format('YYYY-MM-DD'));
+                            }
                         }}
-                        isClearable
+                        customInput={
+                            <MaskedInput
+                                mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                            />
+                        }
                     />
+                    <i className="far fa-calendar-alt calendar-icon" />
                 </div>
                 <div className="formItem" data-testid="productFormNextPhaseDateField">
                     <label className="formItemLabel" htmlFor="end">End Date</label>
@@ -371,9 +382,15 @@ function ProductForm({
                             setEndDate(date ? date : null);
                             updateProductField('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
                         }}
+                        customInput={
+                            <MaskedInput
+                                mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                            />
+                        }
                         isClearable
-                        placeholderText="MM-DD-YYYY"
+                        placeholderText="MM/DD/YYYY"
                     />
+                    {!endDate && <i className="far fa-calendar-alt calendar-icon" />}
                 </div>
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
