@@ -21,7 +21,6 @@ import {SpaceLocation} from '../../Locations/SpaceLocation';
 
 const locationsReducer = (state: Array<SpaceLocation> = [], action: {type: AvailableActions; locations: Array<SpaceLocation>} ): Array<SpaceLocation> => {
     if (action.type === AvailableActions.SET_LOCATIONS) {
-        console.log('Get Location State', action.locations)
         return [...action.locations];
     } else {
         return state;

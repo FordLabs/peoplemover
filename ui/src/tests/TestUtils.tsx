@@ -364,6 +364,17 @@ class TestUtils {
         productTags: [],
     };
 
+    static productWithoutLocation: Product = {
+        id: 5,
+        name: 'Awesome Product',
+        spaceId: 1,
+        startDate: '2011-01-01',
+        endDate: '2022-02-02',
+        assignments: [],
+        archived: false,
+        productTags: [],
+    };
+
     static archivedProduct: Product = {
         id: 4,
         name: 'I am archived',
@@ -382,6 +393,7 @@ class TestUtils {
         TestUtils.productForHank,
         TestUtils.productWithoutAssignments,
         TestUtils.archivedProduct,
+        TestUtils.productWithoutLocation,
     ];
 
     static notEmptyProducts: Array<Product> = [
