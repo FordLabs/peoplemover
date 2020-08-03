@@ -27,12 +27,16 @@ import productSortByReducer from './productSortByReducer';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
-import {Space} from '../../SpaceDashboard/Space';
 import {viewingDateReducer} from './viewingDateReducer';
 import productsReducer from './productsReducer';
-import {Product} from '../../Products/Product';
 import productTagsReducer from './productTagsReducer';
-import {ProductTag} from "../../ProductTag/ProductTag";
+import locationsReducer from './locationsReducer';
+import {Space} from '../../SpaceDashboard/Space';
+import {Product} from '../../Products/Product';
+import {ProductTag} from '../../ProductTag/ProductTag';
+import {SpaceLocation} from '../../Locations/SpaceLocation';
+
+export type SortByType = 'location' | 'product-tag' | 'name'
 
 export default combineReducers({
     currentModal: currentModalReducer,
@@ -45,6 +49,7 @@ export default combineReducers({
     viewingDate: viewingDateReducer,
     products: productsReducer,
     productTags: productTagsReducer,
+    locations: locationsReducer,
 });
 
 export interface GlobalStateProps {
@@ -53,10 +58,11 @@ export interface GlobalStateProps {
     isUnassignedDrawerOpen: boolean;
     whichEditMenuOpen: EditMenuToOpen;
     productRefs: Array<ProductCardRefAndProductPair>;
-    productSortBy: string;
+    productSortBy: SortByType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;
     viewingDate: Date;
     products: Array<Product>;
     productTags: Array<ProductTag>;
+    locations: Array<SpaceLocation>;
 }

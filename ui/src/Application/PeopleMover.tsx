@@ -26,7 +26,13 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import UnassignedDrawerContainer from '../Redux/Containers/UnassignedDrawerContainer';
 import {connect} from 'react-redux';
-import {fetchProductsAction, fetchProductTagsAction, setCurrentSpaceAction, setPeopleAction} from '../Redux/Actions';
+import {
+    fetchLocationsAction,
+    fetchProductsAction,
+    fetchProductTagsAction,
+    setCurrentSpaceAction,
+    setPeopleAction,
+} from '../Redux/Actions';
 import BoardSelectionTabs from '../Boards/BoardSelectionTabs';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -39,6 +45,7 @@ import SpaceClient from '../SpaceDashboard/SpaceClient';
 import {Product} from '../Products/Product';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import {ProductTag} from '../ProductTag/ProductTag';
+import {SpaceLocation} from '../Locations/SpaceLocation';
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
@@ -48,6 +55,7 @@ export interface PeopleMoverProps {
 
     fetchProducts(): Array<Product>;
     fetchProductTags(): Array<ProductTag>;
+    fetchLocations(): Array<SpaceLocation>;
     setCurrentSpace(space: Space): Space;
     setPeople(people: Array<Person>): Array<Person>;
 }
@@ -59,6 +67,7 @@ function PeopleMover({
     products,
     fetchProducts,
     fetchProductTags,
+    fetchLocations,
     setCurrentSpace,
     setPeople,
 }: PeopleMoverProps): JSX.Element {
@@ -86,6 +95,7 @@ function PeopleMover({
                     });
                 await fetchProducts();
                 await fetchProductTags();
+                await fetchLocations();
                 const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;
 
                 setPeople(peopleInSpace);
@@ -132,6 +142,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     fetchProducts: () => dispatch(fetchProductsAction()),
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
+    fetchLocations: () => dispatch(fetchLocationsAction()),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
 });

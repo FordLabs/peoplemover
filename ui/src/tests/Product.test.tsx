@@ -64,7 +64,7 @@ describe('Products', () => {
 
         it('displays the empty product text', async () => {
             const app = renderWithRedux(<PeopleMover/>);
-            await app.findByText('Add a person by clicking');
+            await app.findAllByText('Add a person by clicking');
         });
 
         it('does not display the empty product text for a product with people', async () => {
