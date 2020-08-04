@@ -1,4 +1,4 @@
-import React, {forwardRef, Ref, useEffect} from 'react';
+import React, {forwardRef, Ref} from 'react';
 
 interface CustomInputProps {
     value?: string;
