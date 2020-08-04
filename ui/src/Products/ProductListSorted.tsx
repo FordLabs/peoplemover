@@ -31,18 +31,18 @@ function SortedByList({ products, productSortBy}: Props): JSX.Element {
     const [sortedProducts, setSortedProducts] = useState<Array<Product>>([...products]);
 
     useEffect(() => {
+        function sortBy(products: Array<Product>, productSortBy: string):  Array<Product> {
+            switch (productSortBy) {
+                case 'location': return [...products].sort(sortByLocation);
+                case 'name': return [...products].sort(sortByProductName);
+                default: return [...products];
+            }
+        }
+
         if (products && products.length) {
             setSortedProducts(sortBy(products, productSortBy));
         }
     }, [products, productSortBy]);
-
-    function sortBy(products: Array<Product>, productSortBy: string):  Array<Product> {
-        switch (productSortBy) {
-            case 'location': return [...products].sort(sortByLocation);
-            case 'name': return [...products].sort(sortByProductName);
-            default: return [...products];
-        }
-    }
 
     function sortByProductName(productA: Product, productB: Product): number {
         return productA.name.toLowerCase().localeCompare(productB.name.toLowerCase());

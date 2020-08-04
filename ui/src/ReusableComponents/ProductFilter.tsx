@@ -17,20 +17,21 @@
 
 import React, {useEffect, useState} from 'react';
 import Select from 'react-select';
+import {connect} from 'react-redux';
+import {AxiosResponse} from 'axios';
+import {Dispatch} from 'redux';
 import {CustomIndicator, filterByStyles, FilterControl, FilterOptions} from './ReactSelectStyles';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
 import RoleClient from '../Roles/RoleClient';
-import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
-import './ProductFilterOrSortBy.scss';
 import {TraitClient} from '../Traits/TraitClient';
-import {AxiosResponse} from 'axios';
 import {Trait} from '../Traits/Trait';
-import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../SpaceDashboard/Space';
+
+import './ProductFilterOrSortBy.scss';
 
 export type LocalStorageFilters = {
     locationTagsFilters: Array<string>;
@@ -54,12 +55,11 @@ function ProductFilter({
     setAllGroupedTagFilterOptions,
     allGroupedTagFilterOptions,
 }: ProductFilterProps): JSX.Element {
-
     const [checkBoxFilterValues, setCheckBoxFilterValues] = useState<Array<FilterOption>>([]);
 
     useEffect(() => {
         initializeGroupedTagOptions().then();
-    }, []);
+    }, [currentSpace]);
 
     useEffect( () => {
         if (allGroupedTagFilterOptions.length > 0) {
@@ -68,7 +68,7 @@ function ProductFilter({
             const selectedRoleFilters: Array<FilterOption> = allGroupedTagFilterOptions[2].options.filter(option => option.selected);
             setCheckBoxFilterValues([...selectedLocationFilters, ...selectedProductFilters, ...selectedRoleFilters]);
         }
-    }, [allGroupedTagFilterOptions]);
+    }, [allGroupedTagFilterOptions, currentSpace]);
 
     async function initializeGroupedTagOptions(): Promise<void> {
         const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();
@@ -104,9 +104,7 @@ function ProductFilter({
 
     function getLocalStorageFilters(): LocalStorageFilters {
         const localStorageFilters: string | null = localStorage.getItem('filters');
-        if (localStorageFilters) {
-            return JSON.parse(localStorageFilters);
-        }
+        if (localStorageFilters) return JSON.parse(localStorageFilters);
         return {
             locationTagsFilters: [],
             productTagsFilters: [],
