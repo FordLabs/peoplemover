@@ -72,6 +72,7 @@ describe('PeopleMover', () => {
             const actualProductNames = productNameElements.map((element) => element.innerHTML);
             expect(actualProductNames).toEqual(
                 [
+                    TestUtils.productWithoutLocation.name,
                     TestUtils.productForHank.name,
                     TestUtils.productWithAssignments.name,
                     TestUtils.productWithoutAssignments.name,
@@ -79,20 +80,33 @@ describe('PeopleMover', () => {
             );
         });
 
-        it('should sort products by location',  async () => {
+        it('should group products by location',  async () => {
             await wait(() => {
                 selectEvent.select(app.getByLabelText('Sort By:'), ['Location']);
             });
 
-            const productNameElements = await app.findAllByTestId('productName');
-            const actualProductNames = productNameElements.map((element) => element.innerHTML);
-            expect(actualProductNames).toEqual(
-                [
-                    TestUtils.productForHank.name,
-                    TestUtils.productWithoutAssignments.name,
-                    TestUtils.productWithAssignments.name,
-                ]
-            );
+            const productGroups = await app.findAllByTestId('productGroup');
+
+            expect(productGroups.length).toBe(4);
+            const productGroup1 = productGroups[0];
+            expect(productGroup1).toHaveTextContent('Ann Arbor');
+            expect(productGroup1).toHaveTextContent('Hanky Product');
+            expect(productGroup1).toHaveTextContent('New Product');
+
+            const productGroup2 = productGroups[1];
+            expect(productGroup2).toHaveTextContent('Dearborn');
+            expect(productGroup2).toHaveTextContent('Product 3');
+            expect(productGroup2).toHaveTextContent('New Product');
+
+            const productGroup3 = productGroups[2];
+            expect(productGroup3).toHaveTextContent('Southfield');
+            expect(productGroup3).toHaveTextContent('Product 1');
+            expect(productGroup3).toHaveTextContent('New Product');
+
+            const productGroup4 = productGroups[3];
+            expect(productGroup4).toHaveTextContent('No Location');
+            expect(productGroup4).toHaveTextContent('Awesome Product');
+            expect(productGroup4).toHaveTextContent('New Product');
         });
 
         it('should group products by product tag',  async () => {

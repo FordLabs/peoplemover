@@ -22,7 +22,6 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
-import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import org.springframework.stereotype.Service
 
 @Service

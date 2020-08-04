@@ -19,7 +19,8 @@ import React, {RefObject, useEffect, useState} from 'react';
 import './Product.scss';
 import {connect} from 'react-redux';
 import {
-    AvailableModals, fetchProductsAction,
+    AvailableModals,
+    fetchProductsAction,
     registerProductRefAction,
     setCurrentModalAction,
     setWhichEditMenuOpenAction,

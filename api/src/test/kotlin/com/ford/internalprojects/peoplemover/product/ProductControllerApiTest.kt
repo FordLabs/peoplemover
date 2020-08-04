@@ -20,7 +20,6 @@ package com.ford.internalprojects.peoplemover.product
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
-import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository

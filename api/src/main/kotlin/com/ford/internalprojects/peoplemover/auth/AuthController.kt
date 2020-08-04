@@ -17,52 +17,25 @@
 
 package com.ford.internalprojects.peoplemover.auth
 
-import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.labs.authquest.oauth.OAuthAccessTokenResponse
-import com.ford.labs.authquest.oauth.OAuthRefreshTokenResponse
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
-import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.client.HttpClientErrorException
 import javax.validation.Valid
 
 @RestController
-class AuthController(val authClient: AuthClient,
-                     val userSpaceMappingRepository: UserSpaceMappingRepository,
+class AuthController(val userSpaceMappingRepository: UserSpaceMappingRepository,
                      val spaceRepository: SpaceRepository,
                      val authService: AuthService
 ) {
-
-    @PostMapping(path = ["/api/access_token"])
-    fun getAccessToken(@Valid @RequestBody request: AccessTokenRequest): ResponseEntity<OAuthAccessTokenResponse> {
-        val response = authClient.createAccessToken(request.accessCode)
-
-        return if (response.isEmpty) {
-            ResponseEntity.badRequest().build()
-        } else ResponseEntity.ok(response.get())
-    }
 
     @PostMapping(path = ["/api/access_token/validate"])
     fun validateAccessToken(@RequestBody request: ValidateTokenRequest): ResponseEntity<Unit> {
             authService.validateToken(request.accessToken)
             return ResponseEntity.ok().build()
-    }
-
-    @PostMapping(path = ["/api/access_token/refresh"])
-    fun validateAccessToken(@RequestBody request: RefreshTokenRequest): ResponseEntity<OAuthRefreshTokenResponse> {
-        val accessToken = authClient.refreshAccessToken(request.accessToken)
-        if (accessToken.isPresent) {
-            return ResponseEntity.ok(accessToken.get())
-        }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
     }
 
     @PostMapping(path = ["/api/access_token/authenticate"])

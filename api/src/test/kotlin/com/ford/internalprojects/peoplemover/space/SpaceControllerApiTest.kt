@@ -18,31 +18,29 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.auth.*
+import com.ford.internalprojects.peoplemover.auth.AuthService
+import com.ford.internalprojects.peoplemover.auth.OAuthVerifyResponse
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
+import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.labs.authquest.oauth.OAuthVerifyResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.web.client.HttpClientErrorException
-import java.util.*
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
@@ -52,6 +50,9 @@ class SpaceControllerApiTest {
     @MockBean
     lateinit var jwtDecoder: JwtDecoder
 
+    @MockBean
+    lateinit var authService: AuthService
+
     @Autowired
     private lateinit var spaceRepository: SpaceRepository
 
@@ -60,9 +61,6 @@ class SpaceControllerApiTest {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
-
-    @MockBean
-    private lateinit var authClient: AuthClient
 
     @Autowired
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
@@ -102,7 +100,7 @@ class SpaceControllerApiTest {
         val accessToken = "TOKEN"
 
         val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "USER_ID")
-        `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(authVerifyResponse))
+        `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
 
         val result = mockMvc.perform(post("/api/user/space")
                 .content(objectMapper.writeValueAsString(request))
@@ -121,8 +119,6 @@ class SpaceControllerApiTest {
         assertThat(userSpaceMappings).hasSize(1)
         assertThat(userSpaceMappings[0].userId).isEqualTo("USER_ID")
         assertThat(userSpaceMappings[0].spaceId).isEqualTo(actualSpaceResponse.space.id)
-        verify(authClient).validateAccessToken(accessToken)
-
     }
 
     @Test
@@ -154,7 +150,7 @@ class SpaceControllerApiTest {
     fun `POST should return 401 when token is not valid`() {
         val request = SpaceCreationRequest(spaceName = "New Space")
         val token = "TOKEN"
-        `when`(authClient.validateAccessToken(token)).thenThrow(HttpClientErrorException(FORBIDDEN))
+        `when`(authService.validateToken(token)).thenThrow(InvalidTokenException())
 
         mockMvc.perform(post("/api/user/space")
                 .content(objectMapper.writeValueAsString(request))
@@ -163,7 +159,6 @@ class SpaceControllerApiTest {
                 .andExpect(status().isUnauthorized)
 
         assertThat(spaceRepository.count()).isZero()
-        verify(authClient).validateAccessToken(token)
     }
 
     @Test
@@ -217,7 +212,7 @@ class SpaceControllerApiTest {
 
         val accessToken = "TOKEN"
         val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "userId")
-        `when`(authClient.validateAccessToken(accessToken)).thenReturn(Optional.of(authVerifyResponse))
+        `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
 
         val result = mockMvc.perform(get("/api/user/space")
                 .header("Authorization", "Bearer $accessToken"))
@@ -253,7 +248,7 @@ class SpaceControllerApiTest {
     @Test
     fun `GET should return 401 when access token is invalid`() {
         val accessToken = "INVALID_TOKEN"
-        `when`(authClient.validateAccessToken(accessToken)).thenThrow(HttpClientErrorException(FORBIDDEN))
+        `when`(authService.validateToken(accessToken)).thenThrow(InvalidTokenException())
         mockMvc.perform(get("/api/user/space")
                 .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isUnauthorized)

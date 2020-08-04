@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ford.internalprojects.peoplemover.auth
 
-import com.ford.labs.authquest.AuthQuestClient
-
-class AuthQuestPeopleMoverClient(authClientUrl: String, clientId: String, clientSecret: String) :
-        AuthQuestClient(authClientUrl, clientId, clientSecret),
-        AuthClient
+data class AuthCheckScopesRequest (
+    var accessToken: String,
+    var spaceName: String
+)

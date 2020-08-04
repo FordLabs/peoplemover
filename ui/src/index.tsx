@@ -33,6 +33,7 @@ import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Validation/AuthorizedRoute';
 import OAuthRedirect from "./ReusableComponents/OAuthRedirect";
 import {AuthenticatedRoute} from "./AuthenticatedRoute";
+import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -70,7 +71,7 @@ ReactDOM.render(
                 </Route>
 
                 <AuthenticatedRoute exact path={"/user/login"}>
-                    <Redirect to={"/user/dashboard"}/>
+                    <RedirectWrapper redirectUrl={"/user/dashboard"}/>
                 </AuthenticatedRoute>
 
                 <AuthenticatedRoute exact path="/user/dashboard">
