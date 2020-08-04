@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import BoardButtons from '../Boards/SpaceButtons';
+import SpaceButtons from '../Spaces/SpaceButtons';
 import React from 'react';
 
 interface HeaderProps {
@@ -33,7 +33,7 @@ function Header({hideSpaceButtons, hideAllButtons}: HeaderProps): JSX.Element {
                 <h1 className="page-title">PEOPLEMOVER</h1>
             </div>
 
-            {!hideAllButtons && <BoardButtons hideSpaceButtons={hideSpaceButtons}/>}
+            {!hideAllButtons && <SpaceButtons hideSpaceButtons={hideSpaceButtons}/>}
 
         </header>
     );

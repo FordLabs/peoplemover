@@ -17,7 +17,7 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.boardSelectionContainer {
+.spaceSelectionContainer {
     display: flex;
     justify-content: space-between;
     background-color: $gray-5;
@@ -27,12 +27,12 @@
     top: 68px;
 }
 
-.boardSelectionContainer .tab {
+.spaceSelectionContainer .tab {
     background-color: $gray-5;
     min-height: 40px;
 }
 
-.boardSelectionContainer .spaceFiller {
+.spaceSelectionContainer .spaceFiller {
     background-color: $gray-5;
     display: flex;
     flex-grow: 10;
@@ -46,7 +46,8 @@ button.selectionTabButton {
     line-height: 16px;
 }
 
-.addBoardIcon, .myRolesIcon {
+.addBoardIcon,
+.myRolesIcon {
     margin-right: 8px;
     color: $purple-title;
 }

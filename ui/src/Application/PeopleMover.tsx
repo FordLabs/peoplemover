@@ -33,7 +33,7 @@ import {
     setCurrentSpaceAction,
     setPeopleAction,
 } from '../Redux/Actions';
-import BoardSelectionTabs from '../Boards/BoardSelectionTabs';
+import SpaceSelectionTabs from '../Spaces/SpaceSelectionTabs';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
@@ -114,7 +114,7 @@ function PeopleMover({
             : <div className="App">
                 <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
                     <Header/>
-                    <BoardSelectionTabs/>
+                    <SpaceSelectionTabs/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
                         <div className="accordionContainer">
