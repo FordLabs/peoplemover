@@ -33,7 +33,7 @@ import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Validation/AuthorizedRoute';
 import OAuthRedirect from "./ReusableComponents/OAuthRedirect";
 import {AuthenticatedRoute} from "./AuthenticatedRoute";
-import RedirectWrapper from "./ReusableComponents/RedirectWrapper";
+import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;

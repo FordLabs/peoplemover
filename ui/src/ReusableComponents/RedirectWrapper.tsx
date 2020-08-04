@@ -17,7 +17,7 @@
  *
  */
 
-import * as React from "react";
+import React from "react";
 
 interface RedirectWrapperProps {
     redirectUrl: string;
@@ -25,7 +25,7 @@ interface RedirectWrapperProps {
 
 function RedirectWrapper({redirectUrl}: RedirectWrapperProps): JSX.Element {
     window.location.href = `${window.location.origin}${redirectUrl}`;
-    return <></>;
+    return (<></>);
 }
 
 export default RedirectWrapper
