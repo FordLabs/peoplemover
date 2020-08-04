@@ -45,8 +45,18 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
         case AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG: {
             const newProduct = {
                 ...emptyProduct(currentSpace.id),
-                startDate:  moment(viewingDate).format('YYYY-MM-DD'),
+                startDate: moment(viewingDate).format('YYYY-MM-DD'),
                 productTags: [item],
+            };
+            return <ProductForm editing={false}
+                product={newProduct}
+                spaceId={currentSpace.id!!}/>;
+        }
+        case AvailableModals.CREATE_PRODUCT_OF_LOCATION: {
+            const newProduct = {
+                ...emptyProduct(currentSpace.id),
+                startDate: moment(viewingDate).format('YYYY-MM-DD'),
+                spaceLocation: {...item},
             };
             return <ProductForm editing={false}
                 product={newProduct}

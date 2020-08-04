@@ -31,24 +31,6 @@ The ui application will start at localhost:3000.
 npm run test
 ```
 
-## Auth
-PeopleMover can be used without any form of Auth. However, to take advantage of features such as unique users, you'll
-need to provide an auth client.
-
-### AuthQuest
-In production, PeopleMover uses a proprietary auth client called AuthQuest. To use AuthQuest, you'll need to:
-1. create a client_id for your instance of PeopleMover on AuthQuest
-2. fill in the following values in `./.env.local`:
-```
-REACT_APP_AUTHQUEST_URL=https://authquest-url.com
-REACT_APP_AUTHQUEST_CLIENT_ID=AQ-client-id
-```
-3. run `npm run start` to start PeopleMoverUI with auth enabled
-
-### Alternative Auth Clients
-To use an alternative auth client, you will still need to provide those two properties above.
-See the [PeopleMover Server](https://github.com/FordLabs/PeopleMover) repository for more information connecting your auth client.
-
 ## License
 
 PeopleMover is licensed under the Apache 2.0 license.

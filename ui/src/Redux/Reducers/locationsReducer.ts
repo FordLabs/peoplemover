@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,12 +16,15 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth
+import {AvailableActions} from '../Actions';
+import {SpaceLocation} from '../../Locations/SpaceLocation';
 
-data class AuthQuestJWT (
-    val user_id: String?,
-    val scopes: List<String>,
-    val exp: String?,
-    val iss: String?,
-    val sub: String?
-)
+const locationsReducer = (state: Array<SpaceLocation> = [], action: {type: AvailableActions; locations: Array<SpaceLocation>} ): Array<SpaceLocation> => {
+    if (action.type === AvailableActions.SET_LOCATIONS) {
+        return [...action.locations];
+    } else {
+        return state;
+    }
+};
+
+export default locationsReducer;

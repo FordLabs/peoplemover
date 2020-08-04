@@ -27,6 +27,8 @@ import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import ProductTagClient from '../../ProductTag/ProductTagClient';
+import {SpaceLocation} from "../../Locations/SpaceLocation";
+import LocationClient from "../../Locations/LocationClient";
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -43,12 +45,14 @@ export enum AvailableActions {
     SET_VIEWING_DATE,
     SET_PRODUCTS,
     SET_PRODUCT_TAGS,
+    SET_LOCATIONS,
     SET_PRODUCT_SORT_BY,
 }
 
 export enum AvailableModals {
     CREATE_PRODUCT,
     CREATE_PRODUCT_OF_PRODUCT_TAG,
+    CREATE_PRODUCT_OF_LOCATION,
     EDIT_PRODUCT,
     CREATE_PERSON,
     EDIT_PERSON,
@@ -130,6 +134,11 @@ export const setProductTagsAction = (productTags: Array<ProductTag>) => ({
     productTags,
 });
 
+export const setLocationsAction = (locations: Array<SpaceLocation>) => ({
+    type: AvailableActions.SET_LOCATIONS,
+    locations,
+});
+
 export const setProductSortByAction = (productSortBy: string) => ({
     type: AvailableActions.SET_PRODUCT_SORT_BY,
     productSortBy,
@@ -161,5 +170,19 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
                     return 0;
                 });
                 dispatch(setProductTagsAction(productTags));
+            });
+    };
+
+export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
+    (dispatch: Dispatch, getState: Function): Promise<void> => {
+        return LocationClient.get(getState().currentSpace.name,)
+            .then(result => {
+                let locations: Array<SpaceLocation> = result.data || [];
+                locations = locations.sort((a, b) => {
+                    if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
+                    if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+                    return 0;
+                });
+                dispatch(setLocationsAction(locations));
             });
     };
