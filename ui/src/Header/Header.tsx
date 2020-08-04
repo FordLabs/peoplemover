@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-import SpaceButtons from '../Spaces/SpaceButtons';
+import SpaceButtons from '../Header/SpaceButtons';
 import React from 'react';
+import PeopleMoverLogo from '../Application/Assets/logo.svg';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
@@ -28,13 +29,11 @@ function Header({hideSpaceButtons, hideAllButtons}: HeaderProps): JSX.Element {
         <header>
             <div className="logo-title-container">
                 <img
-                    src={require('./Assets/logo.svg')}
+                    src={PeopleMoverLogo}
                     alt="Logo not available"/>
                 <h1 className="page-title">PEOPLEMOVER</h1>
             </div>
-
             {!hideAllButtons && <SpaceButtons hideSpaceButtons={hideSpaceButtons}/>}
-
         </header>
     );
 }

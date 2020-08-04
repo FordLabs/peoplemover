@@ -33,12 +33,12 @@ import {
     setCurrentSpaceAction,
     setPeopleAction,
 } from '../Redux/Actions';
-import SpaceSelectionTabs from '../Spaces/SpaceSelectionTabs';
+import SpaceSelectionTabs from '../Header/SpaceSelectionTabs';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
 import PeopleClient from '../People/PeopleClient';
-import Header from './Header';
+import Header from '../Header/Header';
 import {Redirect} from 'react-router-dom';
 import {Space} from '../SpaceDashboard/Space';
 import SpaceClient from '../SpaceDashboard/SpaceClient';

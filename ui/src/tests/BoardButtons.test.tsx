@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {RenderResult, wait} from '@testing-library/react';
-import SpaceButtons from '../Spaces/SpaceButtons';
+import SpaceButtons from '../Header/SpaceButtons';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';

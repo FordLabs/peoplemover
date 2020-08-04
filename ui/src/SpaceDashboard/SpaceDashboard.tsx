@@ -21,14 +21,13 @@ import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {Space} from './Space';
 import './SpaceDashboard.scss';
-import Header from '../Application/Header';
+import Header from '../Header/Header';
 import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
-import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {Redirect} from 'react-router';
 import SpaceDashboardTile from './SpaceDashboardTile';
 
