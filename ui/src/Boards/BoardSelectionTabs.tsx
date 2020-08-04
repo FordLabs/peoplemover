@@ -31,7 +31,6 @@ interface BoardSelectionTabsProps {
 function BoardSelectionTabs({
     setCurrentModal,
 }: BoardSelectionTabsProps): JSX.Element {
-
     return (
         <div className="boardSelectionContainer">
             <Calendar/>

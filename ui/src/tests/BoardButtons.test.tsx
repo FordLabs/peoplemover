@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {RenderResult, wait} from '@testing-library/react';
-import BoardButtons from '../Boards/BoardButtons';
+import BoardButtons from '../Boards/SpaceButtons';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';

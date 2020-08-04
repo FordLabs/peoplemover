@@ -17,16 +17,18 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.boardButtons, .sortByDropDownContainer, .filterByDropDownContainer{
+.spaceButtons,
+.sortByDropDownContainer,
+.filterByDropDownContainer {
   display: flex;
   flex-direction: row;
 }
 
-.filterByDropDownContainer{
+.filterByDropDownContainer {
   padding-right: 30px;
 }
 
-.boardButtons {
+.spaceButtons {
   justify-content: right;
   padding-left: 100px;
 }

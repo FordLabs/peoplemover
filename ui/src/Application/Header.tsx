@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import BoardButtons from '../Boards/BoardButtons';
+import BoardButtons from '../Boards/SpaceButtons';
 import React from 'react';
 
 interface HeaderProps {
