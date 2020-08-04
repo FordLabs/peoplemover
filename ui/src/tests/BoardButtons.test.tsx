@@ -17,12 +17,12 @@
 
 import React from 'react';
 import {RenderResult, wait} from '@testing-library/react';
-import BoardButtons from '../Boards/BoardButtons';
+import SpaceButtons from '../Header/SpaceButtons';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 
-describe('BoardButtons', () => {
+describe('SpaceButtons', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
 
     beforeEach( () => {
@@ -37,7 +37,7 @@ describe('BoardButtons', () => {
         let result: RenderResult;
 
         await wait(() => {
-            result = renderWithRedux(<BoardButtons/>, undefined, initialState);
+            result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
         });
 
         result.getByTestId('editContributorsModal').click();
@@ -57,7 +57,7 @@ describe('BoardButtons', () => {
         let result: RenderResult;
 
         await wait(() => {
-            result = renderWithRedux(<BoardButtons/>, undefined, initialState);
+            result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
         });
 
         result.getByTestId('editContributorsModal').click();

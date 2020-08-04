@@ -33,12 +33,12 @@ import {
     setCurrentSpaceAction,
     setPeopleAction,
 } from '../Redux/Actions';
-import BoardSelectionTabs from '../Boards/BoardSelectionTabs';
+import SpaceSelectionTabs from '../Header/SpaceSelectionTabs';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
 import PeopleClient from '../People/PeopleClient';
-import Header from './Header';
+import Header from '../Header/Header';
 import {Redirect} from 'react-router-dom';
 import {Space} from '../SpaceDashboard/Space';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
@@ -114,7 +114,7 @@ function PeopleMover({
             : <div className="App">
                 <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
                     <Header/>
-                    <BoardSelectionTabs/>
+                    <SpaceSelectionTabs/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
                         <div className="accordionContainer">
