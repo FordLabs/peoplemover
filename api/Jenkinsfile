@@ -58,74 +58,6 @@ pipeline {
             }
         }
 
-         stage('Deploy Branch') {
-            parallel {
-                stage('API Branch Deploy') {
-                    when {
-                        not {
-                            anyOf {
-                                branch 'master';
-                                branch 'stage'
-                            }
-                        }
-                    }
-                    steps {
-                        withCredentials([
-                            usernamePassword(credentialsId: 'flipJenkins', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
-                            usernamePassword(credentialsId: 'peopleMoverDB', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
-                        ]) {
-                            dir("api") {
-                                sh 'echo Pushing to Cloud Foundry'
-                                sh """./gradlew cf-push-blue-green \
-                                        -PbranchNameWithoutUnderscores=Branch \
-                                        -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                                        -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                                        -Pcf.ccHost=$peoplemover_pcf_cchost \
-                                        -Pcf.domain=$peoplemover_pcf_domain \
-                                        -Pcf.ccUser=$JENKINS_USER \
-                                        -Pcf.ccPassword=$JENKINS_PASSWORD \
-                                        -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
-                                        -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
-                                        -Pcf.environment.react.app.url=https://${env.BRANCH_NAME_WITHOUT_UNDERSCORES}.$peoplemover_pcf_org \
-                                        -Pcf.environment.react.app.auth_enabled=false \
-                                        -Pcf.environment.react.app.invite_users_to_space_enabled=true \
-                                        -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
-                                        -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
-                                        -Pcf.environment.react.app.adfs_resource=$adfs_resource \
-                                """.stripIndent()
-                            }
-                        }
-                    }
-                }
-
-                stage('UI Deploy Test Instances') {
-                    when {
-                        not {
-                            anyOf {
-                                branch 'master'
-                                branch 'stage'
-                                branch 'dev'
-                            }
-                        }
-                    }
-                    steps {
-                        dir("ui") {
-                            pushToCloudFoundry(
-                                target: "$peoplemover_pcf_cchost",
-                                organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
-                                cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
-                                credentialsId: 'flipJenkins',
-                                manifestChoice: [
-                                    manifestFile: "${env.MANIFEST}",
-                                ],
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-
         stage("Deploy") {
             parallel {
                 stage('API Deploy Stage') {
@@ -192,16 +124,46 @@ pipeline {
                         }
                     }
                 }
+                stage('API Deploy Branch') {
+                    when {
+                        not {
+                            anyOf {
+                                branch 'master';
+                                branch 'stage'
+                            }
+                        }
+                    }
+                    steps {
+                        withCredentials([
+                                usernamePassword(credentialsId: 'flipJenkins', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
+                                usernamePassword(credentialsId: 'peopleMoverDB', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
+                        ]) {
+                            dir("api") {
+                                sh 'echo Pushing to Cloud Foundry'
+                                sh """./gradlew cf-push-blue-green \
+                                        -PbranchNameWithoutUnderscores=Branch \
+                                        -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
+                                        -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
+                                        -Pcf.ccHost=$peoplemover_pcf_cchost \
+                                        -Pcf.domain=$peoplemover_pcf_domain \
+                                        -Pcf.ccUser=$JENKINS_USER \
+                                        -Pcf.ccPassword=$JENKINS_PASSWORD \
+                                        -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
+                                        -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
+                                        -Pcf.environment.react.app.url=https://${env.BRANCH_NAME_WITHOUT_UNDERSCORES}.$peoplemover_pcf_org \
+                                        -Pcf.environment.react.app.auth_enabled=false \
+                                        -Pcf.environment.react.app.invite_users_to_space_enabled=true \
+                                        -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
+                                        -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
+                                        -Pcf.environment.react.app.adfs_resource=$adfs_resource \
+                                """.stripIndent()
+                            }
+                        }
+                    }
+                }
 
 
                 stage('UI Deploy') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                            branch 'stage'
-                            branch 'dev'
-                        }
-                    }
                     steps {
                         dir("ui") {
                             pushToCloudFoundry(
@@ -223,29 +185,11 @@ pipeline {
 
 def getNpmEnvironment(branchName) {
     if (branchName == "dev" || branchName == "stage") {
-        return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org \
-                  REACT_APP_AUTH_ENABLED=true \
-                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
-                  REACT_APP_ADFS_URL_TEMPLATE="$adfs_url_template" \
-                  REACT_APP_ADFS_CLIENT_ID=$adfs_client_id \
-                  REACT_APP_ADFS_RESOURCE=$adfs_resource \
-                """.stripIndent()
+        return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org""".stripIndent()
     } else if (branchName == "master") {
-        return """REACT_APP_URL=https://peoplemover2.$peoplemover_pcf_org \
-                  REACT_APP_AUTH_ENABLED=true \
-                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
-                  REACT_APP_ADFS_URL_TEMPLATE="$adfs_url_template" \
-                  REACT_APP_ADFS_CLIENT_ID=$adfs_client_id \
-                  REACT_APP_ADFS_RESOURCE=$adfs_resource \
-                """.stripIndent()
+        return """REACT_APP_URL=https://peoplemover2.$peoplemover_pcf_org""".stripIndent()
     } else {
-        return """REACT_APP_URL=https://$branchName.$peoplemover_pcf_org \
-                  REACT_APP_AUTH_ENABLED=true \
-                  REACT_APP_INVITE_USERS_TO_SPACE_ENABLED=true \
-                  REACT_APP_ADFS_URL_TEMPLATE="$adfs_url_template" \
-                  REACT_APP_ADFS_CLIENT_ID=$adfs_client_id \
-                  REACT_APP_ADFS_RESOURCE=$adfs_resource \
-                """.stripIndent()
+        return """REACT_APP_URL=https://$branchName.$peoplemover_pcf_org""".stripIndent()
     }
 }
 
