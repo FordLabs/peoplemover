@@ -20,8 +20,8 @@ import AuthorizedRoute from '../Validation/AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosResponse} from 'axios';
 import {Router} from 'react-router';
-import {createMemoryHistory} from 'history';
-import {RunConfig} from "../index";
+import {createMemoryHistory, MemoryHistory} from 'history';
+import {RunConfig} from '../index';
 
 describe('The Validation Guard', () => {
     it('should redirect to login when security is enabled and you are not authorized', async () => {
@@ -43,11 +43,13 @@ describe('The Validation Guard', () => {
         expect(Axios.post.mock.calls.length).toBe(0);
     });
 
-    async function renderComponent(securityEnabled: boolean): Promise<RenderResult> {
+    async function renderComponent(securityEnabled: boolean): Promise<{ result: RenderResult; history: MemoryHistory }> {
+        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {auth_enabled: securityEnabled} as RunConfig;
         const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
 
-        let result: RenderResult;
+        // @ts-ignore
+        let result: RenderResult = null;
         await wait(() => {
             result = render(
                 <Router history={history}>
