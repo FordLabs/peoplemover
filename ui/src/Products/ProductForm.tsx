@@ -15,49 +15,31 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, CSSProperties, useEffect, useState} from 'react';
-import ProductClient from './ProductClient';
-
-import '../Modal/Form.scss';
-import './ProductForm.scss';
-
-import LocationClient from '../Locations/LocationClient';
-import {closeModalAction, setAllGroupedTagFilterOptions} from '../Redux/Actions';
+import React, {ChangeEvent, CSSProperties, useState} from 'react';
+import {GlobalStateProps} from '../Redux/Reducers';
+import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import DatePicker from 'react-datepicker';
-import MaskedInput from 'react-text-mask';
-import 'react-datepicker/dist/react-datepicker.css';
+import {closeModalAction, setAllGroupedTagFilterOptions} from '../Redux/Actions';
 import {JSX} from '@babel/types';
+import {StylesConfig} from 'react-select';
+import moment from 'moment';
+import ProductClient from './ProductClient';
 import {emptyProduct, Product} from './Product';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import {CreateNewText, CustomIndicator, CustomOption, reactSelectStyles} from '../ReusableComponents/ReactSelectStyles';
-import Creatable from 'react-select/creatable';
+import {reactSelectStyles} from '../ReusableComponents/ReactSelectStyles';
 import {ProductTag} from '../ProductTag/ProductTag';
-import ProductTagClient from '../ProductTag/ProductTagClient';
-import {AxiosResponse} from 'axios';
-import {SpaceLocation} from '../Locations/SpaceLocation';
-import {FilterOption, Option} from '../CommonTypes/Option';
-import {TraitAddRequest} from '../Traits/TraitAddRequest';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {FilterOption} from '../CommonTypes/Option';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Trait} from '../Traits/Trait';
-import {StylesConfig} from 'react-select';
-import {Dispatch} from 'redux';
-import moment from 'moment';
 import {Space} from '../SpaceDashboard/Space';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
+import ProductFormStartDateField from './ProductFormStartDateField';
+import ProductFormEndDateField from './ProductFormEndDateField';
 
-interface ProductFormProps {
-    editing: boolean;
-    product?: Product;
-    spaceId: number;
-    currentSpace: Space;
-    viewingDate: string;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-    closeModal(): void;
-}
+import 'react-datepicker/dist/react-datepicker.css';
+import '../Modal/Form.scss';
+import './ProductForm.scss';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -76,18 +58,26 @@ export const customStyles: StylesConfig = {
     }),
 };
 
+interface ProductFormProps {
+    editing: boolean;
+    product?: Product;
+    spaceId: number;
+    viewingDate: string;
+    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
+    closeModal(): void;
+}
+
 function ProductForm({
     editing,
     product,
     spaceId,
-    currentSpace,
     viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     closeModal,
 }: ProductFormProps): JSX.Element {
     const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct());
-
     const [selectedProductTags, setSelectedProductTags] = useState<Array<ProductTag>>([]);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -95,10 +85,6 @@ function ProductForm({
 
     const [duplicateProductNameWarning, setDuplicateProductNameWarning] = useState<boolean>(false);
     const [notesFieldLength, setNotesFieldLength] = useState<number>(product && product.notes ? product.notes.length : 0);
-
-
-    const [startDate, setStartDate] = useState<Date>(currentProduct.startDate ? moment(currentProduct.startDate).toDate() : moment(viewingDate).toDate());
-    const [endDate, setEndDate] = useState<Date | null>(currentProduct.endDate ? moment(currentProduct.endDate).toDate() : null);
 
     function initializeProduct(): Product {
         if (product == null) {
@@ -215,51 +201,14 @@ function ProductForm({
                     selectedProductTagsState={{ selectedProductTags, setSelectedProductTags }}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
-                <div className="formItem" data-testid="productFormStartDateField">
-                    <label className="formItemLabel" htmlFor="start">Start Date</label>
-                    <DatePicker
-                        className="formInput formTextInput"
-                        name="start"
-                        id="start"
-                        selected={startDate}
-                        onChange={date => {
-                            if (date) {
-                                setStartDate(date);
-                                updateProductField('startDate', moment(date).format('YYYY-MM-DD'));
-                            } else {
-                                setStartDate(moment(currentProduct.startDate).toDate());
-                                updateProductField('startDate', moment(currentProduct.startDate).format('YYYY-MM-DD'));
-                            }
-                        }}
-                        customInput={
-                            <MaskedInput
-                                mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
-                            />
-                        }
-                    />
-                    <i className="far fa-calendar-alt calendar-icon" />
-                </div>
-                <div className="formItem" data-testid="productFormNextPhaseDateField">
-                    <label className="formItemLabel" htmlFor="end">End Date</label>
-                    <DatePicker
-                        className="formInput formTextInput"
-                        name="end"
-                        id="end"
-                        selected={endDate}
-                        onChange={date => {
-                            setEndDate(date ? date : null);
-                            updateProductField('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
-                        }}
-                        customInput={
-                            <MaskedInput
-                                mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
-                            />
-                        }
-                        isClearable
-                        placeholderText="MM/DD/YYYY"
-                    />
-                    {!endDate && <i className="far fa-calendar-alt calendar-icon" />}
-                </div>
+                <ProductFormStartDateField
+                    currentProduct={currentProduct}
+                    updateProductField={updateProductField}
+                />
+                <ProductFormEndDateField
+                    currentProduct={currentProduct}
+                    updateProductField={updateProductField}
+                />
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="notes">Notes</label>
                     <textarea
@@ -301,7 +250,6 @@ function ProductForm({
     );
 }
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
