@@ -45,6 +45,7 @@ import {StylesConfig} from 'react-select';
 import {Dispatch} from 'redux';
 import moment from 'moment';
 import {Space} from '../SpaceDashboard/Space';
+import ProductFormLocationField from './ProductFormLocationField';
 
 interface ProductFormProps {
     editing: boolean;
@@ -57,6 +58,23 @@ interface ProductFormProps {
     closeModal(): void;
 }
 
+export const customStyles: StylesConfig = {
+    ...reactSelectStyles,
+    valueContainer: (provided: CSSProperties) => ({
+        ...provided,
+        padding: '0px 3px',
+    }),
+    multiValue: (provided: CSSProperties) => ({
+        ...provided,
+        alignItems: 'center',
+        backgroundColor: '#F2E7F3',
+        fontFamily: 'Helvetica, sans-serif',
+        borderRadius: '6px',
+        height: '22px',
+        marginRight: '3px',
+    }),
+};
+
 function ProductForm({
     editing,
     product,
@@ -67,27 +85,8 @@ function ProductForm({
     setAllGroupedTagFilterOptions,
     closeModal,
 }: ProductFormProps): JSX.Element {
-
-    const customStyles: StylesConfig = {
-        ...reactSelectStyles,
-        valueContainer: (provided: CSSProperties) => ({
-            ...provided,
-            padding: '0px 3px',
-        }),
-        multiValue: (provided: CSSProperties) => ({
-            ...provided,
-            alignItems: 'center',
-            backgroundColor: '#F2E7F3',
-            fontFamily: 'Helvetica, sans-serif',
-            borderRadius: '6px',
-            height: '22px',
-            marginRight: '3px',
-        }),
-    };
-
     const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct());
 
-    const [availableLocations, setAvailableLocations] = useState<SpaceLocation[]>([]);
     const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
 
     const [selectedProductTags, setSelectedProductTags] = useState<Array<ProductTag>>([]);
@@ -99,13 +98,10 @@ function ProductForm({
     const [notesFieldLength, setNotesFieldLength] = useState<number>(product && product.notes ? product.notes.length : 0);
     const [typedInProductTag, setTypedInProductTag] = useState<string>('');
 
-    const [typedInLocation, setTypedInLocation] = useState<string>('');
-
     const [startDate, setStartDate] = useState<Date>(currentProduct.startDate ? moment(currentProduct.startDate).toDate() : moment(viewingDate).toDate());
     const [endDate, setEndDate] = useState<Date | null>(currentProduct.endDate ? moment(currentProduct.endDate).toDate() : null);
 
     useEffect(() => {
-        LocationClient.get(currentSpace.name).then(result => {setAvailableLocations(result.data);});
         ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
         setSelectedProductTags(currentProduct.productTags);
@@ -120,7 +116,6 @@ function ProductForm({
     }
 
     // Put the selected product tags on the updated product and use the 'editProduct' endpoint
-
     function handleSubmit(): void {
         currentProduct.productTags = selectedProductTags;
 
@@ -196,30 +191,11 @@ function ProductForm({
         }
     }
 
-    function optionToSpaceLocation(option: Option): SpaceLocation {
-        return {
-            id: Number.parseInt(option.value.split('_')[0], 10),
-            name: option.label,
-            spaceId,
-        };
-    }
-
-    function createLocationOption(location: SpaceLocation): Option {
-        return {
-            label: location.name,
-            value: location.id!.toString(),
-        };
-    }
-
     function createTagOption(label: string, id: number): Option {
         return {
             label: label,
             value: id.toString() + '_' + label,
         };
-    }
-
-    function locationOptions(): Option[] {
-        return availableLocations.map(location => createLocationOption(location));
     }
 
     function handleCreateProductTag(inputValue: string): void {
@@ -235,24 +211,6 @@ function ProductForm({
             }] as Array<ProductTag>);
             addGroupedTagFilterOptions(1, newProductTag as Trait);
             updateSelectedProductTags([...selectedProductTags, newProductTag]);
-            setIsLoading(false);
-        });
-    }
-
-    function handleCreateLocationTag(inputValue: string): void {
-        setIsLoading(true);
-
-        const location: TraitAddRequest = {
-            name: inputValue,
-        };
-        LocationClient.add(location, currentSpace.name).then((result: AxiosResponse) => {
-            const newLocation: SpaceLocation = result.data;
-            setAvailableLocations([...availableLocations, newLocation]);
-            addGroupedTagFilterOptions(0, newLocation as Trait);
-            setCurrentProduct({
-                ...currentProduct,
-                spaceLocation: newLocation,
-            });
             setIsLoading(false);
         });
     }
@@ -276,17 +234,17 @@ function ProductForm({
         setAllGroupedTagFilterOptions(groupedTagFilterOptions);
     }
 
-    function locationOptionValue(): Option | undefined {
-        if (currentProduct.spaceLocation && currentProduct.spaceLocation.name !== '') {
-            return createLocationOption(currentProduct.spaceLocation);
-        }
-
-        return undefined;
-    }
-
     function notesChanged(e: ChangeEvent<HTMLTextAreaElement>): void {
         updateProductField('notes', e.target.value);
         setNotesFieldLength(e.target.value.length);
+    }
+
+    function optionToSpaceLocation(option: Option): SpaceLocation {
+        return {
+            id: Number.parseInt(option.value.split('_')[0], 10),
+            name: option.label,
+            spaceId,
+        };
     }
 
     return (
@@ -306,26 +264,12 @@ function ProductForm({
                     {duplicateProductNameWarning &&
                     <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
                 </div>
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="location">Location</label>
-                    <Creatable
-                        name="location"
-                        inputId="location"
-                        onInputChange={(e: string): void => setTypedInLocation(e)}
-                        onChange={(e): void  => updateProductField('spaceLocation', optionToSpaceLocation(e as Option))}
-                        isLoading={isLoading}
-                        isDisabled={isLoading}
-                        onCreateOption={handleCreateLocationTag}
-                        options={locationOptions()}
-                        styles={customStyles}
-                        components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
-                        formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInLocation}"`)}
-                        placeholder="Select or create location"
-                        hideSelectedOptions={true}
-                        isClearable={false}
-                        value={locationOptionValue()}
-                    />
-                </div>
+                <ProductFormLocationField
+                    onChange={(option): void  => updateProductField('spaceLocation', optionToSpaceLocation(option))}
+                    currentProductState={{ currentProduct, setCurrentProduct }}
+                    loadingState={{ isLoading, setIsLoading }}
+                    addGroupedTagFilterOptions={addGroupedTagFilterOptions}
+                />
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="productTags">Product Tags</label>
                     <Creatable
