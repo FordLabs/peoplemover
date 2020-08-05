@@ -2,6 +2,30 @@
   "name": "peoplemover",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "scripts": {
+    "start": "env-cmd .env.local react-scripts start",
+    "start:noauth": "env-cmd .env.localnoauth react-scripts start",
+    "test:unit": "react-scripts test",
+    "test:unit:coverage": "CI=true react-scripts test --coverage --testResultsProcessor jest-sonar-reporter",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "e2e-setup": "BROWSER=none start-server-and-test start:noauth 3000",
+    "test:e2e": "npm run e2e-setup cy:open",
+    "test:e2e:ci": "npm run e2e-setup cy:run",
+    "test": "npm run test:unit",
+    "coverage": "npm run test:unit:coverage",
+    "eject": "react-scripts eject",
+    "build": "react-scripts build",
+    "lint": "eslint src/**/*.ts src/**/*.tsx",
+    "lint:fix": "eslint --fix src/**/*.ts src/**/*.tsx",
+    "analyze": "node analyze.js"
+  },
   "dependencies": {
     "@types/react-text-mask": "^5.4.6",
     "@types/redux-mock-store": "^1.0.2",
@@ -25,33 +49,6 @@
     "redux-thunk": "^2.3.0",
     "universal-cookie": "^4.0.3"
   },
-  "scripts": {
-    "start": "env-cmd .env.local react-scripts start",
-    "start:noauth": "env-cmd .env.localnoauth react-scripts start",
-    "test:unit": "react-scripts test",
-    "test:unit:coverage": "CI=true react-scripts test --coverage --testResultsProcessor jest-sonar-reporter",
-    "cy:open": "cypress open",
-    "cy:run": "cypress run",
-    "e2e-setup": "BROWSER=none start-server-and-test start:noauth 3000",
-    "test:e2e": "npm run e2e-setup cy:open",
-    "test:e2e:ci": "npm run e2e-setup cy:run",
-    "test": "npm run test:unit",
-    "coverage": "npm run test:unit:coverage",
-    "eject": "react-scripts eject",
-    "build": "react-scripts build",
-    "lint": "eslint src/**/*.ts src/**/*.tsx",
-    "lint-fix": "eslint --fix src/**/*.ts src/**/*.tsx",
-    "analyze": "node analyze.js"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "devDependencies": {
     "@babel/traverse": "^7.8.6",
     "@babel/types": "^7.8.7",
@@ -99,6 +96,9 @@
     "source-map-loader": "^0.2.4",
     "start-server-and-test": "1.10.6",
     "typescript": "^3.8.3"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   },
   "jest": {
     "coverageReporters": [
