@@ -17,7 +17,7 @@
 
 @import "../Application/Styleguide/Colors.scss";
 
-.user-space-item-container {
+.userSpaceItemContainer {
   margin-top: 50px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -26,7 +26,7 @@
   padding: 88px;
 }
 
-.create-new-space{
+.createNewSpaceButton {
   background: transparent;
   border-radius: 6px 6px;
   color: $purple;
@@ -40,8 +40,51 @@
   align-items: center;
   justify-content: center;
   width: 400px;
+  height: 128px;
 
-  .create-new-space-icon {
+  .createNewSpaceIcon {
     margin-bottom: 7px;
+  }
+}
+
+.welcomeMessageContainer {
+  font-style: normal;
+  font-weight: bold;
+  color: $gray-1;
+  max-width: 480px;
+  text-align: center;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .welcomeMessageTitle {
+    font-size: 72px;
+    line-height: 72px;
+    color: $purple;
+    background: $logo-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+
+  .welcomeMessageSubtitle {
+    font-size: 24px;
+    line-height: 32px;
+    margin: 31px 0 9px;
+  }
+
+  .welcomeMessageParagraph {
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 0;
+    max-width: 420px;
+  }
+
+  .createNewSpaceButton {
+    margin-top: 50px;
   }
 }
