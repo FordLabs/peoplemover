@@ -66,7 +66,7 @@ pipeline {
                     }
                     steps {
                         withCredentials([
-                            usernamePassword(credentialsId: 'flipJenkins', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
+                            usernamePassword(credentialsId: 'labsci', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
                             usernamePassword(credentialsId: 'peopleMoverDB', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
                         ]) {
                             dir("api") {
@@ -98,7 +98,7 @@ pipeline {
                     }
                     steps {
                         withCredentials([
-                            usernamePassword(credentialsId: 'flipJenkins', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
+                            usernamePassword(credentialsId: 'labsci', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
                             usernamePassword(credentialsId: 'peopleMoverDB', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
                         ]) {
                             dir("api") {
@@ -140,7 +140,7 @@ pipeline {
                                 target: "$peoplemover_pcf_cchost",
                                 organization: 'FordLabs_Experiments_InternalProjects_EDC1_Prod',
                                 cloudSpace: 'FordLabs_Experiments_InternalProjects-prod',
-                                credentialsId: 'flipJenkins',
+                                credentialsId: 'labsci',
                                 manifestChoice: [
                                     manifestFile: "${env.MANIFEST}",
                                 ]
