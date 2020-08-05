@@ -17,12 +17,12 @@
 
 import {Router} from 'react-router';
 import * as React from 'react';
-import {act, render, RenderResult, wait, waitForDomChange} from '@testing-library/react';
+import {render, RenderResult, wait} from '@testing-library/react';
 import {AuthenticatedRoute} from '../AuthenticatedRoute';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
 import Axios, {AxiosResponse} from 'axios';
-import {RunConfig} from "../index";
+import {RunConfig} from '../index';
 
 describe('AuthenticatedRoute', function() {
     let originalWindow: Window;
@@ -61,11 +61,13 @@ describe('AuthenticatedRoute', function() {
 
     function renderComponent({authenticated}: ComponentState): RenderedComponent {
         const history = createMemoryHistory({ initialEntries: ['/secure'] });
+        /* eslint-disable @typescript-eslint/camelcase */
         window.runConfig = {
             adfs_url_template: 'http://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s',
             adfs_client_id: 'urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa',
-            adfs_resource: 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb'
+            adfs_resource: 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb',
         } as RunConfig;
+        /* eslint-enable @typescript-eslint/camelcase */
         if (authenticated) {
             new Cookies().set('accessToken', 'TOTALLY_REAL_ACCESS_TOKEN', {path: '/'});
         }

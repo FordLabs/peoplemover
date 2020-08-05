@@ -64,11 +64,11 @@ declare global {
 }
 
 export interface RunConfig {
-    auth_enabled: boolean,
-    invite_users_to_space_enabled: boolean,
-    adfs_url_template: string,
-    adfs_client_id: string,
-    adfs_resource: string
+    auth_enabled: boolean;
+    invite_users_to_space_enabled: boolean;
+    adfs_url_template: string;
+    adfs_client_id: string;
+    adfs_resource: string;
 }
 
 Axios.get(`${process.env.REACT_APP_URL}config`,

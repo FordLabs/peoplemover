@@ -21,7 +21,7 @@ import SpaceButtons from '../Header/SpaceButtons';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {RunConfig} from "../index";
+import {RunConfig} from '../index';
 
 describe('SpaceButtons', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
@@ -33,6 +33,7 @@ describe('SpaceButtons', () => {
 
 
     it('should not show invite users to space button when the feature flag is toggled off', async () => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
 
         let result: RenderResult;
@@ -53,6 +54,7 @@ describe('SpaceButtons', () => {
     });
 
     it('should show invite users to space button when the feature flag is toggled on', async () => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
         let result: RenderResult;

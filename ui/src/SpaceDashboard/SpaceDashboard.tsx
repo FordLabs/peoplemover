@@ -20,8 +20,6 @@ import {useEffect, useState} from 'react';
 import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {Space} from './Space';
-import './SpaceDashboard.scss';
-import Header from '../Header/Header';
 import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
@@ -29,14 +27,16 @@ import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router';
+import Header from '../Header/Header';
 import SpaceDashboardTile from './SpaceDashboardTile';
+
+import './SpaceDashboard.scss';
 
 interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
-
     const [userSpaces, setUserSpaces] = useState<Space[]>([]);
     const [redirectPage, setRedirectPage] = useState<JSX.Element | null >(null);
 
@@ -61,29 +61,53 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
 
     }, []);
 
-    if ( redirectPage ) {
-        return redirectPage;
+    function WelcomeMessage(): JSX.Element {
+        return (
+            <div className="welcomeMessageContainer">
+                <h1 className="welcomeMessageTitle">Welcome to PeopleMover!</h1>
+                <h2 className="welcomeMessageSubtitle">Get started by creating your own space.</h2>
+                <p className="welcomeMessageParagraph">
+                    If you’re already a part of a space but you’re not seeing it here,
+                    you’ll have to ask the owner to share it with you.
+                </p>
+                <NewSpaceButton />
+            </div>
+        );
     }
 
-    return <div>
+    function SpaceTileGrid(): JSX.Element {
+        return (
+            <div className="userSpaceItemContainer">
+                {
+                    userSpaces.map((space, index) => {
+                        return <SpaceDashboardTile
+                            key={index} space={space}
+                            onClick={onSpaceClicked}/>;
+                    })
+                }
+                <NewSpaceButton />
+            </div>
+        );
+    }
 
-        <Header hideSpaceButtons={true}/>
-
-        <CurrentModal/>
-
-        <div className={'user-space-item-container'}>
-            {
-                userSpaces.map((space, index) => {
-                    return <SpaceDashboardTile key={index} space={space} onClick={onSpaceClicked}/>;
-                })
-            }
-            <button className="create-new-space" onClick={onCreateNewSpaceButtonClicked}>
-                <img className={'create-new-space-icon'} src={plusIcon}/>
+    function NewSpaceButton(): JSX.Element {
+        return (
+            <button className="createNewSpaceButton" onClick={onCreateNewSpaceButtonClicked}>
+                <img className="createNewSpaceIcon" src={plusIcon} alt=""/>
                 Create New Space
             </button>
-        </div>
+        );
+    }
 
-    </div>;
+    if ( redirectPage ) return redirectPage;
+
+    return (
+        <div className="spaceDashboard">
+            <Header hideSpaceButtons={true}/>
+            <CurrentModal/>
+            {!userSpaces.length ? <WelcomeMessage /> : <SpaceTileGrid /> }
+        </div>
+    );
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

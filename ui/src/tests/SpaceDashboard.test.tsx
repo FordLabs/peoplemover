@@ -25,18 +25,11 @@ import {wait, fireEvent, RenderResult} from '@testing-library/react';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
 import moment from 'moment';
-import {RunConfig} from "../index";
+import {RunConfig} from '../index';
 
-interface TestComponent {
-    component: RenderResult;
-    fakeAccessToken: string;
-    cookies: Cookies;
-    history: History;
-}
-
-describe('SpaceDashbord tests', () => {
-
-    it('should display signout and not invite contributors in menu', async () => {
+describe('SpaceDashboard tests', () => {
+    it('should display sign out and not invite contributors in menu', async () => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
         const {component} = await createTestComponent();
         await fireEvent.click(component.getByTestId('editContributorsModal'));
@@ -44,45 +37,78 @@ describe('SpaceDashbord tests', () => {
         expect(component.queryByTestId('sign-out')).not.toBeNull();
     });
 
-    it('should redirect to space when a space in the dashboard is clicked', async () => {
-        const {component, fakeAccessToken, history} = await createTestComponent();
+    describe('if spaces are present', () => {
+        let component: RenderResult;
+        let fakeAccessToken: string;
+        let history: MemoryHistory;
 
-        const space1 = await component.findByText('Space1');
-        await fireEvent.click(space1);
+        beforeEach(async () => {
+            ({component, fakeAccessToken, history} = await createTestComponent());
+        });
 
-        expect(SpaceClient.getSpacesForUser).toHaveBeenCalledWith(fakeAccessToken);
+        it('should redirect to space when a space in the dashboard is clicked', async () => {
+            const space1 = await component.findByText('Space1');
+            await fireEvent.click(space1);
+            expect(SpaceClient.getSpacesForUser).toHaveBeenCalledWith(fakeAccessToken);
+            expect(history.location.pathname).toBe('/space1');
+        });
 
-        expect(history.location.pathname).toBe('/space1');
+        it('should display space name on a space', async () => {
+            expect(component.queryByText('Space1')).not.toBeNull();
+        });
+
+        it('should display space last modified date and time on a space', async () => {
+            const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('dddd, MMMM D, Y [at] h:mm a');
+            expect(component.getByText(`Last modified ${localTime}`)).not.toBeNull();
+        });
+
+        it('should display today and last modified time on a space', async () => {
+            Date.now = jest.fn(() => 1586887571000);
+            const {component} = await createTestComponent();
+            const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('h:mm a');
+            expect(component.getByText(`Last modified today at ${localTime}`)).not.toBeNull();
+        });
+
+        it('should NOT show welcome message if no spaces are present', async () => {
+            expect(component.queryByText(`Welcome to PeopleMover!`)).toBeNull();
+        });
+
+        it('should show "Create New Space" button', async () => {
+            await component.findByText(`Create New Space`);
+        });
     });
 
-    it('should display space name on a space', async () => {
-        const {component} = await createTestComponent();
-        expect(component.queryByText('Space1')).not.toBeNull();
+    describe('if no spaces are present', () => {
+        let component: RenderResult;
+
+        beforeEach(async () => {
+            ({component} = await createTestComponent(false));
+        });
+
+        it('should show welcome message', async () => {
+            await component.findByText(`Welcome to PeopleMover!`);
+        });
+
+        it('should show "Create New Space" button', async () => {
+            await component.findByText(`Create New Space`);
+        });
     });
 
-    it('should display space last modified date and time on a space', async () => {
-        const {component} = await createTestComponent();
-        const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('dddd, MMMM D, Y [at] h:mm a');
-        expect(component.getByText(`Last modified ${localTime}`)).not.toBeNull();
-    });
-
-    it('should display today and last modified time on a space', async () => {
-        Date.now = jest.fn(() => 1586887571000);
-        const {component} = await createTestComponent();
-        const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('h:mm a');
-        expect(component.getByText(`Last modified today at ${localTime}`)).not.toBeNull();
-    });
-
-    const createTestComponent = async (): Promise<TestComponent> => {
+    const createTestComponent = async (hasSpaces = true): Promise<{
+        component: RenderResult;
+        fakeAccessToken: string;
+        cookies: Cookies;
+        history: MemoryHistory;
+    }> => {
         const fakeAccessToken = 'FAKE_TOKEN123';
         const cookies = new Cookies();
         cookies.set('accessToken', fakeAccessToken);
         const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
-        SpaceClient.getSpacesForUser = jest.fn(() => Promise.resolve({
-            data: [{name: 'Space1', lastModifiedDate: '2020-04-14T18:06:11.791+0000'}],
-        } as AxiosResponse));
+        const responseData = hasSpaces ? [{name: 'Space1', lastModifiedDate: '2020-04-14T18:06:11.791+0000'}] : [];
+        SpaceClient.getSpacesForUser = jest.fn(() => Promise.resolve({ data: responseData } as AxiosResponse));
 
-        let component: any = null;
+        // @ts-ignore
+        let component: RenderResult = null;
         await wait(() => {
             component = renderWithRedux(
                 <Router history={history}>

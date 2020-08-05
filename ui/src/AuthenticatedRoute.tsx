@@ -15,33 +15,35 @@
  * limitations under the License.
  */
 
-import {Route, RouteProps} from "react-router";
-import * as React from "react";
-import Cookies from "universal-cookie";
-import {AccessTokenClient} from "./Login/AccessTokenClient";
-import {useState} from "react";
-import {useEffect} from "react";
+import {Route, RouteProps} from 'react-router';
+import * as React from 'react';
+import Cookies from 'universal-cookie';
+import {AccessTokenClient} from './Login/AccessTokenClient';
+import {useState} from 'react';
+import {useEffect} from 'react';
 
 export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     useEffect(() => {
-            const cookie = new Cookies();
-            const accessToken = cookie.get('accessToken');
+        const cookie = new Cookies();
+        const accessToken = cookie.get('accessToken');
 
-            AccessTokenClient.validateAccessToken(accessToken)
-                .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
-                .catch(() => setRenderedElement(<RedirectToADFS/>));
+        AccessTokenClient.validateAccessToken(accessToken)
+            .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
+            .catch(() => setRenderedElement(<RedirectToADFS/>));
     }, []);
 
     return <>{renderedElement}</>;
 }
 
-function RedirectToADFS(){
+function RedirectToADFS() {
+    /* eslint-disable @typescript-eslint/camelcase */
     let oauthUri: string = window.runConfig.adfs_url_template!!;
     const clientId: string = window.runConfig.adfs_client_id!!;
     const resource: string = window.runConfig.adfs_resource!!;
+    /* eslint-enable @typescript-eslint/camelcase */
     const redirectUri: string = `${window.location.origin}/adfs/catch`!!;
 
     oauthUri = oauthUri.replace('%s', clientId);

@@ -17,7 +17,7 @@
  *
  */
 
-import React from "react";
+import React from 'react';
 
 interface RedirectWrapperProps {
     redirectUrl: string;
@@ -28,4 +28,4 @@ function RedirectWrapper({redirectUrl}: RedirectWrapperProps): JSX.Element {
     return (<></>);
 }
 
-export default RedirectWrapper
+export default RedirectWrapper;

@@ -50,6 +50,7 @@ function AccountDropdown({
             <i className="fas fa-caret-down drawerCaret"/>
 
             {dropdownFlag && <div className={'dropdown-container'}>
+                // eslint-disable-next-line @typescript-eslint/camelcase
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
                     <div data-testid="invite-members" className="account-dropdown-options"
                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
