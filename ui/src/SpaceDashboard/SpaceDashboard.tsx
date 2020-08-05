@@ -105,7 +105,6 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
         <div className="spaceDashboard">
             <Header hideSpaceButtons={true}/>
             <CurrentModal/>
-            <SpaceTileGrid />
             {!userSpaces.length ? <WelcomeMessage /> : <SpaceTileGrid /> }
         </div>
     );
