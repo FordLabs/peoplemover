@@ -1,4 +1,5 @@
 import {JSX} from '@babel/types';
+import {connect} from 'react-redux';
 import {Option} from '../CommonTypes/Option';
 import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import LocationClient from '../Locations/LocationClient';
@@ -11,20 +12,18 @@ import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {Space} from '../SpaceDashboard/Space';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
 import {customStyles} from './ProductForm';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
     currentProductState: { currentProduct: Product; setCurrentProduct: (updatedProduct: Product) => void };
-    onChange: (e: Option) => void;
+    spaceId: number;
     addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Trait) => void;
-
     currentSpace: Space;
 }
 
 function ProductFormLocationField({
-    onChange,
+    spaceId,
     loadingState: {
         isLoading,
         setIsLoading,
@@ -45,6 +44,14 @@ function ProductFormLocationField({
                 setAvailableLocations(result.data);
             });
     }, []);
+
+    function optionToSpaceLocation(option: Option): SpaceLocation {
+        return {
+            id: Number.parseInt(option.value.split('_')[0], 10),
+            name: option.label,
+            spaceId,
+        };
+    }
 
     function createLocationOption(location: SpaceLocation): Option {
         return {
@@ -82,6 +89,14 @@ function ProductFormLocationField({
         });
     }
 
+    function updateSpaceLocations(option: Option): void {
+        const updatedProduct: Product = {
+            ...currentProduct,
+            spaceLocation: optionToSpaceLocation(option),
+        };
+        setCurrentProduct(updatedProduct);
+    }
+
     return (
         <div className="formItem">
             <label className="formItemLabel" htmlFor="location">Location</label>
@@ -89,7 +104,7 @@ function ProductFormLocationField({
                 name="location"
                 inputId="location"
                 onInputChange={(e: string): void => setTypedInLocation(e)}
-                onChange={(option): void => onChange(option as Option)}
+                onChange={(option): void  => updateSpaceLocations(option as Option)}
                 isLoading={isLoading}
                 isDisabled={isLoading}
                 onCreateOption={handleCreateLocationTag}
@@ -108,7 +123,6 @@ function ProductFormLocationField({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 export default connect(mapStateToProps)(ProductFormLocationField);

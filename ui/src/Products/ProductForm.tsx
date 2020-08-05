@@ -46,6 +46,7 @@ import {Dispatch} from 'redux';
 import moment from 'moment';
 import {Space} from '../SpaceDashboard/Space';
 import ProductFormLocationField from './ProductFormLocationField';
+import ProductFormProductTagsField from './ProductFormProductTagsField';
 
 interface ProductFormProps {
     editing: boolean;
@@ -87,8 +88,6 @@ function ProductForm({
 }: ProductFormProps): JSX.Element {
     const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct());
 
-    const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
-
     const [selectedProductTags, setSelectedProductTags] = useState<Array<ProductTag>>([]);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -96,17 +95,10 @@ function ProductForm({
 
     const [duplicateProductNameWarning, setDuplicateProductNameWarning] = useState<boolean>(false);
     const [notesFieldLength, setNotesFieldLength] = useState<number>(product && product.notes ? product.notes.length : 0);
-    const [typedInProductTag, setTypedInProductTag] = useState<string>('');
+
 
     const [startDate, setStartDate] = useState<Date>(currentProduct.startDate ? moment(currentProduct.startDate).toDate() : moment(viewingDate).toDate());
     const [endDate, setEndDate] = useState<Date | null>(currentProduct.endDate ? moment(currentProduct.endDate).toDate() : null);
-
-    useEffect(() => {
-        ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
-
-        setSelectedProductTags(currentProduct.productTags);
-
-    }, []);
 
     function initializeProduct(): Product {
         if (product == null) {
@@ -169,52 +161,6 @@ function ProductForm({
         setCurrentProduct(updatedProduct);
     }
 
-    function updateSelectedProductTags(productTags: Array<ProductTag>): void {
-        if (productTags.length > 0) {
-            setSelectedProductTags([...productTags]);
-        } else {
-            setSelectedProductTags([]);
-        }
-    }
-
-    function optionToProductTag(options: Array<Option>): Array<ProductTag> {
-        if (options) {
-            return options.map(option => {
-                return {
-                    id: Number.parseInt(option.value, 10),
-                    name: option.label,
-                    spaceId,
-                };
-            });
-        } else {
-            return [];
-        }
-    }
-
-    function createTagOption(label: string, id: number): Option {
-        return {
-            label: label,
-            value: id.toString() + '_' + label,
-        };
-    }
-
-    function handleCreateProductTag(inputValue: string): void {
-        setIsLoading(true);
-        const productTag: TraitAddRequest = {
-            name: inputValue,
-        };
-        ProductTagClient.add(productTag, currentSpace.name).then((response: AxiosResponse) => {
-            const newProductTag: ProductTag = response.data;
-            setAvailableProductTags(productTags => [...productTags, {
-                id: newProductTag.id,
-                name: newProductTag.name,
-            }] as Array<ProductTag>);
-            addGroupedTagFilterOptions(1, newProductTag as Trait);
-            updateSelectedProductTags([...selectedProductTags, newProductTag]);
-            setIsLoading(false);
-        });
-    }
-
     function addGroupedTagFilterOptions(tagFilterIndex: number, trait: Trait): void {
         const addedFilterOption: FilterOption = {
             label: trait.name,
@@ -239,14 +185,6 @@ function ProductForm({
         setNotesFieldLength(e.target.value.length);
     }
 
-    function optionToSpaceLocation(option: Option): SpaceLocation {
-        return {
-            id: Number.parseInt(option.value.split('_')[0], 10),
-            name: option.label,
-            spaceId,
-        };
-    }
-
     return (
         <div className="formContainer">
             <form className="form" data-testid="productForm">
@@ -265,32 +203,18 @@ function ProductForm({
                     <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
                 </div>
                 <ProductFormLocationField
-                    onChange={(option): void  => updateProductField('spaceLocation', optionToSpaceLocation(option))}
+                    spaceId={spaceId}
                     currentProductState={{ currentProduct, setCurrentProduct }}
                     loadingState={{ isLoading, setIsLoading }}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="productTags">Product Tags</label>
-                    <Creatable
-                        isMulti={true}
-                        name="productTags"
-                        inputId="productTags"
-                        onInputChange={(e: string): void => setTypedInProductTag(e)}
-                        onChange={(e): void => updateSelectedProductTags(optionToProductTag(e as Option[]))}
-                        isLoading={isLoading}
-                        isDisabled={isLoading}
-                        onCreateOption={handleCreateProductTag}
-                        options={availableProductTags.map((productTag: ProductTag) => createTagOption(productTag.name, productTag.id))}
-                        styles={customStyles}
-                        value={selectedProductTags.map(productTag => createTagOption(productTag.name, productTag.id))}
-                        components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
-                        formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInProductTag}"`)}
-                        placeholder="Select or create product tags"
-                        hideSelectedOptions={true}
-                        isClearable={false}
-                    />
-                </div>
+                <ProductFormProductTagsField
+                    spaceId={spaceId}
+                    currentProductState={{ currentProduct }}
+                    loadingState={{ isLoading, setIsLoading }}
+                    selectedProductTagsState={{ selectedProductTags, setSelectedProductTags }}
+                    addGroupedTagFilterOptions={addGroupedTagFilterOptions}
+                />
                 <div className="formItem" data-testid="productFormStartDateField">
                     <label className="formItemLabel" htmlFor="start">Start Date</label>
                     <DatePicker
