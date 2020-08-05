@@ -34,6 +34,7 @@ import AuthorizedRoute from './Validation/AuthorizedRoute';
 import OAuthRedirect from "./ReusableComponents/OAuthRedirect";
 import {AuthenticatedRoute} from "./AuthenticatedRoute";
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
+import Axios from "axios";
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -57,40 +58,60 @@ const store = createStore(
     rootReducer,
     composedEnhancers,
 );
-ReactDOM.render(
-    <Provider store={store}>
-        <Router>
-            <Switch>
 
-                <Route exact path="/">
-                    <LandingPage/>
-                </Route>
+declare global {
+    interface Window { runConfig: RunConfig; }
+}
 
-                <Route exact path={"/adfs/catch"}>
-                    <OAuthRedirect redirectUrl={"/user/dashboard"}/>
-                </Route>
+export interface RunConfig {
+    auth_enabled: boolean,
+    invite_users_to_space_enabled: boolean,
+    adfs_url_template: string,
+    adfs_client_id: string,
+    adfs_resource: string
+}
 
-                <AuthenticatedRoute exact path={"/user/login"}>
-                    <RedirectWrapper redirectUrl={"/user/dashboard"}/>
-                </AuthenticatedRoute>
+Axios.get(`${process.env.REACT_APP_URL}config`,
+    {headers: { 'Content-Type': 'application/json'}}
+).then( (response) => {
 
-                <AuthenticatedRoute exact path="/user/dashboard">
-                    <SpaceDashboard/>
-                </AuthenticatedRoute>
+    window.runConfig = Object.freeze(response.data);
 
-                <AuthorizedRoute exact path="/:teamName">
-                    <PeopleMover/>
-                </AuthorizedRoute>
+    ReactDOM.render(
+        <Provider store={store}>
+            <Router>
+                <Switch>
 
-                <Route path="/error/404">
-                    <Error404Page/>
-                </Route>
+                    <Route exact path="/">
+                        <LandingPage/>
+                    </Route>
 
-                <Route>
-                    <Redirect to={`/error/404`} />
-                </Route>
-            </Switch>
-        </Router>
-    </Provider>,
-    document.getElementById('root')
-);
+                    <Route exact path={"/adfs/catch"}>
+                        <OAuthRedirect redirectUrl={"/user/dashboard"}/>
+                    </Route>
+
+                    <AuthenticatedRoute exact path={"/user/login"}>
+                        <RedirectWrapper redirectUrl={"/user/dashboard"}/>
+                    </AuthenticatedRoute>
+
+                    <AuthenticatedRoute exact path="/user/dashboard">
+                        <SpaceDashboard/>
+                    </AuthenticatedRoute>
+
+                    <AuthorizedRoute exact path="/:teamName">
+                        <PeopleMover/>
+                    </AuthorizedRoute>
+
+                    <Route path="/error/404">
+                        <Error404Page/>
+                    </Route>
+
+                    <Route>
+                        <Redirect to={`/error/404`} />
+                    </Route>
+                </Switch>
+            </Router>
+        </Provider>,
+        document.getElementById('root')
+    );
+});

@@ -22,6 +22,7 @@ import {AuthenticatedRoute} from '../AuthenticatedRoute';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
 import Axios, {AxiosResponse} from 'axios';
+import {RunConfig} from "../index";
 
 describe('AuthenticatedRoute', function() {
     let originalWindow: Window;
@@ -60,9 +61,11 @@ describe('AuthenticatedRoute', function() {
 
     function renderComponent({authenticated}: ComponentState): RenderedComponent {
         const history = createMemoryHistory({ initialEntries: ['/secure'] });
-        process.env.REACT_APP_ADFS_URL_TEMPLATE = 'http://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s';
-        process.env.REACT_APP_ADFS_CLIENT_ID = 'urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa';
-        process.env.REACT_APP_ADFS_RESOURCE = 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb';
+        window.runConfig = {
+            adfs_url_template: 'http://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s',
+            adfs_client_id: 'urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa',
+            adfs_resource: 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb'
+        } as RunConfig;
         if (authenticated) {
             new Cookies().set('accessToken', 'TOTALLY_REAL_ACCESS_TOKEN', {path: '/'});
         }

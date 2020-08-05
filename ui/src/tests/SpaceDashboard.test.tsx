@@ -25,9 +25,12 @@ import {wait, fireEvent, RenderResult} from '@testing-library/react';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
 import moment from 'moment';
+import {RunConfig} from '../index';
 
 describe('SpaceDashboard tests', () => {
     it('should display sign out and not invite contributors in menu', async () => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
         const {component} = await createTestComponent();
         await fireEvent.click(component.getByTestId('editContributorsModal'));
         expect(component.queryByTestId('invite-members')).toBeNull();

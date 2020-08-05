@@ -39,9 +39,9 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
 }
 
 function RedirectToADFS(){
-    let oauthUri: string = process.env.REACT_APP_ADFS_URL_TEMPLATE!!;
-    const clientId: string = process.env.REACT_APP_ADFS_CLIENT_ID!!;
-    const resource: string = process.env.REACT_APP_ADFS_RESOURCE!!;
+    let oauthUri: string = window.runConfig.adfs_url_template!!;
+    const clientId: string = window.runConfig.adfs_client_id!!;
+    const resource: string = window.runConfig.adfs_resource!!;
     const redirectUri: string = `${window.location.origin}/adfs/catch`!!;
 
     oauthUri = oauthUri.replace('%s', clientId);
