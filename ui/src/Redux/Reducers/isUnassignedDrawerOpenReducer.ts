@@ -17,7 +17,7 @@
 
 import {AvailableActions} from '../Actions';
 
-const isUnassignedDrawerOpenReducer = (state: boolean = false, action: {type: AvailableActions, open: boolean}): boolean => {
+const isUnassignedDrawerOpenReducer = (state = false, action: {type: AvailableActions; open: boolean}): boolean => {
     if (action.type === AvailableActions.SET_IS_UNASSIGNED_DRAWER_OPEN) {
         return action.open;
     } else {
