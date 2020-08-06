@@ -22,21 +22,21 @@ import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 class SpaceClient {
 
     static async getSpacesForUser(accessToken: string): Promise<AxiosResponse<Space[]>> {
-        return Axios.get(`${process.env.REACT_APP_URL}user/space`, {headers: {
+        return Axios.get(`/api/user/space`, {headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,
         }});
     }
 
     static async getSpaceFromName(spaceName: string): Promise<AxiosResponse<Space>> {
-        return Axios.get(`${process.env.REACT_APP_URL}space/${spaceName}`, {headers: {
+        return Axios.get(`/api/space/${spaceName}`, {headers: {
             'Content-Type': 'application/json',
         }});
     }
 
     static async createSpaceForUser(spaceName: string, accessToken: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
         return Axios.post(
-            `${process.env.REACT_APP_URL}user/space`,
+            `/api/user/space`,
             {
                 spaceName: spaceName,
             },
@@ -49,7 +49,7 @@ class SpaceClient {
 
     static async inviteUsersToSpace(spaceName: string, emails: string[]): Promise<AxiosResponse<void>> {
         return Axios.put(
-            `${process.env.REACT_APP_URL}user/invite/space`,
+            `/api/user/invite/space`,
             {
                 spaceName: spaceName,
                 emails: emails,

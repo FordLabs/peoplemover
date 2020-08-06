@@ -25,6 +25,7 @@
     "redux-thunk": "^2.3.0",
     "universal-cookie": "^4.0.3"
   },
+  "proxy": "http://localhost:8080",
   "scripts": {
     "start": "env-cmd .env.local react-scripts start",
     "start:noauth": "env-cmd .env.localnoauth react-scripts start",

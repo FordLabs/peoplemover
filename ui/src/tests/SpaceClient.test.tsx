@@ -21,11 +21,10 @@ import SpaceClient from '../SpaceDashboard/SpaceClient';
 describe('Space Client', function() {
     it('should invite users to a space', function() {
         Axios.put = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
         SpaceClient.inviteUsersToSpace('spaceName', ['email1@mail.com', 'email2@mail.com']);
 
-        const expectedUrl = 'testUrl/user/invite/space';
+        const expectedUrl = '/api/user/invite/space';
         const expectedData = {
             spaceName: 'spaceName',
             emails: ['email1@mail.com', 'email2@mail.com'],
@@ -41,9 +40,8 @@ describe('Space Client', function() {
 
     it('should return the space given a space name', function() {
         Axios.get = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = 'testUrl/space/testName';
+        const expectedUrl = '/api/space/testName';
         const expectedConfig = {
             headers: { 'Content-Type': 'application/json' },
         };

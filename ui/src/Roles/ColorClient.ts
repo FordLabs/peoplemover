@@ -20,7 +20,7 @@ import Axios, {AxiosResponse} from 'axios';
 class ColorClient {
     static async getAllColors(): Promise<AxiosResponse> {
         return Axios.get(
-            `${process.env.REACT_APP_URL}color`,
+            `/api/color`,
             {headers: {'Content-Type': 'application/json'}}
         );
     }

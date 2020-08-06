@@ -23,28 +23,28 @@ class ProductClient {
 
     static async createProduct(product: Product): Promise<AxiosResponse> {
         return Axios.post(
-            process.env.REACT_APP_URL + 'product',
+            '/api/product',
             product
         );
     }
 
     static async editProduct(product: Product): Promise<AxiosResponse> {
         return Axios.put(
-            process.env.REACT_APP_URL + 'product/' + product.id,
+            '/api/product/' + product.id,
             product
         );
     }
 
     static async deleteProduct(product: Product): Promise<AxiosResponse> {
         return Axios.delete(
-            process.env.REACT_APP_URL + 'product/' + product.id
+            '/api/product/' + product.id
         );
     }
 
     static async getProductsForDate(spaceId: number, date: Date): Promise<AxiosResponse> {
         const formattedDate = moment(date).format('YYYY-MM-DD');
         return Axios.get(
-            process.env.REACT_APP_URL + `product/${spaceId}/${formattedDate}`,
+            `/api/product/${spaceId}/${formattedDate}`,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }
