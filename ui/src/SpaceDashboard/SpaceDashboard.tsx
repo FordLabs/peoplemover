@@ -38,6 +38,7 @@ interface SpaceDashboardProps {
 
 function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
     const [userSpaces, setUserSpaces] = useState<Space[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [redirectPage, setRedirectPage] = useState<JSX.Element | null >(null);
 
     function onCreateNewSpaceButtonClicked(): void {
@@ -57,8 +58,9 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
 
     useEffect(() => {
         window.history.pushState([], 'User Dashboard', '/user/dashboard');
-        refreshUserSpaces().then();
-
+        refreshUserSpaces().then( () => {
+            setIsLoading(false);
+        });
     }, []);
 
     function WelcomeMessage(): JSX.Element {
@@ -105,7 +107,7 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
         <div className="spaceDashboard">
             <Header hideSpaceButtons={true}/>
             <CurrentModal/>
-            {!userSpaces.length ? <WelcomeMessage /> : <SpaceTileGrid /> }
+            {!isLoading && (!userSpaces.length ? <WelcomeMessage /> : <SpaceTileGrid /> )}
         </div>
     );
 }
