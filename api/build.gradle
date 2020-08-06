@@ -69,7 +69,8 @@ cfConfig {
     org = "FordLabs_Experiments_InternalProjects_EDC1_Prod"
 
     name = "PeopleMover"
-    host = "peoplemover"
+    host = "peoplemoverUI"
+    path = "api"
     buildpack = "java_buildpack_offline"
     filePath = "build/libs/PeopleMover-0.0.1-SNAPSHOT.jar"
     environment = [
