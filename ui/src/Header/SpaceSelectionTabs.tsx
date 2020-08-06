@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import './BoardSelectionTabs.scss';
+import './SpaceSelectionTabs.scss';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -24,16 +24,15 @@ import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
 
-interface BoardSelectionTabsProps {
+interface SpaceSelectionTabsProps {
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function BoardSelectionTabs({
+function SpaceSelectionTabs({
     setCurrentModal,
-}: BoardSelectionTabsProps): JSX.Element {
-
+}: SpaceSelectionTabsProps): JSX.Element {
     return (
-        <div className="boardSelectionContainer">
+        <div className="spaceSelectionContainer">
             <Calendar/>
             <div className="spaceFiller"/>
             <button className="selectionTabButton tab"
@@ -62,4 +61,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(null, mapDispatchToProps)(BoardSelectionTabs);
+export default connect(null, mapDispatchToProps)(SpaceSelectionTabs);

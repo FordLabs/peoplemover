@@ -17,12 +17,13 @@
 
 import React from 'react';
 import {RenderResult, wait} from '@testing-library/react';
-import BoardButtons from '../Boards/BoardButtons';
+import SpaceButtons from '../Header/SpaceButtons';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {RunConfig} from '../index';
 
-describe('BoardButtons', () => {
+describe('SpaceButtons', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
 
     beforeEach( () => {
@@ -32,12 +33,13 @@ describe('BoardButtons', () => {
 
 
     it('should not show invite users to space button when the feature flag is toggled off', async () => {
-        process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'false';
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
 
         let result: RenderResult;
 
         await wait(() => {
-            result = renderWithRedux(<BoardButtons/>, undefined, initialState);
+            result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
         });
 
         result.getByTestId('editContributorsModal').click();
@@ -52,12 +54,13 @@ describe('BoardButtons', () => {
     });
 
     it('should show invite users to space button when the feature flag is toggled on', async () => {
-        process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'true';
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
         let result: RenderResult;
 
         await wait(() => {
-            result = renderWithRedux(<BoardButtons/>, undefined, initialState);
+            result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
         });
 
         result.getByTestId('editContributorsModal').click();

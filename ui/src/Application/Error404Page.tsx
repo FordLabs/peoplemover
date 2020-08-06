@@ -17,7 +17,7 @@
 
 import React from 'react';
 import './Error404Page.scss';
-import Header from './Header';
+import Header from '../Header/Header';
 import AnimatedImageSrc from './Assets/404.gif';
 import Branding from '../ReusableComponents/Branding';
 

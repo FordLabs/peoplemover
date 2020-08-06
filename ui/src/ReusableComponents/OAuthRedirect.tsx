@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 import {Redirect} from 'react-router';
 import Cookies from 'universal-cookie';
 

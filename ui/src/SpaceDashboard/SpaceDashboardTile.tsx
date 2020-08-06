@@ -17,8 +17,8 @@
 
 import {Space} from './Space';
 import * as React from 'react';
-import './SpaceDashboardTile.scss';
 import moment, {now} from 'moment';
+import './SpaceDashboardTile.scss';
 
 interface SpaceDashboardTileProps {
     space: Space;
@@ -35,8 +35,10 @@ export default function SpaceDashboardTile({space, onClick}: SpaceDashboardTileP
         timestamp = lastModifiedMoment.format('dddd, MMMM D, YYYY [at] h:mm a');
     }
 
-    return <div className="space" onClick={(): void => onClick(space)}>
-        <div className="space-name">{space.name}</div>
-        <div className="last-modified-text">Last modified {timestamp}</div>
-    </div>;
+    return (
+        <div className="space" onClick={(): void => onClick(space)}>
+            <div className="space-name">{space.name}</div>
+            <div className="last-modified-text">Last modified {timestamp}</div>
+        </div>
+    );
 }

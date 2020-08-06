@@ -25,7 +25,7 @@ export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Ele
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     useEffect(() => {
-        if (process.env.REACT_APP_AUTH_ENABLED === 'false') {
+        if (!window.runConfig.auth_enabled) {
             setRenderedElement(<>{children}</>);
         } else {
             const cookie = new Cookies();

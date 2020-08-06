@@ -16,31 +16,30 @@
  */
 
 import React from 'react';
-import {setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
+import {Dispatch} from 'redux';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import './BoardButtons.scss';
 import ProductFilter from '../ReusableComponents/ProductFilter';
 import ProductSortBy from '../ReusableComponents/ProductSortBy';
-import {Dispatch} from 'redux';
 import AccountDropdown from '../ReusableComponents/AccountDropdown';
 
-interface BoardButtonsProps {
+import './SpaceButtons.scss';
+
+interface SpaceButtonsProps {
     setCurrentModal(modalState: CurrentModalState): void;
     hideSpaceButtons?: boolean;
 }
 
-function BoardButtons({hideSpaceButtons}: BoardButtonsProps): JSX.Element {
-
+function SpaceButtons({hideSpaceButtons}: SpaceButtonsProps): JSX.Element {
     return (
-        <div className="boardButtons">
+        <div className="spaceButtons">
             {!hideSpaceButtons &&
                 <>
-                    <div className={'filterByDropDownContainer'} data-testid={'filterByDropDownContainer'}>
+                    <div className="filterByDropDownContainer" data-testid="filterByDropDownContainer">
                         <ProductFilter/>
                     </div>
-
-                    < div className={'sortByDropDownContainer'}>
+                    <div className="sortByDropDownContainer">
                         <ProductSortBy/>
                     </div>
                 </>
@@ -54,4 +53,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(null, mapDispatchToProps)(BoardButtons);
+export default connect(null, mapDispatchToProps)(SpaceButtons);

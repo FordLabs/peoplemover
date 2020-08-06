@@ -24,6 +24,7 @@ import {createMemoryHistory} from 'history';
 import {MemoryHistory} from 'history/createMemoryHistory';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
 import Cookies from 'universal-cookie';
+import {RunConfig} from '../index';
 
 describe('Account Dropdown',  () => {
     let app: RenderResult;
@@ -34,7 +35,8 @@ describe('Account Dropdown',  () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        process.env.REACT_APP_INVITE_USERS_TO_SPACE_ENABLED = 'true';
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
         history = createMemoryHistory({ initialEntries: ['/teamName'] });
         await act( async () => {
