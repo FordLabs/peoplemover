@@ -72,8 +72,8 @@ pipeline {
                                 sh 'echo Pushing to Cloud Foundry'
                                 sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Stage \
-                                        -Pcf.name=StagePeopleMover \
-                                        -Pcf.host=stagepeoplemoverUI \
+                                        -Pcf.name=StagePeopleMoverApi \
+                                        -Pcf.host=stagepeoplemover \
                                         -Pcf.ccHost=$peoplemover_pcf_cchost \
                                         -Pcf.domain=$peoplemover_pcf_domain \
                                         -Pcf.ccUser=$JENKINS_USER \
@@ -103,8 +103,8 @@ pipeline {
                                 sh 'echo Pushing to Cloud Foundry'
                                 sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Prod \
-                                        -Pcf.name=PeopleMover2 \
-                                        -Pcf.host=peoplemover2UI \
+                                        -Pcf.name=PeopleMover2Api \
+                                        -Pcf.host=peoplemover2 \
                                         -Pcf.ccUser=$JENKINS_USER \
                                         -Pcf.ccPassword=$JENKINS_PASSWORD \
                                         -Pcf.ccHost=$peoplemover_pcf_cchost \
@@ -139,8 +139,8 @@ pipeline {
                                 sh 'echo Pushing to Cloud Foundry'
                                 sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Branch \
-                                        -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                                        -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES}UI \
+                                        -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES}Api \
+                                        -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                         -Pcf.ccHost=$peoplemover_pcf_cchost \
                                         -Pcf.domain=$peoplemover_pcf_domain \
                                         -Pcf.ccUser=$JENKINS_USER \
@@ -189,7 +189,7 @@ def getManifest(branchName) {
     } else {
         def filename = 'ui/manifest_QA.yml'
         def data = readYaml file: filename
-        data.applications.get(0).name = "${branchName}UI"
+        data.applications.get(0).name = "${branchName}"
 
         sh "rm $filename"
         writeYaml file: filename, data: data

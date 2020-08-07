@@ -1,6 +1,6 @@
 ---
 applications:
-  - name: StagePeopleMoverUI
+  - name: StagePeopleMover
     path: build
     buildpack: staticfile_buildpack
     stack: cflinuxfs3
