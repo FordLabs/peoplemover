@@ -31,7 +31,7 @@ pipeline {
                 stage('UI Test') {
                     steps {
                         dir("ui") {
-                            sh "CI=true npm run test"
+                            sh "CI=true npm run test:ci"
                         }
                     }
                 }
