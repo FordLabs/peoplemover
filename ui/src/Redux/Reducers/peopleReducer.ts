@@ -20,22 +20,22 @@ import {Person} from '../../People/Person';
 
 const peopleReducer = (state: Array<Person> = [], action: {type: AvailableActions; people: Array<Person>}): Array<Person> => {
     switch (action.type) {
-    case AvailableActions.ADD_PERSON:
-        return [
-            ...state,
-            action.people[0],
-        ];
-    case AvailableActions.EDIT_PERSON:
-        return state.map((person) => {
-            if (person.id === action.people[0].id) {
-                return action.people[0];
-            }
-            return person;
-        });
-    case AvailableActions.SET_PEOPLE:
-        return action.people;
-    default:
-        return state;
+        case AvailableActions.ADD_PERSON:
+            return [
+                ...state,
+                action.people[0],
+            ];
+        case AvailableActions.EDIT_PERSON:
+            return state.map((person) => {
+                if (person.id === action.people[0].id) {
+                    return action.people[0];
+                }
+                return person;
+            });
+        case AvailableActions.SET_PEOPLE:
+            return action.people;
+        default:
+            return state;
     }
 };
 
