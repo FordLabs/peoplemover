@@ -27,8 +27,8 @@ import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import ProductTagClient from '../../ProductTag/ProductTagClient';
-import {SpaceLocation} from "../../Locations/SpaceLocation";
-import LocationClient from "../../Locations/LocationClient";
+import {SpaceLocation} from '../../Locations/SpaceLocation';
+import LocationClient from '../../Locations/LocationClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,

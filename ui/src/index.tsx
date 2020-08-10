@@ -31,10 +31,10 @@ import Error404Page from './Application/Error404Page';
 import LandingPage from './LandingPage/LandingPage';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Validation/AuthorizedRoute';
-import OAuthRedirect from "./ReusableComponents/OAuthRedirect";
-import {AuthenticatedRoute} from "./AuthenticatedRoute";
+import OAuthRedirect from './ReusableComponents/OAuthRedirect';
+import {AuthenticatedRoute} from './AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
-import Axios from "axios";
+import Axios from 'axios';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -60,7 +60,7 @@ const store = createStore(
 );
 
 declare global {
-    interface Window { runConfig: RunConfig; }
+    interface Window { runConfig: RunConfig }
 }
 
 export interface RunConfig {
@@ -86,12 +86,12 @@ Axios.get(`/api/config`,
                         <LandingPage/>
                     </Route>
 
-                    <Route exact path={"/adfs/catch"}>
-                        <OAuthRedirect redirectUrl={"/user/dashboard"}/>
+                    <Route exact path={'/adfs/catch'}>
+                        <OAuthRedirect redirectUrl={'/user/dashboard'}/>
                     </Route>
 
-                    <AuthenticatedRoute exact path={"/user/login"}>
-                        <RedirectWrapper redirectUrl={"/user/dashboard"}/>
+                    <AuthenticatedRoute exact path={'/user/login'}>
+                        <RedirectWrapper redirectUrl={'/user/dashboard'}/>
                     </AuthenticatedRoute>
 
                     <AuthenticatedRoute exact path="/user/dashboard">

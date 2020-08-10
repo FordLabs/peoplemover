@@ -45,3 +45,5 @@ nbdist/
 
 ui/cypress/screenshots
 ui/cypress/videos
+ui/reports
+ui/coverage

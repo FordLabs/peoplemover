@@ -39,7 +39,7 @@ function ProductSortBy({
 }: ProductSortByProps): JSX.Element {
     const [originalSortOption, setOriginalSortOption] = useState<SortByOption>();
     const sortByOptions: Array<SortByOption> = [
-        {label:'Name', value:'name'},
+        {label:'Alphabetical', value:'name'},
         {label:'Location', value:'location'},
         {label:'Product Tag', value:'product-tag'},
     ];
