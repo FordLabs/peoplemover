@@ -44,13 +44,14 @@ function AccountDropdown({
         return redirect;
     }
 
+
+    // eslint-disable-next-line @typescript-eslint/camelcase
     return (
         <button data-testid="editContributorsModal" className={'editContributorsModal'} onClick={showsDropdown}>
             <i className="fas fa-user" data-testid={'userIcon'}/>
             <i className="fas fa-caret-down drawerCaret"/>
 
             {dropdownFlag && <div className={'dropdown-container'}>
-                // eslint-disable-next-line @typescript-eslint/camelcase
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
                     <div data-testid="invite-members" className="account-dropdown-options"
                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
