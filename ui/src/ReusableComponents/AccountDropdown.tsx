@@ -29,7 +29,18 @@ function AccountDropdown({
     const [redirect, setRedirect] = useState<JSX.Element>();
 
     function showsDropdown(): boolean {
-        setDropdownFlag(!dropdownFlag);
+        if(dropdownFlag) {
+            hidesDropdown();
+        } else {
+            setDropdownFlag(!dropdownFlag);
+            document.addEventListener('click', hidesDropdown, false);
+        }
+        return dropdownFlag;
+    }
+
+    function hidesDropdown(): boolean {
+        setDropdownFlag(false);
+        document.removeEventListener('click', hidesDropdown);
         return dropdownFlag;
     }
 
