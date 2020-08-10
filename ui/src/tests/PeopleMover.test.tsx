@@ -48,7 +48,7 @@ describe('PeopleMover', () => {
 
     it('should display Sort By dropdown on startup', async () => {
         await app.findByText('Sort By:');
-        await app.findByText('Name');
+        await app.findByText('Alphabetical');
     });
 
     it('should display Filter option on startup', async () => {
