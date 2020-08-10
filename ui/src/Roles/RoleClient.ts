@@ -23,22 +23,19 @@ import {TraitClient} from '../Traits/TraitClient';
 class RoleClient implements TraitClient {
 
     async get(spaceName: string): Promise<AxiosResponse> {
-        return Axios.get(
-            process.env.REACT_APP_URL + 'role/' + spaceName
+        return Axios.get('/api/role/' + spaceName
         );
     }
 
     async add(role: RoleAddRequest, spaceName: string): Promise<AxiosResponse> {
-        return Axios.post(
-            process.env.REACT_APP_URL + 'role/' + spaceName,
+        return Axios.post('/api/role/' + spaceName,
             role,
             {headers: {'Content-Type': 'application/json'}}
         );
     }
 
     async edit(role: RoleEditRequest, spaceName: string): Promise<AxiosResponse> {
-        return Axios.put(
-            process.env.REACT_APP_URL + 'role/' + spaceName,
+        return Axios.put('/api/role/' + spaceName,
             role,
             {headers: {'Content-Type': 'application/json'}}
         );
@@ -46,7 +43,7 @@ class RoleClient implements TraitClient {
 
     async delete(roleId: number): Promise<AxiosResponse> {
         return Axios.delete(
-            `${process.env.REACT_APP_URL}role/${roleId}`,
+            `/api/role/${roleId}`,
         );
     }
 }

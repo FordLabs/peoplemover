@@ -71,7 +71,7 @@ export interface RunConfig {
     adfs_resource: string;
 }
 
-Axios.get(`${process.env.REACT_APP_URL}config`,
+Axios.get(`/api/config`,
     {headers: { 'Content-Type': 'application/json'}}
 ).then( (response) => {
 
