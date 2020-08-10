@@ -1,6 +1,6 @@
 ---
 applications:
-  - name: QAPeopleMover
+  - name: QAPeopleMoverUI
     path: build
     buildpack: staticfile_buildpack
     stack: cflinuxfs3

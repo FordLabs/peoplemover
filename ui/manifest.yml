@@ -1,6 +1,6 @@
 ---
 applications:
-  - name: PeopleMover2
+  - name: PeopleMoverUI2
     path: build
     buildpack: staticfile_buildpack
     stack: cflinuxfs3
