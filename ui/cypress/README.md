@@ -14,6 +14,8 @@ The Cypress tests will be ran against the web application which is expected on p
 
 Ensure an instance of the API is running locally using the local profile.
 
+Make sure auth is disabled
+
 ## Running Tests
 
 **Cypress UI**
