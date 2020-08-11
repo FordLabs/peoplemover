@@ -381,7 +381,7 @@ function PersonForm({
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                     <i className="fas fa-trash"/>
                     <div className="trashCanSpacer"/>
-                    <a className="obliterateLink" onClick={displayRemovePersonModal}>Delete</a>
+                    <span className="obliterateLink" onClick={displayRemovePersonModal}>Delete</span>
                 </div>)}
             </form>
             {confirmDeleteModal}

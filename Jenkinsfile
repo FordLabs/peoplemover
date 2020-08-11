@@ -21,7 +21,7 @@ pipeline {
                         stage('Test') {
                             steps {
                                 dir("ui") {
-                                    sh "npm run test --runInBand"
+                                    sh "npm run test:ci"
                                 }
                             }
                         }

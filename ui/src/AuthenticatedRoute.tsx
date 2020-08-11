@@ -26,6 +26,7 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
     const {children, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
+    /* eslint-disable */
     useEffect(() => {
         const cookie = new Cookies();
         const accessToken = cookie.get('accessToken');
@@ -34,6 +35,7 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
             .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
             .catch(() => setRenderedElement(<RedirectToADFS/>));
     }, []);
+    /* eslint-enable */
 
     return <>{renderedElement}</>;
 }

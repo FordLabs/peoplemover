@@ -24,6 +24,7 @@ export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Ele
     const {children, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
+    /* eslint-disable */
     useEffect(() => {
         if (!window.runConfig.auth_enabled) {
             setRenderedElement(<>{children}</>);
@@ -38,6 +39,7 @@ export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Ele
                 .catch(() => setRenderedElement(<Redirect to={'/user/login'}/>));
         }
     }, []);
+    /* eslint-enable */
 
     return <>{renderedElement}</>;
 }
