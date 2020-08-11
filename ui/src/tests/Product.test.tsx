@@ -488,18 +488,18 @@ describe('Products', () => {
         });
 
         it('should call the product client with the product when a deletion is requested', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
-            const editProduct3Button = await app.findByTestId('editProductIcon_3');
-            fireEvent.click(editProduct3Button);
-            const editProductMenuOption = await app.findByText('Edit Product');
-            fireEvent.mouseDown(editProductMenuOption);
-            fireEvent.mouseUp(editProductMenuOption);
-            const deleteProductButton = await app.findByText('Delete Product');
-            fireEvent.click(deleteProductButton);
-            const deleteButton = await app.findByText('Delete');
-            fireEvent.click(deleteButton);
-
+            await act(async() => {
+                const app = renderWithRedux(<PeopleMover/>);
+                const editProduct3Button = await app.findByTestId('editProductIcon_3');
+                fireEvent.click(editProduct3Button);
+                const editProductMenuOption = await app.findByText('Edit Product');
+                fireEvent.mouseDown(editProductMenuOption);
+                fireEvent.mouseUp(editProductMenuOption);
+                const deleteProductButton = await app.findByText('Delete Product');
+                fireEvent.click(deleteProductButton);
+                const deleteButton = await app.findByText('Delete');
+                fireEvent.click(deleteButton);
+            });
             expect(ProductClient.deleteProduct).toBeCalledTimes(1);
             expect(ProductClient.deleteProduct).toBeCalledWith(TestUtils.productWithoutAssignments);
         });
@@ -526,18 +526,19 @@ describe('Products', () => {
 
                 const viewingDate = new Date(2020, 6, 17);
                 const initialState: PreloadedState<GlobalStateProps> = { viewingDate: viewingDate } as GlobalStateProps;
-                const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+                await act(async () => {
+                    const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
-                const editProduct3Button = await app.findByTestId('editProductIcon_3');
-                fireEvent.click(editProduct3Button);
-                const editProductMenuOption = await app.findByText('Edit Product');
-                fireEvent.mouseDown(editProductMenuOption);
-                fireEvent.mouseUp(editProductMenuOption);
-                const deleteProductButton = await app.findByText('Delete Product');
-                fireEvent.click(deleteProductButton);
-                const archiveButton = await app.findByText('Archive');
-                fireEvent.click(archiveButton);
-
+                    const editProduct3Button = await app.findByTestId('editProductIcon_3');
+                    fireEvent.click(editProduct3Button);
+                    const editProductMenuOption = await app.findByText('Edit Product');
+                    fireEvent.mouseDown(editProductMenuOption);
+                    fireEvent.mouseUp(editProductMenuOption);
+                    const deleteProductButton = await app.findByText('Delete Product');
+                    fireEvent.click(deleteProductButton);
+                    const archiveButton = await app.findByText('Archive');
+                    fireEvent.click(archiveButton);
+                });
                 expect(ProductClient.editProduct).toBeCalledTimes(1);
                 const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestUtils.productWithoutAssignments));
                 cloneWithEndDateSet.endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');

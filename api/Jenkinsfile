@@ -104,7 +104,7 @@ pipeline {
                                 sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Prod \
                                         -Pcf.name=PeopleMover2API \
-                                        -Pcf.host=peoplemover2ui \
+                                        -Pcf.host=peoplemoverui2 \
                                         -Pcf.ccUser=$JENKINS_USER \
                                         -Pcf.ccPassword=$JENKINS_PASSWORD \
                                         -Pcf.ccHost=$peoplemover_pcf_cchost \
