@@ -11,6 +11,7 @@
   "scripts": {
     "start": "env-cmd .env.local react-scripts start",
     "start:noauth": "env-cmd .env.localnoauth react-scripts start",
+    "test:ci": "CI=true react-scripts test --runInBand",
     "test:unit": "react-scripts test",
     "test:unit:coverage": "CI=true react-scripts test --coverage --testResultsProcessor jest-sonar-reporter",
     "cy:open": "cypress open",
