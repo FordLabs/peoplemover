@@ -31,13 +31,14 @@ describe('People', () => {
             const personId = xhr?.response?.body.id;
 
             cy.contains(person.assignTo)
-                .parentsUntil('[data-testid=productCardContainer]')
-                .find(`[data-testid=assignmentCard${personId}]`)
+                .parentsUntil('[data-testid=productPeopleContainer]')
+                .find(`[data-testid=assignmentCard${personId}info]`)
                 .should('contain', person.name)
                 .should('contain', person.role)
-                .then(($personCard) => {
+                .then(() => {
                     if (person.isNew) {
-                        cy.get($personCard)
+                        cy.contains(person.assignTo)
+                            .parentsUntil(`[data-testid=assignmentCard${personId}]`)
                             .find('[data-testid=newBadge]')
                             .should('be.visible');
                     }

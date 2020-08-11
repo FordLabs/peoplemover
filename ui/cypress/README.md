@@ -10,7 +10,7 @@
 
 Tests can either be ran via the Cypress Interface, or headless with test results output into the terminal.
 
-The Cypress tests will be ran against the web application which is expected on port `8000`, and the API which is expected on port `8080`. 
+The Cypress tests will be ran against the web application which is expected on port `3000`, and the API which is expected on port `8080`. 
 
 Ensure an instance of the API is running locally using the local profile.
 
