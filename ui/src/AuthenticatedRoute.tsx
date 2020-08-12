@@ -20,22 +20,21 @@ import * as React from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from './Login/AccessTokenClient';
 import {useState} from 'react';
-import {useEffect} from 'react';
+import {useOnLoad} from "./ReusableComponents/UseOnLoad";
 
 export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
-    /* eslint-disable */
-    useEffect(() => {
+
+    useOnLoad(() => {
         const cookie = new Cookies();
         const accessToken = cookie.get('accessToken');
 
         AccessTokenClient.validateAccessToken(accessToken)
             .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
             .catch(() => setRenderedElement(<RedirectToADFS/>));
-    }, []);
-    /* eslint-enable */
+    });
 
     return <>{renderedElement}</>;
 }

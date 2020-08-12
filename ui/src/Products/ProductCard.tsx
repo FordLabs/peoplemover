@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useEffect, useState} from 'react';
+import React, {RefObject, useState} from 'react';
 import './Product.scss';
 import {connect} from 'react-redux';
 import {
@@ -36,6 +36,7 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
+import {useOnLoad} from "../ReusableComponents/UseOnLoad";
 
 interface ProductCardProps {
     container: string;
@@ -74,15 +75,13 @@ function ProductCard({
         setEditMenuIsOpened(false);
     }
 
-    /* eslint-disable */
-    useEffect(() => {
+    useOnLoad(() => {
         registerProductRef({ref: productRef, product});
 
         return () => {
             unregisterProductRef({ref: productRef, product});
         };
-    }, []);
-    /* eslint-enable */
+    });
 
     function toggleEditMenu(): void {
         if (ourEditMenuIsOpen()) {

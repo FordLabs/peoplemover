@@ -16,7 +16,7 @@
  */
 
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {Space} from './Space';
@@ -31,6 +31,7 @@ import Header from '../Header/Header';
 import SpaceDashboardTile from './SpaceDashboardTile';
 
 import './SpaceDashboard.scss';
+import {useOnLoad} from "../ReusableComponents/UseOnLoad";
 
 interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;
@@ -55,11 +56,11 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
         setRedirectPage(<Redirect to={`/${space.name.toLowerCase()}`}/>);
     }
 
-    useEffect(() => {
+    useOnLoad(() => {
         window.history.pushState([], 'User Dashboard', '/user/dashboard');
         refreshUserSpaces().then();
 
-    }, []);
+    });
 
     function WelcomeMessage(): JSX.Element {
         return (

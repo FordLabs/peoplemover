@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import '../Modal/Form.scss';
 import RoleClient from '../Roles/RoleClient';
@@ -46,6 +46,7 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
+import {useOnLoad} from "../ReusableComponents/UseOnLoad";
 
 interface PersonFormProps {
     editing: boolean;
@@ -94,8 +95,7 @@ function PersonForm({
         return person!.spaceId;
     }
 
-    /* eslint-disable */
-    useEffect(() => {
+    useOnLoad(() => {
         async function setup() {
             const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.name);
             setRoles(rolesResponse.data);
@@ -125,8 +125,7 @@ function PersonForm({
         }
 
         setup().then();
-    }, []);
-    /* eslint-enable */
+    });
 
     function getUnassignedProduct(): Product {
         const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
