@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {fireEvent, RenderResult} from '@testing-library/react';
+import {act, fireEvent, RenderResult} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {AxiosResponse} from 'axios';
@@ -34,19 +34,20 @@ describe('Product List tests', () => {
                 data: TestUtils.products,
             } as AxiosResponse
         ));
-        app = await renderWithRedux(<PeopleMover/>);
     });
 
     it('should only have one edit menu open at a time', async () => {
-        const editPerson1Button = await app.findByTestId('editPersonIconContainer-1');
-        const editPerson3Button = await app.findByTestId('editPersonIconContainer-3');
+        await act (async () => {
+            app = await renderWithRedux(<PeopleMover/>);
+            const editPerson1Button = await app.findByTestId('editPersonIconContainer-1');
+            const editPerson3Button = await app.findByTestId('editPersonIconContainer-3');
 
-        fireEvent.click(editPerson1Button);
-        await app.findByTestId('editMenu');
+            fireEvent.click(editPerson1Button);
+            await app.findByTestId('editMenu');
 
-        fireEvent.click(editPerson3Button);
-        await app.findByTestId('editMenu');
-
+            fireEvent.click(editPerson3Button);
+            await app.findByTestId('editMenu');
+        });
         expect(app.getAllByTestId('editMenu').length).toEqual(1);
     });
 });
