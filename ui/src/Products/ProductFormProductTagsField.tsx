@@ -45,11 +45,13 @@ function ProductFormProductTagsField({
     const [typedInProductTag, setTypedInProductTag] = useState<string>('');
     const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
 
+    /* eslint-disable */
     useEffect(() => {
         ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
         setSelectedProductTags(currentProduct.productTags);
     }, []);
+    /* eslint-enable */
 
     function createTagOption(label: string, id: number): Option {
         return {

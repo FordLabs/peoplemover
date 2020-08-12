@@ -85,7 +85,6 @@ function PersonForm({
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
     const [roles, setRoles] = useState<Array<SpaceRole>>([]);
-    const [initialProducts, setInitialProducts] = useState<Array<Product>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
     const [notesFieldLength, setNotesFieldLength] = useState<number>(person && person.notes ? person.notes.length : 0);
@@ -95,6 +94,7 @@ function PersonForm({
         return person!.spaceId;
     }
 
+    /* eslint-disable */
     useEffect(() => {
         async function setup() {
             const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.name);
@@ -112,7 +112,6 @@ function PersonForm({
                 setPerson(personFromAssignment);
                 const assignmentsResponse: AxiosResponse = await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate);
                 const assignments: Array<Assignment> = assignmentsResponse.data;
-                setInitialProducts(createProductsFromAssignments(assignments));
                 setSelectedProducts(createProductsFromAssignments(assignments));
             } else {
 
@@ -127,6 +126,7 @@ function PersonForm({
 
         setup().then();
     }, []);
+    /* eslint-enable */
 
     function getUnassignedProduct(): Product {
         const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
@@ -264,7 +264,8 @@ function PersonForm({
         setConfirmDeleteModal(deleteConfirmationModal);
     }
 
-    const peopleList = people.map((person, index) => <option key={index} value={person.name}>
+    // eslint-disable-next-line  jsx-a11y/accessible-emoji
+    const peopleList = people.map((person, index) => <option key={index} value={person.name} >
         👤 {person.name}</option>);
 
     function getColorFromLabel(label: string): string {

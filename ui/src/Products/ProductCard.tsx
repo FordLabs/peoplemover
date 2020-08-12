@@ -74,6 +74,7 @@ function ProductCard({
         setEditMenuIsOpened(false);
     }
 
+    /* eslint-disable */
     useEffect(() => {
         registerProductRef({ref: productRef, product});
 
@@ -81,6 +82,7 @@ function ProductCard({
             unregisterProductRef({ref: productRef, product});
         };
     }, []);
+    /* eslint-enable */
 
     function toggleEditMenu(): void {
         if (ourEditMenuIsOpen()) {

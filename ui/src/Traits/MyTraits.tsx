@@ -73,12 +73,17 @@ function MyTraits({
         }
 
         setup().then();
-    }, []);
+    }, [currentSpace.name, traitClient]);
 
     useEffect(() => {
+        function checkForUnsavedChanges(): boolean {
+            const editSectionOpen: boolean = editSectionsOpen.includes(true);
+            return addSectionOpen || editSectionOpen;
+        }
+
         setTraitSectionOpen(checkForUnsavedChanges());
         return (): void => setTraitSectionOpen(false);
-    }, [addSectionOpen, editSectionsOpen]);
+    }, [addSectionOpen, editSectionsOpen, setTraitSectionOpen]);
 
     useEffect(() => {
         sortTraitsAlphabetically(traits);
@@ -88,11 +93,6 @@ function MyTraits({
         traits.sort( (trait1: Trait, trait2: Trait) => {
             return trait1.name.toLowerCase().localeCompare(trait2.name.toLowerCase());
         });
-    }
-
-    function checkForUnsavedChanges(): boolean {
-        const editSectionOpen: boolean = editSectionsOpen.includes(true);
-        return addSectionOpen || editSectionOpen;
     }
 
     function updateTraits(trait: Trait): void {
