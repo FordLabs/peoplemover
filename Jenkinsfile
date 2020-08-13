@@ -64,6 +64,12 @@ pipeline {
             }
         }
         stage('API Deploy Branch') {
+            agent {
+                kubernetes {
+                    label 'jdk11'
+                    defaultContainer 'jdk11'
+                }
+            }
             when {
                 not {
                     anyOf {
@@ -74,8 +80,7 @@ pipeline {
             }
             steps {
                 withCredentials([
-                        usernamePassword(credentialsId: 'flipJenkins', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASSWORD'),
-                        usernamePassword(credentialsId: 'peopleMoverDB', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
+                        usernamePassword(credentialsId: 'labsci', usernameVariable: 'CI_USER', passwordVariable: 'CI_PASSWORD')
                 ]) {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
@@ -85,8 +90,8 @@ pipeline {
                                 -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                                 -Pcf.ccHost=$peoplemover_pcf_cchost \
                                 -Pcf.domain=$peoplemover_pcf_domain \
-                                -Pcf.ccUser=$JENKINS_USER \
-                                -Pcf.ccPassword=$JENKINS_PASSWORD \
+                                -Pcf.ccUser=$CI_USER \
+                                -Pcf.ccPassword=$CI_PASSWORD \
                                 -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
                                 -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                                 -Pcf.environment.react.app.url=https://${env.BRANCH_NAME_WITHOUT_UNDERSCORES}.$peoplemover_pcf_org \
