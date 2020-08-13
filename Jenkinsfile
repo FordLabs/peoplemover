@@ -121,6 +121,7 @@ pipeline {
                     dir("ui") {
                         sh 'echo Login to Cloud Foundry'
                         sh """cf login \
+                            -a $peoplemover_pcf_cchost \
                             -u $CI_USER \
                             -p $CI_PASSWORD \
                             -o  FordLabs_Experiments_InternalProjects_EDC1_Prod \
