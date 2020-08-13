@@ -79,7 +79,13 @@ pipeline {
                 ]) {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
-                        sh  """${API_DEPLOY_COMMAND}"""
+                        sh  """./gradlew cf-push-blue-green \
+                        -Pcf.ccUser=$CI_USER \
+                        -Pcf.ccPassword=$CI_PASSWORD \
+                        -Pcf.ccHost=$peoplemover_pcf_cchost \
+                        -Pcf.domain=$peoplemover_pcf_domain \
+                        ${API_DEPLOY_COMMAND}
+                        """.stripIndent()
                     }
                 }
             }
@@ -124,10 +130,6 @@ def getAPIDeployCommand(branchName) {
                 -PbranchNameWithoutUnderscores=Prod \
                 -Pcf.name=PeopleMover2 \
                 -Pcf.host=peoplemover2 \
-                -Pcf.ccUser=$CI_USER \
-                -Pcf.ccPassword=$CI_PASSWORD \
-                -Pcf.ccHost=$peoplemover_pcf_cchost \
-                -Pcf.domain=$peoplemover_pcf_domain \
                 -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
                 -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                 -Pcf.environment.react.app.url=https://peoplemover2.$peoplemover_pcf_org \
@@ -136,17 +138,13 @@ def getAPIDeployCommand(branchName) {
                 -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
                 -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
                 -Pcf.environment.react.app.adfs_resource=$adfs_resource \
-                """.stripIndent()
+                """
     }
     else if (branchName =="stage"){
         return """./gradlew cf-push-blue-green \
                 -PbranchNameWithoutUnderscores=Stage \
                 -Pcf.name=StagePeopleMover \
                 -Pcf.host=stagepeoplemover \
-                -Pcf.ccHost=$peoplemover_pcf_cchost \
-                -Pcf.domain=$peoplemover_pcf_domain \
-                -Pcf.ccUser=$CI_USER \
-                -Pcf.ccPassword=$CI_PASSWORD \
                 -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
                 -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                 -Pcf.environment.react.app.url=https://stagepeoplemover.$peoplemover_pcf_org \
@@ -155,17 +153,13 @@ def getAPIDeployCommand(branchName) {
                 -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
                 -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
                 -Pcf.environment.react.app.adfs_resource=$adfs_resource \
-                """.stripIndent()
+                """
     }
     else{
         return """./gradlew cf-push-blue-green \
                 -PbranchNameWithoutUnderscores=Branch \
                 -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                 -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                -Pcf.ccHost=$peoplemover_pcf_cchost \
-                -Pcf.domain=$peoplemover_pcf_domain \
-                -Pcf.ccUser=$CI_USER \
-                -Pcf.ccPassword=$CI_PASSWORD \
                 -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
                 -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                 -Pcf.environment.react.app.url=https://${env.BRANCH_NAME_WITHOUT_UNDERSCORES}.$peoplemover_pcf_org \
@@ -174,7 +168,7 @@ def getAPIDeployCommand(branchName) {
                 -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
                 -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
                 -Pcf.environment.react.app.adfs_resource=$adfs_resource \
-                """.stripIndent()
+                """
     }
 }
 
