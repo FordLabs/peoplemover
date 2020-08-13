@@ -126,7 +126,7 @@ pipeline {
 
 def getAPIDeployCommand(branchName) {
     if(branchName == "master"){
-        return """./gradlew cf-push-blue-green \
+        return """
                 -PbranchNameWithoutUnderscores=Prod \
                 -Pcf.name=PeopleMover2 \
                 -Pcf.host=peoplemover2 \
@@ -141,7 +141,7 @@ def getAPIDeployCommand(branchName) {
                 """
     }
     else if (branchName =="stage"){
-        return """./gradlew cf-push-blue-green \
+        return """
                 -PbranchNameWithoutUnderscores=Stage \
                 -Pcf.name=StagePeopleMover \
                 -Pcf.host=stagepeoplemover \
@@ -156,7 +156,7 @@ def getAPIDeployCommand(branchName) {
                 """
     }
     else{
-        return """./gradlew cf-push-blue-green \
+        return """
                 -PbranchNameWithoutUnderscores=Branch \
                 -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
                 -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
