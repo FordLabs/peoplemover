@@ -88,7 +88,7 @@ function PersonForm({
     const [initialProducts, setInitialProducts] = useState<Array<Product>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
-    const [notesFieldLength, setNotesFieldLength] = useState<number>(person && person.notes ? person.notes.length : 0);
+    const [notesFieldLength, setNotesFieldLength] = useState<number>(assignment && assignment.person && assignment.person.notes ? assignment.person.notes.length : 0);
 
     function getSpaceObjectFromPersonName(name: string): number {
         const person: Person | undefined = people.find(x => x.name === name);
@@ -359,14 +359,15 @@ function PersonForm({
                         value={person.notes ? person.notes : ''}
                         onChange={notesChanged}
                         rows={4}
-                        cols={25}>
+                        cols={25}
+                        maxLength={255}>
                         {person.notes}
                     </textarea>
                     <span className="notesFieldText" data-testid="notesFieldText">
                         <span
-                            className={notesFieldLength > 500 ? 'notesFieldTooLong' : ''}>
-                            {notesFieldLength}</span>
-                        &nbsp;(500 characters max)
+                            className={notesFieldLength >= 255 ? 'notesFieldTooLong' : ''}>
+                            {notesFieldLength}&nbsp;(255 characters max)</span>
+
                     </span>
                 </div>
                 <div className="yesNoButtons">
