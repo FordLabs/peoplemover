@@ -46,5 +46,11 @@ describe('notes input', ()=>{
         fireEvent.change(input, { target: { value: 'Good' } });
         expect(callback).toHaveBeenCalledWith('Good');
     });
+
+    it('should change the max value allowed in the input', function () {
+        const callback = jest.fn();
+        const notes = render(<NotesTextArea callBack={callback} maxLength={5}/>);
+        notes.getByText('0 (5 characters max)');
+    });
 });
 

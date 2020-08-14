@@ -23,8 +23,9 @@ import '../Modal/Form.scss';
 interface NotesProps {
     notes?: string;
     callBack: (notes: string) => void;
+    maxLength?: number;
 }
-export default function NotesTextArea({ notes = '', callBack }: NotesProps): JSX.Element {
+export default function NotesTextArea({ notes = '', callBack, maxLength = 255 }: NotesProps): JSX.Element {
     const [notesState, setNotesState] = useState<string>(notes);
     useEffect(() => {setNotesState(notes);}, [notes]);
 
@@ -43,9 +44,9 @@ export default function NotesTextArea({ notes = '', callBack }: NotesProps): JSX
             onChange={handleChange}
             rows={4}
             cols={25}
-            maxLength={255} />
-        <span className={`notesFieldText ${notesState.length >= 255 ? 'notesFieldTooLong' : ''}`} data-testid="notesFieldText">
-            {notesState.length}&nbsp;(255 characters max)
+            maxLength={maxLength} />
+        <span className={`notesFieldText ${notesState.length >= maxLength ? 'notesFieldTooLong' : ''}`} data-testid="notesFieldText">
+            {notesState.length}&nbsp;({maxLength} characters max)
         </span>
     </>;
 }
