@@ -4,7 +4,7 @@ pipeline {
         BRANCH_NAME_WITHOUT_UNDERSCORES = "${env.BRANCH_NAME}".replaceAll("_", "")
         NPM_ENVIRONMENT = getNpmEnvironment(BRANCH_NAME_WITHOUT_UNDERSCORES)
         MANIFEST = getManifest(BRANCH_NAME_WITHOUT_UNDERSCORES)
-        API_DEPLOY_COMMAND = getAPIDeployCommand(BRANCH_NAME_WITHOUT_UNDERSCORES)
+        API_DEPLOY_PROPS = getAPIDeployProps(BRANCH_NAME_WITHOUT_UNDERSCORES)
     }
     stages {
         stage('Build & Test') {
@@ -83,7 +83,7 @@ pipeline {
                         -Pcf.ccUser=$CI_USER \
                         -Pcf.ccPassword=$CI_PASSWORD \
                         -Pcf.ccHost=$peoplemover_pcf_cchost \
-                        -Pcf.domain=$peoplemover_pcf_domain ${env.API_DEPLOY_COMMAND}
+                        -Pcf.domain=$peoplemover_pcf_domain ${env.API_DEPLOY_PROPS} \
                         -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
                         -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                         -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
@@ -128,15 +128,14 @@ pipeline {
     }
 }
 
-def getAPIDeployCommand(branchName) {
+def getAPIDeployProps(branchName) {
     if(branchName == "master"){
         return """-PbranchNameWithoutUnderscores=Prod \
                 -Pcf.name=PeopleMover2 \
                 -Pcf.host=peoplemover2 \
                 -Pcf.environment.react.app.url=https://peoplemover2.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=true \
-                -Pcf.environment.react.app.invite_users_to_space_enabled=true \
-                """
+                -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
     }
     else if (branchName =="stage"){
         return """-PbranchNameWithoutUnderscores=Stage \
@@ -144,8 +143,7 @@ def getAPIDeployCommand(branchName) {
                 -Pcf.host=stagepeoplemover \
                 -Pcf.environment.react.app.url=https://stagepeoplemover.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=true \
-                -Pcf.environment.react.app.invite_users_to_space_enabled=true \
-                """
+                -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
     }
     else{
         return """-PbranchNameWithoutUnderscores=Branch \
@@ -153,8 +151,7 @@ def getAPIDeployCommand(branchName) {
                 -Pcf.host=$branchName \
                 -Pcf.environment.react.app.url=https://$branchName.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=false \
-                -Pcf.environment.react.app.invite_users_to_space_enabled=true \
-                """
+                -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
     }
 }
 
