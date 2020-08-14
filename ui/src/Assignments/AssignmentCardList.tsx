@@ -62,9 +62,11 @@ function AssignmentCardList({
     const getSelectedRoleFilters = (): Array<string> => getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[2].options);
     const [roleFilters, setRoleFilters] = useState<Array<string>>(getSelectedRoleFilters());
 
+    /* eslint-disable */
     useEffect(() => {
         setRoleFilters(getSelectedRoleFilters());
     }, [allGroupedTagFilterOptions]);
+    /* eslint-enable */
 
     function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
         const assignments: Array<Assignment> = product.assignments;

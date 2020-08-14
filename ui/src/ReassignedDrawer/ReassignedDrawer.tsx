@@ -44,11 +44,13 @@ function ReassignedDrawer({
     const [showDrawer, setShowDrawer] = useState(true);
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
 
+    /* eslint-disable */
     useEffect(() => {
         const reassignments = AssignmentClient.getReassignments(currentSpace.id!!, viewingDate).then( reassignmentResponse =>
             setReassignments(reassignmentResponse.data)
         );
     }, [products]);
+    /* eslint-enable */
 
     const listOfHTMLReassignments: Array<JSX.Element> = reassignments.map((reassignment: Reassignment, index: number) => (
         mapsReassignments(reassignment, index)

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import '../Modal/Form.scss';
 import RoleClient from '../Roles/RoleClient';
@@ -47,6 +47,7 @@ import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
 import NotesTextArea from "../Form/NotesTextArea";
+import {useOnLoad} from "../ReusableComponents/UseOnLoad";
 
 interface PersonFormProps {
     editing: boolean;
@@ -86,7 +87,6 @@ function PersonForm({
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
     const [roles, setRoles] = useState<Array<SpaceRole>>([]);
-    const [initialProducts, setInitialProducts] = useState<Array<Product>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
 
@@ -95,7 +95,7 @@ function PersonForm({
         return person!.spaceId;
     }
 
-    useEffect(() => {
+    useOnLoad(() => {
         async function setup() {
             const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.name);
             setRoles(rolesResponse.data);
@@ -112,7 +112,6 @@ function PersonForm({
                 setPerson(personFromAssignment);
                 const assignmentsResponse: AxiosResponse = await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate);
                 const assignments: Array<Assignment> = assignmentsResponse.data;
-                setInitialProducts(createProductsFromAssignments(assignments));
                 setSelectedProducts(createProductsFromAssignments(assignments));
             } else {
 
@@ -126,7 +125,7 @@ function PersonForm({
         }
 
         setup().then();
-    }, []);
+    });
 
     function getUnassignedProduct(): Product {
         const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
@@ -264,7 +263,8 @@ function PersonForm({
         setConfirmDeleteModal(deleteConfirmationModal);
     }
 
-    const peopleList = people.map((person, index) => <option key={index} value={person.name}>
+    // eslint-disable-next-line  jsx-a11y/accessible-emoji
+    const peopleList = people.map((person, index) => <option key={index} value={person.name} >
         👤 {person.name}</option>);
 
     function getColorFromLabel(label: string): string {
@@ -363,7 +363,7 @@ function PersonForm({
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                     <i className="fas fa-trash"/>
                     <div className="trashCanSpacer"/>
-                    <a className="obliterateLink" onClick={displayRemovePersonModal}>Delete</a>
+                    <span className="obliterateLink" onClick={displayRemovePersonModal}>Delete</span>
                 </div>)}
             </form>
             {confirmDeleteModal}

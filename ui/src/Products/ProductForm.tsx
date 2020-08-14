@@ -31,7 +31,6 @@ import {ProductTag} from '../ProductTag/ProductTag';
 import {FilterOption} from '../CommonTypes/Option';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Trait} from '../Traits/Trait';
-import {Space} from '../SpaceDashboard/Space';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';
@@ -222,8 +221,8 @@ function ProductForm({
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                     <i className="fas fa-trash"/>
                     <div className="trashCanSpacer"/>
-                    <a className="obliterateLink"
-                        onClick={displayDeleteProductModal}>Delete Product</a>
+                    <span className="obliterateLink"
+                        onClick={displayDeleteProductModal}>Delete Product</span>
                 </div>)}
             </form>
             {confirmDeleteModal}

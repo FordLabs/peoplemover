@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-import React, {useEffect} from 'react';
+import React from 'react';
 import './EditMenu.scss';
+import {useOnLoad} from "./UseOnLoad";
 
 
 export interface EditMenuOption {
@@ -34,10 +35,10 @@ function EditMenu(props: EditMenuProps) {
 
     const hiddenInputRef: any = React.useRef();
 
-    useEffect(() => {
+    useOnLoad(() => {
         const inputField = hiddenInputRef.current;
         setTimeout(() => inputField.focus());
-    }, []);
+    });
 
     function onOptionSelected(event: any, callback: any) {
         event.stopPropagation();

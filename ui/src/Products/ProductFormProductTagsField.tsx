@@ -3,7 +3,7 @@ import {Option} from '../CommonTypes/Option';
 import {ProductTag} from '../ProductTag/ProductTag';
 import {CreateNewText, CustomIndicator, CustomOption} from '../ReusableComponents/ReactSelectStyles';
 import {JSX} from '@babel/types';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {customStyles} from './ProductForm';
 import {Product} from './Product';
 import {Trait} from '../Traits/Trait';
@@ -13,6 +13,7 @@ import ProductTagClient from '../ProductTag/ProductTagClient';
 import {AxiosResponse} from 'axios';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
+import {useOnLoad} from "../ReusableComponents/UseOnLoad";
 
 interface Props {
     spaceId: number;
@@ -45,11 +46,11 @@ function ProductFormProductTagsField({
     const [typedInProductTag, setTypedInProductTag] = useState<string>('');
     const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
 
-    useEffect(() => {
+    useOnLoad(() => {
         ProductTagClient.get(currentSpace.name).then(result => setAvailableProductTags(result.data));
 
         setSelectedProductTags(currentProduct.productTags);
-    }, []);
+    });
 
     function createTagOption(label: string, id: number): Option {
         return {
