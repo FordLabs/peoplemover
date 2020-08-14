@@ -84,6 +84,11 @@ pipeline {
                         -Pcf.ccPassword=$CI_PASSWORD \
                         -Pcf.ccHost=$peoplemover_pcf_cchost \
                         -Pcf.domain=$peoplemover_pcf_domain ${env.API_DEPLOY_COMMAND}
+                        -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
+                        -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
+                        -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
+                        -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
+                        -Pcf.environment.react.app.adfs_resource=$adfs_resource \
                         """.stripIndent()
                     }
                 }
@@ -128,42 +133,27 @@ def getAPIDeployCommand(branchName) {
         return """-PbranchNameWithoutUnderscores=Prod \
                 -Pcf.name=PeopleMover2 \
                 -Pcf.host=peoplemover2 \
-                -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
-                -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                 -Pcf.environment.react.app.url=https://peoplemover2.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=true \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true \
-                -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
-                -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
-                -Pcf.environment.react.app.adfs_resource=$adfs_resource \
                 """
     }
     else if (branchName =="stage"){
         return """-PbranchNameWithoutUnderscores=Stage \
                 -Pcf.name=StagePeopleMover \
                 -Pcf.host=stagepeoplemover \
-                -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
-                -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                 -Pcf.environment.react.app.url=https://stagepeoplemover.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=true \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true \
-                -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
-                -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
-                -Pcf.environment.react.app.adfs_resource=$adfs_resource \
                 """
     }
     else{
         return """-PbranchNameWithoutUnderscores=Branch \
                 -Pcf.name=$branchName \
                 -Pcf.host=$branchName \
-                -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
-                -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
                 -Pcf.environment.react.app.url=https://$branchName.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=false \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true \
-                -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
-                -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
-                -Pcf.environment.react.app.adfs_resource=$adfs_resource \
                 """
     }
 }
