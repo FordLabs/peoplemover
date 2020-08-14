@@ -8,11 +8,13 @@
     "not ie <= 11",
     "not op_mini all"
   ],
+  "proxy": "http://localhost:8080",
   "scripts": {
     "start": "env-cmd .env.local react-scripts start",
     "start:noauth": "env-cmd .env.localnoauth react-scripts start",
     "test:ci": "CI=true react-scripts test --runInBand",
     "test:unit": "react-scripts test",
+    "test:unit:ci": "react-scripts test --runInBand",
     "test:unit:coverage": "CI=true react-scripts test --coverage --testResultsProcessor jest-sonar-reporter",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
@@ -20,6 +22,7 @@
     "test:e2e": "npm run e2e-setup cy:open",
     "test:e2e:ci": "npm run e2e-setup cy:run",
     "test": "npm run test:unit",
+    "test:ci": "npm run test:unit:ci",
     "coverage": "npm run test:unit:coverage",
     "eject": "react-scripts eject",
     "build": "react-scripts build",

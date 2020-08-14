@@ -1,7 +1,15 @@
+---
+name: Feature request
+about: Suggest an idea for this project
+title: ''
+labels: ''
+assignees: ''
+
+---
 
 # Feature Request
 
-**As a** description of the the user of this feature
+**As a** description of the user of this feature
 **I would** description of the feature capabilities
 **so that** justification for the feature
 

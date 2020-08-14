@@ -130,7 +130,7 @@ class AuthControllerE2ETest {
         claims["sub"] = "USER_ID"
         claims["expiresAt"] = Instant.now()
         claims["iss"] = "https://localhost"
-        val fakeJwt = Jwt("access_token", Instant.now(), Instant.now(), headers, claims)
+        val fakeJwt = Jwt("access_token", Instant.MIN, Instant.now(), headers, claims)
 
 
         `when`(jwtDecoder.decode(request.accessToken)).thenReturn(fakeJwt)

@@ -29,7 +29,18 @@ function AccountDropdown({
     const [redirect, setRedirect] = useState<JSX.Element>();
 
     function showsDropdown(): boolean {
-        setDropdownFlag(!dropdownFlag);
+        if(dropdownFlag) {
+            hidesDropdown();
+        } else {
+            setDropdownFlag(!dropdownFlag);
+            document.addEventListener('click', hidesDropdown, false);
+        }
+        return dropdownFlag;
+    }
+
+    function hidesDropdown(): boolean {
+        setDropdownFlag(false);
+        document.removeEventListener('click', hidesDropdown);
         return dropdownFlag;
     }
 
@@ -44,13 +55,14 @@ function AccountDropdown({
         return redirect;
     }
 
+
+    // eslint-disable-next-line @typescript-eslint/camelcase
     return (
         <button data-testid="editContributorsModal" className={'editContributorsModal'} onClick={showsDropdown}>
             <i className="fas fa-user" data-testid={'userIcon'}/>
             <i className="fas fa-caret-down drawerCaret"/>
 
             {dropdownFlag && <div className={'dropdown-container'}>
-                // eslint-disable-next-line @typescript-eslint/camelcase
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
                     <div data-testid="invite-members" className="account-dropdown-options"
                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
