@@ -136,7 +136,7 @@ function ProductForm({
             },
             archiveCallback: archiveProduct,
             isArchived: currentProduct.archived,
-            warningMessage: 'Deleting this product will permanently remove it from this board.',
+            warningMessage: 'Deleting this product will permanently remove it from this space.',
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);
