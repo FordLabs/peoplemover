@@ -33,9 +33,8 @@ describe('the assignment client', () => {
         const date = new Date(2019, 1, 10);
 
         Axios.get = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = `testUrl/person/${personId}/assignments/date/2019-02-10`;
+        const expectedUrl = `/api/person/${personId}/assignments/date/2019-02-10`;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };
@@ -61,9 +60,8 @@ describe('the assignment client', () => {
         };
 
         Axios.post = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = 'testUrl/assignment/create';
+        const expectedUrl = '/api/assignment/create';
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };
@@ -77,9 +75,8 @@ describe('the assignment client', () => {
         const spaceId = 10;
 
         Axios.get = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = `testUrl/assignment/dates/${spaceId}`;
+        const expectedUrl = `/api/assignment/dates/${spaceId}`;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };
@@ -91,11 +88,10 @@ describe('the assignment client', () => {
 
     it('should delete assignment given assignment', async () => {
         Axios.delete = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
         const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
 
-        const expectedUrl = 'testUrl/assignment/delete';
+        const expectedUrl = '/api/assignment/delete';
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
             data: {'assignmentToDelete': expectedAssignmentToDelete},
@@ -108,9 +104,8 @@ describe('the assignment client', () => {
 
     it('should delete assignment given person for a specific date', async () => {
         Axios.delete = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = 'testUrl/assignment/delete/' + TestUtils.originDateString;
+        const expectedUrl = '/api/assignment/delete/' + TestUtils.originDateString;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
             data: TestUtils.person1,
@@ -122,14 +117,13 @@ describe('the assignment client', () => {
 
     it('should get reassignments given assignment', async () => {
         Axios.get = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
         const spaceId = 1;
         const requestedDate = new Date(2020, 5, 20);
 
         const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
 
-        const expectedUrl = `testUrl/reassignment/${spaceId}/2020-06-20`;
+        const expectedUrl = `/api/reassignment/${spaceId}/2020-06-20`;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };

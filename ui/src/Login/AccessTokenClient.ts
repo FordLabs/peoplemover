@@ -19,13 +19,13 @@ import Axios, {AxiosResponse} from 'axios';
 
 export class AccessTokenClient {
     static async validateAccessToken(accessToken: string): Promise<AxiosResponse> {
-        return Axios.post(`${process.env.REACT_APP_URL}access_token/validate`, {
+        return Axios.post(`/api/access_token/validate`, {
             accessToken: accessToken,
         });
     }
 
     static async userCanAccessSpace(accessToken: string, spaceName: string): Promise<AxiosResponse> {
-        return Axios.post(`${process.env.REACT_APP_URL}access_token/authenticate`, {
+        return Axios.post(`/api/access_token/authenticate`, {
             accessToken: accessToken,
             spaceName: spaceName,
         });

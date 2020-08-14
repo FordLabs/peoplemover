@@ -49,17 +49,18 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
         cy.get('@productForm').find('[id=productTags]').focus().type(tag + '{enter}', {force: true});
     });
 
-    const todaysDate = Cypress.moment().format('yyyy-MM-DD');
-    cy.get('[data-testid=productFormStartDateField]')
+    const todaysDate = Cypress.moment().format('MM/DD/yyyy');
+    cy.get('#start')
         .should('have.value', todaysDate)
         .focus()
         .type(startDate)
         .should('have.value', startDate);
-    cy.get('[data-testid=productFormNextPhaseDateField]')
+    cy.get('#end')
         .should('have.value', '')
         .focus()
         .type(nextPhaseDate)
         .should('have.value', nextPhaseDate);
+    cy.get('[data-testid=modalPopupContainer]').click();
 
     cy.get('[data-testid=productFormNotesField]').focus().type(notes).should('have.value', notes);
 };

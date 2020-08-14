@@ -61,7 +61,7 @@ describe('Roles', () => {
         cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')
             .then(($container) => {
                 cy.get($container).find('[data-testid=productPeopleContainer]').children().as('peopleCards');
-                cy.get('@peopleCards').should('have.length', 2);
+                cy.get('@peopleCards').should('have.length', 3);
                 cy.get('@peopleCards').eq(0).should('contain', 'Jane Smith');
                 cy.get('@peopleCards').eq(1).should('contain', 'Bob Barker');
 

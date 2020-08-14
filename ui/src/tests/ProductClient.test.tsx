@@ -24,9 +24,8 @@ describe('Product Client', function() {
         const spaceId = 1;
         const date = '2019-01-10';
         Axios.get = jest.fn();
-        process.env.REACT_APP_URL = 'testUrl/';
 
-        const expectedUrl = `${process.env.REACT_APP_URL}product/${spaceId}/${date}`;
+        const expectedUrl = `/api/product/${spaceId}/${date}`;
         const expectedConfig = {
             headers: { 'Content-Type': 'application/json' },
         };

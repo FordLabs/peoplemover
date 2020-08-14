@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {RenderResult, wait} from '@testing-library/react';
+import {act, RenderResult, wait} from '@testing-library/react';
 import SpaceButtons from '../Header/SpaceButtons';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {PreloadedState} from 'redux';
@@ -31,18 +31,18 @@ describe('SpaceButtons', () => {
         TestUtils.mockClientCalls();
     });
 
-
     it('should not show invite users to space button when the feature flag is toggled off', async () => {
         // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
 
         let result: RenderResult;
 
-        await wait(() => {
-            result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
+        await act( async () => {
+            await wait(() => {
+                result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
+                result.getByTestId('editContributorsModal').click();
+            });
         });
-
-        result.getByTestId('editContributorsModal').click();
 
         try {
             expect(result.getByTestId('invite-members'));
@@ -59,12 +59,12 @@ describe('SpaceButtons', () => {
 
         let result: RenderResult;
 
-        await wait(() => {
-            result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
+        await act (async ( ) => {
+            await wait(() => {
+                result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
+            });
+            result.getByTestId('editContributorsModal').click();
         });
-
-        result.getByTestId('editContributorsModal').click();
-
         expect(result.getByTestId('invite-members')).not.toBeNull();
     });
 

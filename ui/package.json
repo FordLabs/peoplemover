@@ -2,6 +2,33 @@
   "name": "peoplemover",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "proxy": "http://localhost:8080",
+  "scripts": {
+    "start": "env-cmd .env.local react-scripts start",
+    "start:noauth": "env-cmd .env.localnoauth react-scripts start",
+    "test:unit": "react-scripts test",
+    "test:unit:ci": "react-scripts test --runInBand",
+    "test:unit:coverage": "CI=true react-scripts test --coverage --testResultsProcessor jest-sonar-reporter",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "e2e-setup": "BROWSER=none start-server-and-test start:noauth 3000",
+    "test:e2e": "npm run e2e-setup cy:open",
+    "test:e2e:ci": "npm run e2e-setup cy:run",
+    "test": "npm run test:unit",
+    "test:ci": "npm run test:unit:ci",
+    "coverage": "npm run test:unit:coverage",
+    "eject": "react-scripts eject",
+    "build": "react-scripts build",
+    "lint": "eslint src/**/*.ts src/**/*.tsx",
+    "lint:fix": "eslint --fix src/**/*.ts src/**/*.tsx",
+    "analyze": "node analyze.js"
+  },
   "dependencies": {
     "@types/react-text-mask": "^5.4.6",
     "@types/redux-mock-store": "^1.0.2",
@@ -25,34 +52,6 @@
     "redux-thunk": "^2.3.0",
     "universal-cookie": "^4.0.3"
   },
-  "scripts": {
-    "start": "env-cmd .env.local react-scripts start",
-    "start:noauth": "env-cmd .env.localnoauth react-scripts start",
-    "test:unit": "react-scripts test",
-    "test:unit:coverage": "CI=true react-scripts test --coverage --testResultsProcessor jest-sonar-reporter",
-    "cy:open": "cypress open",
-    "cy:run": "cypress run",
-    "e2e-setup": "BROWSER=none start-server-and-test start:noauth 3000",
-    "test:e2e": "npm run e2e-setup cy:open",
-    "test:e2e:ci": "npm run e2e-setup cy:run",
-    "test": "npm run test:unit",
-    "coverage": "npm run test:unit:coverage",
-    "eject": "react-scripts eject",
-    "build": "react-scripts build",
-    "buildfeature": "env-cmd .env.buildfeature react-scripts build",
-    "lint": "eslint src/**/*.ts src/**/*.tsx",
-    "lint-fix": "eslint --fix src/**/*.ts src/**/*.tsx",
-    "analyze": "node analyze.js"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "devDependencies": {
     "@babel/traverse": "^7.8.6",
     "@babel/types": "^7.8.7",
@@ -90,7 +89,6 @@
     "eslint-plugin-react-hooks": "^2.5.0",
     "eslint-plugin-react-redux": "^3.0.3",
     "eslint-plugin-standard": "^4.0.1",
-    "husky": "^1.3.1",
     "jest-dom": "^3.1.3",
     "jest-sonar-reporter": "^2.0.0",
     "node-sass": "^4.13.1",
@@ -102,28 +100,12 @@
     "start-server-and-test": "1.10.6",
     "typescript": "^3.8.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint && CI=true npm test"
-    }
-  },
-  "jest": {
-    "coverageReporters": [
-      "lcov",
-      "text"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}",
-      "!**/node_modules/**",
-      "!build/**"
-    ]
+  "optionalDependencies": {
+    "fsevents": "^2.1.3"
   },
   "jestSonar": {
     "reportPath": "reports",
     "reportFile": "test-report.xml",
     "indent": 4
-  },
-  "optionalDependencies": {
-    "fsevents": "^2.1.3"
   }
 }

@@ -23,26 +23,26 @@ import {Person} from '../People/Person';
 
 class AssignmentClient {
     static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {
-        return Axios.post(`${process.env.REACT_APP_URL}assignment/create`, assignment,
+        return Axios.post(`/api/assignment/create`, assignment,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }
 
     static async getAssignmentsUsingPersonIdAndDate(personId: number, date: Date): Promise<AxiosResponse> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
-        return Axios.get(process.env.REACT_APP_URL + 'person/' + personId + '/assignments/date/' + dateAsString,
+        return Axios.get('/api/person/' + personId + '/assignments/date/' + dateAsString,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }
 
     static async getAssignmentEffectiveDates(spaceId: number): Promise<AxiosResponse> {
-        return Axios.get(process.env.REACT_APP_URL + 'assignment/dates/' + spaceId,
+        return Axios.get('/api/assignment/dates/' + spaceId,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }
 
     static async deleteAssignment(assignmentToDelete: Assignment): Promise<AxiosResponse> {
-        return Axios.delete(`${process.env.REACT_APP_URL}assignment/delete`,
+        return Axios.delete(`/api/assignment/delete`,
             {
                 headers: { 'Content-Type': 'application/json'},
                 data: {'assignmentToDelete': assignmentToDelete},
@@ -52,7 +52,7 @@ class AssignmentClient {
 
     static async deleteAssignmentForDate(date: Date, person: Person): Promise<AxiosResponse> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
-        return Axios.delete(`${process.env.REACT_APP_URL}assignment/delete/` + dateAsString,
+        return Axios.delete(`/api/assignment/delete/` + dateAsString,
             {
                 headers: { 'Content-Type': 'application/json'},
                 data: person,
@@ -62,7 +62,7 @@ class AssignmentClient {
 
     static async getReassignments(spaceId: number, requestedDate: Date): Promise<AxiosResponse> {
         const formattedDate = moment(requestedDate).format('YYYY-MM-DD');
-        return Axios.get(`${process.env.REACT_APP_URL}reassignment/` + spaceId + '/' + formattedDate,
+        return Axios.get(`/api/reassignment/` + spaceId + '/' + formattedDate,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }

@@ -2,7 +2,6 @@ pipeline {
     agent any
     environment {
         BRANCH_NAME_WITHOUT_UNDERSCORES = "${env.BRANCH_NAME}".replaceAll("_", "")
-        NPM_ENVIRONMENT = getNpmEnvironment(BRANCH_NAME_WITHOUT_UNDERSCORES)
         MANIFEST = getManifest(BRANCH_NAME_WITHOUT_UNDERSCORES)
     }
     tools {
@@ -31,7 +30,7 @@ pipeline {
                 stage('UI Test') {
                     steps {
                         dir("ui") {
-                            sh "CI=true npm run test"
+                            sh "CI=true npm run test:ci"
                         }
                     }
                 }
@@ -51,7 +50,7 @@ pipeline {
                 stage('UI Build') {
                     steps {
                         dir("ui") {
-                            sh "${env.NPM_ENVIRONMENT} npm run build"
+                            sh "npm run build"
                         }
                     }
                 }
@@ -73,15 +72,14 @@ pipeline {
                                 sh 'echo Pushing to Cloud Foundry'
                                 sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Stage \
-                                        -Pcf.name=StagePeopleMover \
-                                        -Pcf.host=stagepeoplemover \
+                                        -Pcf.name=StagePeopleMoverAPI \
+                                        -Pcf.host=stagepeoplemoverui \
                                         -Pcf.ccHost=$peoplemover_pcf_cchost \
                                         -Pcf.domain=$peoplemover_pcf_domain \
                                         -Pcf.ccUser=$JENKINS_USER \
                                         -Pcf.ccPassword=$JENKINS_PASSWORD \
                                         -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
                                         -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
-                                        -Pcf.environment.react.app.url=https://stagepeoplemover.$peoplemover_pcf_org \
                                         -Pcf.environment.react.app.auth_enabled=true \
                                         -Pcf.environment.react.app.invite_users_to_space_enabled=true \
                                         -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
@@ -93,7 +91,7 @@ pipeline {
                     }
                 }
                 stage('API Deploy Prod') {
-                        when {
+                    when {
                         branch 'master'
                     }
                     steps {
@@ -105,15 +103,14 @@ pipeline {
                                 sh 'echo Pushing to Cloud Foundry'
                                 sh """./gradlew cf-push-blue-green \
                                         -PbranchNameWithoutUnderscores=Prod \
-                                        -Pcf.name=PeopleMover2 \
-                                        -Pcf.host=peoplemover2 \
+                                        -Pcf.name=PeopleMover2API \
+                                        -Pcf.host=peoplemoverui2 \
                                         -Pcf.ccUser=$JENKINS_USER \
                                         -Pcf.ccPassword=$JENKINS_PASSWORD \
                                         -Pcf.ccHost=$peoplemover_pcf_cchost \
                                         -Pcf.domain=$peoplemover_pcf_domain \
                                         -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
                                         -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
-                                        -Pcf.environment.react.app.url=https://peoplemover2.$peoplemover_pcf_org \
                                         -Pcf.environment.react.app.auth_enabled=true \
                                         -Pcf.environment.react.app.invite_users_to_space_enabled=true \
                                         -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
@@ -127,13 +124,6 @@ pipeline {
 
 
                 stage('UI Deploy') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                            branch 'stage'
-                            branch 'dev'
-                        }
-                    }
                     steps {
                         dir("ui") {
                             pushToCloudFoundry(
@@ -150,16 +140,6 @@ pipeline {
                 }
             }
         }
-    }
-}
-
-def getNpmEnvironment(branchName) {
-    if (branchName == "dev" || branchName == "stage") {
-        return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org""".stripIndent()
-    } else if (branchName == "master") {
-        return """REACT_APP_URL=https://peoplemover2.$peoplemover_pcf_org""".stripIndent()
-    } else {
-        return """REACT_APP_URL=https://$branchName.$peoplemover_pcf_org""".stripIndent()
     }
 }
 

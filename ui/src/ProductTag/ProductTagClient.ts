@@ -26,26 +26,26 @@ class ProductTagClient implements TraitClient {
 
     async get(spaceName: string): Promise<AxiosResponse<Array<ProductTag>>> {
         return Axios.get(
-            `${process.env.REACT_APP_URL}producttag/${spaceName}`,
+            `/api/producttag/${spaceName}`,
             {headers: {'Content-Type': 'application/json'}}
         );
     }
 
     async add(productTagAddRequest: TraitAddRequest, spaceName: string ): Promise<AxiosResponse> {
-        return Axios.post(`${process.env.REACT_APP_URL}producttag/${spaceName}`,
+        return Axios.post(`/api/producttag/${spaceName}`,
             productTagAddRequest
         );
     }
 
     async edit(productTagEditRequest: TraitEditRequest, spaceName: string): Promise<AxiosResponse<ProductTag>> {
-        return Axios.put(`${process.env.REACT_APP_URL}producttag/${spaceName}`,
+        return Axios.put(`/api/producttag/${spaceName}`,
             productTagEditRequest
         );
     }
 
     async delete(id: number): Promise<AxiosResponse> {
         const spaceToken = window.location.pathname.substr(1);
-        return Axios.delete(`${process.env.REACT_APP_URL}producttag/${spaceToken}/${id}`);
+        return Axios.delete(`/api/producttag/${spaceToken}/${id}`);
     }
 }
 export default new ProductTagClient();

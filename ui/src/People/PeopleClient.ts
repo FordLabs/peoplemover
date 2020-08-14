@@ -21,7 +21,7 @@ import {Person} from './Person';
 class PeopleClient {
     static async getAllPeopleInSpace(): Promise<AxiosResponse> {
         return Axios.get(
-            `${process.env.REACT_APP_URL}person/${this.getSpaceName()}`,
+            `/api/person/${this.getSpaceName()}`,
             {headers: {'Content-Type': 'application/json'}}
         );
     }
@@ -32,18 +32,18 @@ class PeopleClient {
 
     static async createPersonForSpace(person: Person): Promise<AxiosResponse> {
         return Axios.post(
-            `${process.env.REACT_APP_URL}person/${this.getSpaceName()}`,
+            `/api/person/${this.getSpaceName()}`,
             person
         );
     }
 
     static async updatePerson(person: Person): Promise<AxiosResponse> {
-        return Axios.put(`${process.env.REACT_APP_URL}person`, person
+        return Axios.put(`/api/person`, person
         );
     }
 
     static async removePerson(personId: number): Promise<AxiosResponse> {
-        return Axios.delete(`${process.env.REACT_APP_URL}person/${personId}`);
+        return Axios.delete(`/api/person/${personId}`);
     }
 }
 

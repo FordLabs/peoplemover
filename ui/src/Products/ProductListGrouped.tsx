@@ -141,10 +141,13 @@ function GroupedByList({
                     </span>
                 );
             })}
-            <ProductGroup
-                tagName={`No ${groupedListData.traitTitle}`}
-                useGrayBackground
-                productFilterFunction={groupedListData.filterByNoTraitFunction}/>
+            {products.length === 0 ?
+                <NewProductButton /> :
+                <ProductGroup
+                    tagName={`No ${groupedListData.traitTitle}`}
+                    useGrayBackground
+                    productFilterFunction={groupedListData.filterByNoTraitFunction}/>
+            }
         </div>
     );
 }

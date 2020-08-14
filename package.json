@@ -1,0 +1,25 @@
+{
+  "name": "peoplemover",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FordLabs/PeopleMover.git"
+  },
+  "scripts": {
+    "test:ui": "cd ui && npm run lint && CI=true npm test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test:ui && .git/hooks/pre-commit-guet",
+      "commit-msg": ".git/hooks/commit-msg-guet",
+      "post-commit": ".git/hooks/post-commit-guet"
+    }
+  },
+  "devDependencies": {
+    "husky": "^4.2.5"
+  }
+}

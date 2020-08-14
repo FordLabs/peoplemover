@@ -26,7 +26,7 @@ class ReportClient {
     static async getReportsWithNames(spaceName: string, date: Date): Promise<void> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
         return Axios.get(
-            process.env.REACT_APP_URL + `reportgenerator/${spaceName}/${dateAsString}`,
+            `/api/reportgenerator/${spaceName}/${dateAsString}`,
             {headers: { 'Content-Type': 'application/json'}}
         ).then( response => {
             const jsonAsCsv = ReportClient.convertToCSV(response.data);
