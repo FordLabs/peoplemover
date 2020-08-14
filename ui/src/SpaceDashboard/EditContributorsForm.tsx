@@ -41,7 +41,7 @@ function EditContributorsForm({
 
     useEffect(() => {
         setSpaceName(pathname.substring(1, pathname.length));
-    });
+    }, [pathname]);
 
     async function inviteUsers(): Promise<void> {
         await SpaceClient.inviteUsersToSpace(spaceName, invitedUserEmails);

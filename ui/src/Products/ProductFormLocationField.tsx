@@ -43,7 +43,7 @@ function ProductFormLocationField({
             .then(result => {
                 setAvailableLocations(result.data);
             });
-    }, []);
+    }, [currentSpace.name]);
 
     function optionToSpaceLocation(option: Option): SpaceLocation {
         return {

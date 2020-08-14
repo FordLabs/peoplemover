@@ -77,33 +77,37 @@ function PeopleMover({
         return Boolean(products && products.length > 0 && currentSpace);
     }
 
+    /* eslint-disable */
     useEffect(() => {
+        async function RenderPage(): Promise<void> {
+            if (currentModal.modal === null) {
+                try {
+                    const spaceName = window.location.pathname.replace('/', '');
+                    await SpaceClient.getSpaceFromName(spaceName)
+                        .then(response => {
+                            setCurrentSpace(response.data);
+                        });
+                    await fetchProducts();
+                    await fetchProductTags();
+                    await fetchLocations();
+                    const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;
+
+                    setPeople(peopleInSpace);
+                } catch (err) {
+                    setRedirect(<Redirect to="/error/404"/>);
+                }
+            }
+        }
+
         RenderPage().then();
     }, [currentModal]);
+    /* eslint-enable */
 
+    /* eslint-disable */
     useEffect(() => {
         if (hasProducts()) fetchProducts();
     }, [viewingDate]);
-
-    async function RenderPage(): Promise<void> {
-        if (currentModal.modal === null) {
-            try {
-                const spaceName = window.location.pathname.replace('/', '');
-                await SpaceClient.getSpaceFromName(spaceName)
-                    .then(response => {
-                        setCurrentSpace(response.data);
-                    });
-                await fetchProducts();
-                await fetchProductTags();
-                await fetchLocations();
-                const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;
-
-                setPeople(peopleInSpace);
-            } catch (err) {
-                setRedirect(<Redirect to="/error/404"/>);
-            }
-        }
-    }
+    /* eslint-enable */
 
     if (redirect) {
         return redirect;

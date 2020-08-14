@@ -43,13 +43,17 @@ function ProductSortBy({
         {label:'Location', value:'location'},
         {label:'Product Tag', value:'product-tag'},
     ];
+
+    /* eslint-disable */
     useEffect( () => {
+        function stringToOption(value: string): SortByOption {
+            return sortByOptions.filter(option => option.value === value)[0];
+        }
+
         setOriginalSortOption(stringToOption(productSortBy));
     }, [productSortBy]);
+    /* eslint-enable */
 
-    function stringToOption(value: string): SortByOption {
-        return sortByOptions.filter(option => option.value === value)[0];
-    }
     return (
         <React.Fragment>
             <label htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>

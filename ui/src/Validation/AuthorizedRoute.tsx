@@ -16,15 +16,16 @@
  */
 
 import {Redirect, Route, RouteProps} from 'react-router';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
+import {useOnLoad} from "../ReusableComponents/UseOnLoad";
 
 export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
-    useEffect(() => {
+    useOnLoad(() => {
         if (!window.runConfig.auth_enabled) {
             setRenderedElement(<>{children}</>);
         } else {
@@ -37,7 +38,7 @@ export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Ele
                 .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
                 .catch(() => setRenderedElement(<Redirect to={'/user/login'}/>));
         }
-    }, []);
+    });
 
     return <>{renderedElement}</>;
 }

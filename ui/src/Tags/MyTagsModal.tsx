@@ -37,7 +37,7 @@ function MyTagsModal({setShouldShowConfirmCloseModal}: MyTagsModalProps): JSX.El
             return (): void => setShouldShowConfirmCloseModal(false);
         }
         return noop;
-    }, [locationSectionOpen, productTagSectionOpen]);
+    }, [locationSectionOpen, productTagSectionOpen, setShouldShowConfirmCloseModal]);
 
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">

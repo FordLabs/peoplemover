@@ -21,6 +21,7 @@ import './FilterInput.scss';
 import {ThemeApplier} from './ThemeApplier';
 import CheckIcon from '../Application/Assets/checkIcon.svg';
 import {Option} from '../CommonTypes/Option';
+import {useOnLoad} from "./UseOnLoad";
 
 export const reactSelectStyles = {
     control: (provided: CSSProperties): CSSProperties => ({
@@ -274,7 +275,7 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
         if (props.selectProps.getColorFromLabel && colorBadgeRef.current) {
             colorBadgeRef.current.style.backgroundColor = props.selectProps.getColorFromLabel(label);
         }
-    }, [label]);
+    }, [label, props.selectProps]);
 
     return (
         <div className="customControlContainer">
@@ -297,11 +298,11 @@ export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Elem
     const {value} = propsForTheDiv;
     const colorBadgeRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+    useOnLoad(() => {
         if (selectProps.getColorFromLabel && colorBadgeRef.current) {
             ThemeApplier.setBackgroundColorOnElement(colorBadgeRef.current, selectProps.getColorFromLabel(value));
         }
-    }, []);
+    });
 
     return (
         <components.Option {...allTheProps}>
