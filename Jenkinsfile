@@ -131,24 +131,24 @@ pipeline {
 def getAPIDeployProps(branchName) {
     if(branchName == "master"){
         return """-PbranchNameWithoutUnderscores=Prod \
-                -Pcf.name=PeopleMover2 \
-                -Pcf.host=peoplemover2 \
+                -Pcf.name=PeopleMoverAPI2 \
+                -Pcf.host=peoplemoverui2 \
                 -Pcf.environment.react.app.url=https://peoplemover2.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=true \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
     }
     else if (branchName =="stage"){
         return """-PbranchNameWithoutUnderscores=Stage \
-                -Pcf.name=StagePeopleMover \
-                -Pcf.host=stagepeoplemover \
+                -Pcf.name=StagePeopleMoverAPI \
+                -Pcf.host=stagepeoplemoverui \
                 -Pcf.environment.react.app.url=https://stagepeoplemover.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=true \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
     }
     else{
         return """-PbranchNameWithoutUnderscores=Branch \
-                -Pcf.name=$branchName \
-                -Pcf.host=$branchName \
+                -Pcf.name=${branchName}API \
+                -Pcf.host=${branchName}ui \
                 -Pcf.environment.react.app.url=https://$branchName.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=false \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
