@@ -42,7 +42,7 @@ function ConfirmationModal({
     warningMessage,
     submitButtonLabel,
 }: ConfirmationModalProps): JSX.Element {
-    const isArchivable = canArchive && !isArchived;
+    const isArchivable = (): boolean => Boolean(canArchive && !isArchived);
 
     const ArchiveMessage = (): JSX.Element => (
         <div><br/>You can also choose to archive this product to be able to access it later.</div>
@@ -62,7 +62,7 @@ function ConfirmationModal({
     
     const ArchiveButton = (): JSX.Element => (
         <button
-            className="formButton confirmationModalDelete"
+            className="formButton archiveFormButton"
             data-testid="confirmationModalArchive"
             onClick={archiveCallback}>
             Archive
@@ -89,15 +89,15 @@ function ConfirmationModal({
                     </div>
                     <div className="confirmationModalContent">
                         <div>{warningMessage}</div>
-                        {(isArchivable) && <ArchiveMessage />}
+                        {(isArchivable()) && <ArchiveMessage />}
                         {(confirmClose) && <CloseConfirmationMessage />}
                     </div>
                     <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${canArchive ? 'archivable' : ''}`}>
-                        <CancelButton />
-                        <div className={`archiveAndDeleteContainer ${isArchivable ? 'archivable' : ''}`}>
-                            {isArchivable && <ArchiveButton />}
-                            <DeleteButton />
+                        <div className={`cancelAndArchiveContainer ${isArchivable() ? 'archivable' : ''}`}>
+                            <CancelButton />
+                            {isArchivable() && <ArchiveButton />}
                         </div>
+                        <DeleteButton />
                     </div>
                 </div>
             </div>

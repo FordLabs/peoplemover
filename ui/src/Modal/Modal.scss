@@ -89,7 +89,7 @@
     flex-grow:0;
 }
 
-.yesNoButtons.confirmationModalControls{
+.yesNoButtons.confirmationModalControls {
     padding: 0 52px;
 }
 
@@ -97,14 +97,14 @@
     margin-top: 32px;
 }
 
-.archiveAndDeleteContainer {
-    justify-content: flex-end;
+.cancelAndArchiveContainer {
+    justify-content: flex-start;
 }
 
-.archiveAndDeleteContainer.archivable {
+.cancelAndArchiveContainer.archivable {
     display: flex;
     flex-direction: row;
-    min-width: 242px;
+    min-width: 218px;
     justify-content: space-between;
 }
 
