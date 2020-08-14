@@ -39,6 +39,7 @@
     "coverage": "npm run test:unit:coverage",
     "eject": "react-scripts eject",
     "build": "react-scripts build",
+    "buildfeature": "env-cmd .env.buildfeature react-scripts build",
     "lint": "eslint src/**/*.ts src/**/*.tsx",
     "lint-fix": "eslint --fix src/**/*.ts src/**/*.tsx",
     "analyze": "node analyze.js"

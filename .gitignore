@@ -5,11 +5,12 @@
 application-local.properties
 node_modules/
 
-.env.local
-.env.development.local
-.env.test.local
-.env.stage.local
-.env.production.local
+ui/.env.local
+ui/.env.development.local
+ui/.env.test.local
+ui/.env.stage.local
+ui/.env.production.local
+ui/.env.buildfeature
 
 ### STS ###
 .apt_generated
