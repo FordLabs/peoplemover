@@ -83,8 +83,7 @@ pipeline {
                         -Pcf.ccUser=$CI_USER \
                         -Pcf.ccPassword=$CI_PASSWORD \
                         -Pcf.ccHost=$peoplemover_pcf_cchost \
-                        -Pcf.domain=$peoplemover_pcf_domain \
-                        ${API_DEPLOY_COMMAND}
+                        -Pcf.domain=$peoplemover_pcf_domain ${env.API_DEPLOY_COMMAND}
                         """.stripIndent()
                     }
                 }
@@ -126,8 +125,7 @@ pipeline {
 
 def getAPIDeployCommand(branchName) {
     if(branchName == "master"){
-        return """
-                -PbranchNameWithoutUnderscores=Prod \
+        return """-PbranchNameWithoutUnderscores=Prod \
                 -Pcf.name=PeopleMover2 \
                 -Pcf.host=peoplemover2 \
                 -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
@@ -141,8 +139,7 @@ def getAPIDeployCommand(branchName) {
                 """
     }
     else if (branchName =="stage"){
-        return """
-                -PbranchNameWithoutUnderscores=Stage \
+        return """-PbranchNameWithoutUnderscores=Stage \
                 -Pcf.name=StagePeopleMover \
                 -Pcf.host=stagepeoplemover \
                 -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
@@ -156,13 +153,12 @@ def getAPIDeployCommand(branchName) {
                 """
     }
     else{
-        return """
-                -PbranchNameWithoutUnderscores=Branch \
-                -Pcf.name=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
-                -Pcf.host=${env.BRANCH_NAME_WITHOUT_UNDERSCORES} \
+        return """-PbranchNameWithoutUnderscores=Branch \
+                -Pcf.name=$branchName \
+                -Pcf.host=$branchName \
                 -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
                 -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
-                -Pcf.environment.react.app.url=https://${env.BRANCH_NAME_WITHOUT_UNDERSCORES}.$peoplemover_pcf_org \
+                -Pcf.environment.react.app.url=https://$branchName.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=false \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true \
                 -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
