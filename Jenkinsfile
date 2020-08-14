@@ -112,7 +112,7 @@ pipeline {
                         """.stripIndent()
                         sh 'echo Pushing to Cloud Foundry'
                         sh """cf push \
-                            ${env.BRANCH_NAME}UI \
+                            ${env.BRANCH_NAME_WITHOUT_UNDERSCORES}UI \
                             -f ${env.MANIFEST} \
 
                         """.stripIndent()
