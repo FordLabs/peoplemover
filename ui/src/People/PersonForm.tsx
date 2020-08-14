@@ -46,6 +46,7 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
+import NotesTextArea from "../Form/NotesTextArea";
 
 interface PersonFormProps {
     editing: boolean;
@@ -88,7 +89,6 @@ function PersonForm({
     const [initialProducts, setInitialProducts] = useState<Array<Product>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
-    const [notesFieldLength, setNotesFieldLength] = useState<number>(assignment && assignment.person && assignment.person.notes ? assignment.person.notes.length : 0);
 
     function getSpaceObjectFromPersonName(name: string): number {
         const person: Person | undefined = people.find(x => x.name === name);
@@ -275,9 +275,8 @@ function PersonForm({
         return '';
     }
 
-    function notesChanged(e: React.ChangeEvent<HTMLTextAreaElement>): void {
-        updatePersonField('notes', e.target.value);
-        setNotesFieldLength(e.target.value.length);
+    function notesChanged(notes: string): void {
+        updatePersonField('notes', notes);
     }
 
     function getSelectables(): Array<Product> {
@@ -351,24 +350,7 @@ function PersonForm({
                     />
                 </div>
                 <div className="formItem">
-                    <label className="formItemLabel" htmlFor="notes">Notes</label>
-                    <textarea className="formInput formTextInput notes"
-                        data-testid="personFormNotesToField"
-                        id="notes"
-                        name="notes"
-                        value={person.notes ? person.notes : ''}
-                        onChange={notesChanged}
-                        rows={4}
-                        cols={25}
-                        maxLength={255}>
-                        {person.notes}
-                    </textarea>
-                    <span className="notesFieldText" data-testid="notesFieldText">
-                        <span
-                            className={notesFieldLength >= 255 ? 'notesFieldTooLong' : ''}>
-                            {notesFieldLength}&nbsp;(255 characters max)</span>
-
-                    </span>
+                    <NotesTextArea notes={person.notes} callBack={notesChanged}/>
                 </div>
                 <div className="yesNoButtons">
                     <input className="formButton cancelFormButton" onClick={closeModal} type="button" value="Cancel" />
@@ -376,7 +358,6 @@ function PersonForm({
                         data-testid="personFormSubmitButton"
                         onClick={handleSubmit}
                         type="button"
-                        disabled={notesFieldLength > 500}
                         value={editing ? 'Save' : 'Create'}/>
                 </div>
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
