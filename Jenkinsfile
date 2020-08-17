@@ -5,6 +5,7 @@ pipeline {
         NPM_ENVIRONMENT = getNpmEnvironment(BRANCH_NAME_WITHOUT_UNDERSCORES)
         MANIFEST = getManifest(BRANCH_NAME_WITHOUT_UNDERSCORES)
         API_DEPLOY_PROPS = getAPIDeployProps(BRANCH_NAME_WITHOUT_UNDERSCORES)
+        UI_APP_NAME = getUIAppName(BRANCH_NAME_WITHOUT_UNDERSCORES)
     }
     stages {
         stage('Build & Test') {
@@ -117,9 +118,7 @@ pipeline {
                         """.stripIndent()
                         sh 'echo Pushing to Cloud Foundry'
                         sh """cf push \
-                            ${env.BRANCH_NAME_WITHOUT_UNDERSCORES}UI \
-                            -f ${env.MANIFEST} \
-
+                            ${env.UI_APP_NAME} -f ${env.MANIFEST} \
                         """.stripIndent()
                     }
                 }
@@ -152,6 +151,16 @@ def getAPIDeployProps(branchName) {
                 -Pcf.environment.react.app.url=https://$branchName.$peoplemover_pcf_org \
                 -Pcf.environment.react.app.auth_enabled=false \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
+    }
+}
+
+def getUIAppName(branchName) {
+    if (branchName == "stage") {
+        return "StagePeopleMoverUI"
+    } else if (branchName == "master") {
+        return "PeopleMoverUI2"
+    } else {
+        return """$branchName"""
     }
 }
 
