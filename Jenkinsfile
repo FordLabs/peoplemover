@@ -75,23 +75,30 @@ pipeline {
                 }
             }
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'labsci', usernameVariable: 'CI_USER', passwordVariable: 'CI_PASSWORD')
-                ]) {
+              withCredentials([
+                   usernamePassword(credentialsId: 'labsci', usernameVariable: 'CI_USER', passwordVariable: 'CI_PASSWORD'),
+                   string(credentialsId: 'peoplemover_pcf_cchost', variable: 'PCF_HOST'),
+                   string(credentialsId: 'peoplemover_pcf_domain', variable: 'PCF_DOMAIN'),
+                   string(credentialsId: 'spring_security_oauth2_resourceserver_jwt_issuer_uri', variable: 'OAUTH_URI'),
+                   string(credentialsId: 'adfs_client_id', variable: 'ADFS_CLIENT_ID'),
+                   string(credentialsId: 'adfs_url_template', variable: 'ADFS_URL_TEMPLATE'),
+                   string(credentialsId: 'adfs_resource_uri', variable: 'ADFS_RESOURCE_URI'),
+                   string(credentialsId: 'adfs_resource', variable: 'ADFS_RESOURCE')
+                             ]) {
                     dir("api") {
                         sh 'echo Pushing to Cloud Foundry'
                         sh  """./gradlew cf-push-blue-green \
                         -Pcf.ccUser=$CI_USER \
                         -Pcf.ccPassword=$CI_PASSWORD \
-                        -Pcf.ccHost=$peoplemover_pcf_cchost \
-                        -Pcf.domain=$peoplemover_pcf_domain ${env.API_DEPLOY_PROPS} \
-                        -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$spring_security_oauth2_resourceserver_jwt_issuer_uri \
-                        -Pcf.environment.adfs-resource-uri=$adfs_resource_uri \
-                        -Pcf.environment.react.app.adfs_url_template="$adfs_url_template" \
-                        -Pcf.environment.react.app.adfs_client_id=$adfs_client_id \
-                        -Pcf.environment.react.app.adfs_resource=$adfs_resource \
+                        -Pcf.ccHost=$PCF_HOST \
+                        -Pcf.domain=$PCF_DOMAIN ${env.API_DEPLOY_PROPS} \
+                        -Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$OAUTH_URI \
+                        -Pcf.environment.adfs-resource-uri=$ADFS_RESOURCE_URI \
+                        -Pcf.environment.react.app.adfs_url_template="$ADFS_URL_TEMPLATE" \
+                        -Pcf.environment.react.app.adfs_client_id=$ADFS_CLIENT_ID \
+                        -Pcf.environment.react.app.adfs_resource=$ADFS_RESOURCE \
                         """.stripIndent()
-                    }
+                        }
                 }
             }
         }
