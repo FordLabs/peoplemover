@@ -78,7 +78,7 @@ cfConfig {
     domain = peoplemoverPcfdomain
 
     buildpack = "java_buildpack_offline"
-    filePath = file("build/libs/PeopleMover-0.0.1-SNAPSHOT.jar").absolutePath
+    filePath = file("build/libs/api-0.0.1-SNAPSHOT.jar").absolutePath
     environment = [
             "spring.security.oauth2.resourceserver.jwt.issuer-uri": peoplemoverResourceserverJwtIssuer,
             "react.app.url": "https://" + "featureBranch" + "." + peoplemoverReactAppUrl,
