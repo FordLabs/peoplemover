@@ -117,7 +117,7 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
         case AvailableModals.CREATE_SPACE:
             return 'Create New Space';
         case AvailableModals.EDIT_CONTRIBUTORS:
-            return 'Edit Contributors';
+            return 'Invite Members';
         default:
             return '';
     }
