@@ -47,6 +47,7 @@ function MyTagsModal({setShouldShowConfirmCloseModal}: MyTagsModalProps): JSX.El
                 traitClient={LocationClient}
                 colorSection={false}
                 setTraitSectionOpen={setLocationSectionOpen}
+                traitType="product"
                 traitName="location"
             />
 
@@ -57,6 +58,7 @@ function MyTagsModal({setShouldShowConfirmCloseModal}: MyTagsModalProps): JSX.El
                 traitClient={ProductTagClient}
                 colorSection={false}
                 setTraitSectionOpen={setProductTagSectionOpen}
+                traitType="product"
                 traitName="product tag"
             />
 

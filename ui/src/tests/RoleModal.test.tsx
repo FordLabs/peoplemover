@@ -334,7 +334,7 @@ describe('PeopleMover Role Modal', () => {
     });
 
     describe('deleting a role', () => {
-        const deleteWarning = 'Deleting this role will remove it from any person or product that has been given this role.';
+        const deleteWarning = 'Deleting this role will remove it from any person that has been given this role.';
 
         it('should show trashcan icon', async () => {
             const roleDeleteIcons = await app.findAllByTestId('roleDeleteIcon');
