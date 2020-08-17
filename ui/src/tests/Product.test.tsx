@@ -416,36 +416,6 @@ describe('Products', () => {
             expect(notesFieldText.innerHTML).toContain(expectedNotes.length);
         });
 
-        it('should show length of note and disable save when note is too long', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
-            const editProductMenuButton = await app.findByTestId('editProductIcon_1');
-            fireEvent.click(editProductMenuButton);
-
-            const editProductOption = await app.findByTestId('editMenuOption0');
-            fireEvent.mouseDown(editProductOption);
-            fireEvent.mouseUp(editProductOption);
-
-            await app.findByText('Edit Product');
-
-            const notesInputField = await app.findByLabelText('Notes');
-            fireEvent.change(notesInputField, {target: {value:
-                        '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678789012345' +
-                        '9012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345' +
-                        '6789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012' +
-                        '3456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789' +
-                        '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456' +
-                        '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456' +
-                        '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456' +
-                        '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456'}});
-
-            const fieldLength = await app.findByText('776');
-            expect(fieldLength).toHaveClass('notesFieldTooLong');
-
-            const saveButton = await app.getByText('Save');
-            expect(saveButton).toBeDisabled();
-        });
-
         it('displays people on each product', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 

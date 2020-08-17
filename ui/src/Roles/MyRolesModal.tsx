@@ -35,7 +35,7 @@ function MyRolesModal({setShouldShowConfirmCloseModal}: MyRolesModalProps): JSX.
             return (): void => setShouldShowConfirmCloseModal(false);
         }
         return noop;
-    }, [roleSectionOpen]);
+    }, [roleSectionOpen, setShouldShowConfirmCloseModal]);
 
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">

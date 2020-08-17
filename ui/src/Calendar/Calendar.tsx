@@ -28,6 +28,7 @@ function Calendar({
     const [daysHighlighted, setDaysHighlighted] = useState<Array<Date>>([]);
     const calendarRef = createRef<ReactDatePicker>();
 
+    /* eslint-disable */
     useEffect(() => {
         calendarRef.current?.setOpen(isCalendarOpen);
         AssignmentClient.getAssignmentEffectiveDates(currentSpace.id!!).then(response => {
@@ -35,6 +36,7 @@ function Calendar({
             setDaysHighlighted(dates);
         });
     }, [isCalendarOpen]);
+    /* eslint-enable */
 
     function onChange(date: Date): void {
         setViewingDate(date);

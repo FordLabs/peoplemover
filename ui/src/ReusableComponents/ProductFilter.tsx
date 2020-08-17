@@ -57,9 +57,33 @@ function ProductFilter({
 }: ProductFilterProps): JSX.Element {
     const [checkBoxFilterValues, setCheckBoxFilterValues] = useState<Array<FilterOption>>([]);
 
+    /* eslint-disable */
     useEffect(() => {
+        async function initializeGroupedTagOptions(): Promise<void> {
+            const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();
+            const productTagOptions: Array<FilterOption> = await buildTagOptions(ProductTagClient, localStorageFilter.productTagsFilters);
+            const locationTagOptions: Array<FilterOption> = await buildTagOptions(LocationClient, localStorageFilter.locationTagsFilters);
+            const roleTagOptions: Array<FilterOption> = await buildTagOptions(RoleClient, localStorageFilter.roleTagsFilters);
+            const options: Array<AllGroupedTagFilterOptions>  = [
+                {
+                    label: 'Location Tags:',
+                    options: locationTagOptions,
+                },
+                {
+                    label: 'Product Tags:',
+                    options: productTagOptions,
+                },
+                {
+                    label: 'Role Tags:',
+                    options: roleTagOptions,
+                },
+            ];
+            setAllGroupedTagFilterOptions(options);
+        }
+
         initializeGroupedTagOptions().then();
     }, [currentSpace]);
+    /* eslint-enable */
 
     useEffect( () => {
         if (allGroupedTagFilterOptions.length > 0) {
@@ -69,28 +93,6 @@ function ProductFilter({
             setCheckBoxFilterValues([...selectedLocationFilters, ...selectedProductFilters, ...selectedRoleFilters]);
         }
     }, [allGroupedTagFilterOptions, currentSpace]);
-
-    async function initializeGroupedTagOptions(): Promise<void> {
-        const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();
-        const productTagOptions: Array<FilterOption> = await buildTagOptions(ProductTagClient, localStorageFilter.productTagsFilters);
-        const locationTagOptions: Array<FilterOption> = await buildTagOptions(LocationClient, localStorageFilter.locationTagsFilters);
-        const roleTagOptions: Array<FilterOption> = await buildTagOptions(RoleClient, localStorageFilter.roleTagsFilters);
-        const options: Array<AllGroupedTagFilterOptions>  = [
-            {
-                label: 'Location Tags:',
-                options: locationTagOptions,
-            },
-            {
-                label: 'Product Tags:',
-                options: productTagOptions,
-            },
-            {
-                label: 'Role Tags:',
-                options: roleTagOptions,
-            },
-        ];
-        setAllGroupedTagFilterOptions(options);
-    }
 
     async function buildTagOptions(tagClient: TraitClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
         const tagsResponse: AxiosResponse<Array<Trait>> = await tagClient.get(currentSpace.name);

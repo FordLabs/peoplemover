@@ -74,7 +74,7 @@ function EditTraitSection({
         }
 
         setup().then();
-    }, []);
+    }, [colorSection, trait]);
 
     function highlightCircle(circleRef: RefObject<HTMLSpanElement>, color: Color): void {
         clearHighlightedCircle();

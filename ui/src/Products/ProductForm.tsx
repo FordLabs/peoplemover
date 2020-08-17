@@ -31,7 +31,6 @@ import {ProductTag} from '../ProductTag/ProductTag';
 import {FilterOption} from '../CommonTypes/Option';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Trait} from '../Traits/Trait';
-import {Space} from '../SpaceDashboard/Space';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';
@@ -40,6 +39,7 @@ import ProductFormEndDateField from './ProductFormEndDateField';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../Modal/Form.scss';
 import './ProductForm.scss';
+import NotesTextArea from "../Form/NotesTextArea";
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -84,7 +84,6 @@ function ProductForm({
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
 
     const [duplicateProductNameWarning, setDuplicateProductNameWarning] = useState<boolean>(false);
-    const [notesFieldLength, setNotesFieldLength] = useState<number>(product && product.notes ? product.notes.length : 0);
 
     function initializeProduct(): Product {
         if (product == null) {
@@ -166,9 +165,8 @@ function ProductForm({
         setAllGroupedTagFilterOptions(groupedTagFilterOptions);
     }
 
-    function notesChanged(e: ChangeEvent<HTMLTextAreaElement>): void {
-        updateProductField('notes', e.target.value);
-        setNotesFieldLength(e.target.value.length);
+    function notesChanged(notes: string): void {
+        updateProductField('notes', notes);
     }
 
     return (
@@ -210,24 +208,7 @@ function ProductForm({
                     updateProductField={updateProductField}
                 />
                 <div className="formItem">
-                    <label className="formItemLabel" htmlFor="notes">Notes</label>
-                    <textarea
-                        data-testid="productFormNotesField"
-                        className="formInput formTextInput notes"
-                        id="notes"
-                        name="notes"
-                        value={currentProduct.notes}
-                        onChange={notesChanged}
-                        rows={4}
-                        cols={25}>
-                        {currentProduct.notes}
-                    </textarea>
-                    <span className="notesFieldText" data-testid="notesFieldText">
-                        <span
-                            className={notesFieldLength > 500 ? 'notesFieldTooLong' : ''}>
-                            {notesFieldLength}</span>
-                        &nbsp;(500 characters max)
-                    </span>
+                    <NotesTextArea notes={currentProduct.notes} callBack={notesChanged}/>
                 </div>
                 <div className="yesNoButtons">
                     <input className="formButton cancelFormButton" onClick={closeModal} data-testid="productFormCancelButton" type="button" value="Cancel" />
@@ -235,14 +216,13 @@ function ProductForm({
                         data-testid="productFormSubmitButton"
                         onClick={handleSubmit}
                         type="button"
-                        disabled={notesFieldLength > 500}
                         value={editing ? 'Save' : 'Create'}/>
                 </div>
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                     <i className="fas fa-trash"/>
                     <div className="trashCanSpacer"/>
-                    <a className="obliterateLink"
-                        onClick={displayDeleteProductModal}>Delete Product</a>
+                    <span className="obliterateLink"
+                        onClick={displayDeleteProductModal}>Delete Product</span>
                 </div>)}
             </form>
             {confirmDeleteModal}
