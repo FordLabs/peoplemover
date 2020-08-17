@@ -37,6 +37,7 @@ interface MyTraitsProps {
     title?: string;
     traitClient: TraitClient;
     setTraitSectionOpen: Function;
+    traitType: string;
     colorSection: boolean;
     traitName: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
@@ -56,6 +57,7 @@ function MyTraits({
     setTraitSectionOpen,
     colorSection,
     traitName,
+    traitType,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: MyTraitsProps): JSX.Element {
@@ -179,7 +181,7 @@ function MyTraits({
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteTrait(traitToDelete),
             close: () => setConfirmDeleteModal(null),
-            warningMessage: `Deleting this ${traitName} will remove it from any person or product that has been given this ${traitName}.`,
+            warningMessage: `Deleting this ${traitName} will remove it from any ${traitType} that has been given this ${traitName}.`,
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);
