@@ -68,25 +68,15 @@ function Modal({
         );
         return (
             <div className="modalContainer" data-testid="modalContainer"
-                onClick={() => {
-                    close();
-                }}
-                onKeyDown={(event) => {
-                    if (event.key === 'Escape') {
-                        close();
-                    }
+                onClick={close}
+                onKeyDown={(event): void => {
+                    if (event.key === 'Escape') close();
                 }}>
-
                 <div className="modalDialogContainer">
                     <div className="modalPopupContainer"
                         data-testid="modalPopupContainer"
-                        onClick={event => {
-                            event.stopPropagation();
-                        }}
-                    >
-
-                        <input type={'text'} autoFocus={true} aria-hidden={true} className="hiddenInputField"/>
-
+                        onClick={(event): void => { event.stopPropagation(); }}>
+                        <input type="text" autoFocus={true} aria-hidden={true} className="hiddenInputField"/>
                         <div className="modalTitleAndCloseButtonContainer">
                             <div className="modalTitleSpacer"/>
                             <div className="modalTitle">{title}</div>

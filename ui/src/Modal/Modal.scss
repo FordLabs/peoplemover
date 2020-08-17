@@ -58,7 +58,6 @@
 }
 
 .modalTitle {
-
     font-size: 20px;
     color: $purple-title;
     font-weight: bold;
@@ -73,8 +72,7 @@
     border-radius: 50%;
 }
 
-.confirmationModalContent{
-
+.confirmationModalContent {
     font-size: 14px;
     color: $gray-1;
     padding: 0 52px;
@@ -82,7 +80,7 @@
     line-height: 16px;
 }
 
-.confirmationModalControls.archiveable {
+.confirmationModalControls.archivable {
     justify-content: space-between;
 }
 
@@ -91,7 +89,7 @@
     flex-grow:0;
 }
 
-.yesNoButtons.confirmationModalControls{
+.yesNoButtons.confirmationModalControls {
     padding: 0 52px;
 }
 
@@ -99,14 +97,14 @@
     margin-top: 32px;
 }
 
-.archiveAndDeleteContainer {
-    justify-content: flex-end;
+.cancelAndArchiveContainer {
+    justify-content: flex-start;
 }
 
-.archiveAndDeleteContainer.archiveable {
+.cancelAndArchiveContainer.archivable {
     display: flex;
     flex-direction: row;
-    min-width: 242px;
+    min-width: 218px;
     justify-content: space-between;
 }
 
