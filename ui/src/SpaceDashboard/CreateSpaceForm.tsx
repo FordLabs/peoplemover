@@ -56,7 +56,7 @@ function CreateSpaceForm({
 
         <div className={'createSpaceButtonContainer'}>
             <button className={'createSpaceCancelButton'} onClick={closeModal}>Cancel</button>
-            <button className={'createSpaceSubmitButton'} onClick={addSpace}>Add Space</button>
+            <button className={'createSpaceSubmitButton'} disabled={spaceName.length <= 0} onClick={addSpace}>Add Space</button>
         </div>
 
     </div>;
