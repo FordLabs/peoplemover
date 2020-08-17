@@ -30,6 +30,7 @@ ui/.env.buildfeature
 # env
 ui/.env.local
 application-local.properties
+.java-version
 
 ### VSCode ###
 bin/
