@@ -111,12 +111,13 @@ pipeline {
             }
             steps {
                 withCredentials([
-                        usernamePassword(credentialsId: 'labsci', usernameVariable: 'CI_USER', passwordVariable: 'CI_PASSWORD')
+                        usernamePassword(credentialsId: 'labsci', usernameVariable: 'CI_USER', passwordVariable: 'CI_PASSWORD'),
+                        string(credentialsId: 'peoplemover_pcf_cchost', variable: 'PCF_HOST'),
                 ]) {
                     dir("ui") {
                         sh 'echo Login to Cloud Foundry'
                         sh """cf login \
-                            -a $peoplemover_pcf_cchost \
+                            -a $PCF_HOST \
                             -u $CI_USER \
                             -p $CI_PASSWORD \
                             -o  FordLabs_Experiments_InternalProjects_EDC1_Prod \
