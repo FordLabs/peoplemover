@@ -52,11 +52,11 @@ describe('Account Dropdown',  () => {
         });
     });
 
-    it('Should open Edit Contributors modal on click of text in dropdown',  async () => {
+    it('Should open Invite Members modal on click of text in dropdown',  async () => {
         await act( async () => {
             fireEvent.click(await app.findByText('Invite Members'));
         });
-        expect(app.getByText('Edit Contributors'));
+        expect(app.getByText('Invite Members'));
     });
 
     it('should close Edit Contributors modal on click of Cancel button', async () => {
@@ -68,7 +68,7 @@ describe('Account Dropdown',  () => {
         expect(app.queryByText('Edit Contributors')).toBe(null);
     });
 
-    it('should submit invited contributors, current space name, and access token on click of Save button', async () => {
+    it('should submit invited contributors, current space name, and access token on click of Invite button', async () => {
         await act( async () => {
             fireEvent.click(await app.findByText('Invite Members'));
             SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -76,7 +76,7 @@ describe('Account Dropdown',  () => {
             const usersToInvite = app.getByTestId('emailTextArea');
             fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByText('Invite');
             fireEvent.click(saveButton);
         });
         expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith('teamName', ['some1@email.com', 'some2@email.com', 'some3@email.com']);
