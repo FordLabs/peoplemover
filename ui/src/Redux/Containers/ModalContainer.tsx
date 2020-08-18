@@ -27,6 +27,7 @@ import {GlobalStateProps} from '../Reducers';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
 import MyTagsModal from '../../Tags/MyTagsModal';
 import MyRolesModal from '../../Roles/MyRolesModal';
+import InviteContributorConfirmationForm from '../../SpaceDashboard/InviteContributorsConfirmationForm';
 import CreateSpaceForm from '../../SpaceDashboard/CreateSpaceForm';
 import {Dispatch} from 'redux';
 import EditContributorsForm from '../../SpaceDashboard/EditContributorsForm';
@@ -90,7 +91,7 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
         case AvailableModals.EDIT_CONTRIBUTORS:
             return <EditContributorsForm/>;
         case AvailableModals.CONTRIBUTORS_CONFIRMATION:
-            return <div>Contributors Confirmation</div>;
+            return <InviteContributorConfirmationForm />;
         default:
             return null;
     }

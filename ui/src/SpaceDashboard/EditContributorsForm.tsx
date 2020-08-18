@@ -57,19 +57,20 @@ function EditContributorsForm({
         setInvitedUserEmails(emails);
     };
 
-    return <div className="editContributorsContainer">
-        <div className="inviteContributorsLabel">Invite others to collaborate</div>
-        <textarea placeholder="Enter Emails" onChange={parseEmails} data-testid="emailTextArea"/>
-        <div className="editContributorsButtonContainer">
-            <button className="editContributorsCancelButton" onClick={closeModal}>Cancel</button>
-            <button className="editContributorsSaveButton" onClick={inviteUsers}>Invite</button>
+    return (
+        <div className="editContributorsContainer">
+            <div className="inviteContributorsLabel">Invite others to collaborate</div>
+            <textarea placeholder="Enter Emails" onChange={parseEmails} data-testid="emailTextArea"/>
+            <div className="editContributorsButtonContainer">
+                <button className="editContributorsCancelButton" onClick={closeModal}>Cancel</button>
+                <button className="editContributorsSaveButton" onClick={inviteUsers}>Invite</button>
+            </div>
         </div>
-    </div>;
+    );
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
-
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
