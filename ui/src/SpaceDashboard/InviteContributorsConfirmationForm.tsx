@@ -17,13 +17,16 @@
 
 import React from 'react';
 import './InviteContributorsConfirmationModal.scss';
+import {Dispatch} from 'redux';
+import {closeModalAction} from '../Redux/Actions';
+import {connect} from 'react-redux';
 
-const InviteContributorConfirmationForm = (): JSX.Element => {
+interface Props {
+    closeModal(): void;
+}
+
+const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element => {
     const linkToSpace = window ? window.location.href : '';
-    
-    const onClick = (): void => {
-        console.log('Click');
-    };
 
     return (
         <div className="inviteContributorsConfirmationContainer">
@@ -38,18 +41,16 @@ const InviteContributorConfirmationForm = (): JSX.Element => {
                     Copy link
                 </div>
             </div>
-            <div className="inviteContributorsConfirmationButtonContainer">
-                <button className="inviteContributorsConfirmationCancelButton"
-                    onClick={onClick}>
-                    Cancel
-                </button>
-                <button className="inviteContributorsConfirmationSaveButton"
-                    onClick={onClick}>
-                    Done
-                </button>
-            </div>
+            <button className="inviteContributorsConfirmationDoneButton"
+                onClick={closeModal}>
+                Done
+            </button>
         </div>
     );
 };
 
-export default InviteContributorConfirmationForm;
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    closeModal: () => dispatch(closeModalAction()),
+});
+
+export default connect(null, mapDispatchToProps)(InviteContributorConfirmationForm);
