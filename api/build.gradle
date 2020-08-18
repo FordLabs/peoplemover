@@ -108,8 +108,8 @@ sonarqube {
 task pushBranchAPI(type: Exec) {
     commandLine "./gradlew",
                 "cf-push-blue-green",
-                "-Pcf.ccUser=$peoplemoverPcfUsername",
-                "-Pcf.ccPassword=$peoplemoverPcfPassword",
+                "-Pcf.ccUser=${project.properties['peoplemoverPcfUsername']}",
+                "-Pcf.ccPassword=${project.properties['peoplemoverPcfPassword']}",
                 "-Pcf.ccHost=$peoplemoverPcfccHost",
                 "-Pcf.domain=$peoplemoverPcfdomain",
                 "-PbranchNameWithoutUnderscores=Branch",
