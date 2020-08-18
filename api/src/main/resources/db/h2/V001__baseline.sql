@@ -1,6 +1,7 @@
 create table space
 (
     id    int          not null identity primary key,
+    uuid varchar(36) not null,
     name varchar(255) not null unique,
     last_modified_date datetime
 );

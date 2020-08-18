@@ -1,0 +1,1 @@
+ALTER TABLE space ADD uuid varchar(36) not null;
