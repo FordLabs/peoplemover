@@ -26,7 +26,11 @@ interface Props {
 }
 
 const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element => {
-    const linkToSpace = window ? window.location.href : '';
+    const linkToSpace: string = window ? window.location.href : '';
+
+    const copyLink = async (): Promise<void> => {
+        await navigator.clipboard.writeText(linkToSpace);
+    };
 
     return (
         <div className="inviteContributorsConfirmationContainer">
@@ -37,7 +41,7 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
                 <div className="inviteContributorsConfirmationLink">
                     {linkToSpace}
                 </div>
-                <div className="inviteContributorsConfirmationCopyButton">
+                <div className="inviteContributorsConfirmationCopyButton" onClick={copyLink}>
                     Copy link
                 </div>
             </div>
