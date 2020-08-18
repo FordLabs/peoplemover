@@ -55,11 +55,11 @@ function EditContributorsForm({
     }
 
     return <div className={'editContributorsContainer'}>
-        <div className={'inviteContributorsLabel'}>Invite Contributors</div>
+        <div className={'inviteContributorsLabel'}>Invite others to collaborate</div>
         <textarea placeholder={'Enter Emails'} onChange={parseEmails} data-testid={'emailTextArea'}/>
         <div className={'editContributorsButtonContainer'}>
             <button className={'editContributorsCancelButton'} onClick={closeModal}>Cancel</button>
-            <button className={'editContributorsSaveButton'} onClick={inviteUsers}>Save</button>
+            <button className={'editContributorsSaveButton'} onClick={inviteUsers}>Invite</button>
         </div>
     </div>;
 }

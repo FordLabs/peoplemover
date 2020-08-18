@@ -188,7 +188,7 @@ describe('PeopleMover My Tags', () => {
 
         describe('delete a location tag', () => {
             let locationTagDeleteIcon: HTMLElement;
-            const deleteLocationWarning = 'Deleting this location will remove it from any person or product that has been given this location.';
+            const deleteLocationWarning = 'Deleting this location will remove it from any product that has been given this location.';
 
             beforeEach(async () => {
                 const deleteIcons = await app.findAllByTestId('locationDeleteIcon');
@@ -218,7 +218,7 @@ describe('PeopleMover My Tags', () => {
 
         describe('delete a product tag', () => {
             let productTagDeleteIcon: HTMLElement;
-            const deleteProductTagWarning = 'Deleting this product tag will remove it from any person or product that has been given this product tag.';
+            const deleteProductTagWarning = 'Deleting this product tag will remove it from any product that has been given this product tag.';
 
             beforeEach(async () => {
                 const deleteIcons = await app.findAllByTestId('producttagDeleteIcon');

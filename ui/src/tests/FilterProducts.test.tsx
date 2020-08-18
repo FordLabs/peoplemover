@@ -82,7 +82,7 @@ describe('filter products', () => {
 
         it('should remove filter location when location is deleted from my tags modal', async () => {
             let locationTagDeleteIcon: HTMLElement;
-            const deleteLocationWarning = 'Deleting this location will remove it from any person or product that has been given this location.';
+            const deleteLocationWarning = 'Deleting this location will remove it from any product that has been given this location.';
 
             const deleteIcons = await app.findAllByTestId('locationDeleteIcon');
             locationTagDeleteIcon = deleteIcons[0];
@@ -186,7 +186,7 @@ describe('filter products', () => {
 
         it('should remove filter option when product tag is deleted from my tags modal', async () => {
             let productTagDeleteIcon: HTMLElement;
-            const deleteProductTagWarning = 'Deleting this product tag will remove it from any person or product that has been given this product tag.';
+            const deleteProductTagWarning = 'Deleting this product tag will remove it from any product that has been given this product tag.';
             const deleteIcons = await app.findAllByTestId('producttagDeleteIcon');
             productTagDeleteIcon = deleteIcons[0];
 

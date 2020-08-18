@@ -22,9 +22,7 @@ import './Modal.scss';
 
 export interface ConfirmationModalProps {
     submit(itemToDelete?: unknown): void | Promise<void>;
-
     archiveCallback?(): void;
-
     close(): void;
 
     canArchive?: boolean;
@@ -44,50 +42,62 @@ function ConfirmationModal({
     warningMessage,
     submitButtonLabel,
 }: ConfirmationModalProps): JSX.Element {
+    const isArchivable = (): boolean => Boolean(canArchive && !isArchived);
+
+    const ArchiveMessage = (): JSX.Element => (
+        <div><br/>You can also choose to archive this product to be able to access it later.</div>
+    );
+
+    const CloseConfirmationMessage = (): JSX.Element => (
+        <div><br/>Are you sure you want to close the window?</div>
+    );
+    
+    const DeleteButton = (): JSX.Element => (
+        <button className="formButton confirmationModalDelete"
+            onClick={submit}
+            data-testid="confirmDeleteButton">
+            {submitButtonLabel ? submitButtonLabel : 'Delete'}
+        </button>
+    );
+    
+    const ArchiveButton = (): JSX.Element => (
+        <button
+            className="formButton archiveFormButton"
+            data-testid="confirmationModalArchive"
+            onClick={archiveCallback}>
+            Archive
+        </button>
+    );
+
+    const CancelButton = (): JSX.Element => (
+        <button
+            className="formButton cancelFormButton"
+            data-testid="confirmationModalCancel"
+            onClick={close}>
+            Cancel
+        </button>
+    );
 
     return (
         <div className="modalContainer">
             <div className="modalDialogContainer">
                 <div className="modalPopupContainer">
-
                     <div className="modalTitleAndCloseButtonContainer">
                         <div className="modalTitleSpacer"/>
                         <div className="modalTitle">Are you sure?</div>
                         <div className="fa fa-times fa-lg closeButton" onClick={close}/>
                     </div>
-
                     <div className="confirmationModalContent">
-
                         <div>{warningMessage}</div>
-
-                        {(canArchive && !isArchived) && <div>
-                            <br/>
-                            You can also choose to archive this product to be able to access it later.
-                        </div>}
-                        {(confirmClose) && <div>
-                            <br/>
-                            Are you sure you want to close the window?
-                        </div>}
-
+                        {(isArchivable()) && <ArchiveMessage />}
+                        {(confirmClose) && <CloseConfirmationMessage />}
                     </div>
-
-                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls${canArchive ? ' archiveable' : ''}`}>
-
-                        <button className="formButton cancelFormButton" data-testid="confirmationModalCancel"
-                            onClick={close}>Cancel</button>
-
-                        <div className={`archiveAndDeleteContainer${canArchive && !isArchived ? ' archiveable' : ''}`}>
-                            {canArchive && !isArchived && (<button
-                                className="formButton confirmationModalDelete"
-                                data-testid="confirmationModalArchive"
-                                onClick={archiveCallback}>Archive</button>)}
-
-                            <button className="formButton confirmationModalDelete"
-                                onClick={submit}
-                                data-testid="confirmDeleteButton">{submitButtonLabel ? submitButtonLabel : 'Delete'}
-                            </button>
-
+                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${canArchive ? 'archivable' : ''}`}>
+                        <div className={`cancelAndArchiveContainer ${isArchivable() ? 'archivable' : ''}`}>
+                            <CancelButton />
+                            {isArchivable() && <ArchiveButton />}
                         </div>
+                        <DeleteButton />
                     </div>
                 </div>
             </div>

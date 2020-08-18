@@ -52,5 +52,19 @@
 
   .createSpaceSubmitButton {
     margin-left: 12px;
+    border-radius: 6px;
+  }
+
+  .createSpaceSubmitButton:disabled {
+    background-color: $light-purple;
+    cursor: not-allowed;
+  }
+
+  .createSpaceCancelButton {
+    color: $purple;
+    background-color: $white;
+    border: solid 1px $purple;
+    box-sizing: border-box;
+    border-radius: 6px;
   }
 }

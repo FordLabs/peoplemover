@@ -44,6 +44,7 @@ function MyRolesModal({setShouldShowConfirmCloseModal}: MyRolesModalProps): JSX.
                 traitClient={RoleClient}
                 setTraitSectionOpen={setRoleSectionOpen}
                 colorSection
+                traitType="person"
                 traitName="role"
             />
 
