@@ -29,6 +29,7 @@ node_modules/
 # env
 ui/.env.local
 application-local.properties
+.java-version
 
 ### VSCode ###
 bin/
