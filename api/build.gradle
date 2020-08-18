@@ -68,26 +68,16 @@ cfConfig {
     space = "FordLabs_Experiments_InternalProjects-prod"
     org = "FordLabs_Experiments_InternalProjects_EDC1_Prod"
 
-    ccUser = peoplemoverPcfUsername
-    ccPassword = peoplemoverPcfPassword
-
     name = "featureBranchAPI"
     host = "featurebranchui"
     path = "/api"
-    ccHost = peoplemoverPcfccHost
-    domain = peoplemoverPcfdomain
 
     buildpack = "java_buildpack_offline"
     filePath = file("build/libs/api-0.0.1-SNAPSHOT.jar").absolutePath
     environment = [
-            "spring.security.oauth2.resourceserver.jwt.issuer-uri": peoplemoverResourceserverJwtIssuer,
-            "react.app.url": "https://" + "featureBranch" + "." + peoplemoverReactAppUrl,
             "spring.datasource.username": "",
             "spring.datasource.password": "",
-            "JBP_CONFIG_OPEN_JDK_JRE": "{ jre: {version: 11.+} }",
-            "react.app.adfs_url_template": peoplemoverAdfsUrlTemplate,
-            "react.app.adfs_client_id": peoplemoverAdfsClientID,
-            "react.app.adfs_resource": peoplemoverAdfsResource
+            "JBP_CONFIG_OPEN_JDK_JRE": "{ jre: {version: 11.+} }"
     ]
     
     cfService {
@@ -116,7 +106,21 @@ sonarqube {
 }
 
 task pushBranchAPI(type: Exec) {
-    commandLine "./gradlew", "cf-push-blue-green", "-PbranchNameWithoutUnderscores=Branch", "-Pcf.environment.react.app.auth_enabled=true", "-Pcf.environment.react.app.invite_users_to_space_enabled=true", "-Pcf.environment.react.app.adfs_enabled=true"
+    commandLine "./gradlew",
+                "cf-push-blue-green",
+                "-Pcf.ccUser=$peoplemoverPcfUsername",
+                "-Pcf.ccPassword=$peoplemoverPcfPassword",
+                "-Pcf.ccHost=$peoplemoverPcfccHost",
+                "-Pcf.domain=$peoplemoverPcfdomain",
+                "-PbranchNameWithoutUnderscores=Branch",
+                "-Pcf.environment.react.app.auth_enabled=true",
+                "-Pcf.environment.react.app.invite_users_to_space_enabled=true",
+                "-Pcf.environment.react.app.adfs_enabled=true",
+                "-Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=$peoplemoverResourceserverJwtIssuer",
+                "-Pcf.environment.react.app.url=https://featureBranch.$peoplemoverReactAppUrl",
+                "-Pcf.environment.react.app.adfs_url_template=$peoplemoverAdfsUrlTemplate",
+                "-Pcf.environment.react.app.adfs_client_id=$peoplemoverAdfsClientID",
+                "-Pcf.environment.react.app.adfs_resource=$peoplemoverAdfsResource"
 }
 
 project.tasks["jacocoTestReport"].dependsOn "test"
