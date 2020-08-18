@@ -62,6 +62,7 @@ export enum AvailableModals {
     MY_ROLES_MODAL,
     CREATE_SPACE,
     EDIT_CONTRIBUTORS,
+    CONTRIBUTORS_CONFIRMATION,
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({

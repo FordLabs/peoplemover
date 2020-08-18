@@ -89,6 +89,8 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
             return <CreateSpaceForm onSubmit={item}/>;
         case AvailableModals.EDIT_CONTRIBUTORS:
             return <EditContributorsForm/>;
+        case AvailableModals.CONTRIBUTORS_CONFIRMATION:
+            return <div>Contributors Confirmation</div>;
         default:
             return null;
     }
@@ -118,6 +120,8 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
             return 'Create New Space';
         case AvailableModals.EDIT_CONTRIBUTORS:
             return 'Invite Members';
+        case AvailableModals.CONTRIBUTORS_CONFIRMATION:
+            return 'Your team member now has access!';
         default:
             return '';
     }
