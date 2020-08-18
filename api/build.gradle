@@ -73,7 +73,7 @@ cfConfig {
     path = "/api"
 
     buildpack = "java_buildpack_offline"
-    filePath = file("build/libs/api-0.0.1-SNAPSHOT.jar").absolutePath
+    filePath = file("build/libs/PeopleMover-0.0.1-SNAPSHOT.jar").absolutePath
     environment = [
             "spring.datasource.username": "",
             "spring.datasource.password": "",
@@ -112,6 +112,7 @@ task pushBranchAPI(type: Exec) {
                 "-Pcf.ccPassword=${project.properties['peoplemoverPcfPassword']}",
                 "-Pcf.ccHost=${project.properties['peoplemoverPcfccHost']}",
                 "-Pcf.domain=${project.properties['peoplemoverPcfdomain']}",
+                "-Pcf.filePath=${file("build/libs/api-0.0.1-SNAPSHOT.jar").absolutePath}",
                 "-PbranchNameWithoutUnderscores=Branch",
                 "-Pcf.environment.react.app.auth_enabled=true",
                 "-Pcf.environment.react.app.invite_users_to_space_enabled=true",
