@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useState} from 'react';
+import React, {RefObject, useEffect, useState} from 'react';
 import './Product.scss';
 import {connect} from 'react-redux';
 import {
@@ -75,13 +75,15 @@ function ProductCard({
         setEditMenuIsOpened(false);
     }
 
-    useOnLoad(() => {
+    /* eslint-disable */
+    useEffect(() => {
         registerProductRef({ref: productRef, product});
 
         return () => {
             unregisterProductRef({ref: productRef, product});
         };
-    });
+    }, []);
+    /* eslint-enable */
 
     function toggleEditMenu(): void {
         if (ourEditMenuIsOpen()) {
