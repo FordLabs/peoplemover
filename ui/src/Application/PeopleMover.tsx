@@ -136,6 +136,7 @@ function PeopleMover({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentModal: state.currentModal,
     currentSpace: state.currentSpace,
@@ -152,3 +153,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleMover);
+/* eslint-enable */
