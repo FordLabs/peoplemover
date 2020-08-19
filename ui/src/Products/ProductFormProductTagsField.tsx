@@ -13,7 +13,7 @@ import ProductTagClient from '../ProductTag/ProductTagClient';
 import {AxiosResponse} from 'axios';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {useOnLoad} from "../ReusableComponents/UseOnLoad";
+import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 interface Props {
     spaceId: number;

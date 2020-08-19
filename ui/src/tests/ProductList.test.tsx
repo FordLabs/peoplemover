@@ -37,7 +37,7 @@ describe('Product List tests', () => {
     });
 
     it('should only have one edit menu open at a time', async () => {
-        await act (async () => {
+        await act(async () => {
             app = await renderWithRedux(<PeopleMover/>);
             const editPerson1Button = await app.findByTestId('editPersonIconContainer-1');
             const editPerson3Button = await app.findByTestId('editPersonIconContainer-3');

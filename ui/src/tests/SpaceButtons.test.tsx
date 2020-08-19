@@ -59,7 +59,7 @@ describe('SpaceButtons', () => {
 
         let result: RenderResult;
 
-        await act (async ( ) => {
+        await act(async ( ) => {
             await wait(() => {
                 result = renderWithRedux(<SpaceButtons/>, undefined, initialState);
             });
