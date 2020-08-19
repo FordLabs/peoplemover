@@ -13,16 +13,9 @@
   }
 }
 
-button.account-dropdown-options,
 .account-dropdown-options {
   text-align: left;
   padding: 4px 6px;
-  font-family: Helvetica, sans-serif;
-  font-size: 12px;
-  margin: 0;
-  width: 100%;
-  background: white;
-  color: $gray-1;
 }
 
 .account-dropdown-options:hover {
@@ -45,5 +38,7 @@ button.account-dropdown-options,
 
   padding: 16px 15px;
   box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
 
 }
