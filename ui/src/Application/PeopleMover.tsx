@@ -116,7 +116,7 @@ function PeopleMover({
         !hasProducts()
             ? <></>
             : <div className="App">
-                <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
+                <div>
                     <Header/>
                     <SpaceSelectionTabs/>
                     <div className="productAndAccordionContainer">
@@ -136,6 +136,7 @@ function PeopleMover({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentModal: state.currentModal,
     currentSpace: state.currentSpace,
@@ -152,3 +153,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleMover);
+/* eslint-enable */

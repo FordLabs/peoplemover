@@ -18,19 +18,19 @@
  */
 
 
-import {fireEvent, render} from "@testing-library/react";
-import * as React from "react";
-import NotesTextArea from "./NotesTextArea";
+import {fireEvent, render} from '@testing-library/react';
+import * as React from 'react';
+import NotesTextArea from './NotesTextArea';
 
-describe('notes input', ()=>{
+describe('notes input', () => {
 
-    it('should count the number of characters',() =>{
+    it('should count the number of characters', () => {
         const callback = jest.fn();
         const notes = render(<NotesTextArea notes={'this string is 17'} callBack={callback}/>);
         notes.getByText('17 (255 characters max)');
     });
 
-    it('should update character count when notes is typed in', function () {
+    it('should update character count when notes is typed in', function() {
         const callback = jest.fn();
         const notes = render(<NotesTextArea callBack={callback}/>);
         notes.getByText('0 (255 characters max)');
@@ -39,7 +39,7 @@ describe('notes input', ()=>{
         notes.getByText('4 (255 characters max)');
     });
 
-    it('should send update to parent when text changes', function () {
+    it('should send update to parent when text changes', function() {
         const callback = jest.fn();
         const notes = render(<NotesTextArea callBack={callback}/>);
         const input = notes.getByLabelText('Notes');
@@ -47,7 +47,7 @@ describe('notes input', ()=>{
         expect(callback).toHaveBeenCalledWith('Good');
     });
 
-    it('should change the max value allowed in the input', function () {
+    it('should change the max value allowed in the input', function() {
         const callback = jest.fn();
         const notes = render(<NotesTextArea callBack={callback} maxLength={5}/>);
         notes.getByText('0 (5 characters max)');

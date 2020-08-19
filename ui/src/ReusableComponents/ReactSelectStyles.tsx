@@ -21,7 +21,7 @@ import './FilterInput.scss';
 import {ThemeApplier} from './ThemeApplier';
 import CheckIcon from '../Application/Assets/checkIcon.svg';
 import {Option} from '../CommonTypes/Option';
-import {useOnLoad} from "./UseOnLoad";
+import {useOnLoad} from './UseOnLoad';
 
 export const reactSelectStyles = {
     control: (provided: CSSProperties): CSSProperties => ({
