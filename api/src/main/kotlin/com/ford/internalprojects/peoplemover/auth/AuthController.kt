@@ -42,8 +42,8 @@ class AuthController(val userSpaceMappingRepository: UserSpaceMappingRepository,
     fun validateAndAuthenticateAccessToken(@RequestBody request: AuthCheckScopesRequest): ResponseEntity<Void> {
         val validateTokenResponse = authService.validateToken(request.accessToken)
 
-        val spaceToSearch = spaceRepository.findByNameIgnoreCase(request.spaceName)
-        val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.sub!!, spaceToSearch!!.id!!)
+        val spaceToSearch = spaceRepository.findByUuid(request.uuid)
+        val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.sub, spaceToSearch!!.id!!)
         return if (mapping.isPresent) {
             ResponseEntity.ok().build()
         } else {
@@ -53,7 +53,7 @@ class AuthController(val userSpaceMappingRepository: UserSpaceMappingRepository,
 
     @PutMapping(path = ["/api/user/invite/space"])
     fun inviteUsersToSpace(@Valid @RequestBody request: AuthInviteUsersToSpaceRequest): ResponseEntity<Void> {
-        val space = spaceRepository.findByNameIgnoreCase(request.spaceName)!!
+        val space = spaceRepository.findByUuid(request.uuid)!!
         request.emails.forEach {
             val userId = it.substringBefore('@').toUpperCase()
             userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))

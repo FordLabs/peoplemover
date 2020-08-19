@@ -69,7 +69,7 @@ class SpaceService(
             return spaceRepository.findAllByIdIn(spaceIds)
     }
 
-    fun getSpace(spaceName: String): Space {
-        return spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
+    fun getSpace(uuid: String): Space {
+        return spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
     }
 }

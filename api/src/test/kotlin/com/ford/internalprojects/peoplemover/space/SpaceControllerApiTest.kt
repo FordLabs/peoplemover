@@ -233,7 +233,7 @@ class SpaceControllerApiTest {
     fun `GET should return correct space for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
-        val result = mockMvc.perform(get("/api/space/${space1.name}"))
+        val result = mockMvc.perform(get("/api/space/${space1.uuid}"))
                 .andExpect(status().isOk)
                 .andReturn()
 

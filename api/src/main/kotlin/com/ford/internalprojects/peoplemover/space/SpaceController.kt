@@ -57,8 +57,8 @@ class SpaceController(private val spaceService: SpaceService, private val logger
         return spaceService.getSpacesForUser(accessToken.replace("Bearer ", ""))
     }
 
-    @GetMapping("/api/space/{spaceName}")
-    fun getSpace(@PathVariable spaceName: String): Space {
-        return spaceService.getSpace(spaceName)
+    @GetMapping("/api/space/{uuid}")
+    fun getSpace(@PathVariable uuid: String): Space {
+        return spaceService.getSpace(uuid)
     }
 }

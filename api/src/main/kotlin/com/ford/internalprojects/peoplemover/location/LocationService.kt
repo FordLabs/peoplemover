@@ -31,10 +31,7 @@ class LocationService(
         private val spaceRepository: SpaceRepository,
         private val spaceLocationRepository: SpaceLocationRepository
 ) {
-    fun addLocationToSpace(
-            spaceName: String,
-            locationAddRequest: LocationAddRequest
-    ): SpaceLocation {
+    fun addLocationToSpace(spaceName: String, locationAddRequest: LocationAddRequest): SpaceLocation {
         val space: Space = spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
         throwIfSpaceLocationAlreadyExists(space, locationAddRequest.name)
 

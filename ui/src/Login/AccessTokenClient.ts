@@ -24,10 +24,10 @@ export class AccessTokenClient {
         });
     }
 
-    static async userCanAccessSpace(accessToken: string, spaceName: string): Promise<AxiosResponse> {
+    static async userCanAccessSpace(accessToken: string, uuid: string): Promise<AxiosResponse> {
         return Axios.post(`/api/access_token/authenticate`, {
             accessToken: accessToken,
-            spaceName: spaceName,
+            uuid: uuid,
         });
     }
 }

@@ -40,7 +40,6 @@ class LocationController(
             @RequestBody locationAddRequest: LocationAddRequest
     ): ResponseEntity<SpaceLocation> {
         val addedLocation: SpaceLocation = locationService.addLocationToSpace(spaceToken, locationAddRequest)
-        logger.logInfoMessage("Location [${addedLocation.name}] is created for space: [$spaceToken].")
         return ResponseEntity.ok(addedLocation)
     }
 

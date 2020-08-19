@@ -36,15 +36,15 @@ function EditContributorsForm({
 
     const pathname = useLocation().pathname;
 
-    const [spaceName, setSpaceName] = useState<string>('');
+    const [spaceUuid, setSpaceUuid] = useState<string>('');
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
 
     useEffect(() => {
-        setSpaceName(pathname.substring(1, pathname.length));
+        setSpaceUuid(pathname.substring(1, pathname.length));
     }, [pathname]);
 
     async function inviteUsers(): Promise<void> {
-        await SpaceClient.inviteUsersToSpace(spaceName, invitedUserEmails);
+        await SpaceClient.inviteUsersToSpace(spaceUuid, invitedUserEmails);
 
         closeModal();
     }
