@@ -68,23 +68,27 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `PUT should return NO_CONTENT with a valid ADFS request`() {
+    fun `PUT should return Ok and an empty list with a valid ADFS request`() {
         val emails = listOf("email_1@email.com", "email_2@otheremail.com")
         val spaceName = "spaceName"
 
-        spaceRepository.save(Space(id = 1, name = spaceName))
+        val space = spaceRepository.save(Space(id = 1, name = spaceName))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "EMAIL_1", spaceId = space.id));
 
         val request = AuthInviteUsersToSpaceRequest(
                 spaceName = spaceName,
                 emails = emails
         )
 
-        mockMvc.perform(put("/api/user/invite/space")
+        val result = mockMvc.perform(put("/api/user/invite/space")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
         ).andExpect(
-                status().isNoContent
-        )
+                status().isOk
+        ).andReturn()
+
+        assertThat(result.response.contentLength).isEqualTo(0)
+
         val savedIds: List<String> = userSpaceMappingRepository.findAll().map { it.userId!! }
 
         assertThat(userSpaceMappingRepository.count()).isEqualTo(2)
@@ -93,7 +97,7 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `PUT should return BAD_REQUEST with an empty space name`() {
+    fun `PUT should return BAD_REQUEST if no space name was provided`() {
         val request = AuthInviteUsersToSpaceRequest(
                 spaceName = "",
                 emails = listOf("EMAIL_1", "EMAIL_2")
@@ -107,7 +111,7 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `PUT should return BAD_REQUEST with an empty emails list`() {
+    fun `PUT should return BAD_REQUEST if no emails were provided`() {
         val request = AuthInviteUsersToSpaceRequest(
                 spaceName = "spaceName",
                 emails = listOf()

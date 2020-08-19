@@ -18,22 +18,22 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import SpaceClient from './SpaceClient';
 import {Dispatch} from 'redux';
-import {closeModalAction} from '../Redux/Actions';
+import {useLocation} from 'react-router-dom';
 import {connect} from 'react-redux';
+import {AvailableModals, closeModalAction, setCurrentModalAction} from '../Redux/Actions';
+import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+
 import './EditContributorsForm.scss';
 
-
-import {useLocation} from 'react-router-dom';
-
-
-interface EditContributorsFormProps {
+interface Props {
     closeModal(): void;
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function EditContributorsForm({
     closeModal,
-}: EditContributorsFormProps): JSX.Element {
-
+    setCurrentModal,
+}: Props): JSX.Element {
     const pathname = useLocation().pathname;
 
     const [spaceName, setSpaceName] = useState<string>('');
@@ -43,29 +43,34 @@ function EditContributorsForm({
         setSpaceName(pathname.substring(1, pathname.length));
     }, [pathname]);
 
-    async function inviteUsers(): Promise<void> {
-        await SpaceClient.inviteUsersToSpace(spaceName, invitedUserEmails);
+    const inviteUsers = async (): Promise<void> => {
+        await SpaceClient.inviteUsersToSpace(spaceName, invitedUserEmails)
+            .catch(console.error)
+            .finally(() => {
+                setCurrentModal({modal: AvailableModals.CONTRIBUTORS_CONFIRMATION});
+            });
+    };
 
-        closeModal();
-    }
-
-    function parseEmails(event: ChangeEvent<HTMLTextAreaElement>): void {
+    const parseEmails = (event: ChangeEvent<HTMLTextAreaElement>): void => {
         const emails: string[] = event.target.value.split(',');
         setInvitedUserEmails(emails);
-    }
+    };
 
-    return <div className={'editContributorsContainer'}>
-        <div className={'inviteContributorsLabel'}>Invite others to collaborate</div>
-        <textarea placeholder={'Enter Emails'} onChange={parseEmails} data-testid={'emailTextArea'}/>
-        <div className={'editContributorsButtonContainer'}>
-            <button className={'editContributorsCancelButton'} onClick={closeModal}>Cancel</button>
-            <button className={'editContributorsSaveButton'} onClick={inviteUsers}>Invite</button>
+    return (
+        <div className="editContributorsContainer">
+            <div className="inviteContributorsLabel">Invite others to collaborate</div>
+            <textarea placeholder="Enter Emails" onChange={parseEmails} data-testid="emailTextArea"/>
+            <div className="editContributorsButtonContainer">
+                <button className="editContributorsCancelButton" onClick={closeModal}>Cancel</button>
+                <button className="editContributorsSaveButton" onClick={inviteUsers}>Invite</button>
+            </div>
         </div>
-    </div>;
+    );
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
+    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(null, mapDispatchToProps)(EditContributorsForm);

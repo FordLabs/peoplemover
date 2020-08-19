@@ -29,7 +29,7 @@ function AccountDropdown({
     const [redirect, setRedirect] = useState<JSX.Element>();
 
     function showsDropdown(): boolean {
-        if(dropdownFlag) {
+        if (dropdownFlag) {
             hidesDropdown();
         } else {
             setDropdownFlag(!dropdownFlag);
@@ -44,7 +44,7 @@ function AccountDropdown({
         return dropdownFlag;
     }
 
-    function clearAccessTokenCookie() {
+    function clearAccessTokenCookie(): void {
         const cookie = new Cookies();
         cookie.remove('accessToken', {path: '/'});
 
