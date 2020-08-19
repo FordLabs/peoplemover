@@ -45,7 +45,6 @@ function EditContributorsForm({
 
     const inviteUsers = async (): Promise<void> => {
         await SpaceClient.inviteUsersToSpace(spaceName, invitedUserEmails)
-            .then(console.log)
             .catch(console.error)
             .finally(() => {
                 setCurrentModal({modal: AvailableModals.CONTRIBUTORS_CONFIRMATION});
