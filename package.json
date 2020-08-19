@@ -10,7 +10,7 @@
     "url": "git+https://github.com/FordLabs/PeopleMover.git"
   },
   "scripts": {
-    "test:ui": "cd ui && npm run lint && CI=true npm test"
+    "test:ui": "cd ui && npm run lint && npm run test:ci"
   },
   "husky": {
     "hooks": {
