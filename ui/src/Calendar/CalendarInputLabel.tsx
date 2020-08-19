@@ -23,7 +23,8 @@ function CalendarCustomInput(
 
     const caretDirectionIcon = isOpen ? 'fa-caret-up' : 'fa-caret-down';
     return (
-        <div className="calendarCustomInput" onClick={calendarClicked} data-testid="calendarToggle">
+        <div className="calendarCustomInput" onClick={calendarClicked} onKeyDown={calendarClicked}
+            data-testid="calendarToggle">
             Viewing: {viewingDate.toLocaleString('en-us', dateFormatOptions)}
             <i className={`fas ${caretDirectionIcon} drawerCaret`}
                 data-testid={`calendar-${caretDirectionIcon}`}/>

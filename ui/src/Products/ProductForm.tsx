@@ -39,7 +39,7 @@ import ProductFormEndDateField from './ProductFormEndDateField';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../Modal/Form.scss';
 import './ProductForm.scss';
-import NotesTextArea from "../Form/NotesTextArea";
+import NotesTextArea from '../Form/NotesTextArea';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -222,7 +222,8 @@ function ProductForm({
                     <i className="fas fa-trash"/>
                     <div className="trashCanSpacer"/>
                     <span className="obliterateLink"
-                        onClick={displayDeleteProductModal}>Delete Product</span>
+                        onClick={displayDeleteProductModal}
+                        onKeyDown={displayDeleteProductModal}>Delete Product</span>
                 </div>)}
             </form>
             {confirmDeleteModal}

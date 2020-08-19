@@ -36,7 +36,7 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
-import {useOnLoad} from "../ReusableComponents/UseOnLoad";
+import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 interface ProductCardProps {
     container: string;
@@ -158,14 +158,15 @@ function ProductCard({
                             </div>
                             <div className="productControlsContainer">
                                 <div className="addPersonIconContainer">
-                                    <i data-testid={'addPersonToProductIcon-' + product.id}
+                                    <button data-testid={'addPersonToProductIcon-' + product.id}
                                         className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
                                         onClick={() => setCurrentModal({
                                             modal: AvailableModals.CREATE_ASSIGNMENT,
                                             item: product,
-                                        })}/>
+                                        })}
+                                    />
                                 </div>
-                                <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
+                                <button className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
                                     data-testid={'editProductIcon_' + product.id}
                                     onClick={toggleEditMenu}/>
                             </div>

@@ -17,17 +17,17 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.newProduct {
+button.newProduct {
   display: flex;
   flex-direction: row;
   justify-content: left;
-  height: 30px;
   align-items: center;
-}
 
-.newProduct.productCardContainer {
-  padding-bottom: 4px;
   cursor: pointer;
+  height: 42px;
+  width: 194px;
+  padding: 8px 5px 4px 5px;
+  letter-spacing: normal;
 }
 
 .addProductIcon {

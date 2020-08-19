@@ -174,7 +174,8 @@ function AssignmentCard({
                 ref={assignmentEditRef}
                 className="personRoleColor"
                 data-testid={`editPersonIconContainer-${assignment.id}`}
-                onClick={toggleEditMenu}>
+                onClick={toggleEditMenu}
+                onKeyDown={toggleEditMenu}>
                 <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>
             </div>
             {

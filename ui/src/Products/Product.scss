@@ -77,6 +77,11 @@
   margin: 0 2px;
 }
 
+button.clickableIcon {
+  background: none;
+  letter-spacing: normal;
+}
+
 .clickableIcon {
   padding: 3px;
 }
@@ -151,15 +156,20 @@ div.DefaultColor {
   margin-left: 2px;
 }
 
+button.archivedProduct,
 .archivedProduct {
+  color: $gray-1;
   background: $gray-5;
   box-shadow: 1px 2px 3px rgba(black, 0.3);
   border-radius: 2px;
-  width: 170px;
-
+  width: 180px;
+  
   padding: 9px 0 8px 10px;
-  margin-right: 10px;
-  margin-bottom: 15px;
+  margin: 0 10px 15px 0px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: normal;
 }
 
 .productInfoContainer {

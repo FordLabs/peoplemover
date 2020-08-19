@@ -36,9 +36,9 @@ export default function SpaceDashboardTile({space, onClick}: SpaceDashboardTileP
     }
 
     return (
-        <div className="space" onClick={(): void => onClick(space)}>
+        <button className="space" onClick={(): void => onClick(space)}>
             <div className="space-name">{space.name}</div>
             <div className="last-modified-text">Last modified {timestamp}</div>
-        </div>
+        </button>
     );
 }

@@ -458,7 +458,7 @@ describe('Products', () => {
         });
 
         it('should call the product client with the product when a deletion is requested', async () => {
-            await act(async() => {
+            await act(async () => {
                 const app = renderWithRedux(<PeopleMover/>);
                 const editProduct3Button = await app.findByTestId('editProductIcon_3');
                 fireEvent.click(editProduct3Button);

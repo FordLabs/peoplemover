@@ -165,8 +165,7 @@ function EditTraitSection({
                 data-testid="traitName"
                 value={enteredTrait ? enteredTrait.name : ''}
                 onChange={updateEnteredRoleText}
-                onKeyPress={event => handleEnterSubmit(event)}
-                autoFocus/>
+                onKeyPress={event => handleEnterSubmit(event)}/>
             {duplicateErrorMessage &&
             <div className="duplicateErrorMessage"> A {traitName} with this name already exists.<br/> Enter a different name. </div>
             }
@@ -181,6 +180,7 @@ function EditTraitSection({
                             data-testid="selectRoleCircle"
                             style={{'backgroundColor': color.color}}
                             onClick={(): void => highlightCircle(ref, color)}
+                            onKeyDown={(): void => highlightCircle(ref, color)}
                             className={`myTraitsCircle selectRoleCircle ${highlightDefaultCircle(color, index)} ${putBorderOnWhiteCircle(index)}`}/>
                     );
                 })}

@@ -46,8 +46,8 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
-import NotesTextArea from "../Form/NotesTextArea";
-import {useOnLoad} from "../ReusableComponents/UseOnLoad";
+import NotesTextArea from '../Form/NotesTextArea';
+import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 interface PersonFormProps {
     editing: boolean;
@@ -363,7 +363,8 @@ function PersonForm({
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                     <i className="fas fa-trash"/>
                     <div className="trashCanSpacer"/>
-                    <span className="obliterateLink" onClick={displayRemovePersonModal}>Delete</span>
+                    <span className="obliterateLink" onClick={displayRemovePersonModal}
+                        onKeyDown={displayRemovePersonModal}>Delete</span>
                 </div>)}
             </form>
             {confirmDeleteModal}

@@ -64,20 +64,20 @@ function AccountDropdown({
 
             {dropdownFlag && <div className={'dropdown-container'}>
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
-                    <div data-testid="invite-members" className="account-dropdown-options"
+                    <button data-testid="invite-members" className="account-dropdown-options"
                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
                         Invite Members
-                    </div>
+                    </button>
                 }
                 {!hideSpaceButtons &&
-                    <div data-testid="download-report" className="account-dropdown-options"
+                    <button data-testid="download-report" className="account-dropdown-options"
                         onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, viewingDate); } }>
                         Download Report
-                    </div>
+                    </button>
                 }
-                <div data-testid="sign-out" className="account-dropdown-options" onClick={() => clearAccessTokenCookie()}>
+                <button data-testid="sign-out" className="account-dropdown-options" onClick={() => clearAccessTokenCookie()}>
                     Sign Out
-                </div>
+                </button>
             </div>
             }
         </button>

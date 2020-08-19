@@ -221,9 +221,10 @@ function MyTraits({
                             <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
                             <div className="traitIcons">
                                 <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
-                                    onClick={(): void => toggleEditSection(index)}/>
+                                    onClick={(): void => toggleEditSection(index)} onKeyDown={(): void => toggleEditSection(index)}/>
                                 <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
-                                    onClick={(): void => showDeleteConfirmationModal(trait)}/>
+                                    onClick={(): void => showDeleteConfirmationModal(trait)}
+                                    onKeyDown={(): void => showDeleteConfirmationModal(trait)}/>
                             </div>
                         </div>
                         }
@@ -249,7 +250,8 @@ function MyTraits({
                 currentSpace={currentSpace}/>
             }
             {!addSectionOpen && <div className="traitRow addNewTraitRow"
-                onClick={(): void => setAddSectionOpen(true)}>
+                onClick={(): void => setAddSectionOpen(true)}
+                onKeyDown={(): void => setAddSectionOpen(true)}>
                 <span data-testid="addNewTraitCircle"
                     className="myTraitsCircle addNewTraitUnfilledCircle">
                     <i className="fa fa-plus orangeIcon addTraitIcon"/>

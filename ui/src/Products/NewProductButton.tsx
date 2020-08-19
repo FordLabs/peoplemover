@@ -30,12 +30,12 @@ interface NewProductButtonProps {
 
 function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: NewProductButtonProps): JSX.Element {
     return (
-        <div className="newProduct productCardContainer"
+        <button className="newProduct productCardContainer"
             onClick={() => setCurrentModal(modalState)}
             data-cy="newProductButton">
             <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
             <h2 className="newProductText">New Product</h2>
-        </div>
+        </button>
     );
 }
 

@@ -19,7 +19,7 @@ import {Redirect, Route, RouteProps} from 'react-router';
 import React, {useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
-import {useOnLoad} from "../ReusableComponents/UseOnLoad";
+import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
