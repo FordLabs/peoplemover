@@ -300,8 +300,7 @@ function PersonForm({
                         value={person.name}
                         onChange={changeName}
                         autoComplete="off"
-                        placeholder={'e.g. Jane Smith'}
-                        autoFocus/>
+                        placeholder={'e.g. Jane Smith'}/>
                     {isPersonNameInvalid && <span className="personNameWarning">Please enter a person name.</span>}
                     <div className="isNewContainer">
                         <input className="checkbox"

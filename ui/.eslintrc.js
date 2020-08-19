@@ -17,7 +17,8 @@ module.exports = {
         'plugin:react/recommended',
         'fbjs',
         'plugin:react-redux/recommended',
-        'plugin:cypress/recommended'
+        'plugin:cypress/recommended',
+        "plugin:jsx-a11y/recommended"
     ],
     rules: {
         'react/jsx-uses-react': 'error',

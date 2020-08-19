@@ -212,7 +212,7 @@ function AssignmentForm({
 
     return (
         <div className="formContainer">
-            <form className="form" onKeyDown={handleKeyDown} data-testid="assignmentForm">
+            <form className="form" role="presentation" onKeyDown={handleKeyDown} data-testid="assignmentForm">
 
                 <div className={'person-select-container'}>
                     <label className="formItemLabel" htmlFor="person">Name</label>

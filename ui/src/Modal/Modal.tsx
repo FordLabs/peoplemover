@@ -77,7 +77,7 @@ function Modal({
                         data-testid="modalPopupContainer"
                         onClick={(event): void => { event.stopPropagation(); }}
                         onKeyDown={(event): void => { event.stopPropagation(); }}>
-                        <input type="text" autoFocus={true} aria-hidden={true} className="hiddenInputField"/>
+                        <input type="text" aria-hidden={true} className="hiddenInputField"/>
                         <div className="modalTitleAndCloseButtonContainer">
                             <div className="modalTitleSpacer"/>
                             <div className="modalTitle">{title}</div>

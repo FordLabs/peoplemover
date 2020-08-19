@@ -64,20 +64,23 @@ function AccountDropdown({
 
             {dropdownFlag && <div className={'dropdown-container'}>
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
-                    <button data-testid="invite-members" className="account-dropdown-options"
-                        onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
+                    <div data-testid="invite-members" className="account-dropdown-options"
+                        onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}
+                        onKeyDown={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
                         Invite Members
-                    </button>
+                    </div>
                 }
                 {!hideSpaceButtons &&
-                    <button data-testid="download-report" className="account-dropdown-options"
-                        onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, viewingDate); } }>
+                    <div data-testid="download-report" className="account-dropdown-options"
+                        onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, viewingDate); } }
+                        onKeyDown={async () => { await ReportClient.getReportsWithNames(currentSpace.name, viewingDate); } }>
                         Download Report
-                    </button>
+                    </div>
                 }
-                <button data-testid="sign-out" className="account-dropdown-options" onClick={() => clearAccessTokenCookie()}>
+                <div data-testid="sign-out" className="account-dropdown-options" onClick={() => clearAccessTokenCookie()}
+                    onKeyDown={() => clearAccessTokenCookie()}>
                     Sign Out
-                </button>
+                </div>
             </div>
             }
         </button>

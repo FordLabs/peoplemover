@@ -181,8 +181,7 @@ function ProductForm({
                         id="name"
                         value={currentProduct.name}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('name', e.target.value)}
-                        placeholder="e.g. Product 1"
-                        autoFocus/>
+                        placeholder="e.g. Product 1"/>
                     {duplicateProductNameWarning &&
                     <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
                 </div>
