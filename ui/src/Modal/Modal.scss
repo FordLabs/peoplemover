@@ -72,6 +72,13 @@
     border-radius: 50%;
 }
 
+button.closeButton {
+    background: none;
+    color: black;
+    padding: 0;
+    letter-spacing: normal;
+}
+
 .confirmationModalContent {
     font-size: 14px;
     color: $gray-1;
