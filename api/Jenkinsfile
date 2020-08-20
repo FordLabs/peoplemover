@@ -125,8 +125,7 @@ pipeline {
 
                 stage('UI Deploy') {
                     when {
-                        branch 'master'
-                        branch 'stage'
+                        anyOf { branch 'master'; branch 'stage' }
                     }
                     steps {
                         dir("ui") {
