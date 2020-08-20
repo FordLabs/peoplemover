@@ -41,21 +41,21 @@ describe('people actions', () => {
         TestUtils.mockClientCalls();
     });
 
-    // it('opens PersonForm component in editing mode when hambaga icon is clicked', async () => {
-    //     const app = renderWithRedux(<PeopleMover/>);
+    xit('opens PersonForm component in editing mode when hambaga icon is clicked', async () => {
+        const app = renderWithRedux(<PeopleMover/>);
 
-    //     const editPersonIcon = await app.findByTestId('editPersonIconContainer-1');
-    //     fireEvent.click(editPersonIcon);
+        const editPersonIcon = await app.findByTestId('editPersonIconContainer-1');
+        fireEvent.click(editPersonIcon);
 
-    //     const editPersonButton = await app.findByText('Edit Person');
-    //     fireEvent.mouseDown(editPersonButton);
+        const editPersonButton = await app.findByText('Edit Person');
+        fireEvent.mouseDown(editPersonButton);
 
-    //     await app.findByText('Save');
+        await app.findByText('Save');
 
-    //     await wait(() => {
-    //         expect(app.getByLabelText('Name')).toHaveFocus();
-    //     });
-    // });
+        await wait(() => {
+            expect(app.getByLabelText('Name')).toHaveFocus();
+        });
+    });
 
     it('opens PersonForm component when Add Person button is clicked', async () => {
         const app = renderWithRedux(<PeopleMover/>);

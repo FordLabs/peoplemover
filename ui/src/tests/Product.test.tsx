@@ -377,29 +377,29 @@ describe('Products', () => {
             await app.findByText('A product with this name already exists. Please enter a different name.');
         });
 
-        // it('should show duplicate product name warning when user tries to edit product with same name', async () => {
-        //     ProductClient.editProduct = jest.fn(() => Promise.reject({
-        //         response: {
-        //             status: 409,
-        //         },
-        //     }));
-        //     const app = renderWithRedux(<PeopleMover/>);
+        xit('should show duplicate product name warning when user tries to edit product with same name', async () => {
+            ProductClient.editProduct = jest.fn(() => Promise.reject({
+                response: {
+                    status: 409,
+                },
+            }));
+            const app = renderWithRedux(<PeopleMover/>);
 
-        //     const editProductMenuButton = await app.findByTestId('editProductIcon_1');
-        //     fireEvent.click(editProductMenuButton);
+            const editProductMenuButton = await app.findByTestId('editProductIcon_1');
+            fireEvent.click(editProductMenuButton);
 
-        //     const editProductOption = await app.findByTestId('editMenuOption0');
-        //     fireEvent.mouseDown(editProductOption);
-        //     fireEvent.mouseUp(editProductOption);
+            const editProductOption = await app.findByTestId('editMenuOption0');
+            fireEvent.mouseDown(editProductOption);
+            fireEvent.mouseUp(editProductOption);
 
-        //     await app.findByText('Edit Product');
+            await app.findByText('Edit Product');
 
-        //     const nameInputField = await app.findByLabelText('Name');
-        //     fireEvent.change(nameInputField, {target: {value: 'Product 3'}});
+            const nameInputField = await app.findByLabelText('Name');
+            fireEvent.change(nameInputField, {target: {value: 'Product 3'}});
 
-        //     fireEvent.click(app.getByText('Save'));
-        //     await app.findByText('A product with this name already exists. Please enter a different name.');
-        // });
+            fireEvent.click(app.getByText('Save'));
+            await app.findByText('A product with this name already exists. Please enter a different name.');
+        });
 
         it('should show length of notes on initial render', async () => {
             const app = renderWithRedux(<PeopleMover/>);
@@ -528,18 +528,18 @@ describe('Products', () => {
             await app.findByText('Archive Product');
         });
 
-        // it('should open edit modal when click on edit product', async () => {
-        //     const app = renderWithRedux(<PeopleMover/>);
+        xit('should open edit modal when click on edit product', async () => {
+            const app = renderWithRedux(<PeopleMover/>);
 
-        //     const myProductElipsis = await app.findByTestId('editProductIcon_1');
-        //     fireEvent.click(myProductElipsis);
+            const myProductElipsis = await app.findByTestId('editProductIcon_1');
+            fireEvent.click(myProductElipsis);
 
-        //     const editProductMenuOption = await app.findByText('Edit Product');
-        //     fireEvent.mouseDown(editProductMenuOption);
-        //     fireEvent.mouseUp(editProductMenuOption);
-        //     await app.findByText('Edit Product');
-        //     await app.findByText('Save');
-        // });
+            const editProductMenuOption = await app.findByText('Edit Product');
+            fireEvent.mouseDown(editProductMenuOption);
+            fireEvent.mouseUp(editProductMenuOption);
+            await app.findByText('Edit Product');
+            await app.findByText('Save');
+        });
 
         it('should put product in archived products when clicking archive product', async () => {
             function updateGetAllProductsResponse(): void {
