@@ -71,7 +71,7 @@ function AccountDropdown({
                 }
                 {!hideSpaceButtons &&
                     <div data-testid="download-report" className="account-dropdown-options"
-                        onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, viewingDate); } }>
+                        onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate); } }>
                         Download Report
                     </div>
                 }

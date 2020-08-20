@@ -23,10 +23,10 @@ import moment from 'moment';
 
 class ReportClient {
 
-    static async getReportsWithNames(spaceName: string, date: Date): Promise<void> {
+    static async getReportsWithNames(spaceName: string, spaceUuid: string, date: Date): Promise<void> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
         return Axios.get(
-            `/api/reportgenerator/${spaceName}/${dateAsString}`,
+            `/api/reportgenerator/${spaceUuid}/${dateAsString}`,
             {headers: { 'Content-Type': 'application/json'}}
         ).then( response => {
             const jsonAsCsv = ReportClient.convertToCSV(response.data);
