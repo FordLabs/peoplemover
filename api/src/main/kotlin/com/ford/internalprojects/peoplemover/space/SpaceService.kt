@@ -19,7 +19,6 @@ package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.ProductService
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.stereotype.Service
@@ -33,8 +32,6 @@ class SpaceService(
         ) {
 
     fun createSpaceWithName(spaceName: String): Space {
-        spaceRepository.findByNameIgnoreCase(spaceName)
-                ?.let { throw SpaceAlreadyExistsException(spaceName) }
         if (spaceName.isEmpty()) {
             throw SpaceNotExistsException(spaceName)
         } else {

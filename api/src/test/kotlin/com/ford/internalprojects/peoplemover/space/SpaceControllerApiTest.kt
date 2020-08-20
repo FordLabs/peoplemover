@@ -162,15 +162,6 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `POST should return 409 when space name already exists`() {
-        spaceRepository.save(Space(name = "NaNy NaNd"))
-
-        mockMvc.perform(post("/api/space")
-                .content("NaNy NaNd"))
-                .andExpect(status().isConflict)
-    }
-
-    @Test
     fun `GET should return all spaces`() {
         val space1: Space = spaceRepository.save(Space(name = "Ken Masters"))
         val space2: Space = spaceRepository.save(Space(name = "KenM"))

@@ -73,9 +73,9 @@ class LocalConfig {
         colorService.addColors(listOf("#FFFF00", "#FF00FF", "#00FFFF"))
         val colors: List<Color?> = colorService.getColors()
 
-        val role1: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE BEST", colors[0]?.id)
-        val role2: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE SECOND BEST (UNDERSTUDY)", colors[1]?.id)
-        val role3: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE WURST", colors[2]?.id)
+        val role1: SpaceRole = roleService.addRoleToSpace(createdSpace.uuid, "THE BEST", colors[0]?.id)
+        val role2: SpaceRole = roleService.addRoleToSpace(createdSpace.uuid, "THE SECOND BEST (UNDERSTUDY)", colors[1]?.id)
+        val role3: SpaceRole = roleService.addRoleToSpace(createdSpace.uuid, "THE WURST", colors[2]?.id)
 
         val jane: Person = personService.createPerson(
                 Person(
@@ -83,7 +83,7 @@ class LocalConfig {
                         spaceId = createdSpace.id!!,
                         spaceRole = role1
                 ),
-                spaceName
+                createdSpace.uuid
         )
         val bob: Person = personService.createPerson(
                 Person(
@@ -91,7 +91,7 @@ class LocalConfig {
                         spaceId = createdSpace.id,
                         spaceRole = role2
                 ),
-                spaceName
+                createdSpace.uuid
         )
         val adam: Person = personService.createPerson(
                 Person(
@@ -99,7 +99,7 @@ class LocalConfig {
                         spaceId = createdSpace.id,
                         spaceRole = role3
                 ),
-                spaceName
+                createdSpace.uuid
         )
         val myProduct: Product = productRepository.save(Product(
                 name = "My Product",
