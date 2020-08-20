@@ -82,7 +82,7 @@ class LocationControllerApiTest {
                 spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Venus"))
         )
 
-        val result = mockMvc.perform(get("/api/location/${space.name}"))
+        val result = mockMvc.perform(get("/api/location/${space.uuid}"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -103,7 +103,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `GET should return an empty set when no expected locations in db`() {
-        val result = mockMvc.perform(get("/api/location/${space.name}"))
+        val result = mockMvc.perform(get("/api/location/${space.uuid}"))
                 .andExpect(status().isOk)
                 .andReturn()
         val actualSpaceLocations: Set<SpaceLocation> = objectMapper.readValue(
@@ -117,7 +117,7 @@ class LocationControllerApiTest {
     fun `POST should return 409 conflict when trying to add a duplicate space location to a space`() {
         spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val duplicateLocationAddRequest = LocationAddRequest(name = "Germany")
-        mockMvc.perform(post("/api/location/${space.name}")
+        mockMvc.perform(post("/api/location/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(duplicateLocationAddRequest)))
                 .andExpect(status().isConflict)
@@ -126,7 +126,7 @@ class LocationControllerApiTest {
     @Test
     fun `POST should add new space location to db and return it`() {
         val locationAddRequest = LocationAddRequest(name = "Germany")
-        val result = mockMvc.perform(post("/api/location/${space.name}")
+        val result = mockMvc.perform(post("/api/location/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationAddRequest)))
                 .andExpect(status().isOk)
@@ -158,7 +158,7 @@ class LocationControllerApiTest {
     fun `PUT should update a location and return 200`() {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val locationEditRequest = LocationEditRequest(id = spaceLocation.id!!, updatedName = "Dearborn")
-        val result = mockMvc.perform(put("/api/location/${space.name}")
+        val result = mockMvc.perform(put("/api/location/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationEditRequest)))
                 .andExpect(status().isOk)
@@ -181,7 +181,7 @@ class LocationControllerApiTest {
         val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "France"))
         val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name.toLowerCase())
-        mockMvc.perform(put("/api/location/${space.name}")
+        mockMvc.perform(put("/api/location/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationEditRequest)))
                 .andExpect(status().isConflict)
@@ -190,7 +190,7 @@ class LocationControllerApiTest {
     @Test
     fun `DELETE should delete location from space`() {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
-        mockMvc.perform(delete("/api/location/${space.name}/${spaceLocation.id}"))
+        mockMvc.perform(delete("/api/location/${space.uuid}/${spaceLocation.id}"))
                 .andExpect(status().isOk)
 
         assertThat(spaceLocationRepository.count()).isZero()
@@ -207,7 +207,7 @@ class LocationControllerApiTest {
                 )
         )
         assertThat(spaceLocationRepository.count()).isOne()
-        mockMvc.perform(delete("/api/location/${space.name}/${location.id}"))
+        mockMvc.perform(delete("/api/location/${space.uuid}/${location.id}"))
                 .andExpect(status().isOk)
         assertThat(spaceLocationRepository.count()).isZero()
 
