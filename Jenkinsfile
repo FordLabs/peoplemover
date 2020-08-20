@@ -36,6 +36,7 @@ pipeline {
                             steps {
                                 dir("ui") {
                                     sh "npm run build"
+                                    stash includes: 'build/**', name: 'ui'
                                 }
                             }
                         }
@@ -60,6 +61,7 @@ pipeline {
                             steps {
                                 dir("api") {
                                     sh "./gradlew assemble"
+                                    stash includes: 'build/libs/*.jar', name: 'api'
                                 }
                             }
                         }
@@ -89,6 +91,7 @@ pipeline {
                    string(credentialsId: 'adfs_resource', variable: 'ADFS_RESOURCE')
                              ]) {
                     dir("api") {
+                        unstash 'api'
                         sh 'echo Pushing to Cloud Foundry'
                         sh  """./gradlew cf-push-blue-green \
                         -Pcf.ccUser=$CI_USER \
@@ -121,6 +124,7 @@ pipeline {
                         string(credentialsId: 'peoplemover_pcf_cchost', variable: 'PCF_HOST'),
                 ]) {
                     dir("ui") {
+                        unstash 'ui'
                         sh 'echo Login to Cloud Foundry'
                         sh """cf login \
                             -a $PCF_HOST \
