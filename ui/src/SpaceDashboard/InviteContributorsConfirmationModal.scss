@@ -30,6 +30,7 @@
     font-size: 14px;
     line-height: 16px;
     width: 100%;
+    padding-bottom: 12px;
   }
 
   .inviteContributorsConfirmationShareLinkContainer {
@@ -38,11 +39,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 12px 0 28px;
+    margin-bottom: 28px;
 
     .inviteContributorsConfirmationLink {
       white-space: nowrap;
-      overflow: scroll;
+      overflow-x: auto;
       background: #F2F2F2;
       border-radius: 6px;
       padding: 10px;
