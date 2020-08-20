@@ -30,8 +30,8 @@ class ReportGeneratorService(
         private val productService: ProductService,
         private val assignmentService: AssignmentService
 ) {
-    fun getReportWithNames(spaceName: String, requestedDate: LocalDate): List<ReportGenerator> {
-        val space = spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException(spaceName)
+    fun getReportWithNames(spaceUuid: String, requestedDate: LocalDate): List<ReportGenerator> {
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
         val assignments = assignmentService.getAssignmentsByDate(space.id!!, requestedDate)
         val products = productService.findAllBySpaceIdAndDate(space.id, requestedDate)

@@ -26,9 +26,9 @@ import java.time.LocalDate
 @RestController
 class ReportGeneratorController(private val reportGeneratorService: ReportGeneratorService) {
 
-    @GetMapping("/api/reportgenerator/{spaceName}/{requestedDate}")
-    fun getReportWithNames(@PathVariable spaceName: String, @PathVariable requestedDate: String): ResponseEntity<List<ReportGenerator>> {
-        return ResponseEntity.ok(reportGeneratorService.getReportWithNames(spaceName, LocalDate.parse(requestedDate)))
+    @GetMapping("/api/reportgenerator/{spaceUuid}/{requestedDate}")
+    fun getReportWithNames(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<List<ReportGenerator>> {
+        return ResponseEntity.ok(reportGeneratorService.getReportWithNames(spaceUuid, LocalDate.parse(requestedDate)))
     }
 
 }

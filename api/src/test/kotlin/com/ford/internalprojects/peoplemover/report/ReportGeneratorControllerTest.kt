@@ -112,7 +112,7 @@ class ReportGeneratorControllerTest {
     @Test
     fun `GET should return people, products, and roles for a space and omit future assignments given a date`() {
         val result = mockMvc
-                .perform(get("/api/reportgenerator/${space.name}/${mar1}"))
+                .perform(get("/api/reportgenerator/${space.uuid}/${mar1}"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -133,7 +133,7 @@ class ReportGeneratorControllerTest {
     @Test
     fun `GET should ignore case and alphabetically sort by product name then person name given a date`() {
         val result = mockMvc
-                .perform(get("/api/reportgenerator/${space.name}/${mar2}"))
+                .perform(get("/api/reportgenerator/${space.uuid}/${mar2}"))
                 .andExpect(status().isOk)
                 .andReturn()
 
