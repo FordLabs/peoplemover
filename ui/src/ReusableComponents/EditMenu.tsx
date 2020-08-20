@@ -17,7 +17,7 @@
 
 import React from 'react';
 import './EditMenu.scss';
-import {useOnLoad} from "./UseOnLoad";
+import {useOnLoad} from './UseOnLoad';
 
 
 export interface EditMenuOption {

@@ -30,7 +30,7 @@ pipeline {
                 stage('UI Test') {
                     steps {
                         dir("ui") {
-                            sh "CI=true npm run test:ci"
+                            sh "npm run test:ci"
                         }
                     }
                 }
@@ -124,6 +124,9 @@ pipeline {
 
 
                 stage('UI Deploy') {
+                    when {
+                        anyOf { branch 'master'; branch 'stage' }
+                    }
                     steps {
                         dir("ui") {
                             pushToCloudFoundry(

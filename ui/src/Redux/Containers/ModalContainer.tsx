@@ -27,6 +27,7 @@ import {GlobalStateProps} from '../Reducers';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
 import MyTagsModal from '../../Tags/MyTagsModal';
 import MyRolesModal from '../../Roles/MyRolesModal';
+import InviteContributorConfirmationForm from '../../SpaceDashboard/InviteContributorsConfirmationForm';
 import CreateSpaceForm from '../../SpaceDashboard/CreateSpaceForm';
 import {Dispatch} from 'redux';
 import EditContributorsForm from '../../SpaceDashboard/EditContributorsForm';
@@ -89,6 +90,8 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
             return <CreateSpaceForm onSubmit={item}/>;
         case AvailableModals.EDIT_CONTRIBUTORS:
             return <EditContributorsForm/>;
+        case AvailableModals.CONTRIBUTORS_CONFIRMATION:
+            return <InviteContributorConfirmationForm />;
         default:
             return null;
     }
@@ -118,6 +121,8 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
             return 'Create New Space';
         case AvailableModals.EDIT_CONTRIBUTORS:
             return 'Invite Members';
+        case AvailableModals.CONTRIBUTORS_CONFIRMATION:
+            return 'Your team member now has access!';
         default:
             return '';
     }

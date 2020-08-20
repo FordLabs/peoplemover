@@ -46,8 +46,8 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
-import NotesTextArea from "../Form/NotesTextArea";
-import {useOnLoad} from "../ReusableComponents/UseOnLoad";
+import NotesTextArea from '../Form/NotesTextArea';
+import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 interface PersonFormProps {
     editing: boolean;
