@@ -38,6 +38,8 @@ function EditContributorsForm({
 
     const [spaceName, setSpaceName] = useState<string>('');
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
+    const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
+
 
     useEffect(() => {
         setSpaceName(pathname.substring(1, pathname.length));
@@ -53,7 +55,18 @@ function EditContributorsForm({
 
     const parseEmails = (event: ChangeEvent<HTMLTextAreaElement>): void => {
         const emails: string[] = event.target.value.split(',');
+        if (validateEmail(emails[0])) {
+            setEnableInviteButton(true);
+        } else {
+            setEnableInviteButton(false);
+        }
         setInvitedUserEmails(emails);
+    };
+
+    const validateEmail = (email: string): boolean => {
+        // eslint-disable-next-line no-useless-escape
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
     };
 
     return (
@@ -62,7 +75,7 @@ function EditContributorsForm({
             <textarea placeholder="Enter Emails" onChange={parseEmails} data-testid="emailTextArea"/>
             <div className="editContributorsButtonContainer">
                 <button className="editContributorsCancelButton" onClick={closeModal}>Cancel</button>
-                <button className="editContributorsSaveButton" onClick={inviteUsers}>Invite</button>
+                <button className="editContributorsSaveButton" onClick={inviteUsers} disabled={!enableInviteButton}>Invite</button>
             </div>
         </div>
     );

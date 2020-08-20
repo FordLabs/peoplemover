@@ -71,6 +71,9 @@
         border: 1px solid #4F5FAB;
       }
     }
+    button:disabled {
+      background: #C8D0F3;
+    }
   }
 }
 
