@@ -36,7 +36,6 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
-import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 interface ProductCardProps {
     container: string;
