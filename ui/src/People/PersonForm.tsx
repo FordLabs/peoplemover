@@ -97,7 +97,7 @@ function PersonForm({
 
     useOnLoad(() => {
         async function setup() {
-            const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.name);
+            const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.uuid!!);
             setRoles(rolesResponse.data);
 
             if (editing && assignment) {
@@ -243,7 +243,7 @@ function PersonForm({
     function handleCreateRole(inputValue: string): void {
         setIsLoading(true);
         const roleAddRequest: RoleAddRequest = {name: inputValue};
-        RoleClient.add(roleAddRequest, currentSpace.name).then((response: AxiosResponse) => {
+        RoleClient.add(roleAddRequest, currentSpace.uuid!!).then((response: AxiosResponse) => {
             const newRole: SpaceRole = response.data;
             setRoles(roles => [...roles, newRole]);
             updatePersonField('spaceRole', newRole);
