@@ -79,7 +79,7 @@ class PersonControllerApiTest {
 
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "someToken"))
+        space = spaceRepository.save(Space(name = "spaceWithThisName"))
     }
 
     @After
@@ -104,7 +104,7 @@ class PersonControllerApiTest {
                 spaceId = space.id!!
         )
         assertThat(personRepository.count()).isZero()
-        val result = mockMvc.perform(post("/api/person/${space.name}")
+        val result = mockMvc.perform(post("/api/person/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(personToCreate)))
                 .andExpect(status().isOk)
@@ -127,7 +127,7 @@ class PersonControllerApiTest {
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
         val result = mockMvc
-                .perform(get("/api/person/${emptySpace.name}"))
+                .perform(get("/api/person/${emptySpace.uuid}"))
                 .andExpect(status().isOk)
                 .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
@@ -149,7 +149,7 @@ class PersonControllerApiTest {
                 spaceId = otherSpace.id!!
         ))
         val result = mockMvc
-                .perform(get("/api/person/" + space.name))
+                .perform(get("/api/person/" + space.uuid))
                 .andExpect(status().isOk)
                 .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(

@@ -30,8 +30,8 @@ class PersonService(
         private val spaceRepository: SpaceRepository
 ) {
 
-    fun createPerson(personIncoming: Person, spaceName: String): Person {
-        val space = spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException(spaceName)
+    fun createPerson(personIncoming: Person, spaceUuid: String): Person {
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
         val personToCreate = Person(
                 name = personIncoming.name,
