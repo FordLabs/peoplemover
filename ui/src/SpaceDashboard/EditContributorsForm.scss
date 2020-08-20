@@ -36,7 +36,7 @@
     font-family: inherit;
     font-weight: inherit;
     font-size: 12px;
-    color: $gray-3;
+    color: $gray-1;
 
     border: 1px solid $gray-4;
     box-sizing: border-box;
@@ -70,6 +70,9 @@
 
         border: 1px solid #4F5FAB;
       }
+    }
+    button:disabled {
+      background: #C8D0F3;
     }
   }
 }
