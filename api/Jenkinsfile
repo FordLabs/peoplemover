@@ -124,6 +124,9 @@ pipeline {
 
 
                 stage('UI Deploy') {
+                    when {
+                        anyOf { branch 'master'; branch 'stage' }
+                    }
                     steps {
                         dir("ui") {
                             pushToCloudFoundry(

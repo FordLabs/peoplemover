@@ -71,10 +71,7 @@ pipeline {
         }
         stage('API Deploy') {
             when {
-                anyOf {
-                    branch 'master'
-                    branch 'stage'
-                }
+                anyOf { branch 'master'; branch 'stage' }
             }
             agent {
                 kubernetes {
@@ -113,10 +110,7 @@ pipeline {
         }
         stage('UI Deploy') {
             when {
-                anyOf {
-                    branch 'master'
-                    branch 'stage'
-                }
+                anyOf { branch 'master'; branch 'stage' }
             }
             agent {
                 kubernetes {
