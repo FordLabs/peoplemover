@@ -9,24 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    
     - name: Setup Java JDK
       uses: actions/setup-java@v1.3.0
       with:
         java-version: '11.x'
-    
-    - name: Test with Gradle
+    - name: Test
       run: ./gradlew clean test
       working-directory: ./api
-
-    - name: Build with Gradle
+    - name: Build
       run: ./gradlew assemble
       working-directory: ./api
-
     - name: Extract branch name
       shell: bash
       run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
-    
     - name: Release artifact
       uses: actions/upload-artifact@v2
       with:
@@ -46,8 +41,8 @@ jobs:
       - name: Lint
         run: npm run lint
         working-directory: ./ui
-      - name: Test
-        run: npm run test:ci
+      - name: Unit Tests
+        run: npm run test:unit:ci
         working-directory: ./ui
       - name: Build
         run: npm run build
