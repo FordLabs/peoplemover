@@ -47,3 +47,11 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: ./ui
+      - name: Zip Build
+        run: zip -r peoplemover-ui.zip build
+        working-directory: ./ui
+      - name: Release artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: peoplemover-ui.zip
+          path: ui/peoplemover-ui.zip
