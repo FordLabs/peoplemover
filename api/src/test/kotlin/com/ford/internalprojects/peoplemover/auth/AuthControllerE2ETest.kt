@@ -72,8 +72,8 @@ class AuthControllerE2ETest {
         val emails = listOf("email_1@email.com", "email_2@otheremail.com")
         val spaceName = "spaceName"
 
-        val space = spaceRepository.save(Space(id = 1, name = spaceName, uuid = "spaceUUID"));
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "EMAIL_1", spaceId = space.id);
+        val space = spaceRepository.save(Space(id = 1, name = spaceName, uuid = "spaceUUID"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "EMAIL_1", spaceId = space.id))
 
         val request = AuthInviteUsersToSpaceRequest(
                 uuid="spaceUUID",
