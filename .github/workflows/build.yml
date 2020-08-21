@@ -40,11 +40,12 @@ jobs:
         uses: actions/setup-node@v1.4.2
         with:
           node-version: 13.x
-      - name: Install
+      - name: NPM Install
         run: npm install
         working-directory: ./ui
-      - name: Test with NPM
-        run: npm run test
+      - name: Test
+        run: npm run test:ci
         working-directory: ./ui
-        env:
-          CI: true
+      - name: Build
+        run: npm run build
+        working-directory: ./ui
