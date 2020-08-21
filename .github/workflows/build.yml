@@ -43,6 +43,9 @@ jobs:
       - name: NPM Install
         run: npm install
         working-directory: ./ui
+      - name: Lint
+        run: npm run lint
+        working-directory: ./ui
       - name: Test
         run: npm run test:ci
         working-directory: ./ui
