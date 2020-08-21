@@ -50,7 +50,7 @@ describe('SpaceDashboard tests', () => {
             const space1 = await component.findByText('Space1');
             await fireEvent.click(space1);
             expect(SpaceClient.getSpacesForUser).toHaveBeenCalledWith(fakeAccessToken);
-            expect(history.location.pathname).toBe('/space1');
+            expect(history.location.pathname).toBe('/SpaceUUID');
         });
 
         it('should display space name on a space', async () => {
@@ -104,7 +104,7 @@ describe('SpaceDashboard tests', () => {
         const cookies = new Cookies();
         cookies.set('accessToken', fakeAccessToken);
         const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
-        const responseData = hasSpaces ? [{name: 'Space1', lastModifiedDate: '2020-04-14T18:06:11.791+0000'}] : [];
+        const responseData = hasSpaces ? [{name: 'Space1', uuid: 'SpaceUUID', lastModifiedDate: '2020-04-14T18:06:11.791+0000'}] : [];
         SpaceClient.getSpacesForUser = jest.fn(() => Promise.resolve({ data: responseData } as AxiosResponse));
 
         // @ts-ignore

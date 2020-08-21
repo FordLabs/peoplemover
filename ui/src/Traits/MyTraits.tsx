@@ -68,14 +68,14 @@ function MyTraits({
 
     useEffect(() => {
         async function setup(): Promise<void> {
-            const response = await traitClient.get(currentSpace.name);
+            const response = await traitClient.get(currentSpace.uuid!!);
             const traitResponse: Array<Trait> = response.data;
             setTraits(traitResponse);
             setEditSectionsOpen(new Array(traitResponse.length).fill(false));
         }
 
         setup().then();
-    }, [currentSpace.name, traitClient]);
+    }, [currentSpace.uuid, traitClient]);
 
     useEffect(() => {
         function checkForUnsavedChanges(): boolean {

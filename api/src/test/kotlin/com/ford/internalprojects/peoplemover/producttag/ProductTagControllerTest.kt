@@ -66,7 +66,7 @@ class ProductTagControllerTest {
 
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "token"))
+        space = spaceRepository.save(Space(name = "anotherSpaceName"))
     }
 
     @After
@@ -80,7 +80,7 @@ class ProductTagControllerTest {
     fun `POST should create product tag`() {
         val tagToCreate = ProductTagAddRequest(name = "Fin Tech")
 
-        val result = mockMvc.perform(post("/api/producttag/${space.name}")
+        val result = mockMvc.perform(post("/api/producttag/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToCreate)))
                 .andExpect(status().isOk)
@@ -104,7 +104,7 @@ class ProductTagControllerTest {
     @Test
     fun `POST should return 409 when creating product tag with already existing name`() {
         val actualTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech"))
-        mockMvc.perform(post("/api/producttag/${space.name}")
+        mockMvc.perform(post("/api/producttag/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(actualTag)))
                 .andExpect(status().isConflict)
@@ -117,7 +117,7 @@ class ProductTagControllerTest {
         val productTag2: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech 2"))
         val productTag3: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech 3"))
 
-        val result = mockMvc.perform(get("/api/producttag/${space.name}"))
+        val result = mockMvc.perform(get("/api/producttag/${space.uuid}"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -151,7 +151,7 @@ class ProductTagControllerTest {
 
         assertThat(productTagRepository.count()).isOne()
 
-        mockMvc.perform(delete("/api/producttag/${space.name}/${productTag.id}"))
+        mockMvc.perform(delete("/api/producttag/${space.uuid}/${productTag.id}"))
                 .andExpect(status().isOk)
 
         assertThat(productTagRepository.count()).isZero()
@@ -162,7 +162,7 @@ class ProductTagControllerTest {
 
     @Test
     fun `DELETE should return 400 when product tag does not exist`() {
-        mockMvc.perform(delete("/api/producttag/${space.name}/700"))
+        mockMvc.perform(delete("/api/producttag/${space.uuid}/700"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -170,7 +170,7 @@ class ProductTagControllerTest {
     fun `PUT should update product tag`() {
         val productTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "FordX"))
         val updatedTag = ProductTagEditRequest(id = productTag.id!!, updatedName = "Fin Tech")
-        val result = mockMvc.perform(put("/api/producttag/${space.name}")
+        val result = mockMvc.perform(put("/api/producttag/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedTag)))
                 .andExpect(status().isOk)
@@ -185,7 +185,7 @@ class ProductTagControllerTest {
     @Test
     fun `PUT should return 400 when trying to edit non existent product tag`() {
         val attemptedEditRequest = ProductTagEditRequest(id = 700, updatedName = "")
-        mockMvc.perform(put("/api/producttag/${space.name}")
+        mockMvc.perform(put("/api/producttag/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(attemptedEditRequest)))
                 .andExpect(status().isBadRequest)
@@ -197,7 +197,7 @@ class ProductTagControllerTest {
         val productTag2: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech"))
         val updatedTag = ProductTagEditRequest(id = productTag1.id!!, updatedName = productTag2.name)
 
-        mockMvc.perform(put("/api/producttag/${space.name}")
+        mockMvc.perform(put("/api/producttag/${space.uuid}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedTag)))
                 .andExpect(status().isConflict)

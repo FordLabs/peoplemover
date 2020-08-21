@@ -21,18 +21,18 @@ import {Person} from './Person';
 class PeopleClient {
     static async getAllPeopleInSpace(): Promise<AxiosResponse> {
         return Axios.get(
-            `/api/person/${this.getSpaceName()}`,
+            `/api/person/${this.getSpaceUuid()}`,
             {headers: {'Content-Type': 'application/json'}}
         );
     }
 
-    static getSpaceName(): string {
+    static getSpaceUuid(): string {
         return window.location.pathname.substr(1);
     }
 
     static async createPersonForSpace(person: Person): Promise<AxiosResponse> {
         return Axios.post(
-            `/api/person/${this.getSpaceName()}`,
+            `/api/person/${this.getSpaceUuid()}`,
             person
         );
     }

@@ -121,7 +121,7 @@ class TestUtils {
         PeopleClient.updatePerson = emptyAxiosResponse;
         PeopleClient.removePerson = emptyAxiosResponse;
 
-        SpaceClient.getSpaceFromName = jest.fn(() => Promise.resolve({
+        SpaceClient.getSpaceFromUuid = jest.fn(() => Promise.resolve({
             data: TestUtils.space,
         } as AxiosResponse));
 

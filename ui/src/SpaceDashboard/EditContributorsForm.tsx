@@ -27,26 +27,24 @@ import './EditContributorsForm.scss';
 
 interface Props {
     closeModal(): void;
+
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function EditContributorsForm({
-    closeModal,
-    setCurrentModal,
-}: Props): JSX.Element {
+function EditContributorsForm({closeModal, setCurrentModal}: Props): JSX.Element {
     const pathname = useLocation().pathname;
 
-    const [spaceName, setSpaceName] = useState<string>('');
+    const [spaceUuid, setSpaceUuid] = useState<string>('');
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
 
 
     useEffect(() => {
-        setSpaceName(pathname.substring(1, pathname.length));
+        setSpaceUuid(pathname.substring(1, pathname.length));
     }, [pathname]);
 
     const inviteUsers = async (): Promise<void> => {
-        await SpaceClient.inviteUsersToSpace(spaceName, invitedUserEmails)
+        await SpaceClient.inviteUsersToSpace(spaceUuid, invitedUserEmails)
             .catch(console.error)
             .finally(() => {
                 setCurrentModal({modal: AvailableModals.CONTRIBUTORS_CONFIRMATION});

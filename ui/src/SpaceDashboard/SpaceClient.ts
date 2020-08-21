@@ -28,8 +28,8 @@ class SpaceClient {
         }});
     }
 
-    static async getSpaceFromName(spaceName: string): Promise<AxiosResponse<Space>> {
-        return Axios.get(`/api/space/${spaceName}`, {headers: {
+    static async getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
+        return Axios.get(`/api/space/${spaceUuid}`, {headers: {
             'Content-Type': 'application/json',
         }});
     }
@@ -47,11 +47,11 @@ class SpaceClient {
         );
     }
 
-    static async inviteUsersToSpace(spaceName: string, emails: string[]): Promise<AxiosResponse<void>> {
+    static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
         return Axios.put(
             `/api/user/invite/space`,
             {
-                spaceName: spaceName,
+                uuid: spaceUuid,
                 emails: emails,
             },
             {

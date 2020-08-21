@@ -32,9 +32,9 @@ export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Ele
             const cookie = new Cookies();
             const accessToken = cookie.get('accessToken');
 
-            const spaceName = window.location.pathname.replace('/', '');
+            const uuid = window.location.pathname.replace('/', '');
 
-            AccessTokenClient.userCanAccessSpace(accessToken, spaceName)
+            AccessTokenClient.userCanAccessSpace(accessToken, uuid)
                 .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
                 .catch(() => setRenderedElement(<Redirect to={'/user/login'}/>));
         }

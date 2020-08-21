@@ -26,24 +26,24 @@ import org.springframework.web.bind.annotation.*
 class RoleController(private val roleService: RoleService,
                      private val logger: BasicLogger) {
 
-    @GetMapping("/{spaceName}")
-    fun getRolesForSpace(@PathVariable spaceName: String): ResponseEntity<Set<SpaceRole>> {
-        val rolesForSpace = roleService.getRolesForSpace(spaceName)
-        logger.logInfoMessage("All role retrieved for space: [$spaceName].")
+    @GetMapping("/{spaceUuid}")
+    fun getRolesForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceRole>> {
+        val rolesForSpace = roleService.getRolesForSpace(spaceUuid)
+        logger.logInfoMessage("All role retrieved for space: [$spaceUuid].")
         return ResponseEntity.ok(rolesForSpace)
     }
 
-    @PostMapping("/{spaceName}")
+    @PostMapping("/{spaceUuid}")
     fun addRoleForSpace(
-            @PathVariable spaceName: String,
+            @PathVariable spaceUuid: String,
             @RequestBody request: RoleAddRequest
     ): ResponseEntity<SpaceRole> {
         val spaceRole: SpaceRole = roleService.addRoleToSpace(
-                spaceName,
+                spaceUuid,
                 request.name,
                 request.colorId
         )
-        logger.logInfoMessage("Role [${request.name}] created for space: [$spaceName].")
+        logger.logInfoMessage("Role [${request.name}] created for space: [$spaceUuid].")
         return ResponseEntity.ok(spaceRole)
     }
 
@@ -54,14 +54,14 @@ class RoleController(private val roleService: RoleService,
         return ResponseEntity.ok().build()
     }
 
-    @PutMapping("/{spaceName}")
+    @PutMapping("/{spaceUuid}")
     fun editRole(
-            @PathVariable spaceName: String,
+            @PathVariable spaceUuid: String,
             @RequestBody roleEditRequest: RoleEditRequest
     ): ResponseEntity<SpaceRole> {
-        val updatedRole: SpaceRole = roleService.editRole(spaceName, roleEditRequest)
+        val updatedRole: SpaceRole = roleService.editRole(spaceUuid, roleEditRequest)
         logger.logInfoMessage("Role with id [${roleEditRequest.id}] edited to: " +
-                        "[${roleEditRequest.updatedName}] in space [$spaceName].")
+                        "[${roleEditRequest.updatedName}] in space [$spaceUuid].")
         return ResponseEntity.ok(updatedRole)
     }
 

@@ -62,7 +62,7 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
         .should('have.value', nextPhaseDate);
     cy.get('[data-testid=modalPopupContainer]').click();
 
-    cy.get('[data-testid=productFormNotesField]').focus().type(notes).should('have.value', notes);
+    cy.get('[data-testid=formNotesToField]').focus().type(notes).should('have.value', notes);
 };
 
 const submitProductForm = () => {

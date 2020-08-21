@@ -24,6 +24,6 @@ data class AuthInviteUsersToSpaceRequest(
         @field:NotEmpty(message = "emails cannot be empty")
         val emails: List<String>,
 
-        @field:NotEmpty(message = "spaceName cannot be empty")
-        val spaceName: String
+        @field:NotEmpty(message = "uuid cannot be empty")
+        val uuid: String
 )
