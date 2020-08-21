@@ -31,7 +31,7 @@ import Header from '../Header/Header';
 import SpaceDashboardTile from './SpaceDashboardTile';
 
 import './SpaceDashboard.scss';
-import {useOnLoad} from "../ReusableComponents/UseOnLoad";
+import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;

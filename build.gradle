@@ -1,0 +1,8 @@
+project(':ui') {}
+project(':api') {}
+
+task build(dependsOn: [':api:build', ':ui:npm_run_build'])
+
+task hotDeployBranch(type: Exec, dependsOn: 'build') {
+    commandLine "./gradlew", ":api:pushBranchAPI", ":ui:pushBranchUI"
+}

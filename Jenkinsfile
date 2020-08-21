@@ -36,6 +36,7 @@ pipeline {
                             steps {
                                 dir("ui") {
                                     sh "npm run build"
+                                    stash includes: 'build/**', name: 'ui'
                                 }
                             }
                         }
@@ -60,6 +61,7 @@ pipeline {
                             steps {
                                 dir("api") {
                                     sh "./gradlew assemble"
+                                    stash includes: 'build/libs/*.jar', name: 'api'
                                 }
                             }
                         }
@@ -68,6 +70,9 @@ pipeline {
             }
         }
         stage('API Deploy') {
+            when {
+                anyOf { branch 'master'; branch 'stage' }
+            }
             agent {
                 kubernetes {
                     label 'jdk11'
@@ -86,6 +91,7 @@ pipeline {
                    string(credentialsId: 'adfs_resource', variable: 'ADFS_RESOURCE')
                              ]) {
                     dir("api") {
+                        unstash 'api'
                         sh 'echo Pushing to Cloud Foundry'
                         sh  """./gradlew cf-push-blue-green \
                         -Pcf.ccUser=$CI_USER \
@@ -103,6 +109,9 @@ pipeline {
             }
         }
         stage('UI Deploy') {
+            when {
+                anyOf { branch 'master'; branch 'stage' }
+            }
             agent {
                 kubernetes {
                     label 'nodejs'
@@ -115,6 +124,7 @@ pipeline {
                         string(credentialsId: 'peoplemover_pcf_cchost', variable: 'PCF_HOST'),
                 ]) {
                     dir("ui") {
+                        unstash 'ui'
                         sh 'echo Login to Cloud Foundry'
                         sh """cf login \
                             -a $PCF_HOST \
@@ -152,14 +162,6 @@ def getAPIDeployProps(branchName) {
                 -Pcf.environment.react.app.auth_enabled=true \
                 -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
     }
-    else{
-        return """-PbranchNameWithoutUnderscores=Branch \
-                -Pcf.name=${branchName}API \
-                -Pcf.host=${branchName}ui \
-                -Pcf.environment.react.app.url=https://$branchName.$peoplemover_pcf_org \
-                -Pcf.environment.react.app.auth_enabled=false \
-                -Pcf.environment.react.app.invite_users_to_space_enabled=true"""
-    }
 }
 
 def getUIAppName(branchName) {
@@ -167,8 +169,6 @@ def getUIAppName(branchName) {
         return "StagePeopleMoverUI"
     } else if (branchName == "master") {
         return "PeopleMoverUI2"
-    } else {
-        return """$branchName"""
     }
 }
 
@@ -177,8 +177,6 @@ def getNpmEnvironment(branchName) {
         return """REACT_APP_URL=https://stagepeoplemover.$peoplemover_pcf_org""".stripIndent()
     } else if (branchName == "master") {
         return """REACT_APP_URL=https://peoplemover2.$peoplemover_pcf_org""".stripIndent()
-    } else {
-        return """REACT_APP_URL=https://$branchName.$peoplemover_pcf_org""".stripIndent()
     }
 }
 
@@ -189,7 +187,5 @@ def getManifest(branchName) {
         return 'manifest_Stage.yml'
     } else if (branchName == "master"){
         return 'manifest.yml'
-    } else {
-        return 'manifest_QA.yml'
     }
 }

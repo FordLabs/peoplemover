@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.auth
 
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -52,13 +53,21 @@ class AuthController(val userSpaceMappingRepository: UserSpaceMappingRepository,
     }
 
     @PutMapping(path = ["/api/user/invite/space"])
-    fun inviteUsersToSpace(@Valid @RequestBody request: AuthInviteUsersToSpaceRequest): ResponseEntity<Void> {
+    fun inviteUsersToSpace(@Valid @RequestBody request: AuthInviteUsersToSpaceRequest): ResponseEntity<ArrayList<String>> {
         val space = spaceRepository.findByUuid(request.uuid)!!
-        request.emails.forEach {
-            val userId = it.substringBefore('@').toUpperCase()
-            userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
-        }
-        return ResponseEntity.noContent().build()
-    }
 
+        val failures = arrayListOf<String>();
+        request.emails.forEach {email ->
+            val userId = email.substringBefore('@').toUpperCase()
+            try {
+                userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
+            } catch (e: DataIntegrityViolationException) {
+                System.out.println(userId + " already has access to this space.");
+            } catch (e: Exception) {
+                failures.add(email)
+                System.out.println(e)
+            }
+        }
+        return ResponseEntity.ok(failures)
+    }
 }

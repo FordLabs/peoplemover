@@ -39,7 +39,7 @@ import ProductFormEndDateField from './ProductFormEndDateField';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../Modal/Form.scss';
 import './ProductForm.scss';
-import NotesTextArea from "../Form/NotesTextArea";
+import NotesTextArea from '../Form/NotesTextArea';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,

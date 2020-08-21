@@ -68,23 +68,27 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `PUT should return NO_CONTENT with a valid ADFS request`() {
+    fun `PUT should return Ok and an empty list with a valid ADFS request`() {
         val emails = listOf("email_1@email.com", "email_2@otheremail.com")
         val spaceName = "spaceName"
 
-        spaceRepository.save(Space(id = 1, name = spaceName, uuid = "spaceUUID"))
+        val space = spaceRepository.save(Space(id = 1, name = spaceName, uuid = "spaceUUID"));
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "EMAIL_1", spaceId = space.id);
 
         val request = AuthInviteUsersToSpaceRequest(
-                uuid = "spaceUUID",
+                uuid="spaceUUID",
                 emails = emails
-        )
+                )
 
-        mockMvc.perform(put("/api/user/invite/space")
+        val result = mockMvc.perform(put("/api/user/invite/space")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
         ).andExpect(
-                status().isNoContent
-        )
+                status().isOk
+        ).andReturn()
+
+        assertThat(result.response.contentLength).isEqualTo(0)
+
         val savedIds: List<String> = userSpaceMappingRepository.findAll().map { it.userId!! }
 
         assertThat(userSpaceMappingRepository.count()).isEqualTo(2)
@@ -107,7 +111,7 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `PUT should return BAD_REQUEST with an empty emails list`() {
+    fun `PUT should return BAD_REQUEST if no emails were provided`() {
         val request = AuthInviteUsersToSpaceRequest(
                 uuid = "spaceName",
                 emails = listOf()
@@ -177,7 +181,7 @@ class AuthControllerE2ETest {
 
         val request = AuthCheckScopesRequest(
                 accessToken = accessToken,
-                uuid ="spaceUUID"
+                uuid = "spaceUUID"
         )
 
         mockMvc.perform(post("/api/access_token/authenticate")
@@ -200,7 +204,7 @@ class AuthControllerE2ETest {
         claims["iss"] = "https://localhost"
         val fakeJwt = Jwt(accessToken, issuedAt, expiresAt, headers, claims)
 
-        spaceRepository.save(Space(name="spaceThree", uuid="SpaceUUID"))
+        spaceRepository.save(Space(name = "spaceThree", uuid = "SpaceUUID"))
         `when`(jwtDecoder.decode(accessToken)).thenReturn(fakeJwt)
 
         val request = AuthCheckScopesRequest(

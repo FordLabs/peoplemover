@@ -1,0 +1,26 @@
+plugins {
+  id "com.moowork.node" version "1.2.0"
+  id 'com.github.pivotalservices.cf-app' version '2.3.0-rc.8'
+}
+
+apply plugin: 'com.moowork.node'
+
+// Deployment Configuration
+apply plugin: 'cf-app'
+cfConfig {
+    // See GettingStarted.md for information on updating these values
+    space = "FordLabs_Experiments_InternalProjects-prod"
+    org = "FordLabs_Experiments_InternalProjects_EDC1_Prod"
+
+    ccUser = peoplemoverPcfUsername
+    ccPassword = peoplemoverPcfPassword
+
+    name = "featureBranchUI"
+    host = "featureBranchUI"
+    ccHost = peoplemoverPcfccHost
+    domain = peoplemoverPcfdomain
+}
+
+task pushBranchUI(type: Exec) {
+    commandLine "cf", "push", "featureBranchUI",  "-f",  "manifest_feature_branch.yml", "-n", "featureBranchUI"
+}

@@ -18,54 +18,70 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import SpaceClient from './SpaceClient';
 import {Dispatch} from 'redux';
-import {closeModalAction} from '../Redux/Actions';
+import {useLocation} from 'react-router-dom';
 import {connect} from 'react-redux';
+import {AvailableModals, closeModalAction, setCurrentModalAction} from '../Redux/Actions';
+import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+
 import './EditContributorsForm.scss';
 
-
-import {useLocation} from 'react-router-dom';
-
-
-interface EditContributorsFormProps {
+interface Props {
     closeModal(): void;
+
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function EditContributorsForm({
-    closeModal,
-}: EditContributorsFormProps): JSX.Element {
-
+function EditContributorsForm({closeModal, setCurrentModal}: Props): JSX.Element {
     const pathname = useLocation().pathname;
 
     const [spaceUuid, setSpaceUuid] = useState<string>('');
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
+    const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
+
 
     useEffect(() => {
         setSpaceUuid(pathname.substring(1, pathname.length));
     }, [pathname]);
 
-    async function inviteUsers(): Promise<void> {
-        await SpaceClient.inviteUsersToSpace(spaceUuid, invitedUserEmails);
+    const inviteUsers = async (): Promise<void> => {
+        await SpaceClient.inviteUsersToSpace(spaceUuid, invitedUserEmails)
+            .catch(console.error)
+            .finally(() => {
+                setCurrentModal({modal: AvailableModals.CONTRIBUTORS_CONFIRMATION});
+            });
+    };
 
-        closeModal();
-    }
-
-    function parseEmails(event: ChangeEvent<HTMLTextAreaElement>): void {
+    const parseEmails = (event: ChangeEvent<HTMLTextAreaElement>): void => {
         const emails: string[] = event.target.value.split(',');
+        if (validateEmail(emails[0])) {
+            setEnableInviteButton(true);
+        } else {
+            setEnableInviteButton(false);
+        }
         setInvitedUserEmails(emails);
-    }
+    };
 
-    return <div className={'editContributorsContainer'}>
-        <div className={'inviteContributorsLabel'}>Invite others to collaborate</div>
-        <textarea placeholder={'Enter Emails'} onChange={parseEmails} data-testid={'emailTextArea'}/>
-        <div className={'editContributorsButtonContainer'}>
-            <button className={'editContributorsCancelButton'} onClick={closeModal}>Cancel</button>
-            <button className={'editContributorsSaveButton'} onClick={inviteUsers}>Invite</button>
+    const validateEmail = (email: string): boolean => {
+        // eslint-disable-next-line no-useless-escape
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    };
+
+    return (
+        <div className="editContributorsContainer">
+            <div className="inviteContributorsLabel">Invite others to collaborate</div>
+            <textarea placeholder="email1@ford.com, email2@ford.com" onChange={parseEmails} data-testid="emailTextArea"/>
+            <div className="editContributorsButtonContainer">
+                <button className="editContributorsCancelButton" onClick={closeModal}>Cancel</button>
+                <button className="editContributorsSaveButton" onClick={inviteUsers} disabled={!enableInviteButton}>Invite</button>
+            </div>
         </div>
-    </div>;
+    );
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
+    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(null, mapDispatchToProps)(EditContributorsForm);
