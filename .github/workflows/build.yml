@@ -62,9 +62,9 @@ jobs:
         run: npm install
         working-directory: ./ui
       - name: Setup Java JDK
-          uses: actions/setup-java@v1.3.0
-          with:
-            java-version: '11.x'
+        uses: actions/setup-java@v1.3.0
+        with:
+          java-version: '11.x'
       - name: Test
-          run: npm run test:e2e:ci
-          working-directory: ./ui
+        run: npm run test:e2e:ci
+        working-directory: ./ui
