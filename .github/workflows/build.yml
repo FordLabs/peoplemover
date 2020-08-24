@@ -1,8 +1,6 @@
 name: build
 
-on:
-  push:
-    branches: [ stage, master ]
+on: push
 
 jobs:
   build-api:
@@ -52,3 +50,21 @@ jobs:
         with:
           name: peoplemover-ui.zip
           path: ui/peoplemover-ui.zip
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1.4.2
+        with:
+          node-version: 13.x
+      - name: NPM Install
+        run: npm install
+        working-directory: ./ui
+      - name: Setup Java JDK
+          uses: actions/setup-java@v1.3.0
+          with:
+            java-version: '11.x'
+      - name: Test
+          run: npm run test:e2e:ci
+          working-directory: ./ui
