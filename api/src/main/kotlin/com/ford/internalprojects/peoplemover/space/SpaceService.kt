@@ -74,8 +74,8 @@ class SpaceService(
         return spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
     }
 
-    fun deleteSpace(spaceId: Int){
-        // Call get products by id and then delete them because cascading rules on assigned products
-        spaceRepository.deleteById(spaceId)
+    fun deleteFlippingSweetSpace(){
+        val flippingSweet = spaceRepository.findByNameIgnoreCase("flippingsweet")
+        spaceRepository.deleteByUuid(flippingSweet!!.uuid);
     }
 }

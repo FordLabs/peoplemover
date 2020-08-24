@@ -44,7 +44,9 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.util.*
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
@@ -274,7 +276,8 @@ class SpaceControllerApiTest {
     @Test
     fun `DELETE should return 200 if the flipping sweet space is deleted` (){
 
-        val space = spaceRepository.save(Space(name = "flippingsweet"))
+        val space = spaceRepository.save(Space(name = "flippingsweet", uuid = UUID.randomUUID().toString()))
+        spaceRepository.save(Space(name = "spaceNotToBeDeleted", uuid = UUID.randomUUID().toString()))
 
         val product =  productRepository.save(Product(name = "Product1", spaceId = space.id!!))
 
@@ -282,16 +285,16 @@ class SpaceControllerApiTest {
 
         assignmentRepository.save(Assignment(person = person, spaceId = space.id!!, productId = product.id!!, effectiveDate = LocalDate.now(), placeholder = false))
 
-        assertThat(spaceRepository.count()).isEqualTo(1)
+        assertThat(spaceRepository.count()).isEqualTo(2)
         assertThat(assignmentRepository.count()).isEqualTo(1)
         assertThat(personRepository.count()).isEqualTo(1)
         assertThat(productRepository.count()).isEqualTo(1)
 
-        mockMvc.perform(delete("/api/space/${space.id}")
+        mockMvc.perform(delete("/api/space/deleteFlippingSweet")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
 
-        assertThat(spaceRepository.count()).isZero()
+        assertThat(spaceRepository.count()).isOne()
         assertThat(assignmentRepository.count()).isZero()
         assertThat(personRepository.count()).isZero()
         assertThat(productRepository.count()).isZero()

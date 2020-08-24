@@ -62,8 +62,8 @@ class SpaceController(private val spaceService: SpaceService, private val logger
         return spaceService.getSpace(spaceName)
     }
 
-    @DeleteMapping("/api/space/{spaceId}")
-    fun deleteSpace(@PathVariable spaceId: Int) {
-        spaceService.deleteSpace(spaceId)
+    @DeleteMapping("/api/space/deleteFlippingSweet")
+    fun deleteFlippingSweetSpace() {
+        spaceService.deleteFlippingSweetSpace()
     }
 }
