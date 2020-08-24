@@ -11,7 +11,7 @@
   "proxy": "http://localhost:8080",
   "scripts": {
     "start": "react-scripts start",
-    "start:backend": "cd ../api && SPRING_PROFILES_ACTIVE=test ./gradlew bRu",
+    "start:backend": "cd ../api && SPRING_PROFILES_ACTIVE=e2e-test ./gradlew bRu",
     "test:unit": "react-scripts test",
     "test:unit:ci": "CI=true react-scripts test --runInBand",
     "test:unit:coverage": "CI=true react-scripts test --coverage --testResultsProcessor jest-sonar-reporter",

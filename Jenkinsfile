@@ -25,10 +25,10 @@ pipeline {
                                 }
                             }
                         }
-                        stage('UI Test') {
+                        stage('UI Unit Tests') {
                             steps {
                                 dir("ui") {
-                                    sh "npm run test:ci"
+                                    sh "npm run test:unit:ci"
                                 }
                             }
                         }
