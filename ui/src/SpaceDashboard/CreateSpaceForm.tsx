@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Dispatch} from 'redux';
 import {closeModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';

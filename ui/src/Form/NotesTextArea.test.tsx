@@ -20,7 +20,7 @@
 
 import {fireEvent, render} from '@testing-library/react';
 import * as React from 'react';
-import NotesTextArea from '../Form/NotesTextArea';
+import NotesTextArea from './NotesTextArea';
 
 describe('notes input', () => {
 

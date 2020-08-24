@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import CreateSpaceForm from '../SpaceDashboard/CreateSpaceForm';
-import {renderWithRedux} from './TestUtils';
+import {renderWithRedux} from '../tests/TestUtils';
 import {fireEvent} from '@testing-library/dom';
 
 describe('Create Space Form', () => {
