@@ -28,7 +28,7 @@ describe('Roles', () => {
 
         cy.get('[data-testid=addNewRole]').click();
 
-        cy.get('[data-testid=traitName]').type(mockRole).should('have.value', mockRole);
+        cy.get('[data-testid=traitName]').focus().type(mockRole).should('have.value', mockRole);
 
         cy.get('[data-testid=selectRoleCircle]')
             .should('have.length', 3)
