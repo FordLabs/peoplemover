@@ -18,5 +18,5 @@ package com.ford.internalprojects.peoplemover.auth
 
 data class AuthCheckScopesRequest (
     var accessToken: String,
-    var spaceName: String
+    var uuid: String
 )

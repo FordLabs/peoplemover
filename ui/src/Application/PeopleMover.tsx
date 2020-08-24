@@ -82,8 +82,8 @@ function PeopleMover({
         async function RenderPage(): Promise<void> {
             if (currentModal.modal === null) {
                 try {
-                    const spaceName = window.location.pathname.replace('/', '');
-                    await SpaceClient.getSpaceFromName(spaceName)
+                    const uuid = window.location.pathname.replace('/', '');
+                    await SpaceClient.getSpaceFromUuid(uuid)
                         .then(response => {
                             setCurrentSpace(response.data);
                         });

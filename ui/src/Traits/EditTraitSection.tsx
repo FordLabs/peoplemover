@@ -118,9 +118,9 @@ function EditTraitSection({
                             updatedColorId: (enteredTrait as RoleAddRequest).colorId,
                         } as RoleEditRequest;
                     }
-                    clientResponse = await traitClient.edit(editRequest, currentSpace.name);
+                    clientResponse = await traitClient.edit(editRequest, currentSpace.uuid!!);
                 } else {
-                    clientResponse = await traitClient.add(enteredTrait, currentSpace.name);
+                    clientResponse = await traitClient.add(enteredTrait, currentSpace.uuid!!);
                 }
             } catch (error) {
                 if (error.response.status === 409) {

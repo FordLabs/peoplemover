@@ -22,20 +22,20 @@ import {TraitClient} from '../Traits/TraitClient';
 
 class RoleClient implements TraitClient {
 
-    async get(spaceName: string): Promise<AxiosResponse> {
-        return Axios.get('/api/role/' + spaceName
+    async get(spaceUuid: string): Promise<AxiosResponse> {
+        return Axios.get(`/api/role/${spaceUuid}`
         );
     }
 
-    async add(role: RoleAddRequest, spaceName: string): Promise<AxiosResponse> {
-        return Axios.post('/api/role/' + spaceName,
+    async add(role: RoleAddRequest, spaceUuid: string): Promise<AxiosResponse> {
+        return Axios.post(`/api/role/${spaceUuid}`,
             role,
             {headers: {'Content-Type': 'application/json'}}
         );
     }
 
-    async edit(role: RoleEditRequest, spaceName: string): Promise<AxiosResponse> {
-        return Axios.put('/api/role/' + spaceName,
+    async edit(role: RoleEditRequest, spaceUuid: string): Promise<AxiosResponse> {
+        return Axios.put(`/api/role/${spaceUuid}`,
             role,
             {headers: {'Content-Type': 'application/json'}}
         );

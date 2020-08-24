@@ -23,45 +23,45 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/producttag/{spaceName}")
+@RequestMapping("/api/producttag/{spaceUuid}")
 class ProductTagController (
         private val productTagService: ProductTagService,
         private val logger: BasicLogger
 ) {
     @PostMapping
     fun createProductTag(
-            @PathVariable spaceName: String,
+            @PathVariable spaceUuid: String,
             @Valid @RequestBody addRequest: ProductTagAddRequest
     ): ResponseEntity<ProductTag> {
         val createdProductTag: ProductTag = productTagService.createProductTagForSpace(
                 addRequest,
-                spaceName
+                spaceUuid
         )
-        logger.logInfoMessage("Product tag [${createdProductTag.name}] created for space: [$spaceName].")
+        logger.logInfoMessage("Product tag [${createdProductTag.name}] created for space: [$spaceUuid].")
         return ResponseEntity.ok(createdProductTag)
     }
 
     @GetMapping
-    fun getAllProductTags(@PathVariable spaceName: String): ResponseEntity<List<ProductTag>> {
-        return ResponseEntity.ok(productTagService.getAllProductTags(spaceName))
+    fun getAllProductTags(@PathVariable spaceUuid: String): ResponseEntity<List<ProductTag>> {
+        return ResponseEntity.ok(productTagService.getAllProductTags(spaceUuid))
     }
 
     @DeleteMapping(path = ["/{productTagId}"])
     fun deleteProductTag(
-            @PathVariable spaceName: String,
+            @PathVariable spaceUuid: String,
             @PathVariable productTagId: Int
     ): ResponseEntity<Unit> {
-        productTagService.deleteProductTag(spaceName, productTagId)
+        productTagService.deleteProductTag(productTagId)
         return ResponseEntity.ok().build()
     }
 
     @PutMapping
     fun editProductTag(
-            @PathVariable spaceName: String,
+            @PathVariable spaceUuid: String,
             @RequestBody productTagEditRequest: ProductTagEditRequest
     ): ResponseEntity<ProductTag> {
         val editedProductTag = productTagService.editProductTag(
-                spaceName,
+                spaceUuid,
                 productTagEditRequest
         )
         return ResponseEntity.ok(editedProductTag)

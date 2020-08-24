@@ -28,10 +28,13 @@ import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonService
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
+import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.role.RoleService
 import com.ford.internalprojects.peoplemover.role.SpaceRole
 import com.ford.internalprojects.peoplemover.space.Space
+import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.SpaceService
+import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import com.google.common.collect.Sets.newHashSet
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
@@ -46,6 +49,9 @@ class LocalConfig {
     private lateinit var spaceService: SpaceService
 
     @Autowired
+    private lateinit var spaceRepository: SpaceRepository
+
+    @Autowired
     private lateinit var colorService: ColorService
 
     @Autowired
@@ -58,6 +64,9 @@ class LocalConfig {
     private lateinit var assignmentService: AssignmentService
 
     @Autowired
+    private lateinit var productService: ProductService
+
+    @Autowired
     private lateinit var productRepository: ProductRepository
 
     @Autowired
@@ -66,16 +75,19 @@ class LocalConfig {
     @PostConstruct
     fun onAppStartup() {
         val spaceName = "flippingsweet"
-        val createdSpace: Space = spaceService.createSpaceWithName(spaceName)
+        val createdSpace: Space = spaceRepository.save(
+                Space(name = spaceName, uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" ,lastModifiedDate = HelperUtils.currentTimeStamp)
+        )
+        productService.createDefaultProducts(createdSpace);
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "AQ-866ed9fa-06ca-41e7-b256-30770b98195f", spaceId = createdSpace.id))
 
         colorService.addColors(listOf("#FFFF00", "#FF00FF", "#00FFFF"))
         val colors: List<Color?> = colorService.getColors()
 
-        val role1: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE BEST", colors[0]?.id)
-        val role2: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE SECOND BEST (UNDERSTUDY)", colors[1]?.id)
-        val role3: SpaceRole = roleService.addRoleToSpace(createdSpace.name, "THE WURST", colors[2]?.id)
+        val role1: SpaceRole = roleService.addRoleToSpace(createdSpace.uuid, "THE BEST", colors[0]?.id)
+        val role2: SpaceRole = roleService.addRoleToSpace(createdSpace.uuid, "THE SECOND BEST (UNDERSTUDY)", colors[1]?.id)
+        val role3: SpaceRole = roleService.addRoleToSpace(createdSpace.uuid, "THE WURST", colors[2]?.id)
 
         val jane: Person = personService.createPerson(
                 Person(
@@ -83,7 +95,7 @@ class LocalConfig {
                         spaceId = createdSpace.id!!,
                         spaceRole = role1
                 ),
-                spaceName
+                createdSpace.uuid
         )
         val bob: Person = personService.createPerson(
                 Person(
@@ -91,7 +103,7 @@ class LocalConfig {
                         spaceId = createdSpace.id,
                         spaceRole = role2
                 ),
-                spaceName
+                createdSpace.uuid
         )
         val adam: Person = personService.createPerson(
                 Person(
@@ -99,7 +111,7 @@ class LocalConfig {
                         spaceId = createdSpace.id,
                         spaceRole = role3
                 ),
-                spaceName
+                createdSpace.uuid
         )
         val myProduct: Product = productRepository.save(Product(
                 name = "My Product",

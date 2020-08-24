@@ -162,7 +162,7 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
 
 export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return ProductTagClient.get(getState().currentSpace.name,)
+        return ProductTagClient.get(getState().currentSpace.uuid!!,)
             .then(result => {
                 let productTags: Array<ProductTag> = result.data || [];
                 productTags = productTags.sort((a, b) => {
@@ -176,7 +176,7 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
 
 export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return LocationClient.get(getState().currentSpace.name,)
+        return LocationClient.get(getState().currentSpace.uuid,)
             .then(result => {
                 let locations: Array<SpaceLocation> = result.data || [];
                 locations = locations.sort((a, b) => {

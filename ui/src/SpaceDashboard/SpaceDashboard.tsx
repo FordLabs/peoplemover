@@ -54,7 +54,7 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
     }
 
     function onSpaceClicked(space: Space): void {
-        setRedirectPage(<Redirect to={`/${space.name.toLowerCase()}`}/>);
+        setRedirectPage(<Redirect to={`/${space.uuid}`}/>);
     }
 
     useOnLoad(() => {

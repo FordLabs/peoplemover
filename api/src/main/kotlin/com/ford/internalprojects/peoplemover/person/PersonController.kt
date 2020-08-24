@@ -33,21 +33,21 @@ class PersonController(
         private val personService: PersonService,
         private val assignmentService: AssignmentService
 ) {
-    @GetMapping("/{spaceToken}")
-    fun getAllPeopleInSpace(@PathVariable spaceToken: String): ResponseEntity<List<Person>> {
-        val space: Space = spaceRepository.findByNameIgnoreCase(spaceToken)
-                ?: throw SpaceNotExistsException(spaceToken)
-        logger.logInfoMessage("All person retrieved for space: [$spaceToken].")
+    @GetMapping("/{spaceUuid}")
+    fun getAllPeopleInSpace(@PathVariable spaceUuid: String): ResponseEntity<List<Person>> {
+        val space: Space = spaceRepository.findByUuid(spaceUuid)
+                ?: throw SpaceNotExistsException(spaceUuid)
+        logger.logInfoMessage("All person retrieved for space: [$spaceUuid].")
         return ResponseEntity.ok(personService.getPeopleInSpace(space))
     }
 
-    @PostMapping("/{spaceToken}")
+    @PostMapping("/{spaceUuid}")
     fun addPersonToSpace(
-            @PathVariable spaceToken: String,
+            @PathVariable spaceUuid: String,
             @RequestBody personIncoming: Person
     ): ResponseEntity<Person> {
-        val personCreated = personService.createPerson(personIncoming, spaceToken)
-        logger.logInfoMessage("Person with id [${personCreated.id}] created for space: [$spaceToken].")
+        val personCreated = personService.createPerson(personIncoming, spaceUuid)
+        logger.logInfoMessage("Person with id [${personCreated.id}] created for space: [$spaceUuid].")
         return ResponseEntity.ok(personCreated)
     }
 

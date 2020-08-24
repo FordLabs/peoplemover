@@ -20,6 +20,7 @@ import {SpaceLocation} from '../Locations/SpaceLocation';
 
 export interface Space {
     id?: number;
+    uuid?: string;
     name: string;
     roles: SpaceRole[];
     locations:    SpaceLocation[];

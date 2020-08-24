@@ -37,7 +37,7 @@ export default function NotesTextArea({ notes = '', callBack, maxLength = 255 }:
     return <>
         <label className="formItemLabel" htmlFor="notes">Notes</label>
         <textarea className="formInput formTextInput notes"
-            data-testid="personFormNotesToField"
+            data-testid="formNotesToField"
             id="notes"
             name="notes"
             value={notes}

@@ -22,11 +22,11 @@ describe('Space Client', function() {
     it('should invite users to a space', function() {
         Axios.put = jest.fn();
 
-        SpaceClient.inviteUsersToSpace('spaceName', ['email1@mail.com', 'email2@mail.com']);
+        SpaceClient.inviteUsersToSpace('spaceUUID', ['email1@mail.com', 'email2@mail.com']);
 
         const expectedUrl = '/api/user/invite/space';
         const expectedData = {
-            spaceName: 'spaceName',
+            uuid: 'spaceUUID',
             emails: ['email1@mail.com', 'email2@mail.com'],
         };
         const expectedConfig = {
@@ -46,7 +46,7 @@ describe('Space Client', function() {
             headers: { 'Content-Type': 'application/json' },
         };
 
-        SpaceClient.getSpaceFromName('testName');
+        SpaceClient.getSpaceFromUuid('testName');
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
