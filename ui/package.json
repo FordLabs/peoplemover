@@ -73,7 +73,7 @@
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
     "awesome-typescript-loader": "^5.2.1",
-    "cypress": "^5.0.0",
+    "cypress": "4.12.1",
     "eslint": "^6.8.0",
     "eslint-config-fbjs": "^3.1.1",
     "eslint-config-standard": "^14.1.0",

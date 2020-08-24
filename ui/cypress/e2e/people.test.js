@@ -80,7 +80,7 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
 
     cy.get('@personForm').find('[id=product]').type(assignTo + '{enter}');
 
-    cy.get('[data-testid=formNotesToField]').focus().type(notes).should('have.value', notes);
+    cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
 };
 
 const submitPersonForm = () => {
