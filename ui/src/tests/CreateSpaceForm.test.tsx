@@ -1,0 +1,38 @@
+/*
+ *
+ *  * Copyright (c) 2019 Ford Motor Company
+ *  * All rights reserved.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
+
+import * as React from 'react';
+import CreateSpaceForm from '../SpaceDashboard/CreateSpaceForm';
+import {renderWithRedux} from './TestUtils';
+import {fireEvent} from '@testing-library/dom';
+
+describe('Create Space Form', () => {
+
+    it('should update the count for number of characters and have max input of 40', () => {
+        const callback = jest.fn();
+        const form = renderWithRedux(<CreateSpaceForm onSubmit={callback}/>);
+        form.getByText('0 (40 characters max)');
+        fireEvent.change(form.getByLabelText('Space Name'), {target: {value: 'Some Name'}});
+        form.getByText('9 (40 characters max)');
+        // @ts-ignore
+        expect(form.getByLabelText('Space Name').maxLength).toBe(40);
+    });
+});
+

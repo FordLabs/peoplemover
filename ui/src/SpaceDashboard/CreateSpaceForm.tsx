@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Dispatch} from 'redux';
 import {closeModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
@@ -27,11 +27,13 @@ import './CreateSpaceForm.scss';
 interface CreateSpaceFormProps {
     onSubmit(): Promise<void>;
     closeModal(): void;
+    maxLength?: number;
 }
 
 function CreateSpaceForm({
     onSubmit,
     closeModal,
+    maxLength = 40,
 }: CreateSpaceFormProps): JSX.Element {
 
     const [spaceName, setSpaceName] = useState<string>('');
@@ -47,18 +49,21 @@ function CreateSpaceForm({
     }
 
     function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
-        setSpaceName(event.target.value.split(' ').join(''));
+        setSpaceName(event.target.value);
     }
 
-    return  <div className={'createSpaceContainer'}>
+    return <div className={'createSpaceContainer'}>
         <label className={'createSpaceLabel'} htmlFor="spaceNameField">Space Name</label>
-        <input className={'createSpaceInputField'} id="spaceNameField" type="text"  value={spaceName} onChange={onSpaceNameFieldChanged}/>
+        <input className={'createSpaceInputField'} id="spaceNameField" type="text" maxLength={maxLength} value={spaceName} onChange={onSpaceNameFieldChanged}/>
+
+        <span className={`createSpaceFieldText ${spaceName.length >= maxLength ? 'createSpaceFieldTooLong' : ''}`} data-testid="createSpaceFieldText">
+            {spaceName.length}&nbsp;({maxLength} characters max)
+        </span>
 
         <div className={'createSpaceButtonContainer'}>
             <button className={'createSpaceCancelButton'} onClick={closeModal}>Cancel</button>
             <button className={'createSpaceSubmitButton'} disabled={spaceName.length <= 0} onClick={addSpace}>Add Space</button>
         </div>
-
     </div>;
 }
 

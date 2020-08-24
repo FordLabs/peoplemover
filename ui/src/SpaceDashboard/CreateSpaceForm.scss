@@ -29,7 +29,6 @@
   width: 100%;
   box-sizing: border-box;
   height: 32px;
-  margin-bottom: 32px;
   margin-top: 12px;
 }
 
@@ -38,6 +37,16 @@
   flex-direction: column;
   align-items: flex-start;
   padding: 0 138px;
+}
+
+.createSpaceFieldTooLong {
+  color: $error-message;
+}
+
+.createSpaceFieldText {
+  font-size: 12px;
+  padding-top: 6px;
+  margin-bottom: 32px;
 }
 
 .createSpaceButtonContainer {
