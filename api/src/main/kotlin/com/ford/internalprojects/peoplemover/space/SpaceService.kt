@@ -23,6 +23,7 @@ import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExists
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class SpaceService(
@@ -71,5 +72,10 @@ class SpaceService(
 
     fun getSpace(spaceName: String): Space {
         return spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
+    }
+
+    fun deleteSpace(spaceId: Int){
+        // Call get products by id and then delete them because cascading rules on assigned products
+        spaceRepository.deleteById(spaceId)
     }
 }

@@ -36,6 +36,10 @@ class ProductService(
         return productRepository.findAll().map { it!! }
     }
 
+    fun findAllBySpaceId(spaceId: Int): List<Product> {
+        return productRepository.findAllBySpaceId(spaceId);
+    }
+
     fun findAllBySpaceIdAndDate(spaceId: Int, date: LocalDate): Set<Product> {
         val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceId, date)
         return productRepository.findAllBySpaceIdAndDate(spaceId, date).map {product ->
