@@ -28,14 +28,15 @@ describe('People', () => {
         submitPersonForm();
 
         let personId;
-        cy.wait('@postNewPerson').should((xhr) => {
-            expect(xhr?.status).to.equal(200);
-            expect(xhr?.response?.body.name).to.equal(person.name);
-        }).then(xhr => {
-            personId = xhr?.response?.body.id;
+        cy.wait(['@postNewPerson', '@getUpdatedProduct'])
+            .should((xhrs) => {
+                const postNewPersonXhr = xhrs[0];
+                const getUpdatedProductXhr = xhrs[1];
 
-            cy.wait('@getUpdatedProduct').should(xhr => {
-                expect(xhr?.status).to.equal(200);
+                expect(postNewPersonXhr?.status).to.equal(200);
+                expect(postNewPersonXhr?.response?.body.name).to.equal(person.name);
+                expect(getUpdatedProductXhr?.status).to.equal(200);
+                personId = postNewPersonXhr?.response?.body.id;
             }).then(() => {
                 cy.get('[data-testid=productPeopleContainer]')
                     .eq(1).as('myProductCardContainer');
@@ -67,7 +68,6 @@ describe('People', () => {
                     .should('contain', person.role)
                     .should('contain', `Assigned to ${person.assignTo}`);
             });
-        });
     });
 });
 
