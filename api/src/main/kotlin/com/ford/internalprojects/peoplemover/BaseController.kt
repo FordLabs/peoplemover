@@ -48,16 +48,16 @@ class BaseController(private val spaceService: SpaceService,
     }
 
     @DeleteMapping("/api/space/{uuid}")
-    fun deleteFlippingSweetSpace(@PathVariable uuid: String): ResponseEntity<Unit> {
+    fun deleteTestSpace(@PathVariable uuid: String): ResponseEntity<Unit> {
         spaceService.deleteSpace(uuid)
-        repopulateDatabaseWithFlippingSweet()
+        repopulateDatabase(uuid)
         return ResponseEntity.ok().build()
     }
 
-    fun repopulateDatabaseWithFlippingSweet() {
+    fun repopulateDatabase(uuid: String) {
         val spaceName = "flippingsweet"
         val createdSpace: Space = spaceRepository.save(
-                Space(name = spaceName, uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" ,lastModifiedDate = HelperUtils.currentTimeStamp)
+                Space(name = spaceName, uuid = uuid ,lastModifiedDate = HelperUtils.currentTimeStamp)
         )
         productService.createDefaultProducts(createdSpace);
 
