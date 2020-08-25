@@ -30,17 +30,16 @@
   cursor: pointer;
 
   .space-name {
-    margin: 8px 22px;
-
-    font-size: 24px;
+    margin: 22px 30px 0 30px;
+    width: 340px;
+    word-break: break-word;
+    font-size: 22px;
     font-weight: bold;
-    line-height: 28px;
-    text-transform: uppercase;
+    line-height: 25px;
   }
 
   .last-modified-text {
-    margin: 0 22px;
-
+    margin: 12px 30px 22px 30px;
     font-size: 12px;
     font-style: italic;
     font-weight: normal;
