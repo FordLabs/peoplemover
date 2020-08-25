@@ -43,7 +43,7 @@ import java.time.LocalDate
 import javax.annotation.PostConstruct
 
 @Configuration
-@Profile("local")
+@Profile("local", "e2e-test")
 class LocalConfig {
     @Autowired
     private lateinit var spaceService: SpaceService
