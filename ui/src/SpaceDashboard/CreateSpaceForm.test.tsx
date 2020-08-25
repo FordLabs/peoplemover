@@ -28,11 +28,13 @@ describe('Create Space Form', () => {
     it('should update the count for number of characters and have max input of 40', () => {
         const callback = jest.fn();
         const form = renderWithRedux(<CreateSpaceForm onSubmit={callback}/>);
-        form.getByText('0 (40 characters max)');
-        fireEvent.change(form.getByLabelText('Space Name'), {target: {value: 'Some Name'}});
-        form.getByText('9 (40 characters max)');
+        const spaceCount = form.getByTestId('createSpaceFieldText');
+        const spaceInput = form.getByTestId('createSpaceInputField');
+        expect(spaceCount.textContent).toBe('0 (40 characters max)');
+        fireEvent.change(spaceInput, {target: {value: 'Some Name'}});
+        expect(spaceCount.textContent).toBe('9 (40 characters max)');
         // @ts-ignore
-        expect(form.getByLabelText('Space Name').maxLength).toBe(40);
+        expect(spaceInput.maxLength).toBe(40);
     });
 });
 

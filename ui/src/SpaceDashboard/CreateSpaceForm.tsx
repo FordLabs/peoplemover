@@ -27,15 +27,14 @@ import './CreateSpaceForm.scss';
 interface CreateSpaceFormProps {
     onSubmit(): Promise<void>;
     closeModal(): void;
-    maxLength?: number;
 }
 
 function CreateSpaceForm({
     onSubmit,
     closeModal,
-    maxLength = 40,
 }: CreateSpaceFormProps): JSX.Element {
 
+    const maxLength = 40;
     const [spaceName, setSpaceName] = useState<string>('');
 
     async function addSpace(): Promise<void> {
@@ -52,19 +51,19 @@ function CreateSpaceForm({
         setSpaceName(event.target.value);
     }
 
-    return <div className={'createSpaceContainer'}>
+    return <form className={'createSpaceContainer'} onSubmit={addSpace}>
         <label className={'createSpaceLabel'} htmlFor="spaceNameField">Space Name</label>
-        <input className={'createSpaceInputField'} id="spaceNameField" type="text" maxLength={maxLength} value={spaceName} onChange={onSpaceNameFieldChanged}/>
+        <input className={'createSpaceInputField'} id="spaceNameField" type="text" data-testid="createSpaceInputField" maxLength={maxLength} value={spaceName} onChange={onSpaceNameFieldChanged}/>
 
         <span className={`createSpaceFieldText ${spaceName.length >= maxLength ? 'createSpaceFieldTooLong' : ''}`} data-testid="createSpaceFieldText">
-            {spaceName.length}&nbsp;({maxLength} characters max)
+            {spaceName.length} ({maxLength} characters max)
         </span>
 
         <div className={'createSpaceButtonContainer'}>
-            <button className={'createSpaceCancelButton'} onClick={closeModal}>Cancel</button>
-            <button className={'createSpaceSubmitButton'} disabled={spaceName.length <= 0} onClick={addSpace}>Add Space</button>
+            <button className={'createSpaceCancelButton'} type="button" onClick={closeModal}>Cancel</button>
+            <button className={'createSpaceSubmitButton'} type="submit" disabled={spaceName.length <= 0}>Add Space</button>
         </div>
-    </div>;
+    </form>;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
