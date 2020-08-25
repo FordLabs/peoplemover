@@ -71,8 +71,7 @@ class SpaceService(
         return spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
     }
 
-    fun deleteFlippingSweetSpace(){
-        val flippingSweet = spaceRepository.findByNameIgnoreCase("flippingsweet")
-        spaceRepository.deleteByUuid(flippingSweet!!.uuid);
+    fun deleteSpace(uuid: String){
+        spaceRepository.deleteByUuid(uuid);
     }
 }

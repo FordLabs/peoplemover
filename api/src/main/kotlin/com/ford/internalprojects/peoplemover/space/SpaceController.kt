@@ -18,6 +18,8 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -62,8 +64,4 @@ class SpaceController(private val spaceService: SpaceService, private val logger
         return spaceService.getSpace(uuid)
     }
 
-    @DeleteMapping("/api/space/deleteFlippingSweet")
-    fun deleteFlippingSweetSpace() {
-        spaceService.deleteFlippingSweetSpace()
-    }
 }
