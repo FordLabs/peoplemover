@@ -2,6 +2,8 @@
 
 import person from '../fixtures/person';
 const spaceId = Cypress.env('SPACE_ID');
+const productId = 1;
+const date = Cypress.moment().format('yyyy-MM-DD');
 
 describe('People', () => {
     beforeEach(() => {
@@ -13,6 +15,7 @@ describe('People', () => {
     it('Add a new person', () => {
         cy.server();
         cy.route('POST', `/api/person/${spaceId}`).as('postNewPerson');
+        cy.route('GET', `/api/product/${productId}/${date}`).as('getUpdatedProduct');
 
         cy.contains(person.name).should('not.exist');
 
@@ -24,12 +27,17 @@ describe('People', () => {
 
         submitPersonForm();
 
-        cy.wait('@postNewPerson').should(xhr => {
+        let personId;
+        cy.wait('@postNewPerson').should((xhr) => {
             expect(xhr?.status).to.equal(200);
             expect(xhr?.response?.body.name).to.equal(person.name);
         }).then(xhr => {
-            const personId = xhr?.response?.body.id;
+            personId = xhr?.response?.body.id;
+        });
 
+        cy.wait('@getUpdatedProduct').should(xhr => {
+            expect(xhr?.status).to.equal(200);
+        }).then(() => {
             cy.contains(person.assignTo)
                 .parentsUntil('[data-testid=productPeopleContainer]')
                 .find(`[data-testid=assignmentCard${personId}info]`)
