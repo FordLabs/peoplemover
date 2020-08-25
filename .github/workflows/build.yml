@@ -69,6 +69,7 @@ jobs:
         run: npm run test:e2e:ci
         working-directory: ./ui
       - name: Upload Screenshots
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:
           name: cypress
