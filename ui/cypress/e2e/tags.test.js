@@ -1,12 +1,11 @@
 /// <reference types="Cypress" />
-
+const spaceUuid = Cypress.env('SPACE_UUID');
 describe('Tags',  () => {
     const locationTag = 'Middle Earth';
     const productTag = 'Flippin Sweet';
     
     beforeEach(() => {
-        cy.resetLocationTags();
-        cy.resetProductTags();
+        cy.resetSpace(spaceUuid)
 
         cy.visitBoard();
     });

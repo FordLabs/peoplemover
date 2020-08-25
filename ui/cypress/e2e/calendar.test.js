@@ -1,7 +1,9 @@
 /// <reference types="Cypress" />
-
+const spaceUuid = Cypress.env('SPACE_UUID');
 describe('Calendar', () => {
     beforeEach(() => {
+        cy.resetSpace(spaceUuid)
+
         cy.visitBoard();
     });
 

@@ -1,18 +1,20 @@
 /// <reference types="Cypress" />
 
 import person from '../fixtures/person';
-const spaceId = Cypress.env('SPACE_ID');
+const spaceUuid = Cypress.env('SPACE_UUID');
 
 describe('People', () => {
     beforeEach(() => {
-        cy.resetPerson(person);
+
+        cy.resetSpace(spaceUuid);
+        // cy.resetPerson(person);
 
         cy.visitBoard();
     });
 
     it('Add a new person', () => {
         cy.server();
-        cy.route('POST', `/api/person/${spaceId}`).as('postNewPerson');
+        cy.route('POST', `/api/person/${spaceUuid}`).as('postNewPerson');
 
         cy.contains(person.name).should('not.exist');
 

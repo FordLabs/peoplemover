@@ -4,7 +4,7 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-const spaceId = Cypress.env('SPACE_ID');
+const spaceId = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 const BASE_PRODUCT_URL =  `${BASE_API_URL}/product`;
@@ -107,6 +107,11 @@ Cypress.Commands.add('resetProductTags', () => {
                 deleteProductTagById(tagData.id);
             });
         });
+});
+
+Cypress.Commands.add('resetSpace', () =>{
+    const DELETESPACEURL = `${BASE_API_URL}/space/${spaceId}`;
+    cy.request('DELETE', DELETESPACEURL);
 });
 
 const deleteProductById = (productId) => {
