@@ -33,38 +33,40 @@ describe('People', () => {
             expect(xhr?.response?.body.name).to.equal(person.name);
         }).then(xhr => {
             personId = xhr?.response?.body.id;
-        });
 
-        cy.wait('@getUpdatedProduct').should(xhr => {
-            expect(xhr?.status).to.equal(200);
-        }).then(() => {
-            cy.contains(person.assignTo)
-                .parentsUntil('[data-testid=productPeopleContainer]')
-                .find(`[data-testid=assignmentCard${personId}info]`)
-                .should('contain', person.name)
-                .should('contain', person.role)
-                .then(() => {
-                    if (person.isNew) {
-                        cy.contains(person.assignTo)
-                            .parentsUntil(`[data-testid=assignmentCard${personId}]`)
-                            .find('[data-testid=newBadge]')
-                            .should('be.visible');
-                    }
-                });
+            cy.wait('@getUpdatedProduct').should(xhr => {
+                expect(xhr?.status).to.equal(200);
+            }).then(() => {
+                cy.get('[data-testid=productPeopleContainer]')
+                    .eq(1).as('myProductCardContainer');
 
-            cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
+                cy.get('@myProductCardContainer')
+                    .find(`[data-testid=assignmentCard${personId}info]`)
+                    .should('contain', person.name)
+                    .should('contain', person.role)
+                    .then(() => {
+                        if (person.isNew) {
+                            cy.contains(person.assignTo)
+                                .parentsUntil(`[data-testid=assignmentCard${personId}]`)
+                                .find('[data-testid=newBadge]')
+                                .should('be.visible');
+                        }
+                    });
 
-            cy.get('@reassignmentDrawer')
-                .should('contain', 'Reassigned')
-                .find('[data-testid=countBadge]').should('have.text', '1');
+                cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
 
-            cy.get('@reassignmentDrawer')
-                .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
-                .should('have.length', 1)
-                .eq(0)
-                .should('contain', person.name)
-                .should('contain', person.role)
-                .should('contain', `Assigned to ${person.assignTo}`);
+                cy.get('@reassignmentDrawer')
+                    .should('contain', 'Reassigned')
+                    .find('[data-testid=countBadge]').should('have.text', '1');
+
+                cy.get('@reassignmentDrawer')
+                    .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
+                    .should('have.length', 1)
+                    .eq(0)
+                    .should('contain', person.name)
+                    .should('contain', person.role)
+                    .should('contain', `Assigned to ${person.assignTo}`);
+            });
         });
     });
 });
