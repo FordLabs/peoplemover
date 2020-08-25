@@ -51,17 +51,21 @@ function CreateSpaceForm({
         setSpaceName(event.target.value);
     }
 
-    return <form className={'createSpaceContainer'} onSubmit={addSpace}>
-        <label className={'createSpaceLabel'} htmlFor="spaceNameField">Space Name</label>
-        <input className={'createSpaceInputField'} id="spaceNameField" type="text" data-testid="createSpaceInputField" maxLength={maxLength} value={spaceName} onChange={onSpaceNameFieldChanged}/>
-
+    return <form className="createSpaceContainer" onSubmit={addSpace}>
+        <label className="createSpaceLabel" htmlFor="spaceNameField">Space Name</label>
+        <input className="createSpaceInputField"
+            id="spaceNameField"
+            type="text"
+            data-testid="createSpaceInputField"
+            maxLength={maxLength}
+            value={spaceName}
+            onChange={onSpaceNameFieldChanged}/>
         <span className={`createSpaceFieldText ${spaceName.length >= maxLength ? 'createSpaceFieldTooLong' : ''}`} data-testid="createSpaceFieldText">
             {spaceName.length} ({maxLength} characters max)
         </span>
-
-        <div className={'createSpaceButtonContainer'}>
-            <button className={'createSpaceCancelButton'} type="button" onClick={closeModal}>Cancel</button>
-            <button className={'createSpaceSubmitButton'} type="submit" disabled={spaceName.length <= 0}>Add Space</button>
+        <div className="createSpaceButtonContainer">
+            <button className="createSpaceCancelButton" type="button" onClick={closeModal}>Cancel</button>
+            <button className="createSpaceSubmitButton" type="submit" disabled={spaceName.length <= 0}>Add Space</button>
         </div>
     </form>;
 }
