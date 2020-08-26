@@ -23,7 +23,6 @@ import {
     AvailableModals,
     closeModalAction,
     setCurrentModalAction,
-    setIsUnassignedDrawerOpenAction,
 } from '../Redux/Actions';
 import {Person} from '../People/Person';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -50,9 +49,6 @@ interface AssignmentFormProps {
     viewingDate: Date;
 
     closeModal(): void;
-
-    setIsUnassignedDrawerOpen(isUnassignedDrawerOpen: boolean): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
@@ -61,7 +57,6 @@ function AssignmentForm({
     initiallySelectedProduct,
     people,
     viewingDate,
-    setIsUnassignedDrawerOpen,
     closeModal,
     setCurrentModal,
 }: AssignmentFormProps): JSX.Element {
@@ -85,7 +80,6 @@ function AssignmentForm({
                 placeholder: placeholder,
             } as ProductPlaceholderPair;
         });
-
     }
 
     function getExistingProductPairsForPerson(): ProductPlaceholderPair[] {
@@ -126,9 +120,6 @@ function AssignmentForm({
 
     async function handleSubmit(): Promise<void> {
         if (canClickSubmit()) {
-            if (getProductFromProductListWithName('unassigned', selectedProducts)) {
-                setIsUnassignedDrawerOpen(true);
-            }
             await AssignmentClient.createAssignmentForDate({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: selectedPerson,
@@ -213,12 +204,11 @@ function AssignmentForm({
     return (
         <div className="formContainer">
             <form className="form" onKeyDown={handleKeyDown} data-testid="assignmentForm">
-
-                <div className={'person-select-container'}>
+                <div className="person-select-container">
                     <label className="formItemLabel" htmlFor="person">Name</label>
                     <Creatable
                         isClearable
-                        name={'person'}
+                        name="person"
                         inputId="person"
                         onInputChange={(e: string) => setTypedInName(e)}
                         onChange={(e: any): void => findPerson(e ? e.value : null)}
@@ -244,10 +234,10 @@ function AssignmentForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="product">Assign to</label>
                     <MultiSelect
-                        name={'product'}
+                        name="product"
                         initiallySelected={selectedProducts}
                         selectables={getSelectables()}
-                        placeholder={'Select a product'}
+                        placeholder="Select a product"
                         changeSelections={changeProductAssignments}
                         disabled={false}/>
                 </div>
@@ -259,13 +249,14 @@ function AssignmentForm({
                         disabled={!canClickSubmit()}
                         type="button"
                         data-testid="assignButton"
-                        value={'Assign'}/>
+                        value="Assign"/>
                 </div>
             </form>
         </div>
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     people: state.people,
     viewingDate: state.viewingDate,
@@ -273,8 +264,8 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
-    setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentForm);
+/* eslint-enable */
