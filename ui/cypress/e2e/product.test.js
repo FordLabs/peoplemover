@@ -63,7 +63,6 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
     cy.get('@calendarStartDate').should('have.value', startDate);
     cy.get('.modalTitle').click();
 
-
     cy.get('@calendarEndDate')
         .should('have.value', '')
         .click();
