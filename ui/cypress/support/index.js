@@ -14,3 +14,10 @@
 // ***********************************************************
 
 import './commands';
+const spaceUuid = Cypress.env('SPACE_UUID');
+
+beforeEach(() => {
+    cy.log('Reset DB');
+    cy.resetSpace(spaceUuid);
+    cy.viewport(1000, 660);
+});

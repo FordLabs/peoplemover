@@ -1,11 +1,8 @@
 /// <reference types="Cypress" />
 import product from '../fixtures/product';
 
-const spaceUuid = Cypress.env('SPACE_UUID');
-
 describe('Product', () => {
     beforeEach(() => {
-        cy.resetSpace(spaceUuid);
         cy.visitBoard();
     });
 

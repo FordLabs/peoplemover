@@ -5,14 +5,9 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 
 describe('Roles', () => {
     const mockRole = person.role;
-    const yellow = 'rgb(255, 255, 0)';
     const pink = 'rgb(255, 0, 255)';
-    const blue = 'rgb(0, 255, 255)';
-    const expectedCircleColors = [yellow, pink, blue];
 
     beforeEach(() => {
-        cy.resetSpace(spaceUuid);
-
         cy.visitBoard();
     });
 

@@ -5,11 +5,7 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 const date = Cypress.moment().format('yyyy-MM-DD');
 
 describe('People', () => {
-
-
     beforeEach(() => {
-        cy.resetSpace(spaceUuid);
-
         cy.visitBoard();
     });
 
