@@ -21,16 +21,16 @@ import ProductClient from '../Products/ProductClient';
 describe('Product Client', function() {
 
     it('should return the products given a date', function() {
-        const spaceId = 1;
+        const spaceUuid = "uuid";
         const date = '2019-01-10';
         Axios.get = jest.fn();
 
-        const expectedUrl = `/api/product/${spaceId}/${date}`;
+        const expectedUrl = `/api/product/${spaceUuid}/${date}`;
         const expectedConfig = {
             headers: { 'Content-Type': 'application/json' },
         };
 
-        ProductClient.getProductsForDate(spaceId, new Date(2019, 0, 10));
+        ProductClient.getProductsForDate(spaceUuid, new Date(2019, 0, 10));
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });

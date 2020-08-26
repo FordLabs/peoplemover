@@ -2,19 +2,22 @@
 
 import person from '../fixtures/person';
 const spaceUuid = Cypress.env('SPACE_UUID');
+const date = Cypress.moment().format('yyyy-MM-DD');
 
 describe('People', () => {
-    beforeEach(() => {
 
+
+    beforeEach(() => {
         cy.resetSpace(spaceUuid);
-        // cy.resetPerson(person);
 
         cy.visitBoard();
     });
 
     it('Add a new person', () => {
         cy.server();
+
         cy.route('POST', `/api/person/${spaceUuid}`).as('postNewPerson');
+        cy.route('GET', `/api/product/${spaceUuid}/${date}`).as('getUpdatedProduct');
 
         cy.contains(person.name).should('not.exist');
 
@@ -26,40 +29,47 @@ describe('People', () => {
 
         submitPersonForm();
 
-        cy.wait('@postNewPerson').should(xhr => {
-            expect(xhr?.status).to.equal(200);
-            expect(xhr?.response?.body.name).to.equal(person.name);
-        }).then(xhr => {
-            const personId = xhr?.response?.body.id;
+        let personId;
+        cy.wait(['@postNewPerson', '@getUpdatedProduct'])
+            .should((xhrs) => {
+                const postNewPersonXhr = xhrs[0];
+                const getUpdatedProductXhr = xhrs[1];
 
-            cy.contains(person.assignTo)
-                .parentsUntil('[data-testid=productPeopleContainer]')
-                .find(`[data-testid=assignmentCard${personId}info]`)
-                .should('contain', person.name)
-                .should('contain', person.role)
-                .then(() => {
-                    if (person.isNew) {
-                        cy.contains(person.assignTo)
-                            .parentsUntil(`[data-testid=assignmentCard${personId}]`)
-                            .find('[data-testid=newBadge]')
-                            .should('be.visible');
-                    }
-                });
+                expect(postNewPersonXhr?.status).to.equal(200);
+                expect(postNewPersonXhr?.response?.body.name).to.equal(person.name);
+                expect(getUpdatedProductXhr?.status).to.equal(200);
+                personId = postNewPersonXhr?.response?.body.id;
+            }).then(() => {
+                cy.get('[data-testid=productPeopleContainer]')
+                    .eq(1).as('myProductCardContainer');
 
-            cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
+                cy.get('@myProductCardContainer')
+                    .find(`[data-testid=assignmentCard${personId}info]`)
+                    .should('contain', person.name)
+                    .should('contain', person.role)
+                    .then(() => {
+                        if (person.isNew) {
+                            cy.contains(person.assignTo)
+                                .parentsUntil(`[data-testid=assignmentCard${personId}]`)
+                                .find('[data-testid=newBadge]')
+                                .should('be.visible');
+                        }
+                    });
 
-            cy.get('@reassignmentDrawer')
-                .should('contain', 'Reassigned')
-                .find('[data-testid=countBadge]').should('have.text', '1');
+                cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
 
-            cy.get('@reassignmentDrawer')
-                .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
-                .should('have.length', 1)
-                .eq(0)
-                .should('contain', person.name)
-                .should('contain', person.role)
-                .should('contain', `Assigned to ${person.assignTo}`);
-        });
+                cy.get('@reassignmentDrawer')
+                    .should('contain', 'Reassigned')
+                    .find('[data-testid=countBadge]').should('have.text', '1');
+
+                cy.get('@reassignmentDrawer')
+                    .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
+                    .should('have.length', 1)
+                    .eq(0)
+                    .should('contain', person.name)
+                    .should('contain', person.role)
+                    .should('contain', `Assigned to ${person.assignTo}`);
+            });
     });
 });
 

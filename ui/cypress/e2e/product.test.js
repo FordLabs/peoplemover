@@ -6,7 +6,6 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 describe('Product', () => {
     beforeEach(() => {
         cy.resetSpace(spaceUuid);
-
         cy.visitBoard();
     });
 
@@ -37,7 +36,7 @@ describe('Product', () => {
     });
 });
 
-const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDate, notes }) => {
+const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}) => {
     cy.log('Populate Product Form');
 
     cy.get('[data-testid=productForm]').as('productForm');
@@ -57,6 +56,7 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
         .focus()
         .type(startDate)
         .should('have.value', startDate);
+
     cy.get('#end')
         .should('have.value', '')
         .focus()

@@ -4,7 +4,7 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-const spaceId = Cypress.env('SPACE_UUID');
+const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 const BASE_PRODUCT_URL =  `${BASE_API_URL}/product`;
@@ -14,7 +14,7 @@ const BASE_PRODUCT_TAGS_URL =  `${BASE_API_URL}/producttag`;
 const BASE_LOCATION_TAGS_URL =  `${BASE_API_URL}/location`;
 
 Cypress.Commands.add('visitBoard', () => {
-    cy.visit(`/${spaceId}`);
+    cy.visit(`/${spaceUuid}`);
 
     cy.get('[data-testid=productCardContainer]')
         .should('exist');
@@ -39,32 +39,32 @@ Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTex
         .click(0, 0, { force: true });
 });
 
-Cypress.Commands.add('resetProduct', (mockProduct) => {
-    cy.log('Delete mock product and associated tags/location in db.');
-
-    const todaysDate = Cypress.moment().format('yyyy-MM-DD');
-    const ALL_PRODUCTS_BY_DATE_URL = `${BASE_PRODUCT_URL}/1/${todaysDate}`;
-    cy.request('GET', ALL_PRODUCTS_BY_DATE_URL)
-        .then(({ body: allProducts = [] }) => {
-            const product = allProducts.find(product => product.name === mockProduct.name);
-            if (product) {
-                deleteProductById(product.id);
-
-                product.productTags.forEach(tagData => {
-                    if (mockProduct.tags.includes(tagData.name)) {
-                        deleteProductTagById(tagData.id);
-                    }
-                });
-
-                if (product.spaceLocation && (product.spaceLocation.name === mockProduct.location)) {
-                    deleteLocationTagById(product.spaceLocation.id);
-                }
-            }
-        });
-});
+// Cypress.Commands.add('resetProduct', (mockProduct) => {
+//     cy.log('Delete mock product and associated tags/location in db.');
+//
+//     const todaysDate = Cypress.moment().format('yyyy-MM-DD');
+//     const ALL_PRODUCTS_BY_DATE_URL = `${BASE_PRODUCT_URL}/1/${todaysDate}`;
+//     cy.request('GET', ALL_PRODUCTS_BY_DATE_URL)
+//         .then(({ body: allProducts = [] }) => {
+//             const product = allProducts.find(product => product.name === mockProduct.name);
+//             if (product) {
+//                 deleteProductById(product.id);
+//
+//                 product.productTags.forEach(tagData => {
+//                     if (mockProduct.tags.includes(tagData.name)) {
+//                         deleteProductTagById(tagData.id);
+//                     }
+//                 });
+//
+//                 if (product.spaceLocation && (product.spaceLocation.name === mockProduct.location)) {
+//                     deleteLocationTagById(product.spaceLocation.id);
+//                 }
+//             }
+//         });
+// });
 
 Cypress.Commands.add('resetPerson', (mockPerson) => {
-    const ALL_PEOPLE_BY_SPACE_URL = `${BASE_PERSON_URL}/${spaceId}`;
+    const ALL_PEOPLE_BY_SPACE_URL = `${BASE_PERSON_URL}/${spaceUuid}`;
     cy.request('GET', ALL_PEOPLE_BY_SPACE_URL)
         .then(({ body: allPeople = [] }) => {
             const person = allPeople.find(person => person.name === mockPerson.name);
@@ -78,7 +78,7 @@ Cypress.Commands.add('resetPerson', (mockPerson) => {
 });
 
 Cypress.Commands.add('resetRole', (mockRole) => {
-    const ALL_ROLES_BY_SPACE_URL =  `${BASE_ROLE_URL}/${spaceId}`;
+    const ALL_ROLES_BY_SPACE_URL =  `${BASE_ROLE_URL}/${spaceUuid}`;
     cy.request('GET', ALL_ROLES_BY_SPACE_URL)
         .then(({ body: allRoles = [] }) => {
             const role = allRoles.find(role => role.name === mockRole);
@@ -89,7 +89,7 @@ Cypress.Commands.add('resetRole', (mockRole) => {
 });
 
 Cypress.Commands.add('resetLocationTags', () => {
-    const ALL_TAGS_BY_SPACE_URL = `${BASE_LOCATION_TAGS_URL}/${spaceId}`;
+    const ALL_TAGS_BY_SPACE_URL = `${BASE_LOCATION_TAGS_URL}/${spaceUuid}`;
     cy.request('GET', ALL_TAGS_BY_SPACE_URL)
         .then(({ body: allLocationTags = []}) => {
             allLocationTags.forEach(tagData => {
@@ -100,7 +100,7 @@ Cypress.Commands.add('resetLocationTags', () => {
 });
 
 Cypress.Commands.add('resetProductTags', () => {
-    const ALL_TAGS_BY_SPACE_URL = `${BASE_PRODUCT_TAGS_URL}/${spaceId}`;
+    const ALL_TAGS_BY_SPACE_URL = `${BASE_PRODUCT_TAGS_URL}/${spaceUuid}`;
     cy.request('GET', ALL_TAGS_BY_SPACE_URL)
         .then(({ body: allProductTags = []}) => {
             allProductTags.forEach(tagData => {
@@ -110,7 +110,7 @@ Cypress.Commands.add('resetProductTags', () => {
 });
 
 Cypress.Commands.add('resetSpace', () =>{
-    const DELETESPACEURL = `${BASE_API_URL}/space/${spaceId}`;
+    const DELETESPACEURL = `${BASE_API_URL}/reset/${spaceUuid}`;
     cy.request('DELETE', DELETESPACEURL);
 });
 
@@ -119,11 +119,11 @@ const deleteProductById = (productId) => {
 };
 
 const deleteProductTagById = (tagId) => {
-    cy.request('DELETE', `${BASE_PRODUCT_TAGS_URL}/${spaceId}/${tagId}`);
+    cy.request('DELETE', `${BASE_PRODUCT_TAGS_URL}/${spaceUuid}/${tagId}`);
 };
 
 const deleteLocationTagById = (locationId) => {
-    cy.request('DELETE', `${BASE_API_URL}/location/${spaceId}/${locationId}`);
+    cy.request('DELETE', `${BASE_API_URL}/location/${spaceUuid}/${locationId}`);
 };
 
 const deletePersonById = (personId) => {

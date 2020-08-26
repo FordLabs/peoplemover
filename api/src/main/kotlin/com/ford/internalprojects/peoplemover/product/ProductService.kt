@@ -22,6 +22,8 @@ import com.ford.internalprojects.peoplemover.product.ProductAddRequest.Companion
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductAlreadyExistsException
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
 import com.ford.internalprojects.peoplemover.space.Space
+import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -30,7 +32,8 @@ import javax.transaction.Transactional
 @Service
 class ProductService(
         private val productRepository: ProductRepository,
-        private val assignmentService: AssignmentService
+        private val assignmentService: AssignmentService,
+        private val spaceRepository: SpaceRepository
 ) {
     fun findAll(): List<Product> {
         return productRepository.findAll().map { it!! }
@@ -40,9 +43,10 @@ class ProductService(
         return productRepository.findAllBySpaceId(spaceId);
     }
 
-    fun findAllBySpaceIdAndDate(spaceId: Int, date: LocalDate): Set<Product> {
-        val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceId, date)
-        return productRepository.findAllBySpaceIdAndDate(spaceId, date).map {product ->
+    fun findAllBySpaceIdAndDate(spaceUuid: String, date: LocalDate): Set<Product> {
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
+        val assignmentsForDate = assignmentService.getAssignmentsByDate(space.id!!, date)
+        return productRepository.findAllBySpaceIdAndDate(space.id, date).map {product ->
             product.copy(assignments = assignmentsForDate.filter {assignment ->
                 assignment.productId == product.id!!
             }.toSet())

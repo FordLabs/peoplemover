@@ -12,7 +12,7 @@ declare namespace Cypress {
         resetLocationTags(): Chainable<any>;
         resetProductTags(): Chainable<any>;
         resetSpace(uuid: string): Chainable<any>;
-
+        getSpace(uuid: string): Chainable<any>;
         getModal(): Chainable<any>;
         closeModal(): Chainable<any>;
 

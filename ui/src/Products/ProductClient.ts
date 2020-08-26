@@ -41,10 +41,10 @@ class ProductClient {
         );
     }
 
-    static async getProductsForDate(spaceId: number, date: Date): Promise<AxiosResponse> {
+    static async getProductsForDate(spaceUuid: string, date: Date): Promise<AxiosResponse> {
         const formattedDate = moment(date).format('YYYY-MM-DD');
         return Axios.get(
-            `/api/product/${spaceId}/${formattedDate}`,
+            `/api/product/${spaceUuid}/${formattedDate}`,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }

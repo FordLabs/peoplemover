@@ -31,15 +31,16 @@ import java.time.LocalDate
 @Profile("e2e-test")
 @Controller
 @RequestMapping("/")
-class BaseController(private val spaceService: SpaceService,
-                     private val spaceRepository: SpaceRepository,
-                     private val productService: ProductService,
-                     private val roleService: RoleService,
-                     private val userSpaceMappingRepository: UserSpaceMappingRepository,
-                     private val colorService: ColorService,
-                     private val personService: PersonService,
-                     private val productRepository: ProductRepository,
-                     private val assignmentService: AssignmentService
+class E2ETestController(
+        private val spaceService: SpaceService,
+        private val spaceRepository: SpaceRepository,
+        private val productService: ProductService,
+        private val roleService: RoleService,
+        private val userSpaceMappingRepository: UserSpaceMappingRepository,
+        private val colorService: ColorService,
+        private val personService: PersonService,
+        private val productRepository: ProductRepository,
+        private val assignmentService: AssignmentService
 ) {
 
     @GetMapping
@@ -47,7 +48,7 @@ class BaseController(private val spaceService: SpaceService,
         return ResponseEntity.ok().build()
     }
 
-    @DeleteMapping("/api/space/{uuid}")
+    @DeleteMapping("/api/reset/{uuid}")
     fun deleteTestSpace(@PathVariable uuid: String): ResponseEntity<Unit> {
         spaceService.deleteSpace(uuid)
         repopulateDatabase(uuid)

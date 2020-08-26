@@ -10,11 +10,12 @@
     "url": "git+https://github.com/FordLabs/PeopleMover.git"
   },
   "scripts": {
-    "test:ui": "cd ui && npm run lint && npm run test:unit:ci"
+    "test:ui": "cd ui && npm run lint && npm run test:ci",
+    "test:api": "cd api && ./gradlew test"
   },
   "husky": {
     "hooks": {
-      "pre-commit": ".git/hooks/pre-commit-guet && npm run test:ui",
+      "pre-commit": ".git/hooks/pre-commit-guet && npm run test:api && npm run test:ui",
       "commit-msg": ".git/hooks/commit-msg-guet",
       "post-commit": ".git/hooks/post-commit-guet"
     }

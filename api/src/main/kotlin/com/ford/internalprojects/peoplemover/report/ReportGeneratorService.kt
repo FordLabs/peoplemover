@@ -34,7 +34,7 @@ class ReportGeneratorService(
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
         val assignments = assignmentService.getAssignmentsByDate(space.id!!, requestedDate)
-        val products = productService.findAllBySpaceIdAndDate(space.id, requestedDate)
+        val products = productService.findAllBySpaceIdAndDate(spaceUuid, requestedDate)
 
         val reportGenerators: MutableList<ReportGenerator> = mutableListOf()
         assignments.forEach { assignment ->

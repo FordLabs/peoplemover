@@ -45,13 +45,13 @@ describe('Calendar', () => {
     it('should display current date on initial load', async () => {
         const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
         await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.id, initialState.viewingDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, initialState.viewingDate);
     });
 
     it('should display highlighted dates when calendar is open', async () => {
         const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
         const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.id, initialState.viewingDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, initialState.viewingDate);
 
         fireEvent.click(datePickerOpener);
         expect(AssignmentClient.getAssignmentEffectiveDates).toHaveBeenCalledWith(TestUtils.space.id);
@@ -64,7 +64,7 @@ describe('Calendar', () => {
     it('should display chosen date when manually selected', async () => {
         const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
         const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.id, initialState.viewingDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, initialState.viewingDate);
         fireEvent.click(datePickerOpener);
 
         const calendar = await app.findByTestId('calendar');
@@ -74,7 +74,7 @@ describe('Calendar', () => {
         await app.findByText('Viewing: May 18, 2020');
 
         const localDate = moment.tz('2020-05-18', moment.tz.guess()).toDate();
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.id, localDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, localDate);
     });
 
     it('should have down caret when closed and up arrow when open', async () => {
