@@ -14,12 +14,18 @@ Cypress.Commands.add('resetSpace', () => {
 });
 
 Cypress.Commands.add('visitBoard', () => {
+    cy.server();
+    const date = Cypress.moment().format('yyyy-MM-DD');
+    cy.route('GET', `/api/product/${spaceUuid}/${date}`).as('getProducts');
+
     cy.visit(`/${spaceUuid}`);
 
-    cy.get('[data-testid=productCardContainer]')
-        .should(($productCards) => {
-            expect($productCards).to.have.length.greaterThan(1);
-        });
+    cy.wait('@getProducts').then(() => {
+        cy.get('[data-testid=productCardContainer]')
+            .should(($productCards) => {
+                expect($productCards).to.have.length.greaterThan(1);
+            });
+    });
 });
 
 Cypress.Commands.add('getModal', () => {
