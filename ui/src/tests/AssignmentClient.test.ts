@@ -45,7 +45,6 @@ describe('the assignment client', () => {
     });
 
     it('should create assignments for given date', async () => {
-        const spaceId = 10;
         const date = new Date('2019-01-10');
         const productPlaceholderPair: ProductPlaceholderPair = {
             productId: 1,
@@ -72,16 +71,16 @@ describe('the assignment client', () => {
     });
 
     it('should get all effective dates given space', async () => {
-        const spaceId = 10;
+        const spaceUuid = 'UUUUUUUUUIDDDD';
 
         Axios.get = jest.fn();
 
-        const expectedUrl = `/api/assignment/dates/${spaceId}`;
+        const expectedUrl = `/api/assignment/dates/${spaceUuid}`;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };
 
-        await AssignmentClient.getAssignmentEffectiveDates(spaceId);
+        await AssignmentClient.getAssignmentEffectiveDates(spaceUuid);
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
@@ -120,8 +119,6 @@ describe('the assignment client', () => {
 
         const spaceId = 1;
         const requestedDate = new Date(2020, 5, 20);
-
-        const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
 
         const expectedUrl = `/api/reassignment/${spaceId}/2020-06-20`;
         const expectedConfig = {

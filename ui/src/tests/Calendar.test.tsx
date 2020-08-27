@@ -27,6 +27,7 @@ import moment from 'moment-timezone';
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;
+    const spaceUuid = TestUtils.space.uuid;
 
     const initialState: PreloadedState<GlobalStateProps> = {
         viewingDate: new Date(2020, 4, 14),
@@ -45,16 +46,16 @@ describe('Calendar', () => {
     it('should display current date on initial load', async () => {
         const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
         await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, initialState.viewingDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUuid, initialState.viewingDate);
     });
 
     it('should display highlighted dates when calendar is open', async () => {
         const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
         const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, initialState.viewingDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUuid, initialState.viewingDate);
 
         fireEvent.click(datePickerOpener);
-        expect(AssignmentClient.getAssignmentEffectiveDates).toHaveBeenCalledWith(TestUtils.space.id);
+        expect(AssignmentClient.getAssignmentEffectiveDates).toHaveBeenCalledWith(spaceUuid);
 
         const calendar = await app.findByTestId('calendar');
         const dayFifteen = await findByText(calendar, '15');
@@ -64,7 +65,7 @@ describe('Calendar', () => {
     it('should display chosen date when manually selected', async () => {
         const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
         const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, initialState.viewingDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUuid, initialState.viewingDate);
         fireEvent.click(datePickerOpener);
 
         const calendar = await app.findByTestId('calendar');
@@ -74,7 +75,7 @@ describe('Calendar', () => {
         await app.findByText('Viewing: May 18, 2020');
 
         const localDate = moment.tz('2020-05-18', moment.tz.guess()).toDate();
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, localDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUuid, localDate);
     });
 
     it('should have down caret when closed and up arrow when open', async () => {

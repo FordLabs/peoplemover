@@ -35,8 +35,8 @@ class AssignmentClient {
         );
     }
 
-    static async getAssignmentEffectiveDates(spaceId: number): Promise<AxiosResponse> {
-        return Axios.get('/api/assignment/dates/' + spaceId,
+    static async getAssignmentEffectiveDates(spaceUuid: string): Promise<AxiosResponse> {
+        return Axios.get('/api/assignment/dates/' + spaceUuid,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }
