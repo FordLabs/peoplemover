@@ -4,6 +4,8 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
+import product from "../fixtures/product";
+
 const spaceId = Cypress.env('SPACE_ID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
@@ -12,6 +14,8 @@ const BASE_PERSON_URL =  `${BASE_API_URL}/person`;
 const BASE_ROLE_URL =  `${BASE_API_URL}/role`;
 const BASE_PRODUCT_TAGS_URL =  `${BASE_API_URL}/producttag`;
 const BASE_LOCATION_TAGS_URL =  `${BASE_API_URL}/location`;
+const BASE_ASSIGNMENT_URL = `${BASE_API_URL}/assignment`;
+
 
 Cypress.Commands.add('visitBoard', () => {
     cy.visit(`/${spaceId}`);
@@ -109,6 +113,18 @@ Cypress.Commands.add('resetProductTags', () => {
         });
 });
 
+Cypress.Commands.add('addProduct', (productRequest) => {
+    addProduct(productRequest);
+});
+
+Cypress.Commands.add('addPerson', (person) => {
+    addPerson(person);
+});
+
+Cypress.Commands.add('addAssignment', (assignmentRequest) => {
+    addAssignment(assignmentRequest);
+});
+
 const deleteProductById = (productId) => {
     cy.request('DELETE', `${BASE_PRODUCT_URL}/${productId}`);
 };
@@ -133,6 +149,10 @@ const addPerson = (person) => {
     cy.request('POST', `${BASE_PERSON_URL}/${spaceId}`, person);
 };
 
-const addProduct = (product) => {
-    cy.request('POST', `${BASE_PRODUCT_URL}/${spaceId}`, product);
+const addProduct = (productRequest) => {
+    cy.request('POST', `${BASE_PRODUCT_URL}`, productRequest);
+};
+
+const addAssignment = (assignmentRequest) => {
+    cy.request(`POST`, `${ BASE_ASSIGNMENT_URL}/create`, assignmentRequest);
 };

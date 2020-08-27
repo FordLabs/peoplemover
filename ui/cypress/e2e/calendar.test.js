@@ -6,6 +6,8 @@ const spaceId = Cypress.env('SPACE_ID');
 
 describe('Calendar', () => {
     beforeEach(() => {
+        // cy.resetPerson();
+        // cy.resetProduct();
         cy.visitBoard();
     });
 
@@ -34,17 +36,47 @@ describe('Calendar', () => {
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();
 
-        const currentDate = Cypress.moment();
-        const dateWithChanges = () => {
-            const startOfMonth = Cypress.moment().startOf('month').day(3);
-            if (currentDate.isSame(startOfMonth, 'date')) {
-                startOfMonth.day(4);
-            }
-            return startOfMonth;
+        const productToAdd = {
+            name: 'Automated Test Product',
+            startDate: Cypress.moment().format('YYYY-MM-DD'),
+            endDate: Cypress.moment().add(1, 'days').format('YYYY-MM-DD'),
+            dorfCode: '',
+            archived: false,
+            spaceId: spaceId,
+            notes: 'These are some VERY interesting product notes. You\'re welcome.',
         };
 
-        // eslint-disable-next-line no-undef
-        addProduct(product);
+        cy.addProduct(productToAdd);
+
+        const personToAdd = {
+            name: 'Name2',
+            isNew: true,
+            role: 'Product Owner',
+            assignTo: 'My Product',
+            notes: 'Here is a thought you might want to remember.',
+        };
+
+        cy.addPerson(personToAdd);
+
+        const productPlaceholderPair = {
+            productId: product.id,
+            boolean: false,
+        };
+
+        let setOfProductPlaceholders = new Set();
+        setOfProductPlaceholders.add(productPlaceholderPair);
+
+        const assignmentToAdd = {
+            requestedDate: Cypress.moment().format('YYYY-MM-DD'),
+            person: personToAdd,
+            products: setOfProductPlaceholders,
+        };
+
+        cy.addAssignment(assignmentToAdd);
+
+        cy.log('Open calendar');
+        cy.get('@calendarToggle').click();
+
 
     });
 });
