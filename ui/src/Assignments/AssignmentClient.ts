@@ -60,9 +60,9 @@ class AssignmentClient {
         );
     }
 
-    static async getReassignments(spaceId: number, requestedDate: Date): Promise<AxiosResponse> {
+    static async getReassignments(spaceUuid: string, requestedDate: Date): Promise<AxiosResponse> {
         const formattedDate = moment(requestedDate).format('YYYY-MM-DD');
-        return Axios.get(`/api/reassignment/` + spaceId + '/' + formattedDate,
+        return Axios.get(`/api/reassignment/` + spaceUuid + '/' + formattedDate,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }

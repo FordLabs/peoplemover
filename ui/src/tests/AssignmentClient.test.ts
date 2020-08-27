@@ -117,15 +117,15 @@ describe('the assignment client', () => {
     it('should get reassignments given assignment', async () => {
         Axios.get = jest.fn();
 
-        const spaceId = 1;
+        const spaceUuid = 'spaceuuid';
         const requestedDate = new Date(2020, 5, 20);
 
-        const expectedUrl = `/api/reassignment/${spaceId}/2020-06-20`;
+        const expectedUrl = `/api/reassignment/${spaceUuid}/2020-06-20`;
         const expectedConfig = {
             headers: {'Content-Type': 'application/json'},
         };
 
-        await AssignmentClient.getReassignments(spaceId, requestedDate);
+        await AssignmentClient.getReassignments(spaceUuid, requestedDate);
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
