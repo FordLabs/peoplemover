@@ -22,6 +22,7 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class SpaceService(
@@ -68,5 +69,9 @@ class SpaceService(
 
     fun getSpace(uuid: String): Space {
         return spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
+    }
+
+    fun deleteSpace(uuid: String){
+        spaceRepository.deleteByUuid(uuid);
     }
 }

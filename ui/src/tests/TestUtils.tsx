@@ -416,6 +416,7 @@ class TestUtils {
 
     static space: Space = {
         id: 1,
+        uuid: 'uuid',
         name: 'testSpace',
         roles: TestUtils.roles,
         locations: TestUtils.locations,

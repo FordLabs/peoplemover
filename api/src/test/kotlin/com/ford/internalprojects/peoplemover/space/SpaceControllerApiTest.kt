@@ -18,11 +18,15 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.assignment.Assignment
+import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.AuthService
 import com.ford.internalprojects.peoplemover.auth.OAuthVerifyResponse
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
+import com.ford.internalprojects.peoplemover.person.Person
+import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -38,9 +42,11 @@ import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
+import java.util.*
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
@@ -60,6 +66,12 @@ class SpaceControllerApiTest {
     private lateinit var productRepository: ProductRepository
 
     @Autowired
+    private lateinit var personRepository: PersonRepository
+
+    @Autowired
+    private lateinit var assignmentRepository: AssignmentRepository
+
+    @Autowired
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
@@ -71,6 +83,7 @@ class SpaceControllerApiTest {
 
     @After
     fun tearDown() {
+        assignmentRepository.deleteAll()
         productRepository.deleteAll()
         spaceRepository.deleteAll()
         userSpaceMappingRepository.deleteAll()

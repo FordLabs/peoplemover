@@ -102,118 +102,6 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return all assignments for the given spaceId and past date`() {
-        val currentAssignment1: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
-        ))
-        val currentAssignment2: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productTwo.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
-        ))
-        val futureAssignment: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productTwo.id!!,
-                effectiveDate = LocalDate.parse(apr2),
-                spaceId = space.id!!
-        ))
-
-        val result = mockMvc.perform(get("/api/assignment/${space.id}/$apr1"))
-                .andExpect(status().isOk)
-                .andReturn()
-        val actualAssignments: List<Assignment> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
-        )
-
-        assertThat(actualAssignments.size).isEqualTo(2)
-        assertThat(actualAssignments).contains(currentAssignment1, currentAssignment2)
-        assertThat(actualAssignments).doesNotContain(futureAssignment)
-    }
-
-    @Test
-    fun `GET should return all assignments for the given spaceId and recent date`() {
-        val oldAssignment1: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
-        ))
-        val oldAssignment2: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productTwo.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
-        ))
-        val newAssignment: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productTwo.id!!,
-                effectiveDate = LocalDate.parse(apr2),
-                spaceId = space.id!!
-        ))
-
-        val result = mockMvc.perform(get("/api/assignment/${space.id}/$apr2"))
-                .andExpect(status().isOk)
-                .andReturn()
-        val actualAssignments: List<Assignment> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
-        )
-
-        assertThat(actualAssignments.size).isOne()
-        assertThat(actualAssignments).contains(newAssignment)
-        assertThat(actualAssignments).doesNotContain(oldAssignment1, oldAssignment2)
-    }
-
-    @Test
-    fun `GET should return null effective date assignments when all assignments for person have null effective date`() {
-        val personTwo: Person = personRepository.save(Person(name = "Avengers", spaceId = space.id!!))
-
-        val originalAssignmentToKeep: Assignment = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = null,
-                spaceId = space.id!!
-        ))
-        val originalAssignmentToReplace: Assignment = assignmentRepository.save(Assignment(
-                person = personTwo,
-                productId = productOne.id!!,
-                effectiveDate = null,
-                spaceId = space.id!!
-        ))
-        val newAssignment: Assignment = assignmentRepository.save(Assignment(
-                person = personTwo,
-                productId = productTwo.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
-        ))
-
-        val result = mockMvc.perform(get("/api/assignment/${space.id}/$apr1"))
-                .andExpect(status().isOk)
-                .andReturn()
-        val actualAssignments: List<Assignment> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
-        )
-
-        assertThat(actualAssignments.size).isEqualTo(2)
-        assertThat(actualAssignments).contains(originalAssignmentToKeep, newAssignment)
-        assertThat(actualAssignments).doesNotContain(originalAssignmentToReplace)
-    }
-
-    @Test
-    fun `GET should return 400 when retrieving assignments given an invalid space` () {
-        val bogusSpaceId = 99999999
-
-        mockMvc.perform(get("/api/assignment/$bogusSpaceId/$apr1"))
-                .andExpect(status().isBadRequest)
-    }
-
-    @Test
     fun `GET should return all assignments for the given personId and a specific date`() {
         val oldAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
                 person = person,
@@ -264,7 +152,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return a set of effective dates given a space id`() {
+    fun `GET should return a set of effective dates given a space uuid`() {
         val savedAssignmentOne = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
@@ -279,7 +167,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val response = mockMvc.perform(get("/api/assignment/dates/${space.id}"))
+        val response = mockMvc.perform(get("/api/assignment/dates/${space.uuid}"))
                 .andExpect(status().isOk)
                 .andReturn().response
 
@@ -293,10 +181,10 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return 400 when retrieving effective dates given an invalid space` () {
-        val bogusSpaceId = 99999999
+    fun `GET should return 400 when retrieving effective dates given an invalid spaceuuid` () {
+        val bogusUuidSpaceId = 99999999
 
-        mockMvc.perform(get("/api/assignment/dates/$bogusSpaceId"))
+        mockMvc.perform(get("/api/assignment/dates/$bogusUuidSpaceId"))
                 .andExpect(status().isBadRequest)
     }
 
