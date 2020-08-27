@@ -83,7 +83,7 @@ class ProductControllerInTimeApiTest {
 
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "tok"))
+        space = spaceRepository.save(Space(name = "tok",uuid = "uuid kari"))
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
         product1 = productRepository.save(Product(
                 name = "product one",
@@ -109,7 +109,7 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return all products given date when they are both active`() {
-        val result = mockMvc.perform(get("/api/product/${space.id}/$may1"))
+        val result = mockMvc.perform(get("/api/product/${space.uuid}/$may1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -126,7 +126,7 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return all products even after end date has passed` () {
-        val result = mockMvc.perform(get("/api/product/${space.id}/$sep1"))
+        val result = mockMvc.perform(get("/api/product/${space.uuid}/$sep1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -143,7 +143,7 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return only first product given date when only first product is active`() {
-        val result = mockMvc.perform(get("/api/product/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/product/${space.uuid}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -178,7 +178,7 @@ class ProductControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get("/api/product/${space.id}/$apr2"))
+        val result = mockMvc.perform(get("/api/product/${space.uuid}/$apr2"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -197,7 +197,7 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return no products for date that is before both start dates`() {
-        val result = mockMvc.perform(get("/api/product/${space.id}/$mar1"))
+        val result = mockMvc.perform(get("/api/product/${space.uuid}/$mar1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -217,7 +217,7 @@ class ProductControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get("/api/product/${space.id}/$sep1"))
+        val result = mockMvc.perform(get("/api/product/${space.uuid}/$sep1"))
                 .andExpect(status().isOk)
                 .andReturn()
 

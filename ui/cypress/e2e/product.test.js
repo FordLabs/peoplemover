@@ -3,8 +3,6 @@ import product from '../fixtures/product';
 
 describe('Product', () => {
     beforeEach(() => {
-        cy.resetProduct(product);
-
         cy.visitBoard();
     });
 
@@ -44,7 +42,7 @@ describe('Product', () => {
     });
 });
 
-const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDate, notes }) => {
+const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}) => {
     cy.log('Populate Product Form');
 
     cy.get('[data-testid=productForm]').as('productForm');

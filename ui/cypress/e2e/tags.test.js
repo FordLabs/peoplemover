@@ -5,9 +5,6 @@ describe('Tags',  () => {
     const productTag = 'Flippin Sweet';
     
     beforeEach(() => {
-        cy.resetLocationTags();
-        cy.resetProductTags();
-
         cy.visitBoard();
     });
 

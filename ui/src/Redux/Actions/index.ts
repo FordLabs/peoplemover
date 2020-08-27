@@ -148,7 +148,7 @@ export const setProductSortByAction = (productSortBy: string) => ({
 export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return ProductClient.getProductsForDate(
-            getState().currentSpace.id,
+            getState().currentSpace.uuid,
             getState().viewingDate
         ).then(result => {
             const products: Array<Product> = result.data || [];

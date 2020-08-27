@@ -31,10 +31,10 @@ class ReportGeneratorService(
         private val assignmentService: AssignmentService
 ) {
     fun getReportWithNames(spaceUuid: String, requestedDate: LocalDate): List<ReportGenerator> {
-        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
+        spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
-        val assignments = assignmentService.getAssignmentsByDate(space.id!!, requestedDate)
-        val products = productService.findAllBySpaceIdAndDate(space.id, requestedDate)
+        val assignments = assignmentService.getAssignmentsByDate(spaceUuid, requestedDate)
+        val products = productService.findAllBySpaceUuidAndDate(spaceUuid, requestedDate)
 
         val reportGenerators: MutableList<ReportGenerator> = mutableListOf()
         assignments.forEach { assignment ->

@@ -1,5 +1,4 @@
 /// <reference types="Cypress" />
-
 describe('Calendar', () => {
     beforeEach(() => {
         cy.visitBoard();
