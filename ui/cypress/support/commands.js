@@ -17,15 +17,23 @@ Cypress.Commands.add('visitBoard', () => {
     cy.server();
     const date = Cypress.moment().format('yyyy-MM-DD');
     cy.route('GET', `/api/product/${spaceUuid}/${date}`).as('getProducts');
+    cy.route('GET', `/api/role/${spaceUuid}`).as('getRoles');
+    cy.route('GET', `/api/location/${spaceUuid}`).as('getLocations');
 
     cy.visit(`/${spaceUuid}`);
 
-    cy.wait('@getProducts').then(() => {
-        cy.get('[data-testid=productCardContainer]')
-            .should(($productCards) => {
-                expect($productCards).to.have.length.greaterThan(1);
-            });
-    });
+    const waitForEndpointsToComplete = [
+        '@getProducts', 
+        '@getRoles', 
+        '@getLocations',
+    ];
+    cy.wait(waitForEndpointsToComplete)
+        .then(() => {
+            cy.get('[data-testid=productCardContainer]')
+                .should(($productCards) => {
+                    expect($productCards).to.have.length.greaterThan(1);
+                });
+        });
 });
 
 Cypress.Commands.add('getModal', () => {
