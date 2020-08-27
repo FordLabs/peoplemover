@@ -17,7 +17,9 @@ Cypress.Commands.add('visitBoard', () => {
     cy.visit(`/${spaceId}`);
 
     cy.get('[data-testid=productCardContainer]')
-        .should('exist');
+        .should(($productCards) => {
+            expect($productCards).to.have.length.greaterThan(1);
+        });
 });
 
 Cypress.Commands.add('getModal', () => {
