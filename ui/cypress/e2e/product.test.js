@@ -49,20 +49,38 @@ const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDa
         cy.get('@productForm').find('[id=productTags]').focus().type(tag + '{enter}', {force: true});
     });
 
-    const todaysDate = Cypress.moment().format('MM/DD/yyyy');
-    cy.get('#start')
-        .should('have.value', todaysDate)
-        .focus()
-        .type(startDate)
-        .should('have.value', startDate);
-    cy.get('#end')
-        .should('have.value', '')
-        .focus()
-        .type(nextPhaseDate)
-        .should('have.value', nextPhaseDate);
-    cy.get('[data-testid=modalPopupContainer]').click();
+    cy.get('#start').as('calendarStartDate');
+    cy.get('#end').as('calendarEndDate');
 
-    cy.get('[data-testid=formNotesToField]').focus().type(notes).should('have.value', notes);
+    const todaysDate = Cypress.moment().format('MM/DD/yyyy');
+    cy.get('@calendarStartDate')
+        .should('have.value', todaysDate)
+        .click();
+
+    const today = Cypress.moment();
+    cy.get(dateSelector(today)).click({force: true});
+
+    cy.get('@calendarStartDate').should('have.value', startDate);
+    cy.get('.modalTitle').click();
+
+    cy.get('@calendarEndDate')
+        .should('have.value', '')
+        .click();
+
+    const tomorrow = Cypress.moment().add(1, 'days');
+    cy.get(dateSelector(tomorrow)).click({force: true});
+
+    cy.get('@calendarEndDate').should('have.value', nextPhaseDate);
+
+    cy.get('[data-testid=formNotesToField]')
+        .focus()
+        .type(notes)
+        .should('have.value', notes);
+};
+
+const dateSelector = (moment) => {
+    const dateLabel = moment.format( 'dddd, MMMM Do, yyyy');
+    return `[aria-label="Choose ${dateLabel}"]`;
 };
 
 const submitProductForm = () => {
