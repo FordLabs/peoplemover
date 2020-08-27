@@ -104,7 +104,7 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
-    fun `GET should return all reassignments for the given spaceId and exact requested date`() {
+    fun `GET should return all reassignments for the given spaceUuid and exact requested date`() {
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
@@ -131,7 +131,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productTwo.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -178,7 +178,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productThree.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -220,7 +220,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productThree.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr2"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr2"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -249,7 +249,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$mar1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$mar1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -271,7 +271,7 @@ class AssignmentControllerReassignmentsApiTest {
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$mar1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$mar1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -325,7 +325,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -375,7 +375,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = ""
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -437,7 +437,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -500,7 +500,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -552,7 +552,7 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
                 .andExpect(status().isOk)
                 .andReturn()
 

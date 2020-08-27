@@ -43,10 +43,10 @@ class ProductService(
         return productRepository.findAllBySpaceId(spaceId);
     }
 
-    fun findAllBySpaceIdAndDate(spaceUuid: String, date: LocalDate): Set<Product> {
+    fun findAllBySpaceUuidAndDate(spaceUuid: String, date: LocalDate): Set<Product> {
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        val assignmentsForDate = assignmentService.getAssignmentsByDate(space.id!!, date)
-        return productRepository.findAllBySpaceIdAndDate(space.id, date).map {product ->
+        val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceUuid, date)
+        return productRepository.findAllBySpaceIdAndDate(space.id!!, date).map {product ->
             product.copy(assignments = assignmentsForDate.filter {assignment ->
                 assignment.productId == product.id!!
             }.toSet())

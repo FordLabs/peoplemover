@@ -32,7 +32,7 @@ class ProductController(
     @GetMapping("/{spaceUuid}/{requestedDate}")
     fun allProductsForDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<Set<Product>> {
         val date = LocalDate.parse(requestedDate)
-        val products: Set<Product> = productService.findAllBySpaceIdAndDate(spaceUuid, date)
+        val products: Set<Product> = productService.findAllBySpaceUuidAndDate(spaceUuid, date)
         logger.logInfoMessage("All product retrieved.")
         return ResponseEntity.ok(products)
     }
