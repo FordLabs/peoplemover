@@ -128,3 +128,11 @@ const deletePersonById = (personId) => {
 const deleteRoleById = (roleId) => {
     cy.request('DELETE', `${BASE_ROLE_URL}/${roleId}`);
 };
+
+const addPerson = (person) => {
+    cy.request('POST', `${BASE_PERSON_URL}/${spaceId}`, person);
+};
+
+const addProduct = (product) => {
+    cy.request('POST', `${BASE_PRODUCT_URL}/${spaceId}`, product);
+};
