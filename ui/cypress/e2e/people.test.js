@@ -33,10 +33,17 @@ describe('People', () => {
                 const postNewPersonXhr = xhrs[0];
                 const getUpdatedProductXhr = xhrs[1];
 
-                expect(postNewPersonXhr?.status).to.equal(200);
-                expect(postNewPersonXhr?.response?.body.name).to.equal(person.name);
-                expect(getUpdatedProductXhr?.status).to.equal(200);
-                personId = postNewPersonXhr?.response?.body.id;
+                expect('@getUpdatedProduct status: ' + getUpdatedProductXhr?.status)
+                    .to.equal('@getUpdatedProduct status: ' + 200);
+                expect('@postNewPerson status: ' + postNewPersonXhr.status)
+                    .to.equal('@postNewPerson status: ' + 200);
+                const body = postNewPersonXhr.response.body || {};
+                expect(body.name).to.equal(person.name);
+                expect(body.newPerson).to.equal(person.isNew);
+                expect(body.notes).to.equal(person.notes);
+                expect(body.spaceRole.name).to.equal(person.role);
+
+                personId = body.id;
             }).then(() => {
                 cy.get('[data-testid=productPeopleContainer]')
                     .eq(1).as('myProductCardContainer');
