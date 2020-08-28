@@ -54,11 +54,12 @@ class ProductService(
     }
 
     @Throws(ProductAlreadyExistsException::class)
-    fun create(productAddRequest: ProductAddRequest): Product {
-        productRepository.findProductByNameAndSpaceId(productAddRequest.name, productAddRequest.spaceId)?.let {
+    fun create(productAddRequest: ProductAddRequest, spaceUuid: String): Product {
+        val space : Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
+        productRepository.findProductByNameAndSpaceId(productAddRequest.name, space.id!!)?.let {
             throw ProductAlreadyExistsException()
         }
-        return create(toProduct(productAddRequest))
+        return create(toProduct(productAddRequest, space.id))
     }
 
     fun create(product: Product): Product {

@@ -74,7 +74,7 @@ class ProductControllerApiTest {
 
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "tok"))
+        space = spaceRepository.save(Space(name = "tok", uuid = "aaa-aaa-aaaa-aaaaa"))
     }
 
     @After
@@ -88,9 +88,9 @@ class ProductControllerApiTest {
 
     @Test
     fun `POST should create new Product`() {
-        val productAddRequest = ProductAddRequest(name = "product one", spaceId = space.id!!)
+        val productAddRequest = ProductAddRequest(name = "product one")
 
-        val result = mockMvc.perform(post("/api/product")
+        val result = mockMvc.perform(post("/api/product/" + space.uuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequest)))
                 .andExpect(status().isOk)
@@ -109,10 +109,10 @@ class ProductControllerApiTest {
 
     @Test
     fun `POST should return 400 when trying to create product with no product name`() {
-        val productAddRequest = ProductAddRequest(name = "", spaceId = space.id!!)
+        val productAddRequest = ProductAddRequest(name = "")
 
         val result = mockMvc.perform(
-                post("/api/product")
+                post("/api/product/" + space.uuid)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productAddRequest))
         )
@@ -126,9 +126,9 @@ class ProductControllerApiTest {
     @Test
     fun `POST should return 409 when trying to create product of the same name`() {
         productRepository.save(Product(name = "product one", spaceId = space.id!!))
-        val productAddRequest = ProductAddRequest(name = "product one", spaceId = space.id!!)
+        val productAddRequest = ProductAddRequest(name = "product one")
 
-        mockMvc.perform(post("/api/product")
+        mockMvc.perform(post("/api/product/" + space.uuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequest)))
                 .andExpect(status().isConflict)

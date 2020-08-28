@@ -40,6 +40,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../Modal/Form.scss';
 import './ProductForm.scss';
 import NotesTextArea from '../Form/NotesTextArea';
+import {Space} from "../SpaceDashboard/Space";
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -61,7 +62,7 @@ export const customStyles: StylesConfig = {
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
-    spaceId: number;
+    currentSpace: Space;
     viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -71,7 +72,7 @@ interface ProductFormProps {
 function ProductForm({
     editing,
     product,
-    spaceId,
+    currentSpace,
     viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
@@ -87,7 +88,7 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return {...emptyProduct(spaceId), startDate: viewingDate};
+            return {...emptyProduct(currentSpace.id), startDate: viewingDate};
         }
         return product;
     }
@@ -106,7 +107,7 @@ function ProductForm({
                 });
 
         } else {
-            ProductClient.createProduct(currentProduct)
+            ProductClient.createProduct(currentProduct, currentSpace.uuid!!)
                 .then(() => setDuplicateProductNameWarning(false))
                 .then(closeModal)
                 .catch(error => {
@@ -187,13 +188,13 @@ function ProductForm({
                     <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
                 </div>
                 <ProductFormLocationField
-                    spaceId={spaceId}
+                    spaceId={currentSpace.id!!}
                     currentProductState={{ currentProduct, setCurrentProduct }}
                     loadingState={{ isLoading, setIsLoading }}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
                 <ProductFormProductTagsField
-                    spaceId={spaceId}
+                    spaceId={currentSpace.id!!}
                     currentProductState={{ currentProduct }}
                     loadingState={{ isLoading, setIsLoading }}
                     selectedProductTagsState={{ selectedProductTags, setSelectedProductTags }}
@@ -230,6 +231,7 @@ function ProductForm({
     );
 }
 const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
     viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });

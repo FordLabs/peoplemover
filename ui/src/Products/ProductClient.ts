@@ -21,9 +21,9 @@ import moment from 'moment';
 
 class ProductClient {
 
-    static async createProduct(product: Product): Promise<AxiosResponse> {
+    static async createProduct(product: Product, spaceUuid: string): Promise<AxiosResponse> {
         return Axios.post(
-            '/api/product',
+            '/api/product/' + spaceUuid,
             product
         );
     }

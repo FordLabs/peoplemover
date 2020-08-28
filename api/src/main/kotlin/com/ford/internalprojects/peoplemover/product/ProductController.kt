@@ -37,9 +37,9 @@ class ProductController(
         return ResponseEntity.ok(products)
     }
 
-    @PostMapping
-    fun createProduct(@Valid @RequestBody productAddRequest: ProductAddRequest): ResponseEntity<Product> {
-        val createdProduct = productService.create(productAddRequest)
+    @PostMapping("/{spaceUuid}")
+    fun createProduct(@PathVariable spaceUuid: String, @Valid @RequestBody productAddRequest: ProductAddRequest): ResponseEntity<Product> {
+        val createdProduct = productService.create(productAddRequest, spaceUuid)
         logger.logInfoMessage("Product [${createdProduct.name}] created.")
         return ResponseEntity.ok(createdProduct)
     }
