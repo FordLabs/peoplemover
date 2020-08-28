@@ -18,7 +18,7 @@
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import MaskedInput from 'react-text-mask';
-import React, {useState} from 'react';
+import React, {ChangeEvent, MutableRefObject, ReactNode, useState} from 'react';
 import {Product} from './Product';
 
 interface Props {
@@ -31,29 +31,40 @@ function ProductFormEndDateField({ currentProduct, updateProductField }: Props):
         currentProduct.endDate ? moment(currentProduct.endDate).toDate() : null
     );
 
-    function onChange(date: Date): void {
+    const onChange = (date: Date): void => {
+        console.log('onChange')
         setEndDate(date ? date : null);
         updateProductField('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
-    }
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const CustomInput = ({ value, onClick }: any): JSX.Element => {
+        return (
+            <div onClick={onClick}>
+                <MaskedInput
+                    className="formInput formTextInput"
+                    name="end"
+                    id="end"
+                    value={value}
+                    mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                    placeholder="MM/DD/YYYY"
+                />
+                {!endDate && <i className="far fa-calendar-alt calendar-icon" />}
+            </div>
+        );
+    };
+
+    const DateInput = React.forwardRef((props, ref) => <CustomInput innerRef={ref} {...props} />);
 
     return (
         <div className="formItem" data-testid="productFormNextPhaseDateField">
             <label className="formItemLabel" htmlFor="end">End Date</label>
             <DatePicker
-                className="formInput formTextInput"
-                name="end"
-                id="end"
-                selected={endDate}
                 onChange={onChange}
-                customInput={
-                    <MaskedInput
-                        mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
-                    />
-                }
+                selected={endDate}
+                customInput={<DateInput />}
                 isClearable
-                placeholderText="MM/DD/YYYY"
             />
-            {!endDate && <i className="far fa-calendar-alt calendar-icon" />}
         </div>
     );
 }
