@@ -18,7 +18,7 @@
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import MaskedInput from 'react-text-mask';
-import React, {ChangeEvent, MutableRefObject, ReactNode, useState} from 'react';
+import React, {useState} from 'react';
 import {Product} from './Product';
 
 interface Props {
@@ -32,13 +32,12 @@ function ProductFormEndDateField({ currentProduct, updateProductField }: Props):
     );
 
     const onChange = (date: Date): void => {
-        console.log('onChange')
         setEndDate(date ? date : null);
         updateProductField('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const CustomInput = ({ value, onClick }: any): JSX.Element => {
+    const CustomInput = ({ value, onClick, onChange }: any): JSX.Element => {
         return (
             <div onClick={onClick}>
                 <MaskedInput
@@ -46,6 +45,7 @@ function ProductFormEndDateField({ currentProduct, updateProductField }: Props):
                     name="end"
                     id="end"
                     value={value}
+                    onChange={onChange}
                     mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
                     placeholder="MM/DD/YYYY"
                 />
