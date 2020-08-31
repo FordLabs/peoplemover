@@ -40,7 +40,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../Modal/Form.scss';
 import './ProductForm.scss';
 import NotesTextArea from '../Form/NotesTextArea';
-import {Space} from "../SpaceDashboard/Space";
+import {Space} from '../SpaceDashboard/Space';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -93,12 +93,14 @@ function ProductForm({
         return product;
     }
 
-    // Put the selected product tags on the updated product and use the 'editProduct' endpoint
     function handleSubmit(): void {
         currentProduct.productTags = selectedProductTags;
-
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return;
+        }
         if (editing) {
-            ProductClient.editProduct(currentProduct)
+            ProductClient.editProduct(currentSpace.uuid, currentProduct)
                 .then(closeModal)
                 .catch(error => {
                     if (error.response.status === 409) {
@@ -107,7 +109,7 @@ function ProductForm({
                 });
 
         } else {
-            ProductClient.createProduct(currentProduct, currentSpace.uuid!!)
+            ProductClient.createProduct(currentSpace.uuid, currentProduct)
                 .then(() => setDuplicateProductNameWarning(false))
                 .then(closeModal)
                 .catch(error => {
@@ -119,12 +121,20 @@ function ProductForm({
     }
 
     async function deleteProduct(): Promise<void> {
-        return ProductClient.deleteProduct(currentProduct).then(closeModal);
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return Promise.resolve();
+        }
+        return ProductClient.deleteProduct(currentSpace.uuid, currentProduct).then(closeModal);
     }
 
     function archiveProduct(): Promise<void> {
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return Promise.resolve();
+        }
         const archivedProduct = {...currentProduct, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(archivedProduct).then(closeModal);
+        return ProductClient.editProduct(currentSpace.uuid, archivedProduct).then(closeModal);
     }
 
     function displayDeleteProductModal(): void {

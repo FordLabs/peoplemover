@@ -13,7 +13,7 @@ describe('People', () => {
         cy.server();
 
         cy.route('POST', `/api/person/${spaceUuid}`).as('postNewPerson');
-        cy.route('GET', `/api/product/${spaceUuid}/${date}`).as('getUpdatedProduct');
+        cy.route('GET', `/api/space/${spaceUuid}/products/${date}`).as('getUpdatedProduct');
 
         cy.contains(person.name).should('not.exist');
 

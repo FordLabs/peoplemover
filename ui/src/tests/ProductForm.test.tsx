@@ -70,20 +70,21 @@ describe('ProductForm', function() {
             fireEvent.click(app.getByText('Create'));
         });
 
-        expect(ProductClient.createProduct).toHaveBeenCalledWith({
-            id: -1,
-            spaceId: 1,
-            name: 'Some Name',
-            startDate: '2020-05-14',
-            endDate: '',
-            spaceLocation: TestUtils.annarbor,
-            archived: false,
-            dorf: '',
-            notes: '',
-            productTags: [TestUtils.productTag2],
-            assignments: [],
-        } as Product,
-        'aaa-aaa-aaa-aaaaa');
+        expect(ProductClient.createProduct).toHaveBeenCalledWith(
+            'aaa-aaa-aaa-aaaaa',
+            {
+                id: -1,
+                spaceId: 1,
+                name: 'Some Name',
+                startDate: '2020-05-14',
+                endDate: '',
+                spaceLocation: TestUtils.annarbor,
+                archived: false,
+                dorf: '',
+                notes: '',
+                productTags: [TestUtils.productTag2],
+                assignments: [],
+            } as Product);
 
         expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
 
