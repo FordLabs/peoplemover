@@ -19,6 +19,7 @@ package com.ford.internalprojects.peoplemover.product
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
 import com.ford.internalprojects.peoplemover.product.ProductAddRequest.Companion.toProduct
+import com.ford.internalprojects.peoplemover.product.exceptions.InvalidProductSpaceMappingException
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductAlreadyExistsException
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
 import com.ford.internalprojects.peoplemover.space.Space
@@ -85,8 +86,14 @@ class ProductService(
     }
 
     @Transactional
-    fun delete(productId: Int) {
+    fun delete(productId: Int, spaceUuid: String) {
+        val space : Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         val productToDelete = productRepository.findByIdOrNull(productId) ?: throw ProductNotExistsException()
+
+        if (space.id == null || (space.id.compareTo(productToDelete.spaceId) != 0)) {
+            throw InvalidProductSpaceMappingException()
+        }
+
         if (productToDelete.assignments.isNotEmpty()) {
             unassignPeopleFromProduct(productToDelete)
         }

@@ -56,8 +56,8 @@ class ProductController(
     }
 
     @DeleteMapping("/{productId}")
-    fun deleteProduct(@PathVariable productId: Int): ResponseEntity<Unit> {
-        productService.delete(productId)
+    fun deleteProduct(@PathVariable spaceUuid: String, @PathVariable productId: Int): ResponseEntity<Unit> {
+        productService.delete(productId, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] deleted.")
         return ResponseEntity.ok().build()
     }
