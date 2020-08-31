@@ -64,4 +64,9 @@ class SpaceController(private val spaceService: SpaceService, private val logger
         return spaceService.getSpace(uuid)
     }
 
+    @PutMapping ("/api/space")
+    fun editSpace(@RequestBody spaceEditRequest: SpaceEditRequest) {
+        return spaceService.editSpace(spaceEditRequest)
+    }
+
 }

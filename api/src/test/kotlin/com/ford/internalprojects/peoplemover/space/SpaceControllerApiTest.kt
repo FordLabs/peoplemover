@@ -272,4 +272,19 @@ class SpaceControllerApiTest {
         assertThat(product.dorf).isNullOrEmpty()
         assertThat(product.notes).isNullOrEmpty()
     }
+
+    @Test
+    fun `PUT should return 200 if space is edited correctly`(){
+        val space = spaceRepository.save(Space(name = "test"))
+        val editedSpace = SpaceEditRequest(id = space.id!!, uuid = space.uuid, spaceName = "edited")
+
+        mockMvc.perform(put("/api/space")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualSpace =  spaceRepository.findByUuid(space.uuid)
+        assertThat(actualSpace!!.name).isEqualTo("edited")
+    }
 }

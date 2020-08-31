@@ -22,7 +22,6 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class SpaceService(
@@ -72,6 +71,13 @@ class SpaceService(
     }
 
     fun deleteSpace(uuid: String){
-        spaceRepository.deleteByUuid(uuid);
+        spaceRepository.deleteByUuid(uuid)
+    }
+
+    fun editSpace(spaceEditRequest: SpaceEditRequest) {
+        var editedSpace = spaceRepository.findByUuid(spaceEditRequest.uuid) ?: throw SpaceNotExistsException()
+         editedSpace.name = spaceEditRequest.spaceName
+        
+        spaceRepository.save(editedSpace)
     }
 }

@@ -37,7 +37,7 @@ data class Space (
     val uuid: String = UUID.randomUUID().toString(),
 
     @Column(unique = true, nullable = false)
-    val name: String,
+    var name: String,
 
     @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
     val roles: Set<SpaceRole> = HashSet(),

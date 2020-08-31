@@ -31,7 +31,7 @@ class AuthServiceTest {
         headers["typ"] = "JWT"
         val claims = HashMap<String, Any>()
         claims["sub"] = "USER_ID"
-        val issuedAt = Instant.now()
+        val issuedAt = Instant.MIN
         val expiredAt = Instant.now()
         claims["expiresAt"] = expiredAt
         claims["iss"] = "https://localhost"
