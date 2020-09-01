@@ -12,6 +12,7 @@ describe('People', () => {
 
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
         cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}/${date}`).as('getUpdatedProduct');
+        cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
         cy.contains(person.name).should('not.exist');
 
@@ -24,7 +25,7 @@ describe('People', () => {
         submitPersonForm();
 
         let personId;
-        cy.wait(['@postNewPerson', '@getUpdatedProduct'])
+        cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
             .should((xhrs) => {
                 const postNewPersonXhr = xhrs[0];
                 const getUpdatedProductXhr = xhrs[1];
