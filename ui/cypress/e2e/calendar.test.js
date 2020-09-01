@@ -6,8 +6,6 @@ const spaceId = Cypress.env('SPACE_ID');
 
 describe('Calendar', () => {
     beforeEach(() => {
-        // cy.resetPerson();
-        // cy.resetProduct();
         cy.visitBoard();
     });
 

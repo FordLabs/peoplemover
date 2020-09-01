@@ -1,16 +1,15 @@
 /// <reference types="Cypress" />
 import product from '../fixtures/product';
+const spaceUuid = Cypress.env('SPACE_UUID');
 
 describe('Product', () => {
     beforeEach(() => {
-        cy.resetProduct(product);
-
         cy.visitBoard();
     });
 
     it('Create a new product', () => {
         cy.server();
-        cy.route('POST', '/api/product').as('postNewProduct');
+        cy.route('POST', `/api/space/${spaceUuid}/products`).as('postNewProduct');
 
         cy.get(product.name).should('not.exist');
 
@@ -35,7 +34,7 @@ describe('Product', () => {
     });
 });
 
-const populateProductForm = ({ name, location, tags = [], startDate, nextPhaseDate, notes }) => {
+const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}) => {
     cy.log('Populate Product Form');
 
     cy.get('[data-testid=productForm]').as('productForm');

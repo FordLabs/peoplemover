@@ -17,16 +17,17 @@ describe('ProductForm', function() {
     const mockStore = configureStore([]);
     const store = mockStore({
         currentSpace: {
+            uuid: 'aaa-aaa-aaa-aaaaa',
             id: 1,
             name: 'Test Space',
         } as Space,
         viewingDate: new Date(2020, 4, 14),
     });
-    store.dispatch = jest.fn();
 
     let resetCreateRange: () => void;
 
     beforeEach(() => {
+        store.dispatch = jest.fn();
         resetCreateRange = mockCreateRange();
     });
 
@@ -43,43 +44,49 @@ describe('ProductForm', function() {
     ProductClient.createProduct = jest.fn(() => createProductPromise);
 
     it('should close the modal when you click the cancel button', async () => {
-        const app = renderWithRedux(<ProductForm editing={false} spaceId={1} />, store, undefined);
-        fireEvent.click(app.getByText('Cancel'));
+        const app = renderWithRedux(<ProductForm editing={false} />, store, undefined);
+        await act(async () => {fireEvent.click(app.getByText('Cancel'));});
         expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
         await act(async () => {await locationPromise;});
         await act(async () => {await productTagPromise;});
     });
 
     it('should submit new product to backend and close modal', async () => {
-        const app = renderWithRedux(
-            <ProductForm editing={false} spaceId={1} />,
-            store,
-            undefined
-        );
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
+        await act(async () => {
 
-        const locationLabelElement = await app.findByLabelText('Location');
-        await selectEvent.select(locationLabelElement, /Ann Arbor/);
+            const app = renderWithRedux(
+                <ProductForm editing={false} />,
+                store,
+                undefined
+            );
+            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
 
-        const tagsLabelElement = await app.findByLabelText('Product Tags');
-        await selectEvent.select(tagsLabelElement, /FordX/);
+            const locationLabelElement = await app.findByLabelText('Location');
+            await selectEvent.select(locationLabelElement, /Ann Arbor/);
 
-        fireEvent.click(app.getByText('Create'));
+            const tagsLabelElement = await app.findByLabelText('Product Tags');
+            await selectEvent.select(tagsLabelElement, /FordX/);
+
+            fireEvent.click(app.getByText('Create'));
+        });
+
+        expect(ProductClient.createProduct).toHaveBeenCalledWith(
+            'aaa-aaa-aaa-aaaaa',
+            {
+                id: -1,
+                spaceId: 1,
+                name: 'Some Name',
+                startDate: '2020-05-14',
+                endDate: '',
+                spaceLocation: TestUtils.annarbor,
+                archived: false,
+                dorf: '',
+                notes: '',
+                productTags: [TestUtils.productTag2],
+                assignments: [],
+            } as Product);
 
         expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
-        expect(ProductClient.createProduct).toHaveBeenCalledWith({
-            id: -1,
-            spaceId: 1,
-            name: 'Some Name',
-            startDate: '2020-05-14',
-            endDate: '',
-            spaceLocation: TestUtils.annarbor,
-            archived: false,
-            dorf: '',
-            notes: '',
-            productTags: [TestUtils.productTag2],
-            assignments: [],
-        } as Product);
 
         await act(async () => {await locationPromise;});
         await act(async () => {await productTagPromise;});

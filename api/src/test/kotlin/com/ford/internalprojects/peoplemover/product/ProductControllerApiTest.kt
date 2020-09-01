@@ -72,9 +72,12 @@ class ProductControllerApiTest {
     private lateinit var mockMvc: MockMvc
     private lateinit var space: Space
 
+    var baseProductsUrl: String = ""
+
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "tok"))
+        space = spaceRepository.save(Space(name = "tok", uuid = "aaa-aaa-aaaa-aaaaa"))
+        baseProductsUrl = "/api/space/" + space.uuid + "/products/"
     }
 
     @After
@@ -88,9 +91,9 @@ class ProductControllerApiTest {
 
     @Test
     fun `POST should create new Product`() {
-        val productAddRequest = ProductAddRequest(name = "product one", spaceId = space.id!!)
+        val productAddRequest = ProductAddRequest(name = "product one")
 
-        val result = mockMvc.perform(post("/api/product")
+        val result = mockMvc.perform(post(baseProductsUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequest)))
                 .andExpect(status().isOk)
@@ -109,10 +112,10 @@ class ProductControllerApiTest {
 
     @Test
     fun `POST should return 400 when trying to create product with no product name`() {
-        val productAddRequest = ProductAddRequest(name = "", spaceId = space.id!!)
+        val productAddRequest = ProductAddRequest(name = "")
 
         val result = mockMvc.perform(
-                post("/api/product")
+                post(baseProductsUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productAddRequest))
         )
@@ -126,9 +129,9 @@ class ProductControllerApiTest {
     @Test
     fun `POST should return 409 when trying to create product of the same name`() {
         productRepository.save(Product(name = "product one", spaceId = space.id!!))
-        val productAddRequest = ProductAddRequest(name = "product one", spaceId = space.id!!)
+        val productAddRequest = ProductAddRequest(name = "product one")
 
-        mockMvc.perform(post("/api/product")
+        mockMvc.perform(post(baseProductsUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequest)))
                 .andExpect(status().isConflict)
@@ -140,7 +143,6 @@ class ProductControllerApiTest {
         val productEditRequest = ProductEditRequest(
                 id = product.id!!,
                 name = product.name,
-                spaceId = product.spaceId,
                 notes = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678" +
                         "9012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345" +
                         "6789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012" +
@@ -151,7 +153,7 @@ class ProductControllerApiTest {
                         "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456" +
                         "789012345678901234567890"
         )
-        mockMvc.perform(put("/api/product/" + product.id)
+        mockMvc.perform(put(baseProductsUrl + product.id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isBadRequest)
@@ -164,11 +166,10 @@ class ProductControllerApiTest {
         assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!))
         val productEditRequest = ProductEditRequest(
                 name = "product two",
-                spaceId = product.spaceId,
                 id = product.id!!
         )
 
-        val result = mockMvc.perform(put("/api/product/" + product.id)
+        val result = mockMvc.perform(put(baseProductsUrl + product.id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
@@ -193,7 +194,7 @@ class ProductControllerApiTest {
         val product2: Product = productRepository.save(Product(name = "product two", spaceId = space.id!!))
         product1.name = product2.name
 
-        mockMvc.perform(put("/api/product/" + product1.id)
+        mockMvc.perform(put(baseProductsUrl + product1.id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(product1)))
                 .andExpect(status().isConflict)
@@ -201,7 +202,7 @@ class ProductControllerApiTest {
 
     @Test
     fun `PUT should return 400 when trying to update non existing product`() {
-        val result = mockMvc.perform(put("/api/product/700")
+        val result = mockMvc.perform(put(baseProductsUrl + "700")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Product(name = "", spaceId = space.id!!))))
                 .andExpect(status().isBadRequest)
@@ -214,7 +215,7 @@ class ProductControllerApiTest {
     fun `DELETE should delete product`() {
         val product: Product = productRepository.save(Product(name = "test", spaceId = space.id!!))
 
-        mockMvc.perform(delete("/api/product/${product.id}"))
+        mockMvc.perform(delete(baseProductsUrl + product.id))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -228,7 +229,7 @@ class ProductControllerApiTest {
         val person = personRepository.save(Person(name = "person", spaceId = space.id!!))
         assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!))
 
-        mockMvc.perform(delete("/api/product/${product.id}"))
+        mockMvc.perform(delete(baseProductsUrl + product.id))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -240,7 +241,7 @@ class ProductControllerApiTest {
 
     @Test
     fun `DELETE should return 400 when trying to delete non existing product`() {
-        mockMvc.perform(delete("/api/product/700"))
+        mockMvc.perform(delete(baseProductsUrl + "700"))
                 .andExpect(status().isBadRequest)
     }
 }

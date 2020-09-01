@@ -296,7 +296,6 @@ function PersonForm({
                         type="text"
                         name="name"
                         id="name"
-                        list="peopleList"
                         value={person.name}
                         onChange={changeName}
                         autoComplete="off"

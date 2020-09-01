@@ -35,24 +35,17 @@ class AssignmentController(
         return ResponseEntity.ok(assignmentsForPerson)
     }
 
-    @GetMapping(path = ["/api/assignment/{spaceId}/{requestedDate}"])
-    fun getAssignmentsByDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
-        val assignmentsByDate = assignmentService.getAssignmentsByDate(spaceId, LocalDate.parse(requestedDate))
-        logger.logInfoMessage("All assignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
-        return ResponseEntity.ok(assignmentsByDate)
-    }
-
-    @GetMapping(path = ["/api/assignment/dates/{spaceId}"])
-    fun getAllEffectiveDates(@PathVariable spaceId: Int): ResponseEntity<Set<LocalDate>> {
-        val dates = assignmentService.getEffectiveDates(spaceId)
-        logger.logInfoMessage("All effective dates retrieved for space with id: [$spaceId].")
+    @GetMapping(path = ["/api/assignment/dates/{spaceUuid}"])
+    fun getAllEffectiveDates(@PathVariable spaceUuid: String): ResponseEntity<Set<LocalDate>> {
+        val dates = assignmentService.getEffectiveDates(spaceUuid)
+        logger.logInfoMessage("All effective dates retrieved for space with uuid: [$spaceUuid].")
         return ResponseEntity.ok(dates)
     }
 
-    @GetMapping(path = ["/api/reassignment/{spaceId}/{requestedDate}"])
-    fun getReassignmentsByExactDate(@PathVariable spaceId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
-        val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceId, LocalDate.parse(requestedDate))
-        logger.logInfoMessage("All reassignments retrieved for space with id: [$spaceId] on date: [$requestedDate].")
+    @GetMapping(path = ["/api/reassignment/{spaceUuid}/{requestedDate}"])
+    fun getReassignmentsByExactDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
+        val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceUuid, LocalDate.parse(requestedDate))
+        logger.logInfoMessage("All reassignments retrieved for space with uuid: [$spaceUuid] on date: [$requestedDate].")
         return ResponseEntity.ok(reassignmentsByExactDate)
     }
 
