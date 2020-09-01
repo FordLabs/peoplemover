@@ -22,13 +22,15 @@ const API_ROLE_PATH = `/api/role/${spaceUuid}`;
 const API_PRODUCT_TAG_PATH = `/api/producttag/${spaceUuid}`;
 const API_LOCATION_PATH = `/api/location/${spaceUuid}`;
 
-beforeEach(() => {
+before(() => {
     Cypress.env('API_PRODUCTS_PATH', API_PRODUCTS_PATH);
     Cypress.env('API_PERSON_PATH', API_PERSON_PATH);
     Cypress.env('API_ROLE_PATH', API_ROLE_PATH);
     Cypress.env('API_PRODUCT_TAG_PATH', API_PRODUCT_TAG_PATH);
     Cypress.env('API_LOCATION_PATH', API_LOCATION_PATH);
+});
 
+beforeEach(() => {
     cy.log('Reset DB');
     cy.resetSpace(spaceUuid);
     cy.viewport(1000, 660);
