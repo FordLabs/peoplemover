@@ -36,32 +36,30 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
+import {Space} from '../SpaceDashboard/Space';
 
 interface ProductCardProps {
     container: string;
     product: Product;
-
-    registerProductRef(productRef: ProductCardRefAndProductPair): void;
-
-    unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
-
+    currentSpace: Space;
     viewingDate: Date;
     whichEditMenuOpen: EditMenuToOpen;
 
+    registerProductRef(productRef: ProductCardRefAndProductPair): void;
+    unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
     setWhichEditMenuOpen(whichEditMenuOption: EditMenuToOpen | null): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
-
     fetchProducts(): void;
 }
 
 function ProductCard({
     container,
     product,
-    registerProductRef,
-    unregisterProductRef,
+    currentSpace,
     viewingDate,
     whichEditMenuOpen,
+    registerProductRef,
+    unregisterProductRef,
     setWhichEditMenuOpen,
     setCurrentModal,
     fetchProducts,
@@ -131,9 +129,13 @@ function ProductCard({
         archiveProduct().then(fetchProducts);
     }
 
-    function archiveProduct(): Promise<AxiosResponse> {
+    function archiveProduct(): Promise<AxiosResponse | void> {
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return Promise.resolve();
+        }
         const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(archivedProduct);
+        return ProductClient.editProduct(currentSpace.uuid, archivedProduct);
     }
 
     return (
@@ -195,6 +197,7 @@ function ProductCard({
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     whichEditMenuOpen: state.whichEditMenuOpen,
 });

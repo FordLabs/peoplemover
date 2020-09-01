@@ -1,5 +1,6 @@
 /// <reference types="Cypress" />
 import product from '../fixtures/product';
+const spaceUuid = Cypress.env('SPACE_UUID');
 
 describe('Product', () => {
     beforeEach(() => {
@@ -8,7 +9,7 @@ describe('Product', () => {
 
     it('Create a new product', () => {
         cy.server();
-        cy.route('POST', '/api/product').as('postNewProduct');
+        cy.route('POST', `/api/space/${spaceUuid}/products`).as('postNewProduct');
 
         cy.get(product.name).should('not.exist');
 

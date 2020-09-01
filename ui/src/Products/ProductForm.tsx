@@ -40,6 +40,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../Modal/Form.scss';
 import './ProductForm.scss';
 import NotesTextArea from '../Form/NotesTextArea';
+import {Space} from '../SpaceDashboard/Space';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -61,7 +62,7 @@ export const customStyles: StylesConfig = {
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
-    spaceId: number;
+    currentSpace: Space;
     viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -71,7 +72,7 @@ interface ProductFormProps {
 function ProductForm({
     editing,
     product,
-    spaceId,
+    currentSpace,
     viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
@@ -87,17 +88,19 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return {...emptyProduct(spaceId), startDate: viewingDate};
+            return {...emptyProduct(currentSpace.id), startDate: viewingDate};
         }
         return product;
     }
 
-    // Put the selected product tags on the updated product and use the 'editProduct' endpoint
     function handleSubmit(): void {
         currentProduct.productTags = selectedProductTags;
-
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return;
+        }
         if (editing) {
-            ProductClient.editProduct(currentProduct)
+            ProductClient.editProduct(currentSpace.uuid, currentProduct)
                 .then(closeModal)
                 .catch(error => {
                     if (error.response.status === 409) {
@@ -106,7 +109,7 @@ function ProductForm({
                 });
 
         } else {
-            ProductClient.createProduct(currentProduct)
+            ProductClient.createProduct(currentSpace.uuid, currentProduct)
                 .then(() => setDuplicateProductNameWarning(false))
                 .then(closeModal)
                 .catch(error => {
@@ -118,12 +121,20 @@ function ProductForm({
     }
 
     async function deleteProduct(): Promise<void> {
-        return ProductClient.deleteProduct(currentProduct).then(closeModal);
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return Promise.resolve();
+        }
+        return ProductClient.deleteProduct(currentSpace.uuid, currentProduct).then(closeModal);
     }
 
     function archiveProduct(): Promise<void> {
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return Promise.resolve();
+        }
         const archivedProduct = {...currentProduct, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(archivedProduct).then(closeModal);
+        return ProductClient.editProduct(currentSpace.uuid, archivedProduct).then(closeModal);
     }
 
     function displayDeleteProductModal(): void {
@@ -187,13 +198,13 @@ function ProductForm({
                     <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
                 </div>
                 <ProductFormLocationField
-                    spaceId={spaceId}
+                    spaceId={currentSpace.id!!}
                     currentProductState={{ currentProduct, setCurrentProduct }}
                     loadingState={{ isLoading, setIsLoading }}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
                 <ProductFormProductTagsField
-                    spaceId={spaceId}
+                    spaceId={currentSpace.id!!}
                     currentProductState={{ currentProduct }}
                     loadingState={{ isLoading, setIsLoading }}
                     selectedProductTagsState={{ selectedProductTags, setSelectedProductTags }}
@@ -230,6 +241,7 @@ function ProductForm({
     );
 }
 const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
     viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });

@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import javax.validation.Valid
 
-@RequestMapping("/api/product")
+@RequestMapping("/api/space/{spaceUuid}/products")
 @RestController
 class ProductController(
         private val productService: ProductService,
         private val logger: BasicLogger) {
 
-    @GetMapping("/{spaceUuid}/{requestedDate}")
+    @GetMapping("/{requestedDate}")
     fun allProductsForDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<Set<Product>> {
         val date = LocalDate.parse(requestedDate)
         val products: Set<Product> = productService.findAllBySpaceUuidAndDate(spaceUuid, date)
@@ -37,26 +37,27 @@ class ProductController(
         return ResponseEntity.ok(products)
     }
 
-    @PostMapping
-    fun createProduct(@Valid @RequestBody productAddRequest: ProductAddRequest): ResponseEntity<Product> {
-        val createdProduct = productService.create(productAddRequest)
+    @PostMapping("")
+    fun createProduct(@PathVariable spaceUuid: String, @Valid @RequestBody productAddRequest: ProductAddRequest): ResponseEntity<Product> {
+        val createdProduct = productService.create(productAddRequest, spaceUuid)
         logger.logInfoMessage("Product [${createdProduct.name}] created.")
         return ResponseEntity.ok(createdProduct)
     }
 
     @PutMapping("/{productId}")
     fun updateProduct(
+            @PathVariable spaceUuid: String,
             @PathVariable productId: Int,
             @Valid @RequestBody productEditRequest: ProductEditRequest
     ): ResponseEntity<Product> {
-        val updatedProduct: Product = productService.update(productEditRequest)
+        val updatedProduct: Product = productService.update(productEditRequest, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] updated.")
         return ResponseEntity.ok(updatedProduct)
     }
 
     @DeleteMapping("/{productId}")
-    fun deleteProduct(@PathVariable productId: Int): ResponseEntity<Unit> {
-        productService.delete(productId)
+    fun deleteProduct(@PathVariable spaceUuid: String, @PathVariable productId: Int): ResponseEntity<Unit> {
+        productService.delete(productId, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] deleted.")
         return ResponseEntity.ok().build()
     }
