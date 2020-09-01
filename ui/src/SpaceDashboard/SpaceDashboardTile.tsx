@@ -19,13 +19,23 @@ import {Space} from './Space';
 import * as React from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
+import {useState} from 'react';
+import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {Dispatch} from 'redux';
+import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import {connect} from 'react-redux';
 
 interface SpaceDashboardTileProps {
     space: Space;
     onClick: (space: Space) => void;
+
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-export default function SpaceDashboardTile({space, onClick}: SpaceDashboardTileProps): JSX.Element {
+
+function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
+    const [dropdownFlag, setDropdownFlag] = useState<boolean>(false);
+
     let timestamp: string;
     const nowStamp = now();
     const lastModifiedMoment = moment(space.lastModifiedDate);
@@ -35,11 +45,46 @@ export default function SpaceDashboardTile({space, onClick}: SpaceDashboardTileP
         timestamp = lastModifiedMoment.format('dddd, MMMM D, YYYY [at] h:mm a');
     }
 
+
+    function showsDropdown(e: React.MouseEvent<HTMLButtonElement>) {
+        e.stopPropagation();
+        if (dropdownFlag) {
+            hidesDropdown();
+        } else {
+            setDropdownFlag(!dropdownFlag);
+            document.addEventListener('click', hidesDropdown, false);
+        }
+    }
+
+    function hidesDropdown(): boolean {
+        setDropdownFlag(false);
+        document.removeEventListener('click', hidesDropdown);
+        return dropdownFlag;
+    }
+
     return (
         <div className="space" onClick={(): void => onClick(space)}>
             <div className="space-name">{space.name}</div>
-            <i className="fas fa-ellipsis-v"></i>
+            <button data-testid="editContributorsModal" className={'editContributorsModal'}
+                    onClick={(event) => showsDropdown(event)}>
+                <i className="fas fa-ellipsis-v icon"/>
+
+                {dropdownFlag && <div className={'dropdown-container'}>
+                    <div data-testid="edit-space" className="dropdown-options"
+                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
+                        Edit Space
+                    </div>
+
+                </div>
+                }
+            </button>
             <div className="last-modified-text">Last modified {timestamp}</div>
         </div>
     );
 }
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
+});
+
+export default connect(null, mapDispatchToProps)(SpaceDashboardTile);

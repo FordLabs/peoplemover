@@ -46,3 +46,22 @@
     line-height: 14px;
   }
 }
+
+.icon {
+  margin-right: 32px;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  color: white;
+}
+
+.dropdown-options {
+  text-align: left;
+  padding: 4px 6px;
+  color: #333333;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+}
