@@ -71,7 +71,7 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
 
                 {dropdownFlag && <div className={'ellipsis-dropdown-container'}>
                     <div data-testid="edit-space" className="dropdown-options"
-                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
+                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_SPACE})}>
                         Edit Space
                     </div>
 

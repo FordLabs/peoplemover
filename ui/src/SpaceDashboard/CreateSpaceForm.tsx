@@ -23,37 +23,47 @@ import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
 
 import './CreateSpaceForm.scss';
+import {Space} from "./Space";
 
 interface CreateSpaceFormProps {
     editing: boolean;
+    space?: Space;
     onSubmit(): Promise<void>;
     closeModal(): void;
 }
 
 function CreateSpaceForm({
+    editing,
+    space,
     onSubmit,
     closeModal,
 }: CreateSpaceFormProps): JSX.Element {
     const maxLength = 40;
     const [spaceName, setSpaceName] = useState<string>('');
 
-    async function addSpace(event: FormEvent): Promise<void> {
+
+
+    function handleSubmit(event: FormEvent): void {
         event.preventDefault();
         const cookies = new Cookies();
         const accessToken = cookies.get('accessToken');
 
-        await SpaceClient.createSpaceForUser(spaceName, accessToken);
-
-        await onSubmit();
-        closeModal();
+        if(editing && space){
+            SpaceClient.editSpace(space.uuid!!, space).then(closeModal)
+        }
+        else{
+            SpaceClient.createSpaceForUser(spaceName, accessToken)
+                .then(closeModal);
+        }
     }
+
 
     function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
         setSpaceName(event.target.value);
     }
 
     return (
-        <form className="createSpaceContainer" onSubmit={addSpace}>
+        <form className="createSpaceContainer" onSubmit={handleSubmit}>
             <label className="createSpaceLabel" htmlFor="spaceNameField">Space Name</label>
             <input className="createSpaceInputField"
                 id="spaceNameField"
