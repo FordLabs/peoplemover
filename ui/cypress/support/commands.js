@@ -16,7 +16,7 @@ Cypress.Commands.add('resetSpace', () => {
 Cypress.Commands.add('visitBoard', () => {
     cy.server();
     const date = Cypress.moment().format('yyyy-MM-DD');
-    cy.route('GET', `/api/product/${spaceUuid}/${date}`).as('getProducts');
+    cy.route('GET', `/api/space/${spaceUuid}/products/${date}`).as('getProducts');
     cy.route('GET', `/api/role/${spaceUuid}`).as('getRoles');
     cy.route('GET', `/api/location/${spaceUuid}`).as('getLocations');
 
