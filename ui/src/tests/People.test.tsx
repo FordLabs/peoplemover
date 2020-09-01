@@ -341,16 +341,6 @@ describe('people actions', () => {
         });
     });
 
-    it('PersonForm allows choices of person names provided by the API', async () => {
-        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-
-        const createPersonButton = await app.findByText('Add Person');
-        fireEvent.click(createPersonButton);
-
-        const nameList = await app.findByLabelText('Name');
-        expect(nameList).toContainHTML('list="peopleList"');
-    });
-
     it('should auto populate the role of the selected person name', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
