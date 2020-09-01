@@ -65,3 +65,24 @@
   font-size: 12px;
   line-height: 18px;
 }
+
+.ellipsis-button{
+  background: transparent;
+}
+
+.ellipsis-dropdown-container {
+  position: absolute;
+  background-color: white;
+  width: 150px;
+  border-radius: 6px;
+  border: 1px solid #EDEBEB;
+
+
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
+
+  padding: 16px 15px;
+  box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+
+}

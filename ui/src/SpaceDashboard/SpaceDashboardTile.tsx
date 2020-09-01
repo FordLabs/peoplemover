@@ -46,7 +46,7 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
     }
 
 
-    function showsDropdown(e: React.MouseEvent<HTMLButtonElement>) {
+    function showsDropdown(e: React.MouseEvent<HTMLButtonElement>): boolean {
         e.stopPropagation();
         if (dropdownFlag) {
             hidesDropdown();
@@ -54,6 +54,7 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
             setDropdownFlag(!dropdownFlag);
             document.addEventListener('click', hidesDropdown, false);
         }
+        return dropdownFlag
     }
 
     function hidesDropdown(): boolean {
@@ -65,11 +66,10 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
     return (
         <div className="space" onClick={(): void => onClick(space)}>
             <div className="space-name">{space.name}</div>
-            <button data-testid="editContributorsModal" className={'editContributorsModal'}
-                    onClick={(event) => showsDropdown(event)}>
+            <button data-testid="ellipsis-button" className="ellipsis-button" onClick={(event) => showsDropdown(event)}>
                 <i className="fas fa-ellipsis-v icon"/>
 
-                {dropdownFlag && <div className={'dropdown-container'}>
+                {dropdownFlag && <div className={'ellipsis-dropdown-container'}>
                     <div data-testid="edit-space" className="dropdown-options"
                          onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
                         Edit Space

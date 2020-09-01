@@ -47,6 +47,11 @@ class SpaceClient {
         );
     }
 
+    static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+        return Axios.put(`/api/space/${uuid}`,
+            editedSpace
+        );
+    }
     static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
         return Axios.put(
             `/api/user/invite/space`,
