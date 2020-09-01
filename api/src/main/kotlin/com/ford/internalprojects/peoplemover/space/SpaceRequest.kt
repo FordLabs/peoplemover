@@ -18,7 +18,5 @@
 package com.ford.internalprojects.peoplemover.space
 
 data class SpaceEditRequest(
-      val id: Int,
-      val spaceName: String,
-      val uuid: String
+      val spaceName: String
 )

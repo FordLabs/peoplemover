@@ -38,6 +38,7 @@ export default function SpaceDashboardTile({space, onClick}: SpaceDashboardTileP
     return (
         <div className="space" onClick={(): void => onClick(space)}>
             <div className="space-name">{space.name}</div>
+            <i className="fas fa-ellipsis-v"></i>
             <div className="last-modified-text">Last modified {timestamp}</div>
         </div>
     );

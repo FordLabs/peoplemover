@@ -76,7 +76,7 @@ class SpaceService(
 
     fun editSpace(spaceEditRequest: SpaceEditRequest) {
         var editedSpace = spaceRepository.findByUuid(spaceEditRequest.uuid) ?: throw SpaceNotExistsException()
-         editedSpace.name = spaceEditRequest.spaceName
+        editedSpace.name = spaceEditRequest.spaceName
         
         spaceRepository.save(editedSpace)
     }
