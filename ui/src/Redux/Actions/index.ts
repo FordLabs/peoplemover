@@ -61,6 +61,7 @@ export enum AvailableModals {
     MY_TAGS,
     MY_ROLES_MODAL,
     CREATE_SPACE,
+    EDIT_SPACE,
     EDIT_CONTRIBUTORS,
     CONTRIBUTORS_CONFIRMATION,
 }

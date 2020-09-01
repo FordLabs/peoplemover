@@ -25,6 +25,7 @@ import SpaceClient from './SpaceClient';
 import './CreateSpaceForm.scss';
 
 interface CreateSpaceFormProps {
+    editing: boolean;
     onSubmit(): Promise<void>;
     closeModal(): void;
 }
