@@ -18,8 +18,6 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -64,9 +62,9 @@ class SpaceController(private val spaceService: SpaceService, private val logger
         return spaceService.getSpace(uuid)
     }
 
-    @PutMapping ("/api/space")
-    fun editSpace(@RequestBody spaceEditRequest: SpaceEditRequest) {
-        return spaceService.editSpace(spaceEditRequest)
+    @PutMapping ("/api/space/{uuid}")
+    fun editSpace(@PathVariable uuid: String, @RequestBody spaceRequest: SpaceRequest) {
+        return spaceService.editSpace(uuid, spaceRequest)
     }
 
 }

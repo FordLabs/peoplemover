@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.space
+package com.ford.internalprojects.peoplemover.space.exceptions
 
-data class SpaceRequest(
-      val spaceName: String
-)
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class SpaceNameTooLongException : RuntimeException("Space name is too long")
