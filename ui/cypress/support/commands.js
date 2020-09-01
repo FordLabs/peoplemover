@@ -5,19 +5,34 @@
 // ***********************************************
 
 const spaceUuid = Cypress.env('SPACE_UUID');
-
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
 Cypress.Commands.add('resetSpace', () => {
-    const DELETE_SPACE_URL = `${BASE_API_URL}/reset/${spaceUuid}`;
-    cy.request('DELETE', DELETE_SPACE_URL);
+    const RESET_SPACE_URL = `${BASE_API_URL}/reset/${spaceUuid}`;
+    cy.request('DELETE', RESET_SPACE_URL);
 });
 
 Cypress.Commands.add('visitBoard', () => {
+    cy.server();
+    const date = Cypress.moment().format('yyyy-MM-DD');
+    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}/${date}`).as('getProductsByDate');
+    cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
+    cy.route('GET', Cypress.env('API_LOCATION_PATH')).as('getLocations');
+
     cy.visit(`/${spaceUuid}`);
 
-    cy.get('[data-testid=productCardContainer]')
-        .should('exist');
+    const waitForEndpointsToComplete = [
+        '@getProductsByDate',
+        '@getRoles', 
+        '@getLocations',
+    ];
+    cy.wait(waitForEndpointsToComplete)
+        .then(() => {
+            cy.get('[data-testid=productCardContainer]')
+                .should(($productCards) => {
+                    expect($productCards).to.have.length.greaterThan(1);
+                });
+        });
 });
 
 Cypress.Commands.add('getModal', () => {

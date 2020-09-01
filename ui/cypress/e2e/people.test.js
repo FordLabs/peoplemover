@@ -1,7 +1,5 @@
 /// <reference types="Cypress" />
-
 import person from '../fixtures/person';
-const spaceUuid = Cypress.env('SPACE_UUID');
 const date = Cypress.moment().format('yyyy-MM-DD');
 
 describe('People', () => {
@@ -12,8 +10,8 @@ describe('People', () => {
     it('Add a new person', () => {
         cy.server();
 
-        cy.route('POST', `/api/person/${spaceUuid}`).as('postNewPerson');
-        cy.route('GET', `/api/space/${spaceUuid}/products/${date}`).as('getUpdatedProduct');
+        cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
+        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}/${date}`).as('getUpdatedProduct');
 
         cy.contains(person.name).should('not.exist');
 
