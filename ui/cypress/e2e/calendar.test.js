@@ -1,8 +1,6 @@
 /// <reference types="Cypress" />
 
 import '../support/commands';
-import product from "../fixtures/product";
-const spaceId = Cypress.env('SPACE_ID');
 
 describe('Calendar', () => {
     beforeEach(() => {
@@ -13,7 +11,7 @@ describe('Calendar', () => {
 
     it('Calendar should show current month and day', () => {
         const expectedCurrentDate = Cypress.moment().format('MMMM D, YYYY');
-        cy.get('@calendarToggle').should('contain', expectedCurrentDate);
+        cy.get('@calendarToggle').should('contain', `Viewing: ${expectedCurrentDate}`);
 
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();
