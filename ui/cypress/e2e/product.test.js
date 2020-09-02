@@ -9,6 +9,8 @@ describe('Product', () => {
     it('Create a new product', () => {
         cy.server();
         cy.route('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
+        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
 
         cy.get(product.name).should('not.exist');
 
@@ -50,10 +52,17 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
 
     cy.get('[data-testid=productFormNameField]').focus().type(name).should('have.value', name);
 
-    cy.get('@productForm').find('[id=location]').focus().type(location + '{enter}');
+    cy.get('@productForm')
+        .find('[id=location]')
+        .focus()
+        .type(location + '{enter}');
+
+    cy.wait('@postNewLocation');
 
     tags.forEach(tag => {
         cy.get('@productForm').find('[id=productTags]').focus().type(tag + '{enter}', {force: true});
+
+        cy.wait('@postNewTag');
     });
 
     cy.get('#start').as('calendarStartDate');
