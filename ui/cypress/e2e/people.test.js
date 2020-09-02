@@ -1,7 +1,5 @@
 /// <reference types="Cypress" />
-
 import person from '../fixtures/person';
-const spaceUuid = Cypress.env('SPACE_UUID');
 const date = Cypress.moment().format('yyyy-MM-DD');
 
 describe('People', () => {
@@ -12,8 +10,9 @@ describe('People', () => {
     it('Add a new person', () => {
         cy.server();
 
-        cy.route('POST', `/api/person/${spaceUuid}`).as('postNewPerson');
-        cy.route('GET', `/api/space/${spaceUuid}/products/${date}`).as('getUpdatedProduct');
+        cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
+        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}/${date}`).as('getUpdatedProduct');
+        cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
         cy.contains(person.name).should('not.exist');
 
@@ -26,7 +25,7 @@ describe('People', () => {
         submitPersonForm();
 
         let personId;
-        cy.wait(['@postNewPerson', '@getUpdatedProduct'])
+        cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
             .should((xhrs) => {
                 const postNewPersonXhr = xhrs[0];
                 const getUpdatedProductXhr = xhrs[1];
@@ -63,11 +62,11 @@ describe('People', () => {
 
                 cy.get('@reassignmentDrawer')
                     .should('contain', 'Reassigned')
-                    .find('[data-testid=countBadge]').should('have.text', '1');
+                    .find('[data-testid=countBadge]').should('have.text', '2');
 
                 cy.get('@reassignmentDrawer')
                     .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
-                    .should('have.length', 1)
+                    .should('have.length', 2)
                     .eq(0)
                     .should('contain', person.name)
                     .should('contain', person.role)
