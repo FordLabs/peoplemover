@@ -11,6 +11,7 @@ describe('People', () => {
         cy.server();
 
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
+        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
         cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}/${date}`).as('getUpdatedProduct');
         cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
@@ -30,10 +31,17 @@ describe('People', () => {
                 const postNewPersonXhr = xhrs[0];
                 const getUpdatedProductXhr = xhrs[1];
 
-                expect(postNewPersonXhr?.status).to.equal(200);
-                expect(postNewPersonXhr?.response?.body.name).to.equal(person.name);
-                expect(getUpdatedProductXhr?.status).to.equal(200);
-                personId = postNewPersonXhr?.response?.body.id;
+                expect('@getUpdatedProduct status: ' + getUpdatedProductXhr?.status)
+                    .to.equal('@getUpdatedProduct status: ' + 200);
+                expect('@postNewPerson status: ' + postNewPersonXhr.status)
+                    .to.equal('@postNewPerson status: ' + 200);
+                const body = postNewPersonXhr.response.body || {};
+                expect(body.name).to.equal(person.name);
+                expect(body.newPerson).to.equal(person.isNew);
+                expect(body.notes).to.equal(person.notes);
+                expect(body.spaceRole.name).to.equal(person.role);
+
+                personId = body.id;
             }).then(() => {
                 cy.get('[data-testid=productPeopleContainer]')
                     .eq(1).as('myProductCardContainer');
@@ -83,9 +91,17 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
             .should('be.checked');
     }
 
-    cy.get('@personForm').find('[id=role]').focus().type(role + '{enter}');
+    cy.get('@personForm')
+        .find('[id=role]')
+        .focus()
+        .type(role + '{enter}');
+    
+    cy.wait('@postNewRole');
 
-    cy.get('@personForm').find('[id=product]').type(assignTo + '{enter}');
+    cy.get('@personForm')
+        .find('.MultiSelect__value-container input')
+        .focus()
+        .type(assignTo + '{enter}');
 
     cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
 };
