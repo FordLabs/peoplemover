@@ -76,11 +76,11 @@ class SpaceService(
     }
 
     fun editSpace(uuid: String, spaceRequest: SpaceRequest) {
-        if(spaceRequest.spaceName.length > 40){
+        if(spaceRequest.name.length > 40){
            throw SpaceNameTooLongException()
         }
         var editedSpace = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
-        editedSpace.name = spaceRequest.spaceName
+        editedSpace.name = spaceRequest.name
         
         spaceRepository.save(editedSpace)
     }

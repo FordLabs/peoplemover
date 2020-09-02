@@ -23,44 +23,50 @@ import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
 
 import './CreateSpaceForm.scss';
-import {Space} from "./Space";
+import {createEmptySpace, Space} from "./Space";
 
 interface CreateSpaceFormProps {
-    editing: boolean;
     space?: Space;
     onSubmit(): Promise<void>;
     closeModal(): void;
 }
 
 function CreateSpaceForm({
-    editing,
     space,
     onSubmit,
     closeModal,
 }: CreateSpaceFormProps): JSX.Element {
     const maxLength = 40;
-    const [spaceName, setSpaceName] = useState<string>('');
+    const editing = !!space;
+    const [formSpace, setFormSpace] = useState<Space>(initializeSpace())
 
-
+    function initializeSpace() {
+        return space ? space : createEmptySpace();
+    }
 
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
         const cookies = new Cookies();
         const accessToken = cookies.get('accessToken');
 
-        if(editing && space){
-            SpaceClient.editSpace(space.uuid!!, space).then(closeModal)
+        if(editing){
+            SpaceClient.editSpace(formSpace.uuid!!, formSpace).then(closeModal)
         }
         else{
-            SpaceClient.createSpaceForUser(spaceName, accessToken)
+            SpaceClient.createSpaceForUser(formSpace.name, accessToken)
                 .then(closeModal);
         }
     }
 
 
     function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
-        setSpaceName(event.target.value);
+        setFormSpace({
+            ...formSpace,
+            name: event.target.value
+        });
     }
+
+    let spaceNameLength = formSpace.name.length;
 
     return (
         <form className="createSpaceContainer" onSubmit={handleSubmit}>
@@ -70,14 +76,14 @@ function CreateSpaceForm({
                 type="text"
                 data-testid="createSpaceInputField"
                 maxLength={maxLength}
-                value={spaceName}
+                value={formSpace.name}
                 onChange={onSpaceNameFieldChanged}/>
-            <span className={`createSpaceFieldText ${spaceName.length >= maxLength ? 'createSpaceFieldTooLong' : ''}`} data-testid="createSpaceFieldText">
-                {spaceName.length} ({maxLength} characters max)
+            <span className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`} data-testid="createSpaceFieldText">
+                {spaceNameLength} ({maxLength} characters max)
             </span>
             <div className="createSpaceButtonContainer">
                 <button className="createSpaceCancelButton" type="button" onClick={closeModal}>Cancel</button>
-                <button className="createSpaceSubmitButton" type="submit" disabled={spaceName.length <= 0}>Add Space</button>
+                <button className="createSpaceSubmitButton" type="submit" disabled={spaceNameLength <= 0}>Add Space</button>
             </div>
         </form>
     );

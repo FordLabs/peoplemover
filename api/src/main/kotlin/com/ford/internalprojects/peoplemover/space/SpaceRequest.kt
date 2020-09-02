@@ -18,5 +18,5 @@
 package com.ford.internalprojects.peoplemover.space
 
 data class SpaceRequest(
-      val spaceName: String
+      val name: String
 )

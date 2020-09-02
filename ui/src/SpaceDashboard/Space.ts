@@ -26,3 +26,12 @@ export interface Space {
     locations:    SpaceLocation[];
     lastModifiedDate: string;
 }
+
+export function createEmptySpace(): Space {
+    return {
+        name: '',
+        roles: [],
+        locations: [],
+        lastModifiedDate: ''
+    }
+}
