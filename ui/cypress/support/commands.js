@@ -5,12 +5,8 @@
 // ***********************************************
 
 const spaceUuid = Cypress.env('SPACE_UUID');
-const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('resetSpace', () => {
-    const RESET_SPACE_URL = `${BASE_API_URL}/reset/${spaceUuid}`;
-    cy.request('DELETE', RESET_SPACE_URL);
-});
+const BASE_API_URL = Cypress.env('BASE_API_URL');
 
 Cypress.Commands.add('visitBoard', () => {
     cy.server();
@@ -23,7 +19,7 @@ Cypress.Commands.add('visitBoard', () => {
 
     const waitForEndpointsToComplete = [
         '@getProductsByDate',
-        '@getRoles', 
+        '@getRoles',
         '@getLocations',
     ];
     cy.wait(waitForEndpointsToComplete)
@@ -52,4 +48,11 @@ Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTex
         .find('[class*="-option"]')
         .contains(checkboxTextToSelect)
         .click(0, 0, { force: true });
+});
+
+
+/* API requests */
+Cypress.Commands.add('resetSpace', () => {
+    const RESET_SPACE_URL = `${BASE_API_URL}/api/reset/${spaceUuid}`;
+    cy.request('DELETE', RESET_SPACE_URL);
 });
