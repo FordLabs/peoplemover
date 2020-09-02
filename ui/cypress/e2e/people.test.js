@@ -90,9 +90,15 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
             .should('be.checked');
     }
 
-    cy.get('@personForm').find('[id=role]').focus().type(role + '{enter}');
+    cy.get('@personForm')
+        .find('[id=role]')
+        .focus()
+        .type(role + '{enter}');
 
-    cy.get('@personForm').find('[id=product]').type(assignTo + '{enter}');
+    cy.get('@personForm')
+        .find('.MultiSelect__value-container input')
+        .focus()
+        .type(assignTo + '{enter}');
 
     cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
 };
