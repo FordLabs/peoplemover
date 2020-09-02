@@ -38,7 +38,7 @@ function CreateSpaceForm({
 }: CreateSpaceFormProps): JSX.Element {
     const maxLength = 40;
     const editing = !!space;
-    const [formSpace, setFormSpace] = useState<Space>(initializeSpace())
+    const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
 
     function initializeSpace() {
         return space ? space : createEmptySpace();
@@ -50,12 +50,16 @@ function CreateSpaceForm({
         const accessToken = cookies.get('accessToken');
 
         if(editing){
-            SpaceClient.editSpace(formSpace.uuid!!, formSpace).then(closeModal)
+            SpaceClient.editSpace(formSpace.uuid!!, formSpace)
+                .then(closeModal)
+                .then(onSubmit)
         }
         else{
             SpaceClient.createSpaceForUser(formSpace.name, accessToken)
-                .then(closeModal);
+                .then(closeModal)
+                .then(onSubmit);
         }
+
     }
 
 
@@ -83,7 +87,9 @@ function CreateSpaceForm({
             </span>
             <div className="createSpaceButtonContainer">
                 <button className="createSpaceCancelButton" type="button" onClick={closeModal}>Cancel</button>
-                <button className="createSpaceSubmitButton" type="submit" disabled={spaceNameLength <= 0}>Add Space</button>
+                <button className="createSpaceSubmitButton" type="submit" disabled={spaceNameLength <= 0}>
+                    {editing ? 'Save' : 'Add Space'}
+                </button>
             </div>
         </form>
     );
