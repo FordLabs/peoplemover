@@ -96,14 +96,14 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
         .focus()
         .type(role + '{enter}');
     
-    cy.wait('@postNewRole').then(() => {
-        cy.get('@personForm')
-            .find('.MultiSelect__value-container input')
-            .focus()
-            .type(assignTo + '{enter}');
+    cy.wait('@postNewRole');
 
-        cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
-    });
+    cy.get('@personForm')
+        .find('.MultiSelect__value-container input')
+        .focus()
+        .type(assignTo + '{enter}');
+
+    cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
 };
 
 const submitPersonForm = () => {
