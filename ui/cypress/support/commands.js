@@ -4,17 +4,9 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-import product from "../fixtures/product";
-
 const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
-const BASE_PRODUCT_URL =  `${BASE_API_URL}/product`;
-const BASE_PERSON_URL =  `${BASE_API_URL}/person`;
-const BASE_ROLE_URL =  `${BASE_API_URL}/role`;
-const BASE_PRODUCT_TAGS_URL =  `${BASE_API_URL}/producttag`;
-const BASE_LOCATION_TAGS_URL =  `${BASE_API_URL}/location`;
-const BASE_ASSIGNMENT_URL = `${BASE_API_URL}/assignment`;
 
 Cypress.Commands.add('visitBoard', () => {
     cy.server();
@@ -60,32 +52,7 @@ Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTex
 
 
 /* API requests */
-
 Cypress.Commands.add('resetSpace', () => {
-    const RESET_SPACE_URL = `${BASE_API_URL}/reset/${spaceUuid}`;
+    const RESET_SPACE_URL = `${BASE_API_URL}/api/reset/${spaceUuid}`;
     cy.request('DELETE', RESET_SPACE_URL);
 });
-
-Cypress.Commands.add('addProduct', (productRequest) => {
-    addProduct(productRequest);
-});
-
-Cypress.Commands.add('addPerson', (person) => {
-    addPerson(person);
-});
-
-Cypress.Commands.add('addAssignment', (assignmentRequest) => {
-    addAssignment(assignmentRequest);
-});
-
-const addPerson = (person) => {
-    cy.request('POST', `${BASE_PERSON_URL}/${spaceId}`, person);
-};
-
-const addProduct = (productRequest) => {
-    cy.request('POST', `${BASE_PRODUCT_URL}`, productRequest);
-};
-
-const addAssignment = (assignmentRequest) => {
-    cy.request(`POST`, `${ BASE_ASSIGNMENT_URL}/create`, assignmentRequest);
-};

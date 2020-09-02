@@ -21,6 +21,7 @@ const API_PERSON_PATH = `/api/person/${spaceUuid}`;
 const API_ROLE_PATH = `/api/role/${spaceUuid}`;
 const API_PRODUCT_TAG_PATH = `/api/producttag/${spaceUuid}`;
 const API_LOCATION_PATH = `/api/location/${spaceUuid}`;
+const API_ASSIGNMENT_PATH = `/api/assignment`;
 
 before(() => {
     Cypress.env('API_PRODUCTS_PATH', API_PRODUCTS_PATH);
@@ -28,6 +29,7 @@ before(() => {
     Cypress.env('API_ROLE_PATH', API_ROLE_PATH);
     Cypress.env('API_PRODUCT_TAG_PATH', API_PRODUCT_TAG_PATH);
     Cypress.env('API_LOCATION_PATH', API_LOCATION_PATH);
+    Cypress.env('API_ASSIGNMENT_PATH', API_ASSIGNMENT_PATH);
 });
 
 beforeEach(() => {

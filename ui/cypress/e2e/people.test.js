@@ -55,11 +55,11 @@ describe('People', () => {
 
                 cy.get('@reassignmentDrawer')
                     .should('contain', 'Reassigned')
-                    .find('[data-testid=countBadge]').should('have.text', '1');
+                    .find('[data-testid=countBadge]').should('have.text', '2');
 
                 cy.get('@reassignmentDrawer')
                     .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
-                    .should('have.length', 1)
+                    .should('have.length', 2)
                     .eq(0)
                     .should('contain', person.name)
                     .should('contain', person.role)

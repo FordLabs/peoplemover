@@ -107,7 +107,7 @@ class LocalDataGenerator(
                 ))
         ))
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
-                requestedDate = LocalDate.parse("2020-06-15"),
+                requestedDate = LocalDate.now(),
                 person = bob,
                 products = Sets.newHashSet(ProductPlaceholderPair(
                         productId = savedProducts[1].id!!,

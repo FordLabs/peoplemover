@@ -1,17 +1,15 @@
 /// <reference types="Cypress" />
-import { Person } from '../fixtures/person';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare namespace Cypress {
     interface Chainable {
         visitBoard(): Chainable<any>;
-        resetSpace(uuid: string): Chainable<any>;
         getModal(): Chainable<any>;
         closeModal(): Chainable<any>;
 
-        addProduct(productRequest): Chainable<any>;
-        addPerson(person): Chainable<any>;
-        addAssignment(assignmentRequest): Chainable<any>;
+        resetSpace(uuid: string): Chainable<any>;
 
         selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: number): Chainable<any>;
     }
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
