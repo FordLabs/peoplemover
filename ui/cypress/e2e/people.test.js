@@ -11,6 +11,7 @@ describe('People', () => {
         cy.server();
 
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
+        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
         cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}/${date}`).as('getUpdatedProduct');
         cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
@@ -94,13 +95,15 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
         .find('[id=role]')
         .focus()
         .type(role + '{enter}');
+    
+    cy.wait('@postNewRole').then(() => {
+        cy.get('@personForm')
+            .find('.MultiSelect__value-container input')
+            .focus()
+            .type(assignTo + '{enter}');
 
-    cy.get('@personForm')
-        .find('.MultiSelect__value-container input')
-        .focus()
-        .type(assignTo + '{enter}');
-
-    cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
+        cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
+    });
 };
 
 const submitPersonForm = () => {
