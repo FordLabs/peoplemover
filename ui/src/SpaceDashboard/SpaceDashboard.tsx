@@ -22,8 +22,11 @@ import Cookies from 'universal-cookie';
 import {Space} from './Space';
 import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
-import {Dispatch} from 'redux';
+import {
+    AvailableModals,
+    fetchUserSpacesAction,
+    setCurrentModalAction,
+} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router';
@@ -31,25 +34,27 @@ import Header from '../Header/Header';
 import SpaceDashboardTile from './SpaceDashboardTile';
 
 import './SpaceDashboard.scss';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;
+    fetchUserSpaces(): void;
+    userSpaces: Array<Space>;
 }
 
-function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
-    const [userSpaces, setUserSpaces] = useState<Space[]>([]);
+function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces}: SpaceDashboardProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [redirectPage, setRedirectPage] = useState<JSX.Element | null >(null);
+    const [redirectPage, setRedirectPage] = useState<JSX.Element | null>(null);
 
     function onCreateNewSpaceButtonClicked(): void {
-        setCurrentModal({modal: AvailableModals.CREATE_SPACE, item: refreshUserSpaces});
+        fetchUserSpaces();
     }
 
     async function refreshUserSpaces(): Promise<void> {
         const cookies = new Cookies();
         const accessToken = cookies.get('accessToken');
         const spaces = (await SpaceClient.getSpacesForUser(accessToken)).data;
-        setUserSpaces(spaces);
+        // setUserSpaces(spaces);
     }
 
     function onSpaceClicked(space: Space): void {
@@ -57,11 +62,15 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
     }
 
     useEffect(() => {
+        async function populateUserSpaces(): Promise<void> {
+            await fetchUserSpaces();
+        }
         window.history.pushState([], 'User Dashboard', '/user/dashboard');
-        refreshUserSpaces().then( () => {
+
+        populateUserSpaces().then(() => {
             setIsLoading(false);
         });
-    }, []);
+    }, [setCurrentModal]);
 
     function WelcomeMessage(): JSX.Element {
         return (
@@ -72,7 +81,7 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
                     If you’re already a part of a space but you’re not seeing it here,
                     you’ll have to ask the owner to share it with you.
                 </p>
-                <NewSpaceButton />
+                <NewSpaceButton/>
             </div>
         );
     }
@@ -87,7 +96,7 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
                             onClick={onSpaceClicked}/>;
                     })
                 }
-                <NewSpaceButton />
+                <NewSpaceButton/>
             </div>
         );
     }
@@ -101,19 +110,24 @@ function SpaceDashboard({setCurrentModal}: SpaceDashboardProps): JSX.Element {
         );
     }
 
-    if ( redirectPage ) return redirectPage;
+    if (redirectPage) return redirectPage;
 
     return (
         <div className="spaceDashboard">
             <Header hideSpaceButtons={true}/>
             <CurrentModal/>
-            {!isLoading && (!userSpaces.length ? <WelcomeMessage /> : <SpaceTileGrid /> )}
+            {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
         </div>
     );
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapStateToProps = (state: GlobalStateProps) => ({
+    userSpaces: state.userSpaces,
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(null, mapDispatchToProps)(SpaceDashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboard);

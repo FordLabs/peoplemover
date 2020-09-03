@@ -17,7 +17,7 @@
 
 import React, {FormEvent, useState} from 'react';
 import {Dispatch} from 'redux';
-import {closeModalAction} from '../Redux/Actions';
+import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
@@ -27,14 +27,14 @@ import {createEmptySpace, Space} from "./Space";
 
 interface CreateSpaceFormProps {
     space?: Space;
-    onSubmit(): Promise<void>;
     closeModal(): void;
+    fetchUserSpaces(): void;
 }
 
 function CreateSpaceForm({
     space,
-    onSubmit,
     closeModal,
+    fetchUserSpaces,
 }: CreateSpaceFormProps): JSX.Element {
     const maxLength = 40;
     const editing = !!space;
@@ -49,15 +49,16 @@ function CreateSpaceForm({
         const cookies = new Cookies();
         const accessToken = cookies.get('accessToken');
 
-        if(editing){
-            SpaceClient.editSpace(formSpace.uuid!!, formSpace)
+        if (editing && formSpace.uuid){
+            SpaceClient.editSpace(formSpace.uuid, formSpace)
                 .then(closeModal)
-                .then(onSubmit)
+                .then(fetchUserSpaces);
+
         }
-        else{
+        else {
             SpaceClient.createSpaceForUser(formSpace.name, accessToken)
                 .then(closeModal)
-                .then(onSubmit);
+                .then(fetchUserSpaces);
         }
 
     }
@@ -95,8 +96,9 @@ function CreateSpaceForm({
     );
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
+    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
 export default connect(null, mapDispatchToProps)(CreateSpaceForm);

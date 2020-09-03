@@ -87,9 +87,9 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
         case AvailableModals.MY_ROLES_MODAL:
             return <MyRolesModal/>;
         case AvailableModals.CREATE_SPACE:
-            return <CreateSpaceForm onSubmit={item}/>;
+            return <CreateSpaceForm/>;
         case AvailableModals.EDIT_SPACE:
-            return <CreateSpaceForm space={item} onSubmit={item}/>;
+            return <CreateSpaceForm space={item}/>;
         case AvailableModals.EDIT_CONTRIBUTORS:
             return <EditContributorsForm/>;
         case AvailableModals.CONTRIBUTORS_CONFIRMATION:
