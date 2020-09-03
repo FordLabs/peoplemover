@@ -68,10 +68,13 @@
 
 .ellipsis-button{
   background: transparent;
+  position: relative;
 }
 
 .ellipsis-dropdown-container {
   position: absolute;
+  left: 356px;
+  margin-top: 8px;
   background-color: white;
   width: 150px;
   border-radius: 6px;
