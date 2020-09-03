@@ -186,8 +186,12 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
             .then(result => {
                 let productTags: Array<ProductTag> = result.data || [];
                 productTags = productTags.sort((a, b) => {
-                    if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-                    if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+                    if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                        return -1;
+                    }
+                    if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                        return 1;
+                    }
                     return 0;
                 });
                 dispatch(setProductTagsAction(productTags));
@@ -200,8 +204,12 @@ export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, nul
             .then(result => {
                 let locations: Array<SpaceLocation> = result.data || [];
                 locations = locations.sort((a, b) => {
-                    if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-                    if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+                    if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                        return -1;
+                    }
+                    if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                        return 1;
+                    }
                     return 0;
                 });
                 dispatch(setLocationsAction(locations));

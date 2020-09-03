@@ -47,14 +47,7 @@ function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces}: SpaceDas
     const [redirectPage, setRedirectPage] = useState<JSX.Element | null>(null);
 
     function onCreateNewSpaceButtonClicked(): void {
-        fetchUserSpaces();
-    }
-
-    async function refreshUserSpaces(): Promise<void> {
-        const cookies = new Cookies();
-        const accessToken = cookies.get('accessToken');
-        const spaces = (await SpaceClient.getSpacesForUser(accessToken)).data;
-        // setUserSpaces(spaces);
+        setCurrentModal({modal: AvailableModals.CREATE_SPACE});
     }
 
     function onSpaceClicked(space: Space): void {
