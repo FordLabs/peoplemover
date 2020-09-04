@@ -16,64 +16,86 @@
  */
 
 import React, {FormEvent, useState} from 'react';
-import {Dispatch} from 'redux';
-import {closeModalAction} from '../Redux/Actions';
+import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
 
-import './CreateSpaceForm.scss';
+import './SpaceForm.scss';
+import {createEmptySpace, Space} from './Space';
 
 interface CreateSpaceFormProps {
-    onSubmit(): Promise<void>;
+    space?: Space;
     closeModal(): void;
+    fetchUserSpaces(): void;
 }
 
-function CreateSpaceForm({
-    onSubmit,
+function SpaceForm({
+    space,
     closeModal,
+    fetchUserSpaces,
 }: CreateSpaceFormProps): JSX.Element {
     const maxLength = 40;
-    const [spaceName, setSpaceName] = useState<string>('');
+    const editing = !!space;
+    const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
 
-    async function addSpace(event: FormEvent): Promise<void> {
+    function initializeSpace(): Space {
+        return space ? space : createEmptySpace();
+    }
+
+    function handleSubmit(event: FormEvent): void {
         event.preventDefault();
         const cookies = new Cookies();
         const accessToken = cookies.get('accessToken');
 
-        await SpaceClient.createSpaceForUser(spaceName, accessToken);
+        if (editing && formSpace.uuid) {
+            SpaceClient.editSpace(formSpace.uuid, formSpace)
+                .then(closeModal)
+                .then(fetchUserSpaces);
+        } else {
+            SpaceClient.createSpaceForUser(formSpace.name, accessToken)
+                .then(closeModal)
+                .then(fetchUserSpaces);
+        }
 
-        await onSubmit();
-        closeModal();
     }
+
 
     function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
-        setSpaceName(event.target.value);
+        setFormSpace({
+            ...formSpace,
+            name: event.target.value,
+        });
     }
 
+    let spaceNameLength = formSpace.name.length;
+
     return (
-        <form className="createSpaceContainer" onSubmit={addSpace}>
+        <form className="createSpaceContainer" onSubmit={handleSubmit}>
             <label className="createSpaceLabel" htmlFor="spaceNameField">Space Name</label>
             <input className="createSpaceInputField"
                 id="spaceNameField"
                 type="text"
                 data-testid="createSpaceInputField"
                 maxLength={maxLength}
-                value={spaceName}
+                value={formSpace.name}
                 onChange={onSpaceNameFieldChanged}/>
-            <span className={`createSpaceFieldText ${spaceName.length >= maxLength ? 'createSpaceFieldTooLong' : ''}`} data-testid="createSpaceFieldText">
-                {spaceName.length} ({maxLength} characters max)
+            <span className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`} data-testid="createSpaceFieldText">
+                {spaceNameLength} ({maxLength} characters max)
             </span>
             <div className="createSpaceButtonContainer">
                 <button className="createSpaceCancelButton" type="button" onClick={closeModal}>Cancel</button>
-                <button className="createSpaceSubmitButton" type="submit" disabled={spaceName.length <= 0}>Add Space</button>
+                <button className="createSpaceSubmitButton" type="submit" disabled={spaceNameLength <= 0}>
+                    {editing ? 'Save' : 'Add Space'}
+                </button>
             </div>
         </form>
     );
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
+    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
-export default connect(null, mapDispatchToProps)(CreateSpaceForm);
+export default connect(null, mapDispatchToProps)(SpaceForm);

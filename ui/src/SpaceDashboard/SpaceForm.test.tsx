@@ -18,14 +18,13 @@
  */
 
 import * as React from 'react';
-import CreateSpaceForm from '../SpaceDashboard/CreateSpaceForm';
 import {renderWithRedux} from '../tests/TestUtils';
 import {fireEvent} from '@testing-library/dom';
+import SpaceForm from './SpaceForm';
 
-describe('Create Space Form', () => {
+describe('Space Form', () => {
     it('should update the count for number of characters and have max input of 40', () => {
-        const callback = jest.fn();
-        const form = renderWithRedux(<CreateSpaceForm onSubmit={callback}/>);
+        const form = renderWithRedux(<SpaceForm/>);
         const spaceCount = form.getByTestId('createSpaceFieldText');
         const spaceInput = form.getByTestId('createSpaceInputField');
         expect(spaceCount.textContent).toBe('0 (40 characters max)');
