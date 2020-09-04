@@ -72,8 +72,8 @@ function EditContributorsForm({closeModal, setCurrentModal}: Props): JSX.Element
             <div className="inviteContributorsLabel">Invite others to collaborate</div>
             <textarea placeholder="email1@ford.com, email2@ford.com" onChange={parseEmails} data-testid="emailTextArea"/>
             <div className="editContributorsButtonContainer">
-                <button className="editContributorsCancelButton" onClick={closeModal}>Cancel</button>
-                <button className="editContributorsSaveButton" onClick={inviteUsers} disabled={!enableInviteButton}>Invite</button>
+                <button className="editContributorsCancelButton secondaryButton" onClick={closeModal}>Cancel</button>
+                <button className="primaryButton" onClick={inviteUsers} disabled={!enableInviteButton}>Invite</button>
             </div>
         </div>
     );

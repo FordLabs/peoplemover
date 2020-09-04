@@ -65,8 +65,16 @@ function CreateSpaceForm({
                 {spaceName.length} ({maxLength} characters max)
             </span>
             <div className="createSpaceButtonContainer">
-                <button className="createSpaceCancelButton" type="button" onClick={closeModal}>Cancel</button>
-                <button className="createSpaceSubmitButton" type="submit" disabled={spaceName.length <= 0}>Add Space</button>
+                <button className="formButton secondaryButton"
+                    type="button" 
+                    onClick={closeModal}>
+                    Cancel
+                </button>
+                <button className="formButton createSpaceSubmitButton primaryButton"
+                    type="submit" 
+                    disabled={spaceName.length <= 0}>
+                    Add Space
+                </button>
             </div>
         </form>
     );

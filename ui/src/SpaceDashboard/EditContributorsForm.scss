@@ -59,20 +59,10 @@
 
     button {
       flex: 1;
-      box-sizing: border-box;
-      border-radius: 6px;
 
       &.editContributorsCancelButton {
         margin-right: 16px;
-
-        background: white;
-        color: $prime-1;
-
-        border: 1px solid #4F5FAB;
       }
-    }
-    button:disabled {
-      background: #C8D0F3;
     }
   }
 }
