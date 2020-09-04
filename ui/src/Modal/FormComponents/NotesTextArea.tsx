@@ -18,7 +18,6 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import '../Modal/Form.scss';
 
 interface NotesProps {
     notes?: string;

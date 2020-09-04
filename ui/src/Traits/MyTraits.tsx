@@ -16,8 +16,6 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import '../Traits/MyTraits.scss';
-import '../Modal/Form.scss';
 import EditTraitSection from '../Traits/EditTraitSection';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
@@ -31,6 +29,8 @@ import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../SpaceDashboard/Space';
+
+import '../Traits/MyTraits.scss';
 
 interface MyTraitsProps {
     currentSpace: Space;

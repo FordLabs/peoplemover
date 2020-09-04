@@ -35,12 +35,11 @@ import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
+import NotesTextArea from '../Modal/FormComponents/NotesTextArea';
+import {Space} from '../SpaceDashboard/Space';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import '../Modal/Form.scss';
 import './ProductForm.scss';
-import NotesTextArea from '../Form/NotesTextArea';
-import {Space} from '../SpaceDashboard/Space';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,

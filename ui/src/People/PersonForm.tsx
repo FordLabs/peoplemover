@@ -17,7 +17,6 @@
 
 import React, {ChangeEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import '../Modal/Form.scss';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import Creatable from 'react-select/creatable';
@@ -37,7 +36,6 @@ import {
 } from '../ReusableComponents/ReactSelectStyles';
 import MultiSelect from '../ReusableComponents/MultiSelect';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import './PersonForm.scss';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
@@ -46,8 +44,10 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
-import NotesTextArea from '../Form/NotesTextArea';
+import NotesTextArea from '../Modal/FormComponents/NotesTextArea';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
+
+import './PersonForm.scss';
 
 interface PersonFormProps {
     editing: boolean;

@@ -17,7 +17,6 @@
 
 import React from 'react';
 import '../Application/Styleguide/Main.scss';
-import './Form.scss';
 import './Modal.scss';
 
 export interface ConfirmationModalProps {
