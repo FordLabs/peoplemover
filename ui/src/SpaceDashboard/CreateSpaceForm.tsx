@@ -22,7 +22,7 @@ import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
 
 import './CreateSpaceForm.scss';
-import {createEmptySpace, Space} from "./Space";
+import {createEmptySpace, Space} from './Space';
 
 interface CreateSpaceFormProps {
     space?: Space;
@@ -39,7 +39,7 @@ function CreateSpaceForm({
     const editing = !!space;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
 
-    function initializeSpace() {
+    function initializeSpace(): Space {
         return space ? space : createEmptySpace();
     }
 
@@ -48,11 +48,10 @@ function CreateSpaceForm({
         const cookies = new Cookies();
         const accessToken = cookies.get('accessToken');
 
-        if (editing && formSpace.uuid){
+        if (editing && formSpace.uuid) {
             SpaceClient.editSpace(formSpace.uuid, formSpace)
                 .then(closeModal)
                 .then(fetchUserSpaces);
-
         }
         else {
             SpaceClient.createSpaceForUser(formSpace.name, accessToken)
@@ -66,7 +65,7 @@ function CreateSpaceForm({
     function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
         setFormSpace({
             ...formSpace,
-            name: event.target.value
+            name: event.target.value,
         });
     }
 
