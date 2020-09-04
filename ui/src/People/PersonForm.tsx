@@ -264,7 +264,7 @@ function PersonForm({
     }
 
     // eslint-disable-next-line  jsx-a11y/accessible-emoji
-    const peopleList = people.map((person, index) => <option key={index} value={person.name} >
+    const peopleList = people.map((person, index) => <option key={index} value={person.name}>
         👤 {person.name}</option>);
 
     function getColorFromLabel(label: string): string {
@@ -352,8 +352,11 @@ function PersonForm({
                     <NotesTextArea notes={person.notes} callBack={notesChanged}/>
                 </div>
                 <div className="yesNoButtons">
-                    <input className="formButton cancelFormButton" onClick={closeModal} type="button" value="Cancel" />
-                    <input className="formButton"
+                    <input className="formButton secondaryButton"
+                        onClick={closeModal}
+                        type="button"
+                        value="Cancel"/>
+                    <input className="formButton primaryButton"
                         data-testid="personFormSubmitButton"
                         onClick={handleSubmit}
                         type="button"

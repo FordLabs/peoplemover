@@ -25,7 +25,7 @@ import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 
-import '../Application/Styleguide/Styleguide.scss';
+import '../Application/Styleguide/Main.scss';
 import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';

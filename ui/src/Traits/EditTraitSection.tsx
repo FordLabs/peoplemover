@@ -187,9 +187,9 @@ function EditTraitSection({
             </div>
             }
             <div className="editTraitsButtons">
-                <button className="formButton cancelFormButton" onClick={closeCallback}>Cancel</button>
+                <button className="formButton secondaryButton" onClick={closeCallback}>Cancel</button>
                 <button
-                    className="formButton saveFormButton"
+                    className="formButton primaryButton"
                     data-testid="saveTraitsButton"
                     disabled={enteredTrait ? enteredTrait.name === '' : true}
                     onClick={handleSubmit}>Save</button>

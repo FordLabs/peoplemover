@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import '../Application/Styleguide/Styleguide.scss';
+import '../Application/Styleguide/Main.scss';
 import './Form.scss';
 import './Modal.scss';
 
@@ -53,7 +53,7 @@ function ConfirmationModal({
     );
     
     const DeleteButton = (): JSX.Element => (
-        <button className="formButton confirmationModalDelete"
+        <button className="formButton confirmationModalDelete primaryButton"
             onClick={submit}
             data-testid="confirmDeleteButton">
             {submitButtonLabel ? submitButtonLabel : 'Delete'}
@@ -62,7 +62,7 @@ function ConfirmationModal({
     
     const ArchiveButton = (): JSX.Element => (
         <button
-            className="formButton archiveFormButton"
+            className="formButton secondaryButton"
             data-testid="confirmationModalArchive"
             onClick={archiveCallback}>
             Archive
@@ -71,7 +71,7 @@ function ConfirmationModal({
 
     const CancelButton = (): JSX.Element => (
         <button
-            className="formButton cancelFormButton"
+            className="formButton secondaryButton"
             data-testid="confirmationModalCancel"
             onClick={close}>
             Cancel

@@ -91,14 +91,6 @@ select.formInput{
     height: 32px;
 }
 
-.archiveFormButton,
-.cancelFormButton {
-    background-color:white;
-    border: 1px solid $prime-1;
-    box-sizing: border-box;
-    color: $prime-1;
-}
-
 .formButton.link {
     flex-grow: 0;
 }

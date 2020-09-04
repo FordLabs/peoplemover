@@ -65,7 +65,9 @@ interface ProductFormProps {
     currentSpace: Space;
     viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
+
     closeModal(): void;
 }
 
@@ -163,7 +165,7 @@ function ProductForm({
             value: trait.id.toString() + '_' + trait.name,
             selected: false,
         };
-        const updatedTagFilterOptions: AllGroupedTagFilterOptions =  {
+        const updatedTagFilterOptions: AllGroupedTagFilterOptions = {
             ...allGroupedTagFilterOptions[tagFilterIndex],
             options: [
                 ...allGroupedTagFilterOptions[tagFilterIndex].options,
@@ -199,15 +201,15 @@ function ProductForm({
                 </div>
                 <ProductFormLocationField
                     spaceId={currentSpace.id!!}
-                    currentProductState={{ currentProduct, setCurrentProduct }}
-                    loadingState={{ isLoading, setIsLoading }}
+                    currentProductState={{currentProduct, setCurrentProduct}}
+                    loadingState={{isLoading, setIsLoading}}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
                 <ProductFormProductTagsField
                     spaceId={currentSpace.id!!}
-                    currentProductState={{ currentProduct }}
-                    loadingState={{ isLoading, setIsLoading }}
-                    selectedProductTagsState={{ selectedProductTags, setSelectedProductTags }}
+                    currentProductState={{currentProduct}}
+                    loadingState={{isLoading, setIsLoading}}
+                    selectedProductTagsState={{selectedProductTags, setSelectedProductTags}}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
                 <ProductFormStartDateField
@@ -222,8 +224,12 @@ function ProductForm({
                     <NotesTextArea notes={currentProduct.notes} callBack={notesChanged}/>
                 </div>
                 <div className="yesNoButtons">
-                    <input className="formButton cancelFormButton" onClick={closeModal} data-testid="productFormCancelButton" type="button" value="Cancel" />
-                    <input className="formButton"
+                    <input className="formButton secondaryButton"
+                        onClick={closeModal}
+                        data-testid="productFormCancelButton"
+                        type="button"
+                        value="Cancel"/>
+                    <input className="formButton primaryButton"
                         data-testid="productFormSubmitButton"
                         onClick={handleSubmit}
                         type="button"
@@ -240,13 +246,14 @@ function ProductForm({
         </div>
     );
 }
+
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),

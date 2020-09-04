@@ -242,9 +242,9 @@ function AssignmentForm({
                         disabled={false}/>
                 </div>
                 <div className="yesNoButtons">
-                    <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
+                    <button className="formButton secondaryButton" onClick={closeModal}>Cancel</button>
                     <input
-                        className="formButton"
+                        className="formButton primaryButton"
                         onClick={handleSubmit}
                         disabled={!canClickSubmit()}
                         type="button"
