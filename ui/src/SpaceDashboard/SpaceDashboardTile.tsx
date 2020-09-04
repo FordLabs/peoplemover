@@ -54,7 +54,7 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
             setDropdownFlag(!dropdownFlag);
             document.addEventListener('click', hidesDropdown, false);
         }
-        return dropdownFlag
+        return dropdownFlag;
     }
 
     function hidesDropdown(): boolean {
@@ -74,7 +74,7 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
                     <i className="fas fa-ellipsis-v icon"/>
 
                     {dropdownFlag && <div className={'ellipsis-dropdown-container'}>
-                        <div data-testid="edit-space" className="dropdown-options" onClick={() => setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space})}>
+                        <div data-testid="edit-space" className="dropdown-options" onClick={openEditModal}>
                             <i className="fas fa-pen"/>Edit
                         </div>
                     </div>
@@ -83,6 +83,10 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
             </div>
         </div>
     );
+
+    function openEditModal(): void {
+        return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
+    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

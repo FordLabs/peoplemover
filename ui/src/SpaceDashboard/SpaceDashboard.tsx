@@ -17,8 +17,6 @@
 
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import SpaceClient from './SpaceClient';
-import Cookies from 'universal-cookie';
 import {Space} from './Space';
 import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
@@ -54,6 +52,7 @@ function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces}: SpaceDas
         setRedirectPage(<Redirect to={`/${space.uuid}`}/>);
     }
 
+    /* eslint-disable */
     useEffect(() => {
         async function populateUserSpaces(): Promise<void> {
             await fetchUserSpaces();
@@ -64,6 +63,7 @@ function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces}: SpaceDas
             setIsLoading(false);
         });
     }, [setCurrentModal]);
+    /* eslint-enable */
 
     function WelcomeMessage(): JSX.Element {
         return (

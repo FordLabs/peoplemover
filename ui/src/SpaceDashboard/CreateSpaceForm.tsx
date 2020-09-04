@@ -16,7 +16,6 @@
  */
 
 import React, {FormEvent, useState} from 'react';
-import {Dispatch} from 'redux';
 import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import Cookies from 'universal-cookie';
