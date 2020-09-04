@@ -471,7 +471,7 @@ describe('Products', () => {
                 fireEvent.click(deleteButton);
             });
             expect(ProductClient.deleteProduct).toBeCalledTimes(1);
-            expect(ProductClient.deleteProduct).toBeCalledWith(TestUtils.productWithoutAssignments);
+            expect(ProductClient.deleteProduct).toBeCalledWith(TestUtils.space.uuid, TestUtils.productWithoutAssignments);
         });
 
         it('should not show archive button option in delete modal if product is already archived', async () => {
@@ -512,7 +512,7 @@ describe('Products', () => {
                 expect(ProductClient.editProduct).toBeCalledTimes(1);
                 const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestUtils.productWithoutAssignments));
                 cloneWithEndDateSet.endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
-                expect(ProductClient.editProduct).toBeCalledWith(cloneWithEndDateSet);
+                expect(ProductClient.editProduct).toBeCalledWith(TestUtils.space.uuid, cloneWithEndDateSet);
             });
         });
     });

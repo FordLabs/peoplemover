@@ -1,13 +1,17 @@
 /// <reference types="Cypress" />
+
+import '../support/commands';
+
 describe('Calendar', () => {
     beforeEach(() => {
         cy.visitBoard();
+
+        cy.get('[data-testid=calendarToggle]').as('calendarToggle');
     });
 
     it('Calendar should show current month and day', () => {
-        cy.get('[data-testid=calendarToggle]').as('calendarToggle');
         const expectedCurrentDate = Cypress.moment().format('MMMM D, YYYY');
-        cy.get('@calendarToggle').should('contain', expectedCurrentDate);
+        cy.get('@calendarToggle').should('contain', `Viewing: ${expectedCurrentDate}`);
 
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();
@@ -20,5 +24,15 @@ describe('Calendar', () => {
 
         cy.log('Close calendar');
         cy.get('@calendarToggle').click();
+    });
+
+    it('Calendar should show highlighted days when changes are made on that day', () => {
+        cy.get('[data-testid=reassignmentDrawer]').should('contain', 'Bob Barker');
+
+        cy.log('Open calendar');
+        cy.get('@calendarToggle').click();
+
+        const expectedCurrentDay = Cypress.moment().format('D');
+        cy.get('.react-datepicker__day--highlighted').should('have.text', expectedCurrentDay);
     });
 });

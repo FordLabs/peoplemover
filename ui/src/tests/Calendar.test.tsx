@@ -16,21 +16,18 @@
  */
 
 import TestUtils, {mockCreateRange, renderWithRedux} from './TestUtils';
-import PeopleMover from '../Application/PeopleMover';
 import React from 'react';
-import {findByText, fireEvent, queryByText, wait} from '@testing-library/react';
-import ProductClient from '../Products/ProductClient';
+import {fireEvent, queryByText, wait} from '@testing-library/react';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import moment from 'moment-timezone';
+import Calendar from '../Calendar/Calendar';
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;
-    const spaceUuid = TestUtils.space.uuid;
 
     const initialState: PreloadedState<GlobalStateProps> = {
         viewingDate: new Date(2020, 4, 14),
+        currentSpace: TestUtils.space,
     } as GlobalStateProps;
 
     beforeEach(() => {
@@ -44,42 +41,12 @@ describe('Calendar', () => {
     });
 
     it('should display current date on initial load', async () => {
-        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+        const app = renderWithRedux(<Calendar/>, undefined, initialState);
         await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUuid, initialState.viewingDate);
-    });
-
-    it('should display highlighted dates when calendar is open', async () => {
-        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-        const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUuid, initialState.viewingDate);
-
-        fireEvent.click(datePickerOpener);
-        expect(AssignmentClient.getAssignmentEffectiveDates).toHaveBeenCalledWith(spaceUuid);
-
-        const calendar = await app.findByTestId('calendar');
-        const dayFifteen = await findByText(calendar, '15');
-        expect(dayFifteen).toHaveClass('react-datepicker__day--highlighted');
-    });
-
-    it('should display chosen date when manually selected', async () => {
-        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-        const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUuid, initialState.viewingDate);
-        fireEvent.click(datePickerOpener);
-
-        const calendar = await app.findByTestId('calendar');
-        const dayEighteen = await findByText(calendar, '18');
-        fireEvent.click(dayEighteen);
-
-        await app.findByText('Viewing: May 18, 2020');
-
-        const localDate = moment.tz('2020-05-18', moment.tz.guess()).toDate();
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUuid, localDate);
     });
 
     it('should have down caret when closed and up arrow when open', async () => {
-        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+        const app = renderWithRedux(<Calendar/>, undefined, initialState);
         const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
 
         await app.findByTestId('calendar-fa-caret-down');

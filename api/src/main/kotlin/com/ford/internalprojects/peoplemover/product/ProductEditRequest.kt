@@ -44,15 +44,12 @@ data class ProductEditRequest(
         val archived: Boolean = false,
 
         @field:Size(max = 500)
-        var notes: String = "",
-
-        @field:NotNull(message = "Invalid Product in Request. Did you forget to provide a spaceId for the product?")
-        var spaceId: Int
+        var notes: String = ""
 ) {
         companion object {
                 @JvmStatic
                 @JsonIgnore
-                fun toProduct(productEditRequest: ProductEditRequest): Product {
+                fun toProduct(productEditRequest: ProductEditRequest, spaceId: Int): Product {
                         return Product(
                                 id = productEditRequest.id,
                                 name = productEditRequest.name,
@@ -63,7 +60,7 @@ data class ProductEditRequest(
                                 spaceLocation = productEditRequest.spaceLocation,
                                 archived = productEditRequest.archived,
                                 notes = productEditRequest.notes,
-                                spaceId = productEditRequest.spaceId
+                                spaceId = spaceId
                         )
                 }
         }

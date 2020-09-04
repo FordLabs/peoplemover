@@ -1,7 +1,5 @@
 /// <reference types="Cypress" />
-
 import person from '../fixtures/person';
-const spaceUuid = Cypress.env('SPACE_UUID');
 
 describe('Roles', () => {
     const mockRole = person.role;
@@ -13,7 +11,7 @@ describe('Roles', () => {
 
     it('Add a new role', () => {
         cy.server();
-        cy.route('POST', `/api/role/${spaceUuid}`).as('postNewRole');
+        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
 
         cy.get('[data-testid=myRolesButton]').click();
 

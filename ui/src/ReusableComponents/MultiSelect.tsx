@@ -38,6 +38,11 @@ export const multiSelectStyles = {
         padding: '0px 17px',
         height: '30px',
         margin: '3px 0px',
+        // @ts-ignore
+        '&:hover': {
+            cursor: 'pointer',
+            backgroundColor: '#F2F2F2',
+        },
     }),
     placeholder: (provided: CSSProperties): CSSProperties => ({
         ...provided,

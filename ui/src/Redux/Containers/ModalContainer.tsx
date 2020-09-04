@@ -41,8 +41,7 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
 
     switch (modal) {
         case AvailableModals.CREATE_PRODUCT:
-            return <ProductForm editing={false}
-                spaceId={currentSpace.id!!} />;
+            return <ProductForm editing={false} />;
         case AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG: {
             const newProduct = {
                 ...emptyProduct(currentSpace.id),
@@ -50,8 +49,7 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
                 productTags: [item],
             };
             return <ProductForm editing={false}
-                product={newProduct}
-                spaceId={currentSpace.id!!}/>;
+                product={newProduct}/>;
         }
         case AvailableModals.CREATE_PRODUCT_OF_LOCATION: {
             const newProduct = {
@@ -60,13 +58,11 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
                 spaceLocation: {...item},
             };
             return <ProductForm editing={false}
-                product={newProduct}
-                spaceId={currentSpace.id!!}/>;
+                product={newProduct}/>;
         }
         case AvailableModals.EDIT_PRODUCT:
             return <ProductForm editing={true}
-                product={item}
-                spaceId={currentSpace.id!!} />;
+                product={item} />;
         case AvailableModals.CREATE_PERSON:
             return <PersonForm editing={false}
                 products={products}

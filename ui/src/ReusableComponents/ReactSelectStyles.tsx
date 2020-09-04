@@ -33,6 +33,10 @@ export const reactSelectStyles = {
         boxShadow: 'none',
         border: '1px solid hsl(0, 0%, 80%) !important',
         backgroundColor: 'transparent',
+        // @ts-ignore
+        '&:hover': {
+            cursor: 'pointer',
+        },
     }),
     placeholder: (provided: CSSProperties): CSSProperties => ({
         ...provided,
@@ -53,6 +57,11 @@ export const reactSelectStyles = {
         padding: '0px 17px 0 0px',
         height: '30px',
         margin: '3px 0px',
+        // @ts-ignore
+        '&:hover': {
+            cursor: 'pointer',
+            backgroundColor: '#F2F2F2',
+        },
     }),
     input: (provided: CSSProperties): CSSProperties => ({
         ...provided,

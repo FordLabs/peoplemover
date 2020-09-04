@@ -15,23 +15,10 @@
  * limitations under the License.
  */
 
-import Axios from 'axios';
-import ProductClient from '../Products/ProductClient';
+package com.ford.internalprojects.peoplemover.product.exceptions
 
-describe('Product Client', function() {
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
-    it('should return the products given a date', function() {
-        const spaceUuid = "uuid";
-        const date = '2019-01-10';
-        Axios.get = jest.fn();
-
-        const expectedUrl = `/api/product/${spaceUuid}/${date}`;
-        const expectedConfig = {
-            headers: { 'Content-Type': 'application/json' },
-        };
-
-        ProductClient.getProductsForDate(spaceUuid, new Date(2019, 0, 10));
-
-        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
-    });
-});
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class InvalidProductSpaceMappingException : RuntimeException("Product is not mapped to this space")
