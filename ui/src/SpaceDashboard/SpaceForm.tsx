@@ -21,7 +21,7 @@ import {connect} from 'react-redux';
 import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
 
-import './CreateSpaceForm.scss';
+import './SpaceForm.scss';
 import {createEmptySpace, Space} from './Space';
 
 interface CreateSpaceFormProps {
@@ -30,7 +30,7 @@ interface CreateSpaceFormProps {
     fetchUserSpaces(): void;
 }
 
-function CreateSpaceForm({
+function SpaceForm({
     space,
     closeModal,
     fetchUserSpaces,
@@ -52,8 +52,7 @@ function CreateSpaceForm({
             SpaceClient.editSpace(formSpace.uuid, formSpace)
                 .then(closeModal)
                 .then(fetchUserSpaces);
-        }
-        else {
+        } else {
             SpaceClient.createSpaceForUser(formSpace.name, accessToken)
                 .then(closeModal)
                 .then(fetchUserSpaces);
@@ -99,4 +98,4 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
-export default connect(null, mapDispatchToProps)(CreateSpaceForm);
+export default connect(null, mapDispatchToProps)(SpaceForm);

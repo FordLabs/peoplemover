@@ -28,12 +28,12 @@ import {CurrentModalState} from '../Reducers/currentModalReducer';
 import MyTagsModal from '../../Tags/MyTagsModal';
 import MyRolesModal from '../../Roles/MyRolesModal';
 import InviteContributorConfirmationForm from '../../SpaceDashboard/InviteContributorsConfirmationForm';
-import CreateSpaceForm from '../../SpaceDashboard/CreateSpaceForm';
 import {Dispatch} from 'redux';
 import EditContributorsForm from '../../SpaceDashboard/EditContributorsForm';
 import {emptyProduct, Product} from '../../Products/Product';
 import {Space} from '../../SpaceDashboard/Space';
 import moment from 'moment';
+import SpaceForm from '../../SpaceDashboard/SpaceForm';
 
 
 const getCurrentModal = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space, viewingDate: Date): JSX.Element | null => {
@@ -83,9 +83,9 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
         case AvailableModals.MY_ROLES_MODAL:
             return <MyRolesModal/>;
         case AvailableModals.CREATE_SPACE:
-            return <CreateSpaceForm/>;
+            return <SpaceForm/>;
         case AvailableModals.EDIT_SPACE:
-            return <CreateSpaceForm space={item}/>;
+            return <SpaceForm space={item}/>;
         case AvailableModals.EDIT_CONTRIBUTORS:
             return <EditContributorsForm/>;
         case AvailableModals.CONTRIBUTORS_CONFIRMATION:
