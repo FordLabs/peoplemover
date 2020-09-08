@@ -156,8 +156,11 @@ function ProductForm({
         setConfirmDeleteModal(deleteConfirmationModal);
     }
 
-    function updateProductField(fieldName: string, fieldValue: any): void {
-        const updatedProduct: Product = {...currentProduct, [fieldName]: fieldValue};
+    function updateProductField(fieldName: string, fieldValue: string): void {
+        const updatedProduct: Product = {
+            ...currentProduct,
+            [fieldName]: fieldValue,
+        };
         setCurrentProduct(updatedProduct);
     }
 
@@ -184,7 +187,7 @@ function ProductForm({
         updateProductField('notes', notes);
     }
 
-    return (
+    return currentSpace.id ? (
         <div className="formContainer">
             <form className="form"
                 data-testid="productForm"
@@ -204,13 +207,13 @@ function ProductForm({
                     <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
                 </div>
                 <ProductFormLocationField
-                    spaceId={currentSpace.id!!}
+                    spaceId={currentSpace.id}
                     currentProductState={{currentProduct, setCurrentProduct}}
                     loadingState={{isLoading, setIsLoading}}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
                 <ProductFormProductTagsField
-                    spaceId={currentSpace.id!!}
+                    spaceId={currentSpace.id}
                     currentProductState={{currentProduct}}
                     loadingState={{isLoading, setIsLoading}}
                     selectedProductTagsState={{selectedProductTags, setSelectedProductTags}}
@@ -255,9 +258,10 @@ function ProductForm({
             </form>
             {confirmDeleteModal}
         </div>
-    );
+    ) : <></>;
 }
 
+/* eslint-disable  */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
@@ -271,3 +275,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductForm);
+/* eslint-enable  */
