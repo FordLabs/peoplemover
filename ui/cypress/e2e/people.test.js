@@ -111,6 +111,6 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
 };
 
 const submitPersonForm = () => {
-    cy.get('[data-testid=personFormSubmitButton]').should('have.value', 'Create').click();
+    cy.get('[data-testid=personFormSubmitButton]').should('have.text', 'Create').click();
     cy.get('@personForm').should('not.be.visible');
 };
