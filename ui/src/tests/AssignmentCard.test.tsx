@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {act, fireEvent, wait} from '@testing-library/react';
+import {act, fireEvent} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from '../Assignments/AssignmentCard';
 import TestUtils, {renderWithRedux} from './TestUtils';
