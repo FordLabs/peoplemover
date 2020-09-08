@@ -15,23 +15,8 @@
  * limitations under the License.
  */
 
-import {SpaceRole} from '../Roles/Role';
-import {SpaceLocation} from '../Locations/SpaceLocation';
+package com.ford.internalprojects.peoplemover.space
 
-export interface Space {
-    id?: number;
-    uuid?: string;
-    name: string;
-    roles: SpaceRole[];
-    locations:    SpaceLocation[];
-    lastModifiedDate: string;
-}
-
-export function createEmptySpace(): Space {
-    return {
-        name: '',
-        roles: [],
-        locations: [],
-        lastModifiedDate: ''
-    }
-}
+data class SpaceRequest(
+      val name: String
+)

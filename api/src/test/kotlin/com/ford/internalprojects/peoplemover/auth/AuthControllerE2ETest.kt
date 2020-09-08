@@ -166,7 +166,7 @@ class AuthControllerE2ETest {
 
         val savedSpace = spaceRepository.save(Space(name = "spaceThree", uuid = "spaceUUID"))
 
-        val issuedAt = Instant.now()
+        val issuedAt = Instant.MIN
         val headers = HashMap<String, Any>()
         headers["typ"] = "JWT"
         val claims = HashMap<String, Any>()
@@ -194,7 +194,7 @@ class AuthControllerE2ETest {
     fun `POST should return 403 if space not mapped to user`() {
         val accessToken = "fake_access_token"
 
-        val issuedAt = Instant.now()
+        val issuedAt = Instant.MIN
         val headers = HashMap<String, Any>()
         headers["typ"] = "JWT"
         val claims = HashMap<String, Any>()

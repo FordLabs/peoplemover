@@ -18,14 +18,12 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.AuthService
 import com.ford.internalprojects.peoplemover.auth.OAuthVerifyResponse
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
-import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
@@ -44,8 +42,6 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 import java.util.*
 
 @AutoConfigureMockMvc
@@ -271,5 +267,41 @@ class SpaceControllerApiTest {
         assertThat(product.spaceLocation?.name).isNull()
         assertThat(product.dorf).isNullOrEmpty()
         assertThat(product.notes).isNullOrEmpty()
+    }
+
+    @Test
+    fun `PUT should return 200 if space is edited correctly`() {
+        val space = spaceRepository.save(Space(name = "test"))
+        val editedSpace = SpaceRequest(name = "edited")
+
+        mockMvc.perform(put("/api/space/${space.uuid}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualSpace = spaceRepository.findByUuid(space.uuid)
+        assertThat(actualSpace!!.name).isEqualTo("edited")
+    }
+
+    @Test
+    fun `PUT should return 400 if space does not exist`() {
+        val editedSpace = SpaceRequest(name = "edited")
+        val uuid = UUID.randomUUID().toString()
+        mockMvc.perform(put("/api/space/${uuid}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `PUT New Space Name is Too Long`() {
+        val space = spaceRepository.save(Space(name = "space"))
+        val editedSpace = SpaceRequest(name = "12345678901234567890123456789012345678901")
+
+        mockMvc.perform(put("/api/space/${space.uuid}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isBadRequest)
     }
 }

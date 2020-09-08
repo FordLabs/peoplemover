@@ -19,10 +19,10 @@ package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.ProductService
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class SpaceService(
@@ -72,6 +72,16 @@ class SpaceService(
     }
 
     fun deleteSpace(uuid: String){
-        spaceRepository.deleteByUuid(uuid);
+        spaceRepository.deleteByUuid(uuid)
+    }
+
+    fun editSpace(uuid: String, spaceRequest: SpaceRequest) {
+        if(spaceRequest.name.length > 40){
+           throw SpaceNameTooLongException()
+        }
+        var editedSpace = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
+        editedSpace.name = spaceRequest.name
+        
+        spaceRepository.save(editedSpace)
     }
 }

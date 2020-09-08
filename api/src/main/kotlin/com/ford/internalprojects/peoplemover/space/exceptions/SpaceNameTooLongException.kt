@@ -15,23 +15,10 @@
  * limitations under the License.
  */
 
-import {SpaceRole} from '../Roles/Role';
-import {SpaceLocation} from '../Locations/SpaceLocation';
+package com.ford.internalprojects.peoplemover.space.exceptions
 
-export interface Space {
-    id?: number;
-    uuid?: string;
-    name: string;
-    roles: SpaceRole[];
-    locations:    SpaceLocation[];
-    lastModifiedDate: string;
-}
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
-export function createEmptySpace(): Space {
-    return {
-        name: '',
-        roles: [],
-        locations: [],
-        lastModifiedDate: ''
-    }
-}
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class SpaceNameTooLongException : RuntimeException("Space name is too long")
