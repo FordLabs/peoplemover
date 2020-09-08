@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import MultiSelect from '../ReusableComponents/MultiSelect';
 import {connect} from 'react-redux';
@@ -41,6 +41,7 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
 import moment from 'moment';
+import FormButton from "../ModalFormComponents/FormButton";
 
 interface AssignmentFormProps {
     products: Array<Product>;
@@ -69,7 +70,7 @@ function AssignmentForm({
     function handleKeyDown(event: React.KeyboardEvent<HTMLFormElement>): void {
         if (event.key === 'Enter') {
             event.preventDefault();
-            handleSubmit().then();
+            handleSubmit(event).then();
         }
     }
 
@@ -118,7 +119,9 @@ function AssignmentForm({
         return allProductPairs;
     }
 
-    async function handleSubmit(): Promise<void> {
+    async function handleSubmit(event: FormEvent): Promise<void> {
+        event.preventDefault();
+
         if (canClickSubmit()) {
             await AssignmentClient.createAssignmentForDate({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
@@ -203,7 +206,10 @@ function AssignmentForm({
 
     return (
         <div className="formContainer">
-            <form className="form" onKeyDown={handleKeyDown} data-testid="assignmentForm">
+            <form className="form"
+                onKeyDown={handleKeyDown}
+                data-testid="assignmentForm"
+                onSubmit={(event): Promise<void> => handleSubmit(event)}>
                 <div className="person-select-container">
                     <label className="formItemLabel" htmlFor="person">Name</label>
                     <Creatable
@@ -242,14 +248,17 @@ function AssignmentForm({
                         disabled={false}/>
                 </div>
                 <div className="yesNoButtons">
-                    <button className="formButton secondaryButton" onClick={closeModal}>Cancel</button>
-                    <input
-                        className="formButton primaryButton"
-                        onClick={handleSubmit}
-                        disabled={!canClickSubmit()}
-                        type="button"
-                        data-testid="assignButton"
-                        value="Assign"/>
+                    <FormButton
+                        buttonStyle="secondary"
+                        onClick={closeModal}>
+                        Cancel
+                    </FormButton>
+                    <FormButton
+                        type="submit"
+                        testId="assignButton"
+                        disabled={!canClickSubmit()}>
+                        Assign
+                    </FormButton>
                 </div>
             </form>
         </div>

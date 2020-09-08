@@ -28,6 +28,7 @@ interface Props {
     buttonStyle?: ButtonStyle;
     className?: string;
     testId?: string;
+    disabled?: boolean;
 }
 
 const FormButton = ({
@@ -37,12 +38,14 @@ const FormButton = ({
     buttonStyle = 'primary',
     className,
     testId,
+    disabled,
 }: Props): JSX.Element => (
     <button
         onClick={onClick}
         className={`formButton ${buttonStyle}Button ${className || ''}`}
         type={type}
         data-testid={testId}
+        disabled={disabled}
     >
         {children}
     </button>
