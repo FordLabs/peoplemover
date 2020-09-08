@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, CSSProperties, useState} from 'react';
+import React, {ChangeEvent, CSSProperties, FormEvent, useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
@@ -40,7 +40,7 @@ import {Space} from '../SpaceDashboard/Space';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
-import FormButton from "../ModalFormComponents/FormButton";
+import FormButton from '../ModalFormComponents/FormButton';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -95,7 +95,9 @@ function ProductForm({
         return product;
     }
 
-    function handleSubmit(): void {
+    function handleSubmit(event: FormEvent): void {
+        event.preventDefault();
+
         currentProduct.productTags = selectedProductTags;
         if (!currentSpace.uuid) {
             console.error('No current space uuid');
@@ -184,7 +186,9 @@ function ProductForm({
 
     return (
         <div className="formContainer">
-            <form className="form" data-testid="productForm">
+            <form className="form"
+                data-testid="productForm"
+                onSubmit={(event): void => handleSubmit(event)}>
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="name">Name</label>
                     <input className="formInput formTextInput"
@@ -221,7 +225,10 @@ function ProductForm({
                     updateProductField={updateProductField}
                 />
                 <div className="formItem">
-                    <FormNotesTextArea notes={currentProduct.notes} callBack={notesChanged}/>
+                    <FormNotesTextArea
+                        notes={currentProduct.notes}
+                        callBack={notesChanged}
+                    />
                 </div>
                 <div className="yesNoButtons">
                     <FormButton
@@ -231,19 +238,20 @@ function ProductForm({
                         Cancel
                     </FormButton>
                     <FormButton
-                        onClick={handleSubmit}
+                        type="submit"
                         buttonStyle="primary"
-                        type="button"
                         testId="productFormSubmitButton">
                         {editing ? 'Save' : 'Create'}
                     </FormButton>
                 </div>
-                {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
-                    <i className="fas fa-trash"/>
-                    <div className="trashCanSpacer"/>
-                    <span className="obliterateLink"
-                        onClick={displayDeleteProductModal}>Delete Product</span>
-                </div>)}
+                {editing && (
+                    <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
+                        <i className="fas fa-trash"/>
+                        <div className="trashCanSpacer"/>
+                        <span className="obliterateLink"
+                            onClick={displayDeleteProductModal}>Delete Product</span>
+                    </div>
+                )}
             </form>
             {confirmDeleteModal}
         </div>

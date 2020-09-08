@@ -23,7 +23,7 @@ type ButtonType = 'submit' | 'reset' | 'button' | undefined;
 
 interface Props {
     children: ReactNode;
-    onClick: () => void;
+    onClick?: () => void;
     type?: ButtonType;
     buttonStyle?: ButtonStyle;
     className?: string;
