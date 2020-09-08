@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from './SpaceClient';
 import {Dispatch} from 'redux';
 import {useLocation} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {AvailableModals, closeModalAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import FormButton from '../ModalFormComponents/FormButton';
 
 import './EditContributorsForm.scss';
 
 interface Props {
     closeModal(): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
@@ -43,7 +43,9 @@ function EditContributorsForm({closeModal, setCurrentModal}: Props): JSX.Element
         setSpaceUuid(pathname.substring(1, pathname.length));
     }, [pathname]);
 
-    const inviteUsers = async (): Promise<void> => {
+    const inviteUsers = async (event: FormEvent): Promise<void> => {
+        event.preventDefault();
+
         await SpaceClient.inviteUsersToSpace(spaceUuid, invitedUserEmails)
             .catch(console.error)
             .finally(() => {
@@ -68,20 +70,35 @@ function EditContributorsForm({closeModal, setCurrentModal}: Props): JSX.Element
     };
 
     return (
-        <div className="editContributorsContainer">
+        <form className="editContributorsContainer form"
+            onSubmit={(event): Promise<void> => inviteUsers(event)}>
             <div className="inviteContributorsLabel">Invite others to collaborate</div>
-            <textarea placeholder="email1@ford.com, email2@ford.com" onChange={parseEmails} data-testid="emailTextArea"/>
+            <textarea
+                placeholder="email1@ford.com, email2@ford.com"
+                onChange={parseEmails}
+                data-testid="emailTextArea"/>
             <div className="editContributorsButtonContainer">
-                <button className="editContributorsCancelButton secondaryButton" onClick={closeModal}>Cancel</button>
-                <button className="primaryButton" onClick={inviteUsers} disabled={!enableInviteButton}>Invite</button>
+                <FormButton
+                    buttonStyle="secondary"
+                    className="editContributorsCancelButton"
+                    onClick={closeModal}>
+                    Cancel
+                </FormButton>
+                <FormButton
+                    type="submit"
+                    buttonStyle="primary"
+                    disabled={!enableInviteButton}>
+                    Invite
+                </FormButton>
             </div>
-        </div>
+        </form>
     );
 }
-
+/* eslint-disable */
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(null, mapDispatchToProps)(EditContributorsForm);
+/* eslint-enable */
