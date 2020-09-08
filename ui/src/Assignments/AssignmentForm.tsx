@@ -41,7 +41,7 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
 import moment from 'moment';
-import FormButton from "../ModalFormComponents/FormButton";
+import FormButton from '../ModalFormComponents/FormButton';
 
 interface AssignmentFormProps {
     products: Array<Product>;
@@ -140,26 +140,30 @@ function AssignmentForm({
     }
 
     function getSelectedProduct(): Array<Product> {
-        return initiallySelectedProduct == null ?
-            [getUnassignedProduct()] : [initiallySelectedProduct];
+        if (initiallySelectedProduct == null) {
+            const selectedProduct = getUnassignedProduct();
+            return selectedProduct ? [selectedProduct] : [];
+        }
+
+        return [initiallySelectedProduct];
     }
 
-    function getUnassignedProduct(): Product {
-        return getProductFromProductListWithName('unassigned', products);
+    function getUnassignedProduct(): Product | null {
+        const unassignedProduct = getProductFromProductListWithName('unassigned', products);
+        return unassignedProduct || null;
     }
 
-    function getProductFromProductListWithName(name: string, productsList: Array<Product>): Product {
+    function getProductFromProductListWithName(name: string, productsList: Array<Product>): Product | null {
         const product = productsList.find((product: Product) => product.name === name);
-        return product!;
+        return product || null;
     }
 
     function changeProductAssignments(selectedProductNames: Array<Option>): void {
-        if (selectedProductNames == null) {
-            return;
-        }
+        if (selectedProductNames == null) return;
         const updatedProducts: Array<Product> = [];
         selectedProductNames.forEach(ev => {
-            updatedProducts.push(getProductFromProductListWithName(ev.value, products));
+            const product = getProductFromProductListWithName(ev.value, products);
+            if (product) updatedProducts.push(product);
         });
         setSelectedProducts(updatedProducts);
     }
@@ -216,8 +220,8 @@ function AssignmentForm({
                         isClearable
                         name="person"
                         inputId="person"
-                        onInputChange={(e: string) => setTypedInName(e)}
-                        onChange={(e: any): void => findPerson(e ? e.value : null)}
+                        onInputChange={(e: string): void => setTypedInName(e)}
+                        onChange={(e): void => findPerson(e ? (e as Option).value : null)}
                         options={people.map(person => createOption(person.name, person.id))}
                         styles={reactSelectStyles}
                         value={selectedPerson.name ? createOption(selectedPerson.name, selectedPerson.id) : null}
