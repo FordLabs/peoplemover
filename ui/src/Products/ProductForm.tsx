@@ -35,11 +35,12 @@ import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
-import NotesTextArea from '../Modal/FormComponents/NotesTextArea';
+import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import {Space} from '../SpaceDashboard/Space';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
+import FormButton from "../ModalFormComponents/FormButton";
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -220,19 +221,22 @@ function ProductForm({
                     updateProductField={updateProductField}
                 />
                 <div className="formItem">
-                    <NotesTextArea notes={currentProduct.notes} callBack={notesChanged}/>
+                    <FormNotesTextArea notes={currentProduct.notes} callBack={notesChanged}/>
                 </div>
                 <div className="yesNoButtons">
-                    <input className="formButton secondaryButton"
+                    <FormButton
                         onClick={closeModal}
-                        data-testid="productFormCancelButton"
-                        type="button"
-                        value="Cancel"/>
-                    <input className="formButton primaryButton"
-                        data-testid="productFormSubmitButton"
+                        buttonStyle="secondary"
+                        testId="productFormCancelButton">
+                        Cancel
+                    </FormButton>
+                    <FormButton
                         onClick={handleSubmit}
+                        buttonStyle="primary"
                         type="button"
-                        value={editing ? 'Save' : 'Create'}/>
+                        testId="productFormSubmitButton">
+                        {editing ? 'Save' : 'Create'}
+                    </FormButton>
                 </div>
                 {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                     <i className="fas fa-trash"/>

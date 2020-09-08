@@ -40,7 +40,7 @@
     width: 216px;
 }
 
-select.formInput{
+select.formInput {
     padding-left:4px;
 }
 
@@ -83,16 +83,6 @@ select.formInput{
 
 .formInput.checkbox {
     margin-right: 6px;
-}
-
-.formButton {
-    border-radius: 6px;
-    width: 100px;
-    height: 32px;
-}
-
-.formButton.link {
-    flex-grow: 0;
 }
 
 input[type=date]{

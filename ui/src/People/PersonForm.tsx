@@ -44,7 +44,7 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../SpaceDashboard/Space';
 import moment from 'moment';
-import NotesTextArea from '../Modal/FormComponents/NotesTextArea';
+import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 import './PersonForm.scss';
@@ -349,7 +349,7 @@ function PersonForm({
                     />
                 </div>
                 <div className="formItem">
-                    <NotesTextArea notes={person.notes} callBack={notesChanged}/>
+                    <FormNotesTextArea notes={person.notes} callBack={notesChanged}/>
                 </div>
                 <div className="yesNoButtons">
                     <input className="formButton secondaryButton"
