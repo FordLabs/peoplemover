@@ -35,6 +35,8 @@ describe('Account Dropdown',  () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
+        SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
+
         // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
@@ -71,7 +73,6 @@ describe('Account Dropdown',  () => {
     it('should submit invited contributors, current space name, and access token on click of Invite button', async () => {
         await act( async () => {
             fireEvent.click(await app.findByText('Invite Members'));
-            SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
 
             const usersToInvite = app.getByTestId('emailTextArea');
             fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});

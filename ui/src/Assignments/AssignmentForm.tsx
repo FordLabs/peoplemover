@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import MultiSelect from '../ReusableComponents/MultiSelect';
 import {connect} from 'react-redux';
@@ -41,6 +41,7 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
 import moment from 'moment';
+import FormButton from '../ModalFormComponents/FormButton';
 
 interface AssignmentFormProps {
     products: Array<Product>;
@@ -69,7 +70,7 @@ function AssignmentForm({
     function handleKeyDown(event: React.KeyboardEvent<HTMLFormElement>): void {
         if (event.key === 'Enter') {
             event.preventDefault();
-            handleSubmit().then();
+            handleSubmit(event).then();
         }
     }
 
@@ -118,7 +119,9 @@ function AssignmentForm({
         return allProductPairs;
     }
 
-    async function handleSubmit(): Promise<void> {
+    async function handleSubmit(event: FormEvent): Promise<void> {
+        event.preventDefault();
+
         if (canClickSubmit()) {
             await AssignmentClient.createAssignmentForDate({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
@@ -137,26 +140,30 @@ function AssignmentForm({
     }
 
     function getSelectedProduct(): Array<Product> {
-        return initiallySelectedProduct == null ?
-            [getUnassignedProduct()] : [initiallySelectedProduct];
+        if (initiallySelectedProduct == null) {
+            const selectedProduct = getUnassignedProduct();
+            return selectedProduct ? [selectedProduct] : [];
+        }
+
+        return [initiallySelectedProduct];
     }
 
-    function getUnassignedProduct(): Product {
-        return getProductFromProductListWithName('unassigned', products);
+    function getUnassignedProduct(): Product | null {
+        const unassignedProduct = getProductFromProductListWithName('unassigned', products);
+        return unassignedProduct || null;
     }
 
-    function getProductFromProductListWithName(name: string, productsList: Array<Product>): Product {
+    function getProductFromProductListWithName(name: string, productsList: Array<Product>): Product | null {
         const product = productsList.find((product: Product) => product.name === name);
-        return product!;
+        return product || null;
     }
 
     function changeProductAssignments(selectedProductNames: Array<Option>): void {
-        if (selectedProductNames == null) {
-            return;
-        }
+        if (selectedProductNames == null) return;
         const updatedProducts: Array<Product> = [];
         selectedProductNames.forEach(ev => {
-            updatedProducts.push(getProductFromProductListWithName(ev.value, products));
+            const product = getProductFromProductListWithName(ev.value, products);
+            if (product) updatedProducts.push(product);
         });
         setSelectedProducts(updatedProducts);
     }
@@ -203,15 +210,18 @@ function AssignmentForm({
 
     return (
         <div className="formContainer">
-            <form className="form" onKeyDown={handleKeyDown} data-testid="assignmentForm">
+            <form className="form"
+                onKeyDown={handleKeyDown}
+                data-testid="assignmentForm"
+                onSubmit={(event): Promise<void> => handleSubmit(event)}>
                 <div className="person-select-container">
                     <label className="formItemLabel" htmlFor="person">Name</label>
                     <Creatable
                         isClearable
                         name="person"
                         inputId="person"
-                        onInputChange={(e: string) => setTypedInName(e)}
-                        onChange={(e: any): void => findPerson(e ? e.value : null)}
+                        onInputChange={(e: string): void => setTypedInName(e)}
+                        onChange={(e): void => findPerson(e ? (e as Option).value : null)}
                         options={people.map(person => createOption(person.name, person.id))}
                         styles={reactSelectStyles}
                         value={selectedPerson.name ? createOption(selectedPerson.name, selectedPerson.id) : null}
@@ -242,14 +252,17 @@ function AssignmentForm({
                         disabled={false}/>
                 </div>
                 <div className="yesNoButtons">
-                    <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
-                    <input
-                        className="formButton"
-                        onClick={handleSubmit}
-                        disabled={!canClickSubmit()}
-                        type="button"
-                        data-testid="assignButton"
-                        value="Assign"/>
+                    <FormButton
+                        buttonStyle="secondary"
+                        onClick={closeModal}>
+                        Cancel
+                    </FormButton>
+                    <FormButton
+                        type="submit"
+                        testId="assignButton"
+                        disabled={!canClickSubmit()}>
+                        Assign
+                    </FormButton>
                 </div>
             </form>
         </div>

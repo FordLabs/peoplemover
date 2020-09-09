@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-@import './Colors.scss';
+@import './Colors';
+@import './Buttons';
 
 header {
   display: flex;
@@ -80,41 +81,12 @@ a.deleteLink {
   color: $prime-1;
 }
 
-button,
-input[type="button"],
-input[type="submit"] {
-  border: none;
-  outline: none;
-  color: $white;
-  background-color: $prime-1;
-  cursor: pointer;
-  font-size: 16px;
-  letter-spacing: 0.5px;
-}
-
-input[type="button"].disabled,
-input[type="button"]:disabled {
-  //background-color: $prime-5;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
 input[type="text"] {
   padding-left: 8px;
 }
 
-.squareButton {
-  padding: 10px 30px;
-  border-radius: 6px;
-}
-
 .alignSelfCenter {
   align-self: center;
-}
-
-.deleteButtonContainer {
-  display: flex;
-  margin-top: 32px;
 }
 
 .obliterateLink {

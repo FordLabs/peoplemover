@@ -3,7 +3,7 @@ import React from 'react';
 import {fireEvent} from '@testing-library/dom';
 import configureStore from 'redux-mock-store';
 import {act} from '@testing-library/react';
-import TestUtils, {mockCreateRange, renderWithRedux} from './TestUtils';
+import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
 import {Space} from '../SpaceDashboard/Space';
 import {AvailableActions} from '../Redux/Actions';
 import LocationClient from '../Locations/LocationClient';
@@ -11,7 +11,7 @@ import {AxiosResponse} from 'axios';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';
 import selectEvent from 'react-select-event';
-import {Product} from '../Products/Product';
+import {Product} from './Product';
 
 describe('ProductForm', function() {
     const mockStore = configureStore([]);

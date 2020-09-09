@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright (c) 2019 Ford Motor Company
  * All rights reserved.
  *
@@ -15,23 +15,16 @@
  * limitations under the License.
  */
 
-import {SpaceRole} from '../Roles/Role';
-import {SpaceLocation} from '../Locations/SpaceLocation';
-
-export interface Space {
-    id?: number;
-    uuid?: string;
-    name: string;
-    roles: SpaceRole[];
-    locations:    SpaceLocation[];
-    lastModifiedDate: string;
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
 }
 
-export function createEmptySpace(): Space {
-    return {
-        name: '',
-        roles: [],
-        locations: [],
-        lastModifiedDate: '',
-    };
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }

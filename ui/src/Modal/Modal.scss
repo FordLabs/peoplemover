@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import './Form.scss';
 
 .modalContainer {
     position: fixed;
@@ -70,6 +71,7 @@
 .closeButton {
     cursor: pointer;
     border-radius: 50%;
+    color: $gray-1;
 }
 
 .confirmationModalContent {

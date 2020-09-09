@@ -18,14 +18,13 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import '../Modal/Form.scss';
 
 interface NotesProps {
     notes?: string;
     callBack: (notes: string) => void;
     maxLength?: number;
 }
-export default function NotesTextArea({ notes = '', callBack, maxLength = 255 }: NotesProps): JSX.Element {
+export default function FormNotesTextArea({ notes = '', callBack, maxLength = 255 }: NotesProps): JSX.Element {
     const [notesState, setNotesState] = useState<string>(notes);
     useEffect(() => {setNotesState(notes);}, [notes]);
 

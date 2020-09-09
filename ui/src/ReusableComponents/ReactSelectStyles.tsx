@@ -130,7 +130,8 @@ export const reactSelectStyles = {
     }),
 };
 
-export const filterByStyles = {...reactSelectStyles,
+export const filterByStyles = {
+    ...reactSelectStyles,
     control: (provided: CSSProperties): CSSProperties => ({
         ...provided,
         border: '1px solid transparent',

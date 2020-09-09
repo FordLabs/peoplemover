@@ -17,7 +17,7 @@
 
 import React, {useEffect, useState} from 'react';
 
-import './Styleguide/Styleguide.scss';
+import './Styleguide/Main.scss';
 import './PeopleMover.scss';
 
 import ProductGraveyard from '../Products/ProductGraveyard';

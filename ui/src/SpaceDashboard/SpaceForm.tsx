@@ -20,9 +20,10 @@ import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
+import {createEmptySpace, Space} from './Space';
+import FormButton from '../ModalFormComponents/FormButton';
 
 import './SpaceForm.scss';
-import {createEmptySpace, Space} from './Space';
 
 interface SpaceFormProps {
     space?: Space;
@@ -45,6 +46,7 @@ function SpaceForm({
 
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
+
         const cookies = new Cookies();
         const accessToken = cookies.get('accessToken');
 
@@ -78,22 +80,33 @@ function SpaceForm({
                 maxLength={maxLength}
                 value={formSpace.name}
                 onChange={onSpaceNameFieldChanged}/>
-            <span className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`} data-testid="createSpaceFieldText">
+            <span className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
+                data-testid="createSpaceFieldText">
                 {spaceNameLength} ({maxLength} characters max)
             </span>
             <div className="createSpaceButtonContainer">
-                <button className="createSpaceCancelButton" type="button" onClick={closeModal}>Cancel</button>
-                <button className="createSpaceSubmitButton" type="submit" disabled={spaceNameLength <= 0}>
+                <FormButton
+                    buttonStyle="secondary"
+                    onClick={closeModal}>
+                    Cancel
+                </FormButton>
+                <FormButton
+                    className="createSpaceSubmitButton"
+                    buttonStyle="primary"
+                    type="submit"
+                    disabled={spaceNameLength <= 0}>
                     {editing ? 'Save' : 'Add Space'}
-                </button>
+                </FormButton>
             </div>
         </form>
     );
 }
 
+/* eslint-disable */
 const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
 export default connect(null, mapDispatchToProps)(SpaceForm);
+/* eslint-enable */
