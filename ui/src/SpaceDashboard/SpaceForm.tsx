@@ -24,7 +24,7 @@ import SpaceClient from './SpaceClient';
 import './SpaceForm.scss';
 import {createEmptySpace, Space} from './Space';
 
-interface CreateSpaceFormProps {
+interface SpaceFormProps {
     space?: Space;
     closeModal(): void;
     fetchUserSpaces(): void;
@@ -34,7 +34,7 @@ function SpaceForm({
     space,
     closeModal,
     fetchUserSpaces,
-}: CreateSpaceFormProps): JSX.Element {
+}: SpaceFormProps): JSX.Element {
     const maxLength = 40;
     const editing = !!space;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
@@ -57,9 +57,7 @@ function SpaceForm({
                 .then(closeModal)
                 .then(fetchUserSpaces);
         }
-
     }
-
 
     function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
         setFormSpace({
