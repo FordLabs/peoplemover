@@ -16,11 +16,12 @@ import com.ford.internalprojects.peoplemover.role.RoleService
 import com.ford.internalprojects.peoplemover.role.SpaceRole
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import com.google.common.collect.Sets
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import java.sql.Timestamp
 import java.time.LocalDate
+import java.util.*
 
 @Configuration
 @Profile("local", "e2e-test")
@@ -46,7 +47,7 @@ class LocalDataGenerator(
     private fun generateSpaceData(uuid: String, addColors: Boolean) {
         val spaceName = "Flipping Sweet"
         val createdSpace: Space = spaceRepository.save(
-                Space(name = spaceName, uuid = uuid ,lastModifiedDate = HelperUtils.currentTimeStamp)
+                Space(name = spaceName, uuid = uuid ,lastModifiedDate = Timestamp(Date().time))
         )
         productService.createDefaultProducts(createdSpace);
 
