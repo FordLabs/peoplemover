@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {FormEvent} from 'react';
+import React from 'react';
 import FormButton from '../ModalFormComponents/FormButton';
 import '../Application/Styleguide/Main.scss';
 import './Modal.scss';

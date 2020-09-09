@@ -27,7 +27,7 @@ import {TraitEditRequest} from './TraitEditRequest';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {RoleEditRequest} from '../Roles/RoleEditRequest';
 import {Space} from '../SpaceDashboard/Space';
-import FormButton from "../ModalFormComponents/FormButton";
+import FormButton from '../ModalFormComponents/FormButton';
 
 interface EditTraitSectionProps {
     closeCallback: () => void;

@@ -32,6 +32,6 @@ export function createEmptySpace(): Space {
         name: '',
         roles: [],
         locations: [],
-        lastModifiedDate: ''
-    }
+        lastModifiedDate: '',
+    };
 }
