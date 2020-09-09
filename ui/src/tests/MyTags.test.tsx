@@ -192,7 +192,7 @@ describe('PeopleMover My Tags', () => {
 
             beforeEach(async () => {
                 const deleteIcons = await app.findAllByTestId('locationDeleteIcon');
-                locationTagDeleteIcon = deleteIcons[1];
+                locationTagDeleteIcon = deleteIcons[0];
                 fireEvent.click(locationTagDeleteIcon);
 
                 await app.findByText(deleteLocationWarning);
@@ -213,7 +213,6 @@ describe('PeopleMover My Tags', () => {
                 const modalContainer = await app.findByTestId('modalContainer');
                 expect(queryByText(modalContainer, 'Ann Arbor')).not.toBeInTheDocument();
             });
-
         });
 
         describe('delete a product tag', () => {

@@ -55,7 +55,7 @@ function ConfirmationModal({
     const DeleteButton = (): JSX.Element => (
         <FormButton
             className="confirmationModalDelete"
-            type="submit"
+            onClick={submit}
             buttonStyle="primary"
             testId="confirmDeleteButton">
             {submitButtonLabel ? submitButtonLabel : 'Delete'}
@@ -80,16 +80,10 @@ function ConfirmationModal({
         </FormButton>
     );
 
-    const handleSubmit = (event: FormEvent): void => {
-        event.preventDefault();
-        submit();
-    };
-
     return (
         <div className="modalContainer">
             <div className="modalDialogContainer">
-                <form className="modalPopupContainer"
-                    onSubmit={(event): void => handleSubmit(event)}>
+                <div className="modalPopupContainer">
                     <div className="modalTitleAndCloseButtonContainer">
                         <div className="modalTitleSpacer"/>
                         <div className="modalTitle">Are you sure?</div>
@@ -107,7 +101,7 @@ function ConfirmationModal({
                         </div>
                         <DeleteButton />
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     );

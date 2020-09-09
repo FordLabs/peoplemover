@@ -210,31 +210,33 @@ function MyTraits({
                 const testIdTraitName = traitName.replace(' ', '');
                 return (
                     <React.Fragment key={index}>
-                        {!editSectionsOpen[index] && <div className="traitRow" data-testid="traitRow">
-                            { colorSection &&
-                                <span data-testid="myRolesCircle"
-                                    style={{'backgroundColor': colorToUse}}
-                                    className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
-                                />
-                            }
-                            <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
-                            <div className="traitIcons">
-                                <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
-                                    onClick={(): void => toggleEditSection(index)}/>
-                                <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
-                                    onClick={(): void => showDeleteConfirmationModal(trait)}/>
+                        {!editSectionsOpen[index] &&
+                            <div className="traitRow" data-testid="traitRow">
+                                { colorSection &&
+                                    <span data-testid="myRolesCircle"
+                                        style={{'backgroundColor': colorToUse}}
+                                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+                                    />
+                                }
+                                <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
+                                <div className="traitIcons">
+                                    <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
+                                        onClick={(): void => toggleEditSection(index)}/>
+                                    <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
+                                        onClick={(): void => showDeleteConfirmationModal(trait)}/>
+                                </div>
                             </div>
-                        </div>
                         }
-                        {editSectionsOpen[index] && <EditTraitSection
-                            closeCallback={(): void => toggleEditSection(index)}
-                            updateCallback={updateTraits}
-                            trait={trait}
-                            colorSection={colorSection}
-                            traitClient={traitClient}
-                            traitName={traitName}
-                            currentSpace={currentSpace}
-                        />
+                        {editSectionsOpen[index] &&
+                            <EditTraitSection
+                                closeCallback={(): void => toggleEditSection(index)}
+                                updateCallback={updateTraits}
+                                trait={trait}
+                                colorSection={colorSection}
+                                traitClient={traitClient}
+                                traitName={traitName}
+                                currentSpace={currentSpace}
+                            />
                         }
                     </React.Fragment>
                 );
