@@ -77,6 +77,12 @@
   font-weight: normal;
   font-size: 12px;
   line-height: 18px;
+
+  &:hover {
+    color: $purple;
+    background-color: $gray-6;
+    border-radius: 2px;
+  }
 }
 
 
