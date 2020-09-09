@@ -53,6 +53,11 @@
   width: 0;
 }
 
+.deleteButtonContainer {
+  display: flex;
+  margin-top: 32px;
+}
+
 #start,
 #end {
   padding-left: 10px;

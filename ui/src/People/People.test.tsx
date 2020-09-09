@@ -21,11 +21,11 @@ import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
-import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from './TestUtils';
+import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
 import {createStore, PreloadedState} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
-import {emptyPerson, Person} from '../People/Person';
+import {emptyPerson, Person} from './Person';
 import {Product} from '../Products/Product';
 import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
@@ -429,9 +429,9 @@ describe('people actions', () => {
             const dropDown: React.ComponentProps<typeof Object> = selectDropdown.at(1).instance();
             dropDown.selectOption({label: 'unassigned', value: 'unassigned'});
 
-            const saveButton = await wrapper.find('input[value=\'Save\']');
+            const saveButton = await wrapper.find('form');
             await wait(() => {
-                saveButton.simulate('click');
+                saveButton.simulate('submit');
             });
 
             expect(store.dispatch).toHaveBeenCalledTimes(2);

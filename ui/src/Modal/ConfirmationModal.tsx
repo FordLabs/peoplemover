@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import '../Application/Styleguide/Styleguide.scss';
-import './Form.scss';
+import FormButton from '../ModalFormComponents/FormButton';
+import '../Application/Styleguide/Main.scss';
 import './Modal.scss';
 
 export interface ConfirmationModalProps {
@@ -53,29 +53,31 @@ function ConfirmationModal({
     );
     
     const DeleteButton = (): JSX.Element => (
-        <button className="formButton confirmationModalDelete"
+        <FormButton
+            className="confirmationModalDelete"
             onClick={submit}
-            data-testid="confirmDeleteButton">
+            buttonStyle="primary"
+            testId="confirmDeleteButton">
             {submitButtonLabel ? submitButtonLabel : 'Delete'}
-        </button>
+        </FormButton>
     );
     
     const ArchiveButton = (): JSX.Element => (
-        <button
-            className="formButton archiveFormButton"
-            data-testid="confirmationModalArchive"
+        <FormButton
+            buttonStyle="secondary"
+            testId="confirmationModalArchive"
             onClick={archiveCallback}>
             Archive
-        </button>
+        </FormButton>
     );
 
     const CancelButton = (): JSX.Element => (
-        <button
-            className="formButton cancelFormButton"
-            data-testid="confirmationModalCancel"
+        <FormButton
+            buttonStyle="secondary"
+            testId="confirmationModalCancel"
             onClick={close}>
             Cancel
-        </button>
+        </FormButton>
     );
 
     return (

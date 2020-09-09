@@ -25,7 +25,7 @@ describe('People', () => {
 
         submitPersonForm();
 
-        let personId;
+        let assignmentId;
         cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
             .should((xhrs) => {
                 const postNewPersonXhr = xhrs[0];
@@ -35,25 +35,29 @@ describe('People', () => {
                     .to.equal('@getUpdatedProduct status: ' + 200);
                 expect('@postNewPerson status: ' + postNewPersonXhr.status)
                     .to.equal('@postNewPerson status: ' + 200);
-                const body = postNewPersonXhr.response.body || {};
-                expect(body.name).to.equal(person.name);
-                expect(body.newPerson).to.equal(person.isNew);
-                expect(body.notes).to.equal(person.notes);
-                expect(body.spaceRole.name).to.equal(person.role);
+                const personData = postNewPersonXhr.response.body || {};
+                expect(personData.name).to.equal(person.name);
+                expect(personData.newPerson).to.equal(person.isNew);
+                expect(personData.notes).to.equal(person.notes);
+                expect(personData.spaceRole.name).to.equal(person.role);
 
-                personId = body.id;
+                const productData = getUpdatedProductXhr.response.body || [];
+                assignmentId = productData
+                    .find(product => product.name === person.assignTo).assignments
+                    .find(assignment => assignment.person.id === personData.id).id;
+
             }).then(() => {
                 cy.get('[data-testid=productPeopleContainer]')
                     .eq(1).as('myProductCardContainer');
 
                 cy.get('@myProductCardContainer')
-                    .find(`[data-testid=assignmentCard${personId}info]`)
+                    .find(`[data-testid=assignmentCard${assignmentId}info]`)
                     .should('contain', person.name)
                     .should('contain', person.role)
                     .then(() => {
                         if (person.isNew) {
                             cy.contains(person.assignTo)
-                                .parentsUntil(`[data-testid=assignmentCard${personId}]`)
+                                .parentsUntil(`[data-testid=assignmentCard${assignmentId}]`)
                                 .find('[data-testid=newBadge]')
                                 .should('be.visible');
                         }
@@ -107,6 +111,6 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
 };
 
 const submitPersonForm = () => {
-    cy.get('[data-testid=personFormSubmitButton]').should('have.value', 'Create').click();
+    cy.get('[data-testid=personFormSubmitButton]').should('have.text', 'Create').click();
     cy.get('@personForm').should('not.be.visible');
 };

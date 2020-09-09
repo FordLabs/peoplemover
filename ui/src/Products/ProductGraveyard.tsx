@@ -16,7 +16,7 @@
  */
 
 import React, {useState} from 'react';
-import '../Application/Styleguide/Styleguide.scss';
+import '../Application/Styleguide/Main.scss';
 import './ProductGraveyard.scss';
 import ArchivedProduct from './ArchivedProduct';
 import {Product} from './Product';

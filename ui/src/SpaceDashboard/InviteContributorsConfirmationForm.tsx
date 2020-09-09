@@ -16,10 +16,12 @@
  */
 
 import React from 'react';
-import './InviteContributorsConfirmationModal.scss';
 import {Dispatch} from 'redux';
 import {closeModalAction} from '../Redux/Actions';
+import FormButton from '../ModalFormComponents/FormButton';
 import {connect} from 'react-redux';
+
+import './InviteContributorsConfirmationModal.scss';
 
 interface Props {
     closeModal(): void;
@@ -33,7 +35,7 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
     };
 
     return (
-        <div className="inviteContributorsConfirmationContainer">
+        <form className="inviteContributorsConfirmationContainer">
             <div className="inviteContributorsConfirmationLabel">
                 Share this link with your collaborators.
             </div>
@@ -45,16 +47,19 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
                     Copy link
                 </div>
             </div>
-            <button className="inviteContributorsConfirmationDoneButton"
+            <FormButton
+                buttonStyle="primary"
                 onClick={closeModal}>
                 Done
-            </button>
-        </div>
+            </FormButton>
+        </form>
     );
 };
 
+/* eslint-disable */
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
 });
 
 export default connect(null, mapDispatchToProps)(InviteContributorConfirmationForm);
+/* eslint-enable */
