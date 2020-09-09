@@ -27,6 +27,7 @@ import {TraitEditRequest} from './TraitEditRequest';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {RoleEditRequest} from '../Roles/RoleEditRequest';
 import {Space} from '../SpaceDashboard/Space';
+import FormButton from "../ModalFormComponents/FormButton";
 
 interface EditTraitSectionProps {
     closeCallback: () => void;
@@ -187,12 +188,18 @@ function EditTraitSection({
             </div>
             }
             <div className="editTraitsButtons">
-                <button className="formButton secondaryButton" onClick={closeCallback}>Cancel</button>
-                <button
-                    className="formButton primaryButton"
-                    data-testid="saveTraitsButton"
+                <FormButton
+                    buttonStyle="secondary"
+                    onClick={closeCallback}>
+                    Cancel
+                </FormButton>
+                <FormButton
+                    buttonStyle="primary"
+                    testId="saveTraitsButton"
                     disabled={enteredTrait ? enteredTrait.name === '' : true}
-                    onClick={handleSubmit}>Save</button>
+                    onClick={handleSubmit}>
+                    Save
+                </FormButton>
             </div>
             <div className="separator"/>
         </React.Fragment>
