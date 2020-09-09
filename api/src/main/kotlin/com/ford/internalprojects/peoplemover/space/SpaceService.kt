@@ -21,8 +21,9 @@ import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.stereotype.Service
+import java.sql.Timestamp
+import java.util.*
 
 @Service
 class SpaceService(
@@ -37,7 +38,7 @@ class SpaceService(
             throw SpaceNotExistsException(spaceName)
         } else {
             val savedSpace = spaceRepository.save(
-                    Space(name = spaceName, lastModifiedDate = HelperUtils.currentTimeStamp)
+                    Space(name = spaceName, lastModifiedDate = Timestamp(Date().time))
             )
             productService.createDefaultProducts(savedSpace);
             return savedSpace
