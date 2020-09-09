@@ -81,7 +81,7 @@ describe('PeopleMover My Tags', () => {
                 expect(editLocationTagText.value).toEqual('Ann Arbor');
             });
 
-            it('should call edit Location client and then display the updated location ', async () => {
+            it('should call edit Location client and then display the updated location', async () => {
                 const updatedLocation = 'Saline';
                 fireEvent.click(locationTagIcon);
 
@@ -192,7 +192,7 @@ describe('PeopleMover My Tags', () => {
 
             beforeEach(async () => {
                 const deleteIcons = await app.findAllByTestId('locationDeleteIcon');
-                locationTagDeleteIcon = deleteIcons[0];
+                locationTagDeleteIcon = deleteIcons[1];
                 fireEvent.click(locationTagDeleteIcon);
 
                 await app.findByText(deleteLocationWarning);

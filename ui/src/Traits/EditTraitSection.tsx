@@ -96,7 +96,7 @@ function EditTraitSection({
         });
     }
 
-    function handleEnterSubmit(event: React.KeyboardEvent) {
+    function handleEnterSubmit(event: React.KeyboardEvent): void {
         if (event.key === 'Enter') {
             handleSubmit().then();
         }

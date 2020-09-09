@@ -217,7 +217,6 @@ function MyTraits({
                                     className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
                                 />
                             }
-
                             <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
                             <div className="traitIcons">
                                 <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}

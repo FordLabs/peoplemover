@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {FormEvent} from 'react';
+import FormButton from '../ModalFormComponents/FormButton';
 import '../Application/Styleguide/Main.scss';
 import './Modal.scss';
 
@@ -52,35 +53,43 @@ function ConfirmationModal({
     );
     
     const DeleteButton = (): JSX.Element => (
-        <button className="formButton confirmationModalDelete primaryButton"
-            onClick={submit}
-            data-testid="confirmDeleteButton">
+        <FormButton
+            className="confirmationModalDelete"
+            type="submit"
+            buttonStyle="primary"
+            testId="confirmDeleteButton">
             {submitButtonLabel ? submitButtonLabel : 'Delete'}
-        </button>
+        </FormButton>
     );
     
     const ArchiveButton = (): JSX.Element => (
-        <button
-            className="formButton secondaryButton"
-            data-testid="confirmationModalArchive"
+        <FormButton
+            buttonStyle="secondary"
+            testId="confirmationModalArchive"
             onClick={archiveCallback}>
             Archive
-        </button>
+        </FormButton>
     );
 
     const CancelButton = (): JSX.Element => (
-        <button
-            className="formButton secondaryButton"
-            data-testid="confirmationModalCancel"
+        <FormButton
+            buttonStyle="secondary"
+            testId="confirmationModalCancel"
             onClick={close}>
             Cancel
-        </button>
+        </FormButton>
     );
+
+    const handleSubmit = (event: FormEvent): void => {
+        event.preventDefault();
+        submit();
+    };
 
     return (
         <div className="modalContainer">
             <div className="modalDialogContainer">
-                <div className="modalPopupContainer">
+                <form className="modalPopupContainer"
+                    onSubmit={(event): void => handleSubmit(event)}>
                     <div className="modalTitleAndCloseButtonContainer">
                         <div className="modalTitleSpacer"/>
                         <div className="modalTitle">Are you sure?</div>
@@ -98,7 +107,7 @@ function ConfirmationModal({
                         </div>
                         <DeleteButton />
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     );
