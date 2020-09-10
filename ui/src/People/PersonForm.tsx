@@ -211,9 +211,9 @@ function PersonForm({
         return product || null;
     };
 
-    const changeProductName = (events: Array<{ value: string }> = []): void => {
+    const changeProductName = (events: Array<{ value: string }>): void => {
         const updatedProducts: Array<Product> = [];
-        events.forEach(ev => {
+        (events || []).forEach(ev => {
             if (ev.value !== 'unassigned') {
                 const product = getItemFromListWithName(ev.value, products);
                 if (product) updatedProducts.push(product);
