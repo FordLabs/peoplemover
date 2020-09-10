@@ -88,6 +88,14 @@ function PersonForm({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
 
+    const alphabetizeRoles = (roles: Array<SpaceRole>): Array<SpaceRole> => {
+        return roles.sort((a, b) => {
+            if (a.name < b.name) { return -1; }
+            if ( a.name > b.name) { return 1; }
+            return 0;
+        });
+    };
+
     const getSpaceIdFromPersonName = (name: string): number => {
         const person: Person | undefined = people.find(x => x.name === name);
         if (person && person.spaceId) return person.spaceId;
@@ -98,7 +106,7 @@ function PersonForm({
         const setup = async (): Promise<void> => {
             if (currentSpace.uuid) {
                 const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.uuid);
-                setRoles(rolesResponse.data);
+                setRoles(alphabetizeRoles(rolesResponse.data));
             }
 
             if (editing && assignment) {
@@ -252,7 +260,7 @@ function PersonForm({
             const roleAddRequest: RoleAddRequest = {name: inputValue};
             RoleClient.add(roleAddRequest, currentSpace.uuid).then((response: AxiosResponse) => {
                 const newRole: SpaceRole = response.data;
-                setRoles(roles => [...roles, newRole]);
+                setRoles(roles => alphabetizeRoles([...roles, newRole]));
                 updatePersonField('spaceRole', newRole);
                 setIsLoading(false);
             });
