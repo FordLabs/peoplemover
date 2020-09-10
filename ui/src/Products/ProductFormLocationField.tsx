@@ -92,7 +92,7 @@ function ProductFormLocationField({
     function updateSpaceLocations(option: Option): void {
         const updatedProduct: Product = {
             ...currentProduct,
-            spaceLocation: optionToSpaceLocation(option),
+            spaceLocation: option ? optionToSpaceLocation(option) : undefined,
         };
         setCurrentProduct(updatedProduct);
     }
@@ -114,7 +114,7 @@ function ProductFormLocationField({
                 formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInLocation}"`)}
                 placeholder="Select or create location"
                 hideSelectedOptions={true}
-                isClearable={false}
+                isClearable={true}
                 value={locationOptionValue()}
             />
         </div>
