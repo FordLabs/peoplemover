@@ -88,10 +88,10 @@ function PersonForm({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
 
-    const alphabetizeRoles = (roles: Array<SpaceRole>): Array<SpaceRole> => {
+    const alphabetize = (roles: Array<SpaceRole | Product>): Array<SpaceRole | Product> => {
         return roles.sort((a, b) => {
-            if (a.name < b.name) { return -1; }
-            if ( a.name > b.name) { return 1; }
+            if (a.name < b.name) return -1;
+            if ( a.name > b.name) return 1;
             return 0;
         });
     };
@@ -106,7 +106,7 @@ function PersonForm({
         const setup = async (): Promise<void> => {
             if (currentSpace.uuid) {
                 const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.uuid);
-                setRoles(alphabetizeRoles(rolesResponse.data));
+                setRoles(alphabetize(rolesResponse.data));
             }
 
             if (editing && assignment) {
@@ -260,7 +260,7 @@ function PersonForm({
             const roleAddRequest: RoleAddRequest = {name: inputValue};
             RoleClient.add(roleAddRequest, currentSpace.uuid).then((response: AxiosResponse) => {
                 const newRole: SpaceRole = response.data;
-                setRoles(roles => alphabetizeRoles([...roles, newRole]));
+                setRoles(roles => alphabetize([...roles, newRole]));
                 updatePersonField('spaceRole', newRole);
                 setIsLoading(false);
             });
@@ -296,7 +296,8 @@ function PersonForm({
     };
 
     const getSelectables = (): Array<Product> => {
-        return products.filter(product => !product.archived && product.name !== 'unassigned');
+        const filteredProducts: Array<Product> = products.filter(product => !product.archived && product.name !== 'unassigned');
+        return alphabetize(filteredProducts) as Array<Product>;
     };
 
     return (
