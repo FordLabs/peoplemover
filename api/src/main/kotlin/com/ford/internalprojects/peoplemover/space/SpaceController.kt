@@ -23,13 +23,6 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class SpaceController(private val spaceService: SpaceService, private val logger: BasicLogger) {
-    @PostMapping("/api/space")
-    fun createSpace(@RequestBody spaceName: String): ResponseEntity<Space> {
-        val createdSpace: Space = spaceService.createSpaceWithName(spaceName)
-        logger.logInfoMessage("Space Created.  Name: [$spaceName]")
-        return ResponseEntity.ok(createdSpace)
-    }
-
     @GetMapping("/api/space")
     fun allSpaces(): ResponseEntity<List<Space>> {
         val spaces: List<Space> = spaceService.findAll()
