@@ -9,7 +9,7 @@ import java.time.Instant
 import java.util.HashMap
 
 @Configuration
-@Profile("e2e-test")
+@Profile("local", "e2e-test")
 class TestConfig {
 
     @Bean
