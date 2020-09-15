@@ -89,8 +89,9 @@ class SpaceControllerApiTest {
     fun `POST should create Space and Add Current User to Space`() {
         val request = SpaceCreationRequest(spaceName = "New Space")
         val accessToken = "TOKEN"
+        val expectedUserId = "USER_ID"
 
-        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "USER_ID")
+        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", expectedUserId)
         `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
 
         val result = mockMvc.perform(post("/api/user/space")
@@ -105,10 +106,11 @@ class SpaceControllerApiTest {
                 SpaceResponse::class.java
         )
         assertThat(actualSpaceResponse.space.name).isEqualTo(request.spaceName)
+        assertThat(actualSpaceResponse.space.createdBy).isEqualTo(expectedUserId)
         assertThat(spaceRepository.findAll().first().name).isEqualTo(request.spaceName)
         val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAll()
         assertThat(userSpaceMappings).hasSize(1)
-        assertThat(userSpaceMappings[0].userId).isEqualTo("USER_ID")
+        assertThat(userSpaceMappings[0].userId).isEqualTo(expectedUserId)
         assertThat(userSpaceMappings[0].spaceId).isEqualTo(actualSpaceResponse.space.id)
     }
 
