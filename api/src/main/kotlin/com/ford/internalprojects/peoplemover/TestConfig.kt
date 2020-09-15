@@ -9,7 +9,7 @@ import java.time.Instant
 import java.util.HashMap
 
 @Configuration
-@Profile("local", "e2e-test")
+@Profile("test", "e2e-test")
 class TestConfig {
 
     @Bean
@@ -27,7 +27,7 @@ private class MockJwtDecoder : JwtDecoder {
         val claims = HashMap<String, Any>()
         claims["sub"] = "USER_ID"
         val issuedAt = Instant.now()
-        val expiresAt = Instant.now()
+        val expiresAt = Instant.now().plusSeconds(60)
         claims["expiresAt"] = expiresAt
         claims["iss"] = "https://localhost"
         return Jwt(accessToken, issuedAt, expiresAt, headers, claims)

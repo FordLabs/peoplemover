@@ -35,6 +35,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -44,11 +45,9 @@ import java.time.LocalDate
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ProductControllerInTimeApiTest {
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     private lateinit var productRepository: ProductRepository
@@ -113,7 +112,8 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return all products given date when they are both active`() {
-        val result = mockMvc.perform(get(baseProductsUrl + may1))
+        val result = mockMvc.perform(get(baseProductsUrl + may1)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -130,7 +130,8 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return all products even after end date has passed` () {
-        val result = mockMvc.perform(get(baseProductsUrl + sep1))
+        val result = mockMvc.perform(get(baseProductsUrl + sep1)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -147,7 +148,8 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return only first product given date when only first product is active`() {
-        val result = mockMvc.perform(get(baseProductsUrl + apr1))
+        val result = mockMvc.perform(get(baseProductsUrl + apr1)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -182,7 +184,8 @@ class ProductControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get(baseProductsUrl + apr2))
+        val result = mockMvc.perform(get(baseProductsUrl + apr2)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -201,7 +204,8 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return no products for date that is before both start dates`() {
-        val result = mockMvc.perform(get(baseProductsUrl + mar1))
+        val result = mockMvc.perform(get(baseProductsUrl + mar1)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -221,7 +225,8 @@ class ProductControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get(baseProductsUrl + sep1))
+        val result = mockMvc.perform(get(baseProductsUrl + sep1)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -249,6 +254,7 @@ class ProductControllerInTimeApiTest {
         )
 
         val result = mockMvc.perform(put(baseProductsUrl + product1.id)
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
@@ -281,7 +287,8 @@ class ProductControllerInTimeApiTest {
                 startDate = newProductStartDate
         )
 
-        val result = mockMvc.perform(put(baseProductsUrl + product2.id)
+        mockMvc.perform(put(baseProductsUrl + product2.id)
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
@@ -311,6 +318,7 @@ class ProductControllerInTimeApiTest {
         )
 
         mockMvc.perform(put(baseProductsUrl + product1.id)
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)

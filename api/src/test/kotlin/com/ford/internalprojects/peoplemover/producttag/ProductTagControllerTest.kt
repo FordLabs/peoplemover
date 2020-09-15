@@ -34,6 +34,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -41,11 +42,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ProductTagControllerTest {
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     private lateinit var spaceRepository: SpaceRepository
@@ -81,6 +80,7 @@ class ProductTagControllerTest {
         val tagToCreate = ProductTagAddRequest(name = "Fin Tech")
 
         val result = mockMvc.perform(post("/api/producttag/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToCreate)))
                 .andExpect(status().isOk)
@@ -96,6 +96,7 @@ class ProductTagControllerTest {
     @Test
     fun `POST should return 400 when creating tag for non existent space`() {
         mockMvc.perform(post("/api/producttag/doesNotExist")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ProductTag(name = "", spaceId = 0))))
                 .andExpect(status().isBadRequest)
@@ -105,6 +106,7 @@ class ProductTagControllerTest {
     fun `POST should return 409 when creating product tag with already existing name`() {
         val actualTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech"))
         mockMvc.perform(post("/api/producttag/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(actualTag)))
                 .andExpect(status().isConflict)
@@ -117,7 +119,8 @@ class ProductTagControllerTest {
         val productTag2: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech 2"))
         val productTag3: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech 3"))
 
-        val result = mockMvc.perform(get("/api/producttag/${space.uuid}"))
+        val result = mockMvc.perform(get("/api/producttag/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -134,7 +137,8 @@ class ProductTagControllerTest {
     @Throws(Exception::class)
     @Test
     fun `GET should return 400 when space does not exist`() {
-        mockMvc.perform(get("/api/producttag/doesNotExist"))
+        mockMvc.perform(get("/api/producttag/doesNotExist")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -151,7 +155,8 @@ class ProductTagControllerTest {
 
         assertThat(productTagRepository.count()).isOne()
 
-        mockMvc.perform(delete("/api/producttag/${space.uuid}/${productTag.id}"))
+        mockMvc.perform(delete("/api/producttag/${space.uuid}/${productTag.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
 
         assertThat(productTagRepository.count()).isZero()
@@ -162,7 +167,8 @@ class ProductTagControllerTest {
 
     @Test
     fun `DELETE should return 400 when product tag does not exist`() {
-        mockMvc.perform(delete("/api/producttag/${space.uuid}/700"))
+        mockMvc.perform(delete("/api/producttag/${space.uuid}/700")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -171,6 +177,7 @@ class ProductTagControllerTest {
         val productTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "FordX"))
         val updatedTag = ProductTagEditRequest(id = productTag.id!!, updatedName = "Fin Tech")
         val result = mockMvc.perform(put("/api/producttag/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedTag)))
                 .andExpect(status().isOk)
@@ -186,6 +193,7 @@ class ProductTagControllerTest {
     fun `PUT should return 400 when trying to edit non existent product tag`() {
         val attemptedEditRequest = ProductTagEditRequest(id = 700, updatedName = "")
         mockMvc.perform(put("/api/producttag/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(attemptedEditRequest)))
                 .andExpect(status().isBadRequest)
@@ -198,6 +206,7 @@ class ProductTagControllerTest {
         val updatedTag = ProductTagEditRequest(id = productTag1.id!!, updatedName = productTag2.name)
 
         mockMvc.perform(put("/api/producttag/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedTag)))
                 .andExpect(status().isConflict)

@@ -31,9 +31,8 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -41,6 +40,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
+@ActiveProfiles("test")
 @SpringBootTest
 class LocationControllerApiTest {
     @Autowired
@@ -54,9 +54,6 @@ class LocationControllerApiTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -82,7 +79,8 @@ class LocationControllerApiTest {
                 spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Venus"))
         )
 
-        val result = mockMvc.perform(get("/api/location/${space.uuid}"))
+        val result = mockMvc.perform(get("/api/location/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -97,13 +95,15 @@ class LocationControllerApiTest {
 
     @Test
     fun `GET should return 400 when given bad space`() {
-        mockMvc.perform(get("/api/location/tok1"))
+        mockMvc.perform(get("/api/location/tok1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET should return an empty set when no expected locations in db`() {
-        val result = mockMvc.perform(get("/api/location/${space.uuid}"))
+        val result = mockMvc.perform(get("/api/location/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
         val actualSpaceLocations: Set<SpaceLocation> = objectMapper.readValue(
@@ -118,6 +118,7 @@ class LocationControllerApiTest {
         spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val duplicateLocationAddRequest = LocationAddRequest(name = "Germany")
         mockMvc.perform(post("/api/location/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(duplicateLocationAddRequest)))
                 .andExpect(status().isConflict)
@@ -127,6 +128,7 @@ class LocationControllerApiTest {
     fun `POST should add new space location to db and return it`() {
         val locationAddRequest = LocationAddRequest(name = "Germany")
         val result = mockMvc.perform(post("/api/location/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationAddRequest)))
                 .andExpect(status().isOk)
@@ -149,6 +151,7 @@ class LocationControllerApiTest {
     fun `POST should return 400 when space does not exist`() {
         val location = LocationAddRequest(name = "Germany")
         mockMvc.perform(post("/api/location/okt")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(location)))
                 .andExpect(status().isBadRequest)
@@ -159,6 +162,7 @@ class LocationControllerApiTest {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val locationEditRequest = LocationEditRequest(id = spaceLocation.id!!, updatedName = "Dearborn")
         val result = mockMvc.perform(put("/api/location/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationEditRequest)))
                 .andExpect(status().isOk)
@@ -182,6 +186,7 @@ class LocationControllerApiTest {
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "France"))
         val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name.toLowerCase())
         mockMvc.perform(put("/api/location/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationEditRequest)))
                 .andExpect(status().isConflict)
@@ -190,7 +195,8 @@ class LocationControllerApiTest {
     @Test
     fun `DELETE should delete location from space`() {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
-        mockMvc.perform(delete("/api/location/${space.uuid}/${spaceLocation.id}"))
+        mockMvc.perform(delete("/api/location/${space.uuid}/${spaceLocation.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
 
         assertThat(spaceLocationRepository.count()).isZero()
@@ -207,7 +213,8 @@ class LocationControllerApiTest {
                 )
         )
         assertThat(spaceLocationRepository.count()).isOne()
-        mockMvc.perform(delete("/api/location/${space.uuid}/${location.id}"))
+        mockMvc.perform(delete("/api/location/${space.uuid}/${location.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
         assertThat(spaceLocationRepository.count()).isZero()
 

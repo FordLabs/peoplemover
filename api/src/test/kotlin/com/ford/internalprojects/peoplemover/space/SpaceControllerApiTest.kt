@@ -38,6 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -46,11 +47,9 @@ import java.util.*
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
+@ActiveProfiles("test")
 @SpringBootTest
 class SpaceControllerApiTest {
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     @MockBean
     lateinit var authService: AuthService
@@ -60,9 +59,6 @@ class SpaceControllerApiTest {
 
     @Autowired
     private lateinit var productRepository: ProductRepository
-
-    @Autowired
-    private lateinit var personRepository: PersonRepository
 
     @Autowired
     private lateinit var assignmentRepository: AssignmentRepository
@@ -90,6 +86,7 @@ class SpaceControllerApiTest {
         val spaceNameToCreate = "Ken Carson"
 
         val result = mockMvc.perform(post("/api/space")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .content(spaceNameToCreate))
                 .andExpect(status().isOk).andReturn()
 
@@ -176,7 +173,8 @@ class SpaceControllerApiTest {
         val space2: Space = spaceRepository.save(Space(name = "KenM"))
         val space3: Space = spaceRepository.save(Space(name = "Ken Starr"))
 
-        val result = mockMvc.perform(get("/api/space"))
+        val result = mockMvc.perform(get("/api/space")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk).andReturn()
 
         val actual: List<Space> = objectMapper.readValue(result.response.contentAsString,
@@ -193,7 +191,8 @@ class SpaceControllerApiTest {
         spaceRepository.save(Space(name = "KenM"))
         spaceRepository.save(Space(name = "Ken Starr"))
 
-        val result = mockMvc.perform(get("/api/space/total"))
+        val result = mockMvc.perform(get("/api/space/total")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk).andReturn()
 
         val actual: Int = result.response.contentAsString.toInt()
@@ -233,7 +232,8 @@ class SpaceControllerApiTest {
     fun `GET should return correct space for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
-        val result = mockMvc.perform(get("/api/space/${space1.uuid}"))
+        val result = mockMvc.perform(get("/api/space/${space1.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -256,7 +256,8 @@ class SpaceControllerApiTest {
 
     @Test
     fun `GET should return 400 if space does not exist`() {
-        mockMvc.perform(get("/api/space/badSpace"))
+        mockMvc.perform(get("/api/space/badSpace")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -275,6 +276,7 @@ class SpaceControllerApiTest {
         val editedSpace = SpaceRequest(name = "edited")
 
         mockMvc.perform(put("/api/space/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
                 .andExpect(status().isOk)
@@ -289,6 +291,7 @@ class SpaceControllerApiTest {
         val editedSpace = SpaceRequest(name = "edited")
         val uuid = UUID.randomUUID().toString()
         mockMvc.perform(put("/api/space/${uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
                 .andExpect(status().isBadRequest)
@@ -300,6 +303,7 @@ class SpaceControllerApiTest {
         val editedSpace = SpaceRequest(name = "12345678901234567890123456789012345678901")
 
         mockMvc.perform(put("/api/space/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
                 .andExpect(status().isBadRequest)

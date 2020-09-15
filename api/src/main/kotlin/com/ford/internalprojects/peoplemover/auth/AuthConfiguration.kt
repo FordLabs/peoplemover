@@ -20,6 +20,8 @@ class AuthConfiguration(val jwtFilter: JwtFilter, val jwtAuthenticationProvider:
                 .anyRequest().authenticated()
             .and().exceptionHandling().authenticationEntryPoint(HttpStatusEntryPoint(UNAUTHORIZED))
             .and().addFilterAfter(jwtFilter, ConcurrentSessionFilter::class.java)
+            .csrf().disable()
+
         displayH2ConsoleToDevs(http)
     }
 

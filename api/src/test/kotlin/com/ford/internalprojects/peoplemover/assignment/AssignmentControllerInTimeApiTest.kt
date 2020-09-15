@@ -34,9 +34,8 @@ import org.mockito.internal.util.collections.Sets
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -45,6 +44,7 @@ import java.time.LocalDate
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 class AssignmentControllerInTimeApiTest {
     @Autowired
@@ -67,9 +67,6 @@ class AssignmentControllerInTimeApiTest {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     private lateinit var space: Space
     private lateinit var productOne: Product
@@ -136,7 +133,8 @@ class AssignmentControllerInTimeApiTest {
                 effectiveDate = LocalDate.parse(apr2)
         ))
 
-        val result = mockMvc.perform(get("/api/person/${person.id}/assignments/date/${apr1}"))
+        val result = mockMvc.perform(get("/api/person/${person.id}/assignments/date/${apr1}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
         val actualAssignments: List<Assignment> = objectMapper.readValue(
@@ -167,7 +165,8 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val response = mockMvc.perform(get("/api/assignment/dates/${space.uuid}"))
+        val response = mockMvc.perform(get("/api/assignment/dates/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn().response
 
@@ -184,7 +183,8 @@ class AssignmentControllerInTimeApiTest {
     fun `GET should return 400 when retrieving effective dates given an invalid spaceuuid` () {
         val bogusUuidSpaceId = 99999999
 
-        mockMvc.perform(get("/api/assignment/dates/$bogusUuidSpaceId"))
+        mockMvc.perform(get("/api/assignment/dates/$bogusUuidSpaceId")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -214,6 +214,7 @@ class AssignmentControllerInTimeApiTest {
         )
 
         val result = mockMvc.perform(post("/api/assignment/create")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newAssignments)))
                 .andExpect(status().isOk)
@@ -249,6 +250,7 @@ class AssignmentControllerInTimeApiTest {
         )
 
         val result = mockMvc.perform(post("/api/assignment/create")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(assignmentRequest)))
                 .andExpect(status().isOk)
@@ -282,6 +284,7 @@ class AssignmentControllerInTimeApiTest {
         )
 
         val result = mockMvc.perform(post("/api/assignment/create")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(unassignedAssignmentRequest)))
                 .andExpect(status().isOk)
@@ -320,6 +323,7 @@ class AssignmentControllerInTimeApiTest {
         )
 
         val result = mockMvc.perform(post("/api/assignment/create")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyAssignmentRequest)))
                 .andExpect(status().isOk)
@@ -348,6 +352,7 @@ class AssignmentControllerInTimeApiTest {
         )
 
         mockMvc.perform(post("/api/assignment/create")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bogusAssignmentRequest)))
                 .andExpect(status().isBadRequest)
@@ -364,6 +369,7 @@ class AssignmentControllerInTimeApiTest {
         )
 
         mockMvc.perform(post("/api/assignment/create")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bogusAssignmentRequest)))
                 .andExpect(status().isBadRequest)
@@ -382,6 +388,7 @@ class AssignmentControllerInTimeApiTest {
         assertThat(assignmentRepository.count()).isOne()
 
         mockMvc.perform(delete("/api/assignment/delete")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(assignmentToDelete)))
                 .andExpect(status().isOk)
@@ -400,6 +407,7 @@ class AssignmentControllerInTimeApiTest {
         assertThat(assignmentRepository.count()).isZero()
 
         mockMvc.perform(delete("/api/assignment/delete")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(assignmentNotInDb)))
                 .andExpect(status().isOk)
@@ -422,6 +430,7 @@ class AssignmentControllerInTimeApiTest {
         ))
 
         mockMvc.perform(delete("/api/assignment/delete/$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(person)))
                 .andExpect(status().isOk)
@@ -448,6 +457,7 @@ class AssignmentControllerInTimeApiTest {
         )
 
         mockMvc.perform(delete("/api/assignment/delete/$mar1")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(person)))
                 .andExpect(status().isOk)
