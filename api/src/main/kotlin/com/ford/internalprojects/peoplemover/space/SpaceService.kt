@@ -22,13 +22,13 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.HelperUtils
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 @Service
 class SpaceService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
-        private val authService: AuthService,
         private val userSpaceMappingRepository: UserSpaceMappingRepository
         ) {
 
@@ -49,11 +49,11 @@ class SpaceService(
     }
 
     fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
-        val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
+        val principal: String = SecurityContextHolder.getContext().authentication.principal.toString()
          createSpaceWithName(spaceName).let { createdSpace ->
              userSpaceMappingRepository.save(
                      UserSpaceMapping(
-                             userId = validateResponse.sub!!,
+                             userId = principal,
                              spaceId = createdSpace.id
                      )
              )
@@ -62,8 +62,8 @@ class SpaceService(
     }
 
     fun getSpacesForUser(accessToken: String): List<Space> {
-            val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
-            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(validateResponse.sub).map{ mapping -> mapping.spaceId!! }.toList()
+            val principal: String = SecurityContextHolder.getContext().authentication.principal.toString()
+            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(principal).map{ mapping -> mapping.spaceId!! }.toList()
             return spaceRepository.findAllByIdIn(spaceIds)
     }
 

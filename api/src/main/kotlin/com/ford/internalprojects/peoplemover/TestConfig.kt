@@ -1,5 +1,6 @@
 package com.ford.internalprojects.peoplemover
 
+import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -21,6 +22,9 @@ class TestConfig {
 
 private class MockJwtDecoder : JwtDecoder {
     override fun decode(token: String?): Jwt {
+        if (token.equals("INVALID_TOKEN")) {
+            throw InvalidTokenException()
+        }
         val accessToken = "valid_Token"
         val headers = HashMap<String, Any>()
         headers["typ"] = "JWT"

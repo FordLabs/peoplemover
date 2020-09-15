@@ -51,9 +51,6 @@ import java.util.*
 @SpringBootTest
 class SpaceControllerApiTest {
 
-    @MockBean
-    lateinit var authService: AuthService
-
     @Autowired
     private lateinit var spaceRepository: SpaceRepository
 
@@ -71,7 +68,6 @@ class SpaceControllerApiTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-
 
     @After
     fun tearDown() {
@@ -105,9 +101,6 @@ class SpaceControllerApiTest {
         val request = SpaceCreationRequest(spaceName = "New Space")
         val accessToken = "TOKEN"
 
-        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "USER_ID")
-        `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
-
         val result = mockMvc.perform(post("/api/user/space")
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer $accessToken")
@@ -130,6 +123,7 @@ class SpaceControllerApiTest {
     @Test
     fun `POST should create default product, and unassigned product when creating space`() {
         val result = mockMvc.perform(post("/api/space")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .content("Ken Carson"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -145,9 +139,11 @@ class SpaceControllerApiTest {
 
     @Test
     fun `POST should return 400 when not given name or post body`() {
-        mockMvc.perform(post("/api/space"))
+        mockMvc.perform(post("/api/space")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
         mockMvc.perform(post("/api/space")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .content(""))
                 .andExpect(status().isBadRequest)
     }
@@ -155,8 +151,7 @@ class SpaceControllerApiTest {
     @Test
     fun `POST should return 401 when token is not valid`() {
         val request = SpaceCreationRequest(spaceName = "New Space")
-        val token = "TOKEN"
-        `when`(authService.validateToken(token)).thenThrow(InvalidTokenException())
+        val token = "INVALID_TOKEN"
 
         mockMvc.perform(post("/api/user/space")
                 .content(objectMapper.writeValueAsString(request))
@@ -206,12 +201,10 @@ class SpaceControllerApiTest {
         val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
         spaceRepository.save(Space(name = "SpaceThree"))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "userId", spaceId = space1.id))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "userId", spaceId = space2.id))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = space1.id))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = space2.id))
 
         val accessToken = "TOKEN"
-        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "userId")
-        `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
 
         val result = mockMvc.perform(get("/api/user/space")
                 .header("Authorization", "Bearer $accessToken"))
@@ -248,7 +241,6 @@ class SpaceControllerApiTest {
     @Test
     fun `GET should return 401 when access token is invalid`() {
         val accessToken = "INVALID_TOKEN"
-        `when`(authService.validateToken(accessToken)).thenThrow(InvalidTokenException())
         mockMvc.perform(get("/api/user/space")
                 .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isUnauthorized)
