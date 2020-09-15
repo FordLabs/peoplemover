@@ -33,12 +33,12 @@ class SpaceService(
         private val userSpaceMappingRepository: UserSpaceMappingRepository
         ) {
 
-    fun createSpaceWithName(spaceName: String): Space {
+    fun createSpaceWithName(spaceName: String, createdBy: String): Space {
         if (spaceName.isEmpty()) {
             throw SpaceNotExistsException(spaceName)
         } else {
             val savedSpace = spaceRepository.save(
-                    Space(name = spaceName, lastModifiedDate = Timestamp(Date().time))
+                    Space(name = spaceName, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
             )
             productService.createDefaultProducts(savedSpace);
             return savedSpace
@@ -51,10 +51,11 @@ class SpaceService(
 
     fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
         val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
-         createSpaceWithName(spaceName).let { createdSpace ->
+        val userId = validateResponse.sub!!
+         createSpaceWithName(spaceName, userId).let { createdSpace ->
              userSpaceMappingRepository.save(
                      UserSpaceMapping(
-                             userId = validateResponse.sub!!,
+                             userId = userId,
                              spaceId = createdSpace.id
                      )
              )

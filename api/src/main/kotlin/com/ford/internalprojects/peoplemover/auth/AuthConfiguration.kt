@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 class AuthConfiguration : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
+        // uncomment when running H2 console
+        // http.headers().frameOptions().sameOrigin();
         http.authorizeRequests().anyRequest().permitAll().and().csrf().disable()
     }
 }

@@ -1,9 +1,10 @@
 create table space
 (
-    id    int          not null identity primary key,
+    id   int         not null identity primary key,
     uuid varchar(36) not null,
     name varchar(255) not null unique,
-    last_modified_date datetime
+    last_modified_date datetime,
+    created_by varchar(40)
 );
 
 create table color
