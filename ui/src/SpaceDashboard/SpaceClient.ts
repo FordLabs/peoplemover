@@ -18,10 +18,13 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
+import Cookies from "universal-cookie";
 
 class SpaceClient {
 
-    static async getSpacesForUser(accessToken: string): Promise<AxiosResponse<Space[]>> {
+    static async getSpacesForUser(): Promise<AxiosResponse<Space[]>> {
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
         return Axios.get(`/api/user/space`, {headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,
@@ -29,12 +32,17 @@ class SpaceClient {
     }
 
     static async getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
         return Axios.get(`/api/space/${spaceUuid}`, {headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         }});
     }
 
-    static async createSpaceForUser(spaceName: string, accessToken: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
+    static async createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
         return Axios.post(
             `/api/user/space`,
             {
@@ -48,11 +56,19 @@ class SpaceClient {
     }
 
     static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
         return Axios.put(`/api/space/${uuid}`,
-            editedSpace
+            {editedSpace},
+            {headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            }}
         );
     }
     static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
+        const cookies = new Cookies();
+        const accessToken = cookies.get('accessToken');
         return Axios.put(
             `/api/user/invite/space`,
             {
@@ -62,6 +78,7 @@ class SpaceClient {
             {
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
                 },
             }
         );

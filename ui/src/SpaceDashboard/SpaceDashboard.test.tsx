@@ -16,14 +16,14 @@
  */
 
 import Cookies from 'universal-cookie';
-import SpaceDashboard from '../SpaceDashboard/SpaceDashboard';
+import SpaceDashboard from './SpaceDashboard';
 import React from 'react';
-import {renderWithRedux} from './TestUtils';
+import {renderWithRedux} from '../tests/TestUtils';
 import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {wait, fireEvent, RenderResult} from '@testing-library/react';
 import {AxiosResponse} from 'axios';
-import SpaceClient from '../SpaceDashboard/SpaceClient';
+import SpaceClient from './SpaceClient';
 import moment from 'moment';
 import {RunConfig} from '../index';
 
@@ -49,7 +49,7 @@ describe('SpaceDashboard tests', () => {
         it('should redirect to space when a space in the dashboard is clicked', async () => {
             const space1 = await component.findByText('Space1');
             await fireEvent.click(space1);
-            expect(SpaceClient.getSpacesForUser).toHaveBeenCalledWith(fakeAccessToken);
+            expect(SpaceClient.getSpacesForUser).toHaveBeenCalled();
             expect(history.location.pathname).toBe('/SpaceUUID');
         });
 
