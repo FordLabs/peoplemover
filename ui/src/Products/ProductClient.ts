@@ -18,6 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Product} from './Product';
 import moment from 'moment';
+import {getToken} from '../Auth/TokenProvider';
 
 class ProductClient {
 
@@ -28,20 +29,35 @@ class ProductClient {
     static async createProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
         return Axios.post(
             this.getBaseProductsUrl(spaceUuid),
-            product
+            product, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
+            }
         );
     }
 
     static async editProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
         return Axios.put(
             this.getBaseProductsUrl(spaceUuid) + product.id,
-            product
+            product, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
+            }
         );
     }
 
     static async deleteProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
         return Axios.delete(
-            this.getBaseProductsUrl(spaceUuid) + product.id,
+            this.getBaseProductsUrl(spaceUuid) + product.id, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
+            }
         );
     }
 
@@ -49,7 +65,12 @@ class ProductClient {
         const formattedDate = moment(date).format('YYYY-MM-DD');
         return Axios.get(
             this.getBaseProductsUrl(spaceUuid) + formattedDate,
-            {headers: { 'Content-Type': 'application/json'}}
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
+            }
         );
     }
 }

@@ -20,6 +20,7 @@ import {ProductTag} from './ProductTag';
 import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import {TraitEditRequest} from '../Traits/TraitEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
+import {getToken} from "../Auth/TokenProvider";
 
 
 class ProductTagClient implements TraitClient {
@@ -27,25 +28,49 @@ class ProductTagClient implements TraitClient {
     async get(spaceUuid: string): Promise<AxiosResponse<Array<ProductTag>>> {
         return Axios.get(
             `/api/producttag/${spaceUuid}`,
-            {headers: {'Content-Type': 'application/json'}}
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
+            }
         );
     }
 
     async add(productTagAddRequest: TraitAddRequest, spaceUuid: string ): Promise<AxiosResponse> {
         return Axios.post(`/api/producttag/${spaceUuid}`,
-            productTagAddRequest
+            productTagAddRequest,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
+            }
         );
     }
 
     async edit(productTagEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<ProductTag>> {
         return Axios.put(`/api/producttag/${spaceUuid}`,
-            productTagEditRequest
+            productTagEditRequest,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
+            }
         );
     }
 
     async delete(id: number): Promise<AxiosResponse> {
         const spaceUuid = window.location.pathname.substr(1);
-        return Axios.delete(`/api/producttag/${spaceUuid}/${id}`);
+        return Axios.delete(`/api/producttag/${spaceUuid}/${id}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
+            }
+        );
     }
 }
 export default new ProductTagClient();

@@ -17,9 +17,11 @@
  *
  */
 
-import Axios from 'axios';
+import Axios, {AxiosResponse} from 'axios';
 import SpaceClient from './SpaceClient';
-import Cookies from "universal-cookie";
+import Cookies from 'universal-cookie';
+import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
+import {createEmptySpace} from './Space';
 
 describe('Space Client', function() {
     beforeEach(function() {
@@ -30,6 +32,91 @@ describe('Space Client', function() {
     afterEach(function() {
         const cookies = new Cookies();
         cookies.remove('accessToken');
+    });
+
+    it('should return the space given a user', function() {
+        Axios.get = jest.fn();
+
+        const expectedUrl = '/api/user/space';
+        const expectedConfig = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 123456',
+            },
+        };
+
+        SpaceClient.getSpacesForUser();
+
+        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    });
+
+    it('should return the space given a space name', function() {
+        Axios.get = jest.fn();
+
+        const expectedUrl = '/api/space/testName';
+        const expectedConfig = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 123456',
+            },
+        };
+
+        SpaceClient.getSpaceFromUuid('testName');
+
+        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    });
+
+    it('should create a space given a space name', async () => {
+        const expectedresponse = {} as Promise<AxiosResponse<SpaceWithAccessTokenResponse>>;
+        const expectedUrl = '/api/user/space';
+        const expectedBody = {spaceName: 'bob'};
+        const expectedConfig = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 123456',
+            },
+        };
+
+        Axios.post = jest.fn().mockImplementation((url, data, config) => {
+            let urlMatches = url === expectedUrl;
+            let bodyMatches = JSON.stringify(data) === JSON.stringify(expectedBody);
+            let headersMatch = JSON.stringify(config) === JSON.stringify(expectedConfig);
+            if (urlMatches && bodyMatches && headersMatch) {
+                return expectedresponse;
+            }
+            return null;
+        });
+
+        const actual = await SpaceClient.createSpaceForUser('bob');
+
+        expect(actual).toBe(expectedresponse);
+    });
+
+    it('should edit space given space uuid and content', async () => {
+        const expectedresponse = {} as Promise<AxiosResponse>;
+        const expectedUrl = '/api/space/uuidbob';
+        const expectedSpace =  createEmptySpace();
+        const expectedBody = {editedSpace: expectedSpace};
+        const expectedConfig = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 123456',
+            },
+        };
+
+        Axios.put = jest.fn().mockImplementation((url, data, config) => {
+            let urlMatches = url === expectedUrl;
+            let headersMatch = JSON.stringify(config) === JSON.stringify(expectedConfig);
+            let bodyMatches = JSON.stringify(data) === JSON.stringify(expectedBody);
+            if (urlMatches && bodyMatches && headersMatch) {
+                return expectedresponse;
+            }
+            return null;
+        });
+
+        const actual = await SpaceClient.editSpace('uuidbob', expectedSpace);
+
+        expect(actual).toBe(expectedresponse);
     });
 
     it('should invite users to a space', function() {
@@ -55,19 +142,8 @@ describe('Space Client', function() {
         expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
     });
 
-    it('should return the space given a space name', function() {
-        Axios.get = jest.fn();
-
-        const expectedUrl = '/api/space/testName';
-        const expectedConfig = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer 123456'
-            },
-        };
-
-        SpaceClient.getSpaceFromUuid('testName');
-
-        expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+    it('todo', function() {
+        //TODO make space client tests use .then() like product client test
+        fail();
     });
 });
