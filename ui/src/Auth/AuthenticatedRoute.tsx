@@ -18,9 +18,9 @@
 import {Route, RouteProps} from 'react-router';
 import * as React from 'react';
 import Cookies from 'universal-cookie';
-import {AccessTokenClient} from './Login/AccessTokenClient';
+import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useState} from 'react';
-import {useOnLoad} from './ReusableComponents/UseOnLoad';
+import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 
 export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;

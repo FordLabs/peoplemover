@@ -18,7 +18,7 @@
 import {Router} from 'react-router';
 import * as React from 'react';
 import {render, RenderResult, wait} from '@testing-library/react';
-import {AuthenticatedRoute} from '../AuthenticatedRoute';
+import {AuthenticatedRoute} from '../Auth/AuthenticatedRoute';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
 import Axios, {AxiosResponse} from 'axios';
