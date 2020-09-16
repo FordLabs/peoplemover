@@ -24,7 +24,7 @@ describe('Space Client', function() {
 
         SpaceClient.inviteUsersToSpace('spaceUUID', ['email1@mail.com', 'email2@mail.com']);
 
-        const expectedUrl = '/api/space/user/invite';
+        const expectedUrl = '/api/spaces/user/invite';
         const expectedData = {
             uuid: 'spaceUUID',
             emails: ['email1@mail.com', 'email2@mail.com'],
@@ -41,7 +41,7 @@ describe('Space Client', function() {
     it('should return the space given a space name', function() {
         Axios.get = jest.fn();
 
-        const expectedUrl = '/api/space/testName';
+        const expectedUrl = '/api/spaces/testName';
         const expectedConfig = {
             headers: { 'Content-Type': 'application/json' },
         };

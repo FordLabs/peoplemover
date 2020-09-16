@@ -21,7 +21,7 @@ import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("/api/space")
+@RequestMapping("/api/spaces")
 @RestController
 class SpaceController(private val spaceService: SpaceService, private val logger: BasicLogger) {
     @GetMapping("")

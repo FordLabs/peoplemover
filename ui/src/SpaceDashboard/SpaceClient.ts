@@ -19,7 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 
-const baseSpaceUrl = `/api/space`;
+const baseSpaceUrl = `/api/spaces`;
 
 class SpaceClient {
     static async getSpacesForUser(accessToken: string): Promise<AxiosResponse<Space[]>> {
