@@ -62,11 +62,8 @@ class SpaceClient {
     }
 
     static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
-        const url = `${baseSpaceUrl}/user/invite`;
-        const data = {
-            uuid: spaceUuid,
-            emails: emails,
-        };
+        const url = `${baseSpaceUrl}/${spaceUuid}:invite`;
+        const data = { emails };
         const config = {
             headers: { 'Content-Type': 'application/json' },
         };

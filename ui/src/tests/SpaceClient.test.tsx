@@ -21,12 +21,12 @@ import SpaceClient from '../SpaceDashboard/SpaceClient';
 describe('Space Client', function() {
     it('should invite users to a space', function() {
         Axios.put = jest.fn();
+        const uuid = 'spaceUUID';
 
-        SpaceClient.inviteUsersToSpace('spaceUUID', ['email1@mail.com', 'email2@mail.com']);
+        SpaceClient.inviteUsersToSpace(uuid, ['email1@mail.com', 'email2@mail.com']);
 
-        const expectedUrl = '/api/spaces/user/invite';
+        const expectedUrl = `/api/spaces/${uuid}:invite`;
         const expectedData = {
-            uuid: 'spaceUUID',
             emails: ['email1@mail.com', 'email2@mail.com'],
         };
         const expectedConfig = {
@@ -34,7 +34,6 @@ describe('Space Client', function() {
                 'Content-Type': 'application/json',
             },
         };
-
         expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
     });
 
