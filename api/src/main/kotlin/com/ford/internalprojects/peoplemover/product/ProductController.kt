@@ -61,5 +61,4 @@ class ProductController(
         logger.logInfoMessage("Product with id [$productId] deleted.")
         return ResponseEntity.ok().build()
     }
-
 }

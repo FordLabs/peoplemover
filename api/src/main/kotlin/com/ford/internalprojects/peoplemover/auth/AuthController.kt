@@ -52,7 +52,7 @@ class AuthController(val userSpaceMappingRepository: UserSpaceMappingRepository,
         }
     }
 
-    @PutMapping(path = ["/api/user/invite/space"])
+    @PutMapping(path = ["/api/space/user/invite"])
     fun inviteUsersToSpace(@Valid @RequestBody request: AuthInviteUsersToSpaceRequest): ResponseEntity<ArrayList<String>> {
         val space = spaceRepository.findByUuid(request.uuid)!!
 

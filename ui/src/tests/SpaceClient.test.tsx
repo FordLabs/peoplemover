@@ -24,7 +24,7 @@ describe('Space Client', function() {
 
         SpaceClient.inviteUsersToSpace('spaceUUID', ['email1@mail.com', 'email2@mail.com']);
 
-        const expectedUrl = '/api/user/invite/space';
+        const expectedUrl = '/api/space/user/invite';
         const expectedData = {
             uuid: 'spaceUUID',
             emails: ['email1@mail.com', 'email2@mail.com'],

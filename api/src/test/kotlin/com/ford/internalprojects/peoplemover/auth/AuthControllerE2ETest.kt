@@ -61,6 +61,8 @@ class AuthControllerE2ETest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
+    var inviteUserToSpaceUrl: String = "/api/space/user/invite"
+
     @Before
     fun setUp() {
         userSpaceMappingRepository.deleteAll()
@@ -80,7 +82,7 @@ class AuthControllerE2ETest {
                 emails = emails
                 )
 
-        val result = mockMvc.perform(put("/api/user/invite/space")
+        val result = mockMvc.perform(put(inviteUserToSpaceUrl)
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
         ).andExpect(
@@ -102,7 +104,7 @@ class AuthControllerE2ETest {
                 uuid = "",
                 emails = listOf("EMAIL_1", "EMAIL_2")
         )
-        mockMvc.perform(put("/api/user/invite/space")
+        mockMvc.perform(put(inviteUserToSpaceUrl)
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
         ).andExpect(
@@ -116,7 +118,7 @@ class AuthControllerE2ETest {
                 uuid = "spaceName",
                 emails = listOf()
         )
-        mockMvc.perform(put("/api/user/invite/space")
+        mockMvc.perform(put(inviteUserToSpaceUrl)
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
         ).andExpect(

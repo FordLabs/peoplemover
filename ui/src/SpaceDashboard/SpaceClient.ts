@@ -19,52 +19,58 @@ import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 
-class SpaceClient {
+const baseSpaceUrl = `/api/space`;
 
+class SpaceClient {
     static async getSpacesForUser(accessToken: string): Promise<AxiosResponse<Space[]>> {
-        return Axios.get(`/api/user/space`, {headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-        }});
+        const url = baseSpaceUrl;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        };
+        return Axios.get(url, config);
     }
 
     static async getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
-        return Axios.get(`/api/space/${spaceUuid}`, {headers: {
-            'Content-Type': 'application/json',
-        }});
+        const url = `${baseSpaceUrl}/${spaceUuid}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+        return Axios.get(url, config);
     }
 
     static async createSpaceForUser(spaceName: string, accessToken: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
-        return Axios.post(
-            `/api/user/space`,
-            {
-                spaceName: spaceName,
-            },
-            {headers: {
+        const url = `${baseSpaceUrl}/user`;
+        const data = { spaceName };
+        const config = {
+            headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
-            }}
-        );
+            },
+        };
+        return Axios.post(url, data, config);
     }
 
     static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
-        return Axios.put(`/api/space/${uuid}`,
-            editedSpace
-        );
+        const url = `${baseSpaceUrl}/${uuid}`;
+        const data = editedSpace;
+        return Axios.put(url, data);
     }
+
     static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
-        return Axios.put(
-            `/api/user/invite/space`,
-            {
-                uuid: spaceUuid,
-                emails: emails,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
+        const url = `${baseSpaceUrl}/user/invite`;
+        const data = {
+            uuid: spaceUuid,
+            emails: emails,
+        };
+        const config = {
+            headers: { 'Content-Type': 'application/json' },
+        };
+        return Axios.put(url, data, config);
     }
 }
 

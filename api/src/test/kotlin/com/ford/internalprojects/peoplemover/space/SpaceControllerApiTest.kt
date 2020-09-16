@@ -76,6 +76,7 @@ class SpaceControllerApiTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
+    var baseSpaceUrl: String = "/api/space/"
 
     @After
     fun tearDown() {
@@ -94,7 +95,7 @@ class SpaceControllerApiTest {
         val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", expectedUserId)
         `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
 
-        val result = mockMvc.perform(post("/api/user/space")
+        val result = mockMvc.perform(post(baseSpaceUrl + "user")
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer $accessToken")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -120,7 +121,7 @@ class SpaceControllerApiTest {
         val token = "TOKEN"
         `when`(authService.validateToken(token)).thenThrow(InvalidTokenException())
 
-        mockMvc.perform(post("/api/user/space")
+        mockMvc.perform(post(baseSpaceUrl + "user")
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer $token")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -135,7 +136,7 @@ class SpaceControllerApiTest {
         val space2: Space = spaceRepository.save(Space(name = "KenM"))
         val space3: Space = spaceRepository.save(Space(name = "Ken Starr"))
 
-        val result = mockMvc.perform(get("/api/space"))
+        val result = mockMvc.perform(get(baseSpaceUrl))
                 .andExpect(status().isOk).andReturn()
 
         val actual: List<Space> = objectMapper.readValue(result.response.contentAsString,
@@ -152,7 +153,7 @@ class SpaceControllerApiTest {
         spaceRepository.save(Space(name = "KenM"))
         spaceRepository.save(Space(name = "Ken Starr"))
 
-        val result = mockMvc.perform(get("/api/space/total"))
+        val result = mockMvc.perform(get(baseSpaceUrl + "total"))
                 .andExpect(status().isOk).andReturn()
 
         val actual: Int = result.response.contentAsString.toInt()
@@ -173,7 +174,7 @@ class SpaceControllerApiTest {
         val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "userId")
         `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
 
-        val result = mockMvc.perform(get("/api/user/space")
+        val result = mockMvc.perform(get(baseSpaceUrl + "user")
                 .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -192,7 +193,7 @@ class SpaceControllerApiTest {
     fun `GET should return correct space for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
-        val result = mockMvc.perform(get("/api/space/${space1.uuid}"))
+        val result = mockMvc.perform(get(baseSpaceUrl + space1.uuid))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -208,14 +209,14 @@ class SpaceControllerApiTest {
     fun `GET should return 401 when access token is invalid`() {
         val accessToken = "INVALID_TOKEN"
         `when`(authService.validateToken(accessToken)).thenThrow(InvalidTokenException())
-        mockMvc.perform(get("/api/user/space")
+        mockMvc.perform(get(baseSpaceUrl + "user")
                 .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isUnauthorized)
     }
 
     @Test
     fun `GET should return 400 if space does not exist`() {
-        mockMvc.perform(get("/api/space/badSpace"))
+        mockMvc.perform(get(baseSpaceUrl + "badSpace"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -233,7 +234,7 @@ class SpaceControllerApiTest {
         val space = spaceRepository.save(Space(name = "test"))
         val editedSpace = SpaceRequest(name = "edited")
 
-        mockMvc.perform(put("/api/space/${space.uuid}")
+        mockMvc.perform(put(baseSpaceUrl + space.uuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
                 .andExpect(status().isOk)
@@ -247,7 +248,7 @@ class SpaceControllerApiTest {
     fun `PUT should return 400 if space does not exist`() {
         val editedSpace = SpaceRequest(name = "edited")
         val uuid = UUID.randomUUID().toString()
-        mockMvc.perform(put("/api/space/${uuid}")
+        mockMvc.perform(put(baseSpaceUrl + uuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
                 .andExpect(status().isBadRequest)
@@ -258,7 +259,7 @@ class SpaceControllerApiTest {
         val space = spaceRepository.save(Space(name = "space"))
         val editedSpace = SpaceRequest(name = "12345678901234567890123456789012345678901")
 
-        mockMvc.perform(put("/api/space/${space.uuid}")
+        mockMvc.perform(put(baseSpaceUrl+ space.uuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
                 .andExpect(status().isBadRequest)
