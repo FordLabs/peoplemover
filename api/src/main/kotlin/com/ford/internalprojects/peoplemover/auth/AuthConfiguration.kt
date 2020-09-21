@@ -16,7 +16,7 @@ class AuthConfiguration(val jwtFilter: JwtFilter, val jwtAuthenticationProvider:
 
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
-                .antMatchers("/", "/error", "/api/config", "/h2-console").permitAll()
+                .antMatchers("/", "/error", "/api/config", "/h2-console", "/api/reset/**").permitAll()
                 .anyRequest().authenticated()
             .and().exceptionHandling().authenticationEntryPoint(HttpStatusEntryPoint(UNAUTHORIZED))
             .and().addFilterAfter(jwtFilter, ConcurrentSessionFilter::class.java)
