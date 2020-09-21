@@ -16,12 +16,18 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
+import {getToken} from '../Auth/TokenProvider';
 
 class ColorClient {
     static async getAllColors(): Promise<AxiosResponse> {
         return Axios.get(
             `/api/color`,
-            {headers: {'Content-Type': 'application/json'}}
+            {headers:
+                    {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`,
+                    },
+            }
         );
     }
 }

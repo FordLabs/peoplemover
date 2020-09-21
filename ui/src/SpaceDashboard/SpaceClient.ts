@@ -80,7 +80,7 @@ class SpaceClient {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
-            }
+            },
         };
         return Axios.put(url, data, config);
     }
