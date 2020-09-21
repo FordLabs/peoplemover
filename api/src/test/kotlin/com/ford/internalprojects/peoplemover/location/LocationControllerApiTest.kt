@@ -69,7 +69,7 @@ class LocationControllerApiTest {
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
 
-        baseLocationsUrl ="/api/spaces/" + space.uuid + "/locations"
+        baseLocationsUrl = "/api/spaces/" + space.uuid + "/locations"
     }
 
     @After
