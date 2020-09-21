@@ -44,6 +44,11 @@ class ProductService(
         return productRepository.findAllBySpaceId(spaceId);
     }
 
+    fun findAllBySpaceUuid(spaceUuid: String): Set<Product> {
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
+        return productRepository.findAllBySpaceId(space.id!!).toSet()
+    }
+
     fun findAllBySpaceUuidAndDate(spaceUuid: String, date: LocalDate): Set<Product> {
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceUuid, date)

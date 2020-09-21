@@ -1,0 +1,2 @@
+ALTER TABLE space
+  ADD CREATED_BY varchar(40);

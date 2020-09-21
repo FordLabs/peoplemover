@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,9 +20,8 @@ import ProductClient from '../Products/ProductClient';
 import TestUtils from '../tests/TestUtils';
 
 describe('Product Client', function() {
-
     const spaceUuid = 'uuid';
-    const baseProductsUrl = `/api/space/${spaceUuid}/products/`;
+    const baseProductsUrl = `/api/spaces/${spaceUuid}/products`;
 
     beforeEach(() => {
         Axios.post = jest.fn(x => Promise.resolve({
@@ -50,7 +49,7 @@ describe('Product Client', function() {
     });
 
     it('should update a product and return that product', function(done) {
-        const expectedUrl = baseProductsUrl + TestUtils.productWithAssignments.id;
+        const expectedUrl = `${baseProductsUrl}/${TestUtils.productWithAssignments.id}`;
         ProductClient.editProduct(spaceUuid, TestUtils.productWithAssignments)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, TestUtils.productWithAssignments);
@@ -60,7 +59,7 @@ describe('Product Client', function() {
     });
 
     it('should delete a product', function(done) {
-        const expectedUrl = baseProductsUrl + TestUtils.productWithAssignments.id;
+        const expectedUrl = `${baseProductsUrl}/${TestUtils.productWithAssignments.id}`;
         ProductClient.deleteProduct(spaceUuid, TestUtils.productWithAssignments)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl);
@@ -71,7 +70,7 @@ describe('Product Client', function() {
 
     it('should return the products given a date', function(done) {
         const date = '2019-01-10';
-        const expectedUrl = baseProductsUrl + date;
+        const expectedUrl = baseProductsUrl + `?requestedDate=${date}`;
         const expectedConfig = {
             headers: { 'Content-Type': 'application/json' },
         };

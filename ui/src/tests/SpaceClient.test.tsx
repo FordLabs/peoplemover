@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,12 +21,12 @@ import SpaceClient from '../SpaceDashboard/SpaceClient';
 describe('Space Client', function() {
     it('should invite users to a space', function() {
         Axios.put = jest.fn();
+        const uuid = 'spaceUUID';
 
-        SpaceClient.inviteUsersToSpace('spaceUUID', ['email1@mail.com', 'email2@mail.com']);
+        SpaceClient.inviteUsersToSpace(uuid, ['email1@mail.com', 'email2@mail.com']);
 
-        const expectedUrl = '/api/user/invite/space';
+        const expectedUrl = `/api/spaces/${uuid}:invite`;
         const expectedData = {
-            uuid: 'spaceUUID',
             emails: ['email1@mail.com', 'email2@mail.com'],
         };
         const expectedConfig = {
@@ -34,14 +34,13 @@ describe('Space Client', function() {
                 'Content-Type': 'application/json',
             },
         };
-
         expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
     });
 
     it('should return the space given a space name', function() {
         Axios.get = jest.fn();
 
-        const expectedUrl = '/api/space/testName';
+        const expectedUrl = '/api/spaces/testName';
         const expectedConfig = {
             headers: { 'Content-Type': 'application/json' },
         };

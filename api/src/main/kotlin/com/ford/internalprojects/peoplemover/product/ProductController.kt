@@ -23,22 +23,37 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import javax.validation.Valid
 
-@RequestMapping("/api/space/{spaceUuid}/products")
+@RequestMapping("/api/spaces/{spaceUuid}/products")
 @RestController
 class ProductController(
-        private val productService: ProductService,
-        private val logger: BasicLogger) {
+    private val productService: ProductService,
+    private val logger: BasicLogger
+) {
+    @GetMapping
+    fun getProducts(
+        @PathVariable spaceUuid: String,
+        @RequestParam(name = "requestedDate", required = false) requestedDate: String
+    ): ResponseEntity<Set<Product>> {
+        val products: Set<Product>;
 
-    @GetMapping("/{requestedDate}")
-    fun allProductsForDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<Set<Product>> {
-        val date = LocalDate.parse(requestedDate)
-        val products: Set<Product> = productService.findAllBySpaceUuidAndDate(spaceUuid, date)
-        logger.logInfoMessage("All product retrieved.")
+        if (requestedDate != null) {
+            val date = LocalDate.parse(requestedDate)
+            products = productService.findAllBySpaceUuidAndDate(spaceUuid, date)
+            logger.logInfoMessage("All product retrieved by date ${requestedDate}.")
+            return ResponseEntity.ok(products)
+        }
+
+        logger.logInfoMessage("All product retrieved for space.")
+        products = productService.findAllBySpaceUuid(spaceUuid)
+
         return ResponseEntity.ok(products)
     }
 
-    @PostMapping("")
-    fun createProduct(@PathVariable spaceUuid: String, @Valid @RequestBody productAddRequest: ProductAddRequest): ResponseEntity<Product> {
+    @PostMapping
+    fun createProduct(
+        @PathVariable spaceUuid: String,
+        @Valid @RequestBody productAddRequest: ProductAddRequest
+    ): ResponseEntity<Product> {
         val createdProduct = productService.create(productAddRequest, spaceUuid)
         logger.logInfoMessage("Product [${createdProduct.name}] created.")
         return ResponseEntity.ok(createdProduct)
@@ -46,9 +61,9 @@ class ProductController(
 
     @PutMapping("/{productId}")
     fun updateProduct(
-            @PathVariable spaceUuid: String,
-            @PathVariable productId: Int,
-            @Valid @RequestBody productEditRequest: ProductEditRequest
+        @PathVariable spaceUuid: String,
+        @PathVariable productId: Int,
+        @Valid @RequestBody productEditRequest: ProductEditRequest
     ): ResponseEntity<Product> {
         val updatedProduct: Product = productService.update(productEditRequest, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] updated.")
@@ -56,10 +71,12 @@ class ProductController(
     }
 
     @DeleteMapping("/{productId}")
-    fun deleteProduct(@PathVariable spaceUuid: String, @PathVariable productId: Int): ResponseEntity<Unit> {
+    fun deleteProduct(
+        @PathVariable spaceUuid: String,
+        @PathVariable productId: Int
+    ): ResponseEntity<Unit> {
         productService.delete(productId, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] deleted.")
         return ResponseEntity.ok().build()
     }
-
 }
