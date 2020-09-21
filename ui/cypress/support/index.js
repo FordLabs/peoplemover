@@ -20,7 +20,7 @@ const API_PRODUCTS_PATH = `/api/spaces/${spaceUuid}/products`;
 const API_PERSON_PATH = `/api/person/${spaceUuid}`;
 const API_ROLE_PATH = `/api/role/${spaceUuid}`;
 const API_PRODUCT_TAG_PATH = `/api/producttag/${spaceUuid}`;
-const API_LOCATION_PATH = `/api/location/${spaceUuid}`;
+const API_LOCATION_PATH = `/api/spaces/${spaceUuid}/locations`;
 const API_ASSIGNMENT_PATH = `/api/assignment`;
 
 before(() => {
