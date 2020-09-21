@@ -15,9 +15,7 @@ describe('Access Token Client', function() {
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
-        Axios.post = jest.fn(x => Promise.resolve({
-            data: 'Returned Result',
-        } as AxiosResponse));
+        Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse));
     });
 
     afterEach(() => {
@@ -27,9 +25,8 @@ describe('Access Token Client', function() {
     it('should validate access token and return result', function(done) {
         const expectedUrl = '/api/access_token/validate';
         AccessTokenClient.validateAccessToken(accessToken)
-            .then((response) => {
+            .then(() => {
                 expect(Axios.post).toHaveBeenCalledWith(expectedUrl, { accessToken }, expectedConfig);
-                expect(response.data).toBe('Returned Result');
                 done();
             });
     });
@@ -38,14 +35,13 @@ describe('Access Token Client', function() {
         const expectedUrl = '/api/access_token/authenticate';
         const spaceUUID = 'spaceID';
         AccessTokenClient.userCanAccessSpace(accessToken, spaceUUID)
-            .then((response) => {
+            .then(() => {
                 expect(Axios.post).toHaveBeenCalledWith(expectedUrl,
                     {
                         accessToken: accessToken,
                         uuid: spaceUUID,
                     },
                     expectedConfig);
-                expect(response.data).toBe('Returned Result');
                 done();
             });
     });
