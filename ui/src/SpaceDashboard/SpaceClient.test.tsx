@@ -24,6 +24,7 @@ import {createEmptySpace} from './Space';
 
 describe('Space Client', function() {
 
+    const baseSpaceUrl = `/api/spaces`;
     const cookies = new Cookies();
     const expectedConfig = {
         headers: {
@@ -44,16 +45,15 @@ describe('Space Client', function() {
     });
 
     it('should return the space given a user', function(done) {
-        const expectedUrl = '/api/user/space';
         SpaceClient.getSpacesForUser().then(() => {
-            expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+            expect(Axios.get).toHaveBeenCalledWith(baseSpaceUrl, expectedConfig);
             done();
         });
 
     });
 
     it('should return the space given a space name', function(done) {
-        const expectedUrl = '/api/space/testName';
+        const expectedUrl = baseSpaceUrl +'/testName';
         SpaceClient.getSpaceFromUuid('testName').then(() => {
             expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
             done();
@@ -62,7 +62,7 @@ describe('Space Client', function() {
     });
 
     it('should create a space given a space name', function(done) {
-        const expectedUrl = '/api/user/space';
+        const expectedUrl = baseSpaceUrl + '/user';
         const expectedBody = {spaceName: 'bob'};
 
         SpaceClient.createSpaceForUser('bob').then(() => {
@@ -73,8 +73,8 @@ describe('Space Client', function() {
     });
 
     it('should edit space given space uuid and content', function(done) {
-        const expectedUrl = '/api/space/uuidbob';
-        const expectedBody = {editedSpace: createEmptySpace()};
+        const expectedUrl = baseSpaceUrl + '/uuidbob';
+        const expectedBody = createEmptySpace();
 
         SpaceClient.editSpace('uuidbob', createEmptySpace()).then(() => {
             expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
@@ -83,9 +83,8 @@ describe('Space Client', function() {
     });
 
     it('should invite users to a space', function(done) {
-        const expectedUrl = '/api/user/invite/space';
+        const expectedUrl = baseSpaceUrl + '/spaceUUID:invite';
         const expectedData = {
-            uuid: 'spaceUUID',
             emails: ['email1@mail.com', 'email2@mail.com'],
         };
 

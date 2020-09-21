@@ -21,9 +21,10 @@ import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import com.ford.internalprojects.peoplemover.utilities.HelperUtils
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import java.sql.Timestamp
+import java.util.*
 
 @Service
 class SpaceService(
@@ -32,12 +33,12 @@ class SpaceService(
         private val userSpaceMappingRepository: UserSpaceMappingRepository
         ) {
 
-    fun createSpaceWithName(spaceName: String): Space {
+    fun createSpaceWithName(spaceName: String, createdBy: String): Space {
         if (spaceName.isEmpty()) {
             throw SpaceNotExistsException(spaceName)
         } else {
             val savedSpace = spaceRepository.save(
-                    Space(name = spaceName, lastModifiedDate = HelperUtils.currentTimeStamp)
+                    Space(name = spaceName, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
             )
             productService.createDefaultProducts(savedSpace);
             return savedSpace
@@ -49,11 +50,11 @@ class SpaceService(
     }
 
     fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
-        val principal: String = SecurityContextHolder.getContext().authentication.principal.toString()
-         createSpaceWithName(spaceName).let { createdSpace ->
+        val userId: String = SecurityContextHolder.getContext().authentication.principal.toString()
+        createSpaceWithName(spaceName, userId).let { createdSpace ->
              userSpaceMappingRepository.save(
                      UserSpaceMapping(
-                             userId = principal,
+                             userId = userId,
                              spaceId = createdSpace.id
                      )
              )

@@ -76,7 +76,7 @@ class ProductControllerApiTest {
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok", uuid = "aaa-aaa-aaaa-aaaaa"))
-        baseProductsUrl = "/api/space/" + space.uuid + "/products/"
+        baseProductsUrl = "/api/spaces/" + space.uuid + "/products/"
     }
 
     @After

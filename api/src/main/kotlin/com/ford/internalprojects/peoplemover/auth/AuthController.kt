@@ -21,22 +21,20 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-class AuthController(val userSpaceMappingRepository: UserSpaceMappingRepository,
-                     val spaceRepository: SpaceRepository,
-                     val authService: AuthService
+class AuthController(
+    val userSpaceMappingRepository: UserSpaceMappingRepository,
+    val spaceRepository: SpaceRepository,
+    val authService: AuthService
 ) {
 
     @PostMapping(path = ["/api/access_token/validate"])
     fun validateAccessToken(@RequestBody request: ValidateTokenRequest): ResponseEntity<Unit> {
-            authService.validateToken(request.accessToken)
-            return ResponseEntity.ok().build()
+        authService.validateToken(request.accessToken)
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping(path = ["/api/access_token/authenticate"])
@@ -52,9 +50,12 @@ class AuthController(val userSpaceMappingRepository: UserSpaceMappingRepository,
         }
     }
 
-    @PutMapping(path = ["/api/user/invite/space"])
-    fun inviteUsersToSpace(@Valid @RequestBody request: AuthInviteUsersToSpaceRequest): ResponseEntity<ArrayList<String>> {
-        val space = spaceRepository.findByUuid(request.uuid)!!
+    @PutMapping(path = ["/api/spaces/{uuid}:invite"])
+    fun inviteUsersToSpace(
+        @Valid @RequestBody request: AuthInviteUsersToSpaceRequest,
+        @PathVariable uuid: String
+    ): ResponseEntity<ArrayList<String>> {
+        val space = spaceRepository.findByUuid(uuid)!!
 
         val failures = arrayListOf<String>();
         request.emails.forEach {email ->
@@ -62,7 +63,7 @@ class AuthController(val userSpaceMappingRepository: UserSpaceMappingRepository,
             try {
                 userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
             } catch (e: DataIntegrityViolationException) {
-                System.out.println(userId + " already has access to this space.");
+                System.out.println("$userId already has access to this space.");
             } catch (e: Exception) {
                 failures.add(email)
                 System.out.println(e)

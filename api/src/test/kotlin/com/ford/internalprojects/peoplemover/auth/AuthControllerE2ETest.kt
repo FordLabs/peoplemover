@@ -62,6 +62,9 @@ class AuthControllerE2ETest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
+    final var uuid: String = "spaceUUID"
+    var inviteUserToSpaceUrl: String = "/api/spaces/${uuid}:invite"
+
     @Before
     fun setUp() {
         userSpaceMappingRepository.deleteAll()
@@ -73,16 +76,14 @@ class AuthControllerE2ETest {
         val emails = listOf("email_1@email.com", "email_2@otheremail.com")
         val spaceName = "spaceName"
 
-        val space = spaceRepository.save(Space(id = 1, name = spaceName, uuid = "spaceUUID"))
+        val space = spaceRepository.save(Space(id = 1, name = spaceName, uuid = uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "EMAIL_1", spaceId = space.id))
 
-        val request = AuthInviteUsersToSpaceRequest(
-                uuid="spaceUUID",
-                emails = emails
-                )
+        val request = AuthInviteUsersToSpaceRequest(emails = emails)
 
         `when`(jwtDecoder.decode("fake_access_token")).thenReturn(getJwt("fake_access_token"))
-        val result = mockMvc.perform(put("/api/user/invite/space")
+
+        val result = mockMvc.perform(put(inviteUserToSpaceUrl)
                 .header("Authorization", "Bearer fake_access_token")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
@@ -100,29 +101,12 @@ class AuthControllerE2ETest {
     }
 
     @Test
-    fun `PUT should return BAD_REQUEST with an empty space uuid`() {
-        val request = AuthInviteUsersToSpaceRequest(
-                uuid = "",
-                emails = listOf("EMAIL_1", "EMAIL_2")
-        )
-        `when`(jwtDecoder.decode("GOOD_TOKEN")).thenReturn(getJwt("GOOD_TOKEN"))
-        mockMvc.perform(put("/api/user/invite/space")
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .content(objectMapper.writeValueAsString(request))
-                .contentType("application/json")
-        ).andExpect(
-                status().isBadRequest
-        )
-    }
-
-    @Test
     fun `PUT should return BAD_REQUEST if no emails were provided`() {
         val request = AuthInviteUsersToSpaceRequest(
-                uuid = "spaceName",
                 emails = listOf()
         )
         `when`(jwtDecoder.decode("GOOD_TOKEN")).thenReturn(getJwt("GOOD_TOKEN"))
-        mockMvc.perform(put("/api/user/invite/space")
+        mockMvc.perform(put(inviteUserToSpaceUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
@@ -161,13 +145,13 @@ class AuthControllerE2ETest {
         val accessToken = "fake_access_token"
         `when`(jwtDecoder.decode(accessToken)).thenReturn(getJwt(accessToken))
 
-        val savedSpace = spaceRepository.save(Space(name = "spaceThree", uuid = "spaceUUID"))
+        val savedSpace = spaceRepository.save(Space(name = "spaceThree", uuid = uuid))
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id))
 
         val request = AuthCheckScopesRequest(
                 accessToken = accessToken,
-                uuid = "spaceUUID"
+                uuid = uuid
         )
 
         mockMvc.perform(post("/api/access_token/authenticate")

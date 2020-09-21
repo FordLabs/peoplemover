@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,58 +20,69 @@ import {Space} from './Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 import {getToken} from '../Auth/TokenProvider';
 
-class SpaceClient {
+const baseSpaceUrl = `/api/spaces`;
 
+class SpaceClient {
     static async getSpacesForUser(): Promise<AxiosResponse<Space[]>> {
-        return Axios.get(`/api/user/space`, {headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        }});
+        const url = baseSpaceUrl;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 
     static async getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
-        return Axios.get(`/api/space/${spaceUuid}`, {headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        }});
+        const url = `${baseSpaceUrl}/${spaceUuid}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 
     static async createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
-        return Axios.post(
-            `/api/user/space`,
-            {
-                spaceName: spaceName,
-            },
-            {headers: {
+        const url = `${baseSpaceUrl}/user`;
+        const data = { spaceName };
+        const config = {
+            headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
-            }}
-        );
+            },
+        };
+
+        return Axios.post(url, data, config);
     }
 
     static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
-        return Axios.put(`/api/space/${uuid}`,
-            {editedSpace},
-            {headers: {
+        const url = `${baseSpaceUrl}/${uuid}`;
+        const data = editedSpace;
+        const config = {
+            headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
-            }}
-        );
-    }
-    static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
-        return Axios.put(
-            `/api/user/invite/space`,
-            {
-                uuid: spaceUuid,
-                emails: emails,
             },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`,
-                },
+        };
+
+        return Axios.put(url, data, config);
+    }
+
+    static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
+        const url = `${baseSpaceUrl}/${spaceUuid}:invite`;
+        const data = { emails };
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
             }
-        );
+        };
+        return Axios.put(url, data, config);
     }
 }
 

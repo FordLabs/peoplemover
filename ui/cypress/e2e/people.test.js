@@ -12,7 +12,7 @@ describe('People', () => {
 
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
-        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}/${date}`).as('getUpdatedProduct');
+        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getUpdatedProduct');
         cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
         cy.contains(person.name).should('not.exist');

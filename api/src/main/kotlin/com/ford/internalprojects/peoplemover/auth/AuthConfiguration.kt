@@ -11,8 +11,7 @@ import org.springframework.security.web.session.ConcurrentSessionFilter
 
 @Configuration
 @EnableWebSecurity
-class AuthConfiguration(val jwtFilter: JwtFilter, val jwtAuthenticationProvider: JwtAuthenticationProvider) : WebSecurityConfigurerAdapter()
-{
+class AuthConfiguration(val jwtFilter: JwtFilter, val jwtAuthenticationProvider: JwtAuthenticationProvider) : WebSecurityConfigurerAdapter(){
 
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()

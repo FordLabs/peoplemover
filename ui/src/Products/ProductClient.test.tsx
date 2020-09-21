@@ -21,9 +21,8 @@ import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 
 describe('Product Client', function() {
-
     const spaceUuid = 'uuid';
-    const baseProductsUrl = `/api/space/${spaceUuid}/products/`;
+    const baseProductsUrl = `/api/spaces/${spaceUuid}/products`;
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
@@ -64,7 +63,7 @@ describe('Product Client', function() {
     });
 
     it('should update a product and return that product', function(done) {
-        const expectedUrl = baseProductsUrl + TestUtils.productWithAssignments.id;
+        const expectedUrl = `${baseProductsUrl}/${TestUtils.productWithAssignments.id}`;
         ProductClient.editProduct(spaceUuid, TestUtils.productWithAssignments)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, TestUtils.productWithAssignments, expectedConfig);
@@ -74,7 +73,7 @@ describe('Product Client', function() {
     });
 
     it('should delete a product', function(done) {
-        const expectedUrl = baseProductsUrl + TestUtils.productWithAssignments.id;
+        const expectedUrl = `${baseProductsUrl}/${TestUtils.productWithAssignments.id}`;
         ProductClient.deleteProduct(spaceUuid, TestUtils.productWithAssignments)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
@@ -85,7 +84,7 @@ describe('Product Client', function() {
 
     it('should return the products given a date', function(done) {
         const date = '2019-01-10';
-        const expectedUrl = baseProductsUrl + date;
+        const expectedUrl = baseProductsUrl + `?requestedDate=${date}`;
         ProductClient.getProductsForDate(spaceUuid, new Date(2019, 0, 10))
             .then((response) => {
                 expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);

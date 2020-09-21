@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -88,6 +88,14 @@ function PersonForm({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
 
+    const alphabetize = (roles: Array<SpaceRole | Product>): Array<SpaceRole | Product> => {
+        return roles.sort((a, b) => {
+            if (a.name < b.name) return -1;
+            if ( a.name > b.name) return 1;
+            return 0;
+        });
+    };
+
     const getSpaceIdFromPersonName = (name: string): number => {
         const person: Person | undefined = people.find(x => x.name === name);
         if (person && person.spaceId) return person.spaceId;
@@ -98,7 +106,7 @@ function PersonForm({
         const setup = async (): Promise<void> => {
             if (currentSpace.uuid) {
                 const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.uuid);
-                setRoles(rolesResponse.data);
+                setRoles(alphabetize(rolesResponse.data));
             }
 
             if (editing && assignment) {
@@ -203,9 +211,9 @@ function PersonForm({
         return product || null;
     };
 
-    const changeProductName = (events: Array<{ value: string }> = []): void => {
+    const changeProductName = (events: Array<{ value: string }>): void => {
         const updatedProducts: Array<Product> = [];
-        events.forEach(ev => {
+        (events || []).forEach(ev => {
             if (ev.value !== 'unassigned') {
                 const product = getItemFromListWithName(ev.value, products);
                 if (product) updatedProducts.push(product);
@@ -252,7 +260,7 @@ function PersonForm({
             const roleAddRequest: RoleAddRequest = {name: inputValue};
             RoleClient.add(roleAddRequest, currentSpace.uuid).then((response: AxiosResponse) => {
                 const newRole: SpaceRole = response.data;
-                setRoles(roles => [...roles, newRole]);
+                setRoles(roles => alphabetize([...roles, newRole]));
                 updatePersonField('spaceRole', newRole);
                 setIsLoading(false);
             });
@@ -288,7 +296,8 @@ function PersonForm({
     };
 
     const getSelectables = (): Array<Product> => {
-        return products.filter(product => !product.archived && product.name !== 'unassigned');
+        const filteredProducts: Array<Product> = products.filter(product => !product.archived && product.name !== 'unassigned');
+        return alphabetize(filteredProducts) as Array<Product>;
     };
 
     return (

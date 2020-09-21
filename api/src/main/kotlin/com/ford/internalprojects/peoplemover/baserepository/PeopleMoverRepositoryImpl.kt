@@ -20,10 +20,11 @@ package com.ford.internalprojects.peoplemover.baserepository
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import com.ford.internalprojects.peoplemover.utilities.HelperUtils.currentTimeStamp
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import java.io.Serializable
+import java.sql.Timestamp
+import java.util.*
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
 
@@ -47,7 +48,7 @@ class PeopleMoverRepositoryImpl<T: SpaceComponent, ID : Serializable>(
 
     private fun updateSpaceLastModified(spaceId: Int) {
         val space = spaceRepository.findById(spaceId).orElseThrow { SpaceNotExistsException() }
-        space.lastModifiedDate = currentTimeStamp
+        space.lastModifiedDate = Timestamp(Date().time)
         spaceRepository.save(space)
     }
 
