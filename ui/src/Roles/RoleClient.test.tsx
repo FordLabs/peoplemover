@@ -49,7 +49,7 @@ describe('Role Client', function() {
     });
 
     it('should create a role and return that role', function(done) {
-        const expectedRoleAddRequest = { name: TestUtils.annarbor.name };
+        const expectedRoleAddRequest = { name: TestUtils.softwareEngineer.name };
         RoleClient.add(expectedRoleAddRequest, spaceUuid)
             .then((response) => {
                 const expectedConfig = { headers: { 'Content-Type': 'application/json' } };
@@ -63,8 +63,8 @@ describe('Role Client', function() {
 
     it('should edit a role and return that role', function(done) {
         const expectedRoleEditRequest = {
-            id: TestUtils.annarbor.id,
-            name: TestUtils.annarbor.name,
+            id: TestUtils.softwareEngineer.id,
+            name: TestUtils.softwareEngineer.name,
         };
         RoleClient.edit(expectedRoleEditRequest, spaceUuid)
             .then((response) => {
@@ -78,8 +78,8 @@ describe('Role Client', function() {
     });
 
     it('should delete a role', function(done) {
-        const expectedUrl = `${baseRolesUrl}/${TestUtils.annarbor.id}`;
-        RoleClient.delete(TestUtils.annarbor.id, spaceUuid)
+        const expectedUrl = `${baseRolesUrl}/${TestUtils.softwareEngineer.id}`;
+        RoleClient.delete(TestUtils.softwareEngineer.id, spaceUuid)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl);
                 expect(response.data).toBe('Deleted Role');
