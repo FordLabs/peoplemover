@@ -20,10 +20,6 @@ package com.ford.internalprojects.peoplemover.auth
 import javax.validation.constraints.NotEmpty
 
 data class AuthInviteUsersToSpaceRequest(
-
         @field:NotEmpty(message = "emails cannot be empty")
-        val emails: List<String>,
-
-        @field:NotEmpty(message = "uuid cannot be empty")
-        val uuid: String
+        val emails: List<String>
 )

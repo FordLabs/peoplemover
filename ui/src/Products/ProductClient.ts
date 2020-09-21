@@ -20,37 +20,30 @@ import {Product} from './Product';
 import moment from 'moment';
 
 class ProductClient {
-
     private static getBaseProductsUrl(spaceUuid: string): string {
-        return '/api/space/' + spaceUuid + '/products/';
+        return '/api/spaces/' + spaceUuid + '/products';
     }
 
     static async createProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
-        return Axios.post(
-            this.getBaseProductsUrl(spaceUuid),
-            product
-        );
+        const url = this.getBaseProductsUrl(spaceUuid);
+        return Axios.post(url, product);
     }
 
     static async editProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
-        return Axios.put(
-            this.getBaseProductsUrl(spaceUuid) + product.id,
-            product
-        );
+        const url = this.getBaseProductsUrl(spaceUuid) + `/${product.id}`;
+        return Axios.put(url, product);
     }
 
     static async deleteProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
-        return Axios.delete(
-            this.getBaseProductsUrl(spaceUuid) + product.id,
-        );
+        const url = this.getBaseProductsUrl(spaceUuid) + `/${product.id}`;
+        return Axios.delete(url);
     }
 
     static async getProductsForDate(spaceUuid: string, date: Date): Promise<AxiosResponse> {
         const formattedDate = moment(date).format('YYYY-MM-DD');
-        return Axios.get(
-            this.getBaseProductsUrl(spaceUuid) + formattedDate,
-            {headers: { 'Content-Type': 'application/json'}}
-        );
+        const url = this.getBaseProductsUrl(spaceUuid) + `?requestedDate=${formattedDate}`;
+        const config = { headers: { 'Content-Type': 'application/json' } };
+        return Axios.get(url, config);
     }
 }
 
