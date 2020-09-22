@@ -30,7 +30,6 @@ import ProductTagClient from '../../ProductTag/ProductTagClient';
 import {SpaceLocation} from '../../Locations/SpaceLocation';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../SpaceDashboard/SpaceClient';
-import Cookies from 'universal-cookie';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,

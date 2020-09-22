@@ -18,7 +18,6 @@
 import React, {FormEvent, useState} from 'react';
 import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
-import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
 import {createEmptySpace, Space} from './Space';
 import FormButton from '../ModalFormComponents/FormButton';
