@@ -90,7 +90,7 @@ function PeopleMover({
                     await fetchProducts();
                     await fetchProductTags();
                     await fetchLocations();
-                    const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;
+                    const peopleInSpace = (await PeopleClient.getAllPeopleInSpace(uuid)).data;
 
                     setPeople(peopleInSpace);
                 } catch (err) {
