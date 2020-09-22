@@ -20,7 +20,7 @@ import {SpaceLocation} from './SpaceLocation';
 import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import {TraitEditRequest} from '../Traits/TraitEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
-import {getToken} from "../Auth/TokenProvider";
+import {getToken} from '../Auth/TokenProvider';
 
 
 class LocationClient implements TraitClient {

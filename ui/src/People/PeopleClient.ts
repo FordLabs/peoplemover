@@ -17,13 +17,18 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Person} from './Person';
+import {getToken} from "../Auth/TokenProvider";
 
 class PeopleClient {
     static async getAllPeopleInSpace(): Promise<AxiosResponse> {
-        return Axios.get(
-            `/api/person/${this.getSpaceUuid()}`,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+        let url = `/api/person/${this.getSpaceUuid()}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.get(url, config);
     }
 
     static getSpaceUuid(): string {
@@ -31,19 +36,36 @@ class PeopleClient {
     }
 
     static async createPersonForSpace(person: Person): Promise<AxiosResponse> {
-        return Axios.post(
-            `/api/person/${this.getSpaceUuid()}`,
-            person
-        );
+        let url = `/api/person/${this.getSpaceUuid()}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.post(url, person, config);
     }
 
     static async updatePerson(person: Person): Promise<AxiosResponse> {
-        return Axios.put(`/api/person`, person
-        );
+        let url = `/api/person`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.put(url, person, config);
     }
 
     static async removePerson(personId: number): Promise<AxiosResponse> {
-        return Axios.delete(`/api/person/${personId}`);
+        let url = `/api/person/${personId}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.delete(url, config);
     }
 }
 
