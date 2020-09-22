@@ -185,7 +185,7 @@ class AssignmentService(
 
     private fun createUnassignmentForDate(requestedDate: LocalDate, person: Person): Assignment {
         val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", person.spaceId)
-        return assignmentRepository.save(
+        return assignmentRepository.saveAndUpdateSpaceLastModified(
                 Assignment(
                         person = person,
                         placeholder = false,
@@ -206,7 +206,7 @@ class AssignmentService(
             productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
 
             if(product.productId != unassignedProduct!!.id) {
-                val assignment = assignmentRepository.save(
+                val assignment = assignmentRepository.saveAndUpdateSpaceLastModified(
                         Assignment(
                                 person = assignmentRequest.person,
                                 placeholder = product.placeholder,
