@@ -47,7 +47,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @RunWith(SpringRunner::class)
 class PersonControllerApiTest {
-
     @MockBean
     lateinit var jwtDecoder: JwtDecoder
 
@@ -77,9 +76,13 @@ class PersonControllerApiTest {
 
     private lateinit var space: Space
 
+    var basePeopleUrl: String = ""
+
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "spaceWithThisName"))
+
+        basePeopleUrl = "/api/spaces/" + space.uuid + "/people"
     }
 
     @After
@@ -97,18 +100,18 @@ class PersonControllerApiTest {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
 
         val personToCreate = Person(
-                name = "John",
-                spaceRole = spaceRole,
-                notes = "Some Notes",
-                newPerson = true,
-                spaceId = space.id!!
+            name = "John",
+            spaceRole = spaceRole,
+            notes = "Some Notes",
+            newPerson = true,
+            spaceId = space.id!!
         )
         assertThat(personRepository.count()).isZero()
-        val result = mockMvc.perform(post("/api/person/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(personToCreate)))
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = mockMvc.perform(post(basePeopleUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(personToCreate)))
+            .andExpect(status().isOk)
+            .andReturn()
 
         val actualPerson: Person = objectMapper.readValue(result.response.contentAsString, Person::class.java)
 
@@ -127,12 +130,12 @@ class PersonControllerApiTest {
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
         val result = mockMvc
-                .perform(get("/api/person/${emptySpace.uuid}"))
-                .andExpect(status().isOk)
-                .andReturn()
+            .perform(get("/api/spaces/" + emptySpace.uuid + "/people"))
+            .andExpect(status().isOk)
+            .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
         )
         assertThat(actualPeople).isEqualTo(emptySet<Person>())
     }
@@ -141,20 +144,20 @@ class PersonControllerApiTest {
     fun `GET should only return people in requested space`() {
         val otherSpace: Space = spaceRepository.save(Space(name = "other"))
         val expectedPerson: Person = personRepository.save(Person(
-                name = "HEY I SHOULD SHOW UP IN THE RESULTS",
-                spaceId = space.id!!
+            name = "HEY I SHOULD SHOW UP IN THE RESULTS",
+            spaceId = space.id!!
         ))
         val unexpectedPerson: Person = personRepository.save(Person(
-                name = "HEY I SHOULD NOT SHOW UP",
-                spaceId = otherSpace.id!!
+            name = "HEY I SHOULD NOT SHOW UP",
+            spaceId = otherSpace.id!!
         ))
         val result = mockMvc
-                .perform(get("/api/person/" + space.uuid))
-                .andExpect(status().isOk)
-                .andReturn()
+            .perform(get(basePeopleUrl))
+            .andExpect(status().isOk)
+            .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
         )
         assertThat(actualPeople).containsExactly(expectedPerson)
         assertThat(actualPeople).doesNotContain(unexpectedPerson)
@@ -162,9 +165,9 @@ class PersonControllerApiTest {
 
     @Test
     fun `GET should return 400 when requesting people from invalid space`() {
-        mockMvc.perform(get("/api/person/FiveNightsAtFreddys"))
-                .andExpect(status().isBadRequest)
-                .andReturn()
+        mockMvc.perform(get("/api/spaces/FiveNightsAtFreddys/people"))
+            .andExpect(status().isBadRequest)
+            .andReturn()
     }
 
     @Test
@@ -173,20 +176,20 @@ class PersonControllerApiTest {
         val engineer = spaceRolesRepository.save(SpaceRole(name = "Engineer", spaceId = space.id!!))
         val person: Person = personRepository.save(Person(name = "John", spaceId = space.id!!, spaceRole = softwareEngineer))
         val updatePersonRequest = Person(
-                id = person.id,
-                name = "New John",
-                spaceId = space.id!!,
-                spaceRole = engineer
+            id = person.id,
+            name = "New John",
+            spaceId = space.id!!,
+            spaceRole = engineer
         )
-        val result = mockMvc.perform(put("/api/person")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatePersonRequest)))
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updatePersonRequest)))
+            .andExpect(status().isOk)
+            .andReturn()
 
         val updatedPerson: Person = objectMapper.readValue(
-                result.response.contentAsString,
-                Person::class.java
+            result.response.contentAsString,
+            Person::class.java
         )
 
         val updatedPersonInDb: Person = personRepository.findById(person.id!!).get()
@@ -197,9 +200,9 @@ class PersonControllerApiTest {
     @Test
     fun `DELETE should return 400 when person does not exist`() {
         val notSavedPersonId = 1103
-        mockMvc.perform(delete("/api/person/$notSavedPersonId")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
+        mockMvc.perform(delete("$basePeopleUrl/$notSavedPersonId")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -213,9 +216,9 @@ class PersonControllerApiTest {
         val assignmentToRemain: Assignment = assignmentRepository.save(Assignment(person = personToRemain, productId = product.id!!, spaceId = space.id!!))
         assertThat(assignmentRepository.count()).isEqualTo(2)
 
-        mockMvc.perform(delete("/api/person/${personToDelete.id}")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
+        mockMvc.perform(delete("$basePeopleUrl/${personToDelete.id}")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk)
 
         assertThat(personRepository.findAll()).containsExactly(personToRemain)
         assertThat(assignmentRepository.findAll()).containsExactly(assignmentToRemain)
@@ -226,13 +229,13 @@ class PersonControllerApiTest {
 
     @Test
     fun `GET total should return total number of persons`() {
-        val person1: Person = personRepository.save(Person(name = "John", spaceId = space.id!!))
-        val person2: Person = personRepository.save(Person(name = "Jack", spaceId = space.id!!))
-        val person3: Person = personRepository.save(Person(name = "Jill", spaceId = space.id!!))
+        personRepository.save(Person(name = "John", spaceId = space.id!!))
+        personRepository.save(Person(name = "Jack", spaceId = space.id!!))
+        personRepository.save(Person(name = "Jill", spaceId = space.id!!))
 
-        val request = mockMvc.perform(get("/api/person/total"))
-                .andExpect(status().isOk)
-                .andReturn()
+        val request = mockMvc.perform(get("${basePeopleUrl}/total"))
+            .andExpect(status().isOk)
+            .andReturn()
 
         val totalPersonCount = request.response.contentAsString.toLong()
 

@@ -112,8 +112,8 @@ class TestUtils {
     static mockClientCalls(): void {
         const emptyAxiosResponse = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
-        PeopleClient.createPersonForSpace = jest.fn(x => Promise.resolve({
-            data:  x,
+        PeopleClient.createPersonForSpace = jest.fn((uuid, person) => Promise.resolve({
+            data: person,
         } as AxiosResponse));
         PeopleClient.getAllPeopleInSpace = jest.fn(() => Promise.resolve({
             data: TestUtils.people,

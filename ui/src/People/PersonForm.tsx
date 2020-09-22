@@ -170,7 +170,7 @@ function PersonForm({
                 setIsUnassignedDrawerOpen(true);
             }
             if (editing && assignment) {
-                const response = await PeopleClient.updatePerson(person);
+                const response = await PeopleClient.updatePerson(currentSpace.uuid!!, person);
                 await AssignmentClient.createAssignmentForDate({
                     requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                     person: assignment.person,
@@ -179,7 +179,7 @@ function PersonForm({
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
             } else {
-                const response = await PeopleClient.createPersonForSpace(person);
+                const response = await PeopleClient.createPersonForSpace(currentSpace.uuid!!, person);
                 const newPerson: Person = response.data;
                 addPerson(newPerson);
                 await AssignmentClient.createAssignmentForDate(
@@ -197,7 +197,7 @@ function PersonForm({
     const removePerson = (): void => {
         const assignmentId = assignment && assignment.person.id;
         if (assignmentId) {
-            PeopleClient.removePerson(assignmentId).then(closeModal);
+            PeopleClient.removePerson(currentSpace.uuid!!, assignmentId).then(closeModal);
         }
     };
 
