@@ -19,32 +19,55 @@ import Axios, {AxiosResponse} from 'axios';
 import {RoleAddRequest} from './RoleAddRequest';
 import {RoleEditRequest} from './RoleEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
+import {getToken} from '../Auth/TokenProvider';
 
 class RoleClient implements TraitClient {
 
     async get(spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.get(`/api/role/${spaceUuid}`
-        );
+        let url = `/api/role/${spaceUuid}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 
     async add(role: RoleAddRequest, spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.post(`/api/role/${spaceUuid}`,
-            role,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+        let url = `/api/role/${spaceUuid}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, role, config);
     }
 
     async edit(role: RoleEditRequest, spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.put(`/api/role/${spaceUuid}`,
-            role,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+        let url = `/api/role/${spaceUuid}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, role, config);
     }
 
     async delete(roleId: number): Promise<AxiosResponse> {
-        return Axios.delete(
-            `/api/role/${roleId}`,
-        );
+        let url = `/api/role/${roleId}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.delete(url, config);
     }
 }
 
