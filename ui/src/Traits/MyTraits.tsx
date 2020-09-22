@@ -118,10 +118,12 @@ function MyTraits({
 
     async function deleteTrait(traitToDelete: Trait): Promise<void> {
         try {
-            await traitClient.delete(traitToDelete.id);
-            setConfirmDeleteModal(null);
-            setTraits(prevTraits => prevTraits.filter(trait => trait.id !== traitToDelete.id));
-            updateGroupedTagFilterOptions(traitName, traitToDelete, TraitAction.DELETE);
+            if (currentSpace.uuid) {
+                await traitClient.delete(traitToDelete.id, currentSpace.uuid);
+                setConfirmDeleteModal(null);
+                setTraits(prevTraits => prevTraits.filter(trait => trait.id !== traitToDelete.id));
+                updateGroupedTagFilterOptions(traitName, traitToDelete, TraitAction.DELETE);
+            }
         } catch {
             return;
         }

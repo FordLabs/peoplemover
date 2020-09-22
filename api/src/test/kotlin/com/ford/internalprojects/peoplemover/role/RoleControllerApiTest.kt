@@ -45,7 +45,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @RunWith(SpringRunner::class)
 @SpringBootTest
 class RoleControllerApiTest {
-
     @MockBean
     lateinit var jwtDecoder: JwtDecoder
 
@@ -69,9 +68,13 @@ class RoleControllerApiTest {
 
     private lateinit var space: Space
 
+    var baseRolesUrl: String = ""
+
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
+
+        baseRolesUrl = "/api/spaces/" + space.uuid + "/roles"
     }
 
     @After
@@ -87,13 +90,13 @@ class RoleControllerApiTest {
         val role1: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Fireman", spaceId = space.id!!))
         val role2: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Astronaut", spaceId = space.id!!))
 
-        val result = mockMvc.perform(get("/api/role/${space.uuid}"))
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = mockMvc.perform(get(baseRolesUrl))
+            .andExpect(status().isOk)
+            .andReturn()
 
         val actualSpaceRoles: Set<SpaceRole> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceRole::class.java)
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceRole::class.java)
         )
 
         assertThat(actualSpaceRoles).contains(role1)
@@ -102,20 +105,20 @@ class RoleControllerApiTest {
 
     @Test
     fun `GET should return 400 when space does not exist`() {
-        mockMvc.perform(get("/api/role/doesNotExist"))
-                .andExpect(status().isBadRequest)
+        mockMvc.perform(get("/api/spaces/doesNotExist/roles"))
+            .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET should return empty set when space has no roles`() {
         val result = mockMvc
-                .perform(get("/api/role/${space.uuid}"))
-                .andExpect(status().isOk)
-                .andReturn()
+            .perform(get(baseRolesUrl))
+            .andExpect(status().isOk)
+            .andReturn()
 
         val actualSpaceRoles: Set<SpaceRole> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceRole::class.java))
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceRole::class.java))
 
         assertThat(actualSpaceRoles).isEmpty()
     }
@@ -125,10 +128,10 @@ class RoleControllerApiTest {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Firefighter", spaceId = space.id!!))
         val newRole = RoleAddRequest(name = spaceRole.name)
 
-        mockMvc.perform(post("/api/role/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newRole)))
-                .andExpect(status().isConflict)
+        mockMvc.perform(post(baseRolesUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newRole)))
+            .andExpect(status().isConflict)
     }
 
     @Test
@@ -136,15 +139,15 @@ class RoleControllerApiTest {
         colorRepository.save(Color(color = "red"))
 
         val newRole = RoleAddRequest(name = "Firefighter")
-        val result = mockMvc.perform(post("/api/role/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newRole)))
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = mockMvc.perform(post(baseRolesUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newRole)))
+            .andExpect(status().isOk)
+            .andReturn()
 
         val addedSpaceRole: SpaceRole = objectMapper.readValue(
-                result.response.contentAsString,
-                SpaceRole::class.java
+            result.response.contentAsString,
+            SpaceRole::class.java
         )
         assertThat(addedSpaceRole.name).isEqualTo(newRole.name)
         assertThat(addedSpaceRole.color).isNotNull()
@@ -160,15 +163,15 @@ class RoleControllerApiTest {
         spaceRolesRepository.save(SpaceRole(name = "existingRole", spaceId = space.id!!, color = usedColor))
 
         val newRole = RoleAddRequest(name = "Firefighter")
-        val result = mockMvc.perform(post("/api/role/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newRole)))
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = mockMvc.perform(post(baseRolesUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newRole)))
+            .andExpect(status().isOk)
+            .andReturn()
 
         val addedSpaceRole: SpaceRole = objectMapper.readValue(
-                result.response.contentAsString,
-                SpaceRole::class.java
+            result.response.contentAsString,
+            SpaceRole::class.java
         )
         assertThat(addedSpaceRole.name).isEqualTo(newRole.name)
         assertThat(addedSpaceRole.color).isNull()
@@ -181,14 +184,14 @@ class RoleControllerApiTest {
 
         val newRole = RoleAddRequest(name = "Firefighter", colorId = usedColor.id)
 
-        val result = mockMvc.perform(post("/api/role/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newRole)))
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = mockMvc.perform(post(baseRolesUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newRole)))
+            .andExpect(status().isOk)
+            .andReturn()
         val actualSpaceRole: SpaceRole = objectMapper.readValue(
-                result.response.contentAsString,
-                SpaceRole::class.java
+            result.response.contentAsString,
+            SpaceRole::class.java
         )
         assertThat(actualSpaceRole.name).isEqualTo(newRole.name)
         assertThat(actualSpaceRole.color).isEqualTo(usedColor)
@@ -196,10 +199,10 @@ class RoleControllerApiTest {
 
     @Test
     fun `POST should return 400 when space does not exist`() {
-        mockMvc.perform(post("/api/role/badSpace")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(SpaceRole(name = "role", spaceId = 22))))
-                .andExpect(status().isBadRequest)
+        mockMvc.perform(post("/api/spaces/badSpace/roles")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(SpaceRole(name = "role", spaceId = 22))))
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -212,10 +215,10 @@ class RoleControllerApiTest {
         val updatedRoleName = "Blobware Engineer"
         val roleEditRequest = RoleEditRequest(id = originalSpaceRole.id!!, updatedName = updatedRoleName)
 
-        mockMvc.perform(put("/api/role/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(roleEditRequest)))
-                .andExpect(status().isOk)
+        mockMvc.perform(put(baseRolesUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(roleEditRequest)))
+            .andExpect(status().isOk)
 
         val actualPerson1: Person = personRepository.findByIdOrNull(person1.id!!)!!
         val actualPerson2: Person = personRepository.findByIdOrNull(person2.id!!)!!
@@ -230,18 +233,18 @@ class RoleControllerApiTest {
         val spaceRole2: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Astronaut", spaceId = space.id!!))
         val roleEditRequest = RoleEditRequest(id = spaceRole2.id!!, updatedName = spaceRole1.name)
 
-        mockMvc.perform(put("/api/role/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(roleEditRequest)))
-                .andExpect(status().isConflict)
+        mockMvc.perform(put(baseRolesUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(roleEditRequest)))
+            .andExpect(status().isConflict)
     }
 
     @Test
     fun `PUT should return 400 when trying to edit non existent role`() {
-        mockMvc.perform(put("/api/role/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(RoleEditRequest(updatedName = "role1", id = 0 ))))
-                .andExpect(status().isBadRequest)
+        mockMvc.perform(put(baseRolesUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(RoleEditRequest(updatedName = "role1", id = 0 ))))
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -253,15 +256,15 @@ class RoleControllerApiTest {
         val updatedRoleName = "Herr Doktor-Professor"
         val roleEditRequest = RoleEditRequest(id = spaceRole.id!!, updatedName = updatedRoleName, updatedColorId = greenColor.id)
 
-        val result = mockMvc.perform(put("/api/role/${space.uuid}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(roleEditRequest)))
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = mockMvc.perform(put(baseRolesUrl)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(roleEditRequest)))
+            .andExpect(status().isOk)
+            .andReturn()
 
         val updatedSpaceRole: SpaceRole = objectMapper.readValue(
-                result.response.contentAsString,
-                SpaceRole::class.java
+            result.response.contentAsString,
+            SpaceRole::class.java
         )
         assertThat(updatedSpaceRole.name).isEqualTo(updatedRoleName)
         assertThat(updatedSpaceRole.color).isEqualTo(greenColor)
@@ -279,9 +282,9 @@ class RoleControllerApiTest {
     fun `DELETE should delete a space role from a space`() {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(spaceId = space.id!!, name = "role1"))
 
-        mockMvc.perform(delete("/api/role/${spaceRole.id}")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
+        mockMvc.perform(delete("$baseRolesUrl/${spaceRole.id}")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk)
 
         assertThat(spaceRolesRepository.count()).isZero()
     }
@@ -290,17 +293,16 @@ class RoleControllerApiTest {
     fun `DELETE should set space role on associated person to null `() {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(spaceId = space.id!!, name = "role1"))
         val person: Person = personRepository.save(Person(
-                name = "Jenny",
-                spaceRole = spaceRole,
-                spaceId = space.id!!
+            name = "Jenny",
+            spaceRole = spaceRole,
+            spaceId = space.id!!
         ))
 
-        mockMvc.perform(delete("/api/role/${spaceRole.id}")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
+        mockMvc.perform(delete("$baseRolesUrl/${spaceRole.id}")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk)
 
         val updatedPerson: Person = personRepository.findByIdOrNull(person.id!!)!!
-
         assertThat(updatedPerson.spaceRole).isNull()
     }
 }
