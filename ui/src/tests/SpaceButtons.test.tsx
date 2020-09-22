@@ -45,7 +45,7 @@ describe('SpaceButtons', () => {
         });
 
         try {
-            expect(result.getByTestId('invite-members'));
+            expect(result.getByTestId('share-access'));
             expect(true).toBeFalsy();
         } catch (e) {
             expect(true).toBeTruthy();
@@ -65,7 +65,7 @@ describe('SpaceButtons', () => {
             });
             result.getByTestId('editContributorsModal').click();
         });
-        expect(result.getByTestId('invite-members')).not.toBeNull();
+        expect(result.getByTestId('share-access')).not.toBeNull();
     });
 
 

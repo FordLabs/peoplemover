@@ -120,7 +120,7 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
         case AvailableModals.EDIT_SPACE:
             return 'Edit Space';
         case AvailableModals.EDIT_CONTRIBUTORS:
-            return 'Invite Members';
+            return 'Share Access';
         case AvailableModals.CONTRIBUTORS_CONFIRMATION:
             return 'Your team member now has access!';
         default:
