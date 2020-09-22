@@ -17,8 +17,9 @@ import './commands';
 const spaceUuid = Cypress.env('SPACE_UUID');
 
 const API_ROOT = `/api/spaces/${spaceUuid}`;
+
 const API_PRODUCTS_PATH = `${API_ROOT}/products`;
-const API_PERSON_PATH = `/api/person/${spaceUuid}`;
+const API_PERSON_PATH = `${API_ROOT}/people`;
 const API_ROLE_PATH = `${API_ROOT}/roles`;
 const API_PRODUCT_TAG_PATH = `${API_ROOT}/product-tags`;
 const API_LOCATION_PATH = `${API_ROOT}/locations`;
