@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Person} from './Person';
-import {getToken} from "../Auth/TokenProvider";
+import {getToken} from '../Auth/TokenProvider';
 
 class PeopleClient {
     static async getAllPeopleInSpace(): Promise<AxiosResponse> {
