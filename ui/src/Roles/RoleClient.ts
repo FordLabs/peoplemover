@@ -21,30 +21,30 @@ import {RoleEditRequest} from './RoleEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
 
 class RoleClient implements TraitClient {
+    private getBaseRolesUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/roles';
+    }
 
     async get(spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.get(`/api/role/${spaceUuid}`
-        );
+        const url = this.getBaseRolesUrl(spaceUuid);
+        return Axios.get(url);
     }
 
     async add(role: RoleAddRequest, spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.post(`/api/role/${spaceUuid}`,
-            role,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+        const url = this.getBaseRolesUrl(spaceUuid);
+        const config = { headers: { 'Content-Type': 'application/json' } };
+        return Axios.post(url, role, config);
     }
 
     async edit(role: RoleEditRequest, spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.put(`/api/role/${spaceUuid}`,
-            role,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+        const url = this.getBaseRolesUrl(spaceUuid);
+        const config = { headers: { 'Content-Type': 'application/json' } };
+        return Axios.put(url, role, config);
     }
 
-    async delete(roleId: number): Promise<AxiosResponse> {
-        return Axios.delete(
-            `/api/role/${roleId}`,
-        );
+    async delete(roleId: number, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(spaceUuid) + `/${roleId}`;
+        return Axios.delete(url);
     }
 }
 
