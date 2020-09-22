@@ -23,20 +23,18 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/producttag/{spaceUuid}")
+@RequestMapping("/api/spaces/{spaceUuid}/product-tags")
 class ProductTagController (
         private val productTagService: ProductTagService,
         private val logger: BasicLogger
 ) {
     @PostMapping
     fun createProductTag(
-            @PathVariable spaceUuid: String,
-            @Valid @RequestBody addRequest: ProductTagAddRequest
+        @PathVariable spaceUuid: String,
+        @Valid @RequestBody addRequest: ProductTagAddRequest
     ): ResponseEntity<ProductTag> {
-        val createdProductTag: ProductTag = productTagService.createProductTagForSpace(
-                addRequest,
-                spaceUuid
-        )
+        val createdProductTag: ProductTag = productTagService
+            .createProductTagForSpace(addRequest, spaceUuid)
         logger.logInfoMessage("Product tag [${createdProductTag.name}] created for space: [$spaceUuid].")
         return ResponseEntity.ok(createdProductTag)
     }
