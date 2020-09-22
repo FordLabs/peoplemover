@@ -83,7 +83,8 @@ class SpaceService(
         }
         var editedSpace = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
         editedSpace.name = spaceRequest.name
-        
+        editedSpace.lastModifiedDate = Timestamp(Date().time)
+
         spaceRepository.save(editedSpace)
     }
 }
