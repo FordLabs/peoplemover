@@ -1,12 +1,30 @@
+/*
+ * Copyright (c) 2020 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import Axios, {AxiosResponse} from 'axios';
-import Cookies from 'universal-cookie';
 import PeopleClient from './PeopleClient';
-import {emptyPerson} from './Person';
+import TestUtils from '../tests/TestUtils';
+import Cookies from 'universal-cookie';
 
 describe('People Client', function() {
-    let originalWindow: Window;
-    const baseUrl = `/api/person`;
+    const spaceUuid = 'uuid';
+    const basePeopleUrl = `/api/spaces/${spaceUuid}/people`;
     const cookies = new Cookies();
+
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
@@ -14,52 +32,64 @@ describe('People Client', function() {
         },
     };
 
-    beforeEach(function() {
+    beforeEach(() => {
         cookies.set('accessToken', '123456');
-        originalWindow = window;
-        delete window.location;
-        window.location = {pathname: '/spaceUUID'} as Location;
-        Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse));
-        Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse));
-        Axios.get = jest.fn(x => Promise.resolve({} as AxiosResponse));
-        Axios.delete = jest.fn(x => Promise.resolve({} as AxiosResponse));
+        Axios.post = jest.fn(x => Promise.resolve({
+            data: 'Created Person',
+        } as AxiosResponse));
+        Axios.put = jest.fn(x => Promise.resolve({
+            data: 'Updated Person',
+        } as AxiosResponse));
+        Axios.delete = jest.fn(x => Promise.resolve({
+            data: 'Deleted Person',
+        } as AxiosResponse));
+        Axios.get = jest.fn(x => Promise.resolve({
+            data: 'Get All People',
+        } as AxiosResponse));
     });
 
     afterEach(function() {
         cookies.remove('accessToken');
-        (window as Window) = originalWindow;
     });
 
-    it('should get all people in a space', function(done) {
-        const expectedUrl = `${baseUrl}/spaceUUID`;
-        PeopleClient.getAllPeopleInSpace().then(() => {
-            expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
-            done();
-        });
+    it('should return all people for space', function(done) {
+        PeopleClient.getAllPeopleInSpace(spaceUuid)
+            .then((response) => {
+                expect(Axios.get).toHaveBeenCalledWith(basePeopleUrl, expectedConfig);
+                expect(response.data).toBe('Get All People');
+                done();
+            });
+
     });
 
-    it('should add person to space', function(done) {
-        const expectedUrl = `${baseUrl}/spaceUUID`;
-        const expectedBody = emptyPerson();
-        PeopleClient.createPersonForSpace(expectedBody).then(() => {
-            expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
-            done();
-        });
+    it('should create a person and return that person', function(done) {
+        const newPerson = TestUtils.person1;
+        PeopleClient.createPersonForSpace(spaceUuid, newPerson)
+            .then((response) => {
+                expect(Axios.post).toHaveBeenCalledWith(basePeopleUrl, newPerson, expectedConfig);
+                expect(response.data).toBe('Created Person');
+                done();
+            });
     });
 
-    it('should update person', function(done) {
-        const expectedBody = emptyPerson();
-        PeopleClient.updatePerson(expectedBody).then(() => {
-            expect(Axios.put).toHaveBeenCalledWith(baseUrl, expectedBody, expectedConfig);
-            done();
-        });
+    it('should edit a person and return that person', function(done) {
+        const updatedPerson = TestUtils.person1;
+        const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
+        PeopleClient.updatePerson(spaceUuid, updatedPerson)
+            .then((response) => {
+                expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson, expectedConfig);
+                expect(response.data).toBe('Updated Person');
+                done();
+            });
     });
 
-    it('should remove person', function(done) {
-        const expectedUrl = `${baseUrl}/1`;
-        PeopleClient.removePerson(1).then(() => {
-            expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
-            done();
-        });
+    it('should delete a person', function(done) {
+        const expectedUrl = basePeopleUrl + `/${TestUtils.person1.id}`;
+        PeopleClient.removePerson(spaceUuid, TestUtils.person1.id)
+            .then((response) => {
+                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+                expect(response.data).toBe('Deleted Person');
+                done();
+            });
     });
 });

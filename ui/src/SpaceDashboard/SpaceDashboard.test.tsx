@@ -33,7 +33,7 @@ describe('SpaceDashboard tests', () => {
         window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
         const {component} = await createTestComponent();
         await fireEvent.click(component.getByTestId('editContributorsModal'));
-        expect(component.queryByTestId('invite-members')).toBeNull();
+        expect(component.queryByTestId('share-access')).toBeNull();
         expect(component.queryByTestId('sign-out')).not.toBeNull();
     });
 

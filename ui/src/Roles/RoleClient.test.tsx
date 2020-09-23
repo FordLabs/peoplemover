@@ -16,15 +16,14 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import LocationClient from './LocationClient';
+import RoleClient from './RoleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 
-describe('Location Client', function() {
+describe('Role Client', function() {
     const spaceUuid = 'uuid';
-    const baseLocationsUrl = `/api/spaces/${spaceUuid}/locations`;
-
     const cookies = new Cookies();
+    const baseRolesUrl = `/api/spaces/${spaceUuid}/roles`;
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
@@ -35,16 +34,16 @@ describe('Location Client', function() {
     beforeEach(() => {
         cookies.set('accessToken', '123456');
         Axios.post = jest.fn(x => Promise.resolve({
-            data: 'Created Location',
+            data: 'Created Role',
         } as AxiosResponse));
         Axios.put = jest.fn(x => Promise.resolve({
-            data: 'Updated Location',
+            data: 'Updated Role',
         } as AxiosResponse));
         Axios.delete = jest.fn(x => Promise.resolve({
-            data: 'Deleted Location',
+            data: 'Deleted Role',
         } as AxiosResponse));
         Axios.get = jest.fn(x => Promise.resolve({
-            data: 'Get Locations',
+            data: 'Get Roles',
         } as AxiosResponse));
     });
 
@@ -52,45 +51,49 @@ describe('Location Client', function() {
         cookies.remove('accessToken');
     });
 
-    it('should return all locations for space', function(done) {
-        LocationClient.get(spaceUuid)
+    it('should return all roles for space', function(done) {
+        RoleClient.get(spaceUuid)
             .then((response) => {
-                expect(Axios.get).toHaveBeenCalledWith(baseLocationsUrl,expectedConfig);
-                expect(response.data).toBe('Get Locations');
+                expect(Axios.get).toHaveBeenCalledWith(baseRolesUrl, expectedConfig);
+                expect(response.data).toBe('Get Roles');
                 done();
             });
 
     });
 
-    it('should create a location and return that location', function(done) {
-        const expectedLocationAddRequest = { name: TestUtils.annarbor.name };
-        LocationClient.add(expectedLocationAddRequest, spaceUuid)
+    it('should create a role and return that role', function(done) {
+        const expectedRoleAddRequest = { name: TestUtils.softwareEngineer.name };
+        RoleClient.add(expectedRoleAddRequest, spaceUuid)
             .then((response) => {
-                expect(Axios.post).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationAddRequest, expectedConfig);
-                expect(response.data).toBe('Created Location');
+                expect(Axios.post).toHaveBeenCalledWith(
+                    baseRolesUrl, expectedRoleAddRequest, expectedConfig
+                );
+                expect(response.data).toBe('Created Role');
                 done();
             });
     });
 
-    it('should update a location and return that location', function(done) {
-        const expectedLocationEditRequest = {
-            id: TestUtils.annarbor.id,
-            name: TestUtils.annarbor.name,
+    it('should edit a role and return that role', function(done) {
+        const expectedRoleEditRequest = {
+            id: TestUtils.softwareEngineer.id,
+            name: TestUtils.softwareEngineer.name,
         };
-        LocationClient.edit(expectedLocationEditRequest, spaceUuid)
+        RoleClient.edit(expectedRoleEditRequest, spaceUuid)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationEditRequest,expectedConfig);
-                expect(response.data).toBe('Updated Location');
+                expect(Axios.put).toHaveBeenCalledWith(
+                    baseRolesUrl, expectedRoleEditRequest, expectedConfig
+                );
+                expect(response.data).toBe('Updated Role');
                 done();
             });
     });
 
-    it('should delete a location', function(done) {
-        const expectedUrl = `${baseLocationsUrl}/${TestUtils.annarbor.id}`;
-        LocationClient.delete(TestUtils.annarbor.id, spaceUuid)
+    it('should delete a role', function(done) {
+        const expectedUrl = `${baseRolesUrl}/${TestUtils.softwareEngineer.id}`;
+        RoleClient.delete(TestUtils.softwareEngineer.id, spaceUuid)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
-                expect(response.data).toBe('Deleted Location');
+                expect(response.data).toBe('Deleted Role');
                 done();
             });
     });

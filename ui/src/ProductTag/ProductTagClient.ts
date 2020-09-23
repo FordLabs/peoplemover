@@ -22,55 +22,57 @@ import {TraitEditRequest} from '../Traits/TraitEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
 import {getToken} from '../Auth/TokenProvider';
 
-
 class ProductTagClient implements TraitClient {
+    private getBaseProductTagsUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/product-tags';
+    }
 
     async get(spaceUuid: string): Promise<AxiosResponse<Array<ProductTag>>> {
-        return Axios.get(
-            `/api/producttag/${spaceUuid}`,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`,
-                },
-            }
-        );
+        const url = this.getBaseProductTagsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 
     async add(productTagAddRequest: TraitAddRequest, spaceUuid: string ): Promise<AxiosResponse> {
-        return Axios.post(`/api/producttag/${spaceUuid}`,
-            productTagAddRequest,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`,
-                },
-            }
-        );
+        const url = this.getBaseProductTagsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, productTagAddRequest, config);
     }
 
     async edit(productTagEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<ProductTag>> {
-        return Axios.put(`/api/producttag/${spaceUuid}`,
-            productTagEditRequest,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`,
-                },
-            }
-        );
+        const url = this.getBaseProductTagsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, productTagEditRequest, config);
     }
 
-    async delete(id: number): Promise<AxiosResponse> {
-        const spaceUuid = window.location.pathname.substr(1);
-        return Axios.delete(`/api/producttag/${spaceUuid}/${id}`,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`,
-                },
-            }
-        );
+    async delete(productTagId: number, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseProductTagsUrl(spaceUuid) + `/${productTagId}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
     }
 }
 export default new ProductTagClient();

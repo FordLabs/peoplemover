@@ -23,8 +23,8 @@ import Cookies from 'universal-cookie';
 import {createEmptySpace} from './Space';
 
 describe('Space Client', function() {
-
     const baseSpaceUrl = `/api/spaces`;
+    const uuid = 'spaceUUID';
     const cookies = new Cookies();
     const expectedConfig = {
         headers: {
@@ -45,8 +45,9 @@ describe('Space Client', function() {
     });
 
     it('should return the space given a user', function(done) {
+        const url = baseSpaceUrl + '/user';
         SpaceClient.getSpacesForUser().then(() => {
-            expect(Axios.get).toHaveBeenCalledWith(baseSpaceUrl, expectedConfig);
+            expect(Axios.get).toHaveBeenCalledWith(url, expectedConfig);
             done();
         });
 
@@ -83,7 +84,7 @@ describe('Space Client', function() {
     });
 
     it('should invite users to a space', function(done) {
-        const expectedUrl = baseSpaceUrl + '/spaceUUID:invite';
+        const expectedUrl = `/api/spaces/${uuid}:invite`;
         const expectedData = {
             emails: ['email1@mail.com', 'email2@mail.com'],
         };

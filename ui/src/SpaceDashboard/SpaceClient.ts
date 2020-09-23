@@ -24,7 +24,7 @@ const baseSpaceUrl = `/api/spaces`;
 
 class SpaceClient {
     static async getSpacesForUser(): Promise<AxiosResponse<Space[]>> {
-        const url = baseSpaceUrl;
+        const url = baseSpaceUrl + '/user';
         const config = {
             headers: {
                 'Content-Type': 'application/json',

@@ -22,9 +22,12 @@ import {TraitClient} from '../Traits/TraitClient';
 import {getToken} from '../Auth/TokenProvider';
 
 class RoleClient implements TraitClient {
+    private getBaseRolesUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/roles';
+    }
 
     async get(spaceUuid: string): Promise<AxiosResponse> {
-        let url = `/api/role/${spaceUuid}`;
+        const url = this.getBaseRolesUrl(spaceUuid);
         let config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -36,7 +39,7 @@ class RoleClient implements TraitClient {
     }
 
     async add(role: RoleAddRequest, spaceUuid: string): Promise<AxiosResponse> {
-        let url = `/api/role/${spaceUuid}`;
+        const url = this.getBaseRolesUrl(spaceUuid);
         let config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -48,7 +51,7 @@ class RoleClient implements TraitClient {
     }
 
     async edit(role: RoleEditRequest, spaceUuid: string): Promise<AxiosResponse> {
-        let url = `/api/role/${spaceUuid}`;
+        const url = this.getBaseRolesUrl(spaceUuid);
         let config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -59,14 +62,15 @@ class RoleClient implements TraitClient {
         return Axios.put(url, role, config);
     }
 
-    async delete(roleId: number): Promise<AxiosResponse> {
-        let url = `/api/role/${roleId}`;
+    async delete(roleId: number, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(spaceUuid) + `/${roleId}`;
         let config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
         };
+
         return Axios.delete(url, config);
     }
 }

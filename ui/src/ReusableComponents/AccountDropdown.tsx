@@ -81,9 +81,9 @@ function AccountDropdown({
 
             {dropdownFlag && <div className={'dropdown-container'}>
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
-                    <div data-testid="invite-members" className="account-dropdown-options"
+                    <div data-testid="share-access" className="account-dropdown-options"
                         onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
-                        Invite Members
+                        Share Access
                     </div>
                 }
                 {!hideSpaceButtons &&
