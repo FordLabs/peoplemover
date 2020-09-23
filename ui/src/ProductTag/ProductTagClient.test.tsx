@@ -18,12 +18,22 @@
 import Axios, {AxiosResponse} from 'axios';
 import ProductTag from './ProductTagClient';
 import TestUtils from '../tests/TestUtils';
+import Cookies from 'universal-cookie';
 
 describe('Product Tags Client', function() {
     const spaceUuid = 'uuid';
     const baseProductTagsUrl = `/api/spaces/${spaceUuid}/product-tags`;
+    const expectedConfig = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 123456',
+        },
+    };
+    const cookies = new Cookies();
 
     beforeEach(() => {
+        cookies.set('accessToken', '123456');
+
         Axios.post = jest.fn(x => Promise.resolve({
             data: 'Created Product Tag',
         } as AxiosResponse));
@@ -38,10 +48,13 @@ describe('Product Tags Client', function() {
         } as AxiosResponse));
     });
 
+    afterEach(() => {
+        cookies.remove('accessToken');
+    });
+
     it('should return all product tags for space', function(done) {
         ProductTag.get(spaceUuid)
             .then((response) => {
-                const expectedConfig = { headers: { 'Content-Type': 'application/json' } };
                 expect(Axios.get).toHaveBeenCalledWith(baseProductTagsUrl, expectedConfig);
                 expect(response.data).toBe('Get Product Tags');
                 done();
@@ -53,7 +66,7 @@ describe('Product Tags Client', function() {
         const expectedProductAddRequest = { name: TestUtils.productTag1.name };
         ProductTag.add(expectedProductAddRequest, spaceUuid)
             .then((response) => {
-                expect(Axios.post).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductAddRequest);
+                expect(Axios.post).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductAddRequest, expectedConfig);
                 expect(response.data).toBe('Created Product Tag');
                 done();
             });
@@ -66,7 +79,7 @@ describe('Product Tags Client', function() {
         };
         ProductTag.edit(expectedProductEditRequest, spaceUuid)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductEditRequest);
+                expect(Axios.put).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Product Tag');
                 done();
             });
@@ -76,7 +89,7 @@ describe('Product Tags Client', function() {
         const expectedUrl = `${baseProductTagsUrl}/${TestUtils.productTag1.id}`;
         ProductTag.delete(TestUtils.productTag1.id, spaceUuid)
             .then((response) => {
-                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl);
+                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Product Tag');
                 done();
             });

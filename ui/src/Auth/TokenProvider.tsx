@@ -15,21 +15,9 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {getToken} from '../Auth/TokenProvider';
+import Cookies from 'universal-cookie';
 
-class ColorClient {
-    static async getAllColors(): Promise<AxiosResponse> {
-        return Axios.get(
-            `/api/color`,
-            {headers:
-                    {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getToken()}`,
-                    },
-            }
-        );
-    }
-}
-
-export default ColorClient;
+export const getToken = (): string => {
+    const cookies = new Cookies();
+    return cookies.get('accessToken');
+};

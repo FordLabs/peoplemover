@@ -18,12 +18,22 @@
 import Axios, {AxiosResponse} from 'axios';
 import LocationClient from './LocationClient';
 import TestUtils from '../tests/TestUtils';
+import Cookies from 'universal-cookie';
 
 describe('Location Client', function() {
     const spaceUuid = 'uuid';
     const baseLocationsUrl = `/api/spaces/${spaceUuid}/locations`;
 
+    const cookies = new Cookies();
+    const expectedConfig = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 123456',
+        },
+    };
+
     beforeEach(() => {
+        cookies.set('accessToken', '123456');
         Axios.post = jest.fn(x => Promise.resolve({
             data: 'Created Location',
         } as AxiosResponse));
@@ -38,10 +48,14 @@ describe('Location Client', function() {
         } as AxiosResponse));
     });
 
+    afterEach(function() {
+        cookies.remove('accessToken');
+    });
+
     it('should return all locations for space', function(done) {
         LocationClient.get(spaceUuid)
             .then((response) => {
-                expect(Axios.get).toHaveBeenCalledWith(baseLocationsUrl);
+                expect(Axios.get).toHaveBeenCalledWith(baseLocationsUrl,expectedConfig);
                 expect(response.data).toBe('Get Locations');
                 done();
             });
@@ -52,7 +66,7 @@ describe('Location Client', function() {
         const expectedLocationAddRequest = { name: TestUtils.annarbor.name };
         LocationClient.add(expectedLocationAddRequest, spaceUuid)
             .then((response) => {
-                expect(Axios.post).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationAddRequest);
+                expect(Axios.post).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationAddRequest, expectedConfig);
                 expect(response.data).toBe('Created Location');
                 done();
             });
@@ -65,7 +79,7 @@ describe('Location Client', function() {
         };
         LocationClient.edit(expectedLocationEditRequest, spaceUuid)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationEditRequest);
+                expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationEditRequest,expectedConfig);
                 expect(response.data).toBe('Updated Location');
                 done();
             });
@@ -75,7 +89,7 @@ describe('Location Client', function() {
         const expectedUrl = `${baseLocationsUrl}/${TestUtils.annarbor.id}`;
         LocationClient.delete(TestUtils.annarbor.id, spaceUuid)
             .then((response) => {
-                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl);
+                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Location');
                 done();
             });

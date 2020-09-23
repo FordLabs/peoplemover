@@ -16,11 +16,18 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
+import {getToken} from '../Auth/TokenProvider';
 
 export class AccessTokenClient {
     static async validateAccessToken(accessToken: string): Promise<AxiosResponse> {
         return Axios.post(`/api/access_token/validate`, {
             accessToken: accessToken,
+        },
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
         });
     }
 
@@ -28,6 +35,12 @@ export class AccessTokenClient {
         return Axios.post(`/api/access_token/authenticate`, {
             accessToken: accessToken,
             uuid: uuid,
+        },
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
         });
     }
 }

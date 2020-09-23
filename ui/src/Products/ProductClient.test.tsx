@@ -18,12 +18,22 @@
 import Axios, {AxiosResponse} from 'axios';
 import ProductClient from '../Products/ProductClient';
 import TestUtils from '../tests/TestUtils';
+import Cookies from 'universal-cookie';
 
 describe('Product Client', function() {
     const spaceUuid = 'uuid';
     const baseProductsUrl = `/api/spaces/${spaceUuid}/products`;
+    const expectedConfig = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 123456',
+        },
+    };
+    const cookies = new Cookies();
+
 
     beforeEach(() => {
+        cookies.set('accessToken', '123456');
         Axios.post = jest.fn(x => Promise.resolve({
             data: 'Created Product',
         } as AxiosResponse));
@@ -38,11 +48,15 @@ describe('Product Client', function() {
         } as AxiosResponse));
     });
 
+    afterEach(() => {
+        cookies.remove('accessToken');
+    });
+
     it('should create a product and return that product', function(done) {
         const expectedUrl = baseProductsUrl;
         ProductClient.createProduct(spaceUuid, TestUtils.productWithAssignments)
             .then((response) => {
-                expect(Axios.post).toHaveBeenCalledWith(expectedUrl, TestUtils.productWithAssignments);
+                expect(Axios.post).toHaveBeenCalledWith(expectedUrl, TestUtils.productWithAssignments, expectedConfig);
                 expect(response.data).toBe('Created Product');
                 done();
             });
@@ -52,7 +66,7 @@ describe('Product Client', function() {
         const expectedUrl = `${baseProductsUrl}/${TestUtils.productWithAssignments.id}`;
         ProductClient.editProduct(spaceUuid, TestUtils.productWithAssignments)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(expectedUrl, TestUtils.productWithAssignments);
+                expect(Axios.put).toHaveBeenCalledWith(expectedUrl, TestUtils.productWithAssignments, expectedConfig);
                 expect(response.data).toBe('Updated Product');
                 done();
             });
@@ -62,7 +76,7 @@ describe('Product Client', function() {
         const expectedUrl = `${baseProductsUrl}/${TestUtils.productWithAssignments.id}`;
         ProductClient.deleteProduct(spaceUuid, TestUtils.productWithAssignments)
             .then((response) => {
-                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl);
+                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Product');
                 done();
             });
@@ -71,9 +85,6 @@ describe('Product Client', function() {
     it('should return the products given a date', function(done) {
         const date = '2019-01-10';
         const expectedUrl = baseProductsUrl + `?requestedDate=${date}`;
-        const expectedConfig = {
-            headers: { 'Content-Type': 'application/json' },
-        };
         ProductClient.getProductsForDate(spaceUuid, new Date(2019, 0, 10))
             .then((response) => {
                 expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);

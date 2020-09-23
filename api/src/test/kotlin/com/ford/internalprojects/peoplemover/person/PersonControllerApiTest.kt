@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,9 +35,8 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -45,10 +44,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@ActiveProfiles("test")
 @RunWith(SpringRunner::class)
 class PersonControllerApiTest {
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -108,6 +106,7 @@ class PersonControllerApiTest {
         )
         assertThat(personRepository.count()).isZero()
         val result = mockMvc.perform(post(basePeopleUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(personToCreate)))
             .andExpect(status().isOk)
@@ -130,7 +129,8 @@ class PersonControllerApiTest {
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
         val result = mockMvc
-            .perform(get("/api/spaces/" + emptySpace.uuid + "/people"))
+            .perform(get("/api/spaces/" + emptySpace.uuid + "/people")
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
             .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
@@ -152,7 +152,8 @@ class PersonControllerApiTest {
             spaceId = otherSpace.id!!
         ))
         val result = mockMvc
-            .perform(get(basePeopleUrl))
+            .perform(get(basePeopleUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
             .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
@@ -165,7 +166,8 @@ class PersonControllerApiTest {
 
     @Test
     fun `GET should return 400 when requesting people from invalid space`() {
-        mockMvc.perform(get("/api/spaces/FiveNightsAtFreddys/people"))
+        mockMvc.perform(get("/api/spaces/FiveNightsAtFreddys/people")
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isBadRequest)
             .andReturn()
     }
@@ -182,6 +184,7 @@ class PersonControllerApiTest {
             spaceRole = engineer
         )
         val result = mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updatePersonRequest)))
             .andExpect(status().isOk)
@@ -201,6 +204,7 @@ class PersonControllerApiTest {
     fun `DELETE should return 400 when person does not exist`() {
         val notSavedPersonId = 1103
         mockMvc.perform(delete("$basePeopleUrl/$notSavedPersonId")
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest)
     }
@@ -217,6 +221,7 @@ class PersonControllerApiTest {
         assertThat(assignmentRepository.count()).isEqualTo(2)
 
         mockMvc.perform(delete("$basePeopleUrl/${personToDelete.id}")
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk)
 
@@ -233,7 +238,8 @@ class PersonControllerApiTest {
         personRepository.save(Person(name = "Jack", spaceId = space.id!!))
         personRepository.save(Person(name = "Jill", spaceId = space.id!!))
 
-        val request = mockMvc.perform(get("${basePeopleUrl}/total"))
+        val request = mockMvc.perform(get("${basePeopleUrl}/total")
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
             .andReturn()
 

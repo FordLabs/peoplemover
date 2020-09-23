@@ -20,15 +20,20 @@ import {Report} from './Report';
 import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
 import moment from 'moment';
+import {getToken} from '../Auth/TokenProvider';
 
 class ReportClient {
 
     static async getReportsWithNames(spaceName: string, spaceUuid: string, date: Date): Promise<void> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
-        return Axios.get(
-            `/api/reportgenerator/${spaceUuid}/${dateAsString}`,
-            {headers: { 'Content-Type': 'application/json'}}
-        ).then( response => {
+        let url = `/api/reportgenerator/${spaceUuid}/${dateAsString}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.get(url, config).then(response => {
             const jsonAsCsv = ReportClient.convertToCSV(response.data);
             fileDownload(jsonAsCsv, `${spaceName}_${date.toISOString().split('T')[0]}.csv`);
         });

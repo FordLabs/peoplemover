@@ -18,12 +18,22 @@
 import Axios, {AxiosResponse} from 'axios';
 import PeopleClient from './PeopleClient';
 import TestUtils from '../tests/TestUtils';
+import Cookies from 'universal-cookie';
 
 describe('People Client', function() {
     const spaceUuid = 'uuid';
     const basePeopleUrl = `/api/spaces/${spaceUuid}/people`;
+    const cookies = new Cookies();
+
+    const expectedConfig = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 123456',
+        },
+    };
 
     beforeEach(() => {
+        cookies.set('accessToken', '123456');
         Axios.post = jest.fn(x => Promise.resolve({
             data: 'Created Person',
         } as AxiosResponse));
@@ -38,10 +48,13 @@ describe('People Client', function() {
         } as AxiosResponse));
     });
 
+    afterEach(function() {
+        cookies.remove('accessToken');
+    });
+
     it('should return all people for space', function(done) {
         PeopleClient.getAllPeopleInSpace(spaceUuid)
             .then((response) => {
-                const expectedConfig = { headers: { 'Content-Type': 'application/json' } };
                 expect(Axios.get).toHaveBeenCalledWith(basePeopleUrl, expectedConfig);
                 expect(response.data).toBe('Get All People');
                 done();
@@ -53,9 +66,7 @@ describe('People Client', function() {
         const newPerson = TestUtils.person1;
         PeopleClient.createPersonForSpace(spaceUuid, newPerson)
             .then((response) => {
-                expect(Axios.post).toHaveBeenCalledWith(
-                    basePeopleUrl, newPerson
-                );
+                expect(Axios.post).toHaveBeenCalledWith(basePeopleUrl, newPerson, expectedConfig);
                 expect(response.data).toBe('Created Person');
                 done();
             });
@@ -66,7 +77,7 @@ describe('People Client', function() {
         const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
         PeopleClient.updatePerson(spaceUuid, updatedPerson)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson);
+                expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson, expectedConfig);
                 expect(response.data).toBe('Updated Person');
                 done();
             });
@@ -76,7 +87,7 @@ describe('People Client', function() {
         const expectedUrl = basePeopleUrl + `/${TestUtils.person1.id}`;
         PeopleClient.removePerson(spaceUuid, TestUtils.person1.id)
             .then((response) => {
-                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl);
+                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Person');
                 done();
             });

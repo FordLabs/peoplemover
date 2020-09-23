@@ -18,18 +18,20 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
+import {getToken} from '../Auth/TokenProvider';
 
 const baseSpaceUrl = `/api/spaces`;
 
 class SpaceClient {
-    static async getSpacesForUser(accessToken: string): Promise<AxiosResponse<Space[]>> {
+    static async getSpacesForUser(): Promise<AxiosResponse<Space[]>> {
         const url = baseSpaceUrl + '/user';
         const config = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`,
+                'Authorization': `Bearer ${getToken()}`,
             },
         };
+
         return Axios.get(url, config);
     }
 
@@ -38,34 +40,47 @@ class SpaceClient {
         const config = {
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
             },
         };
+
         return Axios.get(url, config);
     }
 
-    static async createSpaceForUser(spaceName: string, accessToken: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
+    static async createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
         const url = `${baseSpaceUrl}/user`;
         const data = { spaceName };
         const config = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`,
+                'Authorization': `Bearer ${getToken()}`,
             },
         };
+
         return Axios.post(url, data, config);
     }
 
     static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
         const url = `${baseSpaceUrl}/${uuid}`;
         const data = editedSpace;
-        return Axios.put(url, data);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, data, config);
     }
 
     static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
         const url = `${baseSpaceUrl}/${spaceUuid}:invite`;
         const data = { emails };
         const config = {
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
         };
         return Axios.put(url, data, config);
     }

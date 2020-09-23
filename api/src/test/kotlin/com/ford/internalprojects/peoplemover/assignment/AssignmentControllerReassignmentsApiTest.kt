@@ -35,6 +35,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -43,6 +44,7 @@ import java.time.LocalDate
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 class AssignmentControllerReassignmentsApiTest {
     @Autowired
@@ -62,9 +64,6 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -112,7 +111,7 @@ class AssignmentControllerReassignmentsApiTest {
                 spaceId = space.id!!
         ))
 
-        val assignment: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -131,7 +130,8 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productTwo.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -165,7 +165,7 @@ class AssignmentControllerReassignmentsApiTest {
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
-        val assignment: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -178,7 +178,8 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productThree.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -207,7 +208,7 @@ class AssignmentControllerReassignmentsApiTest {
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
-        val assignment: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr2),
@@ -220,7 +221,8 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productThree.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr2"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr2")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -236,7 +238,7 @@ class AssignmentControllerReassignmentsApiTest {
     @Test
     fun `GET should return reassignments with empty string fromProductName when there are no previous assignments`() {
 
-        val assignment: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
@@ -249,7 +251,8 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$mar1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$mar1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -264,14 +267,15 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should return no reassignment when fromProductName is empty and toProductName is unassigned`() {
-        val assignment: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$mar1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$mar1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -300,13 +304,13 @@ class AssignmentControllerReassignmentsApiTest {
                 spaceId = space.id!!
         ))
 
-        val assignmentForPersonTwo: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
-        val assignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -325,7 +329,8 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -375,7 +380,8 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = ""
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -418,7 +424,7 @@ class AssignmentControllerReassignmentsApiTest {
                 spaceId = space.id!!
         ))
 
-        val assignmentForPersonTwo: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -437,7 +443,8 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -467,7 +474,7 @@ class AssignmentControllerReassignmentsApiTest {
                 spaceId = space.id!!
         ))
 
-        val assignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -481,7 +488,7 @@ class AssignmentControllerReassignmentsApiTest {
                 spaceId = space.id!!
         ))
 
-        val assignmentForPersonTwo: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -500,7 +507,8 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -530,14 +538,14 @@ class AssignmentControllerReassignmentsApiTest {
                 spaceId = space.id!!
         ))
 
-        val assignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceId = space.id!!
         ))
 
-        val assignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
+        assignmentRepository.save(Assignment(
                 person = person,
                 productId = productFour.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -552,7 +560,8 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1"))
+        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 

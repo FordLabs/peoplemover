@@ -19,6 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {RoleAddRequest} from './RoleAddRequest';
 import {RoleEditRequest} from './RoleEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
+import {getToken} from '../Auth/TokenProvider';
 
 class RoleClient implements TraitClient {
     private getBaseRolesUrl(spaceUuid: string): string {
@@ -27,24 +28,50 @@ class RoleClient implements TraitClient {
 
     async get(spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseRolesUrl(spaceUuid);
-        return Axios.get(url);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 
     async add(role: RoleAddRequest, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseRolesUrl(spaceUuid);
-        const config = { headers: { 'Content-Type': 'application/json' } };
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
         return Axios.post(url, role, config);
     }
 
     async edit(role: RoleEditRequest, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseRolesUrl(spaceUuid);
-        const config = { headers: { 'Content-Type': 'application/json' } };
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
         return Axios.put(url, role, config);
     }
 
     async delete(roleId: number, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseRolesUrl(spaceUuid) + `/${roleId}`;
-        return Axios.delete(url);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
     }
 }
 

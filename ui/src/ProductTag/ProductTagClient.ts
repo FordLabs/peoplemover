@@ -20,6 +20,7 @@ import {ProductTag} from './ProductTag';
 import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import {TraitEditRequest} from '../Traits/TraitEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
+import {getToken} from '../Auth/TokenProvider';
 
 class ProductTagClient implements TraitClient {
     private getBaseProductTagsUrl(spaceUuid: string): string {
@@ -28,23 +29,50 @@ class ProductTagClient implements TraitClient {
 
     async get(spaceUuid: string): Promise<AxiosResponse<Array<ProductTag>>> {
         const url = this.getBaseProductTagsUrl(spaceUuid);
-        const config = {headers: {'Content-Type': 'application/json'}};
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
         return Axios.get(url, config);
     }
 
     async add(productTagAddRequest: TraitAddRequest, spaceUuid: string ): Promise<AxiosResponse> {
         const url = this.getBaseProductTagsUrl(spaceUuid);
-        return Axios.post(url, productTagAddRequest);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, productTagAddRequest, config);
     }
 
     async edit(productTagEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<ProductTag>> {
         const url = this.getBaseProductTagsUrl(spaceUuid);
-        return Axios.put(url, productTagEditRequest);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, productTagEditRequest, config);
     }
 
     async delete(productTagId: number, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseProductTagsUrl(spaceUuid) + `/${productTagId}`;
-        return Axios.delete(url);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
     }
 }
 export default new ProductTagClient();

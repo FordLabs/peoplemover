@@ -20,6 +20,7 @@ import {SpaceLocation} from './SpaceLocation';
 import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import {TraitEditRequest} from '../Traits/TraitEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
+import {getToken} from '../Auth/TokenProvider';
 
 class LocationClient implements TraitClient {
     private getBaseLocationsUrl(spaceUuid: string): string {
@@ -28,22 +29,50 @@ class LocationClient implements TraitClient {
 
     async get(spaceUuid: string): Promise<AxiosResponse<SpaceLocation[]>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
-        return Axios.get(url);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.get(url, config);
     }
 
     async add(locationAddRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseLocationsUrl(spaceUuid);
-        return Axios.post(url, locationAddRequest);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.post(url, locationAddRequest, config);
     }
 
     async edit(locationEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<SpaceLocation>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
-        return Axios.put(url, locationEditRequest);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.put(url, locationEditRequest, config);
     }
 
     async delete(locationId: number, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseLocationsUrl(spaceUuid) + `/${locationId}`;
-        return Axios.delete(url);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.delete(url, config);
     }
 }
 

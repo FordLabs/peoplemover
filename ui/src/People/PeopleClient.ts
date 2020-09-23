@@ -17,6 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Person} from './Person';
+import {getToken} from '../Auth/TokenProvider';
 
 class PeopleClient {
     private static getBasePeopleUrl(spaceUuid: string): string {
@@ -25,23 +26,50 @@ class PeopleClient {
 
     static async getAllPeopleInSpace(spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBasePeopleUrl(spaceUuid);
-        const config = { headers: { 'Content-Type': 'application/json' } };
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
         return Axios.get(url, config);
     }
 
     static async createPersonForSpace(spaceUuid: string, person: Person): Promise<AxiosResponse> {
         const url = this.getBasePeopleUrl(spaceUuid);
-        return Axios.post(url, person);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, person, config);
     }
 
     static async updatePerson(spaceUuid: string, person: Person): Promise<AxiosResponse> {
         const url = this.getBasePeopleUrl(spaceUuid) + `/${person.id}`;
-        return Axios.put(url, person);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, person, config);
     }
 
     static async removePerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
         const url = this.getBasePeopleUrl(spaceUuid) + `/${personId}`;
-        return Axios.delete(url);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
     }
 }
 

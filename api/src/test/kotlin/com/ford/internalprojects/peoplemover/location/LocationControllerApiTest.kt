@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,9 +31,8 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -41,6 +40,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
+@ActiveProfiles("test")
 @SpringBootTest
 class LocationControllerApiTest {
     @Autowired
@@ -54,9 +54,6 @@ class LocationControllerApiTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -82,11 +79,12 @@ class LocationControllerApiTest {
     @Test
     fun `GET should get Locations`() {
         val expectedLocations: Set<SpaceLocation> = newHashSet(
-            spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Mars")),
-            spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Venus"))
+                spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Mars")),
+                spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Venus"))
         )
 
-        val result = mockMvc.perform(get(baseLocationsUrl))
+        val result = mockMvc.perform(get(baseLocationsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
             .andReturn()
 
@@ -101,13 +99,15 @@ class LocationControllerApiTest {
     @Test
     fun `GET should return 400 when given bad space`() {
         val badLocationsUrl = "/api/spaces/tok1/locations"
-        mockMvc.perform(get(badLocationsUrl))
+        mockMvc.perform(get(badLocationsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET should return an empty set when no expected locations in db`() {
-        val result = mockMvc.perform(get(baseLocationsUrl))
+        val result = mockMvc.perform(get(baseLocationsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
             .andReturn()
         val actualSpaceLocations: Set<SpaceLocation> = objectMapper.readValue(
@@ -122,6 +122,7 @@ class LocationControllerApiTest {
         spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val duplicateLocationAddRequest = LocationAddRequest(name = "Germany")
         mockMvc.perform(post(baseLocationsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(duplicateLocationAddRequest)))
             .andExpect(status().isConflict)
@@ -131,6 +132,7 @@ class LocationControllerApiTest {
     fun `POST should add new space location to db and return it`() {
         val locationAddRequest = LocationAddRequest(name = "Germany")
         val result = mockMvc.perform(post(baseLocationsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(locationAddRequest)))
             .andExpect(status().isOk)
@@ -154,6 +156,7 @@ class LocationControllerApiTest {
         val location = LocationAddRequest(name = "Germany")
         val badLocationsUrl = "/api/spaces/okt/locations"
         mockMvc.perform(post(badLocationsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(location)))
             .andExpect(status().isBadRequest)
@@ -164,6 +167,7 @@ class LocationControllerApiTest {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val locationEditRequest = LocationEditRequest(id = spaceLocation.id!!, updatedName = "Dearborn")
         val result = mockMvc.perform(put(baseLocationsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(locationEditRequest)))
             .andExpect(status().isOk)
@@ -187,6 +191,7 @@ class LocationControllerApiTest {
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "France"))
         val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name.toLowerCase())
         mockMvc.perform(put(baseLocationsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(locationEditRequest)))
             .andExpect(status().isConflict)
@@ -195,7 +200,8 @@ class LocationControllerApiTest {
     @Test
     fun `DELETE should delete location from space`() {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
-        mockMvc.perform(delete("$baseLocationsUrl/${spaceLocation.id}"))
+        mockMvc.perform(delete("$baseLocationsUrl/${spaceLocation.id}")
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
 
         assertThat(spaceLocationRepository.count()).isZero()
@@ -203,7 +209,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `DELETE should delete space location from product`() {
-        val location: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId =  space.id!!, name = "Germany"))
+        val location: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val originalProduct: Product = productRepository.save(
             Product(
                 name = "Product1",
@@ -212,7 +218,8 @@ class LocationControllerApiTest {
             )
         )
         assertThat(spaceLocationRepository.count()).isOne()
-        mockMvc.perform(delete("$baseLocationsUrl/${location.id}"))
+        mockMvc.perform(delete("$baseLocationsUrl/${location.id}")
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
         assertThat(spaceLocationRepository.count()).isZero()
 
