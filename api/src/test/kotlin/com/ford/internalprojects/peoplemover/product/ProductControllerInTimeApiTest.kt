@@ -35,6 +35,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -44,11 +45,9 @@ import java.time.LocalDate
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ProductControllerInTimeApiTest {
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     private lateinit var productRepository: ProductRepository
@@ -81,10 +80,12 @@ class ProductControllerInTimeApiTest {
     val jun1 = "2019-06-01"
     val sep1 = "2019-09-01"
 
+    var baseProductsUrl: String = ""
+
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "tok"))
-        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
+        space = spaceRepository.save(Space(name = "tok", uuid = "kari-on-vacation-uuid"))
+        person = personRepository.save(Person(name = "Benjamin Button", newPerson = true, spaceId = space.id!!))
         product1 = productRepository.save(Product(
                 name = "product one",
                 startDate = LocalDate.parse(apr1),
@@ -97,6 +98,8 @@ class ProductControllerInTimeApiTest {
                 endDate = LocalDate.parse(jun1),
                 spaceId = space.id!!
         ))
+
+        baseProductsUrl = "/api/spaces/" + space.uuid + "/products"
     }
 
     @After
@@ -109,7 +112,8 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return all products given date when they are both active`() {
-        val result = mockMvc.perform(get("/api/product/${space.id}/$may1"))
+        val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$may1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -125,8 +129,9 @@ class ProductControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return all products even after end date has passed` () {
-        val result = mockMvc.perform(get("/api/product/${space.id}/$sep1"))
+    fun `GET should return all products even after end date has passed`() {
+        val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$sep1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -143,7 +148,8 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return only first product given date when only first product is active`() {
-        val result = mockMvc.perform(get("/api/product/${space.id}/$apr1"))
+        val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$apr1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -178,7 +184,8 @@ class ProductControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get("/api/product/${space.id}/$apr2"))
+        val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$apr2")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -197,7 +204,8 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return no products for date that is before both start dates`() {
-        val result = mockMvc.perform(get("/api/product/${space.id}/$mar1"))
+        val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$mar1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -217,7 +225,8 @@ class ProductControllerInTimeApiTest {
                 spaceId = space.id!!
         ))
 
-        val result = mockMvc.perform(get("/api/product/${space.id}/$sep1"))
+        val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$sep1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -234,24 +243,24 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `PUT should update assignments when moving start date to future date`() {
-        assignmentRepository.save(Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
+        assignmentRepository.save(Assignment(person = person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
 
         val newProductStartDate = LocalDate.parse(apr2)
 
         val productEditRequest = ProductEditRequest(
                 name = product1.name,
-                spaceId = space.id!!,
                 id = product1.id!!,
                 startDate = newProductStartDate
         )
 
-        val result = mockMvc.perform(put("/api/product/${product1.id}")
+        val result = mockMvc.perform(put(baseProductsUrl + "/" + product1.id)
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val expectedAssignment = Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
+        val expectedAssignment = Assignment(person = person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
         val actualAssignment = assignmentRepository.findAll().first()
 
         assertThat(assignmentRepository.count()).isOne()
@@ -267,26 +276,30 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `PUT should not alter other assignments when moving start date to future date`() {
-        val untouchedAssignment = assignmentRepository.save(Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1)))
-        assignmentRepository.save(Assignment(person= person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1)))
+        val untouchedAssignment = assignmentRepository.save(
+                Assignment(person = person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1))
+        )
+        assignmentRepository.save(
+                Assignment(person = person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1))
+        )
 
         val newProductStartDate = LocalDate.parse(may2)
 
         val productEditRequest = ProductEditRequest(
                 name = product2.name,
-                spaceId = space.id!!,
                 id = product2.id!!,
                 startDate = newProductStartDate
         )
 
-        val result = mockMvc.perform(put("/api/product/${product2.id}")
+        mockMvc.perform(put(baseProductsUrl + "/" + product2.id)
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val expectedSameAssignment = Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
-        val expectedNewAssignment = Assignment(person= person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
+        val expectedSameAssignment = Assignment(person = person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
+        val expectedNewAssignment = Assignment(person = person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = newProductStartDate)
         val actualAssignments = assignmentRepository.findAll().toList()
 
         assertThat(assignmentRepository.count()).isEqualTo(3)
@@ -297,19 +310,19 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `PUT should delete old assignment when moving start date of product to future date while person is on a different`() {
-        assignmentRepository.save(Assignment(person= person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
-        val currentAssignment = assignmentRepository.save(Assignment(person= person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1)))
+        assignmentRepository.save(Assignment(person = person, productId = product1.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(apr1)))
+        val currentAssignment = assignmentRepository.save(Assignment(person = person, productId = product2.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(may1)))
 
         val newProductStartDate = LocalDate.parse(may2)
 
         val productEditRequest = ProductEditRequest(
                 name = product1.name,
-                spaceId = space.id!!,
                 id = product1.id!!,
                 startDate = newProductStartDate
         )
 
-        mockMvc.perform(put("/api/product/${product1.id}")
+        mockMvc.perform(put(baseProductsUrl + "/" + product1.id)
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
@@ -320,6 +333,4 @@ class ProductControllerInTimeApiTest {
         assertThat(assignmentRepository.count()).isOne()
         assertThat(actualAssignments.first()).isEqualTo(currentAssignment)
     }
-
-
 }

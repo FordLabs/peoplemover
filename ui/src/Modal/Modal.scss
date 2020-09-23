@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import './Form.scss';
 
 .modalContainer {
     position: fixed;
@@ -70,6 +71,7 @@
 .closeButton {
     cursor: pointer;
     border-radius: 50%;
+    color: $gray-1;
 }
 
 button.closeButton {

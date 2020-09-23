@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,18 +16,31 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
+import {getToken} from '../Auth/TokenProvider';
 
 export class AccessTokenClient {
     static async validateAccessToken(accessToken: string): Promise<AxiosResponse> {
         return Axios.post(`/api/access_token/validate`, {
             accessToken: accessToken,
+        },
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
         });
     }
 
-    static async userCanAccessSpace(accessToken: string, spaceName: string): Promise<AxiosResponse> {
+    static async userCanAccessSpace(accessToken: string, uuid: string): Promise<AxiosResponse> {
         return Axios.post(`/api/access_token/authenticate`, {
             accessToken: accessToken,
-            spaceName: spaceName,
+            uuid: uuid,
+        },
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
         });
     }
 }

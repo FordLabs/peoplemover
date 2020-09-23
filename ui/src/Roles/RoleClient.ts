@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,32 +19,59 @@ import Axios, {AxiosResponse} from 'axios';
 import {RoleAddRequest} from './RoleAddRequest';
 import {RoleEditRequest} from './RoleEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
+import {getToken} from '../Auth/TokenProvider';
 
 class RoleClient implements TraitClient {
-
-    async get(spaceName: string): Promise<AxiosResponse> {
-        return Axios.get('/api/role/' + spaceName
-        );
+    private getBaseRolesUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/roles';
     }
 
-    async add(role: RoleAddRequest, spaceName: string): Promise<AxiosResponse> {
-        return Axios.post('/api/role/' + spaceName,
-            role,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+    async get(spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(spaceUuid);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 
-    async edit(role: RoleEditRequest, spaceName: string): Promise<AxiosResponse> {
-        return Axios.put('/api/role/' + spaceName,
-            role,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+    async add(role: RoleAddRequest, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(spaceUuid);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, role, config);
     }
 
-    async delete(roleId: number): Promise<AxiosResponse> {
-        return Axios.delete(
-            `/api/role/${roleId}`,
-        );
+    async edit(role: RoleEditRequest, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(spaceUuid);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, role, config);
+    }
+
+    async delete(roleId: number, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(spaceUuid) + `/${roleId}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
     }
 }
 

@@ -18,11 +18,13 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.AuthService
 import com.ford.internalprojects.peoplemover.auth.OAuthVerifyResponse
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
+import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -36,28 +38,27 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
+@ActiveProfiles("test")
 @SpringBootTest
 class SpaceControllerApiTest {
-
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
-
-    @MockBean
-    lateinit var authService: AuthService
 
     @Autowired
     private lateinit var spaceRepository: SpaceRepository
 
     @Autowired
     private lateinit var productRepository: ProductRepository
+
+    @Autowired
+    private lateinit var assignmentRepository: AssignmentRepository
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -68,41 +69,23 @@ class SpaceControllerApiTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
+    var baseSpaceUrl: String = "/api/spaces"
 
     @After
     fun tearDown() {
+        assignmentRepository.deleteAll()
         productRepository.deleteAll()
         spaceRepository.deleteAll()
         userSpaceMappingRepository.deleteAll()
     }
 
     @Test
-    fun `POST should create space with given name`() {
-        val spaceNameToCreate = "Ken Carson"
-
-        val result = mockMvc.perform(post("/api/space")
-                .content(spaceNameToCreate))
-                .andExpect(status().isOk).andReturn()
-
-        val actualSpace: Space = objectMapper.readValue(
-                result.response.contentAsString,
-                Space::class.java
-        )
-
-        assertThat(spaceRepository.count()).isOne()
-        assertThat(spaceRepository.findByNameIgnoreCase(spaceNameToCreate)).isNotNull()
-        assertThat(actualSpace.name).isEqualTo(spaceNameToCreate)
-    }
-
-    @Test
     fun `POST should create Space and Add Current User to Space`() {
         val request = SpaceCreationRequest(spaceName = "New Space")
         val accessToken = "TOKEN"
+        val expectedUserId = "USER_ID"
 
-        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "USER_ID")
-        `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
-
-        val result = mockMvc.perform(post("/api/user/space")
+        val result = mockMvc.perform(post("$baseSpaceUrl/user")
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer $accessToken")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -114,45 +97,20 @@ class SpaceControllerApiTest {
                 SpaceResponse::class.java
         )
         assertThat(actualSpaceResponse.space.name).isEqualTo(request.spaceName)
+        assertThat(actualSpaceResponse.space.createdBy).isEqualTo(expectedUserId)
         assertThat(spaceRepository.findAll().first().name).isEqualTo(request.spaceName)
         val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAll()
         assertThat(userSpaceMappings).hasSize(1)
-        assertThat(userSpaceMappings[0].userId).isEqualTo("USER_ID")
+        assertThat(userSpaceMappings[0].userId).isEqualTo(expectedUserId)
         assertThat(userSpaceMappings[0].spaceId).isEqualTo(actualSpaceResponse.space.id)
-    }
-
-    @Test
-    fun `POST should create default product, and unassigned product when creating space`() {
-        val result = mockMvc.perform(post("/api/space")
-                .content("Ken Carson"))
-                .andExpect(status().isOk)
-                .andReturn()
-
-        val actualSpaceResponse: Space = objectMapper.readValue(
-                result.response.contentAsString,
-                Space::class.java
-        )
-
-        assertThat(productRepository.count()).isOne()
-        checkAutoGeneratedProduct("unassigned", actualSpaceResponse.id!!)
-    }
-
-    @Test
-    fun `POST should return 400 when not given name or post body`() {
-        mockMvc.perform(post("/api/space"))
-                .andExpect(status().isBadRequest)
-        mockMvc.perform(post("/api/space")
-                .content(""))
-                .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `POST should return 401 when token is not valid`() {
         val request = SpaceCreationRequest(spaceName = "New Space")
-        val token = "TOKEN"
-        `when`(authService.validateToken(token)).thenThrow(InvalidTokenException())
+        val token = "INVALID_TOKEN"
 
-        mockMvc.perform(post("/api/user/space")
+        mockMvc.perform(post("$baseSpaceUrl/user")
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer $token")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -162,21 +120,13 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `POST should return 409 when space name already exists`() {
-        spaceRepository.save(Space(name = "NaNy NaNd"))
-
-        mockMvc.perform(post("/api/space")
-                .content("NaNy NaNd"))
-                .andExpect(status().isConflict)
-    }
-
-    @Test
     fun `GET should return all spaces`() {
         val space1: Space = spaceRepository.save(Space(name = "Ken Masters"))
         val space2: Space = spaceRepository.save(Space(name = "KenM"))
         val space3: Space = spaceRepository.save(Space(name = "Ken Starr"))
 
-        val result = mockMvc.perform(get("/api/space"))
+        val result = mockMvc.perform(get(baseSpaceUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk).andReturn()
 
         val actual: List<Space> = objectMapper.readValue(result.response.contentAsString,
@@ -193,7 +143,8 @@ class SpaceControllerApiTest {
         spaceRepository.save(Space(name = "KenM"))
         spaceRepository.save(Space(name = "Ken Starr"))
 
-        val result = mockMvc.perform(get("/api/space/total"))
+        val result = mockMvc.perform(get("$baseSpaceUrl/total")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk).andReturn()
 
         val actual: Int = result.response.contentAsString.toInt()
@@ -207,14 +158,12 @@ class SpaceControllerApiTest {
         val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
         spaceRepository.save(Space(name = "SpaceThree"))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "userId", spaceId = space1.id))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "userId", spaceId = space2.id))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = space1.id))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = space2.id))
 
         val accessToken = "TOKEN"
-        val authVerifyResponse = OAuthVerifyResponse("", listOf("SpaceOne", "SpaceTwo"), 1, "", "userId")
-        `when`(authService.validateToken(accessToken)).thenReturn(authVerifyResponse)
 
-        val result = mockMvc.perform(get("/api/user/space")
+        val result = mockMvc.perform(get("$baseSpaceUrl/user")
                 .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -233,7 +182,8 @@ class SpaceControllerApiTest {
     fun `GET should return correct space for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
-        val result = mockMvc.perform(get("/api/space/${space1.name}"))
+        val result = mockMvc.perform(get(baseSpaceUrl + "/" + space1.uuid)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -248,24 +198,54 @@ class SpaceControllerApiTest {
     @Test
     fun `GET should return 401 when access token is invalid`() {
         val accessToken = "INVALID_TOKEN"
-        `when`(authService.validateToken(accessToken)).thenThrow(InvalidTokenException())
-        mockMvc.perform(get("/api/user/space")
+        mockMvc.perform(get("$baseSpaceUrl/user")
                 .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isUnauthorized)
     }
 
     @Test
     fun `GET should return 400 if space does not exist`() {
-        mockMvc.perform(get("/api/space/badSpace"))
+        mockMvc.perform(get("$baseSpaceUrl/badSpace")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
-    private fun checkAutoGeneratedProduct(name: String, expectedSpaceId: Int) {
-        val product: Product = productRepository.findByName(name)!!
+    @Test
+    fun `PUT should return 200 if space is edited correctly`() {
+        val space = spaceRepository.save(Space(name = "test"))
+        val editedSpace = SpaceRequest(name = "edited")
 
-        assertThat(product.spaceId).isEqualTo(expectedSpaceId)
-        assertThat(product.spaceLocation?.name).isNull()
-        assertThat(product.dorf).isNullOrEmpty()
-        assertThat(product.notes).isNullOrEmpty()
+        mockMvc.perform(put(baseSpaceUrl + "/" + space.uuid)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualSpace = spaceRepository.findByUuid(space.uuid)
+        assertThat(actualSpace!!.name).isEqualTo("edited")
+    }
+
+    @Test
+    fun `PUT should return 400 if space does not exist`() {
+        val editedSpace = SpaceRequest(name = "edited")
+        val uuid = UUID.randomUUID().toString()
+        mockMvc.perform(put("$baseSpaceUrl/$uuid")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `PUT New Space Name is Too Long`() {
+        val space = spaceRepository.save(Space(name = "space"))
+        val editedSpace = SpaceRequest(name = "12345678901234567890123456789012345678901")
+
+        mockMvc.perform(put(baseSpaceUrl + "/" + space.uuid)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isBadRequest)
     }
 }

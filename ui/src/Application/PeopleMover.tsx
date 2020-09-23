@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 
 import React, {useEffect, useState} from 'react';
 
-import './Styleguide/Styleguide.scss';
+import './Styleguide/Main.scss';
 import './PeopleMover.scss';
 
 import ProductGraveyard from '../Products/ProductGraveyard';
@@ -82,15 +82,15 @@ function PeopleMover({
         async function RenderPage(): Promise<void> {
             if (currentModal.modal === null) {
                 try {
-                    const spaceName = window.location.pathname.replace('/', '');
-                    await SpaceClient.getSpaceFromName(spaceName)
+                    const uuid = window.location.pathname.replace('/', '');
+                    await SpaceClient.getSpaceFromUuid(uuid)
                         .then(response => {
                             setCurrentSpace(response.data);
                         });
                     await fetchProducts();
                     await fetchProductTags();
                     await fetchLocations();
-                    const peopleInSpace = (await PeopleClient.getAllPeopleInSpace()).data;
+                    const peopleInSpace = (await PeopleClient.getAllPeopleInSpace(uuid)).data;
 
                     setPeople(peopleInSpace);
                 } catch (err) {
@@ -116,7 +116,7 @@ function PeopleMover({
         !hasProducts()
             ? <></>
             : <div className="App">
-                <div className={currentModal.modal !== null ? 'noOverflow' : ''}>
+                <div>
                     <Header/>
                     <SpaceSelectionTabs/>
                     <div className="productAndAccordionContainer">
@@ -136,6 +136,7 @@ function PeopleMover({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentModal: state.currentModal,
     currentSpace: state.currentSpace,
@@ -152,3 +153,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleMover);
+/* eslint-enable */

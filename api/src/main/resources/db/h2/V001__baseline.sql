@@ -1,9 +1,10 @@
 create table space
 (
-    id    int          not null identity primary key,
+    id   int         not null identity primary key,
     uuid varchar(36) not null,
     name varchar(255) not null unique,
-    last_modified_date datetime
+    last_modified_date datetime,
+    created_by varchar(40)
 );
 
 create table color
@@ -73,7 +74,7 @@ create table assignment
     person_id           int,
     space_id            int,
 
-    FOREIGN KEY (product_id) REFERENCES product (id),
+    FOREIGN KEY (product_id) REFERENCES product (id) on delete cascade,
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
     FOREIGN KEY (person_id) REFERENCES person (id) on delete cascade,
     constraint UQ_Assignment unique (product_id, person_id, effective_date)

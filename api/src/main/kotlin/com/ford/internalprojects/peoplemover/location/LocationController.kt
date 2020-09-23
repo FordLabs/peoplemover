@@ -21,48 +21,46 @@ import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("/api/location/{spaceToken}")
+@RequestMapping("/api/spaces/{spaceUuid}/locations")
 @RestController
 class LocationController(
-        private val locationService: LocationService,
-        private val logger: BasicLogger
+    private val locationService: LocationService,
+    private val logger: BasicLogger
 ) {
     @GetMapping
-    fun getLocationsForSpace(@PathVariable spaceToken: String): ResponseEntity<Set<SpaceLocation>> {
-        val locationsForSpace: Set<SpaceLocation> = locationService.getLocationsForSpace(spaceToken)
-        logger.logInfoMessage("All location retrieved for space: [$spaceToken].")
+    fun getLocationsForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceLocation>> {
+        val locationsForSpace: Set<SpaceLocation> = locationService.getLocationsForSpace(spaceUuid)
+        logger.logInfoMessage("All location retrieved for space: [$spaceUuid].")
         return ResponseEntity.ok(locationsForSpace)
     }
 
     @PostMapping
     fun addLocationForSpace(
-            @PathVariable spaceToken: String,
-            @RequestBody locationAddRequest: LocationAddRequest
+        @PathVariable spaceUuid: String,
+        @RequestBody locationAddRequest: LocationAddRequest
     ): ResponseEntity<SpaceLocation> {
-        val addedLocation: SpaceLocation = locationService.addLocationToSpace(spaceToken, locationAddRequest)
-        logger.logInfoMessage("Location [${addedLocation.name}] is created for space: [$spaceToken].")
+        val addedLocation: SpaceLocation = locationService.addLocationToSpace(spaceUuid, locationAddRequest)
         return ResponseEntity.ok(addedLocation)
     }
 
     @PutMapping
     fun editLocationForSpace(
-            @PathVariable spaceToken: String,
-            @RequestBody locationEditRequest: LocationEditRequest
+        @PathVariable spaceUuid: String,
+        @RequestBody locationEditRequest: LocationEditRequest
     ): ResponseEntity<SpaceLocation> {
-        val editedLocation: SpaceLocation = locationService.editLocation(spaceToken, locationEditRequest)
+        val editedLocation: SpaceLocation = locationService.editLocation(spaceUuid, locationEditRequest)
         logger.logInfoMessage("Location with id [${editedLocation.id}] is updated to have name " +
-                "[${editedLocation.name}] in space: [$spaceToken].")
+                "[${editedLocation.name}] in space: [$spaceUuid].")
         return ResponseEntity.ok(editedLocation)
     }
 
     @DeleteMapping(path = ["/{locationId}"])
     fun deleteLocationForSpace(
-            @PathVariable spaceToken: String,
-            @PathVariable locationId: Int
+        @PathVariable spaceUuid: String,
+        @PathVariable locationId: Int
     ): ResponseEntity<Unit> {
-        locationService.deleteLocation(spaceToken, locationId)
-        logger.logInfoMessage("Deleted location with id [$locationId] in space: [$spaceToken].")
+        locationService.deleteLocation(locationId)
+        logger.logInfoMessage("Deleted location with id [$locationId] in space: [$spaceUuid].")
         return ResponseEntity.ok().build()
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,7 @@ import {Space} from '../../SpaceDashboard/Space';
 import {Product} from '../../Products/Product';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import {SpaceLocation} from '../../Locations/SpaceLocation';
+import userSpacesReducer from './userSpacesReducer';
 
 export type SortByType = 'location' | 'product-tag' | 'name'
 
@@ -50,6 +51,7 @@ export default combineReducers({
     products: productsReducer,
     productTags: productTagsReducer,
     locations: locationsReducer,
+    userSpaces: userSpacesReducer,
 });
 
 export interface GlobalStateProps {
@@ -65,4 +67,5 @@ export interface GlobalStateProps {
     products: Array<Product>;
     productTags: Array<ProductTag>;
     locations: Array<SpaceLocation>;
+    userSpaces: Array<Space>;
 }

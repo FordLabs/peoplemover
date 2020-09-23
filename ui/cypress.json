@@ -2,7 +2,7 @@
   "baseUrl": "http://localhost:3000",
   "integrationFolder": "cypress/e2e",
   "env": {
-    "BASE_API_URL": "http://localhost:8080/api",
-    "SPACE_ID": "flippingsweet"
+    "BASE_API_URL": "http://localhost:8080",
+    "SPACE_UUID": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
   }
 }

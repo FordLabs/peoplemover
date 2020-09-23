@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +36,7 @@
     font-family: inherit;
     font-weight: inherit;
     font-size: 12px;
-    color: $gray-3;
+    color: $gray-1;
 
     border: 1px solid $gray-4;
     box-sizing: border-box;
@@ -59,16 +59,9 @@
 
     button {
       flex: 1;
-      box-sizing: border-box;
-      border-radius: 6px;
 
       &.editContributorsCancelButton {
         margin-right: 16px;
-
-        background: white;
-        color: $prime-1;
-
-        border: 1px solid #4F5FAB;
       }
     }
   }

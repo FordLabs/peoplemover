@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,9 +30,9 @@ import {BrowserRouter as Router, Redirect} from 'react-router-dom';
 import Error404Page from './Application/Error404Page';
 import LandingPage from './LandingPage/LandingPage';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
-import AuthorizedRoute from './Validation/AuthorizedRoute';
+import AuthorizedRoute from './Auth/AuthorizedRoute';
 import OAuthRedirect from './ReusableComponents/OAuthRedirect';
-import {AuthenticatedRoute} from './AuthenticatedRoute';
+import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
 

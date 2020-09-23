@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  */
 
 import {render, RenderResult, wait} from '@testing-library/react';
-import AuthorizedRoute from '../Validation/AuthorizedRoute';
+import AuthorizedRoute from '../Auth/AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosResponse} from 'axios';
 import {Router} from 'react-router';

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
 import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
 
@@ -33,6 +33,12 @@ function Modal({
 }: ModalProps): JSX.Element | null {
     const [shouldShowConfirmCloseModal, setShouldShowConfirmCloseModal] = useState<boolean>(false);
     const [confirmCloseModal, setConfirmCloseModal] = useState<JSX.Element | null>(null);
+
+    useEffect(() => {
+        let bodyOverflowState = 'unset';
+        if (modalForm !== null) bodyOverflowState = 'hidden';
+        document.body.style.overflow = bodyOverflowState;
+    }, [modalForm]);
 
     let customModalForm = null;
 
@@ -61,7 +67,7 @@ function Modal({
         }
     }
 
-    if (modalForm != null) {
+    if (modalForm !== null) {
         customModalForm = React.cloneElement(
             modalForm,
             {setShouldShowConfirmCloseModal: setShouldShowConfirmCloseModal}

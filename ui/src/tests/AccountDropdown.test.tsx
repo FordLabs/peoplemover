@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,8 @@ describe('Account Dropdown',  () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
+        SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
+
         // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
@@ -52,16 +54,16 @@ describe('Account Dropdown',  () => {
         });
     });
 
-    it('Should open Invite Members modal on click of text in dropdown',  async () => {
+    it('Should open Share Access modal on click of text in dropdown',  async () => {
         await act( async () => {
-            fireEvent.click(await app.findByText('Invite Members'));
+            fireEvent.click(await app.findByTestId('share-access'));
         });
-        expect(app.getByText('Invite Members'));
+        expect(app.getByText('Share Access'));
     });
 
     it('should close Edit Contributors modal on click of Cancel button', async () => {
         await act( async () => {
-            fireEvent.click(await app.findByText('Invite Members'));
+            fireEvent.click(await app.findByTestId('share-access'));
             const cancelButton = await app.findByText('Cancel');
             fireEvent.click(cancelButton);
         });
@@ -70,8 +72,7 @@ describe('Account Dropdown',  () => {
 
     it('should submit invited contributors, current space name, and access token on click of Invite button', async () => {
         await act( async () => {
-            fireEvent.click(await app.findByText('Invite Members'));
-            SpaceClient.inviteUsersToSpace = jest.fn().mockImplementation(() => Promise.resolve({}));
+            fireEvent.click(await app.findByTestId('share-access'));
 
             const usersToInvite = app.getByTestId('emailTextArea');
             fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});

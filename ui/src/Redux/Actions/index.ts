@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,7 @@ import {ProductTag} from '../../ProductTag/ProductTag';
 import ProductTagClient from '../../ProductTag/ProductTagClient';
 import {SpaceLocation} from '../../Locations/SpaceLocation';
 import LocationClient from '../../Locations/LocationClient';
+import SpaceClient from '../../SpaceDashboard/SpaceClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -47,6 +48,7 @@ export enum AvailableActions {
     SET_PRODUCT_TAGS,
     SET_LOCATIONS,
     SET_PRODUCT_SORT_BY,
+    SET_USER_SPACES,
 }
 
 export enum AvailableModals {
@@ -61,6 +63,7 @@ export enum AvailableModals {
     MY_TAGS,
     MY_ROLES_MODAL,
     CREATE_SPACE,
+    EDIT_SPACE,
     EDIT_CONTRIBUTORS,
     CONTRIBUTORS_CONFIRMATION,
 }
@@ -145,10 +148,24 @@ export const setProductSortByAction = (productSortBy: string) => ({
     productSortBy,
 });
 
+export const setUserSpacesAction = (userSpaces: Array<Space>) => ({
+    type: AvailableActions.SET_USER_SPACES,
+    userSpaces,
+});
+
+export const fetchUserSpacesAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
+    (dispatch: Dispatch): Promise<void> => {
+        return SpaceClient.getSpacesForUser()
+            .then(result => {
+                const spaces: Array<Space> = result.data || [];
+                dispatch(setUserSpacesAction(spaces));
+            });
+    };
+
 export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return ProductClient.getProductsForDate(
-            getState().currentSpace.id,
+            getState().currentSpace.uuid,
             getState().viewingDate
         ).then(result => {
             const products: Array<Product> = result.data || [];
@@ -162,12 +179,16 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
 
 export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return ProductTagClient.get(getState().currentSpace.name,)
+        return ProductTagClient.get(getState().currentSpace.uuid!!,)
             .then(result => {
                 let productTags: Array<ProductTag> = result.data || [];
                 productTags = productTags.sort((a, b) => {
-                    if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-                    if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+                    if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                        return -1;
+                    }
+                    if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                        return 1;
+                    }
                     return 0;
                 });
                 dispatch(setProductTagsAction(productTags));
@@ -176,12 +197,16 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
 
 export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return LocationClient.get(getState().currentSpace.name,)
+        return LocationClient.get(getState().currentSpace.uuid,)
             .then(result => {
                 let locations: Array<SpaceLocation> = result.data || [];
                 locations = locations.sort((a, b) => {
-                    if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-                    if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+                    if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                        return -1;
+                    }
+                    if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                        return 1;
+                    }
                     return 0;
                 });
                 dispatch(setLocationsAction(locations));

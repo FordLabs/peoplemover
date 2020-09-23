@@ -19,27 +19,26 @@ package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.ProductService
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceAlreadyExistsException
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import com.ford.internalprojects.peoplemover.utilities.HelperUtils
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import java.sql.Timestamp
+import java.util.*
 
 @Service
 class SpaceService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
-        private val authService: AuthService,
         private val userSpaceMappingRepository: UserSpaceMappingRepository
         ) {
 
-    fun createSpaceWithName(spaceName: String): Space {
-        spaceRepository.findByNameIgnoreCase(spaceName)
-                ?.let { throw SpaceAlreadyExistsException(spaceName) }
+    fun createSpaceWithName(spaceName: String, createdBy: String): Space {
         if (spaceName.isEmpty()) {
             throw SpaceNotExistsException(spaceName)
         } else {
             val savedSpace = spaceRepository.save(
-                    Space(name = spaceName, lastModifiedDate = HelperUtils.currentTimeStamp)
+                    Space(name = spaceName, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
             )
             productService.createDefaultProducts(savedSpace);
             return savedSpace
@@ -51,11 +50,11 @@ class SpaceService(
     }
 
     fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
-        val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
-         createSpaceWithName(spaceName).let { createdSpace ->
+        val userId: String = SecurityContextHolder.getContext().authentication.principal.toString()
+        createSpaceWithName(spaceName, userId).let { createdSpace ->
              userSpaceMappingRepository.save(
                      UserSpaceMapping(
-                             userId = validateResponse.sub!!,
+                             userId = userId,
                              spaceId = createdSpace.id
                      )
              )
@@ -64,12 +63,27 @@ class SpaceService(
     }
 
     fun getSpacesForUser(accessToken: String): List<Space> {
-            val validateResponse: OAuthVerifyResponse = authService.validateToken(accessToken)
-            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(validateResponse.sub).map{ mapping -> mapping.spaceId!! }.toList()
+            val principal: String = SecurityContextHolder.getContext().authentication.principal.toString()
+            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(principal).map{ mapping -> mapping.spaceId!! }.toList()
             return spaceRepository.findAllByIdIn(spaceIds)
     }
 
-    fun getSpace(spaceName: String): Space {
-        return spaceRepository.findByNameIgnoreCase(spaceName) ?: throw SpaceNotExistsException()
+    fun getSpace(uuid: String): Space {
+        return spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
+    }
+
+    fun deleteSpace(uuid: String){
+        spaceRepository.deleteByUuid(uuid)
+    }
+
+    fun editSpace(uuid: String, spaceRequest: SpaceRequest) {
+        if(spaceRequest.name.length > 40){
+           throw SpaceNameTooLongException()
+        }
+        var editedSpace = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
+        editedSpace.name = spaceRequest.name
+        editedSpace.lastModifiedDate = Timestamp(Date().time)
+
+        spaceRepository.save(editedSpace)
     }
 }

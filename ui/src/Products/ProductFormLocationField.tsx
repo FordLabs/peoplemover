@@ -39,11 +39,11 @@ function ProductFormLocationField({
     const [typedInLocation, setTypedInLocation] = useState<string>('');
 
     useEffect(() => {
-        LocationClient.get(currentSpace.name)
+        LocationClient.get(currentSpace.uuid!!)
             .then(result => {
                 setAvailableLocations(result.data);
             });
-    }, [currentSpace.name]);
+    }, [currentSpace.uuid]);
 
     function optionToSpaceLocation(option: Option): SpaceLocation {
         return {
@@ -77,7 +77,7 @@ function ProductFormLocationField({
         const location: TraitAddRequest = {
             name: inputValue,
         };
-        LocationClient.add(location, currentSpace.name).then((result: AxiosResponse) => {
+        LocationClient.add(location, currentSpace.uuid!!).then((result: AxiosResponse) => {
             const newLocation: SpaceLocation = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
             addGroupedTagFilterOptions(0, newLocation as Trait);
@@ -92,7 +92,7 @@ function ProductFormLocationField({
     function updateSpaceLocations(option: Option): void {
         const updatedProduct: Product = {
             ...currentProduct,
-            spaceLocation: optionToSpaceLocation(option),
+            spaceLocation: option ? optionToSpaceLocation(option) : undefined,
         };
         setCurrentProduct(updatedProduct);
     }
@@ -114,7 +114,7 @@ function ProductFormLocationField({
                 formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInLocation}"`)}
                 placeholder="Select or create location"
                 hideSelectedOptions={true}
-                isClearable={false}
+                isClearable={true}
                 value={locationOptionValue()}
             />
         </div>

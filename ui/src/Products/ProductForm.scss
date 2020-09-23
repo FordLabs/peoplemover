@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,8 +47,18 @@
 
 .calendar-icon {
   position: relative;
-  top: -24px;
-  left: 194px;
+  top: 2px;
+  left: -22px;
   height: 0;
   width: 0;
+}
+
+.deleteButtonContainer {
+  display: flex;
+  margin-top: 32px;
+}
+
+#start,
+#end {
+  padding-left: 10px;
 }

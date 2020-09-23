@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {act, fireEvent, wait} from '@testing-library/react';
+import {act, fireEvent} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from '../Assignments/AssignmentCard';
 import TestUtils, {renderWithRedux} from './TestUtils';

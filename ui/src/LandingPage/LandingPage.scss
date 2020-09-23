@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,6 +43,7 @@
   width: 760px;
   height: 540px;
   margin: auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .landing-page-background {
@@ -86,16 +87,6 @@
 .landing-page-info-log-in {
   width: 120px;
   height: 32px;
-  border-radius: 6px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.landing-page-info-adfs-login {
-  width: 120px;
-  height: auto;
-  padding-top: 0.4rem;
-  padding-bottom: 0.4rem;
   border-radius: 6px;
   font-weight: bold;
   margin-bottom: 10px;

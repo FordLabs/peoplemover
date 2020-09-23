@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,6 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import '../Traits/MyTraits.scss';
-import '../Modal/Form.scss';
 import EditTraitSection from '../Traits/EditTraitSection';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
@@ -31,6 +29,8 @@ import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../SpaceDashboard/Space';
+
+import '../Traits/MyTraits.scss';
 
 interface MyTraitsProps {
     currentSpace: Space;
@@ -68,14 +68,14 @@ function MyTraits({
 
     useEffect(() => {
         async function setup(): Promise<void> {
-            const response = await traitClient.get(currentSpace.name);
+            const response = await traitClient.get(currentSpace.uuid!!);
             const traitResponse: Array<Trait> = response.data;
             setTraits(traitResponse);
             setEditSectionsOpen(new Array(traitResponse.length).fill(false));
         }
 
         setup().then();
-    }, [currentSpace.name, traitClient]);
+    }, [currentSpace.uuid, traitClient]);
 
     useEffect(() => {
         function checkForUnsavedChanges(): boolean {
@@ -118,10 +118,12 @@ function MyTraits({
 
     async function deleteTrait(traitToDelete: Trait): Promise<void> {
         try {
-            await traitClient.delete(traitToDelete.id);
-            setConfirmDeleteModal(null);
-            setTraits(prevTraits => prevTraits.filter(trait => trait.id !== traitToDelete.id));
-            updateGroupedTagFilterOptions(traitName, traitToDelete, TraitAction.DELETE);
+            if (currentSpace.uuid) {
+                await traitClient.delete(traitToDelete.id, currentSpace.uuid);
+                setConfirmDeleteModal(null);
+                setTraits(prevTraits => prevTraits.filter(trait => trait.id !== traitToDelete.id));
+                updateGroupedTagFilterOptions(traitName, traitToDelete, TraitAction.DELETE);
+            }
         } catch {
             return;
         }
@@ -210,33 +212,35 @@ function MyTraits({
                 const testIdTraitName = traitName.replace(' ', '');
                 return (
                     <React.Fragment key={index}>
-                        {!editSectionsOpen[index] && <div className="traitRow" data-testid="traitRow">
-                            { colorSection &&
-                                <span data-testid="myRolesCircle"
-                                    style={{'backgroundColor': colorToUse}}
-                                    className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
-                                />
-                            }
-
-                            <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
-                            <div className="traitIcons">
-                                <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
-                                    onClick={(): void => toggleEditSection(index)} onKeyDown={(): void => toggleEditSection(index)}/>
-                                <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
-                                    onClick={(): void => showDeleteConfirmationModal(trait)}
-                                    onKeyDown={(): void => showDeleteConfirmationModal(trait)}/>
+                        {!editSectionsOpen[index] &&
+                            <div className="traitRow" data-testid="traitRow">
+                                { colorSection &&
+                                    <span data-testid="myRolesCircle"
+                                        style={{'backgroundColor': colorToUse}}
+                                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+                                    />
+                                }
+                                <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
+                                <div className="traitIcons">
+                                    <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
+                                        onClick={(): void => toggleEditSection(index)}
+                                        onKeyDown={(): void => toggleEditSection(index)}/>
+                                    <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
+                                        onClick={(): void => showDeleteConfirmationModal(trait)}
+                                        onKeyDown={(): void => showDeleteConfirmationModal(trait)}/>
+                                </div>
                             </div>
-                        </div>
                         }
-                        {editSectionsOpen[index] && <EditTraitSection
-                            closeCallback={(): void => toggleEditSection(index)}
-                            updateCallback={updateTraits}
-                            trait={trait}
-                            colorSection={colorSection}
-                            traitClient={traitClient}
-                            traitName={traitName}
-                            currentSpace={currentSpace}
-                        />
+                        {editSectionsOpen[index] &&
+                            <EditTraitSection
+                                closeCallback={(): void => toggleEditSection(index)}
+                                updateCallback={updateTraits}
+                                trait={trait}
+                                colorSection={colorSection}
+                                traitClient={traitClient}
+                                traitName={traitName}
+                                currentSpace={currentSpace}
+                            />
                         }
                     </React.Fragment>
                 );

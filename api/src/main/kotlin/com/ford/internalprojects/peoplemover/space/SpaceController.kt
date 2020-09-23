@@ -21,44 +21,43 @@ import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+@RequestMapping("/api/spaces")
 @RestController
 class SpaceController(private val spaceService: SpaceService, private val logger: BasicLogger) {
-    @PostMapping("/api/space")
-    fun createSpace(@RequestBody spaceName: String): ResponseEntity<Space> {
-        val createdSpace: Space = spaceService.createSpaceWithName(spaceName)
-        logger.logInfoMessage("Space Created.  Name: [$spaceName]")
-        return ResponseEntity.ok(createdSpace)
-    }
-
-    @GetMapping("/api/space")
+    @GetMapping("")
     fun allSpaces(): ResponseEntity<List<Space>> {
         val spaces: List<Space> = spaceService.findAll()
         logger.logInfoMessage("All space retrieved.")
         return ResponseEntity.ok(spaces)
     }
 
-    @GetMapping("/api/space/total")
+    @GetMapping("/total")
     fun totalSpaces(): ResponseEntity<Int> {
         val spaces: List<Space> = spaceService.findAll()
         logger.logInfoMessage("All space retrieved.")
         return ResponseEntity.ok(spaces.size)
     }
 
-    @PostMapping("/api/user/space")
+    @GetMapping("/{uuid}")
+    fun getSpace(@PathVariable uuid: String): Space {
+        return spaceService.getSpace(uuid)
+    }
+
+    @PutMapping ("/{uuid}")
+    fun editSpace(@PathVariable uuid: String, @RequestBody spaceRequest: SpaceRequest) {
+        return spaceService.editSpace(uuid, spaceRequest)
+    }
+
+    @PostMapping("/user")
     fun createUserSpace(
-            @RequestBody request: SpaceCreationRequest,
-            @RequestHeader(name = "Authorization") token: String
+        @RequestBody request: SpaceCreationRequest,
+        @RequestHeader(name = "Authorization") token: String
     ): SpaceResponse {
         return spaceService.createSpaceWithUser(token.replace("Bearer ", ""), request.spaceName)
     }
 
-    @GetMapping("/api/user/space")
+    @GetMapping("/user")
     fun getAllSpacesForUser(@RequestHeader(name = "Authorization") accessToken: String): List<Space> {
         return spaceService.getSpacesForUser(accessToken.replace("Bearer ", ""))
-    }
-
-    @GetMapping("/api/space/{spaceName}")
-    fun getSpace(@PathVariable spaceName: String): Space {
-        return spaceService.getSpace(spaceName)
     }
 }

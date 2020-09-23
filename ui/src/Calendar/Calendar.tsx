@@ -31,7 +31,7 @@ function Calendar({
     /* eslint-disable */
     useEffect(() => {
         calendarRef.current?.setOpen(isCalendarOpen);
-        AssignmentClient.getAssignmentEffectiveDates(currentSpace.id!!).then(response => {
+        AssignmentClient.getAssignmentEffectiveDates(currentSpace.uuid!!).then(response => {
             const dates: Array<Date> = (response.data as string[]).map(date => moment(date).toDate());
             setDaysHighlighted(dates);
         });

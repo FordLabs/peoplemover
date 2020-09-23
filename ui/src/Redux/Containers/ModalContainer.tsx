@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +28,12 @@ import {CurrentModalState} from '../Reducers/currentModalReducer';
 import MyTagsModal from '../../Tags/MyTagsModal';
 import MyRolesModal from '../../Roles/MyRolesModal';
 import InviteContributorConfirmationForm from '../../SpaceDashboard/InviteContributorsConfirmationForm';
-import CreateSpaceForm from '../../SpaceDashboard/CreateSpaceForm';
 import {Dispatch} from 'redux';
 import EditContributorsForm from '../../SpaceDashboard/EditContributorsForm';
 import {emptyProduct, Product} from '../../Products/Product';
 import {Space} from '../../SpaceDashboard/Space';
 import moment from 'moment';
+import SpaceForm from '../../SpaceDashboard/SpaceForm';
 
 
 const getCurrentModal = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space, viewingDate: Date): JSX.Element | null => {
@@ -41,8 +41,7 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
 
     switch (modal) {
         case AvailableModals.CREATE_PRODUCT:
-            return <ProductForm editing={false}
-                spaceId={currentSpace.id!!} />;
+            return <ProductForm editing={false} />;
         case AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG: {
             const newProduct = {
                 ...emptyProduct(currentSpace.id),
@@ -50,8 +49,7 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
                 productTags: [item],
             };
             return <ProductForm editing={false}
-                product={newProduct}
-                spaceId={currentSpace.id!!}/>;
+                product={newProduct}/>;
         }
         case AvailableModals.CREATE_PRODUCT_OF_LOCATION: {
             const newProduct = {
@@ -60,13 +58,11 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
                 spaceLocation: {...item},
             };
             return <ProductForm editing={false}
-                product={newProduct}
-                spaceId={currentSpace.id!!}/>;
+                product={newProduct}/>;
         }
         case AvailableModals.EDIT_PRODUCT:
             return <ProductForm editing={true}
-                product={item}
-                spaceId={currentSpace.id!!} />;
+                product={item} />;
         case AvailableModals.CREATE_PERSON:
             return <PersonForm editing={false}
                 products={products}
@@ -87,7 +83,9 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
         case AvailableModals.MY_ROLES_MODAL:
             return <MyRolesModal/>;
         case AvailableModals.CREATE_SPACE:
-            return <CreateSpaceForm onSubmit={item}/>;
+            return <SpaceForm/>;
+        case AvailableModals.EDIT_SPACE:
+            return <SpaceForm space={item}/>;
         case AvailableModals.EDIT_CONTRIBUTORS:
             return <EditContributorsForm/>;
         case AvailableModals.CONTRIBUTORS_CONFIRMATION:
@@ -119,8 +117,10 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
             return 'My Roles';
         case AvailableModals.CREATE_SPACE:
             return 'Create New Space';
+        case AvailableModals.EDIT_SPACE:
+            return 'Edit Space';
         case AvailableModals.EDIT_CONTRIBUTORS:
-            return 'Invite Members';
+            return 'Share Access';
         case AvailableModals.CONTRIBUTORS_CONFIRMATION:
             return 'Your team member now has access!';
         default:

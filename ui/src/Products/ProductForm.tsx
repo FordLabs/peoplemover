@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, CSSProperties, useState} from 'react';
+import React, {ChangeEvent, CSSProperties, FormEvent, useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
@@ -35,11 +35,12 @@ import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
+import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
+import {Space} from '../SpaceDashboard/Space';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import '../Modal/Form.scss';
 import './ProductForm.scss';
-import NotesTextArea from '../Form/NotesTextArea';
+import FormButton from '../ModalFormComponents/FormButton';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -61,17 +62,19 @@ export const customStyles: StylesConfig = {
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
-    spaceId: number;
+    currentSpace: Space;
     viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
+
     closeModal(): void;
 }
 
 function ProductForm({
     editing,
     product,
-    spaceId,
+    currentSpace,
     viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
@@ -87,17 +90,21 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return {...emptyProduct(spaceId), startDate: viewingDate};
+            return {...emptyProduct(currentSpace.id), startDate: viewingDate};
         }
         return product;
     }
 
-    // Put the selected product tags on the updated product and use the 'editProduct' endpoint
-    function handleSubmit(): void {
-        currentProduct.productTags = selectedProductTags;
+    function handleSubmit(event: FormEvent): void {
+        event.preventDefault();
 
+        currentProduct.productTags = selectedProductTags;
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return;
+        }
         if (editing) {
-            ProductClient.editProduct(currentProduct)
+            ProductClient.editProduct(currentSpace.uuid, currentProduct)
                 .then(closeModal)
                 .catch(error => {
                     if (error.response.status === 409) {
@@ -106,7 +113,7 @@ function ProductForm({
                 });
 
         } else {
-            ProductClient.createProduct(currentProduct)
+            ProductClient.createProduct(currentSpace.uuid, currentProduct)
                 .then(() => setDuplicateProductNameWarning(false))
                 .then(closeModal)
                 .catch(error => {
@@ -118,12 +125,20 @@ function ProductForm({
     }
 
     async function deleteProduct(): Promise<void> {
-        return ProductClient.deleteProduct(currentProduct).then(closeModal);
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return Promise.resolve();
+        }
+        return ProductClient.deleteProduct(currentSpace.uuid, currentProduct).then(closeModal);
     }
 
     function archiveProduct(): Promise<void> {
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return Promise.resolve();
+        }
         const archivedProduct = {...currentProduct, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(archivedProduct).then(closeModal);
+        return ProductClient.editProduct(currentSpace.uuid, archivedProduct).then(closeModal);
     }
 
     function displayDeleteProductModal(): void {
@@ -141,8 +156,11 @@ function ProductForm({
         setConfirmDeleteModal(deleteConfirmationModal);
     }
 
-    function updateProductField(fieldName: string, fieldValue: any): void {
-        const updatedProduct: Product = {...currentProduct, [fieldName]: fieldValue};
+    function updateProductField(fieldName: string, fieldValue: string): void {
+        const updatedProduct: Product = {
+            ...currentProduct,
+            [fieldName]: fieldValue,
+        };
         setCurrentProduct(updatedProduct);
     }
 
@@ -152,7 +170,7 @@ function ProductForm({
             value: trait.id.toString() + '_' + trait.name,
             selected: false,
         };
-        const updatedTagFilterOptions: AllGroupedTagFilterOptions =  {
+        const updatedTagFilterOptions: AllGroupedTagFilterOptions = {
             ...allGroupedTagFilterOptions[tagFilterIndex],
             options: [
                 ...allGroupedTagFilterOptions[tagFilterIndex].options,
@@ -169,9 +187,11 @@ function ProductForm({
         updateProductField('notes', notes);
     }
 
-    return (
+    return currentSpace.id ? (
         <div className="formContainer">
-            <form className="form" data-testid="productForm">
+            <form className="form"
+                data-testid="productForm"
+                onSubmit={(event): void => handleSubmit(event)}>
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="name">Name</label>
                     <input className="formInput formTextInput"
@@ -186,16 +206,16 @@ function ProductForm({
                     <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
                 </div>
                 <ProductFormLocationField
-                    spaceId={spaceId}
-                    currentProductState={{ currentProduct, setCurrentProduct }}
-                    loadingState={{ isLoading, setIsLoading }}
+                    spaceId={currentSpace.id}
+                    currentProductState={{currentProduct, setCurrentProduct}}
+                    loadingState={{isLoading, setIsLoading}}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
                 <ProductFormProductTagsField
-                    spaceId={spaceId}
-                    currentProductState={{ currentProduct }}
-                    loadingState={{ isLoading, setIsLoading }}
-                    selectedProductTagsState={{ selectedProductTags, setSelectedProductTags }}
+                    spaceId={currentSpace.id}
+                    currentProductState={{currentProduct}}
+                    loadingState={{isLoading, setIsLoading}}
+                    selectedProductTagsState={{selectedProductTags, setSelectedProductTags}}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
                 <ProductFormStartDateField
@@ -207,37 +227,51 @@ function ProductForm({
                     updateProductField={updateProductField}
                 />
                 <div className="formItem">
-                    <NotesTextArea notes={currentProduct.notes} callBack={notesChanged}/>
+                    <FormNotesTextArea
+                        notes={currentProduct.notes}
+                        callBack={notesChanged}
+                    />
                 </div>
                 <div className="yesNoButtons">
-                    <input className="formButton cancelFormButton" onClick={closeModal} data-testid="productFormCancelButton" type="button" value="Cancel" />
-                    <input className="formButton"
-                        data-testid="productFormSubmitButton"
-                        onClick={handleSubmit}
-                        type="button"
-                        value={editing ? 'Save' : 'Create'}/>
+                    <FormButton
+                        onClick={closeModal}
+                        buttonStyle="secondary"
+                        testId="productFormCancelButton">
+                        Cancel
+                    </FormButton>
+                    <FormButton
+                        type="submit"
+                        buttonStyle="primary"
+                        testId="productFormSubmitButton">
+                        {editing ? 'Save' : 'Create'}
+                    </FormButton>
                 </div>
-                {editing && (<div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
-                    <i className="fas fa-trash"/>
-                    <div className="trashCanSpacer"/>
-                    <span className="obliterateLink"
-                        onClick={displayDeleteProductModal}
-                        onKeyDown={displayDeleteProductModal}>Delete Product</span>
-                </div>)}
+                {editing && (
+                    <div className={"deleteButtonContainer alignSelfCenter deleteLinkColor"}>
+                        <i className="fas fa-trash"/>
+                        <div className="trashCanSpacer"/>
+                        <span className="obliterateLink"
+                            onClick={displayDeleteProductModal}
+                            onKeyDown={displayDeleteProductModal}>Delete Product</span>
+                    </div>)}
             </form>
             {confirmDeleteModal}
         </div>
-    );
+    ) : <></>;
 }
+
+/* eslint-disable  */
 const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
     viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductForm);
+/* eslint-enable  */

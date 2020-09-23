@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +33,10 @@ export const reactSelectStyles = {
         boxShadow: 'none',
         border: '1px solid hsl(0, 0%, 80%) !important',
         backgroundColor: 'transparent',
+        // @ts-ignore
+        '&:hover': {
+            cursor: 'pointer',
+        },
     }),
     placeholder: (provided: CSSProperties): CSSProperties => ({
         ...provided,
@@ -53,6 +57,11 @@ export const reactSelectStyles = {
         padding: '0px 17px 0 0px',
         height: '30px',
         margin: '3px 0px',
+        // @ts-ignore
+        '&:hover': {
+            cursor: 'pointer',
+            backgroundColor: '#F2F2F2',
+        },
     }),
     input: (provided: CSSProperties): CSSProperties => ({
         ...provided,
@@ -121,7 +130,8 @@ export const reactSelectStyles = {
     }),
 };
 
-export const filterByStyles = {...reactSelectStyles,
+export const filterByStyles = {
+    ...reactSelectStyles,
     control: (provided: CSSProperties): CSSProperties => ({
         ...provided,
         border: '1px solid transparent',

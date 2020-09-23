@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,26 +24,84 @@
   color: white;
 
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  //justify-content: center;
   width: 400px;
   cursor: pointer;
 
-  .space-name {
-    margin: 8px 22px;
+  .space-metadata {
+    padding-left: 1.375rem;
+    padding-top: 2.5rem;
+    flex-grow: 1;
+  }
 
-    font-size: 24px;
+  .ellipsis-button {
+    background: transparent;
+    height: 1.5rem;
+    width: 1rem;
+    position: relative;
+  }
+
+  .button-container{
+    flex-basis: 10%;
+    padding-top: 3rem;
+  }
+
+  .space-name {
+    word-break: break-word;
+    font-size: 22px;
     font-weight: bold;
-    line-height: 28px;
-    text-transform: uppercase;
+    line-height: 25px;
+    margin-bottom: .25rem;
   }
 
   .last-modified-text {
-    margin: 0 22px;
-
     font-size: 12px;
     font-style: italic;
     font-weight: normal;
     line-height: 14px;
   }
+}
+
+.icon {
+  text-align: right;
+  background: transparent;
+  color: white;
+}
+
+.dropdown-options {
+  text-align: left;
+  padding: 4px 6px;
+  color: #333333;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+
+  &:hover {
+    color: $orange-hover;
+  }
+}
+
+
+.ellipsis-dropdown-container {
+  position: absolute;
+  margin-top: 8px;
+  background-color: white;
+  width: 150px;
+  border-radius: 6px;
+  border: 1px solid #EDEBEB;
+
+
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
+
+  padding: 11px 15px;
+  box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+
+  i {
+    margin-right: 0.5rem;
+  }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,33 +20,59 @@ import {SpaceLocation} from './SpaceLocation';
 import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import {TraitEditRequest} from '../Traits/TraitEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
-
+import {getToken} from '../Auth/TokenProvider';
 
 class LocationClient implements TraitClient {
-
-    async get(spaceName: string): Promise<AxiosResponse<SpaceLocation[]>> {
-        return Axios.get(
-            '/api/location/' + spaceName,
-        );
+    private getBaseLocationsUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/locations';
     }
 
-    async add(locationAddRequest: TraitAddRequest, spaceName: string): Promise<AxiosResponse> {
-        return Axios.post(
-            '/api/location/' + spaceName,
-            locationAddRequest
-        );
+    async get(spaceUuid: string): Promise<AxiosResponse<SpaceLocation[]>> {
+        const url = this.getBaseLocationsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.get(url, config);
     }
 
-    async edit(locationEditRequest: TraitEditRequest, spaceName: string): Promise<AxiosResponse<SpaceLocation>> {
-        return Axios.put(`/api/location/${spaceName}`,
-            locationEditRequest
-        );
+    async add(locationAddRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseLocationsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.post(url, locationAddRequest, config);
     }
 
-    async delete(id: number): Promise<AxiosResponse> {
-        const spaceToken = window.location.pathname.substr(1);
+    async edit(locationEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<SpaceLocation>> {
+        const url = this.getBaseLocationsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
 
-        return Axios.delete(`/api/location/${spaceToken}/${id}`);
+        return Axios.put(url, locationEditRequest, config);
+    }
+
+    async delete(locationId: number, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseLocationsUrl(spaceUuid) + `/${locationId}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.delete(url, config);
     }
 }
 

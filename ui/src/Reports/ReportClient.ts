@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,15 +20,20 @@ import {Report} from './Report';
 import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
 import moment from 'moment';
+import {getToken} from '../Auth/TokenProvider';
 
 class ReportClient {
 
-    static async getReportsWithNames(spaceName: string, date: Date): Promise<void> {
+    static async getReportsWithNames(spaceName: string, spaceUuid: string, date: Date): Promise<void> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
-        return Axios.get(
-            `/api/reportgenerator/${spaceName}/${dateAsString}`,
-            {headers: { 'Content-Type': 'application/json'}}
-        ).then( response => {
+        let url = `/api/reportgenerator/${spaceUuid}/${dateAsString}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.get(url, config).then(response => {
             const jsonAsCsv = ReportClient.convertToCSV(response.data);
             fileDownload(jsonAsCsv, `${spaceName}_${date.toISOString().split('T')[0]}.csv`);
         });

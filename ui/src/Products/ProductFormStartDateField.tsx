@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,22 +44,34 @@ function ProductFormStartDateField({ currentProduct, viewingDate, updateProductF
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const CustomInput = ({ value, onClick, onChange }: any): JSX.Element => {
+        return (
+            <div onClick={onClick}>
+                <MaskedInput
+                    className="formInput formTextInput"
+                    name="start"
+                    id="start"
+                    value={value}
+                    onChange={onChange}
+                    mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                    placeholder="MM/DD/YYYY"
+                />
+                <i className="far fa-calendar-alt calendar-icon" />
+            </div>
+        );
+    };
+
+    const DateInput = React.forwardRef((props, ref) => <CustomInput innerRef={ref} {...props} />);
+
     return (
         <div className="formItem" data-testid="productFormStartDateField">
             <label className="formItemLabel" htmlFor="start">Start Date</label>
             <DatePicker
-                className="formInput formTextInput"
-                name="start"
-                id="start"
                 selected={startDate}
                 onChange={onStartDateChange}
-                customInput={
-                    <MaskedInput
-                        mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
-                    />
-                }
+                customInput={<DateInput />}
             />
-            <i className="far fa-calendar-alt calendar-icon" />
         </div>
     );
 }

@@ -32,16 +32,16 @@ class ProductTagService(
         private val productTagRepository: ProductTagRepository,
         private val spaceRepository: SpaceRepository
 ) {
-    fun createProductTagForSpace(addRequest: ProductTagAddRequest, spaceToken: String): ProductTag {
-        val space = spaceRepository.findByNameIgnoreCase(spaceToken) ?: throw SpaceNotExistsException()
+    fun createProductTagForSpace(addRequest: ProductTagAddRequest, spaceUuid: String): ProductTag {
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         productTagRepository.findByNameAllIgnoreCaseAndSpaceId(addRequest.name, space.id!!)
                 ?.let { throw ProductTagAlreadyExistsForSpaceException() }
-        return productTagRepository.save(ProductTag(spaceId = space.id, name = addRequest.name))
+        return productTagRepository.saveAndUpdateSpaceLastModified(ProductTag(spaceId = space.id, name = addRequest.name))
     }
 
-    fun getAllProductTags(spaceToken: String): List<ProductTag> {
-        val space: Space = spaceRepository.findByNameIgnoreCase(spaceToken)
-                ?: throw SpaceNotExistsException(spaceToken)
+    fun getAllProductTags(spaceUuid: String): List<ProductTag> {
+        val space: Space = spaceRepository.findByUuid(spaceUuid)
+                ?: throw SpaceNotExistsException(spaceUuid)
 
         return productTagRepository.findAllBySpaceId(
                 space.id!!,
@@ -50,7 +50,7 @@ class ProductTagService(
     }
 
     @Transactional
-    fun deleteProductTag(spaceToken: String, productTagId: Int) {
+    fun deleteProductTag(productTagId: Int) {
         val tagToDelete: ProductTag = productTagRepository.findByIdOrNull(productTagId)
                 ?: throw ProductTagNotExistsForSpaceException()
 
@@ -58,10 +58,10 @@ class ProductTagService(
     }
 
     fun editProductTag(
-            spaceToken: String,
+            spaceUuid: String,
             tagEditRequest: ProductTagEditRequest
     ): ProductTag {
-        val space = spaceRepository.findByNameIgnoreCase(spaceToken) ?: throw SpaceNotExistsException(spaceToken)
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
         productTagRepository.findByNameAllIgnoreCaseAndSpaceId(
                 tagEditRequest.updatedName,

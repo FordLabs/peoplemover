@@ -47,10 +47,10 @@ class AssignmentService(
         return assignmentRepository.getByPersonId(personId)
     }
 
-    fun getAssignmentsByDate(spaceId: Int, requestedDate: LocalDate): List<Assignment> {
-        spaceRepository.findByIdOrNull(spaceId) ?: throw SpaceNotExistsException()
+    fun getAssignmentsByDate(spaceUuid: String, requestedDate: LocalDate): List<Assignment> {
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
 
-        val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
+        val people: List<Person> = personRepository.findAllBySpaceId(space.id!!)
         val allAssignments: MutableList<Assignment> = mutableListOf()
         people.forEach { person ->
             val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
@@ -60,10 +60,10 @@ class AssignmentService(
         return allAssignments
     }
 
-    fun getEffectiveDates(spaceId: Int): Set<LocalDate> {
-        spaceRepository.findByIdOrNull(spaceId) ?: throw SpaceNotExistsException()
+    fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
 
-        val people: List<Person> = personRepository.findAllBySpaceId(spaceId)
+        val people: List<Person> = personRepository.findAllBySpaceId(space.id!!)
         val allAssignments: MutableList<Assignment> = mutableListOf()
         people.forEach { person ->
             val assignmentsForPerson: List<Assignment> = assignmentRepository.getByPersonId(person.id!!)
@@ -72,12 +72,13 @@ class AssignmentService(
 
         val uniqueEffectiveDates = allAssignments.mapNotNull { it.effectiveDate }.toSet()
 
-        return uniqueEffectiveDates.filterNot { effectiveDate -> getReassignmentsByExactDate(spaceId, effectiveDate).isNullOrEmpty() }.toSet()
+        return uniqueEffectiveDates.filterNot { effectiveDate -> getReassignmentsByExactDate(spaceUuid, effectiveDate).isNullOrEmpty() }.toSet()
     }
 
-    fun getReassignmentsByExactDate(spaceId: Int, requestedDate: LocalDate): List<Reassignment>? {
-        var assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = spaceId, requestedDate = requestedDate).sortedWith(compareByDescending { it.id })
-        var assignmentsWithPreviousDate = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedDate)
+    fun getReassignmentsByExactDate(spaceUuid: String, requestedDate: LocalDate): List<Reassignment>? {
+        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
+        val assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = space.id!!, requestedDate = requestedDate).sortedWith(compareByDescending { it.id })
+        val assignmentsWithPreviousDate = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedDate)
 
         return createReassignments(assignmentsWithExactDate, assignmentsWithPreviousDate)
     }
@@ -184,7 +185,7 @@ class AssignmentService(
 
     private fun createUnassignmentForDate(requestedDate: LocalDate, person: Person): Assignment {
         val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceId("unassigned", person.spaceId)
-        return assignmentRepository.save(
+        return assignmentRepository.saveAndUpdateSpaceLastModified(
                 Assignment(
                         person = person,
                         placeholder = false,
@@ -205,7 +206,7 @@ class AssignmentService(
             productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
 
             if(product.productId != unassignedProduct!!.id) {
-                val assignment = assignmentRepository.save(
+                val assignment = assignmentRepository.saveAndUpdateSpaceLastModified(
                         Assignment(
                                 person = assignmentRequest.person,
                                 placeholder = product.placeholder,

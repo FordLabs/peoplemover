@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,7 +81,7 @@ describe('PeopleMover My Tags', () => {
                 expect(editLocationTagText.value).toEqual('Ann Arbor');
             });
 
-            it('should call edit Location client and then display the updated location ', async () => {
+            it('should call edit Location client and then display the updated location', async () => {
                 const updatedLocation = 'Saline';
                 fireEvent.click(locationTagIcon);
 
@@ -213,7 +213,6 @@ describe('PeopleMover My Tags', () => {
                 const modalContainer = await app.findByTestId('modalContainer');
                 expect(queryByText(modalContainer, 'Ann Arbor')).not.toBeInTheDocument();
             });
-
         });
 
         describe('delete a product tag', () => {

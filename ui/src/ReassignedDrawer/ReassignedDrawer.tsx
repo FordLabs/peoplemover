@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +46,7 @@ function ReassignedDrawer({
 
     /* eslint-disable */
     useEffect(() => {
-        const reassignments = AssignmentClient.getReassignments(currentSpace.id!!, viewingDate).then( reassignmentResponse =>
+        const reassignments = AssignmentClient.getReassignments(currentSpace.uuid!!, viewingDate).then( reassignmentResponse =>
             setReassignments(reassignmentResponse.data)
         );
     }, [products]);

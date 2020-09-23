@@ -1,20 +1,21 @@
+
 export interface Product {
     name: string;
     location: string;
+    archived: boolean;
     tags: Array<string>;
-    startDate: string;
-    nextPhaseDate: string;
-    dorfCode: string;
+    startDate: unknown;
+    nextPhaseDate: unknown;
     notes: string;
 }
 
 const product: Product = {
     name: 'Automated Test Product',
     location: 'Michigan',
+    archived: false,
     tags: ['Tag 1', 'Tag 2'],
-    startDate: Cypress.moment().format('MM/DD/yyyy'),
-    nextPhaseDate: Cypress.moment().add(1, 'days').format('MM/DD/yyyy'),
-    dorfCode: '',
+    startDate: Cypress.moment(),
+    nextPhaseDate: Cypress.moment().add(1, 'days'),
     notes: 'These are some VERY interesting product notes. You\'re welcome.',
 };
 

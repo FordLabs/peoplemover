@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,6 +38,11 @@ export const multiSelectStyles = {
         padding: '0px 17px',
         height: '30px',
         margin: '3px 0px',
+        // @ts-ignore
+        '&:hover': {
+            cursor: 'pointer',
+            backgroundColor: '#F2F2F2',
+        },
     }),
     placeholder: (provided: CSSProperties): CSSProperties => ({
         ...provided,

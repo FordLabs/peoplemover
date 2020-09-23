@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,12 @@
  */
 
 import React from 'react';
-import './LandingPage.scss';
 import Logo from '../Application/Assets/logo.svg';
 import LandingPageImage from './LandingPageImage.svg';
 import LandingPageBackground from './LandingPageBackground.svg';
+import FormButton from '../ModalFormComponents/FormButton';
+
+import './LandingPage.scss';
 
 function LandingPage(): JSX.Element {
     return (
@@ -42,7 +44,11 @@ function LandingPage(): JSX.Element {
                     </div>
                     <div className="landing-page-info-sub-heading">Give it a shot!</div>
                     <div className="landing-page-info-text">Login with your CDSID to create your own PeopleMover&nbsp;space.</div>
-                    <a href={'/user/login'}><button className="landing-page-info-adfs-login">Login</button></a>
+                    <a href="/user/login">
+                        <FormButton>
+                            Login
+                        </FormButton>
+                    </a>
                 </div>
                 <img
                     className="landing-page-image"

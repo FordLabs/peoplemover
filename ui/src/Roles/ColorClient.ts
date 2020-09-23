@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,12 +16,18 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
+import {getToken} from '../Auth/TokenProvider';
 
 class ColorClient {
     static async getAllColors(): Promise<AxiosResponse> {
         return Axios.get(
             `/api/color`,
-            {headers: {'Content-Type': 'application/json'}}
+            {headers:
+                    {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`,
+                    },
+            }
         );
     }
 }

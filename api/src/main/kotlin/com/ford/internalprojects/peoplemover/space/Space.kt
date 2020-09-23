@@ -37,7 +37,7 @@ data class Space (
     val uuid: String = UUID.randomUUID().toString(),
 
     @Column(unique = true, nullable = false)
-    val name: String,
+    var name: String,
 
     @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
     val roles: Set<SpaceRole> = HashSet(),
@@ -45,8 +45,10 @@ data class Space (
     @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
     val locations: List<SpaceLocation> = ArrayList(),
 
-    var lastModifiedDate: Timestamp? = null
+    var lastModifiedDate: Timestamp? = null,
+
+    var createdBy: String = ""
 ) {
     constructor(name: String):
-        this(null, UUID.randomUUID().toString(), name, HashSet(), ArrayList(), null)
+        this(null, UUID.randomUUID().toString(), name, HashSet(), ArrayList(), null, "")
 }

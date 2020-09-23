@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  */
 
 import React, {useState} from 'react';
-import '../Application/Styleguide/Styleguide.scss';
+import '../Application/Styleguide/Main.scss';
 import './ProductGraveyard.scss';
 import ArchivedProduct from './ArchivedProduct';
 import {Product} from './Product';

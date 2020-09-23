@@ -19,10 +19,14 @@ package com.ford.internalprojects.peoplemover.space
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 interface SpaceRepository : CrudRepository<Space, Int> {
     fun findByNameIgnoreCase(name: String): Space?
-    fun findAllByNameIn(names: List<String>): List<Space>
+    fun findByUuid(uuid: String): Space?
     fun findAllByIdIn(ids: List<Int>): List<Space>
+
+    @Transactional
+    fun deleteByUuid(uuid: String)
 }

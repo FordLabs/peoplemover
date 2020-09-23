@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +20,18 @@ import {SpaceLocation} from '../Locations/SpaceLocation';
 
 export interface Space {
     id?: number;
+    uuid?: string;
     name: string;
     roles: SpaceRole[];
     locations:    SpaceLocation[];
     lastModifiedDate: string;
+}
+
+export function createEmptySpace(): Space {
+    return {
+        name: '',
+        roles: [],
+        locations: [],
+        lastModifiedDate: '',
+    };
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,7 @@ import {TraitEditRequest} from './TraitEditRequest';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {RoleEditRequest} from '../Roles/RoleEditRequest';
 import {Space} from '../SpaceDashboard/Space';
+import FormButton from '../ModalFormComponents/FormButton';
 
 interface EditTraitSectionProps {
     closeCallback: () => void;
@@ -96,7 +97,7 @@ function EditTraitSection({
         });
     }
 
-    function handleEnterSubmit(event: React.KeyboardEvent) {
+    function handleEnterSubmit(event: React.KeyboardEvent): void {
         if (event.key === 'Enter') {
             handleSubmit().then();
         }
@@ -118,9 +119,9 @@ function EditTraitSection({
                             updatedColorId: (enteredTrait as RoleAddRequest).colorId,
                         } as RoleEditRequest;
                     }
-                    clientResponse = await traitClient.edit(editRequest, currentSpace.name);
+                    clientResponse = await traitClient.edit(editRequest, currentSpace.uuid!!);
                 } else {
-                    clientResponse = await traitClient.add(enteredTrait, currentSpace.name);
+                    clientResponse = await traitClient.add(enteredTrait, currentSpace.uuid!!);
                 }
             } catch (error) {
                 if (error.response.status === 409) {
@@ -187,12 +188,18 @@ function EditTraitSection({
             </div>
             }
             <div className="editTraitsButtons">
-                <button className="formButton cancelFormButton" onClick={closeCallback}>Cancel</button>
-                <button
-                    className="formButton saveFormButton"
-                    data-testid="saveTraitsButton"
+                <FormButton
+                    buttonStyle="secondary"
+                    onClick={closeCallback}>
+                    Cancel
+                </FormButton>
+                <FormButton
+                    buttonStyle="primary"
+                    testId="saveTraitsButton"
                     disabled={enteredTrait ? enteredTrait.name === '' : true}
-                    onClick={handleSubmit}>Save</button>
+                    onClick={handleSubmit}>
+                    Save
+                </FormButton>
             </div>
             <div className="separator"/>
         </React.Fragment>

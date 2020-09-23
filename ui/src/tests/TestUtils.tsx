@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -112,8 +112,8 @@ class TestUtils {
     static mockClientCalls(): void {
         const emptyAxiosResponse = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
-        PeopleClient.createPersonForSpace = jest.fn(x => Promise.resolve({
-            data:  x,
+        PeopleClient.createPersonForSpace = jest.fn((uuid, person) => Promise.resolve({
+            data: person,
         } as AxiosResponse));
         PeopleClient.getAllPeopleInSpace = jest.fn(() => Promise.resolve({
             data: TestUtils.people,
@@ -121,7 +121,7 @@ class TestUtils {
         PeopleClient.updatePerson = emptyAxiosResponse;
         PeopleClient.removePerson = emptyAxiosResponse;
 
-        SpaceClient.getSpaceFromName = jest.fn(() => Promise.resolve({
+        SpaceClient.getSpaceFromUuid = jest.fn(() => Promise.resolve({
             data: TestUtils.space,
         } as AxiosResponse));
 
@@ -416,6 +416,7 @@ class TestUtils {
 
     static space: Space = {
         id: 1,
+        uuid: 'uuid',
         name: 'testSpace',
         roles: TestUtils.roles,
         locations: TestUtils.locations,

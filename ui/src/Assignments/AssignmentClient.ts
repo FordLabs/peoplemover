@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,8 +35,8 @@ class AssignmentClient {
         );
     }
 
-    static async getAssignmentEffectiveDates(spaceId: number): Promise<AxiosResponse> {
-        return Axios.get('/api/assignment/dates/' + spaceId,
+    static async getAssignmentEffectiveDates(spaceUuid: string): Promise<AxiosResponse> {
+        return Axios.get('/api/assignment/dates/' + spaceUuid,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }
@@ -60,9 +60,9 @@ class AssignmentClient {
         );
     }
 
-    static async getReassignments(spaceId: number, requestedDate: Date): Promise<AxiosResponse> {
+    static async getReassignments(spaceUuid: string, requestedDate: Date): Promise<AxiosResponse> {
         const formattedDate = moment(requestedDate).format('YYYY-MM-DD');
-        return Axios.get(`/api/reassignment/` + spaceId + '/' + formattedDate,
+        return Axios.get(`/api/reassignment/` + spaceUuid + '/' + formattedDate,
             {headers: { 'Content-Type': 'application/json'}}
         );
     }

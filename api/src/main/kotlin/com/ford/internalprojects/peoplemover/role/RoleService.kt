@@ -36,23 +36,23 @@ class RoleService(
         private val colorRepository: ColorRepository
 ) {
     fun addRoleToSpace(
-            spaceToken: String,
+            spaceUuid: String,
             role: String,
             colorId: Int?
     ): SpaceRole {
-        val space: Space = getSpaceFromSpaceToken(spaceToken)
+        val space: Space = getSpaceFromSpaceUuid(spaceUuid)
 
         spaceRolesRepository.findBySpaceIdAndNameAllIgnoreCase(
                 space.id!!,
                 role
         )?.let { throw RoleAlreadyExistsException(role) }
-        val colorToAssign: Color? = getColorToAssign(spaceToken, colorId)
+        val colorToAssign: Color? = getColorToAssign(spaceUuid, colorId)
         val spaceRole = SpaceRole(name = role, spaceId = space.id, color = colorToAssign)
         return spaceRolesRepository.saveAndUpdateSpaceLastModified(spaceRole)
     }
 
-    fun getRolesForSpace(spaceToken: String): Set<SpaceRole> {
-        val space: Space = getSpaceFromSpaceToken(spaceToken)
+    fun getRolesForSpace(spaceUuid: String): Set<SpaceRole> {
+        val space: Space = getSpaceFromSpaceUuid(spaceUuid)
         return space.roles
     }
 
@@ -64,8 +64,8 @@ class RoleService(
         spaceRolesRepository.deleteAndUpdateSpaceLastModified(roleFound)
     }
 
-    fun editRole(spaceToken: String, roleEditRequest: RoleEditRequest): SpaceRole {
-        val space: Space = getSpaceFromSpaceToken(spaceToken)
+    fun editRole(spaceUuid: String, roleEditRequest: RoleEditRequest): SpaceRole {
+        val space: Space = getSpaceFromSpaceUuid(spaceUuid)
 
         throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest, space)
         val roleToUpdate = spaceRolesRepository.findByIdOrNull(roleEditRequest.id) ?:
@@ -80,17 +80,17 @@ class RoleService(
         return spaceRolesRepository.saveAndUpdateSpaceLastModified(roleToUpdate)
     }
 
-    private fun getColorToAssign(spaceToken: String, colorId: Int?): Color? {
+    private fun getColorToAssign(spaceUuid: String, colorId: Int?): Color? {
         return if (colorId != null) {
             colorRepository.findByIdOrNull(colorId) ?: throw ColorDoesNotExistException()
         } else {
-            getAvailableColor(spaceToken)
+            getAvailableColor(spaceUuid)
         }
     }
 
-    private fun getAvailableColor(spaceToken: String): Color? {
+    private fun getAvailableColor(spaceUuid: String): Color? {
         val colors: List<Color> = colorRepository.findAll().toList()
-        val spaceRoles = getRolesForSpace(spaceToken)
+        val spaceRoles = getRolesForSpace(spaceUuid)
 
         val unusedColors: List<Color> = colors.filter { color -> spaceRoles.none {spaceRole -> spaceRole.color == color} }
         unusedColors.takeUnless { it.isEmpty() }?.let {
@@ -111,7 +111,7 @@ class RoleService(
         }
     }
 
-    private fun getSpaceFromSpaceToken(spaceToken: String): Space {
-        return spaceRepository.findByNameIgnoreCase(spaceToken) ?: throw SpaceNotExistsException(spaceToken)
+    private fun getSpaceFromSpaceUuid(spaceUuid: String): Space {
+        return spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
     }
 }

@@ -25,41 +25,48 @@ import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("/api/person")
+@RequestMapping("/api/spaces/{spaceUuid}/people")
 @RestController
 class PersonController(
-        private val spaceRepository: SpaceRepository,
-        private val logger: BasicLogger,
-        private val personService: PersonService,
-        private val assignmentService: AssignmentService
+    private val spaceRepository: SpaceRepository,
+    private val logger: BasicLogger,
+    private val personService: PersonService,
+    private val assignmentService: AssignmentService
 ) {
-    @GetMapping("/{spaceToken}")
-    fun getAllPeopleInSpace(@PathVariable spaceToken: String): ResponseEntity<List<Person>> {
-        val space: Space = spaceRepository.findByNameIgnoreCase(spaceToken)
-                ?: throw SpaceNotExistsException(spaceToken)
-        logger.logInfoMessage("All person retrieved for space: [$spaceToken].")
+    @GetMapping
+    fun getAllPeopleInSpace(@PathVariable spaceUuid: String): ResponseEntity<List<Person>> {
+        val space: Space = spaceRepository.findByUuid(spaceUuid)
+                ?: throw SpaceNotExistsException(spaceUuid)
+        logger.logInfoMessage("All people retrieved for space: [$spaceUuid].")
         return ResponseEntity.ok(personService.getPeopleInSpace(space))
     }
 
-    @PostMapping("/{spaceToken}")
+    @PostMapping
     fun addPersonToSpace(
-            @PathVariable spaceToken: String,
-            @RequestBody personIncoming: Person
+        @PathVariable spaceUuid: String,
+        @RequestBody personIncoming: Person
     ): ResponseEntity<Person> {
-        val personCreated = personService.createPerson(personIncoming, spaceToken)
-        logger.logInfoMessage("Person with id [${personCreated.id}] created for space: [$spaceToken].")
+        val personCreated = personService.createPerson(personIncoming, spaceUuid)
+        logger.logInfoMessage("Person with id [${personCreated.id}] created for space: [$spaceUuid].")
         return ResponseEntity.ok(personCreated)
     }
 
-    @PutMapping
-    fun updatePerson(@RequestBody personIncoming: Person): ResponseEntity<Person> {
+    @PutMapping("/{personId}")
+    fun updatePerson(
+        @PathVariable spaceUuid: String,
+        @PathVariable personId: Int,
+        @RequestBody personIncoming: Person
+    ): ResponseEntity<Person> {
         val updatedPerson = personService.updatePerson(personIncoming)
         logger.logInfoMessage("Person with id [${updatedPerson.id}] updated.")
         return ResponseEntity.ok(updatedPerson)
     }
 
     @DeleteMapping("/{personId}")
-    fun removePerson(@PathVariable personId: Int): ResponseEntity<Unit> {
+    fun removePerson(
+        @PathVariable spaceUuid: String,
+        @PathVariable personId: Int
+    ): ResponseEntity<Unit> {
         // I DONT THINK THIS NEEDS TO BE HERE
         assignmentService.deleteAllAssignments(personId)
         personService.removePerson(personId)
@@ -72,5 +79,4 @@ class PersonController(
         val count = personService.countOfPeople()
         return ResponseEntity.ok(count)
     }
-
 }

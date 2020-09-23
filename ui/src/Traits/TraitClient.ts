@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,8 +21,8 @@ import {TraitAddRequest} from './TraitAddRequest';
 import {TraitEditRequest} from './TraitEditRequest';
 
 export interface TraitClient {
-     get(spaceName: string): Promise<AxiosResponse<Trait[]>>;
-     add(addRequest: TraitAddRequest, spaceName: string): Promise<AxiosResponse<Trait>>;
-     edit(editRequest: TraitEditRequest, spaceName: string): Promise<AxiosResponse<Trait>>;
-     delete(id: number): Promise<AxiosResponse>;
+     get(spaceUuid: string): Promise<AxiosResponse<Trait[]>>;
+     add(addRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
+     edit(editRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
+     delete(id: number, spaceUuid: string): Promise<AxiosResponse>;
 }

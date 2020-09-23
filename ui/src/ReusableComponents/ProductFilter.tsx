@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,7 +95,7 @@ function ProductFilter({
     }, [allGroupedTagFilterOptions, currentSpace]);
 
     async function buildTagOptions(tagClient: TraitClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
-        const tagsResponse: AxiosResponse<Array<Trait>> = await tagClient.get(currentSpace.name);
+        const tagsResponse: AxiosResponse<Array<Trait>> = await tagClient.get(currentSpace.uuid!!);
         const tags: Array<Trait> = tagsResponse.data;
         return tags.map((tag: Trait): FilterOption => ({
             label: tag.name,

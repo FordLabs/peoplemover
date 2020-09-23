@@ -1,24 +1,17 @@
 /// <reference types="Cypress" />
-
 import person from '../fixtures/person';
-const spaceId = Cypress.env('SPACE_ID');
 
 describe('Roles', () => {
     const mockRole = person.role;
-    const yellow = 'rgb(255, 255, 0)';
     const pink = 'rgb(255, 0, 255)';
-    const blue = 'rgb(0, 255, 255)';
-    const expectedCircleColors = [yellow, pink, blue];
 
     beforeEach(() => {
-        cy.resetRole(mockRole);
-
         cy.visitBoard();
     });
 
     it('Add a new role', () => {
         cy.server();
-        cy.route('POST', `/api/role/${spaceId}`).as('postNewRole');
+        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
 
         cy.get('[data-testid=myRolesButton]').click();
 
@@ -28,13 +21,10 @@ describe('Roles', () => {
 
         cy.get('[data-testid=addNewRole]').click();
 
-        cy.get('[data-testid=traitName]').type(mockRole).should('have.value', mockRole);
+        cy.get('[data-testid=traitName]').clear().type(mockRole).should('have.value', mockRole);
 
         cy.get('[data-testid=selectRoleCircle]')
             .should('have.length', 3)
-            .each(($circle, index, $list) => {
-                cy.get($circle).should('have.css', 'background-color', expectedCircleColors[index]);
-            })
             .then(($circles) => {
                 $circles.eq(1).click();
             });
@@ -61,7 +51,7 @@ describe('Roles', () => {
         cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')
             .then(($container) => {
                 cy.get($container).find('[data-testid=productPeopleContainer]').children().as('peopleCards');
-                cy.get('@peopleCards').should('have.length', 3);
+                cy.get('@peopleCards').should('have.length', 2);
                 cy.get('@peopleCards').eq(0).should('contain', 'Jane Smith');
                 cy.get('@peopleCards').eq(1).should('contain', 'Bob Barker');
 

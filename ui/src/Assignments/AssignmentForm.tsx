@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import MultiSelect from '../ReusableComponents/MultiSelect';
 import {connect} from 'react-redux';
@@ -23,7 +23,6 @@ import {
     AvailableModals,
     closeModalAction,
     setCurrentModalAction,
-    setIsUnassignedDrawerOpenAction,
 } from '../Redux/Actions';
 import {Person} from '../People/Person';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -42,6 +41,7 @@ import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
 import moment from 'moment';
+import FormButton from '../ModalFormComponents/FormButton';
 
 interface AssignmentFormProps {
     products: Array<Product>;
@@ -50,9 +50,6 @@ interface AssignmentFormProps {
     viewingDate: Date;
 
     closeModal(): void;
-
-    setIsUnassignedDrawerOpen(isUnassignedDrawerOpen: boolean): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
@@ -61,7 +58,6 @@ function AssignmentForm({
     initiallySelectedProduct,
     people,
     viewingDate,
-    setIsUnassignedDrawerOpen,
     closeModal,
     setCurrentModal,
 }: AssignmentFormProps): JSX.Element {
@@ -74,7 +70,7 @@ function AssignmentForm({
     function handleKeyDown(event: React.KeyboardEvent<HTMLFormElement>): void {
         if (event.key === 'Enter') {
             event.preventDefault();
-            handleSubmit().then();
+            handleSubmit(event).then();
         }
     }
 
@@ -85,7 +81,6 @@ function AssignmentForm({
                 placeholder: placeholder,
             } as ProductPlaceholderPair;
         });
-
     }
 
     function getExistingProductPairsForPerson(): ProductPlaceholderPair[] {
@@ -124,11 +119,10 @@ function AssignmentForm({
         return allProductPairs;
     }
 
-    async function handleSubmit(): Promise<void> {
+    async function handleSubmit(event: FormEvent): Promise<void> {
+        event.preventDefault();
+
         if (canClickSubmit()) {
-            if (getProductFromProductListWithName('unassigned', selectedProducts)) {
-                setIsUnassignedDrawerOpen(true);
-            }
             await AssignmentClient.createAssignmentForDate({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: selectedPerson,
@@ -146,26 +140,30 @@ function AssignmentForm({
     }
 
     function getSelectedProduct(): Array<Product> {
-        return initiallySelectedProduct == null ?
-            [getUnassignedProduct()] : [initiallySelectedProduct];
+        if (initiallySelectedProduct == null) {
+            const selectedProduct = getUnassignedProduct();
+            return selectedProduct ? [selectedProduct] : [];
+        }
+
+        return [initiallySelectedProduct];
     }
 
-    function getUnassignedProduct(): Product {
-        return getProductFromProductListWithName('unassigned', products);
+    function getUnassignedProduct(): Product | null {
+        const unassignedProduct = getProductFromProductListWithName('unassigned', products);
+        return unassignedProduct || null;
     }
 
-    function getProductFromProductListWithName(name: string, productsList: Array<Product>): Product {
+    function getProductFromProductListWithName(name: string, productsList: Array<Product>): Product | null {
         const product = productsList.find((product: Product) => product.name === name);
-        return product!;
+        return product || null;
     }
 
     function changeProductAssignments(selectedProductNames: Array<Option>): void {
-        if (selectedProductNames == null) {
-            return;
-        }
+        if (selectedProductNames == null) return;
         const updatedProducts: Array<Product> = [];
         selectedProductNames.forEach(ev => {
-            updatedProducts.push(getProductFromProductListWithName(ev.value, products));
+            const product = getProductFromProductListWithName(ev.value, products);
+            if (product) updatedProducts.push(product);
         });
         setSelectedProducts(updatedProducts);
     }
@@ -212,16 +210,19 @@ function AssignmentForm({
 
     return (
         <div className="formContainer">
-            <form className="form" role="presentation" onKeyDown={handleKeyDown} data-testid="assignmentForm">
-
-                <div className={'person-select-container'}>
+            <form className="form"
+                role="presentation"
+                onKeyDown={handleKeyDown}
+                data-testid="assignmentForm"
+                onSubmit={(event): Promise<void> => handleSubmit(event)}>
+                <div className="person-select-container">
                     <label className="formItemLabel" htmlFor="person">Name</label>
                     <Creatable
                         isClearable
-                        name={'person'}
+                        name="person"
                         inputId="person"
-                        onInputChange={(e: string) => setTypedInName(e)}
-                        onChange={(e: any): void => findPerson(e ? e.value : null)}
+                        onInputChange={(e: string): void => setTypedInName(e)}
+                        onChange={(e): void => findPerson(e ? (e as Option).value : null)}
                         options={people.map(person => createOption(person.name, person.id))}
                         styles={reactSelectStyles}
                         value={selectedPerson.name ? createOption(selectedPerson.name, selectedPerson.id) : null}
@@ -244,28 +245,32 @@ function AssignmentForm({
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="product">Assign to</label>
                     <MultiSelect
-                        name={'product'}
+                        name="product"
                         initiallySelected={selectedProducts}
                         selectables={getSelectables()}
-                        placeholder={'Select a product'}
+                        placeholder="Select a product"
                         changeSelections={changeProductAssignments}
                         disabled={false}/>
                 </div>
                 <div className="yesNoButtons">
-                    <button className="formButton cancelFormButton" onClick={closeModal}>Cancel</button>
-                    <input
-                        className="formButton"
-                        onClick={handleSubmit}
-                        disabled={!canClickSubmit()}
-                        type="button"
-                        data-testid="assignButton"
-                        value={'Assign'}/>
+                    <FormButton
+                        buttonStyle="secondary"
+                        onClick={closeModal}>
+                        Cancel
+                    </FormButton>
+                    <FormButton
+                        type="submit"
+                        testId="assignButton"
+                        disabled={!canClickSubmit()}>
+                        Assign
+                    </FormButton>
                 </div>
             </form>
         </div>
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     people: state.people,
     viewingDate: state.viewingDate,
@@ -273,8 +278,8 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
-    setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentForm);
+/* eslint-enable */

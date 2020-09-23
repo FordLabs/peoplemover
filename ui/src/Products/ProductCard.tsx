@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useState} from 'react';
+import React, {RefObject, useEffect, useState} from 'react';
 import './Product.scss';
 import {connect} from 'react-redux';
 import {
@@ -36,33 +36,30 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
-import {useOnLoad} from '../ReusableComponents/UseOnLoad';
+import {Space} from '../SpaceDashboard/Space';
 
 interface ProductCardProps {
     container: string;
     product: Product;
-
-    registerProductRef(productRef: ProductCardRefAndProductPair): void;
-
-    unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
-
+    currentSpace: Space;
     viewingDate: Date;
     whichEditMenuOpen: EditMenuToOpen;
 
+    registerProductRef(productRef: ProductCardRefAndProductPair): void;
+    unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
     setWhichEditMenuOpen(whichEditMenuOption: EditMenuToOpen | null): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
-
     fetchProducts(): void;
 }
 
 function ProductCard({
     container,
     product,
-    registerProductRef,
-    unregisterProductRef,
+    currentSpace,
     viewingDate,
     whichEditMenuOpen,
+    registerProductRef,
+    unregisterProductRef,
     setWhichEditMenuOpen,
     setCurrentModal,
     fetchProducts,
@@ -75,13 +72,15 @@ function ProductCard({
         setEditMenuIsOpened(false);
     }
 
-    useOnLoad(() => {
+    /* eslint-disable */
+    useEffect(() => {
         registerProductRef({ref: productRef, product});
 
         return () => {
             unregisterProductRef({ref: productRef, product});
         };
-    });
+    }, []);
+    /* eslint-enable */
 
     function toggleEditMenu(): void {
         if (ourEditMenuIsOpen()) {
@@ -117,7 +116,8 @@ function ProductCard({
     }
 
     function editProductAndCloseEditMenu(): void {
-        toggleEditMenu();
+        setWhichEditMenuOpen(null);
+        setEditMenuIsOpened(false);
         const newModal: CurrentModalState = {
             modal: AvailableModals.EDIT_PRODUCT,
             item: product,
@@ -130,9 +130,13 @@ function ProductCard({
         archiveProduct().then(fetchProducts);
     }
 
-    function archiveProduct(): Promise<AxiosResponse> {
+    function archiveProduct(): Promise<AxiosResponse | void> {
+        if (!currentSpace.uuid) {
+            console.error('No current space uuid');
+            return Promise.resolve();
+        }
         const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(archivedProduct);
+        return ProductClient.editProduct(currentSpace.uuid, archivedProduct);
     }
 
     return (
@@ -158,17 +162,22 @@ function ProductCard({
                             </div>
                             <div className="productControlsContainer">
                                 <div className="addPersonIconContainer">
-                                    <button data-testid={'addPersonToProductIcon-' + product.id}
+                                    <div data-testid={'addPersonToProductIcon-' + product.id}
                                         className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
                                         onClick={() => setCurrentModal({
                                             modal: AvailableModals.CREATE_ASSIGNMENT,
                                             item: product,
                                         })}
+                                        onKeyDown={() => setCurrentModal({
+                                            modal: AvailableModals.CREATE_ASSIGNMENT,
+                                            item: product,
+                                        })}
                                     />
                                 </div>
-                                <button className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
+                                <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
                                     data-testid={'editProductIcon_' + product.id}
-                                    onClick={toggleEditMenu}/>
+                                    onClick={toggleEditMenu}
+                                    onKeyDown={toggleEditMenu}/>
                             </div>
                             {
                                 editMenuIsOpened &&
@@ -195,6 +204,7 @@ function ProductCard({
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     whichEditMenuOpen: state.whichEditMenuOpen,
 });

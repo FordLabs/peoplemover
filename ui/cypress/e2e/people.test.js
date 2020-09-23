@@ -1,18 +1,19 @@
 /// <reference types="Cypress" />
-
 import person from '../fixtures/person';
-const spaceId = Cypress.env('SPACE_ID');
+const date = Cypress.moment().format('yyyy-MM-DD');
 
 describe('People', () => {
     beforeEach(() => {
-        cy.resetPerson(person);
-
         cy.visitBoard();
     });
 
     it('Add a new person', () => {
         cy.server();
-        cy.route('POST', `/api/person/${spaceId}`).as('postNewPerson');
+
+        cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
+        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
+        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getUpdatedProduct');
+        cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
         cy.contains(person.name).should('not.exist');
 
@@ -24,40 +25,58 @@ describe('People', () => {
 
         submitPersonForm();
 
-        cy.wait('@postNewPerson').should(xhr => {
-            expect(xhr?.status).to.equal(200);
-            expect(xhr?.response?.body.name).to.equal(person.name);
-        }).then(xhr => {
-            const personId = xhr?.response?.body.id;
+        let assignmentId;
+        cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
+            .should((xhrs) => {
+                const postNewPersonXhr = xhrs[0];
+                const getUpdatedProductXhr = xhrs[1];
 
-            cy.contains(person.assignTo)
-                .parentsUntil('[data-testid=productPeopleContainer]')
-                .find(`[data-testid=assignmentCard${personId}info]`)
-                .should('contain', person.name)
-                .should('contain', person.role)
-                .then(() => {
-                    if (person.isNew) {
-                        cy.contains(person.assignTo)
-                            .parentsUntil(`[data-testid=assignmentCard${personId}]`)
-                            .find('[data-testid=newBadge]')
-                            .should('be.visible');
-                    }
-                });
+                expect('@getUpdatedProduct status: ' + getUpdatedProductXhr?.status)
+                    .to.equal('@getUpdatedProduct status: ' + 200);
+                expect('@postNewPerson status: ' + postNewPersonXhr.status)
+                    .to.equal('@postNewPerson status: ' + 200);
+                const personData = postNewPersonXhr.response.body || {};
+                expect(personData.name).to.equal(person.name);
+                expect(personData.newPerson).to.equal(person.isNew);
+                expect(personData.notes).to.equal(person.notes);
+                expect(personData.spaceRole.name).to.equal(person.role);
 
-            cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
+                const productData = getUpdatedProductXhr.response.body || [];
+                assignmentId = productData
+                    .find(product => product.name === person.assignTo).assignments
+                    .find(assignment => assignment.person.id === personData.id).id;
 
-            cy.get('@reassignmentDrawer')
-                .should('contain', 'Reassigned')
-                .find('[data-testid=countBadge]').should('have.text', '1');
+            }).then(() => {
+                cy.get('[data-testid=productPeopleContainer]')
+                    .eq(1).as('myProductCardContainer');
 
-            cy.get('@reassignmentDrawer')
-                .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
-                .should('have.length', 1)
-                .eq(0)
-                .should('contain', person.name)
-                .should('contain', person.role)
-                .should('contain', `Assigned to ${person.assignTo}`);
-        });
+                cy.get('@myProductCardContainer')
+                    .find(`[data-testid=assignmentCard${assignmentId}info]`)
+                    .should('contain', person.name)
+                    .should('contain', person.role)
+                    .then(() => {
+                        if (person.isNew) {
+                            cy.contains(person.assignTo)
+                                .parentsUntil(`[data-testid=assignmentCard${assignmentId}]`)
+                                .find('[data-testid=newBadge]')
+                                .should('be.visible');
+                        }
+                    });
+
+                cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
+
+                cy.get('@reassignmentDrawer')
+                    .should('contain', 'Reassigned')
+                    .find('[data-testid=countBadge]').should('have.text', '2');
+
+                cy.get('@reassignmentDrawer')
+                    .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
+                    .should('have.length', 2)
+                    .eq(0)
+                    .should('contain', person.name)
+                    .should('contain', person.role)
+                    .should('contain', `Assigned to ${person.assignTo}`);
+            });
     });
 });
 
@@ -76,14 +95,22 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
             .should('be.checked');
     }
 
-    cy.get('@personForm').find('[id=role]').focus().type(role + '{enter}');
+    cy.get('@personForm')
+        .find('[id=role]')
+        .focus()
+        .type(role + '{enter}');
+    
+    cy.wait('@postNewRole');
 
-    cy.get('@personForm').find('[id=product]').type(assignTo + '{enter}');
+    cy.get('@personForm')
+        .find('.MultiSelect__value-container input')
+        .focus()
+        .type(assignTo + '{enter}');
 
-    cy.get('[data-testid=personFormNotesToField]').focus().type(notes).should('have.value', notes);
+    cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
 };
 
 const submitPersonForm = () => {
-    cy.get('[data-testid=personFormSubmitButton]').should('have.value', 'Create').click();
+    cy.get('[data-testid=personFormSubmitButton]').should('have.text', 'Create').click();
     cy.get('@personForm').should('not.be.visible');
 };

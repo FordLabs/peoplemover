@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,35 +18,60 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Product} from './Product';
 import moment from 'moment';
+import {getToken} from '../Auth/TokenProvider';
 
 class ProductClient {
-
-    static async createProduct(product: Product): Promise<AxiosResponse> {
-        return Axios.post(
-            '/api/product',
-            product
-        );
+    private static getBaseProductsUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/products';
     }
 
-    static async editProduct(product: Product): Promise<AxiosResponse> {
-        return Axios.put(
-            '/api/product/' + product.id,
-            product
-        );
+    static async createProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
+        const url = this.getBaseProductsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, product, config);
     }
 
-    static async deleteProduct(product: Product): Promise<AxiosResponse> {
-        return Axios.delete(
-            '/api/product/' + product.id
-        );
+    static async editProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
+        const url = this.getBaseProductsUrl(spaceUuid) + `/${product.id}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, product, config);
     }
 
-    static async getProductsForDate(spaceId: number, date: Date): Promise<AxiosResponse> {
+    static async deleteProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
+        const url = this.getBaseProductsUrl(spaceUuid) + `/${product.id}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
+    }
+
+    static async getProductsForDate(spaceUuid: string, date: Date): Promise<AxiosResponse> {
         const formattedDate = moment(date).format('YYYY-MM-DD');
-        return Axios.get(
-            `/api/product/${spaceId}/${formattedDate}`,
-            {headers: { 'Content-Type': 'application/json'}}
-        );
+        const url = this.getBaseProductsUrl(spaceUuid) + `?requestedDate=${formattedDate}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 }
 

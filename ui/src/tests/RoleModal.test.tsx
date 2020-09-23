@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -157,7 +157,7 @@ describe('PeopleMover Role Modal', () => {
                 name: expectedNewRoleName,
                 colorId: TestUtils.whiteColor.id,
             };
-            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace.name);
+            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace.uuid!!);
         });
 
         it('should save role with the given name and color when you click on Save button', async () => {
@@ -358,7 +358,8 @@ describe('PeopleMover Role Modal', () => {
             const confirmDeleteButton = await app.findByTestId('confirmDeleteButton');
             fireEvent.click(confirmDeleteButton);
 
-            expect(RoleClient.delete).toHaveBeenCalledWith(2);
+            const expectedRoleId = 2;
+            expect(RoleClient.delete).toHaveBeenCalledWith(expectedRoleId, initialState.currentSpace.uuid);
             await wait(() => {
                 expect(app.queryByText(deleteWarning)).not.toBeInTheDocument();
             });

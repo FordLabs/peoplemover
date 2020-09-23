@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -146,34 +146,12 @@
     margin: 10px 0;
     display: flex;
     align-items: center;
-
-    .closeButton {
-      margin-left: 1px;
-      color: $gray-2;
-    }
   }
 
   .editTraitsButtons {
     padding-top: 6px;
-
-    button {
-      width: 100px;
-      height: 32px;
-      padding: 0;
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    .cancelFormButton {
-      margin: 0 8px 0 0;
-    }
-
-    .saveFormButton {
-      margin: 0 0 0 8px;
-    }
+    display: flex;
+    justify-content: space-between;
   }
 }
 
