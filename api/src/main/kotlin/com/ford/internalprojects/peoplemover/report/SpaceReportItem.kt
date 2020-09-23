@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,8 @@
 
 package com.ford.internalprojects.peoplemover.report
 
-data class ReportGenerator (
-    val productName: String,
-    val personName: String,
-    val personRole: String
+data class SpaceReportItem (
+    val spaceName: String,
+    val createdBy: String,
+    val users: List<String>
 )

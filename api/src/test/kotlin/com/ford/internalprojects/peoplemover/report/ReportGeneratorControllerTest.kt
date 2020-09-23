@@ -48,7 +48,6 @@ import java.time.LocalDate
 @SpringBootTest
 @AutoConfigureMockMvc
 class ReportGeneratorControllerTest {
-
     @MockBean
     lateinit var jwtDecoder: JwtDecoder
 
@@ -85,6 +84,8 @@ class ReportGeneratorControllerTest {
     val mar1 = "2019-03-01"
     val mar2 = "2019-03-02"
 
+    val baseReportsUrl = "/api/reports"
+
     @Before
     fun setup() {
         space = spaceRepository.save(Space(name = "tok"))
@@ -116,15 +117,14 @@ class ReportGeneratorControllerTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualReportGenerators = objectMapper.readValue<List<ReportGenerator>>(
-                result.response.contentAsString,
-                objectMapper
-                        .typeFactory
-                        .constructCollectionType(MutableList::class.java, ReportGenerator::class.java)
+        val actualReportGenerators = objectMapper.readValue<List<PeopleReportRow>>(
+            result.response.contentAsString,
+            objectMapper
+                .typeFactory
+                .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-
-        val expectedReportGenerator = ReportGenerator(productA.name, person1.name, spaceRole.name)
+        val expectedReportGenerator = PeopleReportRow(productA.name, person1.name, spaceRole.name)
 
         assertThat(actualReportGenerators.size).isOne()
         assertThat(actualReportGenerators[0]).isEqualTo(expectedReportGenerator)
@@ -137,17 +137,17 @@ class ReportGeneratorControllerTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualReportGenerators = objectMapper.readValue<List<ReportGenerator>>(
-                result.response.contentAsString,
-                objectMapper
-                        .typeFactory
-                        .constructCollectionType(MutableList::class.java, ReportGenerator::class.java)
+        val actualReportGenerators = objectMapper.readValue<List<PeopleReportRow>>(
+            result.response.contentAsString,
+            objectMapper
+                .typeFactory
+                .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
 
-        val expectedReportGenerator = ReportGenerator(productA.name, person1.name, spaceRole.name)
-        val expectedReportGenerator2 = ReportGenerator(productA.name, person3.name, spaceRole2.name)
-        val expectedReportGenerator3 = ReportGenerator(productB.name, person2.name, "")
+        val expectedReportGenerator = PeopleReportRow(productA.name, person1.name, spaceRole.name)
+        val expectedReportGenerator2 = PeopleReportRow(productA.name, person3.name, spaceRole2.name)
+        val expectedReportGenerator3 = PeopleReportRow(productB.name, person2.name, "")
 
         assertThat(actualReportGenerators.size).isEqualTo(3)
         assertThat(actualReportGenerators[0]).isEqualTo(expectedReportGenerator)
