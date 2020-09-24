@@ -50,7 +50,7 @@ class SpaceService(
     }
 
     fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
-        val userId: String = SecurityContextHolder.getContext().authentication.principal.toString()
+        val userId: String = SecurityContextHolder.getContext().authentication.name
         createSpaceWithName(spaceName, userId).let { createdSpace ->
              userSpaceMappingRepository.save(
                      UserSpaceMapping(
@@ -63,7 +63,7 @@ class SpaceService(
     }
 
     fun getSpacesForUser(accessToken: String): List<Space> {
-            val principal: String = SecurityContextHolder.getContext().authentication.principal.toString()
+            val principal: String = SecurityContextHolder.getContext().authentication.name
             val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(principal).map{ mapping -> mapping.spaceId!! }.toList()
             return spaceRepository.findAllByIdIn(spaceIds)
     }

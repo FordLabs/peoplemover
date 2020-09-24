@@ -55,7 +55,7 @@ describe('Location Client', function() {
     it('should return all locations for space', function(done) {
         LocationClient.get(spaceUuid)
             .then((response) => {
-                expect(Axios.get).toHaveBeenCalledWith(baseLocationsUrl,expectedConfig);
+                expect(Axios.get).toHaveBeenCalledWith(baseLocationsUrl, expectedConfig);
                 expect(response.data).toBe('Get Locations');
                 done();
             });
@@ -79,7 +79,7 @@ describe('Location Client', function() {
         };
         LocationClient.edit(expectedLocationEditRequest, spaceUuid)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationEditRequest,expectedConfig);
+                expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Location');
                 done();
             });

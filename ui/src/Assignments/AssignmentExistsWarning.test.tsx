@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {renderWithRedux} from './TestUtils';
-import AssignmentExistsWarning from '../Assignments/AssignmentExistsWarning';
+import {renderWithRedux} from '../tests/TestUtils';
+import AssignmentExistsWarning from './AssignmentExistsWarning';
 import React from 'react';
 
 describe('Assignment exists warning ', () => {

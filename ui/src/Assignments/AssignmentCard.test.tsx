@@ -17,9 +17,9 @@
 
 import {act, fireEvent} from '@testing-library/react';
 import React from 'react';
-import AssignmentCard from '../Assignments/AssignmentCard';
-import TestUtils, {renderWithRedux} from './TestUtils';
-import {Assignment} from '../Assignments/Assignment';
+import AssignmentCard from './AssignmentCard';
+import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, SpaceRole} from '../Roles/Role';
 
