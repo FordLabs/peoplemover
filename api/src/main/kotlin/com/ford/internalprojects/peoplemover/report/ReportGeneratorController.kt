@@ -19,13 +19,15 @@ package com.ford.internalprojects.peoplemover.report
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
+@RequestMapping("/api/reports")
 @RestController
 class ReportGeneratorController(private val reportGeneratorService: ReportGeneratorService) {
-    @GetMapping("/api/reports/people")
+    @GetMapping("/people")
     fun getPeopleReport(
         @RequestParam(name = "spaceUuid", required = true) spaceUuid: String,
         @RequestParam(name = "requestedDate", required = true) requestedDate: String
@@ -34,7 +36,7 @@ class ReportGeneratorController(private val reportGeneratorService: ReportGenera
         return ResponseEntity.ok(peopleReport)
     }
 
-    @GetMapping("/api/reports/space")
+    @GetMapping("/space")
     fun getSpaceReport(): ResponseEntity<List<SpaceReportItem>> {
         val spaceReport = reportGeneratorService.createSpacesReport()
         return ResponseEntity.ok(spaceReport)

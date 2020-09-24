@@ -20,5 +20,5 @@ package com.ford.internalprojects.peoplemover.report
 data class SpaceReportItem (
     val spaceName: String,
     val createdBy: String,
-    val users: List<String>
+    val users: List<String?>
 )
