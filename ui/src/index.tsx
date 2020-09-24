@@ -19,6 +19,7 @@ import './Application/Styleguide/Colors.scss';
 
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import axe from 'react-axe';
 import PeopleMover from './Application/PeopleMover';
 import '@fortawesome/fontawesome-free/css/all.css';
 import {Provider} from 'react-redux';
@@ -52,6 +53,10 @@ if (reduxDevToolsEnhancer) {
     composedEnhancers = compose(
         applyMiddleware(thunk)
     );
+}
+
+if (process.env.NODE_ENV !== 'production') {
+    axe(React, ReactDOM, 1000);
 }
 
 const store = createStore(
