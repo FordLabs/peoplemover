@@ -45,15 +45,15 @@ class ReportGeneratorController(private val reportGeneratorService: ReportGenera
 
     @GetMapping("/space")
     fun getSpaceReport(): ResponseEntity<List<SpaceReportItem>> {
-        val userName: String = SecurityContextHolder.getContext()
-            .authentication.principal.toString()
+        val userName: String = SecurityContextHolder.getContext().authentication.name.toLowerCase()
 
-        val isUnauthorizedUser = userName.toLowerCase() != users.toLowerCase()
-        if (isUnauthorizedUser) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        val authorizedUsers = users.toLowerCase().split(",")
+        val isAuthorizedUser = authorizedUsers.contains(userName)
+        if (isAuthorizedUser) {
+            val spaceReport = reportGeneratorService.createSpacesReport()
+            return ResponseEntity.ok(spaceReport)
         }
 
-        val spaceReport = reportGeneratorService.createSpacesReport()
-        return ResponseEntity.ok(spaceReport)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
     }
 }

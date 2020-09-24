@@ -46,7 +46,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(properties=["com.ford.people-mover.space-report.users=USER_ID"])
+@SpringBootTest(properties=["com.ford.people-mover.space-report.users=USER_ID,USER_ID_2"])
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ReportGeneratorControllerTest {
