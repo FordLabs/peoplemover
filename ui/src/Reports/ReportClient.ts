@@ -20,6 +20,7 @@ import {Report} from './Report';
 import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
 import moment from 'moment';
+import {getToken} from '../Auth/TokenProvider';
 
 const baseReportsUrl = '/api/reports';
 
@@ -27,7 +28,12 @@ class ReportClient {
     static async getReportsWithNames(spaceName: string, spaceUuid: string, date: Date): Promise<void> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
         const url = `${baseReportsUrl}/people?spaceUuid=${spaceUuid}&requestedDate=${dateAsString}`;
-        const config = {headers: { 'Content-Type': 'application/json'}};
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
         return Axios.get(url, config).then( response => {
             const jsonAsCsv = ReportClient.convertToCSV(response.data);
             const fileName = `${spaceName}_${date.toISOString().split('T')[0]}.csv`;

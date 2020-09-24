@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -36,10 +37,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
+@ActiveProfiles("test")
 @SpringBootTest
 class ColorApiTest {
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
     @Autowired
     private lateinit var mockMvc: MockMvc
     @Autowired
@@ -58,6 +58,7 @@ class ColorApiTest {
     fun `POST should add all the colors to the repository`() {
         assertThat(colorRepository.count()).isZero()
         mockMvc.perform(post("/api/color")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(colors)))
                 .andExpect(status().isOk)
@@ -69,6 +70,7 @@ class ColorApiTest {
         assertThat(colorRepository.count()).isZero()
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
         mockMvc.perform(post("/api/color")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(colors)))
                 .andExpect(status().isConflict)
@@ -79,6 +81,7 @@ class ColorApiTest {
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
         assertThat(colorRepository.count()).isNotZero()
         val result = mockMvc.perform(get("/api/color")
+                .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
                 .andReturn()

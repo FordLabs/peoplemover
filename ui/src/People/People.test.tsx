@@ -35,6 +35,7 @@ import moment from 'moment';
 
 describe('people actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
+    const spaceUuid = 'uuid';
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -133,7 +134,7 @@ describe('people actions', () => {
                 newPerson: true,
             };
             const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-            expect(spy.mock.calls[0]).toEqual([expectedPerson]);
+            expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
         });
     });
 
@@ -186,7 +187,7 @@ describe('people actions', () => {
                     spaceRole: {name: 'Product Manager', id: 2, spaceId: 1, color: {color: '2', id: 2}},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([expectedPerson]);
+                expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
             });
         });
 
@@ -212,7 +213,7 @@ describe('people actions', () => {
                     spaceRole: {name: 'Product Owner', id: 1, spaceId: -1, color: {color: '1', id: 2}},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([expectedPerson]);
+                expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
             });
         });
 
@@ -258,7 +259,7 @@ describe('people actions', () => {
 
         const checkForCreatedPerson = async (): Promise<void> => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-            expect(PeopleClient.createPersonForSpace).toBeCalledWith(expectedPerson);
+            expect(PeopleClient.createPersonForSpace).toBeCalledWith(spaceUuid, expectedPerson);
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
@@ -266,8 +267,6 @@ describe('people actions', () => {
                 person: expectedPerson,
                 products: [],
             });
-
-
         };
 
         it('assigns the person created by the PersonForm', async () => {
@@ -280,7 +279,6 @@ describe('people actions', () => {
             const labelElement = await app.findByLabelText('Role');
             const containerToFindOptionsIn = {container: await app.findByTestId('personForm')};
             await selectEvent.select(labelElement, /Software Engineer/, containerToFindOptionsIn);
-
 
             await app.findByText('unassigned');
 

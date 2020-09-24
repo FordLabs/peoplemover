@@ -41,6 +41,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -50,11 +51,9 @@ import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ReportGeneratorControllerTest {
-    @MockBean
-    lateinit var jwtDecoder: JwtDecoder
-
     @Autowired
     private lateinit var spaceRepository: SpaceRepository
 
@@ -125,7 +124,8 @@ class ReportGeneratorControllerTest {
     @Test
     fun `GET should return people, products, and roles for a space and omit future assignments given a date`() {
         val result = mockMvc
-            .perform(get("$basePeopleReportsUrl?=spaceUuid=${space.uuid}&requestedDate=${mar1}"))
+            .perform(get("$basePeopleReportsUrl?spaceUuid=${space.uuid}&requestedDate=${mar1}")
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
             .andReturn()
 
@@ -145,7 +145,8 @@ class ReportGeneratorControllerTest {
     @Test
     fun `GET should ignore case and alphabetically sort by product name then person name given a date`() {
         val result = mockMvc
-            .perform(get("$basePeopleReportsUrl?=spaceUuid=${space.uuid}&requestedDate=${mar2}"))
+            .perform(get("$basePeopleReportsUrl?spaceUuid=${space.uuid}&requestedDate=${mar2}")
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isOk)
             .andReturn()
 
@@ -169,14 +170,18 @@ class ReportGeneratorControllerTest {
     @Throws(Exception::class)
     @Test
     fun `GET should return 400 with invalid space name` () {
-        mockMvc.perform(get("$basePeopleReportsUrl?=spaceUuid=fakeSpace&requestedDate=${mar1}"))
+        mockMvc.perform(get("$basePeopleReportsUrl?spaceUuid=fakeSpace&requestedDate=${mar1}")
+            .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET should return all space names, who created the space, and all users related to that space`() {
         val result = mockMvc
-            .perform(get(baseSpaceReportsUrl))
+            .perform(
+                get(baseSpaceReportsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+            )
             .andExpect(status().isOk)
             .andReturn()
 

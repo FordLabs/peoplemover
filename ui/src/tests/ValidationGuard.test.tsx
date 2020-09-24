@@ -16,7 +16,7 @@
  */
 
 import {render, RenderResult, wait} from '@testing-library/react';
-import AuthorizedRoute from '../Validation/AuthorizedRoute';
+import AuthorizedRoute from '../Auth/AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosResponse} from 'axios';
 import {Router} from 'react-router';

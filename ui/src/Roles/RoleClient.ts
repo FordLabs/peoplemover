@@ -19,32 +19,59 @@ import Axios, {AxiosResponse} from 'axios';
 import {RoleAddRequest} from './RoleAddRequest';
 import {RoleEditRequest} from './RoleEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
+import {getToken} from '../Auth/TokenProvider';
 
 class RoleClient implements TraitClient {
+    private getBaseRolesUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/roles';
+    }
 
     async get(spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.get(`/api/role/${spaceUuid}`
-        );
+        const url = this.getBaseRolesUrl(spaceUuid);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 
     async add(role: RoleAddRequest, spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.post(`/api/role/${spaceUuid}`,
-            role,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+        const url = this.getBaseRolesUrl(spaceUuid);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, role, config);
     }
 
     async edit(role: RoleEditRequest, spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.put(`/api/role/${spaceUuid}`,
-            role,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+        const url = this.getBaseRolesUrl(spaceUuid);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, role, config);
     }
 
-    async delete(roleId: number): Promise<AxiosResponse> {
-        return Axios.delete(
-            `/api/role/${roleId}`,
-        );
+    async delete(roleId: number, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(spaceUuid) + `/${roleId}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
     }
 }
 

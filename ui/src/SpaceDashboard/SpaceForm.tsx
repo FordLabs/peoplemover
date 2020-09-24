@@ -18,7 +18,6 @@
 import React, {FormEvent, useState} from 'react';
 import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
-import Cookies from 'universal-cookie';
 import SpaceClient from './SpaceClient';
 import {createEmptySpace, Space} from './Space';
 import FormButton from '../ModalFormComponents/FormButton';
@@ -47,15 +46,12 @@ function SpaceForm({
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
 
-        const cookies = new Cookies();
-        const accessToken = cookies.get('accessToken');
-
         if (editing && formSpace.uuid) {
             SpaceClient.editSpace(formSpace.uuid, formSpace)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         } else {
-            SpaceClient.createSpaceForUser(formSpace.name, accessToken)
+            SpaceClient.createSpaceForUser(formSpace.name)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         }

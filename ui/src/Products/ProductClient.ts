@@ -18,6 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Product} from './Product';
 import moment from 'moment';
+import {getToken} from '../Auth/TokenProvider';
 
 class ProductClient {
     private static getBaseProductsUrl(spaceUuid: string): string {
@@ -26,23 +27,50 @@ class ProductClient {
 
     static async createProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
         const url = this.getBaseProductsUrl(spaceUuid);
-        return Axios.post(url, product);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, product, config);
     }
 
     static async editProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
         const url = this.getBaseProductsUrl(spaceUuid) + `/${product.id}`;
-        return Axios.put(url, product);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, product, config);
     }
 
     static async deleteProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
         const url = this.getBaseProductsUrl(spaceUuid) + `/${product.id}`;
-        return Axios.delete(url);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
     }
 
     static async getProductsForDate(spaceUuid: string, date: Date): Promise<AxiosResponse> {
         const formattedDate = moment(date).format('YYYY-MM-DD');
         const url = this.getBaseProductsUrl(spaceUuid) + `?requestedDate=${formattedDate}`;
-        const config = { headers: { 'Content-Type': 'application/json' } };
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
         return Axios.get(url, config);
     }
 }

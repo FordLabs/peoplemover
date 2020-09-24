@@ -17,33 +17,59 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Person} from './Person';
+import {getToken} from '../Auth/TokenProvider';
 
 class PeopleClient {
-    static async getAllPeopleInSpace(): Promise<AxiosResponse> {
-        return Axios.get(
-            `/api/person/${this.getSpaceUuid()}`,
-            {headers: {'Content-Type': 'application/json'}}
-        );
+    private static getBasePeopleUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/people';
     }
 
-    static getSpaceUuid(): string {
-        return window.location.pathname.substr(1);
+    static async getAllPeopleInSpace(spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBasePeopleUrl(spaceUuid);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
     }
 
-    static async createPersonForSpace(person: Person): Promise<AxiosResponse> {
-        return Axios.post(
-            `/api/person/${this.getSpaceUuid()}`,
-            person
-        );
+    static async createPersonForSpace(spaceUuid: string, person: Person): Promise<AxiosResponse> {
+        const url = this.getBasePeopleUrl(spaceUuid);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.post(url, person, config);
     }
 
-    static async updatePerson(person: Person): Promise<AxiosResponse> {
-        return Axios.put(`/api/person`, person
-        );
+    static async updatePerson(spaceUuid: string, person: Person): Promise<AxiosResponse> {
+        const url = this.getBasePeopleUrl(spaceUuid) + `/${person.id}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, person, config);
     }
 
-    static async removePerson(personId: number): Promise<AxiosResponse> {
-        return Axios.delete(`/api/person/${personId}`);
+    static async removePerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
+        const url = this.getBasePeopleUrl(spaceUuid) + `/${personId}`;
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.delete(url, config);
     }
 }
 

@@ -30,7 +30,6 @@ import ProductTagClient from '../../ProductTag/ProductTagClient';
 import {SpaceLocation} from '../../Locations/SpaceLocation';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../SpaceDashboard/SpaceClient';
-import Cookies from 'universal-cookie';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -156,9 +155,7 @@ export const setUserSpacesAction = (userSpaces: Array<Space>) => ({
 
 export const fetchUserSpacesAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch): Promise<void> => {
-        const cookies = new Cookies();
-        const accessToken = cookies.get('accessToken');
-        return SpaceClient.getSpacesForUser(accessToken)
+        return SpaceClient.getSpacesForUser()
             .then(result => {
                 const spaces: Array<Space> = result.data || [];
                 dispatch(setUserSpacesAction(spaces));

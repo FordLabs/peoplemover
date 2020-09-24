@@ -20,33 +20,59 @@ import {SpaceLocation} from './SpaceLocation';
 import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import {TraitEditRequest} from '../Traits/TraitEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
-
+import {getToken} from '../Auth/TokenProvider';
 
 class LocationClient implements TraitClient {
+    private getBaseLocationsUrl(spaceUuid: string): string {
+        return '/api/spaces/' + spaceUuid + '/locations';
+    }
 
     async get(spaceUuid: string): Promise<AxiosResponse<SpaceLocation[]>> {
-        return Axios.get(
-            `/api/location/${spaceUuid}`,
-        );
+        const url = this.getBaseLocationsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.get(url, config);
     }
 
     async add(locationAddRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.post(
-            `/api/location/${spaceUuid}`,
-            locationAddRequest
-        );
+        const url = this.getBaseLocationsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.post(url, locationAddRequest, config);
     }
 
     async edit(locationEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<SpaceLocation>> {
-        return Axios.put(`/api/location/${spaceUuid}`,
-            locationEditRequest
-        );
+        const url = this.getBaseLocationsUrl(spaceUuid);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
+
+        return Axios.put(url, locationEditRequest, config);
     }
 
-    async delete(id: number): Promise<AxiosResponse> {
-        const spaceUuid = window.location.pathname.substr(1);
+    async delete(locationId: number, spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBaseLocationsUrl(spaceUuid) + `/${locationId}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        }
 
-        return Axios.delete(`/api/location/${spaceUuid}/${id}`);
+        return Axios.delete(url, config);
     }
 }
 

@@ -21,8 +21,8 @@ import {TraitAddRequest} from './TraitAddRequest';
 import {TraitEditRequest} from './TraitEditRequest';
 
 export interface TraitClient {
-     get(spaceName: string): Promise<AxiosResponse<Trait[]>>;
-     add(addRequest: TraitAddRequest, spaceName: string): Promise<AxiosResponse<Trait>>;
-     edit(editRequest: TraitEditRequest, spaceName: string): Promise<AxiosResponse<Trait>>;
-     delete(id: number): Promise<AxiosResponse>;
+     get(spaceUuid: string): Promise<AxiosResponse<Trait[]>>;
+     add(addRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
+     edit(editRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
+     delete(id: number, spaceUuid: string): Promise<AxiosResponse>;
 }
