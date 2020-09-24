@@ -30,7 +30,6 @@ import com.ford.internalprojects.peoplemover.role.SpaceRole
 import com.ford.internalprojects.peoplemover.role.SpaceRolesRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.google.common.collect.Lists.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -39,18 +38,15 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
-import java.util.*
 
 @RunWith(SpringRunner::class)
-@SpringBootTest
+@SpringBootTest(properties=["com.ford.people-mover.space-report.users=USER_ID"])
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ReportGeneratorControllerTest {
@@ -169,18 +165,18 @@ class ReportGeneratorControllerTest {
 
     @Throws(Exception::class)
     @Test
-    fun `GET should return 400 with invalid space name` () {
+    fun `GET should return 400 with invalid space name`() {
         mockMvc.perform(get("$basePeopleReportsUrl?spaceUuid=fakeSpace&requestedDate=${mar1}")
             .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isBadRequest)
     }
 
     @Test
-    fun `GET should return all space names, who created the space, and all users related to that space`() {
+    fun `GET should return all space names, who created the space, and all users related to that space if users is authorized`() {
         val result = mockMvc
             .perform(
                 get(baseSpaceReportsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                    .header("Authorization", "Bearer GOOD_TOKEN")
             )
             .andExpect(status().isOk)
             .andReturn()
