@@ -4,8 +4,10 @@ import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenExcepti
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.security.oauth2.core.OAuth2Error
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.JwtValidationException
 import java.time.Instant
 import java.util.HashMap
 
@@ -23,7 +25,7 @@ class TestConfig {
 private class MockJwtDecoder : JwtDecoder {
     override fun decode(token: String?): Jwt {
         if (token.equals("INVALID_TOKEN")) {
-            throw InvalidTokenException()
+            throw JwtValidationException("Bad", listOf(OAuth2Error("Bad")))
         }
 
         val accessToken = "valid_Token"

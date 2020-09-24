@@ -20,51 +20,71 @@ import {CreateAssignmentsRequest} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {Assignment} from './Assignment';
 import {Person} from '../People/Person';
+import {getToken} from '../Auth/TokenProvider';
 
 class AssignmentClient {
+
     static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {
-        return Axios.post(`/api/assignment/create`, assignment,
-            {headers: { 'Content-Type': 'application/json'}}
-        );
+        const url = `/api/assignment/create`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        };
+
+        return Axios.post(url, assignment, {headers});
     }
 
     static async getAssignmentsUsingPersonIdAndDate(personId: number, date: Date): Promise<AxiosResponse> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
-        return Axios.get('/api/person/' + personId + '/assignments/date/' + dateAsString,
-            {headers: { 'Content-Type': 'application/json'}}
-        );
+        const url = `/api/person/${personId}/assignments/date/${dateAsString}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        };
+
+        return Axios.get(url, {headers});
     }
 
     static async getAssignmentEffectiveDates(spaceUuid: string): Promise<AxiosResponse> {
-        return Axios.get('/api/assignment/dates/' + spaceUuid,
-            {headers: { 'Content-Type': 'application/json'}}
-        );
+        const url = `/api/assignment/dates/${spaceUuid}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        };
+
+        return Axios.get(url, {headers} );
     }
 
     static async deleteAssignment(assignmentToDelete: Assignment): Promise<AxiosResponse> {
-        return Axios.delete(`/api/assignment/delete`,
-            {
-                headers: { 'Content-Type': 'application/json'},
-                data: {'assignmentToDelete': assignmentToDelete},
-            }
-        );
+        const url = `/api/assignment/delete`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        };
+
+        return Axios.delete(url, {headers, data: {'assignmentToDelete': assignmentToDelete}});
     }
 
     static async deleteAssignmentForDate(date: Date, person: Person): Promise<AxiosResponse> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
-        return Axios.delete(`/api/assignment/delete/` + dateAsString,
-            {
-                headers: { 'Content-Type': 'application/json'},
-                data: person,
-            }
-        );
+        const url = `/api/assignment/delete/${dateAsString}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        };
+
+        return Axios.delete(url, {headers, data: person});
     }
 
     static async getReassignments(spaceUuid: string, requestedDate: Date): Promise<AxiosResponse> {
         const formattedDate = moment(requestedDate).format('YYYY-MM-DD');
-        return Axios.get(`/api/reassignment/` + spaceUuid + '/' + formattedDate,
-            {headers: { 'Content-Type': 'application/json'}}
-        );
+        const url = `/api/reassignment/` + spaceUuid + '/' + formattedDate;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        };
+
+        return Axios.get(url, {headers});
     }
 }
 
