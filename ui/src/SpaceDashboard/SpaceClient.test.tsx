@@ -54,7 +54,7 @@ describe('Space Client', function() {
     });
 
     it('should return the space given a space name', function(done) {
-        const expectedUrl = baseSpaceUrl +'/testName';
+        const expectedUrl = baseSpaceUrl + '/testName';
         SpaceClient.getSpaceFromUuid('testName').then(() => {
             expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
             done();

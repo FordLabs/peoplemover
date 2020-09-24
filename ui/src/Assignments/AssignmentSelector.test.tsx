@@ -16,10 +16,10 @@
  */
 
 import React from 'react';
-import AssignmentForm from '../Assignments/AssignmentForm';
+import AssignmentForm from './AssignmentForm';
 import {act, fireEvent} from '@testing-library/react';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from './TestUtils';
+import AssignmentClient from './AssignmentClient';
+import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
 import selectEvent from 'react-select-event';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';

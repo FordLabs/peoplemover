@@ -16,28 +16,40 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
-import TestUtils from './TestUtils';
-import {Assignment} from '../Assignments/Assignment';
+import AssignmentClient from './AssignmentClient';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
+import TestUtils from '../tests/TestUtils';
+import {Assignment} from './Assignment';
 import moment from 'moment';
+import Cookies from 'universal-cookie';
 
 describe('the assignment client', () => {
+
+    const cookies = new Cookies();
+    const expectedConfig = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 123456',
+        },
+    };
+
     beforeEach(() => {
         jest.clearAllMocks();
+        cookies.set('accessToken', '123456');
+        Axios.get = jest.fn(() => Promise.resolve({} as AxiosResponse));
         Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
+        Axios.delete = jest.fn(() => Promise.resolve({} as AxiosResponse));
+    });
+
+    afterEach(function() {
+        cookies.remove('accessToken');
     });
 
     it('should get all assignments for given personId and date', async () => {
         const personId = 10;
         const date = new Date(2019, 1, 10);
 
-        Axios.get = jest.fn();
-
         const expectedUrl = `/api/person/${personId}/assignments/date/2019-02-10`;
-        const expectedConfig = {
-            headers: {'Content-Type': 'application/json'},
-        };
 
         await AssignmentClient.getAssignmentsUsingPersonIdAndDate(personId, date);
 
@@ -58,12 +70,7 @@ describe('the assignment client', () => {
 
         };
 
-        Axios.post = jest.fn();
-
         const expectedUrl = '/api/assignment/create';
-        const expectedConfig = {
-            headers: {'Content-Type': 'application/json'},
-        };
 
         await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest);
 
@@ -73,12 +80,7 @@ describe('the assignment client', () => {
     it('should get all effective dates given space', async () => {
         const spaceUuid = 'UUUUUUUUUIDDDD';
 
-        Axios.get = jest.fn();
-
         const expectedUrl = `/api/assignment/dates/${spaceUuid}`;
-        const expectedConfig = {
-            headers: {'Content-Type': 'application/json'},
-        };
 
         await AssignmentClient.getAssignmentEffectiveDates(spaceUuid);
 
@@ -86,13 +88,14 @@ describe('the assignment client', () => {
     });
 
     it('should delete assignment given assignment', async () => {
-        Axios.delete = jest.fn();
-
         const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
 
         const expectedUrl = '/api/assignment/delete';
         const expectedConfig = {
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 123456',
+            },
             data: {'assignmentToDelete': expectedAssignmentToDelete},
         };
 
@@ -102,11 +105,12 @@ describe('the assignment client', () => {
     });
 
     it('should delete assignment given person for a specific date', async () => {
-        Axios.delete = jest.fn();
-
         const expectedUrl = '/api/assignment/delete/' + TestUtils.originDateString;
         const expectedConfig = {
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 123456',
+            },
             data: TestUtils.person1,
         };
         await AssignmentClient.deleteAssignmentForDate(new Date(2019, 0, 1), TestUtils.person1);
@@ -115,15 +119,10 @@ describe('the assignment client', () => {
     });
 
     it('should get reassignments given assignment', async () => {
-        Axios.get = jest.fn();
-
         const spaceUuid = 'spaceuuid';
         const requestedDate = new Date(2020, 5, 20);
 
         const expectedUrl = `/api/reassignment/${spaceUuid}/2020-06-20`;
-        const expectedConfig = {
-            headers: {'Content-Type': 'application/json'},
-        };
 
         await AssignmentClient.getReassignments(spaceUuid, requestedDate);
 
