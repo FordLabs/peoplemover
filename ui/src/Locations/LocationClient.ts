@@ -34,7 +34,7 @@ class LocationClient implements TraitClient {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
-        }
+        };
 
         return Axios.get(url, config);
     }
@@ -46,7 +46,7 @@ class LocationClient implements TraitClient {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
-        }
+        };
 
         return Axios.post(url, locationAddRequest, config);
     }
@@ -58,7 +58,7 @@ class LocationClient implements TraitClient {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
-        }
+        };
 
         return Axios.put(url, locationEditRequest, config);
     }
@@ -70,7 +70,7 @@ class LocationClient implements TraitClient {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
-        }
+        };
 
         return Axios.delete(url, config);
     }
