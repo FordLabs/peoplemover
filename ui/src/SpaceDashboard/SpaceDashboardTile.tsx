@@ -33,7 +33,7 @@ interface SpaceDashboardTileProps {
 }
 
 
-function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
+function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
     const [dropdownFlag, setDropdownFlag] = useState<boolean>(false);
 
     let timestamp: string;
@@ -63,18 +63,35 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
         return dropdownFlag;
     }
 
+    function handleKeyDownForOpenSpace(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            openSpace(space);
+        }
+    }
+
+    function handleKeyDownForOpenEditModal(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            openSpace(space);
+        }
+    }
+
     return (
-        <div className="space" onClick={(): void => onClick(space)} onKeyDown={(): void => onClick(space)}>
+        <div className="space"
+            onClick={(): void => openSpace(space)}
+            onKeyDown={(e): void => handleKeyDownForOpenSpace(e)}>
             <div className="space-metadata">
                 <div className="space-name">{space.name}</div>
                 <div className="last-modified-text">Last modified {timestamp}</div>
             </div>
             <div className="button-container">
-                <button data-testid="ellipsis-button" className="ellipsis-button" onClick={(event) => showsDropdown(event)}>
+                <button data-testid="ellipsis-button" className="ellipsis-button" onClick={(e): boolean => showsDropdown(e)}>
                     <i className="fas fa-ellipsis-v icon"/>
 
                     {dropdownFlag && <div className={'ellipsis-dropdown-container'}>
-                        <div data-testid="edit-space" className="dropdown-options" onClick={openEditModal} onKeyDown={openEditModal}>
+                        <div data-testid="edit-space"
+                            className="dropdown-options"
+                            onClick={openEditModal}
+                            onKeyDown={(e): void => handleKeyDownForOpenEditModal(e)}>
                             <i className="fas fa-pen"/>Edit
                         </div>
                     </div>

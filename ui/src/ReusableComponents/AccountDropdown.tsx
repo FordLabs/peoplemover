@@ -72,9 +72,27 @@ function AccountDropdown({
         return redirect;
     }
 
+    function handleKeyDownForSetCurrentModalToEditContributors(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            setCurrentModalToEditContributors();
+        }
+    }
+
+    function handleKeyDownForHandleDownloadReport(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            handleDownloadReport();
+        }
+    }
+
+    function handleKeyDownForClearAccessTokenCookie(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            clearAccessTokenCookie();
+        }
+    }
+
     // eslint-disable-next-line @typescript-eslint/camelcase
     const handleDownloadReport = async () => { await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate); };
-    const setCurrentModalToEditContributors = () => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
+    const setCurrentModalToEditContributors = (): void => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
 
     return (
         <button data-testid="editContributorsModal" className={'editContributorsModal'} onClick={showsDropdown}>
@@ -83,21 +101,25 @@ function AccountDropdown({
 
             {dropdownFlag && <div className={'dropdown-container'}>
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
-                    <div data-testid="share-access" className="account-dropdown-options"
+                    <div data-testid="share-access"
+                        className="account-dropdown-options"
                         onClick={setCurrentModalToEditContributors}
-                        onKeyDown={setCurrentModalToEditContributors}>
+                        onKeyDown={(e): void => {handleKeyDownForSetCurrentModalToEditContributors(e);}}>
                         Share Access
                     </div>
                 }
                 {!hideSpaceButtons &&
-                    <div data-testid="download-report" className="account-dropdown-options"
+                    <div data-testid="download-report"
+                        className="account-dropdown-options"
                         onClick={handleDownloadReport}
-                        onKeyDown={handleDownloadReport}>
+                        onKeyDown={(e): void => {handleKeyDownForHandleDownloadReport(e);}}>
                         Download Report
                     </div>
                 }
-                <div data-testid="sign-out" className="account-dropdown-options" onClick={() => clearAccessTokenCookie()}
-                    onKeyDown={() => clearAccessTokenCookie()}>
+                <div data-testid="sign-out"
+                    className="account-dropdown-options"
+                    onClick={(): void => clearAccessTokenCookie()}
+                    onKeyDown={(e): void => {handleKeyDownForClearAccessTokenCookie(e);}}>
                     Sign Out
                 </div>
             </div>

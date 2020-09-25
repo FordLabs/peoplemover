@@ -158,6 +158,12 @@ function EditTraitSection({
         return (colors.length - 1) === index ? 'whiteCircleBorder' : '';
     }
 
+    function handleKeyDownForHighlightCircle(event: React.KeyboardEvent, ref: React.RefObject<HTMLSpanElement>, color: Color): void {
+        if (event.key === 'Enter') {
+            highlightCircle(ref, color);
+        }
+    }
+
     return (
         <React.Fragment>
             <div className="separator"/>
@@ -166,7 +172,7 @@ function EditTraitSection({
                 data-testid="traitName"
                 value={enteredTrait ? enteredTrait.name : ''}
                 onChange={updateEnteredRoleText}
-                onKeyPress={event => handleEnterSubmit(event)}/>
+                onKeyPress={(e): void => handleEnterSubmit(e)}/>
             {duplicateErrorMessage &&
             <div className="duplicateErrorMessage"> A {traitName} with this name already exists.<br/> Enter a different name. </div>
             }
@@ -181,7 +187,7 @@ function EditTraitSection({
                             data-testid="selectRoleCircle"
                             style={{'backgroundColor': color.color}}
                             onClick={(): void => highlightCircle(ref, color)}
-                            onKeyDown={(): void => highlightCircle(ref, color)}
+                            onKeyDown={(e): void => handleKeyDownForHighlightCircle(e, ref, color)}
                             className={`myTraitsCircle selectRoleCircle ${highlightDefaultCircle(color, index)} ${putBorderOnWhiteCircle(index)}`}/>
                     );
                 })}

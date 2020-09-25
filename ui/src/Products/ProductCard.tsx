@@ -144,6 +144,18 @@ function ProductCard({
         item: product,
     });
 
+    function handleKeyDownForSetCurrentModalToCreateAssignment(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            setCurrentModalToCreateAssignment();
+        }
+    }
+
+    function handleKeyDownForToggleEditMenu(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            toggleEditMenu();
+        }
+    }
+
     return (
         <div className={container} data-testid={container} ref={productRef}>
             <div key={product.name}>
@@ -170,13 +182,13 @@ function ProductCard({
                                     <div data-testid={'addPersonToProductIcon-' + product.id}
                                         className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
                                         onClick={setCurrentModalToCreateAssignment}
-                                        onKeyDown={setCurrentModalToCreateAssignment}
+                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
                                     />
                                 </div>
                                 <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
                                     data-testid={'editProductIcon_' + product.id}
                                     onClick={toggleEditMenu}
-                                    onKeyDown={toggleEditMenu}/>
+                                    onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
                             {
                                 editMenuIsOpened &&

@@ -300,6 +300,12 @@ function PersonForm({
         return alphabetize(filteredProducts) as Array<Product>;
     };
 
+    function handleKeyDownForDisplayRemovePersonModal(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            displayRemovePersonModal();
+        }
+    }
+
     return (
         <div className="formContainer">
             <datalist id="peopleList">
@@ -387,7 +393,7 @@ function PersonForm({
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             onClick={displayRemovePersonModal}
-                            onKeyDown={displayRemovePersonModal}>Delete</span>
+                            onKeyDown={(e): void => {handleKeyDownForDisplayRemovePersonModal(e)}}>Delete</span>
                     </div>
                 )}
             </form>
