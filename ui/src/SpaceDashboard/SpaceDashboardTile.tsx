@@ -64,7 +64,7 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
     }
 
     return (
-        <div className="space" onClick={(): void => onClick(space)}>
+        <div className="space" onClick={(): void => onClick(space)} onKeyDown={(): void => onClick(space)}>
             <div className="space-metadata">
                 <div className="space-name">{space.name}</div>
                 <div className="last-modified-text">Last modified {timestamp}</div>
@@ -74,7 +74,7 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
                     <i className="fas fa-ellipsis-v icon"/>
 
                     {dropdownFlag && <div className={'ellipsis-dropdown-container'}>
-                        <div data-testid="edit-space" className="dropdown-options" onClick={openEditModal}>
+                        <div data-testid="edit-space" className="dropdown-options" onClick={openEditModal} onKeyDown={openEditModal}>
                             <i className="fas fa-pen"/>Edit
                         </div>
                     </div>

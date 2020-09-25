@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -15,38 +15,6 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
-
-.createNewPersonContainer {
-    position: absolute;
-    top: 140px;
-    left: 139px;
-    width: 214px;
-    height: 60px;
-    border-radius: 2px;
-    border: 1px solid $gray-4;
-    display: flex;
-    flex-direction: column;
-    background-color: $white;
-    justify-content: center;
-
-    font-size: 12px;
-    line-height: 12px;
-}
-
-.createNewPersonLink {
-    padding: 8px 10px 8px 15px;
-    flex-grow: 1;
-    cursor: pointer;
-}
-
 .createNewPersonIcon {
-    margin: 0 8px 0 0;
-}
-
-.createNewPersonText {
-    border-bottom: 1px solid $gray-4;
-    padding: 12px 10px 9px 15px;
-    color: $gray-2;
-    flex-grow: 1;
+  margin: 0 8px 0 0;
 }

@@ -17,7 +17,7 @@
 
 import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
 import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useEffect} from 'react';
-import './FilterInput.scss';
+import './ReactSelectStyles.scss';
 import {ThemeApplier} from './ThemeApplier';
 import CheckIcon from '../Application/Assets/checkIcon.svg';
 import {Option} from '../CommonTypes/Option';
