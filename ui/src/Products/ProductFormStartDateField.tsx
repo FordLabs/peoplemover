@@ -47,7 +47,7 @@ function ProductFormStartDateField({ currentProduct, viewingDate, updateProductF
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const CustomInput = ({ value, onClick, onChange }: any): JSX.Element => {
         return (
-            <div onClick={onClick}>
+            <div onClick={onClick} onKeyDown={onClick}>
                 <MaskedInput
                     className="formInput formTextInput"
                     name="start"

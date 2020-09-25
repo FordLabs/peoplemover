@@ -101,8 +101,7 @@ function FilterInput({
                     value={selectedOption.name}
                     onChange={onEntryChanged}
                     placeholder="Search for a person"
-                    autoComplete="off"
-                    autoFocus/>
+                    autoComplete="off"/>
             </div>
             {!(anyListItemMatches(selectedOption.name)) &&
                 <div className="createNewPersonContainer">
