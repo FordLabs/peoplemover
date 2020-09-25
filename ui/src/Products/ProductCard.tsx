@@ -139,6 +139,11 @@ function ProductCard({
         return ProductClient.editProduct(currentSpace.uuid, archivedProduct);
     }
 
+    const setCurrentModalToCreateAssignment = () => setCurrentModal({
+        modal: AvailableModals.CREATE_ASSIGNMENT,
+        item: product,
+    });
+
     return (
         <div className={container} data-testid={container} ref={productRef}>
             <div key={product.name}>
@@ -164,14 +169,8 @@ function ProductCard({
                                 <div className="addPersonIconContainer">
                                     <div data-testid={'addPersonToProductIcon-' + product.id}
                                         className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
-                                        onClick={() => setCurrentModal({
-                                            modal: AvailableModals.CREATE_ASSIGNMENT,
-                                            item: product,
-                                        })}
-                                        onKeyDown={() => setCurrentModal({
-                                            modal: AvailableModals.CREATE_ASSIGNMENT,
-                                            item: product,
-                                        })}
+                                        onClick={setCurrentModalToCreateAssignment}
+                                        onKeyDown={setCurrentModalToCreateAssignment}
                                     />
                                 </div>
                                 <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"

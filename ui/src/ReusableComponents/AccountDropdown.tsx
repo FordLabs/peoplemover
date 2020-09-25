@@ -72,8 +72,10 @@ function AccountDropdown({
         return redirect;
     }
 
-
     // eslint-disable-next-line @typescript-eslint/camelcase
+    const handleDownloadReport = async () => { await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate); };
+    const setCurrentModalToEditContributors = () => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
+
     return (
         <button data-testid="editContributorsModal" className={'editContributorsModal'} onClick={showsDropdown}>
             <i className="fas fa-user" data-testid={'userIcon'}/>
@@ -82,15 +84,15 @@ function AccountDropdown({
             {dropdownFlag && <div className={'dropdown-container'}>
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
                     <div data-testid="share-access" className="account-dropdown-options"
-                        onClick={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}
-                        onKeyDown={() => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS})}>
+                        onClick={setCurrentModalToEditContributors}
+                        onKeyDown={setCurrentModalToEditContributors}>
                         Share Access
                     </div>
                 }
                 {!hideSpaceButtons &&
                     <div data-testid="download-report" className="account-dropdown-options"
-                        onClick={async () => { await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate); } }
-                        onKeyDown={async () => { await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate); } }>
+                        onClick={handleDownloadReport}
+                        onKeyDown={handleDownloadReport}>
                         Download Report
                     </div>
                 }
