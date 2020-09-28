@@ -16,10 +16,10 @@
  */
 
 import React from 'react';
-import Logo from '../Application/Assets/logo.svg';
 import LandingPageImage from './LandingPageImage.svg';
 import LandingPageBackground from './LandingPageBackground.svg';
 import FormButton from '../ModalFormComponents/FormButton';
+import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 
 import './LandingPage.scss';
 
@@ -28,12 +28,7 @@ function LandingPage(): JSX.Element {
         <>
             <div className="landing-page-container">
                 <div className="landing-page-info-container">
-                    <div className="logo-title-container">
-                        <img
-                            src={Logo}
-                            alt="Logo not available"/>
-                        <h1 className="app-name page-title">PEOPLEMOVER</h1>
-                    </div>
+                    <PeopleMoverLogo />
                     <div className="landing-page-info-heading">It’s about the people. Your people.</div>
                     <div className="landing-page-info-sub-heading">And helping them be extraordinary.</div>
                     <div className="landing-page-info-text">
