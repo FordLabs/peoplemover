@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(properties=["com.ford.people-mover.space-report.users=SPACE_REPORT_UNAUTHORIZED"])
+@SpringBootTest(properties = ["com.ford.people-mover.secured-report.users=SPACE_REPORT_UNAUTHORIZED"])
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ReportGeneratorControllerUnauthorizedUserTest {
@@ -38,13 +38,21 @@ class ReportGeneratorControllerUnauthorizedUserTest {
 
     val mar1 = "2019-03-01"
 
-    private final val baseReportsUrl = "/api/reports"
-    private final val baseSpaceReportsUrl = "$baseReportsUrl/space"
+    private val baseReportsUrl = "/api/reports"
+    private val baseSpaceReportsUrl = "$baseReportsUrl/space"
+    private val baseUserReportsUrl = "$baseReportsUrl/user"
 
     @Test
-    fun `GET should return unauthorized if user is not authorized`() {
+    fun `GET should return unauthorized if user is not authorized for space reports`() {
         mockMvc.perform(get(baseSpaceReportsUrl)
             .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isUnauthorized)
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `GET should return unauthorized if user is not authorized for user reports`() {
+        mockMvc.perform(get(baseUserReportsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isForbidden)
     }
 }

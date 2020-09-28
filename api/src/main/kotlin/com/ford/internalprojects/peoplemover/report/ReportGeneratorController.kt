@@ -31,7 +31,7 @@ import java.time.LocalDate
 @RequestMapping("/api/reports")
 @RestController
 class ReportGeneratorController(private val reportGeneratorService: ReportGeneratorService) {
-    @Value("\${com.ford.people-mover.space-report.users}")
+    @Value("\${com.ford.people-mover.secured-report.users}")
     protected val users: String = "none"
 
     @GetMapping("/people")
@@ -54,6 +54,20 @@ class ReportGeneratorController(private val reportGeneratorService: ReportGenera
             return ResponseEntity.ok(spaceReport)
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+    }
+
+    @GetMapping("/user")
+    fun getUserReport():ResponseEntity<List<String>> {
+        val userName: String = SecurityContextHolder.getContext().authentication.name.toLowerCase()
+
+        val authorizedUsers = users.toLowerCase().split(",")
+        val isAuthorizedUser = authorizedUsers.contains(userName)
+        if (isAuthorizedUser) {
+            val userReport = reportGeneratorService.createUsersReport()
+            return ResponseEntity.ok(userReport)
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
     }
 }

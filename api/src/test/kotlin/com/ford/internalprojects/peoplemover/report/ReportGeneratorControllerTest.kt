@@ -46,7 +46,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(properties=["com.ford.people-mover.space-report.users=USER_ID,USER_ID_2"])
+@SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ReportGeneratorControllerTest {
@@ -81,7 +81,8 @@ class ReportGeneratorControllerTest {
     private lateinit var person1: Person
     private lateinit var person2: Person
     private lateinit var person3: Person
-    private lateinit var space: Space
+    private lateinit var space1: Space
+    private lateinit var space2: Space
 
     val mar1 = "2019-03-01"
     val mar2 = "2019-03-02"
@@ -89,22 +90,25 @@ class ReportGeneratorControllerTest {
     private final val baseReportsUrl = "/api/reports"
     private final val basePeopleReportsUrl = "$baseReportsUrl/people"
     private final val baseSpaceReportsUrl = "$baseReportsUrl/space"
+    private final val baseUserReportsUrl = "$baseReportsUrl/user"
 
     @Before
     fun setup() {
-        space = spaceRepository.save(Space(name = "tok"))
-        productA = productRepository.save(Product(name = "product a", spaceId = space.id!!))
-        productB = productRepository.save(Product(name = "Product b", spaceId = space.id!!))
-        spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
-        spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceId = space.id!!))
-        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space.id!!))
-        person2 = personRepository.save(Person(name = "Person 2", spaceId = space.id!!))
-        person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceId = space.id!!))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceId = space.id!!))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceId = space.id!!))
-        assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar1)))
-        assignmentRepository.save(Assignment(person = person2, productId = productB.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar2)))
-        assignmentRepository.save(Assignment(person = person3, productId = productA.id!!, spaceId = space.id!!, effectiveDate = LocalDate.parse(mar2)))
+        space1 = spaceRepository.save(Space(name = "Undersea Pineapple"))
+        space2 = spaceRepository.save(Space(name = "Krusty Krabb"))
+        productA = productRepository.save(Product(name = "product a", spaceId = space1.id!!))
+        productB = productRepository.save(Product(name = "Product b", spaceId = space1.id!!))
+        spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space1.id!!))
+        spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceId = space1.id!!))
+        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space1.id!!))
+        person2 = personRepository.save(Person(name = "Person 2", spaceId = space1.id!!))
+        person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceId = space1.id!!))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceId = space1.id!!))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceId = space1.id!!))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceId = space2.id!!))
+        assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar1)))
+        assignmentRepository.save(Assignment(person = person2, productId = productB.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar2)))
+        assignmentRepository.save(Assignment(person = person3, productId = productA.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar2)))
     }
 
     @After
@@ -120,16 +124,16 @@ class ReportGeneratorControllerTest {
     @Test
     fun `GET should return people, products, and roles for a space and omit future assignments given a date`() {
         val result = mockMvc
-            .perform(get("$basePeopleReportsUrl?spaceUuid=${space.uuid}&requestedDate=${mar1}")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .perform(get("$basePeopleReportsUrl?spaceUuid=${space1.uuid}&requestedDate=${mar1}")
+                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualPeopleReport = objectMapper.readValue<List<PeopleReportRow>>(
-            result.response.contentAsString,
-            objectMapper
-                .typeFactory
-                .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
+                result.response.contentAsString,
+                objectMapper
+                        .typeFactory
+                        .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
         val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name)
@@ -141,16 +145,16 @@ class ReportGeneratorControllerTest {
     @Test
     fun `GET should ignore case and alphabetically sort by product name then person name given a date`() {
         val result = mockMvc
-            .perform(get("$basePeopleReportsUrl?spaceUuid=${space.uuid}&requestedDate=${mar2}")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .perform(get("$basePeopleReportsUrl?spaceUuid=${space1.uuid}&requestedDate=${mar2}")
+                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualPeopleReport = objectMapper.readValue<List<PeopleReportRow>>(
-            result.response.contentAsString,
-            objectMapper
-                .typeFactory
-                .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
+                result.response.contentAsString,
+                objectMapper
+                        .typeFactory
+                        .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
         val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name)
@@ -167,31 +171,61 @@ class ReportGeneratorControllerTest {
     @Test
     fun `GET should return 400 with invalid space name`() {
         mockMvc.perform(get("$basePeopleReportsUrl?spaceUuid=fakeSpace&requestedDate=${mar1}")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isBadRequest)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET should return all space names, who created the space, and all users related to that space if users is authorized`() {
         val result = mockMvc
-            .perform(
-                get(baseSpaceReportsUrl)
-                    .header("Authorization", "Bearer GOOD_TOKEN")
-            )
-            .andExpect(status().isOk)
-            .andReturn()
+                .perform(
+                        get(baseSpaceReportsUrl)
+                                .header("Authorization", "Bearer GOOD_TOKEN")
+                )
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualSpaceReport = objectMapper.readValue<List<SpaceReportItem>>(
-            result.response.contentAsString,
-            objectMapper
-                .typeFactory
-                .constructCollectionType(MutableList::class.java, SpaceReportItem::class.java)
+                result.response.contentAsString,
+                objectMapper
+                        .typeFactory
+                        .constructCollectionType(MutableList::class.java, SpaceReportItem::class.java)
         )
 
-        val expectedUsers = listOf("SSQUAREP", "PSTAR")
-        val expectedSpaceReport = SpaceReportItem(space.name, space.createdBy, expectedUsers)
+        val expectedUsers1 = listOf("SSQUAREP", "PSTAR")
+        val expectedUsers2 = listOf("PSTAR")
+        val expectedSpace1 = SpaceReportItem(space1.name, space1.createdBy, expectedUsers1)
+        val expectedSpace2 = SpaceReportItem(space2.name, space2.createdBy, expectedUsers2)
+        val expectedSpaceReport = listOf(expectedSpace1, expectedSpace2)
 
-        assertThat(actualSpaceReport.size).isOne()
-        assertThat(actualSpaceReport[0]).isEqualTo(expectedSpaceReport)
+        assertThat(actualSpaceReport.size).isEqualTo(2)
+        assertThat(actualSpaceReport).containsAll(expectedSpaceReport)
     }
+
+    @Test
+    fun `GET user should return all user ids`() {
+        val result = mockMvc
+                .perform(
+                        get(baseUserReportsUrl)
+                                .header("Authorization", "Bearer GOOD_TOKEN")
+                )
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualUserReport = objectMapper.readValue<List<String>>(
+                result.response.contentAsString,
+                objectMapper
+                        .typeFactory
+                        .constructCollectionType(MutableList::class.java, String::class.java)
+        )
+
+
+        val expectedUsers = listOf("SSQUAREP", "PSTAR")
+
+
+        assertThat(actualUserReport.size).isEqualTo(2)
+        assertThat(actualUserReport).containsAll(expectedUsers)
+
+    }
+
 }

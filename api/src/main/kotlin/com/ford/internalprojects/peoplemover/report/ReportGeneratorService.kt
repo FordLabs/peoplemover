@@ -71,4 +71,10 @@ class ReportGeneratorService(
                 .filter { mapping -> mapping.spaceId == space.id }
                 .map { mapping2 -> mapping2.userId }.toList()
     }
+
+    fun createUsersReport(): List<String> {
+        return userSpaceMappingRepository.findAll()
+                .distinctBy{ it.userId!! }
+                .map{ it.userId!! }
+    }
 }
