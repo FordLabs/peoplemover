@@ -30,7 +30,7 @@
   top: 0;
 }
 
-.logoAndSpaceNameContainer {
+.headerLeftContainer {
   display: flex;
   align-items: center;
 
@@ -45,5 +45,21 @@
     font-weight: normal;
     padding-left: 18px;
     border-left: 2px solid $purple;
+  }
+}
+
+.headerRightContainer,
+.filterByDropDownContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.headerRightContainer {
+  justify-content: right;
+  padding-left: 100px;
+
+  .filterByDropDownContainer {
+    width: auto;
+    padding-right: 30px;
   }
 }

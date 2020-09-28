@@ -19,8 +19,10 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../SpaceDashboard/Space';
-import SpaceButtons from '../Header/SpaceButtons';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
+import ProductFilter from '../ReusableComponents/ProductFilter';
+import ProductSortBy from '../ReusableComponents/ProductSortBy';
+import AccountDropdown from '../ReusableComponents/AccountDropdown';
 
 import './Headers.scss';
 
@@ -37,13 +39,26 @@ function Header({
 }: HeaderProps): JSX.Element {
     const dashboardPathname = '/user/dashboard';
     const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
+
     return (
         <header className="peopleMoverHeader">
-            <div className="logoAndSpaceNameContainer">
+            <div className="headerLeftContainer">
                 <PeopleMoverLogo href={logoHref} />
                 {currentSpace && <h2 className="spaceName">{currentSpace.name}</h2>}
             </div>
-            {!hideAllButtons && <SpaceButtons hideSpaceButtons={hideSpaceButtons}/>}
+            {!hideAllButtons &&
+                <div className="headerRightContainer">
+                    {!hideSpaceButtons &&
+                        <>
+                            <div className="filterByDropDownContainer" data-testid="filterByDropDownContainer">
+                                <ProductFilter/>
+                            </div>
+                            <ProductSortBy/>
+                        </>
+                    }
+                    <AccountDropdown hideSpaceButtons={hideSpaceButtons}/>
+                </div>
+            }
         </header>
     );
 }

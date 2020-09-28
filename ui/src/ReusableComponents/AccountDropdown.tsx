@@ -91,15 +91,16 @@ function AccountDropdown({
     }
 
     // eslint-disable-next-line @typescript-eslint/camelcase
-    const handleDownloadReport = async () => { await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate); };
+    const handleDownloadReport = async (): Promise<void> => {
+        await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate);
+    };
     const setCurrentModalToEditContributors = (): void => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
 
     return (
-        <button data-testid="editContributorsModal" className={'editContributorsModal'} onClick={showsDropdown}>
-            <i className="fas fa-user" data-testid={'userIcon'}/>
+        <button data-testid="editContributorsModal" className="editContributorsModal" onClick={showsDropdown}>
+            <i className="fas fa-user" data-testid="userIcon"/>
             <i className="fas fa-caret-down drawerCaret"/>
-
-            {dropdownFlag && <div className={'dropdown-container'}>
+            {dropdownFlag && <div className="dropdown-container">
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
                     <div data-testid="share-access"
                         className="account-dropdown-options"
@@ -128,6 +129,7 @@ function AccountDropdown({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
@@ -138,3 +140,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountDropdown);
+/* eslint-enable */
