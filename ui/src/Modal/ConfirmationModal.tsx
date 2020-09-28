@@ -87,7 +87,7 @@ function ConfirmationModal({
                     <div className="modalTitleAndCloseButtonContainer">
                         <div className="modalTitleSpacer"/>
                         <div className="modalTitle">Are you sure?</div>
-                        <div className="fa fa-times fa-lg closeButton" onClick={close}/>
+                        <button className="fa fa-times fa-lg closeButton" onClick={close}/>
                     </div>
                     <div className="confirmationModalContent">
                         <div>{warningMessage}</div>

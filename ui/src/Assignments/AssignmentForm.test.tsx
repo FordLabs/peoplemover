@@ -67,12 +67,12 @@ describe('AssignmentForm', () => {
             });
         });
 
-        it('submits an assignment when the enter key is pressed', async () => {
+        it('submits an assignment when submit event fires', async () => {
             const { viewingDate, app } = renderComponent();
             const labelElement = await app.findByLabelText('Name');
             const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
-            fireEvent.keyDown(app.getByText('Assign'), {key: 'Enter', code: 13});
+            fireEvent.submit(app.getByTestId('assignmentForm'));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),

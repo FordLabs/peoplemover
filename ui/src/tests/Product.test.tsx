@@ -346,7 +346,6 @@ describe('Products', () => {
             fireEvent.click(newProductButton);
 
             await app.findByText('Create New Product');
-            expect(app.queryByLabelText('Name')).toHaveFocus();
         });
 
         it('opens ProductForm with product tag field', async () => {

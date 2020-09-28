@@ -36,10 +36,16 @@ function ProductFormEndDateField({ currentProduct, updateProductField }: Props):
         updateProductField('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
     };
 
+    function handleKeyDownForOnClick(event: React.KeyboardEvent, callback: Function): void {
+        if (event.key === 'Enter') {
+            callback();
+        }
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const CustomInput = ({ value, onClick, onChange }: any): JSX.Element => {
         return (
-            <div onClick={onClick}>
+            <div onClick={onClick} onKeyDown={(e): void => handleKeyDownForOnClick(e, onClick)}>
                 <MaskedInput
                     className="formInput formTextInput"
                     name="end"
