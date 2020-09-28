@@ -67,13 +67,6 @@ function AssignmentForm({
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>(getSelectedProduct());
     const [placeholder, setPlaceholder] = useState<boolean>(false);
 
-    function handleKeyDown(event: React.KeyboardEvent<HTMLFormElement>): void {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            handleSubmit(event).then();
-        }
-    }
-
     function getSelectedProductPairs(): ProductPlaceholderPair[] {
         return selectedProducts.map((product) => {
             return {
@@ -211,7 +204,6 @@ function AssignmentForm({
     return (
         <div className="formContainer">
             <form className="form"
-                onKeyDown={handleKeyDown}
                 data-testid="assignmentForm"
                 onSubmit={(event): Promise<void> => handleSubmit(event)}>
                 <div className="person-select-container">

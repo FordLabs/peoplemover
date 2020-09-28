@@ -161,12 +161,18 @@ function AssignmentCard({
         }
     }, [assignment]);
 
+    function handleKeyDown(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            toggleEditMenu();
+        }
+    }
+
     return (
         <div
             className={`personContainer ${container === 'productDrawerContainer' ? 'borderedPeople' : ''} ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}`}
             data-testid={`assignmentCard${assignment.id}`}
             ref={assignmentRef}
-            onMouseDown={e => startDraggingAssignment!!(assignmentRef, assignment, e)}
+            onMouseDown={(e): void => startDraggingAssignment!!(assignmentRef, assignment, e)}
         >
             {assignment.person.newPerson ? <NewBadge/> : null}
             <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={isUnassignedProduct} />
@@ -174,7 +180,8 @@ function AssignmentCard({
                 ref={assignmentEditRef}
                 className="personRoleColor"
                 data-testid={`editPersonIconContainer-${assignment.id}`}
-                onClick={toggleEditMenu}>
+                onClick={toggleEditMenu}
+                onKeyDown={(e): void => {handleKeyDown(e);}}>
                 <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>
             </div>
             {

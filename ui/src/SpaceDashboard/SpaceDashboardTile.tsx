@@ -32,8 +32,7 @@ interface SpaceDashboardTileProps {
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-
-function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
+function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
     const [dropdownFlag, setDropdownFlag] = useState<boolean>(false);
 
     let timestamp: string;
@@ -45,9 +44,7 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
         timestamp = lastModifiedMoment.format('dddd, MMMM D, YYYY [at] h:mm a');
     }
 
-
-    function showsDropdown(e: React.MouseEvent<HTMLButtonElement>): boolean {
-        e.stopPropagation();
+    function showsDropdown(): boolean {
         if (dropdownFlag) {
             hidesDropdown();
         } else {
@@ -57,24 +54,60 @@ function SpaceDashboardTile({space, onClick, setCurrentModal}: SpaceDashboardTil
         return dropdownFlag;
     }
 
+    function handleDropdownClick(event: React.MouseEvent<HTMLButtonElement>): boolean {
+        event.stopPropagation();
+        return showsDropdown();
+    }
+
     function hidesDropdown(): boolean {
         setDropdownFlag(false);
         document.removeEventListener('click', hidesDropdown);
         return dropdownFlag;
     }
 
+    function handleKeyDownForOpenSpace(event: React.KeyboardEvent): void {
+        event.stopPropagation();
+        if (event.key === 'Enter') {
+            openSpace(space);
+        }
+    }
+
+    function handleKeyDownForShowsDropdown(event: React.KeyboardEvent): boolean {
+        event.stopPropagation();
+        if (event.key === 'Enter') {
+            return showsDropdown();
+        }
+        return dropdownFlag;
+    }
+
+    function handleKeyDownForOpenEditModal(event: React.KeyboardEvent): void {
+        event.stopPropagation();
+        if (event.key === 'Enter') {
+            openEditModal();
+        }
+    }
+
     return (
-        <div className="space" onClick={(): void => onClick(space)}>
+        <div className="space"
+            data-testid="space-dashboard-tile"
+            onClick={(): void => openSpace(space)}
+            onKeyDown={(e): void => handleKeyDownForOpenSpace(e)}>
             <div className="space-metadata">
                 <div className="space-name">{space.name}</div>
                 <div className="last-modified-text">Last modified {timestamp}</div>
             </div>
             <div className="button-container">
-                <button data-testid="ellipsis-button" className="ellipsis-button" onClick={(event) => showsDropdown(event)}>
+                <button data-testid="ellipsis-button"
+                    className="ellipsis-button"
+                    onClick={(e): boolean => handleDropdownClick(e)}
+                    onKeyDown={(e): boolean => handleKeyDownForShowsDropdown(e)}>
                     <i className="fas fa-ellipsis-v icon"/>
 
-                    {dropdownFlag && <div className={'ellipsis-dropdown-container'}>
-                        <div data-testid="edit-space" className="dropdown-options" onClick={openEditModal}>
+                    {dropdownFlag && <div className="ellipsis-dropdown-container">
+                        <div data-testid="edit-space"
+                            className="dropdown-options"
+                            onClick={openEditModal}
+                            onKeyDown={(e): void => handleKeyDownForOpenEditModal(e)}>
                             <i className="fas fa-pen"/>Edit
                         </div>
                     </div>
