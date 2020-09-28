@@ -15,28 +15,43 @@
  * limitations under the License.
  */
 
-import SpaceButtons from '../Header/SpaceButtons';
 import React from 'react';
-import PeopleMoverLogo from '../Application/Assets/logo.svg';
+import {connect} from 'react-redux';
+import {GlobalStateProps} from '../Redux/Reducers';
+import {Space} from '../SpaceDashboard/Space';
+import SpaceButtons from '../Header/SpaceButtons';
+import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
+
 import './Headers.scss';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
     hideAllButtons?: boolean;
+    currentSpace: Space;
 }
 
-function Header({hideSpaceButtons, hideAllButtons}: HeaderProps): JSX.Element {
+function Header({
+    hideSpaceButtons, 
+    hideAllButtons,
+    currentSpace,
+}: HeaderProps): JSX.Element {
+    const dashboardPathname = '/user/dashboard';
+    const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
     return (
-        <header>
-            <a href="/user/dashboard" className="logo-title-container peopleMoverLogo">
-                <img
-                    src={PeopleMoverLogo}
-                    alt="Logo not available"/>
-                <h1 className="page-title">PEOPLEMOVER</h1>
-            </a>
+        <header className="peopleMoverHeader">
+            <div className="logoAndSpaceNameContainer">
+                <PeopleMoverLogo href={logoHref} />
+                {currentSpace && <h2 className="spaceName">{currentSpace.name}</h2>}
+            </div>
             {!hideAllButtons && <SpaceButtons hideSpaceButtons={hideSpaceButtons}/>}
         </header>
     );
 }
 
-export default Header;
+/* eslint-disable */
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
+});
+
+export default connect(mapStateToProps)(Header);
+/* eslint-enable */

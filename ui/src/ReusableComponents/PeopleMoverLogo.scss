@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -15,29 +15,23 @@
  * limitations under the License.
  */
 
-$white: #FFFFFF;
+@import '../Application/Styleguide/Colors';
 
-$gray-1: #403D3D;
-$gray-2: #6B6867;
-$gray-3: #999694;
-$gray-4: #BFBCBB;
-$gray-5: #EDEBEB;
-$gray-6: #F2F2F2;
+.peopleMoverLogoContainer {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
 
-$prime-1: #5463B0;
-
-$orange-hover: #EB7B57;
-
-$role-1: #9ADAD3;
-$role-2: #A8CBFA;
-$role-3: #A7EEFE;
-
-$scrollbar-color: #ABABAB;
-$font-color: #323b3e;
-$purple: #4F5FAB;
-$light-purple: #C8D0F3;
-$purple-title: #984AA1;
-$logo-gradient: linear-gradient(90deg, $purple-title 0%, $purple 76.03%);
-$error-message: #C82656;
-$sec-6: #F2E7F3;
-
+.peopleMoverTitle {
+  display: inline-block;
+  margin: 0;
+  background: $logo-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 20px;
+  line-height: 23px;
+  white-space: nowrap;
+  padding-top: 6px;
+  padding-left: 8px;
+}

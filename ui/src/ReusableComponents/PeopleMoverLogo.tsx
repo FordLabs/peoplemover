@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -15,29 +15,25 @@
  * limitations under the License.
  */
 
-$white: #FFFFFF;
+import React from 'react';
+import PersonIcon from '../Application/Assets/logo.svg';
 
-$gray-1: #403D3D;
-$gray-2: #6B6867;
-$gray-3: #999694;
-$gray-4: #BFBCBB;
-$gray-5: #EDEBEB;
-$gray-6: #F2F2F2;
+import './PeopleMoverLogo.scss';
 
-$prime-1: #5463B0;
+interface Props {
+    href?: string;
+}
 
-$orange-hover: #EB7B57;
+function PeopleMoverLogo({ href }: Props): JSX.Element {
+    const CustomElement = href ? 'a' : `div`;
+    return (
+        <CustomElement
+            href={href}
+            className="peopleMoverLogoContainer">
+            <img src={PersonIcon} alt=""/>
+            <h1 className="peopleMoverTitle">PEOPLEMOVER</h1>
+        </CustomElement>
+    );
+}
 
-$role-1: #9ADAD3;
-$role-2: #A8CBFA;
-$role-3: #A7EEFE;
-
-$scrollbar-color: #ABABAB;
-$font-color: #323b3e;
-$purple: #4F5FAB;
-$light-purple: #C8D0F3;
-$purple-title: #984AA1;
-$logo-gradient: linear-gradient(90deg, $purple-title 0%, $purple 76.03%);
-$error-message: #C82656;
-$sec-6: #F2E7F3;
-
+export default PeopleMoverLogo;
