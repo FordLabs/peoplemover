@@ -27,6 +27,7 @@ private class MockJwtDecoder : JwtDecoder {
         if (token.equals("INVALID_TOKEN")) {
             throw JwtValidationException("Bad", listOf(OAuth2Error("Bad")))
         }
+
         val accessToken = "valid_Token"
         val headers = HashMap<String, Any>()
         headers["typ"] = "JWT"

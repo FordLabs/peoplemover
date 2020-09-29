@@ -5,7 +5,7 @@ import fileDownload from 'js-file-download';
 jest.mock('js-file-download');
 
 describe('Report Client', function() {
-    const baseUrl = `/api/reportgenerator`;
+    const baseReportsUrl = `/api/reports`;
     const cookies = new Cookies();
     const expectedConfig = {
         headers: {
@@ -35,7 +35,7 @@ describe('Report Client', function() {
         const expectedFilename = `bob_2020-09-21.csv`;
         const expectedJson = '"productName","personName","personRole"\n"product","person","role"';
 
-        const expectedUrl = `${baseUrl}/spaceUuid/2020-09-21`;
+        const expectedUrl = `${baseReportsUrl}/people?spaceUuid=spaceUuid&requestedDate=2020-09-21`;
         await ReportClient.getReportsWithNames(spaceName, spaceUuid, today);
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
         expect(fileDownload).toHaveBeenCalledWith(expectedJson, expectedFilename);

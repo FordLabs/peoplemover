@@ -31,13 +31,13 @@ class AuthController(
     val authService: AuthService
 ) {
 
-    @PostMapping(path = ["/api/access_token/validate"])
+    @PostMapping("/api/access_token/validate")
     fun validateAccessToken(@RequestBody request: ValidateTokenRequest): ResponseEntity<Unit> {
         authService.validateToken(request.accessToken)
         return ResponseEntity.ok().build()
     }
 
-    @PostMapping(path = ["/api/access_token/authenticate"])
+    @PostMapping("/api/access_token/authenticate")
     fun validateAndAuthenticateAccessToken(@RequestBody request: AuthCheckScopesRequest): ResponseEntity<Void> {
         val validateTokenResponse = authService.validateToken(request.accessToken)
 
@@ -50,7 +50,7 @@ class AuthController(
         }
     }
 
-    @PutMapping(path = ["/api/spaces/{uuid}:invite"])
+    @PutMapping("/api/spaces/{uuid}:invite")
     fun inviteUsersToSpace(
         @Valid @RequestBody request: AuthInviteUsersToSpaceRequest,
         @PathVariable uuid: String

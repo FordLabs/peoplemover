@@ -50,7 +50,6 @@ describe('Space Client', function() {
             expect(Axios.get).toHaveBeenCalledWith(url, expectedConfig);
             done();
         });
-
     });
 
     it('should return the space given a space name', function(done) {
@@ -59,7 +58,6 @@ describe('Space Client', function() {
             expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
             done();
         });
-
     });
 
     it('should create a space given a space name', function(done) {
@@ -70,7 +68,6 @@ describe('Space Client', function() {
             expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
             done();
         });
-
     });
 
     it('should edit space given space uuid and content', function(done) {

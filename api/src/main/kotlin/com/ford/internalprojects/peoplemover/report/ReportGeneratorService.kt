@@ -18,33 +18,63 @@
 package com.ford.internalprojects.peoplemover.report
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
+import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
+import com.google.common.collect.Lists
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import kotlin.streams.toList
 
 @Service
 class ReportGeneratorService(
-        private val spaceRepository: SpaceRepository,
-        private val productService: ProductService,
-        private val assignmentService: AssignmentService
+    private val spaceRepository: SpaceRepository,
+    private val productService: ProductService,
+    private val assignmentService: AssignmentService,
+    private val userSpaceMappingRepository: UserSpaceMappingRepository
 ) {
-    fun getReportWithNames(spaceUuid: String, requestedDate: LocalDate): List<ReportGenerator> {
+    fun createPeopleReport(spaceUuid: String, requestedDate: LocalDate): List<PeopleReportRow> {
         spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
         val assignments = assignmentService.getAssignmentsByDate(spaceUuid, requestedDate)
         val products = productService.findAllBySpaceUuidAndDate(spaceUuid, requestedDate)
 
-        val reportGenerators: MutableList<ReportGenerator> = mutableListOf()
+        val peopleReport: MutableList<PeopleReportRow> = mutableListOf()
         assignments.forEach { assignment ->
-            reportGenerators.add(ReportGenerator(
-                    productName = products.find { it.id == assignment.productId }!!.name,
-                    personName = assignment.person.name,
-                    personRole = assignment.person.spaceRole?.name ?: ""
+            peopleReport.add(PeopleReportRow(
+                productName = products.find { it.id == assignment.productId }!!.name,
+                personName = assignment.person.name,
+                personRole = assignment.person.spaceRole?.name ?: ""
             ))
         }
-        return reportGenerators.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.personName })
+        return peopleReport.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.personName })
                 .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.productName })
+    }
+
+    fun createSpacesReport(): List<SpaceReportItem> {
+        val allSpaces = spaceRepository.findAll().toList()
+        val userSpaceMappings = userSpaceMappingRepository.findAll().toList()
+
+        val spaceReport = allSpaces.stream().map { space ->
+            val users: List<String?> = mapUsersToSpace(userSpaceMappings, space)
+            SpaceReportItem(space.name, space.createdBy, users)
+        }.toList()
+
+        return spaceReport
+    }
+
+    private fun mapUsersToSpace(userSpaceMappings: List<UserSpaceMapping>, space: Space): List<String?> {
+        return userSpaceMappings.stream()
+                .filter { mapping -> mapping.spaceId == space.id }
+                .map { mapping2 -> mapping2.userId }.toList()
+    }
+
+    fun createUsersReport(): List<String> {
+        return userSpaceMappingRepository.findAll()
+                .distinctBy{ it.userId!! }
+                .map{ it.userId!! }
     }
 }

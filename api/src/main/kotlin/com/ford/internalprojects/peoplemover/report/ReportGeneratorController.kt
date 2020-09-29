@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,17 +18,38 @@
 package com.ford.internalprojects.peoplemover.report
 
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
+
+@RequestMapping("/api/reports")
 @RestController
 class ReportGeneratorController(private val reportGeneratorService: ReportGeneratorService) {
 
-    @GetMapping("/api/reportgenerator/{spaceUuid}/{requestedDate}")
-    fun getReportWithNames(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<List<ReportGenerator>> {
-        return ResponseEntity.ok(reportGeneratorService.getReportWithNames(spaceUuid, LocalDate.parse(requestedDate)))
+    @GetMapping("/people")
+    fun getPeopleReport(
+        @RequestParam(name = "spaceUuid", required = true) spaceUuid: String,
+        @RequestParam(name = "requestedDate", required = true) requestedDate: String
+    ): ResponseEntity<List<PeopleReportRow>> {
+        val peopleReport = reportGeneratorService.createPeopleReport(spaceUuid, LocalDate.parse(requestedDate))
+        return ResponseEntity.ok(peopleReport)
     }
 
+    @GetMapping("/space")
+    @PreAuthorize("@authService.requestIsAuthorizedFromReportProperties(authentication)")
+    fun getSpaceReport(): ResponseEntity<List<SpaceReportItem>> {
+            val spaceReport = reportGeneratorService.createSpacesReport()
+            return ResponseEntity.ok(spaceReport)
+    }
+
+    @GetMapping("/user")
+    @PreAuthorize("@authService.requestIsAuthorizedFromReportProperties(authentication)")
+    fun getUserReport():ResponseEntity<List<String>> {
+            val userReport = reportGeneratorService.createUsersReport()
+            return ResponseEntity.ok(userReport)
+    }
 }
