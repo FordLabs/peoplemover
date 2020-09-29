@@ -22,7 +22,7 @@ import {Space} from '../SpaceDashboard/Space';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import ProductFilter from '../ReusableComponents/ProductFilter';
 import ProductSortBy from '../ReusableComponents/ProductSortBy';
-import AccountDropdown from '../ReusableComponents/AccountDropdown';
+import AccountDropdown from '../AccountDropdown/AccountDropdown';
 
 import './Headers.scss';
 
