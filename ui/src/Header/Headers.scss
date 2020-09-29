@@ -48,18 +48,9 @@
   }
 }
 
-.headerRightContainer,
-.filterByDropDownContainer {
+.headerRightContainer {
   display: flex;
   flex-direction: row;
-}
-
-.headerRightContainer {
   justify-content: right;
   padding-left: 100px;
-
-  .filterByDropDownContainer {
-    width: auto;
-    padding-right: 30px;
-  }
 }

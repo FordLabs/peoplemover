@@ -157,12 +157,11 @@ function ProductFilter({
     }
 
     return (
-        <React.Fragment>
+        <div className="filterDropdownContainer" data-testid="filters">
             <label htmlFor="filterBy-dropdown" className="dropdown-label">Filter:</label>
             <Select
                 styles={filterByStyles}
                 name="filter"
-                data-testid="filterBy-dropdown"
                 className="dropdown filterBy-dropdown"
                 inputId="filterBy-dropdown"
                 classNamePrefix="product-filter"
@@ -176,7 +175,7 @@ function ProductFilter({
                 placeholder=""
                 components={{Option: FilterOptions, DropdownIndicator: CustomIndicator, Control: FilterControl}}
             />
-        </React.Fragment>
+        </div>
     );
 }
 

@@ -55,7 +55,7 @@ describe('Roles', () => {
                 cy.get('@peopleCards').eq(0).should('contain', 'Jane Smith');
                 cy.get('@peopleCards').eq(1).should('contain', 'Bob Barker');
 
-                cy.selectOptionFromReactSelect('[data-testid=filterByDropDownContainer]', 'THE SECOND BEST (UNDERSTUDY)');
+                cy.selectOptionFromReactSelect('[data-testid=filters]', 'THE SECOND BEST (UNDERSTUDY)');
             });
 
         cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')

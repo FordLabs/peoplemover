@@ -50,9 +50,7 @@ function Header({
                 <div className="headerRightContainer">
                     {!hideSpaceButtons &&
                         <>
-                            <div className="filterByDropDownContainer" data-testid="filterByDropDownContainer">
-                                <ProductFilter/>
-                            </div>
+                            <ProductFilter/>
                             <ProductSortBy/>
                         </>
                     }
