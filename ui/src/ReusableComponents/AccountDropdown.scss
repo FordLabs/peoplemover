@@ -30,6 +30,19 @@
   }
 }
 
+.accountDropdownToggle {
+  display: flex;
+
+  .welcomeUser {
+    margin: 0 12px;
+
+    .userName {
+      font-weight: bold;
+      text-transform: lowercase;
+    }
+  }
+}
+
 .account-dropdown-options {
   text-align: left;
   padding: 4px 6px;
@@ -57,5 +70,4 @@
   box-sizing: border-box;
   font-family: Helvetica, sans-serif;
   font-size: 12px;
-
 }

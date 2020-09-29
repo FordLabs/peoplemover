@@ -25,41 +25,37 @@ import {RunConfig} from '../index';
 
 describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
+    let comp: RenderResult;
 
-    beforeEach( () => {
+    beforeEach( async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+        comp = await renderWithRedux(<Header/>, undefined, initialState);
     });
 
     describe('Account Dropdown', () => {
+        it('should show username', async () => {
+            expect(comp.getByText('USER_ID')).toBeInTheDocument();
+        });
+
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
             // eslint-disable-next-line @typescript-eslint/camelcase
             window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
 
-            let result: RenderResult;
-
-            await act( async () => {
-                await wait(() => {
-                    result = renderWithRedux(<Header/>, undefined, initialState);
-                    result.getByTestId('editContributorsModal').click();
-                });
-                expect(result.queryByTestId('share-access')).not.toBeInTheDocument();
+            act(() => {
+                comp.getByTestId('editContributorsModal').click();
             });
+            expect(comp.queryByTestId('share-access')).not.toBeInTheDocument();
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
             // eslint-disable-next-line @typescript-eslint/camelcase
             window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
-            let result: RenderResult;
-
-            await act(async ( ) => {
-                await wait(() => {
-                    result = renderWithRedux(<Header/>, undefined, initialState);
-                    result.getByTestId('editContributorsModal').click();
-                });
-                expect(result.getByTestId('share-access')).not.toBeNull();
+            act(() => {
+                comp.getByTestId('editContributorsModal').click();
             });
+            expect(comp.getByTestId('share-access')).not.toBeNull();
         });
     });
 });

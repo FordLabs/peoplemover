@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
-import './AccountDropdown.scss';
+import React, {useEffect, useState} from 'react';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
@@ -26,13 +25,15 @@ import {Redirect} from 'react-router-dom';
 import ReportClient from '../Reports/ReportClient';
 import {Space} from '../SpaceDashboard/Space';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
+
+import './AccountDropdown.scss';
 
 interface AccountDropdownProps {
     currentSpace: Space;
     viewingDate: Date;
-
-    setCurrentModal(modalState: CurrentModalState): void;
     hideSpaceButtons?: boolean;
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function AccountDropdown({
@@ -41,9 +42,13 @@ function AccountDropdown({
     setCurrentModal,
     hideSpaceButtons,
 }: AccountDropdownProps): JSX.Element {
-
+    const [userName, setUserName] = useState<string>('');
     const [dropdownFlag, setDropdownFlag] = useState<boolean>(false);
     const [redirect, setRedirect] = useState<JSX.Element>();
+
+    useEffect(() => {
+        setUserName(getUserNameFromAccessToken());
+    }, []);
 
     function showsDropdown(): boolean {
         if (dropdownFlag) {
@@ -98,8 +103,15 @@ function AccountDropdown({
 
     return (
         <button data-testid="editContributorsModal" className="editContributorsModal" onClick={showsDropdown}>
-            <i className="fas fa-user" data-testid="userIcon"/>
-            <i className="fas fa-caret-down drawerCaret"/>
+            <div className="accountDropdownToggle">
+                <i className="fas fa-user" data-testid="userIcon"/>
+                {userName &&
+                    <div className="welcomeUser">
+                        Welcome, <span className="userName">{userName}</span>
+                    </div>
+                }
+                <i className="fas fa-caret-down drawerCaret"/>
+            </div>
             {dropdownFlag && <div className="dropdown-container">
                 {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
                     <div data-testid="share-access"
