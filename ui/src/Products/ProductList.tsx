@@ -23,7 +23,7 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import moment from 'moment';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
-import { getSelectedTagsFromGroupedTagOptions } from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import {getSelectedTagsFromGroupedTagOptions} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface ProductListProps {
     products: Array<Product>;
@@ -37,11 +37,11 @@ function ProductList({
     allGroupedTagFilterOptions,
     viewingDate,
     productSortBy,
-}: ProductListProps ): JSX.Element {
+}: ProductListProps): JSX.Element {
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
 
     useEffect(() => {
-        if (allGroupedTagFilterOptions.length > 0 ) {
+        if (allGroupedTagFilterOptions.length > 0) {
             const numberOfLocationFiltersApplied = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[0].options).length;
             const numberOfProductTagFiltersApplied = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[1].options).length;
             const totalNumberOfFiltersApplied = numberOfLocationFiltersApplied + numberOfProductTagFiltersApplied;
@@ -60,7 +60,8 @@ function ProductList({
         let isProductTagFilterOn = false;
         const locationTagFilters: Array<string> = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[0].options);
         const productTagFilters: Array<string> = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[1].options);
-        if (product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name)) {
+        if ((product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name))
+            || locationTagFilters.length === 0) {
             isLocationFilterOn = true;
         }
         if (product.productTags) {
@@ -71,7 +72,10 @@ function ProductList({
                 }
             });
         }
-        return isProductTagFilterOn || isLocationFilterOn;
+        if (productTagFilters.length === 0) {
+            isProductTagFilterOn = true;
+        }
+        return isProductTagFilterOn && isLocationFilterOn;
     }
 
     function ListOfProducts(): JSX.Element {

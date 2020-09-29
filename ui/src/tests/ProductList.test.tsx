@@ -21,6 +21,9 @@ import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {AxiosResponse} from 'axios';
 import ProductClient from '../Products/ProductClient';
+import ProductList from "../Products/ProductList";
+import {GlobalStateProps} from "../Redux/Reducers";
+import moment from "moment";
 
 describe('Product List tests', () => {
     let app: RenderResult;
@@ -49,5 +52,21 @@ describe('Product List tests', () => {
             await app.findByTestId('editMenu');
         });
         expect(app.getAllByTestId('editMenu').length).toEqual(1);
+    });
+
+    describe('Product list test filtering', () =>{
+
+        it('should return all product with the selected location filter', async () =>{
+            const initialState = {
+                products: TestUtils.products,
+                productTags: TestUtils.productTags,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+                viewingDate: moment().toDate(),
+                productSortBy: 'name',
+            } as GlobalStateProps;
+
+            let component = await renderWithRedux(<ProductList/>, undefined, initialState);
+            await component.findByText(TestUtils.productForHank.name);
+        });
     });
 });
