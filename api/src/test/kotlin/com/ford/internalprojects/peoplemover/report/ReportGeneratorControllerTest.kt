@@ -170,27 +170,21 @@ class ReportGeneratorControllerTest {
     @Throws(Exception::class)
     @Test
     fun `GET should return 400 with invalid space name`() {
-        mockMvc.perform(get("$basePeopleReportsUrl?spaceUuid=fakeSpace&requestedDate=${mar1}")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
-                .andExpect(status().isBadRequest)
+        val request = get("$basePeopleReportsUrl?spaceUuid=fakeSpace&requestedDate=${mar1}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+
+        mockMvc.perform(request).andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET should return all space names, who created the space, and all users related to that space if users is authorized`() {
-        val result = mockMvc
-                .perform(
-                        get(baseSpaceReportsUrl)
-                                .header("Authorization", "Bearer GOOD_TOKEN")
-                )
+        val request = get(baseSpaceReportsUrl).header("Authorization", "Bearer GOOD_TOKEN")
+        val result = mockMvc.perform(request)
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualSpaceReport = objectMapper.readValue<List<SpaceReportItem>>(
-                result.response.contentAsString,
-                objectMapper
-                        .typeFactory
-                        .constructCollectionType(MutableList::class.java, SpaceReportItem::class.java)
-        )
+        val constructCollectionType = objectMapper.typeFactory.constructCollectionType(MutableList::class.java, SpaceReportItem::class.java)
+        val actualSpaceReport = objectMapper.readValue<List<SpaceReportItem>>(result.response.contentAsString, constructCollectionType)
 
         val expectedUsers1 = listOf("SSQUAREP", "PSTAR")
         val expectedUsers2 = listOf("PSTAR")
@@ -204,20 +198,13 @@ class ReportGeneratorControllerTest {
 
     @Test
     fun `GET user should return all user ids`() {
-        val result = mockMvc
-                .perform(
-                        get(baseUserReportsUrl)
-                                .header("Authorization", "Bearer GOOD_TOKEN")
-                )
+        val request = get(baseUserReportsUrl).header("Authorization", "Bearer GOOD_TOKEN")
+        val result = mockMvc.perform(request)
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualUserReport = objectMapper.readValue<List<String>>(
-                result.response.contentAsString,
-                objectMapper
-                        .typeFactory
-                        .constructCollectionType(MutableList::class.java, String::class.java)
-        )
+        val constructCollectionType = objectMapper.typeFactory.constructCollectionType(MutableList::class.java, String::class.java)
+        val actualUserReport = objectMapper.readValue<List<String>>(result.response.contentAsString, constructCollectionType)
 
 
         val expectedUsers = listOf("SSQUAREP", "PSTAR")

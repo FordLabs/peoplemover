@@ -17,10 +17,8 @@
 
 package com.ford.internalprojects.peoplemover.report
 
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -31,8 +29,6 @@ import java.time.LocalDate
 @RequestMapping("/api/reports")
 @RestController
 class ReportGeneratorController(private val reportGeneratorService: ReportGeneratorService) {
-    @Value("\${com.ford.people-mover.secured-report.users}")
-    protected val users: String = "none"
 
     @GetMapping("/people")
     fun getPeopleReport(
@@ -44,30 +40,16 @@ class ReportGeneratorController(private val reportGeneratorService: ReportGenera
     }
 
     @GetMapping("/space")
+    @PreAuthorize("@authService.requestIsAuthorizedFromReportProperties(authentication)")
     fun getSpaceReport(): ResponseEntity<List<SpaceReportItem>> {
-        val userName: String = SecurityContextHolder.getContext().authentication.name.toLowerCase()
-
-        val authorizedUsers = users.toLowerCase().split(",")
-        val isAuthorizedUser = authorizedUsers.contains(userName)
-        if (isAuthorizedUser) {
             val spaceReport = reportGeneratorService.createSpacesReport()
             return ResponseEntity.ok(spaceReport)
-        }
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
     }
 
     @GetMapping("/user")
+    @PreAuthorize("@authService.requestIsAuthorizedFromReportProperties(authentication)")
     fun getUserReport():ResponseEntity<List<String>> {
-        val userName: String = SecurityContextHolder.getContext().authentication.name.toLowerCase()
-
-        val authorizedUsers = users.toLowerCase().split(",")
-        val isAuthorizedUser = authorizedUsers.contains(userName)
-        if (isAuthorizedUser) {
             val userReport = reportGeneratorService.createUsersReport()
             return ResponseEntity.ok(userReport)
-        }
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
     }
 }
