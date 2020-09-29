@@ -52,10 +52,6 @@ describe('people actions', () => {
         fireEvent.mouseDown(editPersonButton);
 
         await app.findByText('Save');
-
-        await wait(() => {
-            expect(app.getByLabelText('Name')).toHaveFocus();
-        });
     });
 
     it('opens PersonForm component when Add Person button is clicked', async () => {

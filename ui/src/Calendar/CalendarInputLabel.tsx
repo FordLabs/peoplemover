@@ -21,9 +21,18 @@ function CalendarCustomInput(
         setIsOpen(!isOpen);
     }
 
+    function handleKeyDownForCalendarClicked(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            calendarClicked();
+        }
+    }
+
     const caretDirectionIcon = isOpen ? 'fa-caret-up' : 'fa-caret-down';
     return (
-        <div className="calendarCustomInput" onClick={calendarClicked} data-testid="calendarToggle">
+        <div className="calendarCustomInput"
+            onClick={calendarClicked}
+            onKeyDown={(e): void => handleKeyDownForCalendarClicked(e)}
+            data-testid="calendarToggle">
             Viewing: {viewingDate.toLocaleString('en-us', dateFormatOptions)}
             <i className={`fas ${caretDirectionIcon} drawerCaret`}
                 data-testid={`calendar-${caretDirectionIcon}`}/>

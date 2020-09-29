@@ -43,9 +43,9 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
                 <div className="inviteContributorsConfirmationLink">
                     {linkToSpace}
                 </div>
-                <div className="inviteContributorsConfirmationCopyButton" onClick={copyLink}>
+                <button className="inviteContributorsConfirmationCopyButton" onClick={copyLink}>
                     Copy link
-                </div>
+                </button>
             </div>
             <FormButton
                 buttonStyle="primary"

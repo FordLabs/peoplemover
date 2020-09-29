@@ -116,7 +116,8 @@ function ProductCard({
     }
 
     function editProductAndCloseEditMenu(): void {
-        toggleEditMenu();
+        setWhichEditMenuOpen(null);
+        setEditMenuIsOpened(false);
         const newModal: CurrentModalState = {
             modal: AvailableModals.EDIT_PRODUCT,
             item: product,
@@ -136,6 +137,23 @@ function ProductCard({
         }
         const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
         return ProductClient.editProduct(currentSpace.uuid, archivedProduct);
+    }
+
+    const setCurrentModalToCreateAssignment = () => setCurrentModal({
+        modal: AvailableModals.CREATE_ASSIGNMENT,
+        item: product,
+    });
+
+    function handleKeyDownForSetCurrentModalToCreateAssignment(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            setCurrentModalToCreateAssignment();
+        }
+    }
+
+    function handleKeyDownForToggleEditMenu(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            toggleEditMenu();
+        }
     }
 
     return (
@@ -161,16 +179,16 @@ function ProductCard({
                             </div>
                             <div className="productControlsContainer">
                                 <div className="addPersonIconContainer">
-                                    <i data-testid={'addPersonToProductIcon-' + product.id}
+                                    <div data-testid={'addPersonToProductIcon-' + product.id}
                                         className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
-                                        onClick={() => setCurrentModal({
-                                            modal: AvailableModals.CREATE_ASSIGNMENT,
-                                            item: product,
-                                        })}/>
+                                        onClick={setCurrentModalToCreateAssignment}
+                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
+                                    />
                                 </div>
                                 <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
                                     data-testid={'editProductIcon_' + product.id}
-                                    onClick={toggleEditMenu}/>
+                                    onClick={toggleEditMenu}
+                                    onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
                             {
                                 editMenuIsOpened &&

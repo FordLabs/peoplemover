@@ -300,6 +300,12 @@ function PersonForm({
         return alphabetize(filteredProducts) as Array<Product>;
     };
 
+    function handleKeyDownForDisplayRemovePersonModal(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            displayRemovePersonModal();
+        }
+    }
+
     return (
         <div className="formContainer">
             <datalist id="peopleList">
@@ -318,8 +324,7 @@ function PersonForm({
                         value={person.name}
                         onChange={changeName}
                         autoComplete="off"
-                        placeholder={'e.g. Jane Smith'}
-                        autoFocus/>
+                        placeholder={'e.g. Jane Smith'}/>
                     {isPersonNameInvalid && <span className="personNameWarning">Please enter a person name.</span>}
                     <div className="isNewContainer">
                         <input className="checkbox"
@@ -386,7 +391,9 @@ function PersonForm({
                     <div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                         <i className="fas fa-trash"/>
                         <div className="trashCanSpacer"/>
-                        <span className="obliterateLink" onClick={displayRemovePersonModal}>Delete</span>
+                        <span className="obliterateLink"
+                            onClick={displayRemovePersonModal}
+                            onKeyDown={(e): void => {handleKeyDownForDisplayRemovePersonModal(e)}}>Delete</span>
                     </div>
                 )}
             </form>

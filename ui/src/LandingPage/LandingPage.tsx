@@ -16,46 +16,44 @@
  */
 
 import React from 'react';
-import Logo from '../Application/Assets/logo.svg';
 import LandingPageImage from './LandingPageImage.svg';
 import LandingPageBackground from './LandingPageBackground.svg';
 import FormButton from '../ModalFormComponents/FormButton';
+import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 
 import './LandingPage.scss';
 
 function LandingPage(): JSX.Element {
+    const LoginButton = () => (
+        <a href="/user/login">
+            <FormButton>
+                Login
+            </FormButton>
+        </a>
+    );
+
     return (
         <>
-            <div className="landing-page-container">
-                <div className="landing-page-info-container">
-                    <div className="logo-title-container">
-                        <img
-                            src={Logo}
-                            alt="Logo not available"/>
-                        <h1 className="app-name page-title">PEOPLEMOVER</h1>
-                    </div>
-                    <div className="landing-page-info-heading">It’s about the people. Your people.</div>
-                    <div className="landing-page-info-sub-heading">And helping them be extraordinary.</div>
-                    <div className="landing-page-info-text">
+            <div className="landingPageContainer">
+                <div className="landingPageInfoContainer">
+                    <PeopleMoverLogo />
+                    <div className="landingPageInfoHeading">It’s about the people. Your people.</div>
+                    <div className="landingPageInfoSubHeading">And helping them be extraordinary.</div>
+                    <div className="landingPageInfoText">
                         Most allocation applications focus solely on projects and schedules, and seem 
                         to forget that a product is only as successful as its team. PeopleMover focuses on the people, 
                         helping you create and fluidly maintain balanced teams well suited for the product at hand – 
                         because we understand that a great team sets the stage for incredible results.
                     </div>
-                    <div className="landing-page-info-sub-heading">Give it a shot!</div>
-                    <div className="landing-page-info-text">Login with your CDSID to create your own PeopleMover&nbsp;space.</div>
-                    <a href="/user/login">
-                        <FormButton>
-                            Login
-                        </FormButton>
-                    </a>
+                    <div className="landingPageInfoSubHeading">Give it a shot!</div>
+                    <div className="landingPageInfoText">Login with your CDSID to create your own PeopleMover&nbsp;space.</div>
+                    <LoginButton />
                 </div>
-                <img
-                    className="landing-page-image"
+                <img className="landingPageImage"
                     src={LandingPageImage}
                     alt=""/>
             </div>
-            <img className="landing-page-background" src={LandingPageBackground} alt=""/>
+            <img className="landingPageBackground" src={LandingPageBackground} alt=""/>
         </>
     );
 }

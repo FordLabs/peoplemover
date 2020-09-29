@@ -197,6 +197,24 @@ function MyTraits({
             .join(' ');
     }
 
+    function handleKeyDownForToggleEditSection(event: React.KeyboardEvent, index: number): void {
+        if (event.key === 'Enter') {
+            toggleEditSection(index);
+        }
+    }
+
+    function handleKeyDownForShowDeleteConfirmationModal(event: React.KeyboardEvent, trait: Trait): void {
+        if (event.key === 'Enter') {
+            showDeleteConfirmationModal(trait);
+        }
+    }
+
+    function handleKeyDownForSetAddSectionOpen(event: React.KeyboardEvent, isAddSectionOpen: boolean): void {
+        if (event.key === 'Enter') {
+            setAddSectionOpen(isAddSectionOpen);
+        }
+    }
+
     return (
         <div data-testid="myTraitsModalContainer"
             className="myTraitsModalContainer">
@@ -223,9 +241,11 @@ function MyTraits({
                                 <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
                                 <div className="traitIcons">
                                     <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
-                                        onClick={(): void => toggleEditSection(index)}/>
+                                        onClick={(): void => toggleEditSection(index)}
+                                        onKeyDown={(e): void => handleKeyDownForToggleEditSection(e, index)}/>
                                     <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
-                                        onClick={(): void => showDeleteConfirmationModal(trait)}/>
+                                        onClick={(): void => showDeleteConfirmationModal(trait)}
+                                        onKeyDown={(e): void => handleKeyDownForShowDeleteConfirmationModal(e, trait)}/>
                                 </div>
                             </div>
                         }
@@ -252,7 +272,8 @@ function MyTraits({
                 currentSpace={currentSpace}/>
             }
             {!addSectionOpen && <div className="traitRow addNewTraitRow"
-                onClick={(): void => setAddSectionOpen(true)}>
+                onClick={(): void => setAddSectionOpen(true)}
+                onKeyDown={(e): void => handleKeyDownForSetAddSectionOpen(e, true)}>
                 <span data-testid="addNewTraitCircle"
                     className="myTraitsCircle addNewTraitUnfilledCircle">
                     <i className="fa fa-plus orangeIcon addTraitIcon"/>

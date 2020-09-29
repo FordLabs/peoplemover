@@ -187,6 +187,12 @@ function ProductForm({
         updateProductField('notes', notes);
     }
 
+    function handleKeyDownForDisplayDeleteProductModal(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            displayDeleteProductModal();
+        }
+    }
+
     return currentSpace.id ? (
         <div className="formContainer">
             <form className="form"
@@ -201,8 +207,7 @@ function ProductForm({
                         id="name"
                         value={currentProduct.name}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('name', e.target.value)}
-                        placeholder="e.g. Product 1"
-                        autoFocus/>
+                        placeholder="e.g. Product 1"/>
                     {duplicateProductNameWarning &&
                     <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
                 </div>
@@ -248,13 +253,13 @@ function ProductForm({
                     </FormButton>
                 </div>
                 {editing && (
-                    <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
+                    <div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                         <i className="fas fa-trash"/>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
-                            onClick={displayDeleteProductModal}>Delete Product</span>
-                    </div>
-                )}
+                            onClick={displayDeleteProductModal}
+                            onKeyDown={(e): void => handleKeyDownForDisplayDeleteProductModal(e)}>Delete Product</span>
+                    </div>)}
             </form>
             {confirmDeleteModal}
         </div>
