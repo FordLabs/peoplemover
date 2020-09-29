@@ -23,6 +23,11 @@ export const getToken = (): string => {
     return cookies.get('accessToken');
 };
 
+export const removeToken = (): void => {
+    const cookie = new Cookies();
+    cookie.remove('accessToken', {path: '/'});
+};
+
 export const getDecodedToken = (): unknown | null  => {
     const accessToken = getToken();
 

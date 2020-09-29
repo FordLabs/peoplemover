@@ -20,12 +20,11 @@ import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
-import Cookies from 'universal-cookie';
 import {Redirect} from 'react-router-dom';
 import ReportClient from '../Reports/ReportClient';
 import {Space} from '../SpaceDashboard/Space';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
+import {getUserNameFromAccessToken, removeToken} from '../Auth/TokenProvider';
 
 import './AccountDropdown.scss';
 
@@ -43,63 +42,88 @@ function AccountDropdown({
     hideSpaceButtons,
 }: AccountDropdownProps): JSX.Element {
     const [userName, setUserName] = useState<string>('');
-    const [dropdownFlag, setDropdownFlag] = useState<boolean>(false);
+    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [redirect, setRedirect] = useState<JSX.Element>();
 
     useEffect(() => {
         setUserName(getUserNameFromAccessToken());
     }, []);
 
-    function showsDropdown(): boolean {
-        if (dropdownFlag) {
-            hidesDropdown();
-        } else {
-            setDropdownFlag(!dropdownFlag);
-            document.addEventListener('click', hidesDropdown, false);
-        }
-        return dropdownFlag;
-    }
-
-    function hidesDropdown(): boolean {
-        setDropdownFlag(false);
-        document.removeEventListener('click', hidesDropdown);
-        return dropdownFlag;
-    }
-
-    function clearAccessTokenCookie(): void {
-        const cookie = new Cookies();
-        cookie.remove('accessToken', {path: '/'});
-
-        setRedirect(<Redirect to="/"/>);
-    }
-
     if ( redirect ) {
         return redirect;
     }
 
-    function handleKeyDownForSetCurrentModalToEditContributors(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            setCurrentModalToEditContributors();
+    const showsDropdown = (): boolean => {
+        if (dropdownToggle) {
+            hidesDropdown();
+        } else {
+            setDropdownToggle(!dropdownToggle);
+            document.addEventListener('click', hidesDropdown, false);
         }
-    }
-
-    function handleKeyDownForHandleDownloadReport(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            handleDownloadReport();
-        }
-    }
-
-    function handleKeyDownForClearAccessTokenCookie(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            clearAccessTokenCookie();
-        }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    const handleDownloadReport = async (): Promise<void> => {
-        await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate);
+        return dropdownToggle;
     };
-    const setCurrentModalToEditContributors = (): void => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
+
+    const hidesDropdown = (): boolean => {
+        setDropdownToggle(false);
+        document.removeEventListener('click', hidesDropdown);
+        return dropdownToggle;
+    };
+
+    const ShareAccessButton = (): JSX.Element => {
+        const openEditContributorsModal = (): void => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
+        const showButton = window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons;
+        const onkeydown = (event: React.KeyboardEvent): void => {
+            if (event.key === 'Enter') openEditContributorsModal();
+        };
+
+        return showButton ? (
+            <div className="account-dropdown-options"
+                data-testid="share-access"
+                onClick={openEditContributorsModal}
+                onKeyDown={onkeydown}>
+                    Share Access
+            </div>
+        ) : <></>;
+    };
+
+    const DownloadReportButton = (): JSX.Element => {
+        const showButton = !hideSpaceButtons;
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        const handleDownloadReport = async (): Promise<void> => {
+            await ReportClient.getReportsWithNames(currentSpace.name, currentSpace.uuid!!, viewingDate);
+        };
+        const onKeyDown = (event: React.KeyboardEvent): void => {
+            if (event.key === 'Enter') handleDownloadReport().then();
+        };
+
+        return showButton ? (
+            <div data-testid="download-report"
+                className="account-dropdown-options"
+                onClick={handleDownloadReport}
+                onKeyDown={onKeyDown}>
+                Download Report
+            </div>
+        ) : <></>;
+    };
+    
+    const SignOutButton = (): JSX.Element => {
+        const clearAccessTokenCookie = (): void => {
+            removeToken();
+            setRedirect(<Redirect to="/"/>);
+        };
+        const onKeyDown = (event: React.KeyboardEvent): void => {
+            if (event.key === 'Enter') clearAccessTokenCookie();
+        };
+        
+        return (
+            <div data-testid="sign-out"
+                className="account-dropdown-options"
+                onClick={clearAccessTokenCookie}
+                onKeyDown={onKeyDown}>
+              Sign Out
+            </div>
+        );  
+    };
 
     return (
         <button data-testid="editContributorsModal" className="editContributorsModal" onClick={showsDropdown}>
@@ -112,31 +136,13 @@ function AccountDropdown({
                 }
                 <i className="fas fa-caret-down drawerCaret"/>
             </div>
-            {dropdownFlag && <div className="dropdown-container">
-                {window.runConfig.invite_users_to_space_enabled && !hideSpaceButtons &&
-                    <div data-testid="share-access"
-                        className="account-dropdown-options"
-                        onClick={setCurrentModalToEditContributors}
-                        onKeyDown={(e): void => {handleKeyDownForSetCurrentModalToEditContributors(e);}}>
-                        Share Access
-                    </div>
-                }
-                {!hideSpaceButtons &&
-                    <div data-testid="download-report"
-                        className="account-dropdown-options"
-                        onClick={handleDownloadReport}
-                        onKeyDown={(e): void => {handleKeyDownForHandleDownloadReport(e);}}>
-                        Download Report
-                    </div>
-                }
-                <div data-testid="sign-out"
-                    className="account-dropdown-options"
-                    onClick={(): void => clearAccessTokenCookie()}
-                    onKeyDown={(e): void => {handleKeyDownForClearAccessTokenCookie(e);}}>
-                    Sign Out
+            {dropdownToggle && (
+                <div className="dropdown-container">
+                    <ShareAccessButton />
+                    <DownloadReportButton />
+                    <SignOutButton />
                 </div>
-            </div>
-            }
+            )}
         </button>
     );
 }

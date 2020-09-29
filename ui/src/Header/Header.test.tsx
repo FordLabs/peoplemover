@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {act, RenderResult, wait} from '@testing-library/react';
+import {act, RenderResult} from '@testing-library/react';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {PreloadedState} from 'redux';
