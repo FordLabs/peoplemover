@@ -35,7 +35,7 @@ describe('Header', () => {
 
     describe('Account Dropdown', () => {
         it('should show username', async () => {
-            expect(comp.getByText('USER_ID')).toBeInTheDocument();
+            expect(comp.queryByText('USER_ID')).not.toBeNull();
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
@@ -45,7 +45,7 @@ describe('Header', () => {
             act(() => {
                 comp.getByTestId('editContributorsModal').click();
             });
-            expect(comp.queryByTestId('share-access')).not.toBeInTheDocument();
+            expect(comp.queryByTestId('share-access')).toBeNull();
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
@@ -55,7 +55,7 @@ describe('Header', () => {
             act(() => {
                 comp.getByTestId('editContributorsModal').click();
             });
-            expect(comp.getByTestId('share-access')).not.toBeNull();
+            expect(comp.queryByTestId('share-access')).not.toBeNull();
         });
     });
 });
