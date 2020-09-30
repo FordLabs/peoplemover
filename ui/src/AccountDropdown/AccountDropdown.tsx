@@ -57,16 +57,16 @@ function AccountDropdown({ hideSpaceButtons }: AccountDropdownProps): JSX.Elemen
     };
 
     return (
-        <button data-testid="accountDropdown" className="accountDropdownContainer" onClick={showDropdown}>
-            <div className="accountDropdownToggle">
+        <>
+            <button data-testid="accountDropdownToggle" className="accountDropdownToggle" onClick={showDropdown}>
                 <i className="fas fa-user" data-testid="userIcon"/>
-                {userName &&
+                {userName && (
                     <div className="welcomeUser">
                         Welcome, <span className="userName">{userName}</span>
                     </div>
-                }
+                )}
                 <i className="fas fa-caret-down drawerCaret"/>
-            </div>
+            </button>
             {dropdownToggle && (
                 <div className="accountDropdown">
                     { !hideSpaceButtons && (<>
@@ -76,7 +76,7 @@ function AccountDropdown({ hideSpaceButtons }: AccountDropdownProps): JSX.Elemen
                     <SignOutButton setRedirect={setRedirect} />
                 </div>
             )}
-        </button>
+        </>
     );
 }
 

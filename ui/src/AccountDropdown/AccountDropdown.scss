@@ -17,21 +17,19 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.accountDropdownContainer {
+.accountDropdownToggle {
   background: white;
   color: $gray-1;
   font-size: 14px;
   position: relative;
   padding: 0;
   margin: 0;
+  display: flex;
+  align-items: center;
 
   .fa-user {
     padding-right: 4px;
   }
-}
-
-.accountDropdownToggle {
-  display: flex;
 
   .welcomeUser {
     margin: 0 12px;
@@ -50,7 +48,7 @@
   border-radius: 6px;
   border: 1px solid #EDEBEB;
   right: 12px;
-  top: 40px;
+  top: 50px;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
   padding: 16px 15px;
   box-sizing: border-box;
@@ -66,5 +64,6 @@
     background-color: $gray-6;
     color: $purple;
     border-radius: 2px;
+    cursor: pointer;
   }
 }
