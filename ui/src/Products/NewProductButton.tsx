@@ -32,7 +32,7 @@ function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}
     return (
         <button className="newProduct productCardContainer"
             onClick={() => setCurrentModal(modalState)}
-            data-cy="newProductButton">
+            data-testid="newProductButton">
             <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
             <h2 className="newProductText">New Product</h2>
         </button>

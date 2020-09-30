@@ -39,6 +39,7 @@ function ProductList({
     productSortBy,
 }: ProductListProps): JSX.Element {
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
+    const [filteredProductsLoaded, setFilteredProductsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
         if (allGroupedTagFilterOptions.length > 0) {
@@ -46,6 +47,7 @@ function ProductList({
             const numberOfProductTagFiltersApplied = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[1].options).length;
             const totalNumberOfFiltersApplied = numberOfLocationFiltersApplied + numberOfProductTagFiltersApplied;
             setNoFiltersApplied(totalNumberOfFiltersApplied === 0);
+            setFilteredProductsLoaded(true);
         }
     }, [allGroupedTagFilterOptions]);
 
@@ -79,8 +81,7 @@ function ProductList({
     }
 
     function ListOfProducts(): JSX.Element {
-        const productFiltersLoaded = allGroupedTagFilterOptions.length > 0;
-        if (productFiltersLoaded) {
+        if (filteredProductsLoaded) {
             const filteredAndActiveProduct = products
                 .filter(product => noFiltersApplied || permittedByFilters(product))
                 .filter(isActiveProduct);
