@@ -30,19 +30,16 @@ export const removeToken = (): void => {
 
 export const getDecodedToken = (): unknown | null  => {
     const accessToken = getToken();
-    const decodedAccessToken = jwtDecoder(accessToken);
-    return decodedAccessToken;
+    return jwtDecoder(accessToken);
 };
 
 export const getUserNameFromAccessToken = (): string => {
-    let decodedAccessToken = null;
-
     try {
-        decodedAccessToken = getDecodedToken();
-    } catch (err) {
-        console.error(err);
+        const decodedAccessToken = getDecodedToken();
+        // @ts-ignore
+        const userName = decodedAccessToken.sub;
+        return userName;
+    } catch {
+        return '';
     }
-    // @ts-ignore
-    const userName = decodedAccessToken ? decodedAccessToken.sub : '';
-    return userName;
 };
