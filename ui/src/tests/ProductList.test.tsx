@@ -21,9 +21,10 @@ import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {AxiosResponse} from 'axios';
 import ProductClient from '../Products/ProductClient';
-import ProductList from "../Products/ProductList";
-import {GlobalStateProps} from "../Redux/Reducers";
-import moment from "moment";
+import ProductList from '../Products/ProductList';
+import {GlobalStateProps} from '../Redux/Reducers';
+import moment from 'moment';
+import {Product} from '../Products/Product';
 
 describe('Product List tests', () => {
     let app: RenderResult;
@@ -54,11 +55,26 @@ describe('Product List tests', () => {
         expect(app.getAllByTestId('editMenu').length).toEqual(1);
     });
 
-    describe('Product list test filtering', () =>{
+    describe('Product list test filtering', () => {
 
-        it('should return all product with the selected location filter', async () =>{
+        it('should return all product with the selected location filter', async () => {
+            const productWithAnnArborLocation: Product = {
+                id: 99,
+                name: 'AA',
+                spaceId: 1,
+                startDate: '2011-01-01',
+                endDate: undefined,
+                spaceLocation: TestUtils.annarbor,
+                assignments: [],
+                archived: false,
+                productTags: [TestUtils.productTag2],
+                notes: '',
+            };
+            let products: Array<Product> = Object.assign([], TestUtils.products);
+            products.push(productWithAnnArborLocation);
+
             const initialState = {
-                products: TestUtils.products,
+                products: products,
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
@@ -67,6 +83,78 @@ describe('Product List tests', () => {
 
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
             await component.findByText(TestUtils.productForHank.name);
+            await component.findByText(productWithAnnArborLocation.name);
+            expect(component.getAllByTestId('productCardContainer').length).toEqual(2);
+        });
+
+        it('should return all product with the selected product tag filter', async () => {
+            const allGroupedTagFilterOptions = [
+                {
+                    label:'Location Tags:',
+                    options: [],
+                },
+                {
+                    label:'Product Tags:',
+                    options: [{
+                        label: 'FordX',
+                        value: '1_FordX',
+                        selected: true,
+                    }],
+                },
+                {
+                    label:'Role Tags:',
+                    options: [],
+                },
+            ];
+
+            const initialState = {
+                products: TestUtils.products,
+                productTags: TestUtils.productTags,
+                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+                viewingDate: moment().toDate(),
+                productSortBy: 'name',
+            } as GlobalStateProps;
+
+            let component = await renderWithRedux(<ProductList/>, undefined, initialState);
+            await component.findByText(TestUtils.productWithAssignments.name);
+            expect(component.getAllByTestId('productCardContainer').length).toEqual(1);
+        });
+
+        it('should return all product with the selected product tag filter', async () => {
+            const allGroupedTagFilterOptions = [
+                {
+                    label:'Location Tags:',
+                    options: [{
+                        label: 'Dearborn',
+                        value: '1_Dearborn',
+                        selected: true,
+                    }],
+                },
+                {
+                    label:'Product Tags:',
+                    options: [{
+                        label: 'AV',
+                        value: '1_AV',
+                        selected: true,
+                    }],
+                },
+                {
+                    label:'Role Tags:',
+                    options: [],
+                },
+            ];
+    
+            const initialState = {
+                products: TestUtils.products,
+                productTags: TestUtils.productTags,
+                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+                viewingDate: moment().toDate(),
+                productSortBy: 'name',
+            } as GlobalStateProps;
+    
+            let component = await renderWithRedux(<ProductList/>, undefined, initialState);
+            await component.findByText(TestUtils.productWithoutAssignments.name);
+            expect(component.getAllByTestId('productCardContainer').length).toEqual(1);
         });
     });
 });
