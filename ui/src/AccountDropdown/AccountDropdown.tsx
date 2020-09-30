@@ -27,9 +27,7 @@ interface AccountDropdownProps {
     hideSpaceButtons?: boolean;
 }
 
-function AccountDropdown({
-    hideSpaceButtons,
-}: AccountDropdownProps): JSX.Element {
+function AccountDropdown({ hideSpaceButtons }: AccountDropdownProps): JSX.Element {
     const [userName, setUserName] = useState<string>('');
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [redirect, setRedirect] = useState<JSX.Element>();
@@ -59,7 +57,7 @@ function AccountDropdown({
     };
 
     return (
-        <button data-testid="editContributorsModal" className="editContributorsModal" onClick={showDropdown}>
+        <button data-testid="accountDropdown" className="accountDropdownContainer" onClick={showDropdown}>
             <div className="accountDropdownToggle">
                 <i className="fas fa-user" data-testid="userIcon"/>
                 {userName &&

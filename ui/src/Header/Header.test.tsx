@@ -43,7 +43,7 @@ describe('Header', () => {
             window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
 
             act(() => {
-                comp.getByTestId('editContributorsModal').click();
+                comp.getByTestId('accountDropdown').click();
             });
             expect(comp.queryByTestId('share-access')).toBeNull();
         });
@@ -53,7 +53,7 @@ describe('Header', () => {
             window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
             act(() => {
-                comp.getByTestId('editContributorsModal').click();
+                comp.getByTestId('accountDropdown').click();
             });
             expect(comp.queryByTestId('share-access')).not.toBeNull();
         });
