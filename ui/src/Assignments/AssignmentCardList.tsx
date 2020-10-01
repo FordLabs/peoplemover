@@ -34,7 +34,7 @@ import AssignmentClient from './AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import { getSelectedTagsFromGroupedTagOptions } from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import { getSelectedFilterLabels } from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface AssignmentCardListProps {
     container: string;
@@ -59,7 +59,7 @@ function AssignmentCardList({
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
-    const getSelectedRoleFilters = (): Array<string> => getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[2].options);
+    const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[2].options);
     const [roleFilters, setRoleFilters] = useState<Array<string>>(getSelectedRoleFilters());
 
     /* eslint-disable */

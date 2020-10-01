@@ -57,7 +57,7 @@ describe('Product List tests', () => {
 
     describe('Product list test filtering', () => {
 
-        it('should return all product with the selected location filter', async () => {
+        it('should return all products with the selected location filter', async () => {
             const productWithAnnArborLocation: Product = {
                 id: 99,
                 name: 'AA',
@@ -87,7 +87,7 @@ describe('Product List tests', () => {
             expect(component.getAllByTestId('productCardContainer').length).toEqual(2);
         });
 
-        it('should return all product with the selected product tag filter', async () => {
+        it('should return all products with the selected product tag filter', async () => {
             const allGroupedTagFilterOptions = [
                 {
                     label:'Location Tags:',
@@ -120,7 +120,7 @@ describe('Product List tests', () => {
             expect(component.getAllByTestId('productCardContainer').length).toEqual(1);
         });
 
-        it('should return all product with the selected product tag filter', async () => {
+        it('should return all products with the selected product tag filter', async () => {
             const allGroupedTagFilterOptions = [
                 {
                     label:'Location Tags:',

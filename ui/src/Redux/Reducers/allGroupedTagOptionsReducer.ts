@@ -19,7 +19,7 @@ import {AvailableActions} from '../Actions';
 import {AllGroupedTagFilterOptions, LocalStorageFilters} from '../../ReusableComponents/ProductFilter';
 import {FilterOption} from '../../CommonTypes/Option';
 
-export function getSelectedTagsFromGroupedTagOptions(tagFilters: Array<FilterOption>): Array<string> {
+export function getSelectedFilterLabels(tagFilters: Array<FilterOption>): Array<string> {
     const selectedOptions = tagFilters.filter(option => option.selected);
     return selectedOptions.map(value => value.label);
 }
@@ -32,9 +32,9 @@ function sortTags(tags: Array<FilterOption>): Array<FilterOption> {
 
 function updateLocalStorage(tagOptions: Array<AllGroupedTagFilterOptions>): void {
     const selectedFilterOptions: LocalStorageFilters = {
-        locationTagsFilters: getSelectedTagsFromGroupedTagOptions(tagOptions[0].options),
-        productTagsFilters: getSelectedTagsFromGroupedTagOptions(tagOptions[1].options),
-        roleTagsFilters: getSelectedTagsFromGroupedTagOptions(tagOptions[2].options),
+        locationTagsFilters: getSelectedFilterLabels(tagOptions[0].options),
+        productTagsFilters: getSelectedFilterLabels(tagOptions[1].options),
+        roleTagsFilters: getSelectedFilterLabels(tagOptions[2].options),
     };
     localStorage.setItem('filters', JSON.stringify(selectedFilterOptions));
 }

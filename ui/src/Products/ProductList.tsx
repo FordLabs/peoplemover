@@ -23,7 +23,8 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import moment from 'moment';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
-import {getSelectedTagsFromGroupedTagOptions} from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import {filter} from "cypress/types/minimatch";
 
 interface ProductListProps {
     products: Array<Product>;
@@ -43,9 +44,9 @@ function ProductList({
 
     useEffect(() => {
         if (allGroupedTagFilterOptions.length > 0) {
-            const numberOfLocationFiltersApplied = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[0].options).length;
-            const numberOfProductTagFiltersApplied = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[1].options).length;
-            const totalNumberOfFiltersApplied = numberOfLocationFiltersApplied + numberOfProductTagFiltersApplied;
+            const numberOfSelectedLocationFilters = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options).length;
+            const numberOfSelectedProductTagFilters = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options).length;
+            const totalNumberOfFiltersApplied = numberOfSelectedLocationFilters + numberOfSelectedProductTagFilters;
             setNoFiltersApplied(totalNumberOfFiltersApplied === 0);
             setFilteredProductsLoaded(true);
         }
@@ -58,26 +59,26 @@ function ProductList({
     }
 
     function permittedByFilters(product: Product): boolean {
-        let isLocationFilterOn = false;
-        let isProductTagFilterOn = false;
-        const locationTagFilters: Array<string> = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[0].options);
-        const productTagFilters: Array<string> = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[1].options);
+        let permittedByLocationFilter = false;
+        let permittedByProductTagFilter = false;
+        const locationTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options);
+        const productTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options);
         if ((product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name))
             || locationTagFilters.length === 0) {
-            isLocationFilterOn = true;
+            permittedByLocationFilter = true;
         }
         if (product.productTags) {
             const productTagNames: Array<string> = product.productTags.map(productTag => productTag.name);
             productTagFilters.forEach(productTagFilter => {
                 if (productTagNames.includes(productTagFilter)) {
-                    isProductTagFilterOn = true;
+                    permittedByProductTagFilter = true;
                 }
             });
         }
         if (productTagFilters.length === 0) {
-            isProductTagFilterOn = true;
+            permittedByProductTagFilter = true;
         }
-        return isProductTagFilterOn && isLocationFilterOn;
+        return permittedByProductTagFilter && permittedByLocationFilter;
     }
 
     function ListOfProducts(): JSX.Element {
@@ -96,7 +97,6 @@ function ProductList({
                     return <GroupedByList
                         products={filteredAndActiveProduct}
                         productSortBy={productSortBy}/>;
-
             }
         } else {
             return <></>;
