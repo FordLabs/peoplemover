@@ -24,7 +24,6 @@ import moment from 'moment';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
-import {filter} from "cypress/types/minimatch";
 
 interface ProductListProps {
     products: Array<Product>;
@@ -59,26 +58,26 @@ function ProductList({
     }
 
     function permittedByFilters(product: Product): boolean {
-        let permittedByLocationFilter = false;
-        let permittedByProductTagFilter = false;
+        let isPermittedByLocationFilter = false;
+        let isPermittedByProductTagFilter = false;
         const locationTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options);
         const productTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options);
         if ((product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name))
             || locationTagFilters.length === 0) {
-            permittedByLocationFilter = true;
+            isPermittedByLocationFilter = true;
         }
         if (product.productTags) {
             const productTagNames: Array<string> = product.productTags.map(productTag => productTag.name);
             productTagFilters.forEach(productTagFilter => {
                 if (productTagNames.includes(productTagFilter)) {
-                    permittedByProductTagFilter = true;
+                    isPermittedByProductTagFilter = true;
                 }
             });
         }
         if (productTagFilters.length === 0) {
-            permittedByProductTagFilter = true;
+            isPermittedByProductTagFilter = true;
         }
-        return permittedByProductTagFilter && permittedByLocationFilter;
+        return isPermittedByProductTagFilter && isPermittedByLocationFilter;
     }
 
     function ListOfProducts(): JSX.Element {
