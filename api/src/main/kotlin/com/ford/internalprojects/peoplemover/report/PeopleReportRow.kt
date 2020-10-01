@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -15,24 +15,10 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+package com.ford.internalprojects.peoplemover.report
 
-.spaceButtons,
-.sortByDropDownContainer,
-.filterByDropDownContainer {
-  display: flex;
-  flex-direction: row;
-}
-
-.filterByDropDownContainer {
-  padding-right: 30px;
-}
-
-.spaceButtons {
-  justify-content: right;
-  padding-left: 100px;
-}
-
-.filterByDropDownContainer {
-  width: auto;
-}
+data class PeopleReportRow (
+    val productName: String,
+    val personName: String,
+    val personRole: String
+)

@@ -32,7 +32,7 @@ describe('SpaceDashboard tests', () => {
         // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
         const {component} = await createTestComponent();
-        await fireEvent.click(component.getByTestId('editContributorsModal'));
+        await fireEvent.click(component.getByTestId('accountDropdownToggle'));
         expect(component.queryByTestId('share-access')).toBeNull();
         expect(component.queryByTestId('sign-out')).not.toBeNull();
     });

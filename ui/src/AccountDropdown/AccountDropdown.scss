@@ -17,45 +17,53 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.editContributorsModal {
+.accountDropdownToggle {
   background: white;
   color: $gray-1;
   font-size: 14px;
   position: relative;
-  padding-right: 0;
-  margin-right: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
 
   .fa-user {
     padding-right: 4px;
   }
+
+  .welcomeUser {
+    margin: 0 12px;
+
+    .userName {
+      font-weight: bold;
+      text-transform: lowercase;
+    }
+  }
 }
 
-.account-dropdown-options {
-  text-align: left;
-  padding: 4px 6px;
-}
-
-.account-dropdown-options:hover {
-  background-color: $gray-6;
-  color: $purple;
-  border-radius: 2px;
-}
-
-.dropdown-container {
+.accountDropdown {
   position: absolute;
   background-color: white;
   width: 150px;
   border-radius: 6px;
   border: 1px solid #EDEBEB;
-
   right: 12px;
-  top: 40px;
-
+  top: 50px;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
-
   padding: 16px 15px;
   box-sizing: border-box;
   font-family: Helvetica, sans-serif;
   font-size: 12px;
 
+  .accountDropdownOption {
+    text-align: left;
+    padding: 4px 6px;
+  }
+
+  .accountDropdownOption:hover {
+    background-color: $gray-6;
+    color: $purple;
+    border-radius: 2px;
+    cursor: pointer;
+  }
 }

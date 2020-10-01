@@ -17,10 +17,10 @@
 
 import {Route, RouteProps} from 'react-router';
 import * as React from 'react';
-import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useState} from 'react';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
+import {getToken} from './TokenProvider';
 
 export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
@@ -28,8 +28,7 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
 
 
     useOnLoad(() => {
-        const cookie = new Cookies();
-        const accessToken = cookie.get('accessToken');
+        const accessToken = getToken();
 
         AccessTokenClient.validateAccessToken(accessToken)
             .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))

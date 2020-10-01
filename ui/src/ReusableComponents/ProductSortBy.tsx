@@ -55,7 +55,7 @@ function ProductSortBy({
     /* eslint-enable */
 
     return (
-        <React.Fragment>
+        <div className="sortByDropdownContainer" data-testid="sortBy">
             <label htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
             <Select
                 styles={filterByStyles}
@@ -67,7 +67,7 @@ function ProductSortBy({
                 value={originalSortOption}
                 onChange={(value): void => setProductSortBy((value as SortByOption).value)}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
-        </React.Fragment>
+        </div>
     );
 }
 
