@@ -14,7 +14,7 @@ describe('Product', () => {
 
         cy.get(product.name).should('not.exist');
 
-        cy.get('[data-cy=newProductButton]').click();
+        cy.get('[data-testid=newProductButton]').click();
 
         cy.getModal().should('contain', 'Create New Product');
 

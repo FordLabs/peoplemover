@@ -23,7 +23,7 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import moment from 'moment';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
-import { getSelectedTagsFromGroupedTagOptions } from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface ProductListProps {
     products: Array<Product>;
@@ -37,15 +37,17 @@ function ProductList({
     allGroupedTagFilterOptions,
     viewingDate,
     productSortBy,
-}: ProductListProps ): JSX.Element {
+}: ProductListProps): JSX.Element {
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
+    const [filteredProductsLoaded, setFilteredProductsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
-        if (allGroupedTagFilterOptions.length > 0 ) {
-            const numberOfLocationFiltersApplied = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[0].options).length;
-            const numberOfProductTagFiltersApplied = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[1].options).length;
-            const totalNumberOfFiltersApplied = numberOfLocationFiltersApplied + numberOfProductTagFiltersApplied;
+        if (allGroupedTagFilterOptions.length > 0) {
+            const numberOfSelectedLocationFilters = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options).length;
+            const numberOfSelectedProductTagFilters = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options).length;
+            const totalNumberOfFiltersApplied = numberOfSelectedLocationFilters + numberOfSelectedProductTagFilters;
             setNoFiltersApplied(totalNumberOfFiltersApplied === 0);
+            setFilteredProductsLoaded(true);
         }
     }, [allGroupedTagFilterOptions]);
 
@@ -56,27 +58,30 @@ function ProductList({
     }
 
     function permittedByFilters(product: Product): boolean {
-        let isLocationFilterOn = false;
-        let isProductTagFilterOn = false;
-        const locationTagFilters: Array<string> = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[0].options);
-        const productTagFilters: Array<string> = getSelectedTagsFromGroupedTagOptions(allGroupedTagFilterOptions[1].options);
-        if (product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name)) {
-            isLocationFilterOn = true;
+        let isPermittedByLocationFilter = false;
+        let isPermittedByProductTagFilter = false;
+        const locationTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options);
+        const productTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options);
+        if ((product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name))
+            || locationTagFilters.length === 0) {
+            isPermittedByLocationFilter = true;
         }
         if (product.productTags) {
             const productTagNames: Array<string> = product.productTags.map(productTag => productTag.name);
             productTagFilters.forEach(productTagFilter => {
                 if (productTagNames.includes(productTagFilter)) {
-                    isProductTagFilterOn = true;
+                    isPermittedByProductTagFilter = true;
                 }
             });
         }
-        return isProductTagFilterOn || isLocationFilterOn;
+        if (productTagFilters.length === 0) {
+            isPermittedByProductTagFilter = true;
+        }
+        return isPermittedByProductTagFilter && isPermittedByLocationFilter;
     }
 
     function ListOfProducts(): JSX.Element {
-        const productFiltersLoaded = allGroupedTagFilterOptions.length > 0;
-        if (productFiltersLoaded) {
+        if (filteredProductsLoaded) {
             const filteredAndActiveProduct = products
                 .filter(product => noFiltersApplied || permittedByFilters(product))
                 .filter(isActiveProduct);
@@ -91,7 +96,6 @@ function ProductList({
                     return <GroupedByList
                         products={filteredAndActiveProduct}
                         productSortBy={productSortBy}/>;
-
             }
         } else {
             return <></>;

@@ -38,6 +38,7 @@ import {SpaceLocation} from '../Locations/SpaceLocation';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../SpaceDashboard/SpaceClient';
 import {Space} from '../SpaceDashboard/Space';
+import {AllGroupedTagFilterOptions} from "../ReusableComponents/ProductFilter";
 
 export function renderWithRedux(
     component: JSX.Element,
@@ -422,6 +423,25 @@ class TestUtils {
         locations: TestUtils.locations,
         lastModifiedDate: TestUtils.originDateString,
     }
+
+    static allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
+        {
+            label:'Location Tags:',
+            options: [{
+                label: 'Ann Arbor',
+                value: '1_Ann Arbor',
+                selected: true,
+            }],
+        },
+        {
+            label:'Product Tags:',
+            options: [],
+        },
+        {
+            label:'Role Tags:',
+            options: [],
+        },
+    ]
 }
 
 export default TestUtils;
