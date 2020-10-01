@@ -47,8 +47,8 @@ data class Space (
 
     var lastModifiedDate: Timestamp? = null,
 
-    var createdBy: String = ""
+    var createdBy: String? = null
 ) {
     constructor(name: String):
-        this(null, UUID.randomUUID().toString(), name, HashSet(), ArrayList(), null, "")
+        this(null, UUID.randomUUID().toString(), name, HashSet(), ArrayList(), null, null)
 }
