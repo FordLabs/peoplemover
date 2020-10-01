@@ -16,7 +16,7 @@
  */
 
 import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
-import TestUtils, {renderWithRedux} from './TestUtils';
+import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import React from 'react';
 import {Router} from 'react-router-dom';
@@ -54,7 +54,7 @@ describe('Account Dropdown',  () => {
         });
     });
 
-    it('Should open Share Access modal on click of text in dropdown',  async () => {
+    it('should open Share Access modal on click of text in dropdown',  async () => {
         await act( async () => {
             fireEvent.click(await app.findByTestId('share-access'));
         });
@@ -96,5 +96,4 @@ describe('Account Dropdown',  () => {
         expect(cookies.get('accessToken')).toBeUndefined();
         expect(history.location.pathname).toEqual('/');
     });
-
 });

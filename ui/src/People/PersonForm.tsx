@@ -393,7 +393,7 @@ function PersonForm({
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             onClick={displayRemovePersonModal}
-                            onKeyDown={(e): void => {handleKeyDownForDisplayRemovePersonModal(e)}}>Delete</span>
+                            onKeyDown={(e): void => {handleKeyDownForDisplayRemovePersonModal(e);}}>Delete</span>
                     </div>
                 )}
             </form>

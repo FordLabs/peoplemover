@@ -16,8 +16,30 @@
  */
 
 import Cookies from 'universal-cookie';
+import jwtDecoder from 'jwt-decode';
 
 export const getToken = (): string => {
     const cookies = new Cookies();
     return cookies.get('accessToken');
+};
+
+export const removeToken = (): void => {
+    const cookie = new Cookies();
+    cookie.remove('accessToken', {path: '/'});
+};
+
+export const getDecodedToken = (): unknown | null  => {
+    const accessToken = getToken();
+    return jwtDecoder(accessToken);
+};
+
+export const getUserNameFromAccessToken = (): string => {
+    try {
+        const decodedAccessToken = getDecodedToken();
+        // @ts-ignore
+        const userName = decodedAccessToken.sub;
+        return userName;
+    } catch {
+        return '';
+    }
 };

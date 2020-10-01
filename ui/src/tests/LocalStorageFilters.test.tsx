@@ -52,7 +52,7 @@ describe('filter products', () => {
     it('should show the local storage filter options when app starts', async () => {
         localStorage.setItem('filters', JSON.stringify(filters));
         const app = renderWithRedux(<PeopleMover/>);
-        const filterContainer = await app.findByTestId('filterByDropDownContainer');
+        const filterContainer = await app.findByTestId('filters');
         await findByText(filterContainer, TestUtils.annarbor.name);
         await findByText(filterContainer, TestUtils.productTag1.name);
         await findByText(filterContainer, TestUtils.roles[0].name);
