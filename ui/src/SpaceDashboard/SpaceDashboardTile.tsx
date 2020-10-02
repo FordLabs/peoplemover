@@ -88,11 +88,11 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
     }
 
     return (
-        <div className="space"
+        <div className="spaceTile"
             data-testid="space-dashboard-tile"
             onClick={(): void => openSpace(space)}
             onKeyDown={(e): void => handleKeyDownForOpenSpace(e)}>
-            <div className="space-metadata">
+            <div className="spaceMetadata">
                 <div className="space-name">{space.name}</div>
                 <div className="last-modified-text">Last modified {timestamp}</div>
             </div>
@@ -102,7 +102,6 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                     onClick={(e): boolean => handleDropdownClick(e)}
                     onKeyDown={(e): boolean => handleKeyDownForShowsDropdown(e)}>
                     <i className="fas fa-ellipsis-v icon"/>
-
                     {dropdownFlag && <div className="ellipsis-dropdown-container">
                         <div data-testid="edit-space"
                             className="dropdown-options"

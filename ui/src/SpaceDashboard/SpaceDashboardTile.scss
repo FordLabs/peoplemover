@@ -17,22 +17,22 @@
 
 @import "../Application/Styleguide/Colors.scss";
 
-.space {
+.spaceTile {
   background: $logo-gradient;
   border-radius: 6px 6px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   color: white;
-
   display: flex;
   flex-direction: row;
-  //justify-content: center;
   width: 400px;
   cursor: pointer;
 
-  .space-metadata {
+  .spaceMetadata {
     padding-left: 1.375rem;
-    padding-top: 2.5rem;
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .ellipsis-button {
@@ -42,9 +42,8 @@
     position: relative;
   }
 
-  .button-container{
-    flex-basis: 10%;
-    padding-top: 3rem;
+  .button-container {
+    padding: 3rem 1.5rem 0;
   }
 
   .space-name {
@@ -91,8 +90,6 @@
   width: 150px;
   border-radius: 6px;
   border: 1px solid #EDEBEB;
-
-
   box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
 
   padding: 11px 15px;
@@ -103,5 +100,4 @@
   i {
     margin-right: 0.5rem;
   }
-
 }
