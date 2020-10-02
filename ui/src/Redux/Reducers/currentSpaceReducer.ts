@@ -18,7 +18,7 @@
  */
 
 import {AvailableActions} from '../Actions';
-import {Space} from '../../SpaceDashboard/Space';
+import {Space} from '../../Space/Space';
 
 const currentSpaceReducer = (state: Space | null = null, action: { type: AvailableActions; space: Space }): Space | null => {
     switch (action.type) {

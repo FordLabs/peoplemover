@@ -23,7 +23,7 @@ import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {wait, fireEvent, RenderResult} from '@testing-library/react';
 import {AxiosResponse} from 'axios';
-import SpaceClient from './SpaceClient';
+import SpaceClient from '../Space/SpaceClient';
 import moment from 'moment';
 import {RunConfig} from '../index';
 

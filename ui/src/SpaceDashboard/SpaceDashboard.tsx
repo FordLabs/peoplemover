@@ -17,7 +17,7 @@
 
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Space} from './Space';
+import {Space} from '../Space/Space';
 import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import {

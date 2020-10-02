@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Space} from './Space';
+import {Space} from '../Space/Space';
 import * as React from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';

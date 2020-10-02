@@ -16,7 +16,7 @@
  */
 
 import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
-import SpaceClient from './SpaceClient';
+import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
 import {useLocation} from 'react-router-dom';
 import {connect} from 'react-redux';

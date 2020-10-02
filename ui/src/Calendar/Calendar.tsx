@@ -8,7 +8,7 @@ import {connect} from 'react-redux';
 import {setViewingDateAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 import moment from 'moment';
 
 interface CalendarProps {
