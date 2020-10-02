@@ -106,8 +106,8 @@ describe('ProductForm', function() {
             const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store, undefined);
             const deleteSpan = await app.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
-            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy()
-            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeNull()
+            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeNull();
         });
     });
 
@@ -116,8 +116,8 @@ describe('ProductForm', function() {
             const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store, undefined);
             const deleteSpan = await app.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
-            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy()
-            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeTruthy()
+            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeTruthy();
         });
     });
 });
