@@ -87,38 +87,37 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
         }
     }
 
+    function openEditModal(): void {
+        return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
+    }
+
     return (
         <div className="spaceTile"
-            data-testid="space-dashboard-tile"
+            data-testid="spaceDashboardTile"
             onClick={(): void => openSpace(space)}
             onKeyDown={(e): void => handleKeyDownForOpenSpace(e)}>
             <div className="spaceMetadata">
-                <div className="space-name">{space.name}</div>
-                <div className="last-modified-text">Last modified {timestamp}</div>
+                <div className="spaceName">{space.name}</div>
+                <div className="lastModifiedText">Last modified {timestamp}</div>
             </div>
-            <div className="button-container">
-                <button data-testid="ellipsis-button"
-                    className="ellipsis-button"
-                    onClick={(e): boolean => handleDropdownClick(e)}
-                    onKeyDown={(e): boolean => handleKeyDownForShowsDropdown(e)}>
-                    <i className="fas fa-ellipsis-v icon"/>
-                    {dropdownFlag && <div className="ellipsis-dropdown-container">
-                        <div data-testid="edit-space"
-                            className="dropdown-options"
+            <button data-testid="ellipsisButton"
+                className="ellipsisButton"
+                onClick={(e): boolean => handleDropdownClick(e)}
+                onKeyDown={(e): boolean => handleKeyDownForShowsDropdown(e)}>
+                <i className="fas fa-ellipsis-v icon"/>
+                {dropdownFlag && (
+                    <div className="ellipsisDropdownContainer">
+                        <div data-testid="editSpace"
+                            className="dropdownOptions"
                             onClick={openEditModal}
                             onKeyDown={(e): void => handleKeyDownForOpenEditModal(e)}>
                             <i className="fas fa-pen"/>Edit
                         </div>
                     </div>
-                    }
-                </button>
-            </div>
+                )}
+            </button>
         </div>
     );
-
-    function openEditModal(): void {
-        return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
-    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

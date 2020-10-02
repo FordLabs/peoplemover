@@ -26,27 +26,16 @@
   flex-direction: row;
   width: 400px;
   cursor: pointer;
+}
 
-  .spaceMetadata {
-    padding-left: 1.375rem;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+.spaceMetadata {
+  padding-left: 1.375rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
-  .ellipsis-button {
-    background: transparent;
-    height: 1.5rem;
-    width: 1rem;
-    position: relative;
-  }
-
-  .button-container {
-    padding: 3rem 1.5rem 0;
-  }
-
-  .space-name {
+  .spaceName {
     word-break: break-word;
     font-size: 22px;
     font-weight: bold;
@@ -54,7 +43,7 @@
     margin-bottom: .25rem;
   }
 
-  .last-modified-text {
+  .lastModifiedText {
     font-size: 12px;
     font-style: italic;
     font-weight: normal;
@@ -62,13 +51,21 @@
   }
 }
 
-.icon {
-  text-align: right;
+.ellipsisButton {
+  margin: 3rem 1.5rem 0;
   background: transparent;
-  color: white;
+  height: 1.5rem;
+  width: 1rem;
+  position: relative;
+
+  .icon {
+    text-align: right;
+    background: transparent;
+    color: white;
+  }
 }
 
-.dropdown-options {
+.dropdownOptions {
   text-align: left;
   padding: 4px 6px;
   color: #333333;
@@ -83,7 +80,7 @@
 }
 
 
-.ellipsis-dropdown-container {
+.ellipsisDropdownContainer {
   position: absolute;
   margin-top: 8px;
   background-color: white;
