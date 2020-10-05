@@ -141,6 +141,10 @@ function ProductForm({
         return ProductClient.editProduct(currentSpace.uuid, archivedProduct).then(closeModal);
     }
 
+    function determineIfProductIsArchived() {
+        return product?.endDate! < moment(viewingDate).format('YYYY-MM-DD');
+    }
+
     function displayDeleteProductModal(): void {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: deleteProduct,
@@ -149,7 +153,7 @@ function ProductForm({
                 setConfirmDeleteModal(null);
             },
             archiveCallback: archiveProduct,
-            isArchived: currentProduct.archived,
+            isArchived: determineIfProductIsArchived(),
             warningMessage: 'Deleting this product will permanently remove it from this space.',
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
@@ -257,6 +261,7 @@ function ProductForm({
                         <i className="fas fa-trash"/>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
+                            data-testid="deleteProduct"
                             onClick={displayDeleteProductModal}
                             onKeyDown={(e): void => handleKeyDownForDisplayDeleteProductModal(e)}>Delete Product</span>
                     </div>)}

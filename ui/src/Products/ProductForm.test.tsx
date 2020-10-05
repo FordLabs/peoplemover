@@ -91,4 +91,33 @@ describe('ProductForm', function() {
         await act(async () => {await locationPromise;});
         await act(async () => {await productTagPromise;});
     });
+
+    it('should show delete modal without archive text when an archive product is being deleted', async () => {
+        const store = mockStore({
+            currentSpace: {
+                uuid: 'aaa-aaa-aaa-aaaaa',
+                id: 1,
+                name: 'Test Space',
+            } as Space,
+            viewingDate: new Date(2022, 3, 14),
+        });
+
+        await act(async () => {
+            const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store, undefined);
+            const deleteSpan = await app.findByTestId('deleteProduct');
+            fireEvent.click(deleteSpan);
+            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeNull();
+        });
+    });
+
+    it('should show delete modal with archive text when an archive product is being deleted', async () => {
+        await act(async () => {
+            const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store, undefined);
+            const deleteSpan = await app.findByTestId('deleteProduct');
+            fireEvent.click(deleteSpan);
+            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeTruthy();
+        });
+    });
 });
