@@ -78,6 +78,58 @@ describe('People', () => {
                     .should('contain', `Assigned to ${person.assignTo}`);
             });
     });
+
+    it('Drag and drop person from one product to another product', () => {
+        cy.get('[data-testid=unassignedDrawer]').click();
+
+        cy.get('.personContainer').contains('Jane Smith')
+            .trigger('mousedown', { button: 0 })
+            .trigger('mousemove', {
+                clientX: 80,
+                clientY: 150,
+                screenX: 80,
+                screenY: 150,
+                pageX: 80,
+                pageY: 150,
+            })
+            .trigger('mouseup', { force: true });
+    });
+
+    it('Drag and drop person from a product to unassigned', () => {
+        cy.get('[data-testid=unassignedDrawer]').click();
+
+        cy.get('[data-testid=unassignedDrawer]').contains('Jane Smith').should('not.exist');
+
+        cy.get('.personContainer').contains('Jane Smith')
+            .trigger('mousedown', { button: 0 })
+            .trigger('mousemove', {
+                clientX: 900,
+                clientY: 150,
+                screenX: 900,
+                screenY: 150,
+                pageX: 900,
+                pageY: 150,
+            })
+            .trigger('mouseup', { force: true });
+
+        cy.get('[data-testid=unassignedDrawer]').contains('Jane Smith');
+    });
+
+    it('Drag and drop person from a unassigned to a product', () => {
+        cy.get('[data-testid=unassignedDrawer]').click();
+
+        cy.get('.personContainer').contains('Adam Sandler')
+            .trigger('mousedown', { button: 0 })
+            .trigger('mousemove', {
+                clientX: 80,
+                clientY: 150,
+                screenX: 80,
+                screenY: 150,
+                pageX: 80,
+                pageY: 150,
+            })
+            .trigger('mouseup', { force: true });
+    });
 });
 
 const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
