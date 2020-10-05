@@ -220,8 +220,8 @@ describe('Products', () => {
         it('displays the add person icon', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            await app.findByTestId('addPersonToProductIcon-1');
-            await app.findByTestId('addPersonToProductIcon-3');
+            await app.findByTestId('addPersonToProductIcon__product_1');
+            await app.findByTestId('addPersonToProductIcon__product_3');
         });
 
         it('does not display the add person icon on the unassigned product', async () => {
@@ -234,7 +234,7 @@ describe('Products', () => {
         it('opens AssignmentForm component when button clicked with product populated', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const addPersonButton = await app.findByTestId('addPersonToProductIcon-1');
+            const addPersonButton = await app.findByTestId('addPersonToProductIcon__product_1');
             fireEvent.click(addPersonButton);
 
             expect(app.getByText('Assign a Person'));
@@ -384,7 +384,7 @@ describe('Products', () => {
             }));
             const app = renderWithRedux(<PeopleMover/>);
 
-            const editProductMenuButton = await app.findByTestId('editProductIcon_1');
+            const editProductMenuButton = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
 
             const editProductOption = await app.findByTestId('editMenuOption0');
@@ -403,7 +403,7 @@ describe('Products', () => {
         it('should show length of notes on initial render', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const editProductMenuButton = await app.findByTestId('editProductIcon_1');
+            const editProductMenuButton = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
 
             const editProductOption = await app.findByTestId('editMenuOption0');
@@ -434,7 +434,7 @@ describe('Products', () => {
         it('should show a delete button in the product modal', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const editProduct3Button = await app.findByTestId('editProductIcon_3');
+            const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
             const editProductMenuOption = await app.findByText('Edit Product');
             fireEvent.mouseDown(editProductMenuOption);
@@ -446,7 +446,7 @@ describe('Products', () => {
         it('should show the confirmation modal when a deletion is requested', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const editProduct3Button = await app.findByTestId('editProductIcon_3');
+            const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
             const editProductMenuOption = await app.findByText('Edit Product');
             fireEvent.mouseDown(editProductMenuOption);
@@ -459,7 +459,7 @@ describe('Products', () => {
         it('should call the product client with the product when a deletion is requested', async () => {
             await act(async () => {
                 const app = renderWithRedux(<PeopleMover/>);
-                const editProduct3Button = await app.findByTestId('editProductIcon_3');
+                const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
                 fireEvent.click(editProduct3Button);
                 const editProductMenuOption = await app.findByText('Edit Product');
                 fireEvent.mouseDown(editProductMenuOption);
@@ -498,7 +498,7 @@ describe('Products', () => {
                 await act(async () => {
                     const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
-                    const editProduct3Button = await app.findByTestId('editProductIcon_3');
+                    const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
                     fireEvent.click(editProduct3Button);
                     const editProductMenuOption = await app.findByText('Edit Product');
                     fireEvent.mouseDown(editProductMenuOption);
@@ -520,7 +520,7 @@ describe('Products', () => {
         it('should pop the edit menu options', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const myProductElipsis = await app.findByTestId('editProductIcon_1');
+            const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
             await app.findByText('Edit Product');
@@ -530,7 +530,7 @@ describe('Products', () => {
         it('should open edit modal when click on edit product', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const myProductElipsis = await app.findByTestId('editProductIcon_1');
+            const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
             const editProductMenuOption = await app.findByText('Edit Product');
@@ -558,7 +558,7 @@ describe('Products', () => {
 
             const app = renderWithRedux(<PeopleMover/>);
 
-            const myProductElipsis = await app.findByTestId('editProductIcon_1');
+            const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
             const archiveProductMenuOption = await app.findByText('Archive Product');

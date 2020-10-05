@@ -37,6 +37,7 @@ import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
 import {Space} from '../Space/Space';
+import {createDataTestId} from '../tests/TestUtils';
 
 interface ProductCardProps {
     container: string;
@@ -157,7 +158,7 @@ function ProductCard({
     }
 
     return (
-        <div className={container} data-testid={container} ref={productRef}>
+        <div className={container} data-testid={createDataTestId(container, product.name)} ref={productRef}>
             <div key={product.name}>
                 {container === 'productCardContainer' && (
                     <div>
@@ -179,14 +180,14 @@ function ProductCard({
                             </div>
                             <div className="productControlsContainer">
                                 <div className="addPersonIconContainer">
-                                    <div data-testid={'addPersonToProductIcon-' + product.id}
+                                    <div data-testid={createDataTestId('addPersonToProductIcon', product.name)}
                                         className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
                                         onClick={setCurrentModalToCreateAssignment}
                                         onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
                                     />
                                 </div>
                                 <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
-                                    data-testid={'editProductIcon_' + product.id}
+                                    data-testid={createDataTestId('editProductIcon', product.name)}
                                     onClick={toggleEditMenu}
                                     onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
@@ -206,7 +207,6 @@ function ProductCard({
                             </div>
                         )}
                     </div>
-
                 )}
                 <AssignmentCardList container={container} product={product} />
             </div>
