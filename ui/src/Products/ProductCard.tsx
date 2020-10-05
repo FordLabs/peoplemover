@@ -37,6 +37,7 @@ import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
 import {Space} from '../Space/Space';
+import {createDataTestId} from '../tests/TestUtils';
 
 interface ProductCardProps {
     container: string;
@@ -186,7 +187,7 @@ function ProductCard({
                                     />
                                 </div>
                                 <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
-                                    data-testid={'editProductIcon_' + product.id}
+                                    data-testid={createDataTestId('editProductIcon', product.name)}
                                     onClick={toggleEditMenu}
                                     onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
