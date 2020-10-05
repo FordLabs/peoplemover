@@ -29,7 +29,7 @@ import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
 import {TraitClient} from '../Traits/TraitClient';
 import {Trait} from '../Traits/Trait';
 import {FilterOption} from '../CommonTypes/Option';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 
 import './ProductFilterOrSortBy.scss';
 

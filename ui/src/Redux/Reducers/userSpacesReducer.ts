@@ -18,7 +18,7 @@
  */
 
 import {AvailableActions} from '../Actions';
-import {Space} from '../../SpaceDashboard/Space';
+import {Space} from '../../Space/Space';
 
 const userSpacesReducer = (state: Array<Space> = [], action: {type: AvailableActions; userSpaces: Array<Space>} ): Array<Space> => {
     if (action.type === AvailableActions.SET_USER_SPACES) {

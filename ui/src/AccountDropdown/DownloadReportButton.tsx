@@ -19,7 +19,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import ReportClient from '../Reports/ReportClient';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 
 interface Props {
     currentSpace: Space;

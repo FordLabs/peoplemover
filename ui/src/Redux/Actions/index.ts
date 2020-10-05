@@ -22,14 +22,14 @@ import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
 import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
-import {Space} from '../../SpaceDashboard/Space';
+import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import ProductTagClient from '../../ProductTag/ProductTagClient';
 import {SpaceLocation} from '../../Locations/SpaceLocation';
 import LocationClient from '../../Locations/LocationClient';
-import SpaceClient from '../../SpaceDashboard/SpaceClient';
+import SpaceClient from '../../Space/SpaceClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,

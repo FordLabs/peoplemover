@@ -36,9 +36,9 @@ import ColorClient from '../Roles/ColorClient';
 import {Color, SpaceRole} from '../Roles/Role';
 import {SpaceLocation} from '../Locations/SpaceLocation';
 import {AxiosResponse} from 'axios';
-import SpaceClient from '../SpaceDashboard/SpaceClient';
-import {Space} from '../SpaceDashboard/Space';
-import {AllGroupedTagFilterOptions} from "../ReusableComponents/ProductFilter";
+import SpaceClient from '../Space/SpaceClient';
+import {Space} from '../Space/Space';
+import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 
 export function renderWithRedux(
     component: JSX.Element,

@@ -31,7 +31,7 @@ import {viewingDateReducer} from './viewingDateReducer';
 import productsReducer from './productsReducer';
 import productTagsReducer from './productTagsReducer';
 import locationsReducer from './locationsReducer';
-import {Space} from '../../SpaceDashboard/Space';
+import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import {SpaceLocation} from '../../Locations/SpaceLocation';

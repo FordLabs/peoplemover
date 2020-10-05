@@ -7,7 +7,7 @@ import React, {useState} from 'react';
 import {customStyles} from './ProductForm';
 import {Product} from './Product';
 import {Trait} from '../Traits/Trait';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {AxiosResponse} from 'axios';

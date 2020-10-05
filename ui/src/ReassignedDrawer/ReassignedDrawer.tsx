@@ -23,7 +23,7 @@ import {connect} from 'react-redux';
 import {Reassignment} from './Reassignment';
 import {Product} from '../Products/Product';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 import {Person} from '../People/Person';
 import {fetchProductsAction} from '../Redux/Actions';
 

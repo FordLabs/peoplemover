@@ -4,7 +4,7 @@ import {fireEvent} from '@testing-library/dom';
 import configureStore from 'redux-mock-store';
 import {act} from '@testing-library/react';
 import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
 import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
