@@ -26,8 +26,20 @@ import {AxiosResponse} from 'axios';
 import SpaceClient from './SpaceClient';
 import moment from 'moment';
 import {RunConfig} from '../index';
+import {createEmptySpace} from './Space';
+import {createStore} from 'redux';
+import rootReducer from '../Redux/Reducers';
+import {setCurrentSpaceAction} from '../Redux/Actions';
 
-describe('SpaceDashboard tests', () => {
+describe('SpaceDashboard', () => {
+    it('should reset currentSpace on load', () => {
+        let store = createStore(rootReducer, {});
+        store.dispatch = jest.fn();
+        renderWithRedux(<SpaceDashboard/>, store);
+
+        expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(createEmptySpace()));
+    });
+
     it('should display sign out and not invite contributors in menu', async () => {
         // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
