@@ -17,13 +17,14 @@
 
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {createEmptySpace, Space} from './Space';
+import {createEmptySpace, Space} from '../Space/Space';
 import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import {
     AvailableModals,
     fetchUserSpacesAction,
-    setCurrentModalAction, setCurrentSpaceAction,
+    setCurrentModalAction,
+    setCurrentSpaceAction,
 } from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';

@@ -42,7 +42,7 @@ import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 import moment from 'moment';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
