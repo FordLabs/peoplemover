@@ -220,8 +220,8 @@ describe('Products', () => {
         it('displays the add person icon', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            await app.findByTestId('addPersonToProductIcon-1');
-            await app.findByTestId('addPersonToProductIcon-3');
+            await app.findByTestId('addPersonToProductIcon__product_1');
+            await app.findByTestId('addPersonToProductIcon__product_3');
         });
 
         it('does not display the add person icon on the unassigned product', async () => {
@@ -234,7 +234,7 @@ describe('Products', () => {
         it('opens AssignmentForm component when button clicked with product populated', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const addPersonButton = await app.findByTestId('addPersonToProductIcon-1');
+            const addPersonButton = await app.findByTestId('addPersonToProductIcon__product_1');
             fireEvent.click(addPersonButton);
 
             expect(app.getByText('Assign a Person'));

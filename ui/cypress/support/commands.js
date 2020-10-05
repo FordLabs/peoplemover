@@ -24,7 +24,7 @@ Cypress.Commands.add('visitBoard', () => {
     ];
     cy.wait(waitForEndpointsToComplete)
         .then(() => {
-            cy.get('[data-testid=productCardContainer]')
+            cy.get('[data-testid*=productCardContainer__]')
                 .should(($productCards) => {
                     expect($productCards).to.have.length.greaterThan(1);
                 });

@@ -158,7 +158,7 @@ function ProductCard({
     }
 
     return (
-        <div className={container} data-testid={container} ref={productRef}>
+        <div className={container} data-testid={createDataTestId(container, product.name)} ref={productRef}>
             <div key={product.name}>
                 {container === 'productCardContainer' && (
                     <div>
@@ -180,7 +180,7 @@ function ProductCard({
                             </div>
                             <div className="productControlsContainer">
                                 <div className="addPersonIconContainer">
-                                    <div data-testid={'addPersonToProductIcon-' + product.id}
+                                    <div data-testid={createDataTestId('addPersonToProductIcon', product.name)}
                                         className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
                                         onClick={setCurrentModalToCreateAssignment}
                                         onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
@@ -207,7 +207,6 @@ function ProductCard({
                             </div>
                         )}
                     </div>
-
                 )}
                 <AssignmentCardList container={container} product={product} />
             </div>

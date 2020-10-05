@@ -84,7 +84,7 @@ describe('Product List tests', () => {
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
             await component.findByText(TestUtils.productForHank.name);
             await component.findByText(productWithAnnArborLocation.name);
-            expect(component.getAllByTestId('productCardContainer').length).toEqual(2);
+            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(3);
         });
 
         it('should return all products with the selected product tag filter', async () => {
@@ -117,7 +117,7 @@ describe('Product List tests', () => {
 
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
             await component.findByText(TestUtils.productWithAssignments.name);
-            expect(component.getAllByTestId('productCardContainer').length).toEqual(1);
+            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
 
         it('should return all products with the selected product tag filter', async () => {
@@ -154,7 +154,7 @@ describe('Product List tests', () => {
     
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
             await component.findByText(TestUtils.productWithoutAssignments.name);
-            expect(component.getAllByTestId('productCardContainer').length).toEqual(1);
+            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
     });
 });
