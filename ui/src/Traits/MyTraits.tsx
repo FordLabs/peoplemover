@@ -28,7 +28,7 @@ import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 
 import '../Traits/MyTraits.scss';
 

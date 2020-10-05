@@ -18,6 +18,7 @@
 import {connect} from 'react-redux';
 import {AvailableModals, closeModalAction} from '../Actions';
 import Modal from '../../Modal/Modal';
+import {Dispatch} from 'redux';
 import React from 'react';
 import ProductForm from '../../Products/ProductForm';
 import PersonForm from '../../People/PersonForm';
@@ -27,14 +28,12 @@ import {GlobalStateProps} from '../Reducers';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
 import MyTagsModal from '../../Tags/MyTagsModal';
 import MyRolesModal from '../../Roles/MyRolesModal';
-import InviteContributorConfirmationForm from '../../SpaceDashboard/InviteContributorsConfirmationForm';
-import {Dispatch} from 'redux';
-import EditContributorsForm from '../../SpaceDashboard/EditContributorsForm';
+import InviteContributorConfirmationForm from '../../AccountDropdown/InviteContributorsConfirmationForm';
+import EditContributorsForm from '../../AccountDropdown/EditContributorsForm';
 import {emptyProduct, Product} from '../../Products/Product';
-import {Space} from '../../SpaceDashboard/Space';
+import {Space} from '../../Space/Space';
 import moment from 'moment';
 import SpaceForm from '../../SpaceDashboard/SpaceForm';
-
 
 const getCurrentModal = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space, viewingDate: Date): JSX.Element | null => {
     const {modal, item} = currentModal;

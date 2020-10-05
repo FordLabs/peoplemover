@@ -10,7 +10,7 @@ import Creatable from 'react-select/creatable';
 import {CreateNewText, CustomIndicator, CustomOption} from '../ReusableComponents/ReactSelectStyles';
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {customStyles} from './ProductForm';
 

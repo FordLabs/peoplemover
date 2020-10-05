@@ -36,7 +36,7 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 
 interface ProductCardProps {
     container: string;

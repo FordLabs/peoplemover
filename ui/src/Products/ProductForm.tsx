@@ -36,7 +36,7 @@ import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
-import {Space} from '../SpaceDashboard/Space';
+import {Space} from '../Space/Space';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';

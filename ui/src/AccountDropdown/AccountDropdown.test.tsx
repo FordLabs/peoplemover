@@ -22,7 +22,7 @@ import React from 'react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 import {MemoryHistory} from 'history/createMemoryHistory';
-import SpaceClient from '../SpaceDashboard/SpaceClient';
+import SpaceClient from '../Space/SpaceClient';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
 
