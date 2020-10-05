@@ -17,13 +17,14 @@
 
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Space} from '../Space/Space';
+import {createEmptySpace, Space} from '../Space/Space';
 import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import {
     AvailableModals,
     fetchUserSpacesAction,
     setCurrentModalAction,
+    setCurrentSpaceAction,
 } from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
@@ -38,9 +39,10 @@ interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;
     fetchUserSpaces(): void;
     userSpaces: Array<Space>;
+    setCurrentSpace(space: Space): Space;
 }
 
-function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces}: SpaceDashboardProps): JSX.Element {
+function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces, setCurrentSpace}: SpaceDashboardProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [redirectPage, setRedirectPage] = useState<JSX.Element | null>(null);
 
@@ -58,11 +60,12 @@ function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces}: SpaceDas
             await fetchUserSpaces();
         }
         window.history.pushState([], 'User Dashboard', '/user/dashboard');
+        setCurrentSpace(createEmptySpace());
 
         populateUserSpaces().then(() => {
             setIsLoading(false);
         });
-    }, [setCurrentModal]);
+    }, [setCurrentModal, setCurrentSpace]);
     /* eslint-enable */
 
     function WelcomeMessage(): JSX.Element {
@@ -121,6 +124,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
+    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboard);
