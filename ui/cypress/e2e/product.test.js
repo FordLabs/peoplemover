@@ -4,21 +4,22 @@ import product from '../fixtures/product';
 describe('Product', () => {
     beforeEach(() => {
         cy.visitBoard();
+        cy.server();
+        cy.route('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
+        cy.route('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
+        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
     });
 
     it('Create a new product', () => {
-        cy.server();
-        cy.route('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
-        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
-        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
-
         cy.get(product.name).should('not.exist');
 
         cy.get('[data-testid=newProductButton]').click();
 
         cy.getModal().should('contain', 'Create New Product');
 
-        populateProductForm(product);
+        const todayDate = Cypress.moment().format('MM/DD/yyyy');
+        populateProductForm(product, todayDate);
 
         submitProductForm();
 
@@ -36,21 +37,61 @@ describe('Product', () => {
             });
         });
 
-        cy.contains(product.name).parentsUntil('[data-testid=productCardContainer]')
+        cy.get('[data-testid="productCardContainer__automated_test_product"]')
             .should('contain', product.name)
             .should('contain', product.location)
             .should('contain', product.tags[0])
             .should('contain', product.tags[1]);
     });
+
+    it('Edit a product', () => {
+        cy.get('Baguette Bakery').should('not.exist');
+
+        cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
+        cy.get('[data-testid=editMenuOption__edit_product]').click();
+
+        const updateProduct = {
+            name: 'Baguette Bakery 2',
+            location: 'Michigan',
+            archived: false,
+            tags: ['Tag 1', 'Tag 2'],
+            startDate: Cypress.moment('01/02/2019'),
+            nextPhaseDate: Cypress.moment().add(1, 'days'),
+            notes: 'Updated',
+        };
+        populateProductForm(updateProduct, '01/01/2019');
+
+        submitProductForm();
+
+        cy.wait('@updateProduct').should(xhr => {
+            expect(xhr?.status).to.equal(200);
+            const body = xhr?.response?.body;
+            expect(body.name).to.equal(updateProduct.name);
+            expect(body.archived).to.equal(updateProduct.archived);
+            expect(body.spaceLocation.name).to.equal(updateProduct.location);
+            expect(body.startDate).to.equal(updateProduct.startDate.format('yyyy-MM-DD'));
+            expect(body.endDate).to.equal(updateProduct.nextPhaseDate.format('yyyy-MM-DD'));
+            expect(body.notes).to.equal(updateProduct.notes);
+            body.productTags.forEach(tag => {
+                expect(updateProduct.tags).to.contain(tag.name);
+            });
+        });
+
+        cy.get('[data-testid="productCardContainer__baguette_bakery_2"]')
+            .should('contain', updateProduct.name)
+            .should('contain', updateProduct.location)
+            .should('contain', updateProduct.tags[0])
+            .should('contain', updateProduct.tags[1]);
+    });
 });
 
-const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}) => {
+const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}, defaultStartDate) => {
     cy.log('Populate Product Form');
 
     cy.get('[data-testid=productForm]').as('productForm');
     cy.get('@productForm').should('be.visible');
 
-    cy.get('[data-testid=productFormNameField]').focus().type(name).should('have.value', name);
+    cy.get('[data-testid=productFormNameField]').clear().focus().type(name).should('have.value', name);
 
     cy.get('@productForm')
         .find('[id=location]')
@@ -68,12 +109,11 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
     cy.get('#start').as('calendarStartDate');
     cy.get('#end').as('calendarEndDate');
 
-    const todaysDate = Cypress.moment().format('MM/DD/yyyy');
     cy.get('@calendarStartDate')
-        .should('have.value', todaysDate)
+        .should('have.value', defaultStartDate)
         .click();
-
-    const today = Cypress.moment();
+    
+    const today = defaultStartDate ? Cypress.moment(startDate) : Cypress.moment();
     cy.get(dateSelector(today)).click({force: true});
 
     cy.get('@calendarStartDate').should('have.value', startDate.format('MM/DD/yyyy'));
@@ -83,7 +123,7 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
         .should('have.value', '')
         .click();
 
-    const tomorrow = Cypress.moment().add(1, 'days');
+    const tomorrow = Cypress.moment(nextPhaseDate)
     cy.get(dateSelector(tomorrow)).click({force: true});
 
     cy.get('@calendarEndDate').should('have.value', nextPhaseDate.format('MM/DD/yyyy'));

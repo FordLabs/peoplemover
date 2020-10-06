@@ -41,7 +41,7 @@ import {Space} from '../Space/Space';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 
 export function createDataTestId(prefix: string, name: string): string {
-    return prefix + '__' + name.toLowerCase().replace(' ', '_');
+    return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
 }
 
 export function renderWithRedux(
