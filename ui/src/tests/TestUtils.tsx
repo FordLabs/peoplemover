@@ -40,6 +40,10 @@ import SpaceClient from '../Space/SpaceClient';
 import {Space} from '../Space/Space';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 
+export function createDataTestId(prefix: string, name: string): string {
+    return prefix + '__' + name.toLowerCase().replace(' ', '_');
+}
+
 export function renderWithRedux(
     component: JSX.Element,
     store?: Store,
