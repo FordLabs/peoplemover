@@ -5,13 +5,13 @@ describe('Product', () => {
     beforeEach(() => {
         cy.visitBoard();
         cy.server();
-        cy.route('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
-        cy.route('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
-        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
-        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
     });
 
     it('Create a new product', () => {
+        cy.route('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
+        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+
         cy.get(product.name).should('not.exist');
 
         cy.get('[data-testid=newProductButton]').click();
@@ -45,7 +45,9 @@ describe('Product', () => {
     });
 
     it('Edit a product', () => {
-        cy.get('Baguette Bakery').should('not.exist');
+        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+        cy.route('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
         cy.get('[data-testid=editMenuOption__edit_product]').click();
@@ -83,6 +85,23 @@ describe('Product', () => {
             .should('contain', updateProduct.tags[0])
             .should('contain', updateProduct.tags[1]);
     });
+
+    it('Delete a product', () => {
+        cy.route('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
+
+        cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
+        cy.get('[data-testid=editMenuOption__edit_product]').click();
+
+        cy.get('[data-testid=deleteProduct]').click();
+        cy.get('[data-testid=confirmDeleteButton]').click();
+
+        cy.wait('@deleteProduct').should(xhr => {
+            expect(xhr?.status).to.equal(200);
+        });
+
+        cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
+
+    })
 });
 
 const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}, defaultStartDate) => {
