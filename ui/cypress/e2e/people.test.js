@@ -80,55 +80,82 @@ describe('People', () => {
     });
 
     it('Drag and drop person from one product to another product', () => {
-        cy.get('[data-testid=unassignedDrawer]').click();
+        cy.server();
+        cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + date).as('getProducts');
+        cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Jane Smith').should('not.exist');
 
-        cy.get('.personContainer').contains('Jane Smith')
-            .trigger('mousedown', { button: 0 })
-            .trigger('mousemove', {
-                clientX: 80,
-                clientY: 150,
-                screenX: 80,
-                screenY: 150,
-                pageX: 80,
-                pageY: 150,
-            })
-            .trigger('mouseup', { force: true });
+        cy.get('[data-testid=productCardContainer__baguette_bakery]').then(element => {
+            let rect = element[0].getBoundingClientRect();
+            cy.get('[data-testid*=assignmentCard]').contains('Jane Smith')
+                .trigger('mousedown', { button: 0 })
+                .trigger('mousemove', {
+                    clientX: rect.x,
+                    clientY: rect.y,
+                    screenX: rect.x,
+                    screenY: rect.y,
+                    pageX: rect.x,
+                    pageY: rect.y,
+                })
+                .trigger('mouseup', { force: true });
+
+            cy.wait('@getProducts').should(() => {
+                cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Jane Smith');
+            });
+        });
     });
 
     it('Drag and drop person from a product to unassigned', () => {
         cy.get('[data-testid=unassignedDrawer]').click();
 
-        cy.get('[data-testid=unassignedDrawer]').contains('Jane Smith').should('not.exist');
+        cy.server();
+        cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + date).as('getProducts');
+        cy.get('[data-testid=productDrawerContainer__unassigned]').contains('Jane Smith').should('not.exist');
 
-        cy.get('.personContainer').contains('Jane Smith')
-            .trigger('mousedown', { button: 0 })
-            .trigger('mousemove', {
-                clientX: 900,
-                clientY: 150,
-                screenX: 900,
-                screenY: 150,
-                pageX: 900,
-                pageY: 150,
-            })
-            .trigger('mouseup', { force: true });
+        cy.get('[data-testid=productDrawerContainer__unassigned]').then(element => {
+            let rect = element[0].getBoundingClientRect();
+            cy.get('[data-testid*=assignmentCard]').contains('Jane Smith')
+                .trigger('mousedown', { button: 0 })
+                .trigger('mousemove', {
+                    clientX: rect.x,
+                    clientY: rect.y,
+                    screenX: rect.x,
+                    screenY: rect.y,
+                    pageX: rect.x,
+                    pageY: rect.y,
+                })
+                .trigger('mouseup', { force: true });
 
-        cy.get('[data-testid=unassignedDrawer]').contains('Jane Smith');
+            cy.wait('@getProducts').should(() => {
+                cy.get('[data-testid=productDrawerContainer__unassigned]').contains('Jane Smith');
+            });
+        });
     });
 
     it('Drag and drop person from a unassigned to a product', () => {
         cy.get('[data-testid=unassignedDrawer]').click();
 
-        cy.get('.personContainer').contains('Adam Sandler')
-            .trigger('mousedown', { button: 0 })
-            .trigger('mousemove', {
-                clientX: 80,
-                clientY: 150,
-                screenX: 80,
-                screenY: 150,
-                pageX: 80,
-                pageY: 150,
-            })
-            .trigger('mouseup', { force: true });
+        cy.server();
+        cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + date).as('getProducts');
+        cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Adam Sandler').should('not.exist');
+
+        cy.get('[data-testid=productCardContainer__baguette_bakery]').then(element => {
+            let rect = element[0].getBoundingClientRect();
+            cy.get('[data-testid*=assignmentCard]').contains('Adam Sandler')
+                .trigger('mousedown', { button: 0 })
+                .trigger('mousemove', {
+                    clientX: rect.x,
+                    clientY: rect.y,
+                    screenX: rect.x,
+                    screenY: rect.y,
+                    pageX: rect.x,
+                    pageY: rect.y,
+                })
+                .trigger('mouseup', { force: true });
+
+            cy.wait('@getProducts').should(() => {
+                cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Adam Sandler');
+            });
+        });
     });
 });
 
