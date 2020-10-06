@@ -29,6 +29,7 @@ interface Props {
 
 function SortedByList({ products, productSortBy}: Props): JSX.Element {
     const [sortedProducts, setSortedProducts] = useState<Array<Product>>([...products]);
+    const [productsSorted, setProductsSorted] = useState<boolean>(false);
 
     useEffect(() => {
         function sortBy(products: Array<Product>, productSortBy: string):  Array<Product> {
@@ -61,11 +62,12 @@ function SortedByList({ products, productSortBy}: Props): JSX.Element {
         if (products && products.length) {
             setSortedProducts(sortBy(products, productSortBy));
         }
+        setProductsSorted(true);
     }, [products, productSortBy]);
 
     return (
         <div className="productListSortedContainer" data-testid="productListSortedContainer">
-            {sortedProducts && sortedProducts.map((product: Product) => {
+            {productsSorted && sortedProducts && sortedProducts.map((product: Product) => {
                 return (
                     <span key={product.id}>
                         <ProductCard
