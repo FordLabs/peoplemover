@@ -387,7 +387,7 @@ describe('Products', () => {
             const editProductMenuButton = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
 
-            const editProductOption = await app.findByTestId('editMenuOption0');
+            const editProductOption = await app.findByTestId('editMenuOption__edit_product');
             fireEvent.mouseDown(editProductOption);
             fireEvent.mouseUp(editProductOption);
 
@@ -406,7 +406,7 @@ describe('Products', () => {
             const editProductMenuButton = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
 
-            const editProductOption = await app.findByTestId('editMenuOption0');
+            const editProductOption = await app.findByTestId('editMenuOption__edit_product');
             fireEvent.mouseDown(editProductOption);
             fireEvent.mouseUp(editProductOption);
 
