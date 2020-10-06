@@ -37,7 +37,7 @@
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;
-  margin-right: 7px;
+  margin-right: 24px;
 }
 
 .selectRoleCircle {
@@ -52,6 +52,7 @@
 
 .addNewTraitUnfilledCircle {
   border: 1px solid $prime-1;
+  background: $prime-1;
   display: flex;
   align-items: center;
 }
@@ -82,7 +83,7 @@
   min-width: 225px;
 
   .traitName {
-    font-size: 12px;
+    font-size: 14px;
     line-height: 24px;
     max-width: 160px;
     text-overflow: ellipsis;
@@ -94,16 +95,19 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 4px 0;
+    padding: 12px 0;
     position: relative;
 
     .addNewTraitText {
       color: $prime-1;
+      font-weight: bold;
     }
 
     .addTraitIcon {
       margin: auto;
       font-size: 12px;
+      color: white;
+      padding-left: 1px;
     }
   }
 
@@ -118,11 +122,11 @@
     }
 
     .traitEditIcon{
-      margin-right: 5px;
+      margin-right: 10px;
     }
 
     .traitDeleteIcon{
-      margin-left: 5px;
+      margin-left: 10px;
     }
   }
 
@@ -173,5 +177,6 @@
 }
 
 .editTraitName {
+  font-size: 14px;
   margin-bottom: 6px;
 }
