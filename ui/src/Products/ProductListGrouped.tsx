@@ -65,6 +65,8 @@ function GroupedByList({
         filterByNoTraitFunction: () => false,
     });
 
+    const [productsGrouped, setProductsGrouped] = useState<boolean>(false);
+
     useEffect(() => {
         switch (productSortBy) {
             case 'location': {
@@ -87,6 +89,7 @@ function GroupedByList({
                 });
             }
         }
+        setProductsGrouped(true);
     }, [productSortBy, locations, productTags]);
 
 
@@ -131,7 +134,7 @@ function GroupedByList({
 
     return ( 
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
-            {groupedListData.traits.map((trait: Trait) => {
+            {productsGrouped && groupedListData.traits.map((trait: Trait) => {
                 return (
                     <span key={trait.id}>
                         <ProductGroup
@@ -141,7 +144,7 @@ function GroupedByList({
                     </span>
                 );
             })}
-            {products.length === 0 ?
+            {productsGrouped && products.length === 0 ?
                 <NewProductButton /> :
                 <ProductGroup
                     tagName={`No ${groupedListData.traitTitle}`}
