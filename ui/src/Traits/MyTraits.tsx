@@ -240,10 +240,10 @@ function MyTraits({
                                 }
                                 <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
                                 <div className="traitIcons">
-                                    <i className="fas fa-pen fa-xs traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
+                                    <i className="fas fa-pen fa-s traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
                                         onClick={(): void => toggleEditSection(index)}
                                         onKeyDown={(e): void => handleKeyDownForToggleEditSection(e, index)}/>
-                                    <i className="fas fa-trash fa-xs traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
+                                    <i className="fas fa-trash fa-s traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
                                         onClick={(): void => showDeleteConfirmationModal(trait)}
                                         onKeyDown={(e): void => handleKeyDownForShowDeleteConfirmationModal(e, trait)}/>
                                 </div>
@@ -276,7 +276,7 @@ function MyTraits({
                 onKeyDown={(e): void => handleKeyDownForSetAddSectionOpen(e, true)}>
                 <span data-testid="addNewTraitCircle"
                     className="myTraitsCircle addNewTraitUnfilledCircle">
-                    <i className="fa fa-plus orangeIcon addTraitIcon"/>
+                    <i className="fa fa-plus purpleIcon addTraitIcon"/>
                 </span>
                 <span className="traitName addNewTraitText"
                     data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>
