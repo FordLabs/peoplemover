@@ -21,7 +21,7 @@
   display: flex;
   flex-direction: column;
   justify-items: left;
-  margin: 0 136px;
+  margin: 0 94px;
 }
 
 .horizontalLine {
@@ -80,12 +80,12 @@
   text-align: left;
   color: $gray-1;
   margin: -8px auto auto;
-  min-width: 225px;
+  min-width: 280px;
 
   .traitName {
     font-size: 14px;
     line-height: 24px;
-    max-width: 120px;
+    max-width: 160px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
