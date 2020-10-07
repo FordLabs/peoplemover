@@ -18,6 +18,7 @@
 import React from 'react';
 import './EditMenu.scss';
 import {useOnLoad} from './UseOnLoad';
+import {createDataTestId} from "../tests/TestUtils";
 
 
 export interface EditMenuOption {
@@ -51,25 +52,18 @@ function EditMenu(props: EditMenuProps) {
     }
 
     return (
-
-        <div
-            className="editMenuContainer"
-            data-testid="editMenu"
-        >
-
+        <div className="editMenuContainer" data-testid="editMenu">
             <input className={'hiddenInputField'} type={'text'} ref={hiddenInputRef} onBlur={close}/>
-
             {props.menuOptionList.map((menuOption, index) =>
                 <div key={index}
                     className="editMenuContainerOption"
                     onMouseDown={event => onOptionSelected(event, menuOption.callback)}>
-                    <i className={`fas ${menuOption.icon}`} data-testid={`editMenuOption${index}`}/>
+                    <i className={`fas ${menuOption.icon}`}
+                        data-testid={createDataTestId('editMenuOption', menuOption.text)}/>
                     <span>{menuOption.text}</span>
                 </div>
             )}
         </div>
-
-
     );
 }
 

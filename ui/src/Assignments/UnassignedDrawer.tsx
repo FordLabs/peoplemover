@@ -40,6 +40,7 @@ function UnassignedDrawer({
             container={'productDrawerContainer'}/>;
     return (
         <DrawerContainer drawerIcon="fas fa-user-friends"
+            testId="unassignedDrawer"
             numberForCountBadge={product.assignments ? product.assignments.length : 0}
             containerTitle="Unassigned"
             containee={containee}

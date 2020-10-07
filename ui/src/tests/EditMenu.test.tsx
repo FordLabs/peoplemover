@@ -46,15 +46,15 @@ describe('The edit menu', () => {
             const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={TestUtils.dummyCallback}/>);
 
             await underTest.findByText('Edit Person');
-            const firstIcon = await underTest.findByTestId('editMenuOption0');
+            const firstIcon = await underTest.findByTestId('editMenuOption__edit_person');
             expect(firstIcon).toHaveClass(menuOptionList[0].icon);
 
             await underTest.findByText('Mark as Placeholder');
-            const secondIcon = await underTest.findByTestId('editMenuOption1');
+            const secondIcon = await underTest.findByTestId('editMenuOption__mark_as_placeholder');
             expect(secondIcon).toHaveClass(menuOptionList[1].icon);
 
             await underTest.findByText('Cancel Assignment');
-            const thirdIcon = await underTest.findByTestId('editMenuOption2');
+            const thirdIcon = await underTest.findByTestId('editMenuOption__cancel_assignment');
             expect(thirdIcon).toHaveClass(menuOptionList[2].icon);
         });
 
@@ -91,11 +91,11 @@ describe('The edit menu', () => {
             ];
             const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={TestUtils.dummyCallback}/>);
             await underTest.findByText('Edit product');
-            const firstIcon = await underTest.findByTestId('editMenuOption0');
+            const firstIcon = await underTest.findByTestId('editMenuOption__edit_product');
             expect(firstIcon).toHaveClass(menuOptionList[0].icon);
 
             await underTest.findByText('Archive product');
-            const secondIcon = await underTest.findByTestId('editMenuOption1');
+            const secondIcon = await underTest.findByTestId('editMenuOption__archive_product');
             expect(secondIcon).toHaveClass(menuOptionList[1].icon);
         });
     });
