@@ -392,6 +392,7 @@ function PersonForm({
                         <i className="fas fa-trash"/>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
+                            data-testid="deletePersonButton"
                             onClick={displayRemovePersonModal}
                             onKeyDown={(e): void => {handleKeyDownForDisplayRemovePersonModal(e);}}>Delete</span>
                     </div>

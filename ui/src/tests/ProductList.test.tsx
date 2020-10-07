@@ -43,8 +43,8 @@ describe('Product List tests', () => {
     it('should only have one edit menu open at a time', async () => {
         await act(async () => {
             app = await renderWithRedux(<PeopleMover/>);
-            const editPerson1Button = await app.findByTestId('editPersonIconContainer-1');
-            const editPerson3Button = await app.findByTestId('editPersonIconContainer-3');
+            const editPerson1Button = await app.findByTestId('editPersonIconContainer__person_1');
+            const editPerson3Button = await app.findByTestId('editPersonIconContainer__hank');
 
             fireEvent.click(editPerson1Button);
             await app.findByTestId('editMenu');
@@ -56,7 +56,6 @@ describe('Product List tests', () => {
     });
 
     describe('Product list test filtering', () => {
-
         it('should return all products with the selected location filter', async () => {
             const productWithAnnArborLocation: Product = {
                 id: 99,
