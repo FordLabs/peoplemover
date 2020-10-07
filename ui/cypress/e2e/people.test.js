@@ -7,7 +7,6 @@ describe('People', () => {
         cy.visitBoard();
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
-        cy.route('PUT', Cypress.env('API_PERSON_PATH') + '/**').as('updatePerson');
     });
 
     it('Add a new person', () => {
@@ -80,6 +79,7 @@ describe('People', () => {
     });
 
     it('Edit a person', () => {
+        cy.route('PUT', Cypress.env('API_PERSON_PATH') + '/**').as('updatePerson');
         const editedPerson = {
             name: 'Jane Bob',
             isNew: false,
@@ -95,8 +95,7 @@ describe('People', () => {
         cy.wait('@updatePerson')
             .should((xhr) => {
                 const personData = xhr.response.body || {};
-                expect('@updatedPersonXHR status: ' + xhr?.status)
-                    .to.equal('@updatedPersonXHR status: ' + 200);
+                expect('@updatedPersonXHR status: ' + xhr?.status).to.equal('@updatedPersonXHR status: ' + 200);
                 expect(personData.name).to.equal(editedPerson.name);
                 expect(personData.newPerson).to.equal(editedPerson.isNew);
                 expect(personData.notes).to.equal(editedPerson.notes);
@@ -106,6 +105,21 @@ describe('People', () => {
         cy.get(`[data-testid=assignmentCard__jane_bob]`)
             .should('contain', editedPerson.name)
             .should('contain', editedPerson.role);
+    });
+
+    it('Delete a person', () => {
+        cy.route('DELETE', Cypress.env('API_PERSON_PATH') + '/**').as('deletePerson');
+
+        cy.get('[data-testid=editPersonIconContainer__jane_smith]').click();
+        cy.get('[data-testid=editMenuOption__edit_person]').click();
+        cy.get('[data-testid=deletePersonButton]').click();
+        cy.get('[data-testid=confirmDeleteButton]').click();
+
+        cy.wait('@deletePerson')
+            .should((xhr) => {
+                expect(xhr?.status).to.equal(200);
+            });
+        cy.get('[data-testid=editPersonIconContainer__jane_smith]').should('not.exist');
     });
 
     context('Drag and Drop', () => {
