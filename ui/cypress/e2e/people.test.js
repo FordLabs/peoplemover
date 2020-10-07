@@ -5,13 +5,13 @@ const date = Cypress.moment().format('yyyy-MM-DD');
 describe('People', () => {
     beforeEach(() => {
         cy.visitBoard();
+        cy.server();
+        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
+        cy.route('PUT', Cypress.env('API_PERSON_PATH') + '/**').as('updatePerson');
     });
 
     it('Add a new person', () => {
-        cy.server();
-
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
-        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
         cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getUpdatedProduct');
         cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
@@ -23,7 +23,7 @@ describe('People', () => {
 
         populatePersonForm(person);
 
-        submitPersonForm();
+        submitPersonForm('Create');
 
         let assignmentId;
         cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
@@ -80,8 +80,32 @@ describe('People', () => {
     });
 
     it('Edit a person', () => {
-        cy.get('[data-testid=assignmentCard__jane_smith]')
-            .find('[data-testid=editPersonIconContainer__jane_smith]');
+        const editedPerson = {
+            name: 'Jane Bob',
+            isNew: false,
+            role: 'The medium',
+            assignTo: 'My Product',
+            notes: 'BOB',
+        };
+        cy.get('[data-testid=editPersonIconContainer__jane_smith]').click();
+        cy.get('[data-testid=editMenuOption__edit_person]').click();
+        populatePersonForm(editedPerson);
+        submitPersonForm('Save');
+
+        cy.wait('@updatePerson')
+            .should((xhr) => {
+                const personData = xhr.response.body || {};
+                expect('@updatedPersonXHR status: ' + xhr?.status)
+                    .to.equal('@updatedPersonXHR status: ' + 200);
+                expect(personData.name).to.equal(editedPerson.name);
+                expect(personData.newPerson).to.equal(editedPerson.isNew);
+                expect(personData.notes).to.equal(editedPerson.notes);
+                expect(personData.spaceRole.name).to.equal(editedPerson.role);
+            });
+
+        cy.get(`[data-testid=assignmentCard__jane_bob]`)
+            .should('contain', editedPerson.name)
+            .should('contain', editedPerson.role);
     });
 
     context('Drag and Drop', () => {
@@ -163,7 +187,7 @@ describe('People', () => {
                 });
             });
         });
-    })
+    });
 });
 
 const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
@@ -171,6 +195,7 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
     cy.get('@personForm').should('be.visible');
 
     cy.get('[data-testid=personFormNameField]')
+        .clear()
         .focus()
         .type(name)
         .should('have.value', name);
@@ -188,15 +213,17 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
     
     cy.wait('@postNewRole');
 
-    cy.get('@personForm')
-        .find('.MultiSelect__value-container input')
-        .focus()
-        .type(assignTo + '{enter}');
+    if (isNew) {
+        cy.get('@personForm')
+            .find('.MultiSelect__value-container input')
+            .focus()
+            .type(assignTo + '{enter}');
+    }
 
     cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
 };
 
-const submitPersonForm = () => {
-    cy.get('[data-testid=personFormSubmitButton]').should('have.text', 'Create').click();
+const submitPersonForm = (expectedSubmitButtonText) => {
+    cy.get('[data-testid=personFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
     cy.get('@personForm').should('not.be.visible');
 };
