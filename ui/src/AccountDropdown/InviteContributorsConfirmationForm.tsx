@@ -35,6 +35,8 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
         event.preventDefault();
         await navigator.clipboard.writeText(linkToSpace);
         setCopiedLink(true);
+
+        setTimeout(() => {setCopiedLink(false);}, 3000);
     };
 
     return (
