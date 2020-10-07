@@ -146,7 +146,7 @@ describe('Unassigned Products', () => {
             const unassignedDrawer = drawerCarets[0];
             fireEvent.click(unassignedDrawer);
 
-            const editUnassignment = await app.findByTestId(`editPersonIconContainer-${TestUtils.assignmentForUnassigned.id}`);
+            const editUnassignment = await app.findByTestId(`editPersonIconContainer__unassigned_person_7`);
             fireEvent.click(editUnassignment);
 
             const unassignedPersonName: HTMLInputElement = await app.findByLabelText('Name') as HTMLInputElement;
@@ -160,7 +160,7 @@ describe('Unassigned Products', () => {
             const unassignedDrawer = drawerCarets[0];
             fireEvent.click(unassignedDrawer);
 
-            const editUnassignment = await app.findByTestId(`editPersonIconContainer-${TestUtils.assignmentForUnassigned.id}`);
+            const editUnassignment = await app.findByTestId(`editPersonIconContainer__unassigned_person_7`);
             fireEvent.click(editUnassignment);
 
             const unassignedPersonName = await app.findByLabelText('Name');
@@ -170,7 +170,7 @@ describe('Unassigned Products', () => {
             fireEvent.click(closeForm);
 
             await wait(async () => {
-                const editProduct1Assignment = await app.findByTestId(`editPersonIconContainer-${TestUtils.assignmentForPerson1.id}`);
+                const editProduct1Assignment = await app.findByTestId(`editPersonIconContainer__person_1`);
                 fireEvent.click(editProduct1Assignment);
             });
 

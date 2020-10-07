@@ -21,7 +21,7 @@ import {act, fireEvent} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from '../Products/ProductClient';
-import TestUtils, {renderWithRedux} from './TestUtils';
+import TestUtils, {createDataTestId, renderWithRedux} from './TestUtils';
 import {wait} from '@testing-library/dom';
 import {applyMiddleware, compose, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
@@ -143,7 +143,7 @@ describe('Products', () => {
                             newPerson: false,
                             spaceId: 0,
                             id: 4,
-                            name: 'Hank',
+                            name: 'Hank 2',
                             spaceRole: {name: 'herp', spaceId: 0, id: 2, color: {color: '1', id: 2}},
                         },
                         placeholder: false,
@@ -156,7 +156,7 @@ describe('Products', () => {
                             newPerson: false,
                             spaceId: 0,
                             id: 3,
-                            name: 'Hank',
+                            name: 'Hank 1',
                             spaceRole: {name: 'herp', spaceId: 0, id: 2, color: {color: '1', id: 2}},
                         },
                         placeholder: false,
@@ -186,14 +186,14 @@ describe('Products', () => {
                     spaceRole: {name: 'herp', spaceId: 0, id: 2, color: {color: '1', id: 2}},
                 },
                 {
-                    name: 'Hank',
+                    name: 'Hank 1',
                     id: 3,
                     newPerson: false,
                     spaceId: 0,
                     spaceRole: {name: 'herp', spaceId: 0, id: 2, color: {color: '1', id: 2}},
                 },
                 {
-                    name: 'Hank',
+                    name: 'Hank 2',
                     id: 4,
                     newPerson: false,
                     spaceId: 0,
@@ -212,7 +212,7 @@ describe('Products', () => {
             expect(assignmentCardIds.length).toBe(4);
 
             expectedPersonsInOrder.forEach((person, index) => {
-                const assignmentContainerDiv = app.getByTestId(`assignmentCard${assignmentCardIds[index]}`);
+                const assignmentContainerDiv = app.getByTestId(createDataTestId('assignmentCard', person.name));
                 expect(assignmentContainerDiv.textContent).toContain(person.name);
             });
         });
