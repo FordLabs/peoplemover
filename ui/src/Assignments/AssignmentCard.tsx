@@ -32,6 +32,7 @@ import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
+import {createDataTestId} from "../tests/TestUtils";
 
 interface AssignmentCardProps {
     viewingDate: Date;
@@ -170,7 +171,7 @@ function AssignmentCard({
     return (
         <div
             className={`personContainer ${container === 'productDrawerContainer' ? 'borderedPeople' : ''} ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}`}
-            data-testid={`assignmentCard${assignment.id}`}
+            data-testid={createDataTestId('assignmentCard', assignment.person.name)}
             ref={assignmentRef}
             onMouseDown={(e): void => startDraggingAssignment!!(assignmentRef, assignment, e)}
         >
@@ -179,7 +180,7 @@ function AssignmentCard({
             <div
                 ref={assignmentEditRef}
                 className="personRoleColor"
-                data-testid={`editPersonIconContainer-${assignment.id}`}
+                data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
                 onKeyDown={(e): void => {handleKeyDown(e);}}>
                 <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>

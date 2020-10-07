@@ -35,7 +35,7 @@ describe('Assignment Card', () => {
                 newPerson: false,
                 spaceId: 0,
                 id: 1,
-                name: "Billiam O'Handy",
+                name: 'Billiam Handy',
                 spaceRole: {id: 1, spaceId: 0, name: 'Software Engineer', color: {id: 1, color: '#44'}},
                 notes: 'This is a note',
             },
@@ -48,7 +48,7 @@ describe('Assignment Card', () => {
     it('should render the assigned persons name', () => {
         const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
             isUnassignedProduct={false}/>);
-        expect(underTest.getByText("Billiam O'Handy")).toBeInTheDocument();
+        expect(underTest.getByText("Billiam Handy")).toBeInTheDocument();
     });
 
     it('should render the assigned persons role if they have one', () => {
@@ -66,7 +66,7 @@ describe('Assignment Card', () => {
             assignment={placeholderAssignment}
             isUnassignedProduct={false}/>);
 
-        fireEvent.click(getByTestId('editPersonIconContainer-1'));
+        fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
         expect(getByText('Unmark as Placeholder')).toBeInTheDocument();
     });
 
@@ -84,7 +84,7 @@ describe('Assignment Card', () => {
         it('should render software engineer color correctly', () => {
             const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
                 isUnassignedProduct={false}/>);
-            const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer-1');
+            const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             const person1Role: SpaceRole = (TestUtils.people[0].spaceRole as SpaceRole);
             const person1RoleColor: Color = (person1Role.color as Color);
             expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
@@ -107,7 +107,7 @@ describe('Assignment Card', () => {
                     assignment={otherBilliam}
                     isUnassignedProduct={false}/>
             );
-            const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer-1');
+            const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
                 assignmentCardEditContainer,
                 undefined
@@ -120,12 +120,12 @@ describe('Assignment Card', () => {
                 isUnassignedProduct={false}
             />);
 
-            fireEvent.click(getByTestId('editPersonIconContainer-1'));
+            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
             expect(getByText('Edit Person')).toBeInTheDocument();
             expect(getByText('Mark as Placeholder')).toBeInTheDocument();
             expect(getByText('Cancel Assignment')).toBeInTheDocument();
 
-            fireEvent.click(getByTestId('editPersonIconContainer-1'));
+            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
             expect(queryByText('Edit Person')).not.toBeInTheDocument();
             expect(queryByText('Mark as Placeholder')).not.toBeInTheDocument();
             expect(queryByText('Edit Assignment')).not.toBeInTheDocument();
@@ -137,7 +137,7 @@ describe('Assignment Card', () => {
                 isUnassignedProduct={false}
             />);
 
-            fireEvent.click(getByTestId('editPersonIconContainer-1'));
+            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
 
             fireEvent.mouseDown(getByText('Edit Person'));
 
@@ -161,7 +161,7 @@ describe('Assignment Card', () => {
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
             />);
-            fireEvent.click(getByTestId('editPersonIconContainer-1'));
+            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
             expect(getByText('Edit Person')).toBeInTheDocument();
             expect(getByText('Mark as Placeholder')).toBeInTheDocument();
             expect(getByText('Cancel Assignment')).toBeInTheDocument();
