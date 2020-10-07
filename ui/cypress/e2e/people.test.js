@@ -46,17 +46,12 @@ describe('People', () => {
                     .find(assignment => assignment.person.id === personData.id).id;
 
             }).then(() => {
-                cy.get('[data-testid=productPeopleContainer]')
-                    .eq(1).as('myProductCardContainer');
-
-                cy.get('@myProductCardContainer')
-                    .find(`[data-testid=assignmentCard${assignmentId}info]`)
+                cy.get(`[data-testid=assignmentCard__person_name]`)
                     .should('contain', person.name)
                     .should('contain', person.role)
                     .then(() => {
                         if (person.isNew) {
-                            cy.contains(person.assignTo)
-                                .parentsUntil(`[data-testid=assignmentCard${assignmentId}]`)
+                            cy.get(`[data-testid=assignmentCard__person_name]`)
                                 .find('[data-testid=newBadge]')
                                 .should('be.visible');
                         }
@@ -123,14 +118,18 @@ describe('People', () => {
     });
 
     context('Drag and Drop', () => {
-        it('Drag and drop person from one product to another product', () => {
-            cy.server();
+        beforeEach(() => {
             cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + date).as('getProducts');
-            cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Jane Smith').should('not.exist');
+        });
+
+        it('Drag and drop person from one product to another product', () => {
+            cy.get('[data-testid=productCardContainer__baguette_bakery]')
+                .contains('Jane Smith')
+                .should('not.exist');
 
             cy.get('[data-testid=productCardContainer__baguette_bakery]').then(element => {
                 let rect = element[0].getBoundingClientRect();
-                cy.get('[data-testid*=assignmentCard]').contains('Jane Smith')
+                cy.get('[data-testid=assignmentCard__jane_smith]')
                     .trigger('mousedown', { button: 0 })
                     .trigger('mousemove', {
                         clientX: rect.x,
@@ -151,13 +150,13 @@ describe('People', () => {
         it('Drag and drop person from a product to unassigned', () => {
             cy.get('[data-testid=unassignedDrawer]').click();
 
-            cy.server();
-            cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + date).as('getProducts');
-            cy.get('[data-testid=productDrawerContainer__unassigned]').contains('Jane Smith').should('not.exist');
+            cy.get('[data-testid=productDrawerContainer__unassigned]')
+                .contains('Jane Smith')
+                .should('not.exist');
 
             cy.get('[data-testid=productDrawerContainer__unassigned]').then(element => {
                 let rect = element[0].getBoundingClientRect();
-                cy.get('[data-testid*=assignmentCard]').contains('Jane Smith')
+                cy.get('[data-testid=assignmentCard__jane_smith]')
                     .trigger('mousedown', { button: 0 })
                     .trigger('mousemove', {
                         clientX: rect.x,
@@ -178,13 +177,13 @@ describe('People', () => {
         it('Drag and drop person from a unassigned to a product', () => {
             cy.get('[data-testid=unassignedDrawer]').click();
 
-            cy.server();
-            cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + date).as('getProducts');
-            cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Adam Sandler').should('not.exist');
+            cy.get('[data-testid=productCardContainer__baguette_bakery]')
+                .contains('Adam Sandler')
+                .should('not.exist');
 
             cy.get('[data-testid=productCardContainer__baguette_bakery]').then(element => {
                 let rect = element[0].getBoundingClientRect();
-                cy.get('[data-testid*=assignmentCard]').contains('Adam Sandler')
+                cy.get('[data-testid=assignmentCard__adam_sandler]')
                     .trigger('mousedown', { button: 0 })
                     .trigger('mousemove', {
                         clientX: rect.x,
