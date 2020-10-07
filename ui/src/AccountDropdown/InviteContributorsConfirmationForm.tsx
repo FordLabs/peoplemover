@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {Dispatch} from 'redux';
 import {closeModalAction} from '../Redux/Actions';
 import FormButton from '../ModalFormComponents/FormButton';
@@ -28,10 +28,15 @@ interface Props {
 }
 
 const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element => {
-    const linkToSpace: string = window ? window.location.href : '';
+    const linkToSpace: string = window.location.href;
+    const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
-    const copyLink = async (): Promise<void> => {
+    const copyLink = async (event: React.MouseEvent): Promise<void> => {
+        event.preventDefault();
         await navigator.clipboard.writeText(linkToSpace);
+        setCopiedLink(true);
+
+        setTimeout(() => {setCopiedLink(false);}, 3000);
     };
 
     return (
@@ -44,7 +49,7 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
                     {linkToSpace}
                 </div>
                 <button className="inviteContributorsConfirmationCopyButton" onClick={copyLink}>
-                    Copy link
+                    {copiedLink ? 'Copied!' : 'Copy link'}
                 </button>
             </div>
             <FormButton
