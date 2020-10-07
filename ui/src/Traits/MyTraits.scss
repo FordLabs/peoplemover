@@ -57,6 +57,12 @@
   align-items: center;
 }
 
+.addNewTraitCircleImg {
+  height: 24px;
+  width: 24px;
+  margin-right: 24px;
+}
+
 .duplicateErrorMessage {
   color: $error-message;
   font-size: 12px;
@@ -166,6 +172,7 @@
   color: $gray-1;
   padding-top: 6px;
   text-align: left;
+  margin: 0 12px;
 }
 
 .title {

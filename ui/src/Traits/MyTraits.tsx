@@ -29,6 +29,7 @@ import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
+import PlusIcon from './plusIcon.png';
 
 import '../Traits/MyTraits.scss';
 
@@ -274,9 +275,8 @@ function MyTraits({
             {!addSectionOpen && <div className="traitRow addNewTraitRow"
                 onClick={(): void => setAddSectionOpen(true)}
                 onKeyDown={(e): void => handleKeyDownForSetAddSectionOpen(e, true)}>
-                <span data-testid="addNewTraitCircle"
-                    className="myTraitsCircle addNewTraitUnfilledCircle">
-                    <i className="fa fa-plus purpleIcon addTraitIcon"/>
+                <span data-testid="addNewTraitCircle">
+                    <img className="addNewTraitCircleImg" src={PlusIcon} alt="Add Trait Icon"/>
                 </span>
                 <span className="traitName addNewTraitText"
                     data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>
