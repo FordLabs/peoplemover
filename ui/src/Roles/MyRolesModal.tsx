@@ -39,7 +39,6 @@ function MyRolesModal({setShouldShowConfirmCloseModal}: MyRolesModalProps): JSX.
 
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
-
             <MyTraits
                 traitClient={RoleClient}
                 setTraitSectionOpen={setRoleSectionOpen}
@@ -47,10 +46,9 @@ function MyRolesModal({setShouldShowConfirmCloseModal}: MyRolesModalProps): JSX.
                 traitType="person"
                 traitName="role"
             />
-
-            <div className="traitWarning">Note: Editing or deleting a role will affect any<br/>
-                person currently assigned it.</div>
-
+            <div className="traitWarning">
+                Note: Editing or deleting a role will affect any person currently assigned it.
+            </div>
         </div>
     );
 }
