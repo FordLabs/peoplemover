@@ -45,7 +45,7 @@ describe('people actions', () => {
     it('opens PersonForm component in editing mode when hambaga icon is clicked', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
-        const editPersonIcon = await app.findByTestId('editPersonIconContainer-1');
+        const editPersonIcon = await app.findByTestId('editPersonIconContainer__person_1');
         fireEvent.click(editPersonIcon);
 
         const editPersonButton = await app.findByText('Edit Person');
@@ -71,7 +71,7 @@ describe('people actions', () => {
         } as GlobalStateProps;
         const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
-        const editPersonButton = await app.findByTestId('editPersonIconContainer-1');
+        const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
         fireEvent.click(editPersonButton);
 
         await app.findByText('Edit Person');
@@ -448,7 +448,7 @@ describe('people actions', () => {
             const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(2019, 0, 1)} as GlobalStateProps;
             app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
-            const editPersonButton = await app.findByTestId('editPersonIconContainer-1');
+            const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
             fireEvent.click(editPersonButton);
         });
 
@@ -483,11 +483,11 @@ describe('people actions', () => {
             it('should update an assignment to toggle placeholder when you click on Mark/Unmark as Placeholder option', async () => {
                 await markAsPlaceHolder();
 
-                let person1Card = await app.findByTestId('assignmentCard1');
+                let person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('Placeholder');
                 expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate);
 
-                const editPersonButton = await app.findByTestId('editPersonIconContainer-1');
+                const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
                 fireEvent.click(editPersonButton);
 
                 const unmarkAsPlaceholderButton = await app.findByText('Unmark as Placeholder');
@@ -502,7 +502,7 @@ describe('people actions', () => {
                     }],
                 };
 
-                person1Card = await app.findByTestId('assignmentCard1');
+                person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
                 expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate);
             });
@@ -542,7 +542,7 @@ describe('Deleting a Person', () => {
 
     describe('click delete from edit person form', () => {
         beforeEach(async () => {
-            fireEvent.click(app.getByTestId('editPersonIconContainer-1'));
+            fireEvent.click(app.getByTestId('editPersonIconContainer__person_1'));
             fireEvent.mouseDown(app.getByText('Edit Person'));
             fireEvent.mouseUp(app.getByText('Edit Person'));
             await app.findByText('Delete');
