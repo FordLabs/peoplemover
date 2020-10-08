@@ -25,17 +25,15 @@ function MyRolesModal(): JSX.Element {
 
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
-
             <MyTraits
                 traitClient={RoleClient}
                 colorSection
                 traitType="person"
                 traitName="role"
             />
-
-            <div className="traitWarning">Note: Editing or deleting a role will affect any<br/>
-                person currently assigned it.</div>
-
+            <div className="traitWarning">
+                Note: Editing or deleting a role will affect any person currently assigned it.
+            </div>
         </div>
     );
 }
