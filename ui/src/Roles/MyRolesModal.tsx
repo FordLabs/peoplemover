@@ -15,33 +15,18 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import MyTraits from '../Traits/MyTraits';
 import RoleClient from './RoleClient';
 import '../Traits/MyTraits.scss';
-import {noop} from '@babel/types';
 
-interface MyRolesModalProps {
-    setShouldShowConfirmCloseModal?: Function;
-}
 
-function MyRolesModal({setShouldShowConfirmCloseModal}: MyRolesModalProps): JSX.Element {
-    const [roleSectionOpen, setRoleSectionOpen] = useState<boolean>(false);
-
-    useEffect(() => {
-        if (setShouldShowConfirmCloseModal) {
-            setShouldShowConfirmCloseModal(roleSectionOpen);
-
-            return (): void => setShouldShowConfirmCloseModal(false);
-        }
-        return noop;
-    }, [roleSectionOpen, setShouldShowConfirmCloseModal]);
+function MyRolesModal(): JSX.Element {
 
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
             <MyTraits
                 traitClient={RoleClient}
-                setTraitSectionOpen={setRoleSectionOpen}
                 colorSection
                 traitType="person"
                 traitName="role"
