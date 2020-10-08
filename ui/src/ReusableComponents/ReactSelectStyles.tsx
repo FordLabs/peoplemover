@@ -130,6 +130,51 @@ export const reactSelectStyles = {
     }),
 };
 
+export const sortByStyle = {
+    ...reactSelectStyles,
+    control: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        border: '1px solid transparent',
+        backgroundColor: 'transparent',
+        boxShadow: 'none !important',
+        // @ts-ignore
+        '&:focus, &:hover': {
+            boxShadow: 'none !important',
+            borderColor: '#EDEBEB',
+            cursor: 'pointer',
+        },
+        flexWrap: 'unset',
+    }),
+    singleValue: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        backgroundColor: '#F2E7F3',
+        borderRadius: '6px',
+        padding: '6px',
+        color: '#403D3D',
+        float: 'right',
+    }),
+    menu: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        maxWidth: '150px',
+        minWidth: '150px',
+        right: '0',
+        padding: '16px 15px',
+        margin: '0',
+    }),
+    option: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        fontFamily: 'Helvetica, sans-serif',
+        fontSize: '12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0px 10px',
+        height: '30px',
+        margin: '3px 0px',
+        cursor: 'pointer',
+    }),
+}
+
 export const filterByStyles = {
     ...reactSelectStyles,
     control: (provided: CSSProperties): CSSProperties => ({
@@ -193,7 +238,7 @@ export const filterByStyles = {
         maxWidth: '150px',
         minWidth: '150px',
         right: '0',
-        padding: '8px 18px',
+        padding: '16px 0px 16px 15px',
         margin: '0',
     }),
     groupHeading: (provided: CSSProperties): CSSProperties => ({
