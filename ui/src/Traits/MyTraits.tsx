@@ -277,6 +277,7 @@ function MyTraits({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
@@ -288,3 +289,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyTraits);
+/* eslint-enable */
