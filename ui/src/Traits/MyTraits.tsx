@@ -37,7 +37,6 @@ interface MyTraitsProps {
     currentSpace: Space;
     title?: string;
     traitClient: TraitClient;
-    setTraitSectionOpen: Function;
     traitType: string;
     colorSection: boolean;
     traitName: string;
@@ -55,7 +54,6 @@ function MyTraits({
     currentSpace,
     title,
     traitClient,
-    setTraitSectionOpen,
     colorSection,
     traitName,
     traitType,
@@ -77,16 +75,6 @@ function MyTraits({
 
         setup().then();
     }, [currentSpace.uuid, traitClient]);
-
-    useEffect(() => {
-        function checkForUnsavedChanges(): boolean {
-            const editSectionOpen: boolean = editSectionsOpen.includes(true);
-            return addSectionOpen || editSectionOpen;
-        }
-
-        setTraitSectionOpen(checkForUnsavedChanges());
-        return (): void => setTraitSectionOpen(false);
-    }, [addSectionOpen, editSectionsOpen, setTraitSectionOpen]);
 
     useEffect(() => {
         sortTraitsAlphabetically(traits);
