@@ -87,7 +87,8 @@ function EditContributorsForm({closeModal, setCurrentModal}: Props): JSX.Element
                 <FormButton
                     type="submit"
                     buttonStyle="primary"
-                    disabled={!enableInviteButton}>
+                    disabled={!enableInviteButton}
+                    testId="share_access_invite_button">
                     Invite
                 </FormButton>
             </div>
