@@ -15,29 +15,13 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import '../Traits/MyTraits.scss';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import MyTraits from '../Traits/MyTraits';
-import {noop} from '@babel/types';
 
-interface MyTagsModalProps {
-    setShouldShowConfirmCloseModal?: Function;
-}
-
-function MyTagsModal({setShouldShowConfirmCloseModal}: MyTagsModalProps): JSX.Element {
-    const [locationSectionOpen, setLocationSectionOpen] = useState<boolean>(false);
-    const [productTagSectionOpen, setProductTagSectionOpen] = useState<boolean>(false);
-
-    useEffect(() => {
-        if (setShouldShowConfirmCloseModal) {
-            setShouldShowConfirmCloseModal(locationSectionOpen || productTagSectionOpen);
-
-            return (): void => setShouldShowConfirmCloseModal(false);
-        }
-        return noop;
-    }, [locationSectionOpen, productTagSectionOpen, setShouldShowConfirmCloseModal]);
+function MyTagsModal(): JSX.Element {
 
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
@@ -46,7 +30,6 @@ function MyTagsModal({setShouldShowConfirmCloseModal}: MyTagsModalProps): JSX.El
                 title={'Location Tags'}
                 traitClient={LocationClient}
                 colorSection={false}
-                setTraitSectionOpen={setLocationSectionOpen}
                 traitType="product"
                 traitName="location"
             />
@@ -57,7 +40,6 @@ function MyTagsModal({setShouldShowConfirmCloseModal}: MyTagsModalProps): JSX.El
                 title={'Product Tags'}
                 traitClient={ProductTagClient}
                 colorSection={false}
-                setTraitSectionOpen={setProductTagSectionOpen}
                 traitType="product"
                 traitName="product tag"
             />
