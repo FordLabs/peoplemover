@@ -127,11 +127,11 @@
       cursor: pointer;
     }
 
-    .traitEditIcon{
+    .traitEditIcon {
       margin-right: 10px;
     }
 
-    .traitDeleteIcon{
+    .traitDeleteIcon {
       margin-left: 10px;
     }
   }
@@ -187,3 +187,36 @@
   font-size: 14px;
   margin-bottom: 6px;
 }
+
+
+
+//*****************************************************************************************************************//
+
+
+
+.editTagInput {
+  width: 170px;
+  height: 36px;
+  background: $white;
+  border: 1px solid $gray-4;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.saveEditTagButton,
+.closeEditTagButton {
+  background: $white;
+  color: $purple;
+  padding: 0;
+  margin: 0;
+
+  img {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+.saveEditTagButton {
+  margin-left: 8px;
+}
+
