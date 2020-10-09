@@ -16,7 +16,7 @@
  */
 
 import Select from 'react-select';
-import {CustomIndicator, filterByStyles, SortByOption} from './ReactSelectStyles';
+import {CustomIndicator, sortByStyle, SortByOption} from './ReactSelectStyles';
 import React, {useEffect, useState} from 'react';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
@@ -58,7 +58,7 @@ function ProductSortBy({
         <div className="sortByDropdownContainer" data-testid="sortBy">
             <label htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
             <Select
-                styles={filterByStyles}
+                styles={sortByStyle}
                 id="sortby-dropdown"
                 className="dropdown sortby-dropdown"
                 classNamePrefix="product-sort-by"
