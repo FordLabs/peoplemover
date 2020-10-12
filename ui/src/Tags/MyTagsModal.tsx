@@ -44,8 +44,9 @@ function MyTagsModal(): JSX.Element {
                 traitName="product tag"
             />
 
-            <div className="traitWarning">Note: Editing or deleting a tag will affect any product currently tagged
-                with it.
+            <div className="traitWarning">
+                <i className="fas fa-lg fa-exclamation-circle warning-icon"/>
+                <div>Editing or deleting a tag will affect any product currently tagged with it.</div>
             </div>
 
         </div>

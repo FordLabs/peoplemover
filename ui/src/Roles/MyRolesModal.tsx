@@ -32,7 +32,8 @@ function MyRolesModal(): JSX.Element {
                 traitName="role"
             />
             <div className="traitWarning">
-                Note: Editing or deleting a role will affect any person currently assigned it.
+                <i className="fas fa-lg fa-exclamation-circle warning-icon"/>
+                <div>Editing or deleting a role will affect any person currently assigned to it.</div>
             </div>
         </div>
     );
