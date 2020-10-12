@@ -18,11 +18,33 @@
 @import '../Application/Styleguide/Colors.scss';
 
 .selectDropdown {
+  position: relative;
+}
+
+.selectDropdownSelectedValue {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+  cursor: pointer;
+
+  .selectDropdownArrow {
+    padding-right: 0.5rem;
+  }
+}
+
+.selectDropdownSelectedValue,
+.selectDropdownOptions {
+  width: 62px;
   background: #FFFFFF;
   border: $gray-4 1px solid;
   box-sizing: border-box;
   border-radius: 4px;
-  width: 62px;
   text-align: center;
+}
+
+.selectDropdownOptions {
   padding: 0.5rem 0;
+  position: absolute;
+  z-index: 2;
 }

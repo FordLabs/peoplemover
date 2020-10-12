@@ -30,24 +30,45 @@ interface Props {
 }
 
 const Select = ({ options, defaultOption }: Props): JSX.Element => {
+    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [currentOption, setCurrentOption] = useState<OptionType>(defaultOption);
 
-    useEffect(() => {
-        console.log(currentOption);
-    }, [currentOption]);
+    const showDropdown = (): void => {
+        if (dropdownToggle) {
+            hideDropdown();
+        } else {
+            setDropdownToggle(!dropdownToggle);
+            document.addEventListener('click', hideDropdown, false);
+        }
+    };
 
-    return (
-        <div>
-            <div>{currentOption.displayValue}</div>
-            <div className="selectDropdown">
+    const hideDropdown = (): void => {
+        setDropdownToggle(false);
+        document.removeEventListener('click', hideDropdown);
+    };
+
+    const Dropdown = (): JSX.Element => {
+        return (
+            <div className="selectDropdownOptions">
                 {options && options.map((option, index) => {
+                    const onClick = (): void => {setCurrentOption(option);};
                     return (
-                        <Option key={`select-option-${index}`} onClick={(): void => {setCurrentOption(option);}}>
+                        <Option key={`select-option-${index}`} onClick={onClick}>
                             {option.displayValue}
                         </Option>
                     );
                 })}
             </div>
+        );
+    };
+
+    return (
+        <div className="selectDropdown">
+            <div className="selectDropdownSelectedValue" onClick={showDropdown}>
+                <i className={`selectDropdownArrow fas ${ dropdownToggle ? 'fa-caret-up' : 'fa-caret-down' }`} />
+                {currentOption.displayValue}
+            </div>
+            {dropdownToggle && <Dropdown />}
         </div>
     );
 };
