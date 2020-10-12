@@ -55,18 +55,22 @@ function EditTraitSection({
     const colorRefs: Array<RefObject<HTMLSpanElement>> = [];
 
     useEffect(() => {
-        async function setup(): Promise<void> {
+        let mounted = false;
+        async function setColorsAndTraits(): Promise<void> {
             if (colorSection) {
-                const colorsResponse = await ColorClient.getAllColors();
-                const colors: Array<Color> = colorsResponse.data;
-                setColors(colors);
+                ColorClient.getAllColors().then(response => {
+                    if (mounted) {
+                        const colors: Array<Color> = response.data;
+                        setColors(colors);
 
-                const spaceRole: SpaceRole = trait as SpaceRole;
-                const roleAddRequest: RoleAddRequest = {
-                    name: spaceRole ? spaceRole.name : '',
-                    colorId: spaceRole && spaceRole.color ? spaceRole.color.id : colors[colors.length - 1].id,
-                };
-                setEnteredTrait(roleAddRequest);
+                        const spaceRole: SpaceRole = trait as SpaceRole;
+                        const roleAddRequest: RoleAddRequest = {
+                            name: spaceRole ? spaceRole.name : '',
+                            colorId: spaceRole && spaceRole.color ? spaceRole.color.id : colors[colors.length - 1].id,
+                        };
+                        setEnteredTrait(roleAddRequest);
+                    }
+                });
             } else {
                 const traitAddRequest: TraitAddRequest = {
                     name: trait ? trait.name : '',
@@ -75,7 +79,9 @@ function EditTraitSection({
             }
         }
 
-        setup().then();
+        mounted = true;
+        setColorsAndTraits().then();
+        return (): void => {mounted = false;};
     }, [colorSection, trait]);
 
     function highlightCircle(circleRef: RefObject<HTMLSpanElement>, color: Color): void {
@@ -169,18 +175,21 @@ function EditTraitSection({
         <>
             <div className="traitRow">
                 <input className="editTagInput"
+                    data-testid="tagNameInput"
                     type="text"
                     value={enteredTrait ? enteredTrait.name : ''}
                     onChange={updateEnteredRoleText}
                     onKeyPress={(e): void => handleEnterSubmit(e)}/>
                 <div className="traitIcons">
                     <button onClick={closeCallback}
+                        data-testid="cancelTagButton"
                         className="closeEditTagButton"
                         aria-label="Close Edited Tag">
                         <img src={CloseIcon} alt=""/>
                     </button>
                     <button disabled={enteredTrait ? enteredTrait.name === '' : true}
                         onClick={handleSubmit}
+                        data-testid="saveTagButton"
                         className="saveEditTagButton"
                         aria-label="Save Edited Tag">
                         <img src={SaveIcon} alt=""/>

@@ -70,10 +70,10 @@ describe('PeopleMover Role Modal', () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
-            const roleNameField = await app.findByTestId('traitName');
+            const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: 'I am a duplicate'}});
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             fireEvent.click(saveButton);
 
             await app.findByText('A role with this name already exists. Enter a different name.');
@@ -83,7 +83,7 @@ describe('PeopleMover Role Modal', () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
-            await app.findByText('Save');
+            await app.findByTestId('saveTagButton');
             expect(app.queryByText('Add New Role')).not.toBeInTheDocument();
         });
 
@@ -91,7 +91,7 @@ describe('PeopleMover Role Modal', () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
-            const cancelButton = await app.findByText('Cancel');
+            const cancelButton = await app.findByTestId('cancelTagButton');
             fireEvent.click(cancelButton);
 
             await app.findByText('Add New Role');
@@ -143,14 +143,14 @@ describe('PeopleMover Role Modal', () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
-            const roleNameField = await app.findByTestId('traitName');
+            const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: expectedNewRoleName}});
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             fireEvent.click(saveButton);
 
             await wait(() => {
-                expect(app.queryByText('Cancel')).not.toBeInTheDocument();
+                expect(app.queryByTestId('saveTagButton')).not.toBeInTheDocument();
             });
 
             const expectedRoleAddRequest: RoleAddRequest = {
@@ -169,17 +169,17 @@ describe('PeopleMover Role Modal', () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
-            const roleNameField = await app.findByTestId('traitName');
+            const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: expectedNewRoleName}});
 
             const circles: Array<HTMLElement> = await app.findAllByTestId('selectRoleCircle');
             fireEvent.click(circles[1]);
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             fireEvent.click(saveButton);
 
             await wait(() => {
-                expect(app.queryByText('Cancel')).not.toBeInTheDocument();
+                expect(app.queryByTestId('cancelTagButton')).not.toBeInTheDocument();
             });
 
             const modalContainer = await app.findByTestId('modalContainer');
@@ -195,7 +195,7 @@ describe('PeopleMover Role Modal', () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
-            const roleNameField = await app.findByTestId('traitName');
+            const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: expectedNewRoleName}});
 
             const circles: Array<HTMLElement> = await app.findAllByTestId('selectRoleCircle');
@@ -215,7 +215,7 @@ describe('PeopleMover Role Modal', () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             expect(saveButton).toBeDisabled();
         });
 
@@ -223,10 +223,10 @@ describe('PeopleMover Role Modal', () => {
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             expect(saveButton).toBeDisabled();
 
-            const roleNameField = await app.findByTestId('traitName');
+            const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: 'hello'}});
             expect(saveButton).not.toBeDisabled();
         });
@@ -248,10 +248,10 @@ describe('PeopleMover Role Modal', () => {
             const myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
 
-            const roleNameField = await app.findByTestId('traitName');
+            const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: 'Product Designer'}});
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             fireEvent.click(saveButton);
 
             await app.findByText('A role with this name already exists. Enter a different name.');
@@ -264,9 +264,8 @@ describe('PeopleMover Role Modal', () => {
             const myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
 
-            await app.findByText('Save');
-            roleEditIcons = await app.findAllByTestId('roleEditIcon');
-            expect(roleEditIcons.length).toEqual(2);
+            expect(app.findByTestId('saveTagButton')).not.toBeNull();
+            expect(app.queryByTestId('roleEditIcon')).toBeNull();
         });
 
         it('should auto-populate name field when opening edit role section', async () => {
@@ -276,7 +275,7 @@ describe('PeopleMover Role Modal', () => {
             fireEvent.click(myFirstPencil);
 
             const modalContainer = await app.findByTestId('modalContainer');
-            const roleNameInputField: HTMLInputElement = await findByTestId(modalContainer, 'traitName') as HTMLInputElement;
+            const roleNameInputField: HTMLInputElement = await findByTestId(modalContainer, 'tagNameInput') as HTMLInputElement;
             expect(roleNameInputField.value).toEqual('Product Designer');
         });
 
@@ -298,13 +297,13 @@ describe('PeopleMover Role Modal', () => {
             let myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
 
-            const roleNameField = await app.findByTestId('traitName');
+            const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: updatedRoleName}});
 
             let circles: Array<HTMLElement> = await app.findAllByTestId('selectRoleCircle');
             fireEvent.click(circles[2]);
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             fireEvent.click(saveButton);
 
             await app.findByText(updatedRoleName);
@@ -323,10 +322,10 @@ describe('PeopleMover Role Modal', () => {
             let myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             expect(saveButton).not.toBeDisabled();
 
-            const roleNameField = await app.findByTestId('traitName');
+            const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: ''}});
 
             expect(saveButton).toBeDisabled();

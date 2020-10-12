@@ -21,7 +21,7 @@ describe('Roles', () => {
 
         cy.get('[data-testid=addNewRole]').click();
 
-        cy.get('[data-testid=traitName]').clear().type(mockRole).should('have.value', mockRole);
+        cy.get('[data-testid=tagNameInput]').clear().type(mockRole).should('have.value', mockRole);
 
         cy.get('[data-testid=selectRoleCircle]')
             .should('have.length', 3)
@@ -29,7 +29,7 @@ describe('Roles', () => {
                 $circles.eq(1).click();
             });
 
-        cy.get('[data-testid=saveTraitsButton]').click();
+        cy.get('[data-testid=saveTagButton]').click();
 
         cy.wait('@postNewRole').should(xhr => {
             expect(xhr?.status).to.equal(200);

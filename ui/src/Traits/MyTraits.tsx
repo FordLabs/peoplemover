@@ -224,7 +224,6 @@ function MyTraits({
         }
         const testIdTraitName = traitName.replace(' ', '');
         const userIsNotEditingATag = !editSectionsOpen.find(value => value);
-        console.log(userIsNotEditingATag);
         return (
             <div className="traitRow" data-testid="traitRow">
                 {colorSection &&
