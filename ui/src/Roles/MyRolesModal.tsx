@@ -19,6 +19,7 @@ import React from 'react';
 import MyTraits from '../Traits/MyTraits';
 import RoleClient from './RoleClient';
 import '../Traits/MyTraits.scss';
+import warningIcon from '../Application/Assets/warningIcon.svg';
 
 
 function MyRolesModal(): JSX.Element {
@@ -32,8 +33,8 @@ function MyRolesModal(): JSX.Element {
                 traitName="role"
             />
             <div className="traitWarning">
-                <i className="fas fa-lg fa-exclamation-circle warning-icon"/>
-                <div>Editing or deleting a role will affect any person currently assigned to it.</div>
+                <img src={warningIcon} className="warningIcon" alt="warning icon"/>
+                <p className="warningText">Editing or deleting a role will affect any person currently assigned to it.</p>
             </div>
         </div>
     );

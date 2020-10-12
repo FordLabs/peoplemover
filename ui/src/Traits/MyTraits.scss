@@ -159,19 +159,23 @@
 }
 
 .traitWarning {
-  font-weight: normal;
-  font-size: 12px;
-  color: $gray-2;
+  margin-top: 12px;
   padding: 12px 20px 12px 6px;
-  text-align: left;
   background: $sec-6;
   display: flex;
   justify-content: space-between;
   border-radius: 4px;
 
-  .warning-icon {
-    padding: 10px;
-    color: $prime-1;
+  .warningIcon {
+    padding: 6px 12px 8px 10px;
+  }
+
+  .warningText {
+    color: $gray-2;
+    font-weight: 300;
+    font-size: 12px;
+    text-align: left;
+    margin: 0;
   }
 }
 
