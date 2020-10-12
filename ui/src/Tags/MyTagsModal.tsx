@@ -20,6 +20,7 @@ import '../Traits/MyTraits.scss';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import MyTraits from '../Traits/MyTraits';
+import warningIcon from '../Application/Assets/warningIcon.svg';
 
 function MyTagsModal(): JSX.Element {
 
@@ -44,8 +45,9 @@ function MyTagsModal(): JSX.Element {
                 traitName="product tag"
             />
 
-            <div className="traitWarning">Note: Editing or deleting a tag will affect any product currently tagged
-                with it.
+            <div className="traitWarning">
+                <img src={warningIcon} className="warningIcon" alt="warning icon"/>
+                <p className="warningText">Editing or deleting a tag will affect any product currently tagged with it.</p>
             </div>
 
         </div>

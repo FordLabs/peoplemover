@@ -145,13 +145,6 @@
   .addNewTraitRow {
     cursor: pointer;
   }
-
-  .traitWarning {
-    font-style: italic;
-    font-size: 10px;
-    margin-top: 15px;
-  }
-
   .selectRoleCircles {
     margin: 10px 0;
     display: flex;
@@ -166,13 +159,24 @@
 }
 
 .traitWarning {
-  font-style: italic;
-  font-weight: normal;
-  font-size: 10px;
-  color: $gray-1;
-  padding-top: 6px;
-  text-align: left;
-  margin: 0 12px;
+  margin-top: 12px;
+  padding: 12px 20px 12px 6px;
+  background: $sec-6;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 4px;
+
+  .warningIcon {
+    padding: 6px 12px 8px 10px;
+  }
+
+  .warningText {
+    color: $gray-2;
+    font-weight: 300;
+    font-size: 12px;
+    text-align: left;
+    margin: 0;
+  }
 }
 
 .title {
