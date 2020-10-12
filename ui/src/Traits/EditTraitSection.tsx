@@ -180,7 +180,7 @@ function EditTraitSection({
                     value={enteredTrait ? enteredTrait.name : ''}
                     onChange={updateEnteredRoleText}
                     onKeyPress={(e): void => handleEnterSubmit(e)}/>
-                <div className="traitIcons">
+                <div className="traitEditIcons">
                     <button onClick={closeCallback}
                         data-testid="cancelTagButton"
                         className="closeEditTagButton"

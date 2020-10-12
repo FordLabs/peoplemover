@@ -89,6 +89,8 @@
   min-width: 280px;
 
   .traitName {
+    flex-grow: 1;
+    margin-right: 14px;
     font-size: 14px;
     line-height: 24px;
     max-width: 160px;
@@ -117,9 +119,9 @@
     }
   }
 
-  .traitIcons{
+  .traitEditIcons,
+  .traitIcons {
     color: $gray-4;
-    position: absolute;
     right: 0;
 
     :hover {
@@ -134,6 +136,14 @@
     .traitDeleteIcon {
       margin-left: 10px;
     }
+  }
+
+  .traitEditIcons {
+    height: 24px;
+  }
+
+  .traitIcons {
+    height: 16px;
   }
 
   .highlightedCircle {
@@ -193,7 +203,8 @@
 }
 
 .editTagInput {
-  width: 170px;
+  flex-grow: 1;
+  margin-right: 16px;
   height: 36px;
   background: $white;
   border: 1px solid $gray-4;
