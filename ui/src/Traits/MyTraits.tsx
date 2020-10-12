@@ -264,8 +264,6 @@ function MyTraits({
                 );
             })}
 
-
-            {/* Create Tag Section*/}
             {addSectionOpen && <EditTraitSection
                 closeCallback={(): void => setAddSectionOpen(false)}
                 updateCallback={updateTraits}
@@ -274,7 +272,7 @@ function MyTraits({
                 colorSection={colorSection}
                 currentSpace={currentSpace}/>
             }
-            {/* Add New Tag Section*/}
+
             {!addSectionOpen && <div className="traitRow addNewTraitRow"
                 onClick={(): void => setAddSectionOpen(true)}
                 onKeyDown={(e): void => handleKeyDownForSetAddSectionOpen(e, true)}>
