@@ -15,19 +15,13 @@
  *   limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
-
-.colorCircle {
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  border: 1px solid $gray-4;
+.selectOption {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 0.5rem;
 }
 
-.selected {
-  box-shadow:
-          0 0 0 1px white,
-          0 0 0 3px $gray-2;
+.selectOption:last-child {
+  padding-bottom: 0;
 }

@@ -1,4 +1,4 @@
-/*!
+/*
  *   Copyright (c) 2020 Ford Motor Company
  *   All rights reserved.
  *
@@ -15,19 +15,22 @@
  *   limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+import React, {ReactNode} from 'react';
 
-.colorCircle {
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  border: 1px solid $gray-4;
+import './Option.scss';
+
+interface Props {
+    children: ReactNode;
+    onClick?: () => void;
 }
 
-.selected {
-  box-shadow:
-          0 0 0 1px white,
-          0 0 0 3px $gray-2;
-}
+const Option = ({ children, onClick }: Props): JSX.Element => {
+    return (
+        <div className="selectOption" onClick={onClick}>
+            {children}
+        </div>
+    );
+};
+
+export default Option;
+

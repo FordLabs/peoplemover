@@ -30,6 +30,8 @@ import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 import PlusIcon from './plusIcon.png';
+import ColorCircle from '../TagsForm/ColorCircle';
+import Select from '../ModalFormComponents/Select';
 
 import '../Traits/MyTraits.scss';
 
@@ -222,10 +224,29 @@ function MyTraits({
                         {!editSectionsOpen[index] &&
                             <div className="traitRow" data-testid="traitRow">
                                 { colorSection &&
-                                    <span data-testid="myRolesCircle"
-                                        style={{'backgroundColor': colorToUse}}
-                                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
-                                    />
+                                    <>
+                                        {/*<Dropdown value={'something dumb'} label={'pickOne'} options={['something dumb', 'something more dumb']} onChange={() => {return;}} />*/}
+                                        <Select
+                                            defaultOption={{
+                                                value: 1,
+                                                displayValue: <ColorCircle color={{ id: 1, color: '#446600'}}/>,
+                                            }}
+                                            options={[
+                                                {
+                                                    value: 1,
+                                                    displayValue: <ColorCircle color={{ id: 1, color: '#446600'}}/>,
+                                                },
+                                                {
+                                                    value: 2,
+                                                    displayValue:  <ColorCircle color={{ id: 1, color: '#000'}}/>,
+                                                },
+                                            ]}
+                                        />
+                                        {/*<span data-testid="myRolesCircle"*/}
+                                        {/*    style={{'backgroundColor': colorToUse}}*/}
+                                        {/*    className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}*/}
+                                        {/*/>*/}
+                                    </>
                                 }
                                 <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
                                 <div className="traitIcons">

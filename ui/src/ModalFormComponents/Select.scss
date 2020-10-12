@@ -17,17 +17,12 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.colorCircle {
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  display: inline-block;
+.selectDropdown {
+  background: #FFFFFF;
+  border: $gray-4 1px solid;
   box-sizing: border-box;
-  border: 1px solid $gray-4;
-}
-
-.selected {
-  box-shadow:
-          0 0 0 1px white,
-          0 0 0 3px $gray-2;
+  border-radius: 4px;
+  width: 62px;
+  text-align: center;
+  padding: 0.5rem 0;
 }
