@@ -367,18 +367,4 @@ describe('PeopleMover Role Modal', () => {
             expect(queryByText(modalContainer, 'Product Manager')).not.toBeInTheDocument();
         });
     });
-
-    describe('exiting', () => {
-        it('should show a confirmation modal when trying to exit with unsaved changes', async () => {
-            const roleEditIcons = await app.findAllByTestId('roleEditIcon');
-
-            const myFirstPencil = roleEditIcons[0];
-            fireEvent.click(myFirstPencil);
-
-            const modalCloseButton = await app.findByTestId('modalCloseButton');
-            fireEvent.click(modalCloseButton);
-
-            await app.findByText('Are you sure you want to close the window?');
-        });
-    });
 });

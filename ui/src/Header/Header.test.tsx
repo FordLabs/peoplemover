@@ -45,7 +45,7 @@ describe('Header', () => {
             act(() => {
                 comp.getByTestId('accountDropdownToggle').click();
             });
-            expect(comp.queryByTestId('share-access')).toBeNull();
+            expect(comp.queryByTestId('shareAccess')).toBeNull();
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
@@ -55,7 +55,7 @@ describe('Header', () => {
             act(() => {
                 comp.getByTestId('accountDropdownToggle').click();
             });
-            expect(comp.queryByTestId('share-access')).not.toBeNull();
+            expect(comp.queryByTestId('shareAccess')).not.toBeNull();
         });
     });
 });

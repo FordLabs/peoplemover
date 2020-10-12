@@ -56,14 +56,14 @@ describe('Account Dropdown',  () => {
 
     it('should open Share Access modal on click of text in dropdown',  async () => {
         await act( async () => {
-            fireEvent.click(await app.findByTestId('share-access'));
+            fireEvent.click(await app.findByTestId('shareAccess'));
         });
         expect(app.getByText('Share Access'));
     });
 
     it('should close Edit Contributors modal on click of Cancel button', async () => {
         await act( async () => {
-            fireEvent.click(await app.findByTestId('share-access'));
+            fireEvent.click(await app.findByTestId('shareAccess'));
             const cancelButton = await app.findByText('Cancel');
             fireEvent.click(cancelButton);
         });
@@ -72,7 +72,7 @@ describe('Account Dropdown',  () => {
 
     it('should submit invited contributors, current space name, and access token on click of Invite button', async () => {
         await act( async () => {
-            fireEvent.click(await app.findByTestId('share-access'));
+            fireEvent.click(await app.findByTestId('shareAccess'));
 
             const usersToInvite = app.getByTestId('emailTextArea');
             fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});

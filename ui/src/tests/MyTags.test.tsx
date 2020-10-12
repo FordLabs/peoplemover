@@ -330,39 +330,4 @@ describe('PeopleMover My Tags', () => {
             });
         });
     });
-
-    describe('exiting', () => {
-        it('should show a confirmation modal when trying to exit with unsaved changes in location section', async () => {
-            const locationEditIcons = await app.findAllByTestId('locationEditIcon');
-
-            const myFirstPencil = locationEditIcons[0];
-            fireEvent.click(myFirstPencil);
-
-            const modalCloseButton = await app.findByTestId('modalCloseButton');
-            fireEvent.click(modalCloseButton);
-
-            await app.findByText('Are you sure you want to close the window?');
-        });
-
-        it('should show a confirmation modal when trying to exit with unsaved changes in either section', async () => {
-            const locationEditIcons = await app.findAllByTestId('locationEditIcon');
-
-            const myFirstLocationPencil = locationEditIcons[0];
-            fireEvent.click(myFirstLocationPencil);
-
-            const productTagEditIcons = await app.findAllByTestId('producttagEditIcon');
-
-            const myFirstProductTagPencil = productTagEditIcons[0];
-            fireEvent.click(myFirstProductTagPencil);
-
-            const editCancelButtons = await app.findAllByTestId('cancelTagButton');
-            const locationEditCancelButton = editCancelButtons[0];
-            fireEvent.click(locationEditCancelButton);
-
-            const modalCloseButton = await app.findByTestId('modalCloseButton');
-            fireEvent.click(modalCloseButton);
-
-            await app.findByText('Are you sure you want to close the window?');
-        });
-    });
 });
