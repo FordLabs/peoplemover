@@ -27,9 +27,10 @@ interface OptionType {
 interface Props {
     selectedOption: OptionType;
     options: Array<OptionType>;
+    onChange: Function;
 }
 
-const Select = ({ options, selectedOption }: Props): JSX.Element => {
+const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [currentOption, setCurrentOption] = useState<OptionType>(selectedOption);
 
@@ -52,7 +53,10 @@ const Select = ({ options, selectedOption }: Props): JSX.Element => {
         return (
             <ul className="selectDropdownOptions">
                 {options && options.map((option, index) => {
-                    const onClick = (): void => {setCurrentOption(option);};
+                    const onClick = (): void => {
+                        setCurrentOption(option);
+                        onChange(option);
+                    };
                     const isSelected = option.value === currentOption.value;
                     return (
                         <Option

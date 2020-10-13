@@ -249,14 +249,10 @@ function MyTraits({
                         {!editSectionsOpen[index] &&
                             <div className="traitRow" data-testid="traitRow">
                                 { colorSection &&
-                                    <>
-                                        {/*<Dropdown value={'something dumb'} label={'pickOne'} options={['something dumb', 'something more dumb']} onChange={() => {return;}} />*/}
-                                        <ColorDropdown />
-                                        {/*<span data-testid="myRolesCircle"*/}
-                                        {/*    style={{'backgroundColor': colorToUse}}*/}
-                                        {/*    className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}*/}
-                                        {/*/>*/}
-                                    </>
+                                    <span data-testid="myRolesCircle"
+                                        style={{'backgroundColor': colorToUse}}
+                                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+                                    />
                                 }
                                 <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
                                 <div className="traitIcons">

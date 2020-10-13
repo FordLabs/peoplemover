@@ -48,7 +48,7 @@ describe('Assignment Card', () => {
     it('should render the assigned persons name', () => {
         const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
             isUnassignedProduct={false}/>);
-        expect(underTest.getByText("Billiam Handy")).toBeInTheDocument();
+        expect(underTest.getByText('Billiam Handy')).toBeInTheDocument();
     });
 
     it('should render the assigned persons role if they have one', () => {
