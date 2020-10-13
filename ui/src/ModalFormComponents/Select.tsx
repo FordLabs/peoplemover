@@ -15,8 +15,8 @@
  *   limitations under the License.
  */
 
-import React, {ReactNode, useEffect, useState} from 'react';
-import Option from './Option';
+import React, {ReactNode, useState} from 'react';
+
 import './Select.scss';
 
 interface OptionType {
@@ -25,13 +25,13 @@ interface OptionType {
 }
 
 interface Props {
-    defaultOption: OptionType;
+    selectedOption: OptionType;
     options: Array<OptionType>;
 }
 
-const Select = ({ options, defaultOption }: Props): JSX.Element => {
+const Select = ({ options, selectedOption }: Props): JSX.Element => {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
-    const [currentOption, setCurrentOption] = useState<OptionType>(defaultOption);
+    const [currentOption, setCurrentOption] = useState<OptionType>(selectedOption);
 
     const showDropdown = (): void => {
         if (dropdownToggle) {
@@ -48,17 +48,22 @@ const Select = ({ options, defaultOption }: Props): JSX.Element => {
     };
 
     const Dropdown = (): JSX.Element => {
+        const Option = 'li';
         return (
-            <div className="selectDropdownOptions">
+            <ul className="selectDropdownOptions">
                 {options && options.map((option, index) => {
                     const onClick = (): void => {setCurrentOption(option);};
+                    const isSelected = option.value === currentOption.value;
                     return (
-                        <Option key={`select-option-${index}`} onClick={onClick}>
+                        <Option
+                            className={`selectOption ${isSelected ? 'selected' : '' }`}
+                            key={`select-option-${index}`}
+                            onClick={onClick}>
                             {option.displayValue}
                         </Option>
                     );
                 })}
-            </div>
+            </ul>
         );
     };
 

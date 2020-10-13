@@ -205,6 +205,31 @@ function MyTraits({
             setAddSectionOpen(isAddSectionOpen);
         }
     }
+    
+    const ColorDropdown = (): JSX.Element => {
+        const selectedOption = {
+            value: 1,
+            displayValue: <ColorCircle color={{ id: 1, color: '#446600'}}/>,
+        };
+        
+        const options = [
+            {
+                value: 1,
+                displayValue: <ColorCircle color={{ id: 1, color: '#446600'}} />,
+            },
+            {
+                value: 2,
+                displayValue:  <ColorCircle color={{ id: 1, color: '#000'}} />,
+            },
+        ];
+        
+        return (
+            <Select
+                selectedOption={selectedOption}
+                options={options}
+            />
+        );
+    };
 
     return (
         <div data-testid="myTraitsModalContainer"
@@ -226,22 +251,7 @@ function MyTraits({
                                 { colorSection &&
                                     <>
                                         {/*<Dropdown value={'something dumb'} label={'pickOne'} options={['something dumb', 'something more dumb']} onChange={() => {return;}} />*/}
-                                        <Select
-                                            defaultOption={{
-                                                value: 1,
-                                                displayValue: <ColorCircle color={{ id: 1, color: '#446600'}}/>,
-                                            }}
-                                            options={[
-                                                {
-                                                    value: 1,
-                                                    displayValue: <ColorCircle color={{ id: 1, color: '#446600'}}/>,
-                                                },
-                                                {
-                                                    value: 2,
-                                                    displayValue:  <ColorCircle color={{ id: 1, color: '#000'}}/>,
-                                                },
-                                            ]}
-                                        />
+                                        <ColorDropdown />
                                         {/*<span data-testid="myRolesCircle"*/}
                                         {/*    style={{'backgroundColor': colorToUse}}*/}
                                         {/*    className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}*/}

@@ -17,14 +17,12 @@
 
 import React, {useState, useRef, useEffect, RefObject, createRef} from 'react';
 
+import {Color} from '../Roles/Role';
+import ColorClient from '../Roles/ColorClient';
+import ColorCircle from './ColorCircle';
 // import errorWarning from '../../../assets/error-warning.png';
 
 import './Dropdown.scss';
-import {Color, SpaceRole} from "../Roles/Role";
-import ColorClient from "../Roles/ColorClient";
-import {RoleAddRequest} from "../Roles/RoleAddRequest";
-import {TraitAddRequest} from "../Traits/TraitAddRequest";
-import ColorCircle from "./ColorCircle";
 
 interface Props {
     value: string | number;

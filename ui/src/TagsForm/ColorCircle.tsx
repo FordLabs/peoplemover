@@ -21,14 +21,15 @@ import './ColorCircle.scss';
 
 interface Props {
     color: Color;
-    isSelected?: boolean;
 }
 
-const ColorCircle = ({color, isSelected = false}: Props): JSX.Element => {
-    return <span data-testid="selectRoleCircle"
-        style={{'backgroundColor': color.color}}
-        className={`colorCircle ${isSelected ? 'selected' : ''}`}
-    />;
+const ColorCircle = ({ color }: Props): JSX.Element => {
+    return (
+        <span data-testid="selectRoleCircle"
+            style={{'backgroundColor': color.color}}
+            className="colorCircle"
+        />
+    );
 };
 
 export default ColorCircle;
