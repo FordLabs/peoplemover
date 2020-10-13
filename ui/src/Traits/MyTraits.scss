@@ -34,6 +34,7 @@
 .myTraitsCircle {
   height: 24px;
   width: 24px;
+  min-width:24px;
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;
@@ -93,7 +94,7 @@
     margin-right: 14px;
     font-size: 14px;
     line-height: 24px;
-    max-width: 214px;
+    max-width: 190px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
