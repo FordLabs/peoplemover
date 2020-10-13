@@ -204,39 +204,50 @@ function MyTraits({
         }
     }
 
+    function ViewTraitRow({ trait, index }: { trait: Trait; index: number }): JSX.Element {
+        let colorToUse: string | undefined;
+        if (colorSection) {
+            const spaceRole: SpaceRole = trait as SpaceRole;
+            colorToUse = spaceRole.color ? spaceRole.color.color : '#FFFFFF';
+        }
+        const testIdTraitName = traitName.replace(' ', '');
+        const userIsNotEditingATag = !editSectionsOpen.find(value => value);
+        return (
+            <div className="traitRow" data-testid="traitRow">
+                {colorSection &&
+                    <span data-testid="myRolesCircle"
+                        style={{'backgroundColor': colorToUse}}
+                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+                    />
+                }
+                <span className="traitName" data-testid={`given${testIdTraitName}Name`}>
+                    {trait.name}
+                </span>
+                {userIsNotEditingATag && (
+                    <div className="traitIcons">
+                        <i className="fas fa-pen fa-s traitEditIcon"
+                            data-testid={`${testIdTraitName}EditIcon`}
+                            onClick={(): void => toggleEditSection(index)}
+                            onKeyDown={(e): void => handleKeyDownForToggleEditSection(e, index)}/>
+                        <i className="fas fa-trash fa-s traitDeleteIcon"
+                            data-testid={`${testIdTraitName}DeleteIcon`}
+                            onClick={(): void => showDeleteConfirmationModal(trait)}
+                            onKeyDown={(e): void => handleKeyDownForShowDeleteConfirmationModal(e, trait)}/>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div data-testid="myTraitsModalContainer"
             className="myTraitsModalContainer">
-
             {!colorSection && <div className="title"> {title}</div>}
-
             {traits.map((trait: Trait, index: number) => {
-                let colorToUse: string | undefined;
-                if (colorSection) {
-                    const spaceRole: SpaceRole = trait as SpaceRole;
-                    colorToUse = spaceRole.color ? spaceRole.color.color : '#FFFFFF';
-                }
-                const testIdTraitName = traitName.replace(' ', '');
                 return (
                     <React.Fragment key={index}>
                         {!editSectionsOpen[index] &&
-                            <div className="traitRow" data-testid="traitRow">
-                                { colorSection &&
-                                    <span data-testid="myRolesCircle"
-                                        style={{'backgroundColor': colorToUse}}
-                                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
-                                    />
-                                }
-                                <span className="traitName" data-testid={`given${testIdTraitName}Name`}>{trait.name}</span>
-                                <div className="traitIcons">
-                                    <i className="fas fa-pen fa-s traitEditIcon" data-testid={`${testIdTraitName}EditIcon`}
-                                        onClick={(): void => toggleEditSection(index)}
-                                        onKeyDown={(e): void => handleKeyDownForToggleEditSection(e, index)}/>
-                                    <i className="fas fa-trash fa-s traitDeleteIcon" data-testid={`${testIdTraitName}DeleteIcon`}
-                                        onClick={(): void => showDeleteConfirmationModal(trait)}
-                                        onKeyDown={(e): void => handleKeyDownForShowDeleteConfirmationModal(e, trait)}/>
-                                </div>
-                            </div>
+                            <ViewTraitRow trait={trait} index={index}/>
                         }
                         {editSectionsOpen[index] &&
                             <EditTraitSection
@@ -252,6 +263,7 @@ function MyTraits({
                     </React.Fragment>
                 );
             })}
+
             {addSectionOpen && <EditTraitSection
                 closeCallback={(): void => setAddSectionOpen(false)}
                 updateCallback={updateTraits}
@@ -260,6 +272,7 @@ function MyTraits({
                 colorSection={colorSection}
                 currentSpace={currentSpace}/>
             }
+
             {!addSectionOpen && <div className="traitRow addNewTraitRow"
                 onClick={(): void => setAddSectionOpen(true)}
                 onKeyDown={(e): void => handleKeyDownForSetAddSectionOpen(e, true)}>

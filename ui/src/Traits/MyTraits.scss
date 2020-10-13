@@ -89,9 +89,11 @@
   min-width: 280px;
 
   .traitName {
+    flex-grow: 1;
+    margin-right: 14px;
     font-size: 14px;
     line-height: 24px;
-    max-width: 160px;
+    max-width: 214px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -117,9 +119,9 @@
     }
   }
 
-  .traitIcons{
+  .traitEditIcons,
+  .traitIcons {
     color: $gray-4;
-    position: absolute;
     right: 0;
 
     :hover {
@@ -127,13 +129,21 @@
       cursor: pointer;
     }
 
-    .traitEditIcon{
+    .traitEditIcon {
       margin-right: 10px;
     }
 
-    .traitDeleteIcon{
+    .traitDeleteIcon {
       margin-left: 10px;
     }
+  }
+
+  .traitEditIcons {
+    height: 24px;
+  }
+
+  .traitIcons {
+    height: 16px;
   }
 
   .highlightedCircle {
@@ -190,4 +200,31 @@
 .editTraitName {
   font-size: 14px;
   margin-bottom: 6px;
+}
+
+.editTagInput {
+  flex-grow: 1;
+  margin-right: 16px;
+  height: 36px;
+  background: $white;
+  border: 1px solid $gray-4;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.saveEditTagButton,
+.closeEditTagButton {
+  background: $white;
+  color: $purple;
+  padding: 0;
+  margin: 0;
+
+  img {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+.saveEditTagButton {
+  margin-left: 8px;
 }

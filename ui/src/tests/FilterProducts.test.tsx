@@ -41,11 +41,11 @@ describe('filter products', () => {
         it('should show the newly added location tag from my tags modal', async () => {
             const addNewLocationButton = await app.findByText('Add New Location');
             fireEvent.click(addNewLocationButton);
-            await app.findByText('Save');
+            await app.findByTestId('saveTagButton');
             const newLocation = 'Ahmedabad';
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
 
-            const addLocationTagText = await app.findByTestId('traitName');
+            const addLocationTagText = await app.findByTestId('tagNameInput');
             fireEvent.change(addLocationTagText, {target: {value: newLocation}});
 
             fireEvent.click(saveButton);
@@ -61,13 +61,13 @@ describe('filter products', () => {
             const locationTagIcon: HTMLElement = editIcons[0];
             fireEvent.click(locationTagIcon);
 
-            await app.findByText('Save');
+            await app.findByTestId('saveTagButton');
 
-            const editLocationTagText = await app.findByTestId('traitName');
+            const editLocationTagText = await app.findByTestId('tagNameInput');
             const updatedLocation = 'Saline';
             fireEvent.change(editLocationTagText, {target: {value: updatedLocation}});
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             fireEvent.click(saveButton);
 
             await app.findByText(updatedLocation);
@@ -145,9 +145,9 @@ describe('filter products', () => {
             const addNewProductTagButton = await app.findByText('Add New Product Tag');
             fireEvent.click(addNewProductTagButton);
             const newProductTag = 'Fin Tech';
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
 
-            const addProductTagText = await app.findByTestId('traitName');
+            const addProductTagText = await app.findByTestId('tagNameInput');
             fireEvent.change(addProductTagText, {target: {value: newProductTag}});
 
             fireEvent.click(saveButton);
@@ -160,17 +160,16 @@ describe('filter products', () => {
         });
 
         it('should show the edited product tag from my tags modal', async () => {
-
             let editIcons: Array<HTMLElement> = await app.findAllByTestId('producttagEditIcon');
             let productTagIcon: HTMLElement = editIcons[0];
             fireEvent.click(productTagIcon);
-            await app.findByText('Save');
+            await app.findByTestId('saveTagButton');
             const updatedProductTag = 'Finance';
 
-            const editProductTagText = await app.findByTestId('traitName');
+            const editProductTagText = await app.findByTestId('tagNameInput');
             fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
 
-            const saveButton = await app.findByText('Save');
+            const saveButton = await app.findByTestId('saveTagButton');
             fireEvent.click(saveButton);
 
             await app.findByText(updatedProductTag);

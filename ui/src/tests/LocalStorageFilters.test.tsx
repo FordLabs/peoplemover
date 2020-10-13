@@ -68,13 +68,13 @@ describe('filter products', () => {
         const locationTagIcon: HTMLElement = editIcons[0];
         fireEvent.click(locationTagIcon);
 
-        await app.findByText('Save');
+        await app.findByTestId('saveTagButton');
 
-        const editLocationTagText = await app.findByTestId('traitName');
+        const editLocationTagText = await app.findByTestId('tagNameInput');
         const updatedLocation = 'Saline';
         fireEvent.change(editLocationTagText, {target: {value: updatedLocation}});
 
-        const saveButton = await app.findByText('Save');
+        const saveButton = await app.findByTestId('saveTagButton');
         fireEvent.click(saveButton);
 
         const instancesOfSaline = await app.findAllByText(updatedLocation);
