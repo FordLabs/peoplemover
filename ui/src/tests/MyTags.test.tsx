@@ -291,6 +291,36 @@ describe('PeopleMover My Tags', () => {
             });
         });
 
+        describe('interaction between editing and creating location tag', () => {
+
+            it('should not show pen and trash can when add new tag is clicked', async () => {
+                expect(app.queryAllByTestId('locationEditIcon').length).toEqual(4);
+                expect(app.queryAllByTestId('locationDeleteIcon').length).toEqual(4);
+
+                const addNewLocationButton = await app.findByText('Add New Location');
+                fireEvent.click(addNewLocationButton);
+
+                expect(app.queryAllByTestId('locationEditIcon').length).toEqual(0);
+                expect(app.queryAllByTestId('locationDeleteIcon').length).toEqual(0);
+            });
+
+            it('should not show pen and trash icons when editing location tag', async () => {
+                expect(app.queryAllByTestId('locationEditIcon').length).toEqual(4);
+                expect(app.queryAllByTestId('locationDeleteIcon').length).toEqual(4);
+                fireEvent.click(app.queryAllByTestId('locationEditIcon')[0]);
+
+                expect(app.queryAllByTestId('locationEditIcon').length).toEqual(0);
+                expect(app.queryAllByTestId('locationDeleteIcon').length).toEqual(0);
+            });
+
+            it('should have create location button disabled when editing location tag', async () => {
+                fireEvent.click(app.queryAllByTestId('locationEditIcon')[0]);
+
+                const addNewLocationButton = await app.findByText('Add New Location');
+                expect(addNewLocationButton).toBeDisabled();
+            });
+        });
+
         describe('adding a product tag', () => {
             beforeEach(async () => {
                 const addNewProductTagButton = await app.findByText('Add New Product Tag');
