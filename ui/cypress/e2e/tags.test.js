@@ -23,8 +23,8 @@ describe('Tags',  () => {
             cy.get('[data-testid=traitRow]').should('not.exist');
 
             cy.get('@locationTagsContainer').find('[data-testid=addNewLocation]').click();
-            cy.get('@locationTagsContainer').find('[data-testid=traitName]').focus().type(locationTag).should('have.value', locationTag);
-            cy.get('@locationTagsContainer').find('[data-testid=saveTraitsButton]').click();
+            cy.get('@locationTagsContainer').find('[data-testid=tagNameInput]').focus().type(locationTag).should('have.value', locationTag);
+            cy.get('@locationTagsContainer').find('[data-testid=saveTagButton]').click();
 
             cy.get('@locationTagsContainer').find('[data-testid=traitRow]')
                 .should(($row) => {
@@ -42,8 +42,8 @@ describe('Tags',  () => {
             cy.get('[data-testid=traitRow]').should('not.exist');
 
             cy.get('@productTagsContainer').find('[data-testid=addNewProductTag]').click();
-            cy.get('@productTagsContainer').find('[data-testid=traitName]').focus().type(productTag).should('have.value', productTag);
-            cy.get('@productTagsContainer').find('[data-testid=saveTraitsButton]').click();
+            cy.get('@productTagsContainer').find('[data-testid=tagNameInput]').focus().type(productTag).should('have.value', productTag);
+            cy.get('@productTagsContainer').find('[data-testid=saveTagButton]').click();
 
             cy.get('@productTagsContainer').find('[data-testid=traitRow]')
                 .should(($row) => {

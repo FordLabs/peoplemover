@@ -34,7 +34,7 @@ function ShareAccessButton({ setCurrentModal }: Props): JSX.Element {
 
     return showButton ? (
         <div className="accountDropdownOption"
-            data-testid="share-access"
+            data-testid="shareAccess"
             onClick={openEditContributorsModal}
             onKeyDown={onkeydown}>
             Share Access

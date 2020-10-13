@@ -34,7 +34,7 @@
 }
 
 .sortby-option {
-  height: 25px;
+  height: 22px;
   font-size: 12px;
   padding: 0 4px;
   display: flex;
@@ -77,4 +77,5 @@
 
 .filter-option > .filter-label-name {
   word-break: break-word;
+  padding-right: 16px;
 }
