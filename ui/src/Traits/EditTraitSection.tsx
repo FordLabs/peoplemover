@@ -30,10 +30,11 @@ import SaveIcon from './saveIcon.png';
 import CloseIcon from './closeIcon.png';
 import {JSX} from '@babel/types';
 import ColorCircle from '../TagsForm/ColorCircle';
-import Select from '../ModalFormComponents/Select';
-import {TraitType} from './MyTraits';
+import Select, {OptionType} from '../ModalFormComponents/Select';
+import {TraitNameType} from './MyTraits';
 
 import '../Traits/MyTraits.scss';
+import {Option} from '../CommonTypes/Option';
 
 interface EditTraitSectionProps {
     closeCallback: () => void;
@@ -41,7 +42,7 @@ interface EditTraitSectionProps {
     trait?: Trait;
     colorSection: boolean;
     traitClient: TraitClient;
-    traitName: TraitType;
+    traitName: TraitNameType;
     currentSpace: Space;
 }
 
@@ -55,26 +56,10 @@ function EditTraitSection({
     currentSpace,
 }: EditTraitSectionProps): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
+    const [selectedColor, setSelectedColor] = useState<Color>();
     const [enteredTrait, setEnteredTrait] = useState<TraitAddRequest>();
     const [duplicateErrorMessage, setDuplicateErrorMessage] = useState<boolean>(false);
-    const colorRefs: Array<RefObject<HTMLSpanElement>> = [];
     const traitNameClass = traitName.replace(' ', '_');
-
-    const selectedOption = {
-        value: 1,
-        displayValue: <ColorCircle color={{ id: 1, color: '#446600'}}/>,
-    };
-
-    const options = [
-        {
-            value: 1,
-            displayValue: <ColorCircle color={{ id: 1, color: '#446600'}} />,
-        },
-        {
-            value: 2,
-            displayValue:  <ColorCircle color={{ id: 1, color: '#000'}} />,
-        },
-    ];
 
     useEffect(() => {
         let mounted = false;
@@ -86,6 +71,7 @@ function EditTraitSection({
                         setColors(colors);
 
                         const spaceRole: SpaceRole = trait as SpaceRole;
+                        //Todo: Add selected color here
                         const roleAddRequest: RoleAddRequest = {
                             name: spaceRole ? spaceRole.name : '',
                             colorId: spaceRole && spaceRole.color ? spaceRole.color.id : colors[colors.length - 1].id,
@@ -105,26 +91,6 @@ function EditTraitSection({
         setColorsAndTraits().then();
         return (): void => {mounted = false;};
     }, [colorSection, trait]);
-
-    function highlightCircle(circleRef: RefObject<HTMLSpanElement>, color: Color): void {
-        clearHighlightedCircle();
-        if (circleRef.current) {
-            circleRef.current.classList.add('highlightedCircle');
-        }
-
-        setEnteredTrait(prevEnteredTrait => ({
-            ...prevEnteredTrait,
-            colorId: color.id,
-        }));
-    }
-
-    function clearHighlightedCircle(): void {
-        colorRefs.forEach(colorRef => {
-            if (colorRef.current) {
-                colorRef.current.classList.remove('highlightedCircle');
-            }
-        });
-    }
 
     function handleEnterSubmit(event: React.KeyboardEvent): void {
         if (event.key === 'Enter') {
@@ -172,35 +138,38 @@ function EditTraitSection({
         }));
     }
 
-    function highlightDefaultCircle(color: Color, index: number): string {
-        const spaceRole: SpaceRole = trait as SpaceRole;
-        const thisColorCircleMatchesProvidedColor = spaceRole && spaceRole.color && spaceRole.color.color === color.color;
-        const thisColorCircleIsWhiteOne = !spaceRole && (colors.length - 1) === index;
+    const selectedColorOption = (): OptionType => {
+        const color = selectedColor ? selectedColor : { id: -1, color: 'transparent'};
+        return {
+            value: color.id,
+            displayValue: <ColorCircle color={color} />,
+        };
+    };
 
-        if (thisColorCircleMatchesProvidedColor || thisColorCircleIsWhiteOne) {
-            return 'highlightedCircle';
-        }
-        return '';
-    }
+    const colorOptions = (): OptionType[] => {
+        return colors.map((color): OptionType => {
+            return {
+                value: color.id,
+                displayValue: <ColorCircle color={color} />,
+            };
+        });
+    };
 
-    function putBorderOnWhiteCircle(index: number): string {
-        return (colors.length - 1) === index ? 'whiteCircleBorder' : '';
-    }
-
-    function handleKeyDownForHighlightCircle(event: React.KeyboardEvent, ref: React.RefObject<HTMLSpanElement>, color: Color): void {
-        if (event.key === 'Enter') {
-            highlightCircle(ref, color);
-        }
-    }
+    const handleColorChange = (selectedOption: OptionType): void => {
+        setEnteredTrait(prevEnteredTrait => ({
+            ...prevEnteredTrait,
+            colorId: selectedOption.value,
+        }));
+    };
 
     return (
         <>
             <div className={`editTagRow ${traitNameClass}`}>
                 {colorSection && (
                     <Select
-                        selectedOption={selectedOption}
-                        options={options}
-                        onChange={(selectedOption): void => { console.log(selectedOption); }}
+                        selectedOption={selectedColorOption()}
+                        options={colorOptions()}
+                        onChange={handleColorChange}
                     />
                 )}
                 <input className={`editTagInput ${traitNameClass}`}

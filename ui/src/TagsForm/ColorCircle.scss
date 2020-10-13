@@ -23,7 +23,10 @@
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;
-  border: 1px solid $gray-4;
+
+  &.whiteCircleBorder {
+    border: 1px solid $gray-4;
+  }
 
   &:hover {
     box-shadow: 0 0 0 1px white, 0 0 0 3px $gray-2;

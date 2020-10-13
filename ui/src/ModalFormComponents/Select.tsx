@@ -19,7 +19,7 @@ import React, {ReactNode, useState} from 'react';
 
 import './Select.scss';
 
-interface OptionType {
+export interface OptionType {
     value: unknown;
     displayValue: ReactNode | string;
 }

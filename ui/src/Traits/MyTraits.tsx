@@ -33,15 +33,17 @@ import PlusIcon from './plusIcon.png';
 
 import '../Traits/MyTraits.scss';
 
-export type TraitType = 'role' | 'product tag' | 'location'
+export type TraitNameType = 'role' | 'product tag' | 'location'
+export type TitleType = 'Location Tags' | 'Product Tags';
+export type TraitType = 'product' | 'person'
 
 interface MyTraitsProps {
     currentSpace: Space;
-    title?: string;
+    title?: TitleType;
     traitClient: TraitClient;
-    traitType: string;
+    traitType: TraitType;
     colorSection: boolean;
-    traitName: TraitType;
+    traitName: TraitNameType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }

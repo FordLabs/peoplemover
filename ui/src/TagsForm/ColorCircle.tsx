@@ -27,7 +27,7 @@ const ColorCircle = ({ color }: Props): JSX.Element => {
     return (
         <span data-testid="selectRoleCircle"
             style={{'backgroundColor': color.color}}
-            className="colorCircle"
+            className={`colorCircle ${color.color === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
         />
     );
 };
