@@ -18,8 +18,9 @@
 import React from 'react';
 import MyTraits from '../Traits/MyTraits';
 import RoleClient from './RoleClient';
-import '../Traits/MyTraits.scss';
 import warningIcon from '../Application/Assets/warningIcon.svg';
+
+import '../Traits/MyTraits.scss';
 
 
 function MyRolesModal(): JSX.Element {

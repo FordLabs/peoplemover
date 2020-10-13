@@ -16,9 +16,8 @@
  */
 
 import {Color, SpaceRole} from '../Roles/Role';
-import React, {createRef, RefObject, useEffect, useState} from 'react';
+import React, {RefObject, useEffect, useState} from 'react';
 import ColorClient from '../Roles/ColorClient';
-import '../Traits/MyTraits.scss';
 import {AxiosResponse} from 'axios';
 import {Trait} from './Trait';
 import {TraitAddRequest} from './TraitAddRequest';
@@ -29,6 +28,12 @@ import {RoleEditRequest} from '../Roles/RoleEditRequest';
 import {Space} from '../Space/Space';
 import SaveIcon from './saveIcon.png';
 import CloseIcon from './closeIcon.png';
+import {JSX} from '@babel/types';
+import ColorCircle from '../TagsForm/ColorCircle';
+import Select from '../ModalFormComponents/Select';
+import {TraitType} from './MyTraits';
+
+import '../Traits/MyTraits.scss';
 
 interface EditTraitSectionProps {
     closeCallback: () => void;
@@ -36,7 +41,7 @@ interface EditTraitSectionProps {
     trait?: Trait;
     colorSection: boolean;
     traitClient: TraitClient;
-    traitName: string;
+    traitName: TraitType;
     currentSpace: Space;
 }
 
@@ -53,6 +58,23 @@ function EditTraitSection({
     const [enteredTrait, setEnteredTrait] = useState<TraitAddRequest>();
     const [duplicateErrorMessage, setDuplicateErrorMessage] = useState<boolean>(false);
     const colorRefs: Array<RefObject<HTMLSpanElement>> = [];
+    const traitNameClass = traitName.replace(' ', '_');
+
+    const selectedOption = {
+        value: 1,
+        displayValue: <ColorCircle color={{ id: 1, color: '#446600'}}/>,
+    };
+
+    const options = [
+        {
+            value: 1,
+            displayValue: <ColorCircle color={{ id: 1, color: '#446600'}} />,
+        },
+        {
+            value: 2,
+            displayValue:  <ColorCircle color={{ id: 1, color: '#000'}} />,
+        },
+    ];
 
     useEffect(() => {
         let mounted = false;
@@ -173,8 +195,15 @@ function EditTraitSection({
 
     return (
         <>
-            <div className="traitRow">
-                <input className="editTagInput"
+            <div className={`editTagRow ${traitNameClass}`}>
+                {colorSection && (
+                    <Select
+                        selectedOption={selectedOption}
+                        options={options}
+                        onChange={(selectedOption): void => { console.log(selectedOption); }}
+                    />
+                )}
+                <input className={`editTagInput ${traitNameClass}`}
                     data-testid="tagNameInput"
                     type="text"
                     value={enteredTrait ? enteredTrait.name : ''}
@@ -196,24 +225,6 @@ function EditTraitSection({
                     </button>
                 </div>
             </div>
-            {colorSection && (
-                <div className="selectRoleCircles">
-                    {colors.map((color: Color, index: number) => {
-                        const ref: RefObject<HTMLSpanElement> = createRef();
-                        colorRefs.push(ref);
-
-                        return (
-                            <span key={index}
-                                ref={ref}
-                                data-testid="selectRoleCircle"
-                                style={{'backgroundColor': color.color}}
-                                onClick={(): void => highlightCircle(ref, color)}
-                                onKeyDown={(e): void => handleKeyDownForHighlightCircle(e, ref, color)}
-                                className={`myTraitsCircle selectRoleCircle ${highlightDefaultCircle(color, index)} ${putBorderOnWhiteCircle(index)}`}/>
-                        );
-                    })}
-                </div>
-            )}
             {duplicateErrorMessage && (
                 <div className="duplicateErrorMessage">
                     A {traitName} with this name already exists. Enter a different name.

@@ -27,7 +27,7 @@ interface OptionType {
 interface Props {
     selectedOption: OptionType;
     options: Array<OptionType>;
-    onChange: Function;
+    onChange: (selectedOption: OptionType) => void;
 }
 
 const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
