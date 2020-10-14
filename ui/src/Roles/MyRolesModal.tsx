@@ -22,9 +22,7 @@ import warningIcon from '../Application/Assets/warningIcon.svg';
 
 import '../Traits/MyTraits.scss';
 
-
 function MyRolesModal(): JSX.Element {
-
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
             <MyTraits

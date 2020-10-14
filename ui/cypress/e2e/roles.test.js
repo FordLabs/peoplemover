@@ -19,7 +19,7 @@ describe('Roles', () => {
 
         cy.get('[data-testid=givenroleName]').contains(mockRole).should('not.exist');
 
-        cy.get('[data-testid=addNewRole]').click();
+        cy.get('[data-testid=addNewButton__role]').click();
 
         cy.get('[data-testid=tagNameInput]').clear().type(mockRole).should('have.value', mockRole);
 

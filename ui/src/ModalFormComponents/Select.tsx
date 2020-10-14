@@ -35,10 +35,8 @@ const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
     const [currentOption, setCurrentOption] = useState<OptionType>(selectedOption);
 
     useEffect(() => {
-        if (currentOption.value !== selectedOption.value) {
-            setCurrentOption(selectedOption);
-        }
-    }, [currentOption, selectedOption]);
+        setCurrentOption(selectedOption);
+    }, [selectedOption]);
 
     const showDropdown = (): void => {
         if (dropdownToggle) {
@@ -63,7 +61,7 @@ const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
                         setCurrentOption(option);
                         onChange(option);
                     };
-                    const isSelected = option.value === currentOption.value;
+                    const isSelected = currentOption && option.value === currentOption.value;
                     return (
                         <Option
                             className={`selectOption ${isSelected ? 'selected' : '' }`}
