@@ -3,6 +3,7 @@ import person from '../fixtures/person';
 
 describe('Roles', () => {
     const mockRole = person.role;
+    const mockColor = { id: 2, color: '#FF00FF' };
     const pink = 'rgb(255, 0, 255)';
     const defaultColor = 'rgb(0, 255, 255)';
 
@@ -50,6 +51,7 @@ describe('Roles', () => {
         cy.wait('@postNewRole').should(xhr => {
             expect(xhr?.status).to.equal(200);
             expect(xhr?.response?.body.name).to.equal(mockRole);
+            expect(xhr?.response?.body.color).to.deep.equal(mockColor);
         });
 
         cy.contains(mockRole).parent('[data-testid=traitRow]').should(($lis) => {
