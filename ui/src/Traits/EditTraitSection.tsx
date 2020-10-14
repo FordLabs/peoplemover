@@ -16,7 +16,7 @@
  */
 
 import {Color, SpaceRole} from '../Roles/Role';
-import React, {RefObject, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ColorClient from '../Roles/ColorClient';
 import {AxiosResponse} from 'axios';
 import {Trait} from './Trait';
@@ -34,7 +34,6 @@ import Select, {OptionType} from '../ModalFormComponents/Select';
 import {TraitNameType} from './MyTraits';
 
 import '../Traits/MyTraits.scss';
-import {Option} from '../CommonTypes/Option';
 
 interface EditTraitSectionProps {
     closeCallback: () => void;
@@ -71,11 +70,13 @@ function EditTraitSection({
                         setColors(colors);
 
                         const spaceRole: SpaceRole = trait as SpaceRole;
-                        //Todo: Add selected color here
+
+                        const roleColor = spaceRole && spaceRole.color ? spaceRole.color : colors[colors.length - 1];
                         const roleAddRequest: RoleAddRequest = {
                             name: spaceRole ? spaceRole.name : '',
-                            colorId: spaceRole && spaceRole.color ? spaceRole.color.id : colors[colors.length - 1].id,
+                            colorId: roleColor.id,
                         };
+                        setSelectedColor(roleColor);
                         setEnteredTrait(roleAddRequest);
                     }
                 });
@@ -141,7 +142,7 @@ function EditTraitSection({
     const selectedColorOption = (): OptionType => {
         const color = selectedColor ? selectedColor : { id: -1, color: 'transparent'};
         return {
-            value: color.id,
+            value: color,
             displayValue: <ColorCircle color={color} />,
         };
     };
@@ -149,17 +150,19 @@ function EditTraitSection({
     const colorOptions = (): OptionType[] => {
         return colors.map((color): OptionType => {
             return {
-                value: color.id,
+                value: color,
                 displayValue: <ColorCircle color={color} />,
             };
         });
     };
 
     const handleColorChange = (selectedOption: OptionType): void => {
+        const color = selectedOption.value as Color;
         setEnteredTrait(prevEnteredTrait => ({
             ...prevEnteredTrait,
-            colorId: selectedOption.value,
+            colorId: color.id,
         }));
+        setSelectedColor(color);
     };
 
     return (

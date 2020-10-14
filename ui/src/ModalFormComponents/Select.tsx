@@ -15,7 +15,7 @@
  *   limitations under the License.
  */
 
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 
 import './Select.scss';
 
@@ -33,6 +33,12 @@ interface Props {
 const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [currentOption, setCurrentOption] = useState<OptionType>(selectedOption);
+
+    useEffect(() => {
+        if (currentOption.value !== selectedOption.value) {
+            setCurrentOption(selectedOption);
+        }
+    }, [currentOption, selectedOption]);
 
     const showDropdown = (): void => {
         if (dropdownToggle) {
