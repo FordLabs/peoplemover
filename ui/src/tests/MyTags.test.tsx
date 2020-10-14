@@ -359,5 +359,35 @@ describe('PeopleMover My Tags', () => {
                 await app.findByText('A product tag with this name already exists. Enter a different name.');
             });
         });
+
+        describe('interaction between editing and creating product tag', () => {
+
+            it('should not show pen and trash can when add new tag is clicked', async () => {
+                expect(app.queryAllByTestId('producttagEditIcon').length).toEqual(4);
+                expect(app.queryAllByTestId('producttagDeleteIcon').length).toEqual(4);
+
+                const addNewLocationButton = await app.findByText('Add New Product Tag');
+                fireEvent.click(addNewLocationButton);
+
+                expect(app.queryAllByTestId('producttagEditIcon').length).toEqual(0);
+                expect(app.queryAllByTestId('producttagDeleteIcon').length).toEqual(0);
+            });
+
+            it('should not show pen and trash icons when editing product tag', async () => {
+                expect(app.queryAllByTestId('producttagEditIcon').length).toEqual(4);
+                expect(app.queryAllByTestId('producttagDeleteIcon').length).toEqual(4);
+                fireEvent.click(app.queryAllByTestId('producttagEditIcon')[0]);
+
+                expect(app.queryAllByTestId('producttagEditIcon').length).toEqual(0);
+                expect(app.queryAllByTestId('producttagDeleteIcon').length).toEqual(0);
+            });
+
+            it('should have create producttag button disabled when editing product tag', async () => {
+                fireEvent.click(app.queryAllByTestId('producttagEditIcon')[0]);
+
+                const addNewLocationButton = await app.findByText('Add New Product Tag');
+                expect(addNewLocationButton).toBeDisabled();
+            });
+        });
     });
 });
