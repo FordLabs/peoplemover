@@ -4,6 +4,7 @@ import person from '../fixtures/person';
 describe('Roles', () => {
     const mockRole = person.role;
     const pink = 'rgb(255, 0, 255)';
+    const defaultColor = 'rgb(0, 255, 255)';
 
     beforeEach(() => {
         cy.visitBoard();
@@ -21,13 +22,28 @@ describe('Roles', () => {
 
         cy.get('[data-testid=addNewButton__role]').click();
 
-        cy.get('[data-testid=tagNameInput]').clear().type(mockRole).should('have.value', mockRole);
+        cy.get('[data-testid=editTagRow__role]').as('colorDropdownToggle');
 
-        cy.get('[data-testid=selectRoleCircle]')
-            .should('have.length', 3)
-            .then(($circles) => {
-                $circles.eq(1).click();
-            });
+        cy.get('@colorDropdownToggle')
+            .find('[data-testid=selectRoleCircle]')
+            .should('have.css', 'background-color', defaultColor);
+
+        cy.get('@colorDropdownToggle')
+            .find('[data-testid=selectDropdownToggle]').click();
+
+        cy.get('[data-testid=selectOption__1]').as('colorOption');
+
+        cy.get('@colorOption')
+            .find('[data-testid=selectRoleCircle]')
+            .should('have.css', 'background-color', pink);
+
+        cy.get('@colorOption').click();
+
+        cy.get('@colorDropdownToggle')
+            .find('[data-testid=selectRoleCircle]')
+            .should('have.css', 'background-color', pink);
+
+        cy.get('[data-testid=tagNameInput]').clear().type(mockRole).should('have.value', mockRole);
 
         cy.get('[data-testid=saveTagButton]').click();
 

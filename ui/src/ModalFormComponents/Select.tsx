@@ -64,6 +64,7 @@ const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
                     const isSelected = currentOption && option.value === currentOption.value;
                     return (
                         <Option
+                            data-testid={`selectOption__${index}`}
                             className={`selectOption ${isSelected ? 'selected' : '' }`}
                             key={`select-option-${index}`}
                             onClick={onClick}>
@@ -77,7 +78,7 @@ const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
 
     return (
         <div className="selectDropdown">
-            <button className="selectDropdownToggle" onClick={showDropdown}>
+            <button className="selectDropdownToggle" onClick={showDropdown} data-testid="selectDropdownToggle">
                 <i className={`selectDropdownArrow fas ${ dropdownToggle ? 'fa-caret-up' : 'fa-caret-down' }`} />
                 {currentOption.displayValue}
             </button>

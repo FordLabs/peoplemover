@@ -34,6 +34,7 @@ import Select, {OptionType} from '../ModalFormComponents/Select';
 import {TraitNameType} from './MyTraits';
 
 import '../Traits/MyTraits.scss';
+import {createDataTestId} from "../tests/TestUtils";
 
 interface EditTraitSectionProps {
     closeCallback: () => void;
@@ -167,7 +168,7 @@ function EditTraitSection({
 
     return (
         <>
-            <div className={`editTagRow ${traitNameClass}`}>
+            <div className={`editTagRow ${traitNameClass}`} data-testid={createDataTestId('editTagRow', traitName)}>
                 {colorSection && (
                     <Select
                         selectedOption={selectedColorOption()}
