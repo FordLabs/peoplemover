@@ -21,12 +21,16 @@
   position: relative;
 }
 
-.selectDropdownSelectedValue {
+.selectDropdownToggle {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 36px;
   cursor: pointer;
+
+  &:focus {
+    box-shadow: 0 0 2px 2px $purple-title;
+  }
 
   .selectDropdownArrow {
     padding-right: 0.5rem;
@@ -37,7 +41,7 @@
   }
 }
 
-.selectDropdownSelectedValue,
+.selectDropdownToggle,
 .selectDropdownOptions {
   width: 62px;
   background: #FFFFFF;

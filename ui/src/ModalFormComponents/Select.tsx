@@ -79,10 +79,10 @@ const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
 
     return (
         <div className="selectDropdown">
-            <div className="selectDropdownSelectedValue" onClick={showDropdown}>
+            <button className="selectDropdownToggle" onClick={showDropdown}>
                 <i className={`selectDropdownArrow fas ${ dropdownToggle ? 'fa-caret-up' : 'fa-caret-down' }`} />
                 {currentOption.displayValue}
-            </div>
+            </button>
             {dropdownToggle && <Dropdown />}
         </div>
     );
