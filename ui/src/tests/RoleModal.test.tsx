@@ -18,24 +18,22 @@
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult, wait} from '@testing-library/react';
-import PeopleMover from '../Application/PeopleMover';
 import RoleClient from '../Roles/RoleClient';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
+import MyRolesModal from '../Roles/MyRolesModal';
 
 describe('PeopleMover Role Modal', () => {
     let app: RenderResult;
-    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
+    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions} as GlobalStateProps;
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
         await act(async () => {
-            app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-            const myRolesButton = await app.findByText('My Roles');
-            fireEvent.click(myRolesButton);
+            app = renderWithRedux(<MyRolesModal/>, undefined, initialState);
         });
     });
 
@@ -44,10 +42,10 @@ describe('PeopleMover Role Modal', () => {
     });
 
     it('should show existing roles', async () => {
-        const modalContainer = await app.findByTestId('modalContainer');
-        await findByText(modalContainer, 'Software Engineer');
-        await findByText(modalContainer, 'Product Designer');
-        await findByText(modalContainer, 'Product Manager');
+        const myRolesModalContainer = await app.findByTestId('myRolesModalContainer');
+        await findByText(myRolesModalContainer, 'Software Engineer');
+        await findByText(myRolesModalContainer, 'Product Designer');
+        await findByText(myRolesModalContainer, 'Product Manager');
     });
 
     it('should show existing roles with color-circle', async () => {
@@ -184,8 +182,8 @@ describe('PeopleMover Role Modal', () => {
             const myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
 
-            const modalContainer = await app.findByTestId('modalContainer');
-            const roleNameInputField: HTMLInputElement = await findByTestId(modalContainer, 'tagNameInput') as HTMLInputElement;
+            const myRolesModalContainer = await app.findByTestId('myRolesModalContainer');
+            const roleNameInputField: HTMLInputElement = await findByTestId(myRolesModalContainer, 'tagNameInput') as HTMLInputElement;
             expect(roleNameInputField.value).toEqual('Product Designer');
         });
 
@@ -235,8 +233,38 @@ describe('PeopleMover Role Modal', () => {
                 expect(app.queryByText(deleteWarning)).not.toBeInTheDocument();
             });
 
-            const modalContainer = await app.findByTestId('modalContainer');
-            expect(queryByText(modalContainer, 'Product Manager')).not.toBeInTheDocument();
+            const myRolesModalContainer = await app.findByTestId('myRolesModalContainer');
+            expect(queryByText(myRolesModalContainer, 'Product Manager')).not.toBeInTheDocument();
+        });
+    });
+
+    describe('interaction between editing and creating role', () => {
+
+        it('should not show pen and trash can when add new tag is clicked', async () => {
+            expect(app.queryAllByTestId('roleEditIcon').length).toEqual(3);
+            expect(app.queryAllByTestId('roleDeleteIcon').length).toEqual(3);
+
+            const addNewLocationButton = await app.findByText('Add New Role');
+            fireEvent.click(addNewLocationButton);
+
+            expect(app.queryAllByTestId('roleEditIcon').length).toEqual(0);
+            expect(app.queryAllByTestId('roleDeleteIcon').length).toEqual(0);
+        });
+
+        it('should not show pen and trash icons when editing role', async () => {
+            expect(app.queryAllByTestId('roleEditIcon').length).toEqual(3);
+            expect(app.queryAllByTestId('roleDeleteIcon').length).toEqual(3);
+            fireEvent.click(app.queryAllByTestId('roleEditIcon')[0]);
+
+            expect(app.queryAllByTestId('roleEditIcon').length).toEqual(0);
+            expect(app.queryAllByTestId('roleDeleteIcon').length).toEqual(0);
+        });
+
+        it('should have create role button disabled when editing role', async () => {
+            fireEvent.click(app.queryAllByTestId('roleEditIcon')[0]);
+
+            const addNewLocationButton = await app.findByText('Add New Role');
+            expect(addNewLocationButton).toBeDisabled();
         });
     });
 });

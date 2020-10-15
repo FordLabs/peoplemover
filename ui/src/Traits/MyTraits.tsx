@@ -67,6 +67,7 @@ function MyTraits({
 }: MyTraitsProps): JSX.Element {
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const [traits, setTraits] = useState<Array<Trait>>([]);
+    const [showEditState, setShowEditState] = useState<boolean>(false);
     const [editSectionsOpen, setEditSectionsOpen] = useState<Array<boolean>>([]);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const traitNameClass = traitName.replace(' ', '_');
@@ -207,6 +208,10 @@ function MyTraits({
         }
     }
 
+    function isEditBoxOpen(): boolean {
+        return editSectionsOpen.includes(true);
+    }
+
     function ViewTraitRow({ trait, index }: { trait: Trait; index: number }): JSX.Element {
         let colorToUse: string | undefined;
         if (colorSection) {
@@ -228,7 +233,7 @@ function MyTraits({
                 <span className="traitName" data-testid={`given${testIdTraitName}Name`}>
                     {trait.name}
                 </span>
-                {userIsNotEditingATag && (
+                {userIsNotEditingATag && !showEditState && (
                     <div className="traitIcons">
                         <button
                             className="traitEditIcon"
@@ -249,9 +254,8 @@ function MyTraits({
             </div>
         );
     }
-    
+
     const AddNewTagRow = (): JSX.Element => {
-        const [showEditState, setShowEditState] = useState<boolean>(false);
         const handleAddNewTagClick = (event: React.KeyboardEvent, isAddSectionOpen: boolean): void => {
             if (event.key === 'Enter') {
                 setShowEditState(isAddSectionOpen);
@@ -259,7 +263,8 @@ function MyTraits({
         };
 
         return !showEditState ? (
-            <div className="addNewTagRow"
+            <button className="addNewTagRow"
+                disabled={isEditBoxOpen()}
                 data-testid={createDataTestId('addNewButton', traitName)}
                 onClick={(): void => setShowEditState(true)}
                 onKeyDown={(e): void => handleAddNewTagClick(e, true)}>
@@ -269,7 +274,7 @@ function MyTraits({
                 <span className="traitName addNewTraitText">
                     Add New {toTitleCase(traitName)}
                 </span>
-            </div>
+            </button>
         ) : (
             <EditTraitSection
                 closeCallback={(): void => setShowEditState(false)}
