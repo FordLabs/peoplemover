@@ -18,7 +18,7 @@ describe('Tags',  () => {
                 .should('contain', 'Product Tags');
         });
 
-        it('location tag',  () => {
+        xit('location tag',  () => {
             cy.get('[data-testid=tagsModalContainer__location]')
                 .as('locationTagsContainer');
 
