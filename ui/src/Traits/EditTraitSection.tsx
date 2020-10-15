@@ -34,7 +34,7 @@ import Select, {OptionType} from '../ModalFormComponents/Select';
 import {TraitNameType} from './MyTraits';
 
 import '../Traits/MyTraits.scss';
-import {createDataTestId} from "../tests/TestUtils";
+import {createDataTestId} from '../tests/TestUtils';
 
 interface EditTraitSectionProps {
     closeCallback: () => void;

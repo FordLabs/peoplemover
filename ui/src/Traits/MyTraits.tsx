@@ -234,7 +234,7 @@ function MyTraits({
                     {trait.name}
                 </span>
                 {userIsNotEditingATag && !showEditState && (
-                    <div className="traitIcons">
+                    <div>
                         <button
                             className="traitEditIcon"
                             data-testid={`${testIdTraitName}EditIcon`}
@@ -313,7 +313,7 @@ function MyTraits({
             <AddNewTagRow />
             {confirmDeleteModal}
         </div>
-    ) : <></>
+    ) : <></>;
 }
 
 /* eslint-disable */

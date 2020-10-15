@@ -38,7 +38,6 @@
   display: grid;
   grid-template-rows: auto;
   align-items: center;
-
   text-align: left;
   color: $gray-1;
   margin: -8px auto auto;
@@ -169,10 +168,6 @@
     display: flex;
   }
 
-  .traitIcons {
-    height: 16px;
-  }
-
   .highlightedCircle {
     box-shadow:
             0 0 0 1px white,
@@ -211,7 +206,10 @@
   border-radius: 4px;
 
   .warningIcon {
-    padding: 6px 12px 8px 10px;
+    height: 15px;
+    width: 15px;
+    font-size: 15px;
+    margin: 6px 12px 8px 10px;
   }
 
   .warningText {
@@ -220,6 +218,7 @@
     font-size: 12px;
     text-align: left;
     margin: 0;
+    line-height: 16px;
   }
 }
 
