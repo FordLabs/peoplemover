@@ -65,7 +65,6 @@ function MyTraits({
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: MyTraitsProps): JSX.Element {
-    const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const [traits, setTraits] = useState<Array<Trait>>([]);
     const [showEditState, setShowEditState] = useState<boolean>(false);
     const [editSectionsOpen, setEditSectionsOpen] = useState<Array<boolean>>([]);
@@ -81,9 +80,7 @@ function MyTraits({
             setEditSectionsOpen(new Array(traitResponse.length).fill(false));
         }
 
-        setup().then(() => {
-            setIsLoaded(true);
-        });
+        setup().then();
     }, [currentSpace.uuid, traitClient]);
 
     function sortTraitsAlphabetically(traitsList: Array<Trait>): void {
@@ -286,7 +283,7 @@ function MyTraits({
         );
     };
 
-    return isLoaded ? (
+    return (
         <div data-testid={createDataTestId('tagsModalContainer', traitName)}
             className="myTraitsModalContainer">
             {!colorSection && <div className="title"> {title}</div>}
@@ -294,18 +291,18 @@ function MyTraits({
                 return (
                     <React.Fragment key={index}>
                         {!editSectionsOpen[index] &&
-                            <ViewTraitRow trait={trait} index={index}/>
+                        <ViewTraitRow trait={trait} index={index}/>
                         }
                         {editSectionsOpen[index] &&
-                            <EditTraitSection
-                                closeCallback={(): void => toggleEditSection(index)}
-                                updateCallback={updateTraits}
-                                trait={trait}
-                                colorSection={colorSection}
-                                traitClient={traitClient}
-                                traitName={traitName}
-                                currentSpace={currentSpace}
-                            />
+                        <EditTraitSection
+                            closeCallback={(): void => toggleEditSection(index)}
+                            updateCallback={updateTraits}
+                            trait={trait}
+                            colorSection={colorSection}
+                            traitClient={traitClient}
+                            traitName={traitName}
+                            currentSpace={currentSpace}
+                        />
                         }
                     </React.Fragment>
                 );
@@ -313,7 +310,7 @@ function MyTraits({
             <AddNewTagRow />
             {confirmDeleteModal}
         </div>
-    ) : <></>;
+    );
 }
 
 /* eslint-disable */

@@ -36,7 +36,7 @@ describe('Tags',  () => {
                 });
         });
 
-        it('product tag',  () => {
+        xit('product tag',  () => {
             cy.get('[data-testid=tagsModalContainer__product_tag]')
                 .as('productTagsContainer');
 
