@@ -21,16 +21,18 @@ import './Select.scss';
 
 export interface OptionType {
     value: unknown;
+    ariaLabel: string;
     displayValue: ReactNode | string;
 }
 
 interface Props {
+    ariaLabel: string;
     selectedOption: OptionType;
     options: Array<OptionType>;
     onChange: (selectedOption: OptionType) => void;
 }
 
-const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
+const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.Element => {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [currentOption, setCurrentOption] = useState<OptionType>(selectedOption);
 
@@ -55,7 +57,7 @@ const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
     const Dropdown = (): JSX.Element => {
         const Option = 'li';
         return (
-            <ul className="selectDropdownOptions">
+            <ul className="selectDropdownOptions" role="listbox">
                 {options && options.map((option, index) => {
                     const onClick = (): void => {
                         setCurrentOption(option);
@@ -65,6 +67,8 @@ const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
                     return (
                         <Option
                             data-testid={`selectOption__${index}`}
+                            aria-label={option.ariaLabel}
+                            role="option"
                             className={`selectOption ${isSelected ? 'selected' : '' }`}
                             key={`select-option-${index}`}
                             onClick={onClick}>
@@ -78,7 +82,12 @@ const Select = ({ options, selectedOption, onChange }: Props): JSX.Element => {
 
     return (
         <div className="selectDropdown">
-            <button className="selectDropdownToggle" onClick={showDropdown} data-testid="selectDropdownToggle">
+            <button
+                className="selectDropdownToggle"
+                aria-label={ariaLabel}
+                aria-haspopup="listbox"
+                onClick={showDropdown}
+                data-testid="selectDropdownToggle">
                 <i className={`selectDropdownArrow fas ${ dropdownToggle ? 'fa-caret-up' : 'fa-caret-down' }`} />
                 {currentOption.displayValue}
             </button>
