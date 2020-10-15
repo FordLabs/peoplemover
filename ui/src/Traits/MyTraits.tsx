@@ -204,6 +204,10 @@ function MyTraits({
         }
     }
 
+    function isEditBoxOpen(): boolean {
+        return editSectionsOpen.includes(true);
+    }
+
     function ViewTraitRow({ trait, index }: { trait: Trait; index: number }): JSX.Element {
         let colorToUse: string | undefined;
         if (colorSection) {
@@ -223,7 +227,7 @@ function MyTraits({
                 <span className="traitName" data-testid={`given${testIdTraitName}Name`}>
                     {trait.name}
                 </span>
-                {userIsNotEditingATag && (
+                {userIsNotEditingATag && !addSectionOpen && (
                     <div className="traitIcons">
                         <i className="fas fa-pen fa-s traitEditIcon"
                             data-testid={`${testIdTraitName}EditIcon`}
@@ -273,7 +277,7 @@ function MyTraits({
                 currentSpace={currentSpace}/>
             }
 
-            {!addSectionOpen && <div className="traitRow addNewTraitRow"
+            {!addSectionOpen && <button className="traitRow addNewTraitRow" disabled={isEditBoxOpen()}
                 onClick={(): void => setAddSectionOpen(true)}
                 onKeyDown={(e): void => handleKeyDownForSetAddSectionOpen(e, true)}>
                 <span data-testid="addNewTraitCircle">
@@ -283,7 +287,7 @@ function MyTraits({
                     data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>
                     Add New {toTitleCase(traitName)}
                 </span>
-            </div>
+            </button>
             }
             {confirmDeleteModal}
         </div>

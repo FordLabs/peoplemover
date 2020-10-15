@@ -21,18 +21,21 @@ import PeopleMover from '../Application/PeopleMover';
 import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
+import MyTagsModal from "../Tags/MyTagsModal";
+import {PreloadedState} from "redux";
+import {GlobalStateProps} from "../Redux/Reducers";
 
 describe('PeopleMover My Tags', () => {
     let app: RenderResult;
+    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions} as GlobalStateProps;
+
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
         await act(async () => {
-            app = renderWithRedux(<PeopleMover/>);
-            const myTagsButton = await app.findByText('My Tags');
-            fireEvent.click(myTagsButton);
+            app = renderWithRedux(<MyTagsModal/>, undefined, initialState);
         });
     });
 
@@ -51,9 +54,9 @@ describe('PeopleMover My Tags', () => {
     });
 
     it('Should contain all product tags available in the space', async () => {
-        const modalContainer = await app.findByTestId('modalContainer');
+        const myTagsModal = await app.findByTestId('myTagsModal');
         for (const productTag of TestUtils.productTags) {
-            await findByText(modalContainer, productTag.name);
+            await findByText(myTagsModal, productTag.name);
         }
     });
 
@@ -76,8 +79,8 @@ describe('PeopleMover My Tags', () => {
                 fireEvent.click(locationTagIcon);
                 await app.findByTestId('saveTagButton');
 
-                const modalContainer = await app.findByTestId('modalContainer');
-                const editLocationTagText: HTMLInputElement = await findByTestId(modalContainer, 'tagNameInput') as HTMLInputElement;
+                const myTagsModal = await app.findByTestId('myTagsModal');
+                const editLocationTagText: HTMLInputElement = await findByTestId(myTagsModal, 'tagNameInput') as HTMLInputElement;
                 expect(editLocationTagText.value).toEqual('Ann Arbor');
             });
 
@@ -95,8 +98,8 @@ describe('PeopleMover My Tags', () => {
 
                 await app.findByText(updatedLocation);
 
-                const modalContainer = await app.findByTestId('modalContainer');
-                expect(queryByText(modalContainer, 'Ann Arbor')).not.toBeInTheDocument();
+                const myTagsModal = await app.findByTestId('myTagsModal');
+                expect(queryByText(myTagsModal, 'Ann Arbor')).not.toBeInTheDocument();
             });
 
             it('should display error message when location with existed name is edited', async () => {
@@ -142,8 +145,8 @@ describe('PeopleMover My Tags', () => {
 
                 await app.findByText(updatedProductTag);
 
-                const modalContainer = await app.findByTestId('modalContainer');
-                expect(queryByText(modalContainer, 'FordX')).not.toBeInTheDocument();
+                const myTagsModal = await app.findByTestId('myTagsModal');
+                expect(queryByText(myTagsModal, 'FordX')).not.toBeInTheDocument();
             });
 
             it('should display error message when you try to edit product tag to have some existed tag name', async () => {
@@ -202,16 +205,16 @@ describe('PeopleMover My Tags', () => {
                 const cancelButton = await app.findByText('Cancel');
                 fireEvent.click(cancelButton);
 
-                const modalContainer = await app.findByTestId('modalContainer');
-                await findByText(modalContainer, 'Ann Arbor');
+                const myTagsModal = await app.findByTestId('myTagsModal');
+                await findByText(myTagsModal, 'Ann Arbor');
             });
 
             it('should remove location tag when clicking delete button in confirmation modal', async () => {
                 const deleteButton = await app.findByText('Delete');
                 fireEvent.click(deleteButton);
 
-                const modalContainer = await app.findByTestId('modalContainer');
-                expect(queryByText(modalContainer, 'Ann Arbor')).not.toBeInTheDocument();
+                const myTagsModal = await app.findByTestId('myTagsModal');
+                expect(queryByText(myTagsModal, 'Ann Arbor')).not.toBeInTheDocument();
             });
         });
 
@@ -231,16 +234,16 @@ describe('PeopleMover My Tags', () => {
                 const deleteButton = await app.findByText('Delete');
                 fireEvent.click(deleteButton);
 
-                const modalContainer = await app.findByTestId('modalContainer');
-                expect(queryByText(modalContainer, 'AV')).not.toBeInTheDocument();
+                const myTagsModal = await app.findByTestId('myTagsModal');
+                expect(queryByText(myTagsModal, 'AV')).not.toBeInTheDocument();
             });
 
             it('should not remove product tag when clicking cancel button in confirmation modal', async () => {
                 const cancelButton = await app.findByText('Cancel');
                 fireEvent.click(cancelButton);
 
-                const modalContainer = await app.findByTestId('modalContainer');
-                await findByText(modalContainer, 'AV');
+                const myTagsModal = await app.findByTestId('myTagsModal');
+                await findByText(myTagsModal, 'AV');
             });
 
         });
@@ -291,6 +294,36 @@ describe('PeopleMover My Tags', () => {
             });
         });
 
+        describe('interaction between editing and creating location tag', () => {
+
+            it('should not show pen and trash can when add new tag is clicked', async () => {
+                expect(app.queryAllByTestId('locationEditIcon').length).toEqual(4);
+                expect(app.queryAllByTestId('locationDeleteIcon').length).toEqual(4);
+
+                const addNewLocationButton = await app.findByText('Add New Location');
+                fireEvent.click(addNewLocationButton);
+
+                expect(app.queryAllByTestId('locationEditIcon').length).toEqual(0);
+                expect(app.queryAllByTestId('locationDeleteIcon').length).toEqual(0);
+            });
+
+            it('should not show pen and trash icons when editing location tag', async () => {
+                expect(app.queryAllByTestId('locationEditIcon').length).toEqual(4);
+                expect(app.queryAllByTestId('locationDeleteIcon').length).toEqual(4);
+                fireEvent.click(app.queryAllByTestId('locationEditIcon')[0]);
+
+                expect(app.queryAllByTestId('locationEditIcon').length).toEqual(0);
+                expect(app.queryAllByTestId('locationDeleteIcon').length).toEqual(0);
+            });
+
+            it('should have create location button disabled when editing location tag', async () => {
+                fireEvent.click(app.queryAllByTestId('locationEditIcon')[0]);
+
+                const addNewLocationButton = await app.findByText('Add New Location');
+                expect(addNewLocationButton).toBeDisabled();
+            });
+        });
+
         describe('adding a product tag', () => {
             beforeEach(async () => {
                 const addNewProductTagButton = await app.findByText('Add New Product Tag');
@@ -327,6 +360,36 @@ describe('PeopleMover My Tags', () => {
                 fireEvent.click(saveButton);
 
                 await app.findByText('A product tag with this name already exists. Enter a different name.');
+            });
+        });
+
+        describe('interaction between editing and creating product tag', () => {
+
+            it('should not show pen and trash can when add new tag is clicked', async () => {
+                expect(app.queryAllByTestId('producttagEditIcon').length).toEqual(4);
+                expect(app.queryAllByTestId('producttagDeleteIcon').length).toEqual(4);
+
+                const addNewLocationButton = await app.findByText('Add New Product Tag');
+                fireEvent.click(addNewLocationButton);
+
+                expect(app.queryAllByTestId('producttagEditIcon').length).toEqual(0);
+                expect(app.queryAllByTestId('producttagDeleteIcon').length).toEqual(0);
+            });
+
+            it('should not show pen and trash icons when editing product tag', async () => {
+                expect(app.queryAllByTestId('producttagEditIcon').length).toEqual(4);
+                expect(app.queryAllByTestId('producttagDeleteIcon').length).toEqual(4);
+                fireEvent.click(app.queryAllByTestId('producttagEditIcon')[0]);
+
+                expect(app.queryAllByTestId('producttagEditIcon').length).toEqual(0);
+                expect(app.queryAllByTestId('producttagDeleteIcon').length).toEqual(0);
+            });
+
+            it('should have create producttag button disabled when editing product tag', async () => {
+                fireEvent.click(app.queryAllByTestId('producttagEditIcon')[0]);
+
+                const addNewLocationButton = await app.findByText('Add New Product Tag');
+                expect(addNewLocationButton).toBeDisabled();
             });
         });
     });

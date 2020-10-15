@@ -156,7 +156,13 @@
 
   .addNewTraitRow {
     cursor: pointer;
+    background: none;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
+
   .selectRoleCircles {
     margin: 10px 0;
     display: flex;
