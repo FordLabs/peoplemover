@@ -17,13 +17,12 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import PeopleMover from '../Application/PeopleMover';
 import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
-import MyTagsModal from "../Tags/MyTagsModal";
-import {PreloadedState} from "redux";
-import {GlobalStateProps} from "../Redux/Reducers";
+import MyTagsModal from '../Tags/MyTagsModal';
+import {PreloadedState} from 'redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('PeopleMover My Tags', () => {
     let app: RenderResult;

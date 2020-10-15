@@ -18,7 +18,7 @@
 import React from 'react';
 import './EditMenu.scss';
 import {useOnLoad} from './UseOnLoad';
-import {createDataTestId} from "../tests/TestUtils";
+import {createDataTestId} from '../tests/TestUtils';
 
 
 export interface EditMenuOption {

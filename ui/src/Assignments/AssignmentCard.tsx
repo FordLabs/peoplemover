@@ -32,7 +32,7 @@ import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
-import {createDataTestId} from "../tests/TestUtils";
+import {createDataTestId} from '../tests/TestUtils';
 
 interface AssignmentCardProps {
     viewingDate: Date;

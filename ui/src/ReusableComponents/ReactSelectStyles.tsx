@@ -173,7 +173,7 @@ export const sortByStyle = {
         margin: '3px 0px',
         cursor: 'pointer',
     }),
-}
+};
 
 export const filterByStyles = {
     ...reactSelectStyles,

@@ -14,6 +14,7 @@ Cypress.Commands.add('visitBoard', () => {
     cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');
     cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
     cy.route('GET', Cypress.env('API_LOCATION_PATH')).as('getLocations');
+    cy.route('GET', Cypress.env('API_PRODUCT_TAG_PATH')).as('getProductTags');
 
     cy.visit(`/${spaceUuid}`);
 
@@ -21,6 +22,7 @@ Cypress.Commands.add('visitBoard', () => {
         '@getProductsByDate',
         '@getRoles',
         '@getLocations',
+        '@getProductTags'
     ];
     cy.wait(waitForEndpointsToComplete)
         .then(() => {
