@@ -24,7 +24,59 @@
   margin: 0 94px;
 }
 
-.lineSeparator {
+.horizontalLine {
+  margin-top: 6px;
+  margin-bottom: 24px;
+  border: 1px solid $gray-4;
+  width: 222px;
+}
+
+.myTraitsCircle {
+  height: 24px;
+  width: 24px;
+  min-width:24px;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+.selectRoleCircle {
+  height: 20px;
+  width: 20px;
+  min-width: 20px;
+  margin-right: 5px;
+}
+
+.whiteCircleBorder {
+  border: 1px solid $gray-4;
+}
+
+.addNewTraitUnfilledCircle {
+  border: 1px solid $prime-1;
+  background: $prime-1;
+  display: flex;
+  align-items: center;
+}
+
+.addNewTraitCircleImg {
+  height: 24px;
+  width: 24px;
+  margin-right: 24px;
+}
+
+.duplicateErrorMessage {
+  color: $error-message;
+  font-size: 12px;
+  padding-top: 6px;
+  font-style: italic;
+}
+
+.separator {
+  margin: 16px 0;
+  border: 1px solid #BFBCBB;
+}
+
+.separatorBetweenTags {
   margin-top: 21px;
   margin-bottom: 32px;
   border: 1px solid $gray-5;
@@ -51,7 +103,7 @@
     margin-right: 14px;
     font-size: 14px;
     line-height: 24px;
-    max-width: 214px;
+    max-width: 190px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
