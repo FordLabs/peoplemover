@@ -37,8 +37,8 @@ function LandingPage(): JSX.Element {
             <div className="landingPageContainer">
                 <div className="landingPageInfoContainer">
                     <PeopleMoverLogo />
-                    <div className="landingPageInfoHeading">It’s about the people. Your people.</div>
-                    <div className="landingPageInfoSubHeading">And helping them be extraordinary.</div>
+                    <div className="landingPageInfoHeading">It’s about the PEOPLE. Your PEOPLE.</div>
+                    <div className="landingPageInfoSubHeading">And helping them be EXTRA EXTRA ORDINARY.</div>
                     <div className="landingPageInfoText">
                         Most allocation applications focus solely on projects and schedules, and seem 
                         to forget that a product is only as successful as its team. PeopleMover focuses on the people, 
