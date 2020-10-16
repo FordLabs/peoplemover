@@ -16,7 +16,7 @@
  */
 
 import {Color, SpaceRole} from '../Roles/Role';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import ColorClient from '../Roles/ColorClient';
 import {AxiosResponse} from 'axios';
 import {Trait} from './Trait';
@@ -185,7 +185,7 @@ function EditTraitSection({
             <div className={`editTagRow ${traitNameClass}`} data-testid={createDataTestId('editTagRow', traitName)}>
                 {colorSection && (
                     <Select
-                        ariaLabel="Color Selector"
+                        ariaLabel="Color"
                         selectedOption={selectedColorOption()}
                         options={colorOptions()}
                         onChange={handleColorChange}

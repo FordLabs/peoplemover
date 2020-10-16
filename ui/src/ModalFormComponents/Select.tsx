@@ -18,7 +18,6 @@
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
 
 import './Select.scss';
-import index from '../Redux/Reducers';
 
 const DEFAULT_CURRENT_INDEX = 0;
 
@@ -38,7 +37,8 @@ interface Props {
 const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.Element => {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [currentOption, setCurrentOption] = useState<OptionType>(selectedOption);
-    const panelElement = useRef<HTMLUListElement>(null);
+    const dropdownToggleElement = useRef<HTMLButtonElement>(null);
+    const dropdownElement = useRef<HTMLUListElement>(null);
     const [currentIndex, setCurrentIndex] = useState<number>(
         DEFAULT_CURRENT_INDEX
     );
@@ -46,27 +46,27 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
 
     useEffect(() => {
         setCurrentOption(selectedOption);
-        setCurrentIndex(getOptionIndex);
+        const currentOptionIndex = options.map(option => JSON.stringify(option.value))
+            .indexOf(JSON.stringify(currentOption.value));
+        setCurrentIndex(currentOptionIndex);
     }, [selectedOption]);
 
     useEffect(() => {
-        if (dropdownToggle && !!panelElement.current) {
-            panelElement.current.focus();
-        }
-    }, [dropdownToggle]);
+        const focusOnDropdown = (): void => {
+            if (dropdownToggle && !!dropdownElement.current) {
+                dropdownElement.current.focus();
+            }
+        };
+
+        focusOnDropdown();
+    }, [dropdownToggle, currentIndex]);
 
     const showDropdown = (): void => {
-        if (dropdownToggle) {
-            hideDropdown();
-        } else {
-            setDropdownToggle(!dropdownToggle);
-            document.addEventListener('click', hideDropdown, false);
-        }
+        setDropdownToggle(true);
     };
 
     const hideDropdown = (): void => {
         setDropdownToggle(false);
-        document.removeEventListener('click', hideDropdown);
     };
 
     const setSelectedItem = (index: number) => {
@@ -75,76 +75,66 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
         }
     };
 
-    const getOptionIndex = (): number => {
-        return options.map(option => JSON.stringify(option.value)).indexOf(JSON.stringify(currentOption.value));
+    const updateSelectedOption = (option: OptionType, currentIndex: number): void => {
+        setCurrentOption(option);
+        setCurrentIndex(currentIndex);
+        onChange(option);
     };
 
-    const handleKeyDownList = (
-        event: React.KeyboardEvent<HTMLUListElement>
-    ) => {
+    const handleKeyDownList = (event: React.KeyboardEvent<HTMLUListElement>): void => {
         event.preventDefault();
         event.stopPropagation();
 
         switch (event.keyCode) {
             case upKey:
-                if (currentIndex !== undefined && currentIndex > 0) {
-                    console.log('keyup');
+                if (currentIndex !== undefined && currentIndex > 0)
                     setSelectedItem(currentIndex - 1);
-                }
                 break;
             case downKey:
-                if (
-                    currentIndex !== undefined &&
-                    currentIndex < options.length - 1
-                ) {
-                    console.log('keydown');
+                if (currentIndex !== undefined && currentIndex < options.length - 1)
                     setSelectedItem(currentIndex + 1);
-                }
                 break;
             case enterKey:
                 hideDropdown();
+                if (dropdownToggleElement.current) {
+                    dropdownToggleElement.current.focus();
+                }
+                updateSelectedOption(options[currentIndex], currentIndex);
                 break;
         }
     };
 
-    const isSelectedItem = (index: number): boolean => {
-        return currentIndex === index;
+    const handleKeyDownButton = (event: React.KeyboardEvent<HTMLButtonElement>): void => {
+        if (!dropdownToggle && (event.keyCode === upKey || event.keyCode === downKey)) {
+            event.preventDefault();
+            event.stopPropagation();
+            showDropdown();
+        }
     };
 
     const Dropdown = (): JSX.Element => {
         const Option = 'li';
-
-        useEffect(() => {
-            if (panelElement && panelElement.current) {
-                console.log(panelElement.current.children);
-            }
-        }, [panelElement]);
-
         return (
             <ul
+                onBlur={hideDropdown}
+                role="listbox"
+                aria-label={`${ariaLabel} Options`}
                 onKeyDown={handleKeyDownList}
                 className="selectDropdownOptions"
-                role="listbox"
                 tabIndex={0}
-                ref={panelElement}
+                ref={dropdownElement}
             >
                 {options && options.map((option, index) => {
-                    const onClick = (): void => {
-                        setCurrentOption(option);
-                        onChange(option);
-                    };
-                    console.log(currentIndex, index);
-                    const isFocused = currentIndex === index;
-
+                    const isSelectedItem = currentIndex === index;
                     return (
                         <Option
                             data-testid={`selectOption__${index}`}
-                            aria-selected={isSelectedItem(index)}
+                            aria-selected={isSelectedItem}
                             aria-label={option.ariaLabel}
                             role="option"
-                            className={`selectOption ${isFocused ? 'focused' : '' }`}
+                            className={`selectOption ${isSelectedItem ? 'focused' : '' }`}
                             key={`select-option-${index}`}
-                            onClick={onClick}>
+                            onClick={(): void => updateSelectedOption(option, index)}>
                             {option.displayValue}
                         </Option>
                     );
@@ -156,10 +146,12 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
     return (
         <div className="selectDropdown">
             <button
+                ref={dropdownToggleElement}
                 className="selectDropdownToggle"
-                aria-label={ariaLabel}
+                aria-label={`${ariaLabel} Selector: ${currentOption.ariaLabel} is selected`}
                 aria-haspopup="listbox"
                 onClick={showDropdown}
+                onKeyDown={handleKeyDownButton}
                 data-testid="selectDropdownToggle">
                 <i className={`selectDropdownArrow fas ${ dropdownToggle ? 'fa-caret-up' : 'fa-caret-down' }`} />
                 {currentOption.displayValue}
