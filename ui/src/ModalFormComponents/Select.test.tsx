@@ -19,6 +19,7 @@ import Select from './Select';
 import {render, RenderResult, fireEvent} from '@testing-library/react';
 
 describe('Select', () => {
+    const [upKey, downKey, enterKey] = [38, 40, 13];
 
     let component: RenderResult;
     let onChange: jest.Mock;
@@ -50,20 +51,96 @@ describe('Select', () => {
                 onChange={onChange}/>
         );
     });
-    
-    it('should display a newly selected option', () => {
-        fireEvent.click(component.getByText('Zero'));
-        fireEvent.click(component.getByText('Two'));
 
-        expect(component.queryByText('Zero')).toBeNull();
-        expect(component.queryByText('One')).toBeNull();
-        expect(component.queryByText('Two')).not.toBeNull();
+    describe('onClick', () => {
+        beforeEach(() => {
+            const selectDropdownButton = component.getByText('Zero');
+            fireEvent.click(selectDropdownButton);
+            const selectDropdownOption = component.getByText('Two');
+            fireEvent.click(selectDropdownOption);
+        });
+
+        it('should display a newly selected option on click', () => {
+            expect(component.queryByText('Zero')).toBeNull();
+            expect(component.queryByText('One')).toBeNull();
+            const expectedDropdownButton = component.queryByText('Two');
+            expect(expectedDropdownButton).not.toBeNull();
+        });
+
+        it('should notify watcher of value change on click', () => {
+            expect(onChange).toHaveBeenCalledWith(options[2]);
+        });
     });
 
-    it('should notify watcher of value change', () => {
-        fireEvent.click(component.getByText('Zero'));
-        fireEvent.click(component.getByText('Two'));
 
-        expect(onChange).toHaveBeenCalledWith(options[2]);
+    describe('onKeyDown', () => {
+        beforeEach(() => {
+            const selectDropdownButton = component.getByText('Zero');
+            fireEvent.keyDown(selectDropdownButton, {keyCode: enterKey});
+
+            const selectedOptionZero = component.getByTestId('selectOption__0');
+            expect(selectedOptionZero.className).toContain('focused');
+            fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
+
+            fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
+
+            const selectedOptionTwo = component.getByTestId('selectOption__2');
+            expect(selectedOptionTwo.className).toContain('focused');
+
+            fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: upKey});
+
+            const selectedOptionOne = component.getByTestId('selectOption__1');
+            expect(selectedOptionOne.className).toContain('focused');
+
+            fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: enterKey});
+        });
+
+        it('should display a newly selected option on keydown', () => {
+            expect(component.queryByText('Zero')).toBeNull();
+            const expectedDropdownButton = component.queryByText('One');
+            expect(expectedDropdownButton).not.toBeNull();
+            expect(component.queryByText('Two')).toBeNull();
+        });
+
+        it('should notify watcher of value change on keydown', () => {
+            expect(onChange).toHaveBeenCalledWith(options[1]);
+        });
+    });
+
+    describe('Aria Labels', () => {
+        it('should have aria labels on the dropdown toggle button', () => {
+            component.getByLabelText('selectAriaLabel Selector: ariaLabel0 is selected');
+        });
+
+        it('should have aria labels on the dropdown options list', () => {
+            const selectDropdownButton = component.getByText('Zero');
+            fireEvent.click(selectDropdownButton);
+
+            component.getByLabelText('selectAriaLabel Options');
+        });
+
+        it('should have aria labels on the dropdown options', () => {
+            const selectDropdownButton = component.getByText('Zero');
+            fireEvent.click(selectDropdownButton);
+
+            component.getByLabelText('ariaLabel0');
+            component.getByLabelText('ariaLabel1');
+            component.getByLabelText('ariaLabel2');
+        });
+
+        it('should have aria-selected to be true on the active option', () => {
+            const selectDropdownButton = component.getByText('Zero');
+            fireEvent.click(selectDropdownButton);
+
+            const options = component.getAllByRole('option');
+
+            options.forEach((option) => {
+                if (option.innerHTML.includes('Zero')) {
+                    expect(option.getAttribute('aria-selected')).toBe('true');
+                } else {
+                    expect(option.getAttribute('aria-selected')).toBe('false');
+                }
+            });
+        });
     });
 });

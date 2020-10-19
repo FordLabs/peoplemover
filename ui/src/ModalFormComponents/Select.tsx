@@ -77,7 +77,7 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
         setDropdownToggle(false);
     };
 
-    const setSelectedItem = (index: number) => {
+    const setSelectedItem = (index: number): void => {
         if (currentIndex !== index) {
             setCurrentIndex(index);
         }
@@ -125,6 +125,7 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
         return (
             <ul
                 role="listbox"
+                data-testid="selectDropdownOptions"
                 onBlur={hideDropdown}
                 aria-label={`${ariaLabel} Options`}
                 onKeyDown={handleKeyDownList}
