@@ -79,6 +79,7 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
         setCurrentOption(option);
         setCurrentIndex(currentIndex);
         onChange(option);
+        hideDropdown();
     };
 
     const handleKeyDownList = (event: React.KeyboardEvent<HTMLUListElement>): void => {

@@ -26,14 +26,17 @@ describe('Select', () => {
         {
             value: 0,
             displayValue: <span>Zero</span>,
+            ariaLabel: 'ariaLabel0',
         },
         {
             value: 1,
             displayValue: <span>One</span>,
+            ariaLabel: 'ariaLabel1',
         },
         {
             value: 2,
             displayValue: <span>Two</span>,
+            ariaLabel: 'ariaLabel2',
         },
     ];
     
@@ -41,6 +44,7 @@ describe('Select', () => {
         onChange = jest.fn();
         component = render(
             <Select
+                ariaLabel="selectAriaLabel"
                 selectedOption={options[0]}
                 options={options}
                 onChange={onChange}/>
