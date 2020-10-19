@@ -41,7 +41,7 @@ export const reactSelectStyles = {
     placeholder: (provided: CSSProperties): CSSProperties => ({
         ...provided,
         fontSize: '12px',
-        color: '#BFBCBB',
+        color: '#999694',
         fontFamily: 'Helvetica, sans-serif',
         lineHeight: '14px',
     }),
