@@ -65,6 +65,14 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
         setDropdownToggle(true);
     };
 
+    const toggleDropdown = (): void => {
+        if (!dropdownToggle) {
+            showDropdown();
+        } else {
+            hideDropdown();
+        }
+    };
+
     const hideDropdown = (): void => {
         setDropdownToggle(false);
     };
@@ -96,7 +104,6 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
                     setSelectedItem(currentIndex + 1);
                 break;
             case enterKey:
-                hideDropdown();
                 if (dropdownToggleElement.current) {
                     dropdownToggleElement.current.focus();
                 }
@@ -106,7 +113,7 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
     };
 
     const handleKeyDownButton = (event: React.KeyboardEvent<HTMLButtonElement>): void => {
-        if (!dropdownToggle && (event.keyCode === upKey || event.keyCode === downKey)) {
+        if (!dropdownToggle && (event.keyCode === upKey || event.keyCode === downKey || event.keyCode === enterKey)) {
             event.preventDefault();
             event.stopPropagation();
             showDropdown();
@@ -117,8 +124,8 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
         const Option = 'li';
         return (
             <ul
-                onBlur={hideDropdown}
                 role="listbox"
+                onBlur={hideDropdown}
                 aria-label={`${ariaLabel} Options`}
                 onKeyDown={handleKeyDownList}
                 className="selectDropdownOptions"
@@ -151,7 +158,7 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
                 className="selectDropdownToggle"
                 aria-label={`${ariaLabel} Selector: ${currentOption.ariaLabel} is selected`}
                 aria-haspopup="listbox"
-                onClick={showDropdown}
+                onClick={toggleDropdown}
                 onKeyDown={handleKeyDownButton}
                 data-testid="selectDropdownToggle">
                 <i className={`selectDropdownArrow fas ${ dropdownToggle ? 'fa-caret-up' : 'fa-caret-down' }`} />
