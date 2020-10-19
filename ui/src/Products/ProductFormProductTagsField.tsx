@@ -114,7 +114,7 @@ function ProductFormProductTagsField({
                 value={selectedProductTags.map(productTag => createTagOption(productTag.name, productTag.id))}
                 components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
                 formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInProductTag}"`)}
-                placeholder="Select or create product tags"
+                placeholder="Add product tags"
                 hideSelectedOptions={true}
                 isClearable={false}
             />
