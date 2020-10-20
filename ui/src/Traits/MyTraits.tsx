@@ -30,16 +30,21 @@ import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 import PlusIcon from './plusIcon.png';
+import {createDataTestId} from '../tests/TestUtils';
 
 import '../Traits/MyTraits.scss';
 
+export type TraitNameType = 'role' | 'product tag' | 'location'
+export type TitleType = 'Location Tags' | 'Product Tags';
+export type TraitType = 'product' | 'person'
+
 interface MyTraitsProps {
     currentSpace: Space;
-    title?: string;
+    title?: TitleType;
     traitClient: TraitClient;
-    traitType: string;
+    traitType: TraitType;
     colorSection: boolean;
-    traitName: string;
+    traitName: TraitNameType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
@@ -61,14 +66,16 @@ function MyTraits({
     setAllGroupedTagFilterOptions,
 }: MyTraitsProps): JSX.Element {
     const [traits, setTraits] = useState<Array<Trait>>([]);
-    const [addSectionOpen, setAddSectionOpen] = useState<boolean>(false);
+    const [showEditState, setShowEditState] = useState<boolean>(false);
     const [editSectionsOpen, setEditSectionsOpen] = useState<Array<boolean>>([]);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
+    const traitNameClass = traitName.replace(' ', '_');
 
     useEffect(() => {
         async function setup(): Promise<void> {
             const response = await traitClient.get(currentSpace.uuid!!);
             const traitResponse: Array<Trait> = response.data;
+            sortTraitsAlphabetically(traitResponse);
             setTraits(traitResponse);
             setEditSectionsOpen(new Array(traitResponse.length).fill(false));
         }
@@ -76,12 +83,8 @@ function MyTraits({
         setup().then();
     }, [currentSpace.uuid, traitClient]);
 
-    useEffect(() => {
-        sortTraitsAlphabetically(traits);
-    }, [traits]);
-
-    function sortTraitsAlphabetically(traits: Array<Trait>): void {
-        traits.sort( (trait1: Trait, trait2: Trait) => {
+    function sortTraitsAlphabetically(traitsList: Array<Trait>): void {
+        traitsList.sort( (trait1: Trait, trait2: Trait) => {
             return trait1.name.toLowerCase().localeCompare(trait2.name.toLowerCase());
         });
     }
@@ -91,10 +94,14 @@ function MyTraits({
             const updating: boolean = prevTraits.some(prevTrait => prevTrait.id === trait.id);
             if (updating) {
                 updateGroupedTagFilterOptions(traitName, trait, TraitAction.EDIT);
-                return prevTraits.map(prevTrait => prevTrait.id !== trait.id ? prevTrait : trait);
+                const traits = prevTraits.map(prevTrait => prevTrait.id !== trait.id ? prevTrait : trait);
+                sortTraitsAlphabetically(traits);
+                return traits;
             } else {
                 updateGroupedTagFilterOptions(traitName, trait, TraitAction.ADD);
-                return [...prevTraits, trait];
+                const traits = [...prevTraits, trait];
+                sortTraitsAlphabetically(traits);
+                return traits;
             }
         });
     }
@@ -198,10 +205,8 @@ function MyTraits({
         }
     }
 
-    function handleKeyDownForSetAddSectionOpen(event: React.KeyboardEvent, isAddSectionOpen: boolean): void {
-        if (event.key === 'Enter') {
-            setAddSectionOpen(isAddSectionOpen);
-        }
+    function isEditBoxOpen(): boolean {
+        return editSectionsOpen.includes(true);
     }
 
     function ViewTraitRow({ trait, index }: { trait: Trait; index: number }): JSX.Element {
@@ -213,78 +218,96 @@ function MyTraits({
         const testIdTraitName = traitName.replace(' ', '');
         const userIsNotEditingATag = !editSectionsOpen.find(value => value);
         return (
-            <div className="traitRow" data-testid="traitRow">
+            <div className={`viewTagRow ${traitNameClass}`} data-testid="traitRow">
                 {colorSection &&
-                    <span data-testid="myRolesCircle"
-                        style={{'backgroundColor': colorToUse}}
-                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
-                    />
+                    <div className="viewTagRowColorCircle">
+                        <span data-testid="myRolesCircle"
+                            style={{'backgroundColor': colorToUse}}
+                            className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+                        />
+                    </div>
                 }
                 <span className="traitName" data-testid={`given${testIdTraitName}Name`}>
                     {trait.name}
                 </span>
-                {userIsNotEditingATag && (
-                    <div className="traitIcons">
-                        <i className="fas fa-pen fa-s traitEditIcon"
+                {userIsNotEditingATag && !showEditState && (
+                    <div>
+                        <button
+                            className="traitEditIcon"
                             data-testid={`${testIdTraitName}EditIcon`}
                             onClick={(): void => toggleEditSection(index)}
-                            onKeyDown={(e): void => handleKeyDownForToggleEditSection(e, index)}/>
-                        <i className="fas fa-trash fa-s traitDeleteIcon"
+                            onKeyDown={(e): void => handleKeyDownForToggleEditSection(e, index)}>
+                            <i className="fas fa-pen fa-s"/>
+                        </button>
+                        <button className="traitDeleteIcon"
                             data-testid={`${testIdTraitName}DeleteIcon`}
                             onClick={(): void => showDeleteConfirmationModal(trait)}
-                            onKeyDown={(e): void => handleKeyDownForShowDeleteConfirmationModal(e, trait)}/>
+                            onKeyDown={(e): void => handleKeyDownForShowDeleteConfirmationModal(e, trait)}
+                        >
+                            <i className="fas fa-trash fa-s" />
+                        </button>
                     </div>
                 )}
             </div>
         );
     }
 
+    const AddNewTagRow = (): JSX.Element => {
+        const handleAddNewTagClick = (event: React.KeyboardEvent, isAddSectionOpen: boolean): void => {
+            if (event.key === 'Enter') {
+                setShowEditState(isAddSectionOpen);
+            }
+        };
+
+        return !showEditState ? (
+            <button className="addNewTagRow"
+                disabled={isEditBoxOpen()}
+                data-testid={createDataTestId('addNewButton', traitName)}
+                onClick={(): void => setShowEditState(true)}
+                onKeyDown={(e): void => handleAddNewTagClick(e, true)}>
+                <div className="addNewTagCircle" data-testid="addNewTraitCircle">
+                    <img src={PlusIcon} alt="Add Trait Icon"/>
+                </div>
+                <span className="traitName addNewTraitText">
+                    Add New {toTitleCase(traitName)}
+                </span>
+            </button>
+        ) : (
+            <EditTraitSection
+                closeCallback={(): void => setShowEditState(false)}
+                updateCallback={updateTraits}
+                traitClient={traitClient}
+                traitName={traitName}
+                colorSection={colorSection}
+                currentSpace={currentSpace}/>
+        );
+    };
+
     return (
-        <div data-testid="myTraitsModalContainer"
+        <div data-testid={createDataTestId('tagsModalContainer', traitName)}
             className="myTraitsModalContainer">
             {!colorSection && <div className="title"> {title}</div>}
             {traits.map((trait: Trait, index: number) => {
                 return (
                     <React.Fragment key={index}>
                         {!editSectionsOpen[index] &&
-                            <ViewTraitRow trait={trait} index={index}/>
+                        <ViewTraitRow trait={trait} index={index}/>
                         }
                         {editSectionsOpen[index] &&
-                            <EditTraitSection
-                                closeCallback={(): void => toggleEditSection(index)}
-                                updateCallback={updateTraits}
-                                trait={trait}
-                                colorSection={colorSection}
-                                traitClient={traitClient}
-                                traitName={traitName}
-                                currentSpace={currentSpace}
-                            />
+                        <EditTraitSection
+                            closeCallback={(): void => toggleEditSection(index)}
+                            updateCallback={updateTraits}
+                            trait={trait}
+                            colorSection={colorSection}
+                            traitClient={traitClient}
+                            traitName={traitName}
+                            currentSpace={currentSpace}
+                        />
                         }
                     </React.Fragment>
                 );
             })}
-
-            {addSectionOpen && <EditTraitSection
-                closeCallback={(): void => setAddSectionOpen(false)}
-                updateCallback={updateTraits}
-                traitClient={traitClient}
-                traitName={traitName}
-                colorSection={colorSection}
-                currentSpace={currentSpace}/>
-            }
-
-            {!addSectionOpen && <div className="traitRow addNewTraitRow"
-                onClick={(): void => setAddSectionOpen(true)}
-                onKeyDown={(e): void => handleKeyDownForSetAddSectionOpen(e, true)}>
-                <span data-testid="addNewTraitCircle">
-                    <img className="addNewTraitCircleImg" src={PlusIcon} alt="Add Trait Icon"/>
-                </span>
-                <span className="traitName addNewTraitText"
-                    data-testid={`addNew${toTitleCase(traitName).replace(' ', '')}`}>
-                    Add New {toTitleCase(traitName)}
-                </span>
-            </div>
-            }
+            <AddNewTagRow />
             {confirmDeleteModal}
         </div>
     );

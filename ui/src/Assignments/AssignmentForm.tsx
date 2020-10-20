@@ -219,7 +219,7 @@ function AssignmentForm({
                         value={selectedPerson.name ? createOption(selectedPerson.name, selectedPerson.id) : null}
                         components={{Option: CustomOption, DropdownIndicator: CustomIndicator}}
                         formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInName}"`)}
-                        placeholder="Select or create a person"
+                        placeholder="Add a person"
                         hideSelectedOptions={true}
                         {...{getColorFromLabel}}
                     />

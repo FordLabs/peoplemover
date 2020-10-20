@@ -112,7 +112,7 @@ function ProductFormLocationField({
                 styles={customStyles}
                 components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
                 formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInLocation}"`)}
-                placeholder="Select or create location"
+                placeholder="Add a location tag"
                 hideSelectedOptions={true}
                 isClearable={true}
                 value={locationOptionValue()}

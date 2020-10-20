@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -24,126 +24,148 @@
   margin: 0 94px;
 }
 
-.horizontalLine {
-  margin-top: 6px;
-  margin-bottom: 24px;
-  border: 1px solid $gray-4;
-  width: 222px;
-}
-
-.myTraitsCircle {
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  margin-right: 24px;
-}
-
-.selectRoleCircle {
-  height: 20px;
-  width: 20px;
-  margin-right: 5px;
+.lineSeparator {
+  margin: 21px 32px 32px;
+  border: 1px solid $gray-5;
+  min-width: 225px;
 }
 
 .whiteCircleBorder {
   border: 1px solid $gray-4;
 }
 
-.addNewTraitUnfilledCircle {
-  border: 1px solid $prime-1;
-  background: $prime-1;
-  display: flex;
-  align-items: center;
-}
-
-.addNewTraitCircleImg {
-  height: 24px;
-  width: 24px;
-  margin-right: 24px;
-}
-
-.duplicateErrorMessage {
-  color: $error-message;
-  font-size: 12px;
-  padding-top: 6px;
-  font-style: italic;
-}
-
-.separator {
-  margin: 16px 0;
-  border: 1px solid #BFBCBB;
-}
-
-.separatorBetweenTags {
-  margin-top: 21px;
-  margin-bottom: 32px;
-  border: 1px solid #BFBCBB;
-  min-width: 225px;
-}
-
 .myTraitsModalContainer {
+  display: grid;
+  grid-template-rows: auto;
+  align-items: center;
   text-align: left;
   color: $gray-1;
   margin: -8px auto auto;
   min-width: 280px;
+  width: 100%;
 
   .traitName {
-    flex-grow: 1;
+    padding-left: 8px;
     margin-right: 14px;
     font-size: 14px;
     line-height: 24px;
-    max-width: 214px;
+    max-width: 190px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
   }
 
-  .traitRow {
-    display: flex;
-    flex-direction: row;
+  .editTagRow,
+  .viewTagRow {
+    display: grid;
+    grid-gap: 0.5rem;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 52px;
     align-items: center;
-    padding: 12px 0;
-    position: relative;
+
+    &.role {
+      align-content: space-between;
+      grid-template-columns: auto 1fr auto;
+    }
+
+    &.location,
+    &.product_tag {
+      margin: 0 2rem;
+    }
+  }
+
+  .addNewTagRow {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: 52px;
+    align-items: center;
+    padding: 0;
 
     .addNewTraitText {
       color: $prime-1;
       font-weight: bold;
+      text-align: left;
+      padding-left: 16px;
     }
 
+    .addNewTagCircle {
+      width: 62px;
+      text-align: right;
+      padding-right: 10px;
+      box-sizing: border-box;
+
+      img {
+        height: 24px;
+        width: 24px;
+      }
+    }
+  }
+
+  .editTagRow {
+    .editTagInput {
+      width: 100%;
+      height: 36px;
+      background: $white;
+      border: 1px solid $gray-4;
+      box-sizing: border-box;
+      border-radius: 4px;
+      font-size: 14px;
+      line-height: 24px;
+
+      .role {
+        width: 170px;
+      }
+    }
+  }
+
+  .viewTagRow {
     .addTraitIcon {
       margin: auto;
       font-size: 12px;
       color: white;
       padding-left: 1px;
     }
+
+    .viewTagRowColorCircle {
+      width: 62px;
+      text-align: right;
+      padding-right: 10px;
+      box-sizing: border-box;
+
+      .myTraitsCircle {
+        height: 24px;
+        width: 24px;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+      }
+    }
   }
 
-  .traitEditIcons,
-  .traitIcons {
-    color: $gray-4;
+  .traitEditIcon,
+  .traitDeleteIcon {
+    background: transparent;
     right: 0;
+    padding: 0;
+    margin: 0;
+    color: $gray-4;
 
     :hover {
       color: $prime-1;
       cursor: pointer;
     }
+  }
 
-    .traitEditIcon {
-      margin-right: 10px;
-    }
+  .traitEditIcon {
+    margin-right: 10px;
+  }
 
-    .traitDeleteIcon {
-      margin-left: 10px;
-    }
+  .traitDeleteIcon {
+    margin-left: 10px;
   }
 
   .traitEditIcons {
-    height: 24px;
-  }
-
-  .traitIcons {
-    height: 16px;
+    display: flex;
   }
 
   .highlightedCircle {
@@ -152,9 +174,15 @@
             0 0 0 3px $gray-3;
   }
 
-  .addNewTraitRow {
+  .addNewTagRow {
     cursor: pointer;
+    background: none;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
+
   .selectRoleCircles {
     margin: 10px 0;
     display: flex;
@@ -169,6 +197,7 @@
 }
 
 .traitWarning {
+  width: 285px;
   margin-top: 12px;
   padding: 12px 20px 12px 6px;
   background: $sec-6;
@@ -177,7 +206,10 @@
   border-radius: 4px;
 
   .warningIcon {
-    padding: 6px 12px 8px 10px;
+    height: 15px;
+    width: 15px;
+    font-size: 15px;
+    margin: 6px 12px 8px 10px;
   }
 
   .warningText {
@@ -186,6 +218,7 @@
     font-size: 12px;
     text-align: left;
     margin: 0;
+    line-height: 16px;
   }
 }
 
@@ -194,22 +227,12 @@
   font-size: 16px;
   color: $gray-1;
   text-align: left;
-  margin-bottom: 18px;
+  margin: 0 2rem 18px;
 }
 
 .editTraitName {
   font-size: 14px;
   margin-bottom: 6px;
-}
-
-.editTagInput {
-  flex-grow: 1;
-  margin-right: 16px;
-  height: 36px;
-  background: $white;
-  border: 1px solid $gray-4;
-  box-sizing: border-box;
-  border-radius: 4px;
 }
 
 .saveEditTagButton,
@@ -226,5 +249,16 @@
 }
 
 .saveEditTagButton {
+  margin-left: 6px;
+}
+
+.closeEditTagButton {
   margin-left: 8px;
+}
+
+.duplicateErrorMessage {
+  color: $error-message;
+  font-size: 12px;
+  padding-top: 6px;
+  font-style: italic;
 }

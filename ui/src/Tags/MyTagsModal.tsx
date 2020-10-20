@@ -16,40 +16,37 @@
  */
 
 import React from 'react';
-import '../Traits/MyTraits.scss';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import MyTraits from '../Traits/MyTraits';
 import warningIcon from '../Application/Assets/warningIcon.svg';
 
-function MyTagsModal(): JSX.Element {
+import '../Traits/MyTraits.scss';
 
+function MyTagsModal(): JSX.Element {
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
-
             <MyTraits
-                title={'Location Tags'}
+                title="Location Tags"
                 traitClient={LocationClient}
                 colorSection={false}
                 traitType="product"
                 traitName="location"
             />
-
-            <div className="separatorBetweenTags"/>
-
+            <div className="lineSeparator"/>
             <MyTraits
-                title={'Product Tags'}
+                title="Product Tags"
                 traitClient={ProductTagClient}
                 colorSection={false}
                 traitType="product"
                 traitName="product tag"
             />
-
             <div className="traitWarning">
                 <img src={warningIcon} className="warningIcon" alt="warning icon"/>
-                <p className="warningText">Editing or deleting a tag will affect any product currently tagged with it.</p>
+                <p className="warningText">
+                    Editing or deleting a tag will affect any product currently tagged with it.
+                </p>
             </div>
-
         </div>
     );
 }
