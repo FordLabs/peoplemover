@@ -1,17 +1,14 @@
 import {getUserNameFromAccessToken} from "./TokenProvider";
 import Cookies from "universal-cookie";
+import {MatomoWindow} from "../CommonTypes/MatomoWindow";
 
-interface WindowWithPaq extends Window {
-    _paq?: Array<any>;
-};
+declare let window: MatomoWindow;
 
 describe('TokenProvider', function () {
     let originalWindow: Window;
 
     beforeEach(() => {
         originalWindow = window;
-        (window as WindowWithPaq) = Object.create(window);
-        (window as WindowWithPaq)._paq  = [];
     });
 
     afterEach(() => {
@@ -25,7 +22,11 @@ describe('TokenProvider', function () {
 
         it('should set the username for matomo on _paq', function () {
             getUserNameFromAccessToken();
-            expect((window as WindowWithPaq)._paq).toContain(['setUserId', 'USER_ID']);
+            expect(window._paq).toContainEqual(['setUserId', 'USER_ID']);
+        });
+        it('should set track page views on _paq', function () {
+            getUserNameFromAccessToken();
+            expect(window._paq).toContainEqual(['trackPageView']);
         });
     });
 
