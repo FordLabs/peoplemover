@@ -214,7 +214,7 @@ describe('people actions', () => {
         });
 
         it('display placeholder text when you clear role field ', async () => {
-            const placeholderText = 'Select or create a role';
+            const placeholderText = 'Add a role';
             await app.findByText(placeholderText);
 
             const roleLabel = await app.findByLabelText('Role');
