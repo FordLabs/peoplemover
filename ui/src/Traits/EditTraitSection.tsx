@@ -180,12 +180,10 @@ function EditTraitSection({
         setSelectedColor(color);
     };
 
-    const showColorDropdown = (): boolean => !!(colors.length && selectedColor && colorSection);
-
     return (
         <>
             <div className={`editTagRow ${traitNameClass}`} data-testid={createDataTestId('editTagRow', traitName)}>
-                {showColorDropdown() && (
+                {colorSection && (
                     <Select
                         ariaLabel="Color"
                         selectedOption={selectedColorOption()}
