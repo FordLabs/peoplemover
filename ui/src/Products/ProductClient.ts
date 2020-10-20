@@ -19,6 +19,10 @@ import Axios, {AxiosResponse} from 'axios';
 import {Product} from './Product';
 import moment from 'moment';
 import {getToken} from '../Auth/TokenProvider';
+import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+import MatomoEvents from "../Matomo/MatomoEvents";
+
+declare let window: MatomoWindow;
 
 class ProductClient {
     private static getBaseProductsUrl(spaceUuid: string): string {
@@ -34,7 +38,13 @@ class ProductClient {
             },
         };
 
-        return Axios.post(url, product, config);
+        return Axios.post(url, product, config).then(result => {
+            MatomoEvents.pushEvent('Product', 'create', product.name)
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent('Product', 'createError', product.name, err.code);
+            return err;
+        });
     }
 
     static async editProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
