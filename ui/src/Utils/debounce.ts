@@ -11,4 +11,4 @@ const debounce = (fn: Function, delay: number): Function => {
     };
 };
 
-export default debounce
+export default debounce;
