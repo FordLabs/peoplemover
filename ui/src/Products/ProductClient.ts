@@ -43,7 +43,7 @@ class ProductClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent('Product', 'createError', product.name, err.code);
-            return err;
+            return Promise.reject(err);
         });
     }
 

@@ -21,6 +21,7 @@ import moment from 'moment';
 import {Assignment} from './Assignment';
 import {Person} from '../People/Person';
 import {getToken} from '../Auth/TokenProvider';
+import MatomoEvents from "../Matomo/MatomoEvents";
 
 class AssignmentClient {
 
@@ -31,7 +32,13 @@ class AssignmentClient {
             'Authorization': `Bearer ${getToken()}`,
         };
 
-        return Axios.post(url, assignment, {headers});
+        return Axios.post(url, assignment, {headers}).then(result => {
+            MatomoEvents.pushEvent('person', 'assign', assignment.person.name);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent('personError', 'assign', assignment.person.name, err.code);
+            return Promise.reject(err);
+        });
     }
 
     static async getAssignmentsUsingPersonIdAndDate(personId: number, date: Date): Promise<AxiosResponse> {
