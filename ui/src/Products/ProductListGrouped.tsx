@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import ProductCard from './ProductCard';
 import {Product} from './Product';
 import NewProductButton from './NewProductButton';
