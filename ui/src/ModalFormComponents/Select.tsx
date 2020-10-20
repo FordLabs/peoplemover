@@ -16,6 +16,7 @@
  */
 
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
+import {debounce} from '../Utils';
 
 import './Select.scss';
 
@@ -64,7 +65,9 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
     }, [dropdownToggle, currentIndex]);
 
     const showDropdown = (): void => {
-        setDropdownToggle(true);
+        debounce(() => {
+            setDropdownToggle(true);
+        }, 100)();
     };
 
     const toggleDropdown = (): void => {
@@ -76,7 +79,9 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
     };
 
     const hideDropdown = (): void => {
-        setDropdownToggle(false);
+        debounce(() => {
+            setDropdownToggle(false);
+        }, 100)();
     };
 
     const setSelectedItem = (index: number): void => {

@@ -18,7 +18,10 @@ import * as React from 'react';
 import Select from './Select';
 import {render, RenderResult, fireEvent} from '@testing-library/react';
 
+jest.useFakeTimers();
+
 describe('Select', () => {
+    const setTimeoutTime = 100;
     const [upKey, downKey, enterKey] = [38, 40, 13];
 
     let component: RenderResult;
@@ -56,8 +59,10 @@ describe('Select', () => {
         beforeEach(() => {
             const selectDropdownButton = component.getByText('Zero');
             fireEvent.click(selectDropdownButton);
+            jest.advanceTimersByTime(setTimeoutTime);
             const selectDropdownOption = component.getByText('Two');
             fireEvent.click(selectDropdownOption);
+            jest.advanceTimersByTime(setTimeoutTime);
         });
 
         it('should display a newly selected option on click', () => {
@@ -77,6 +82,7 @@ describe('Select', () => {
         beforeEach(() => {
             const selectDropdownButton = component.getByText('Zero');
             fireEvent.keyDown(selectDropdownButton, {keyCode: enterKey});
+            jest.advanceTimersByTime(setTimeoutTime);
 
             const selectedOptionZero = component.getByTestId('selectOption__0');
             expect(selectedOptionZero.className).toContain('focused');
@@ -93,6 +99,7 @@ describe('Select', () => {
             expect(selectedOptionOne.className).toContain('focused');
 
             fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: enterKey});
+            jest.advanceTimersByTime(setTimeoutTime);
         });
 
         it('should display a newly selected option on keydown', () => {
@@ -108,30 +115,27 @@ describe('Select', () => {
     });
 
     describe('Aria Labels', () => {
+        beforeEach(() => {
+            const selectDropdownButton = component.getByText('Zero');
+            fireEvent.click(selectDropdownButton);
+            jest.advanceTimersByTime(setTimeoutTime);
+        });
+
         it('should have aria labels on the dropdown toggle button', () => {
             component.getByLabelText('selectAriaLabel Selector: ariaLabel0 is selected');
         });
 
         it('should have aria labels on the dropdown options list', () => {
-            const selectDropdownButton = component.getByText('Zero');
-            fireEvent.click(selectDropdownButton);
-
             component.getByLabelText('selectAriaLabel Options');
         });
 
         it('should have aria labels on the dropdown options', () => {
-            const selectDropdownButton = component.getByText('Zero');
-            fireEvent.click(selectDropdownButton);
-
             component.getByLabelText('ariaLabel0');
             component.getByLabelText('ariaLabel1');
             component.getByLabelText('ariaLabel2');
         });
 
         it('should have aria-selected to be true on the active option', () => {
-            const selectDropdownButton = component.getByText('Zero');
-            fireEvent.click(selectDropdownButton);
-
             const options = component.getAllByRole('option');
 
             options.forEach((option) => {
