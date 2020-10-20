@@ -45,11 +45,13 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
     const [upKey, downKey, enterKey] = [38, 40, 13];
 
     useEffect(() => {
-        setCurrentOption(selectedOption);
+        if (JSON.stringify(selectedOption.value) === JSON.stringify(currentOption.value)) {
+            setCurrentOption(selectedOption);
+        }
         const currentOptionIndex = options.map(option => JSON.stringify(option.value))
             .indexOf(JSON.stringify(currentOption.value));
         setCurrentIndex(currentOptionIndex);
-    }, [selectedOption]);
+    }, [selectedOption, options, currentOption]);
 
     useEffect(() => {
         const focusOnDropdown = (): void => {
