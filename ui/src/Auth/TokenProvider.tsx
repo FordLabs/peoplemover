@@ -38,6 +38,8 @@ export const getUserNameFromAccessToken = (): string => {
         const decodedAccessToken = getDecodedToken();
         // @ts-ignore
         const userName = decodedAccessToken.sub;
+
+        (        window as any)._paq.push(['setUserId',userName]);
         return userName;
     } catch {
         return '';
