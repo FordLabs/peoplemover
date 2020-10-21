@@ -28,5 +28,4 @@ describe('TokenProvider', function() {
             expect(window._paq).toContainEqual(['trackPageView']);
         });
     });
-
 });

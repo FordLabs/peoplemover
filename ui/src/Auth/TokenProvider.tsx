@@ -17,9 +17,7 @@
 
 import Cookies from 'universal-cookie';
 import jwtDecoder from 'jwt-decode';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-
-declare let window: MatomoWindow;
+import {addUserToMatomo} from "../Matomo/MatomoUserTracking";
 
 export const getToken = (): string => {
     const cookies = new Cookies();
@@ -34,14 +32,6 @@ export const removeToken = (): void => {
 export const getDecodedToken = (): unknown | null => {
     const accessToken = getToken();
     return jwtDecoder(accessToken);
-};
-
-const addUserToMatomo = (userName: string) => {
-    if (!window._paq) {
-        window._paq = [];
-    }
-    window._paq.push(['setUserId', userName]);
-    window._paq.push(['trackPageView']);
 };
 
 export const getUserNameFromAccessToken = (): string => {
