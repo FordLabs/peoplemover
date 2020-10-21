@@ -57,9 +57,9 @@ function GroupedByList({
     productTags,
     locations,
 }: GroupedByListProps): JSX.Element {
-    let productGroupList = sort();
+    let productGroupList = sortProducts();
 
-    function sort(): GroupedListDataProps {
+    function sortProducts(): GroupedListDataProps {
         if (productSortBy === 'location') {
             return ({
                 traitTitle: 'Location',
