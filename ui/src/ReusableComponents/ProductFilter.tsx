@@ -26,8 +26,8 @@ import LocationClient from '../Locations/LocationClient';
 import RoleClient from '../Roles/RoleClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
-import {TraitClient} from '../Traits/TraitClient';
-import {Trait} from '../Traits/Trait';
+import {TagClient} from '../Tags/TagClient';
+import {Tag} from '../Tags/Tag';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 
@@ -94,10 +94,10 @@ function ProductFilter({
         }
     }, [allGroupedTagFilterOptions, currentSpace]);
 
-    async function buildTagOptions(tagClient: TraitClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
-        const tagsResponse: AxiosResponse<Array<Trait>> = await tagClient.get(currentSpace.uuid!!);
-        const tags: Array<Trait> = tagsResponse.data;
-        return tags.map((tag: Trait): FilterOption => ({
+    async function buildTagOptions(tagClient: TagClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
+        const tagsResponse: AxiosResponse<Array<Tag>> = await tagClient.get(currentSpace.uuid!!);
+        const tags: Array<Tag> = tagsResponse.data;
+        return tags.map((tag: Tag): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: tagFilters.includes(tag.name),

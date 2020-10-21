@@ -21,7 +21,7 @@ import {Product} from './Product';
 import NewProductButton from './NewProductButton';
 import {AvailableModals} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Trait} from '../Traits/Trait';
+import {Tag} from '../Tags/Tag';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {ProductTag} from '../ProductTag/ProductTag';
@@ -38,7 +38,7 @@ interface GroupedByListProps {
 
 interface GroupedListDataProps {
     traitTitle: string;
-    traits: Array<Trait>;
+    traits: Array<Tag>;
     modalType: AvailableModals | null;
     filterByTraitFunction: (product: Product, tagName: string) => boolean;
     filterByNoTraitFunction: (product: Product) => boolean;
@@ -120,7 +120,7 @@ function GroupedByList({
 
     return ( 
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
-            {productGroupList.traits.map((trait: Trait) => {
+            {productGroupList.traits.map((trait: Tag) => {
                 return (
                     <span key={trait.id}>
                         <ProductGroup

@@ -23,7 +23,7 @@ import warningIcon from '../Application/Assets/warningIcon.svg';
 
 import '../Traits/MyTraits.scss';
 
-function MyTagsModal(): JSX.Element {
+function MyTagsForm(): JSX.Element {
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
             <MyTraits
@@ -51,4 +51,4 @@ function MyTagsModal(): JSX.Element {
     );
 }
 
-export default MyTagsModal;
+export default MyTagsForm;

@@ -17,12 +17,12 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {SpaceLocation} from './SpaceLocation';
-import {TraitAddRequest} from '../Traits/TraitAddRequest';
-import {TraitEditRequest} from '../Traits/TraitEditRequest';
-import {TraitClient} from '../Traits/TraitClient';
+import {TagAddRequest} from '../Tags/TagAddRequest';
+import {TagEditRequest} from '../Tags/TagEditRequest';
+import {TagClient} from '../Tags/TagClient';
 import {getToken} from '../Auth/TokenProvider';
 
-class LocationClient implements TraitClient {
+class LocationClient implements TagClient {
     private getBaseLocationsUrl(spaceUuid: string): string {
         return '/api/spaces/' + spaceUuid + '/locations';
     }
@@ -39,7 +39,7 @@ class LocationClient implements TraitClient {
         return Axios.get(url, config);
     }
 
-    async add(locationAddRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse> {
+    async add(locationAddRequest: TagAddRequest, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -51,7 +51,7 @@ class LocationClient implements TraitClient {
         return Axios.post(url, locationAddRequest, config);
     }
 
-    async edit(locationEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<SpaceLocation>> {
+    async edit(locationEditRequest: TagEditRequest, spaceUuid: string): Promise<AxiosResponse<SpaceLocation>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {

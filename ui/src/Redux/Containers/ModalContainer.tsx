@@ -26,8 +26,8 @@ import AssignmentForm from '../../Assignments/AssignmentForm';
 import AssignmentExistsWarning from '../../Assignments/AssignmentExistsWarning';
 import {GlobalStateProps} from '../Reducers';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
-import MyTagsModal from '../../Tags/MyTagsModal';
-import MyRolesModal from '../../Roles/MyRolesModal';
+import MyTagsForm from '../../Tags/MyTagsForm';
+import MyRolesForm from '../../Roles/MyRolesForm';
 import InviteContributorConfirmationForm from '../../AccountDropdown/InviteContributorsConfirmationForm';
 import EditContributorsForm from '../../AccountDropdown/EditContributorsForm';
 import {emptyProduct, Product} from '../../Products/Product';
@@ -78,9 +78,9 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
         case AvailableModals.ASSIGNMENT_EXISTS_WARNING:
             return <AssignmentExistsWarning/>;
         case AvailableModals.MY_TAGS:
-            return <MyTagsModal/>;
+            return <MyTagsForm/>;
         case AvailableModals.MY_ROLES_MODAL:
-            return <MyRolesModal/>;
+            return <MyRolesForm/>;
         case AvailableModals.CREATE_SPACE:
             return <SpaceForm/>;
         case AvailableModals.EDIT_SPACE:

@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-import {Trait} from '../Traits/Trait';
+import {Tag} from '../Tags/Tag';
 
-export type SpaceLocation = Trait;
+export type SpaceLocation = Tag;

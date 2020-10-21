@@ -22,7 +22,7 @@ import RoleClient from '../Roles/RoleClient';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import MyRolesModal from '../Roles/MyRolesModal';
+import MyRolesForm from '../Roles/MyRolesForm';
 
 describe('PeopleMover Role Modal', () => {
     let app: RenderResult;
@@ -33,7 +33,7 @@ describe('PeopleMover Role Modal', () => {
         TestUtils.mockClientCalls();
 
         await act(async () => {
-            app = renderWithRedux(<MyRolesModal/>, undefined, initialState);
+            app = renderWithRedux(<MyRolesForm/>, undefined, initialState);
         });
     });
 

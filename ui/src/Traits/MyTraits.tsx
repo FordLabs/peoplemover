@@ -16,11 +16,11 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import EditTraitSection from '../Traits/EditTraitSection';
+import EditTagRow from '../ModalFormComponents/EditTagRow';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
-import {TraitClient} from './TraitClient';
-import {Trait} from './Trait';
+import {TagClient} from '../Tags/TagClient';
+import {Tag} from '../Tags/Tag';
 import {SpaceRole} from '../Roles/Role';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
@@ -29,7 +29,7 @@ import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
-import PlusIcon from './plusIcon.png';
+import PlusIcon from '../Application/Assets/plusIcon.png';
 import {createDataTestId} from '../tests/TestUtils';
 
 import '../Traits/MyTraits.scss';
@@ -41,7 +41,7 @@ export type TraitType = 'product' | 'person'
 interface MyTraitsProps {
     currentSpace: Space;
     title?: TitleType;
-    traitClient: TraitClient;
+    traitClient: TagClient;
     traitType: TraitType;
     colorSection: boolean;
     traitName: TraitNameType;
@@ -65,7 +65,7 @@ function MyTraits({
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: MyTraitsProps): JSX.Element {
-    const [traits, setTraits] = useState<Array<Trait>>([]);
+    const [traits, setTraits] = useState<Array<Tag>>([]);
     const [showEditState, setShowEditState] = useState<boolean>(false);
     const [editSectionsOpen, setEditSectionsOpen] = useState<Array<boolean>>([]);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
@@ -74,7 +74,7 @@ function MyTraits({
     useEffect(() => {
         async function setup(): Promise<void> {
             const response = await traitClient.get(currentSpace.uuid!!);
-            const traitResponse: Array<Trait> = response.data;
+            const traitResponse: Array<Tag> = response.data;
             sortTraitsAlphabetically(traitResponse);
             setTraits(traitResponse);
             setEditSectionsOpen(new Array(traitResponse.length).fill(false));
@@ -83,13 +83,13 @@ function MyTraits({
         setup().then();
     }, [currentSpace.uuid, traitClient]);
 
-    function sortTraitsAlphabetically(traitsList: Array<Trait>): void {
-        traitsList.sort( (trait1: Trait, trait2: Trait) => {
+    function sortTraitsAlphabetically(traitsList: Array<Tag>): void {
+        traitsList.sort( (trait1: Tag, trait2: Tag) => {
             return trait1.name.toLowerCase().localeCompare(trait2.name.toLowerCase());
         });
     }
 
-    function updateTraits(trait: Trait): void {
+    function updateTraits(trait: Tag): void {
         setTraits(prevTraits => {
             const updating: boolean = prevTraits.some(prevTrait => prevTrait.id === trait.id);
             if (updating) {
@@ -112,7 +112,7 @@ function MyTraits({
         setEditSectionsOpen(editSectionChanges);
     }
 
-    async function deleteTrait(traitToDelete: Trait): Promise<void> {
+    async function deleteTrait(traitToDelete: Tag): Promise<void> {
         try {
             if (currentSpace.uuid) {
                 await traitClient.delete(traitToDelete.id, currentSpace.uuid);
@@ -125,7 +125,7 @@ function MyTraits({
         }
     }
 
-    function updateFilterValuesInGroupedTags(index: number, trait: Trait, action: TraitAction): Array<FilterOption> {
+    function updateFilterValuesInGroupedTags(index: number, trait: Tag, action: TraitAction): Array<FilterOption> {
         let options: Array<FilterOption>;
         switch (action) {
             case TraitAction.ADD:
@@ -154,7 +154,7 @@ function MyTraits({
         return options;
     }
 
-    function updateGroupedTagFilterOptions(traitName: string, trait: Trait, action: TraitAction ): void {
+    function updateGroupedTagFilterOptions(traitName: string, trait: Tag, action: TraitAction ): void {
         const groupedFilterOptions = [...allGroupedTagFilterOptions];
         if (traitName === 'location') {
             groupedFilterOptions[0] = {
@@ -175,7 +175,7 @@ function MyTraits({
         setAllGroupedTagFilterOptions(groupedFilterOptions);
     }
 
-    function showDeleteConfirmationModal(traitToDelete: Trait): void {
+    function showDeleteConfirmationModal(traitToDelete: Tag): void {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteTrait(traitToDelete),
             close: () => setConfirmDeleteModal(null),
@@ -199,7 +199,7 @@ function MyTraits({
         }
     }
 
-    function handleKeyDownForShowDeleteConfirmationModal(event: React.KeyboardEvent, trait: Trait): void {
+    function handleKeyDownForShowDeleteConfirmationModal(event: React.KeyboardEvent, trait: Tag): void {
         if (event.key === 'Enter') {
             showDeleteConfirmationModal(trait);
         }
@@ -209,7 +209,7 @@ function MyTraits({
         return editSectionsOpen.includes(true);
     }
 
-    function ViewTraitRow({ trait, index }: { trait: Trait; index: number }): JSX.Element {
+    function ViewTraitRow({ trait, index }: { trait: Tag; index: number }): JSX.Element {
         let colorToUse: string | undefined;
         if (colorSection) {
             const spaceRole: SpaceRole = trait as SpaceRole;
@@ -266,14 +266,14 @@ function MyTraits({
                 onClick={(): void => setShowEditState(true)}
                 onKeyDown={(e): void => handleAddNewTagClick(e, true)}>
                 <div className="addNewTagCircle" data-testid="addNewTraitCircle">
-                    <img src={PlusIcon} alt="Add Trait Icon"/>
+                    <img src={PlusIcon} alt="Add Tag Icon"/>
                 </div>
                 <span className="traitName addNewTraitText">
                     Add New {toTitleCase(traitName)}
                 </span>
             </button>
         ) : (
-            <EditTraitSection
+            <EditTagRow
                 closeCallback={(): void => setShowEditState(false)}
                 updateCallback={updateTraits}
                 traitClient={traitClient}
@@ -288,14 +288,14 @@ function MyTraits({
         <div data-testid={createDataTestId('tagsModalContainer', traitName)}
             className="myTraitsModalContainer">
             {!colorSection && <div className="title"> {title}</div>}
-            {traits.map((trait: Trait, index: number) => {
+            {traits.map((trait: Tag, index: number) => {
                 return (
                     <React.Fragment key={index}>
                         {!editSectionsOpen[index] &&
-                        <ViewTraitRow trait={trait} index={index}/>
+                            <ViewTraitRow trait={trait} index={index}/>
                         }
                         {editSectionsOpen[index] &&
-                        <EditTraitSection
+                        <EditTagRow
                             closeCallback={(): void => toggleEditSection(index)}
                             updateCallback={updateTraits}
                             trait={trait}
@@ -303,7 +303,8 @@ function MyTraits({
                             traitClient={traitClient}
                             traitName={traitName}
                             currentSpace={currentSpace}
-                            listOfTraits={traits}/>
+                            listOfTraits={traits}
+                        />
                         }
                     </React.Fragment>
                 );

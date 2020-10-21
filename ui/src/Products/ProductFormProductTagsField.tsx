@@ -6,9 +6,9 @@ import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {customStyles} from './ProductForm';
 import {Product} from './Product';
-import {Trait} from '../Traits/Trait';
+import {Tag} from '../Tags/Tag';
 import {Space} from '../Space/Space';
-import {TraitAddRequest} from '../Traits/TraitAddRequest';
+import {TagAddRequest} from '../Tags/TagAddRequest';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {AxiosResponse} from 'axios';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -23,7 +23,7 @@ interface Props {
         selectedProductTags: Array<ProductTag>;
         setSelectedProductTags: (productTags: Array<ProductTag>) => void;
     };
-    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Trait) => void;
+    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Tag) => void;
     currentSpace: Space;
 }
 
@@ -74,7 +74,7 @@ function ProductFormProductTagsField({
     
     function handleCreateProductTag(inputValue: string): void {
         setIsLoading(true);
-        const productTag: TraitAddRequest = { name: inputValue };
+        const productTag: TagAddRequest = { name: inputValue };
 
         ProductTagClient.add(productTag, currentSpace.uuid!!)
             .then((response: AxiosResponse) => {
@@ -83,7 +83,7 @@ function ProductFormProductTagsField({
                     id: newProductTag.id,
                     name: newProductTag.name,
                 }] as Array<ProductTag>);
-                addGroupedTagFilterOptions(1, newProductTag as Trait);
+                addGroupedTagFilterOptions(1, newProductTag as Tag);
                 updateSelectedProductTags([...selectedProductTags, newProductTag]);
                 setIsLoading(false);
             });

@@ -16,13 +16,13 @@
  */
 
 import {AxiosResponse} from 'axios';
-import {Trait} from './Trait';
-import {TraitAddRequest} from './TraitAddRequest';
-import {TraitEditRequest} from './TraitEditRequest';
+import {Tag} from './Tag';
+import {TagAddRequest} from './TagAddRequest';
+import {TagEditRequest} from './TagEditRequest';
 
-export interface TraitClient {
-     get(spaceUuid: string): Promise<AxiosResponse<Trait[]>>;
-     add(addRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
-     edit(editRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
+export interface TagClient {
+     get(spaceUuid: string): Promise<AxiosResponse<Tag[]>>;
+     add(addRequest: TagAddRequest, spaceUuid: string): Promise<AxiosResponse<Tag>>;
+     edit(editRequest: TagEditRequest, spaceUuid: string): Promise<AxiosResponse<Tag>>;
      delete(id: number, spaceUuid: string): Promise<AxiosResponse>;
 }

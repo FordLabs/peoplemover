@@ -22,7 +22,7 @@ import warningIcon from '../Application/Assets/warningIcon.svg';
 
 import '../Traits/MyTraits.scss';
 
-function MyRolesModal(): JSX.Element {
+function MyRolesForm(): JSX.Element {
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
             <MyTraits
@@ -39,4 +39,4 @@ function MyRolesModal(): JSX.Element {
     );
 }
 
-export default MyRolesModal;
+export default MyRolesForm;

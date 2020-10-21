@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-export interface TraitAddRequest {
+export interface TagAddRequest {
     name: string;
 }

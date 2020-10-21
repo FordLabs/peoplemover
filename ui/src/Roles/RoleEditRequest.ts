@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {TraitEditRequest} from '../Traits/TraitEditRequest';
+import {TagEditRequest} from '../Tags/TagEditRequest';
 
-export interface RoleEditRequest extends TraitEditRequest{
+export interface RoleEditRequest extends TagEditRequest{
     updatedColorId?: number;
 }

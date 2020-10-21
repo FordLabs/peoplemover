@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-export interface TraitEditRequest {
+export interface TagEditRequest {
     id: number;
     updatedName?: string;
 }

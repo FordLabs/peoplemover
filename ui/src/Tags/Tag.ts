@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-export interface Trait {
+export interface Tag {
     id: number;
     name: string;
     spaceId: number;

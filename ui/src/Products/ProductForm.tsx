@@ -30,7 +30,7 @@ import {reactSelectStyles} from '../ReusableComponents/ReactSelectStyles';
 import {ProductTag} from '../ProductTag/ProductTag';
 import {FilterOption} from '../CommonTypes/Option';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import {Trait} from '../Traits/Trait';
+import {Tag} from '../Tags/Tag';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';
@@ -194,7 +194,7 @@ function ProductForm({
         setCurrentProduct(updatedProduct);
     }
 
-    function addGroupedTagFilterOptions(tagFilterIndex: number, trait: Trait): void {
+    function addGroupedTagFilterOptions(tagFilterIndex: number, trait: Tag): void {
         const addedFilterOption: FilterOption = {
             label: trait.name,
             value: trait.id.toString() + '_' + trait.name,

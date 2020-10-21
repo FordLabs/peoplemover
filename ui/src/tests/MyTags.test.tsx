@@ -20,7 +20,7 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
-import MyTagsModal from '../Tags/MyTagsModal';
+import MyTagsForm from '../Tags/MyTagsForm';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 
@@ -34,7 +34,7 @@ describe('PeopleMover My Tags', () => {
         TestUtils.mockClientCalls();
 
         await act(async () => {
-            app = renderWithRedux(<MyTagsModal/>, undefined, initialState);
+            app = renderWithRedux(<MyTagsForm/>, undefined, initialState);
         });
     });
 
