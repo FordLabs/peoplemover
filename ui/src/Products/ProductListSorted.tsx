@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Product} from './Product';
 import ProductCard from './ProductCard';
 import NewProductButton from './NewProductButton';
@@ -28,46 +28,40 @@ interface Props {
 }
 
 function SortedByList({ products, productSortBy}: Props): JSX.Element {
-    const [sortedProducts, setSortedProducts] = useState<Array<Product>>([...products]);
-    const [productsSorted, setProductsSorted] = useState<boolean>(false);
+    let sortedProducts: Product [] = sortBy(products, productSortBy);
 
-    useEffect(() => {
-        function sortBy(products: Array<Product>, productSortBy: string):  Array<Product> {
-            switch (productSortBy) {
-                case 'location': return [...products].sort(sortByLocation);
-                case 'name': return [...products].sort(sortByProductName);
-                default: return [...products];
-            }
+    function sortBy(products: Array<Product>, productSortBy: string):  Array<Product> {
+        switch (productSortBy) {
+            case 'location': return [...products].sort(sortByLocation);
+            case 'name': return [...products].sort(sortByProductName);
+            default: return [...products];
         }
+    }
 
-        function sortByProductName(productA: Product, productB: Product): number {
-            return productA.name.toLowerCase().localeCompare(productB.name.toLowerCase());
+    function sortByProductName(productA: Product, productB: Product): number {
+        return productA.name.toLowerCase().localeCompare(productB.name.toLowerCase());
+
+    }
+
+    function getSpaceLocationNameSafely(product: Product): string {
+        return product.spaceLocation ? product.spaceLocation.name : 'ZZZZZZZZ';
+
+    }
+
+    function sortByLocation(productA: Product, productB: Product): number {
+        const locationA = getSpaceLocationNameSafely(productA);
+
+        const locationB = getSpaceLocationNameSafely(productB);
+        const comparisonValue: number = locationA.toLowerCase().localeCompare(locationB.toLowerCase());
+        if (comparisonValue === 0) {
+            return sortByProductName(productA, productB);
         }
-
-        function getSpaceLocationNameSafely(product: Product): string {
-            return product.spaceLocation ? product.spaceLocation.name : 'ZZZZZZZZ';
-        }
-
-        function sortByLocation(productA: Product, productB: Product): number {
-            const locationA = getSpaceLocationNameSafely(productA);
-            const locationB = getSpaceLocationNameSafely(productB);
-
-            const comparisonValue: number = locationA.toLowerCase().localeCompare(locationB.toLowerCase());
-            if (comparisonValue === 0) {
-                return sortByProductName(productA, productB);
-            }
-            return comparisonValue;
-        }
-
-        if (products && products.length) {
-            setSortedProducts(sortBy(products, productSortBy));
-        }
-        setProductsSorted(true);
-    }, [products, productSortBy]);
+        return comparisonValue;
+    }
 
     return (
         <div className="productListSortedContainer" data-testid="productListSortedContainer">
-            {productsSorted && sortedProducts && sortedProducts.map((product: Product) => {
+            {sortedProducts && sortedProducts.map((product: Product) => {
                 return (
                     <span key={product.id}>
                         <ProductCard
