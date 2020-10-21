@@ -15,7 +15,7 @@
  *   limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Main.scss';
 
 .selectDropdown {
   position: relative;
@@ -29,7 +29,7 @@
   cursor: pointer;
 
   &:focus {
-    box-shadow: 0 0 2px 2px $purple-title;
+    border: $focus-state-border;
   }
 
   .selectDropdownArrow {
@@ -57,12 +57,24 @@
   padding: 0.5rem 0;
   margin: 0;
 
+  &:focus {
+    outline: none;
+    border: $focus-state-border !important;
+    border-radius: 4px;
+  }
+
   .selectOption {
     display: flex;
     justify-content: center;
     align-items: center;
     padding-bottom: 0.5rem;
     cursor: pointer;
+
+   &.focused {
+     .colorCircle {
+       box-shadow: 0 0 0 1px white, 0 0 0 3px $gray-2;
+     }
+   }
   }
 
   .selectOption:last-child {
