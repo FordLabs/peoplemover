@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import ProductCard from './ProductCard';
 import {Product} from './Product';
 import NewProductButton from './NewProductButton';
@@ -57,41 +57,27 @@ function GroupedByList({
     productTags,
     locations,
 }: GroupedByListProps): JSX.Element {
-    const [groupedListData, setGroupedListData] = useState<GroupedListDataProps>({
-        traitTitle: '',
-        traits: [],
-        modalType: null,
-        filterByTraitFunction: () => false,
-        filterByNoTraitFunction: () => false,
-    });
+    let productGroupList = sortProducts();
 
-    const [productsGrouped, setProductsGrouped] = useState<boolean>(false);
-
-    useEffect(() => {
-        switch (productSortBy) {
-            case 'location': {
-                setGroupedListData({
-                    traitTitle: 'Location',
-                    traits: [...locations],
-                    modalType: AvailableModals.CREATE_PRODUCT_OF_LOCATION,
-                    filterByTraitFunction: filterByLocation,
-                    filterByNoTraitFunction: filterByNoLocation,
-                });
-                break;
-            }
-            case 'product-tag': {
-                setGroupedListData({
-                    traitTitle: 'Product Tag',
-                    traits: [...productTags],
-                    modalType: AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG,
-                    filterByTraitFunction: filterByProductTag,
-                    filterByNoTraitFunction: filterByNoProductTag,
-                });
-            }
+    function sortProducts(): GroupedListDataProps {
+        if (productSortBy === 'location') {
+            return ({
+                traitTitle: 'Location',
+                traits: [...locations],
+                modalType: AvailableModals.CREATE_PRODUCT_OF_LOCATION,
+                filterByTraitFunction: filterByLocation,
+                filterByNoTraitFunction: filterByNoLocation,
+            });
+        } else {
+            return ({
+                traitTitle: 'Product Tag',
+                traits: [...productTags],
+                modalType: AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG,
+                filterByTraitFunction: filterByProductTag,
+                filterByNoTraitFunction: filterByNoProductTag,
+            });
         }
-        setProductsGrouped(true);
-    }, [productSortBy, locations, productTags]);
-
+    }
 
     function filterByProductTag(product: Product, tagName: string): boolean {
         return product.productTags.map(t => t.name).includes(tagName);
@@ -134,27 +120,26 @@ function GroupedByList({
 
     return ( 
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
-            {productsGrouped && groupedListData.traits.map((trait: Trait) => {
+            {productGroupList.traits.map((trait: Trait) => {
                 return (
                     <span key={trait.id}>
                         <ProductGroup
                             tagName={trait.name}
-                            modalState={{modal: groupedListData.modalType, item: trait}}
-                            productFilterFunction={groupedListData.filterByTraitFunction}/>
+                            modalState={{modal: productGroupList.modalType, item: trait}}
+                            productFilterFunction={productGroupList.filterByTraitFunction}/>
                     </span>
                 );
             })}
-            {productsGrouped && products.length === 0 ?
+            { products.length === 0 ?
                 <NewProductButton /> :
                 <ProductGroup
-                    tagName={`No ${groupedListData.traitTitle}`}
+                    tagName={`No ${productGroupList.traitTitle}`}
                     useGrayBackground
-                    productFilterFunction={groupedListData.filterByNoTraitFunction}/>
+                    productFilterFunction={productGroupList.filterByNoTraitFunction}/>
             }
         </div>
     );
 }
-
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     productTags: state.productTags,
