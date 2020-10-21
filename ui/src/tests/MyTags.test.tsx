@@ -165,20 +165,22 @@ describe('PeopleMover My Tags', () => {
             });
 
             it('should display error message only for corresponding edit product tag section', async () => {
-                ProductTagClient.edit = jest.fn(() => Promise.reject({
-                    response: { status: 409 },
-                }));
+                // ProductTagClient.edit = jest.fn(() => Promise.reject({
+                //     response: { status: 409 },
+                // }));
 
                 const updatedProductTag = 'av';
 
                 const editProductTagText = await app.findByTestId('tagNameInput');
-                fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
+                fireEvent.change(editProductTagText, {target: {value: 'FordX'}});
+                // fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
 
-                const secondEditProductTagIcon = editIcons[1];
-                fireEvent.click(secondEditProductTagIcon);
+                // const secondEditProductTagIcon = editIcons[1];
+                // fireEvent.click(secondEditProductTagIcon);
 
                 const saveButton = await app.findByTestId('saveTagButton');
-                fireEvent.click(saveButton);
+                expect(saveButton).toBeDisabled()
+                // fireEvent.click(saveButton);
 
                 const errorMessage = await app.findAllByText('A product tag with this name already exists. Enter a different name.');
                 expect(errorMessage.length).toEqual(1);

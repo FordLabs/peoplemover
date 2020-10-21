@@ -44,6 +44,7 @@ interface EditTraitSectionProps {
     traitClient: TraitClient;
     traitName: TraitNameType;
     currentSpace: Space;
+    listOfTraits?: Trait[];
 }
 
 function EditTraitSection({
@@ -54,12 +55,14 @@ function EditTraitSection({
     traitClient,
     traitName,
     currentSpace,
+    listOfTraits,
 }: EditTraitSectionProps): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
     const [selectedColor, setSelectedColor] = useState<Color>();
-    const [enteredTrait, setEnteredTrait] = useState<TraitAddRequest>();
+    const [enteredTrait, setEnteredTrait] = useState<TraitAddRequest>({name:''});
     const [duplicateErrorMessage, setDuplicateErrorMessage] = useState<boolean>(false);
     const traitNameClass = traitName.replace(' ', '_');
+    const originalTraitName = trait?.name;
 
     useEffect(() => {
         let mounted = false;
@@ -121,9 +124,6 @@ function EditTraitSection({
                     clientResponse = await traitClient.add(enteredTrait, currentSpace.uuid!!);
                 }
             } catch (error) {
-                if (error.response.status === 409) {
-                    setDuplicateErrorMessage(true);
-                }
                 return;
             }
             const newTrait: Trait = clientResponse.data;
@@ -134,6 +134,12 @@ function EditTraitSection({
 
     function updateEnteredRoleText(event: React.ChangeEvent<HTMLInputElement>): void {
         const input: string = event.target ? event.target.value : '';
+
+        if (listOfTraits?.find(trait => {return trait.name.toLowerCase() === input.toLowerCase();}) && originalTraitName?.toLowerCase() !== input.toLowerCase()) {
+            setDuplicateErrorMessage(true);
+        } else {
+            setDuplicateErrorMessage(false);
+        }
         setEnteredTrait(prevEnteredTrait => ({
             ...prevEnteredTrait,
             name: input,
@@ -179,7 +185,7 @@ function EditTraitSection({
                 <input className={`editTagInput ${traitNameClass}`}
                     data-testid="tagNameInput"
                     type="text"
-                    value={enteredTrait ? enteredTrait.name : ''}
+                    value={enteredTrait.name}
                     onChange={updateEnteredRoleText}
                     onKeyPress={(e): void => handleEnterSubmit(e)}/>
                 <div className="traitEditIcons">
@@ -189,7 +195,7 @@ function EditTraitSection({
                         aria-label="Close Edited Tag">
                         <img src={CloseIcon} alt=""/>
                     </button>
-                    <button disabled={enteredTrait ? enteredTrait.name === '' : true}
+                    <button disabled={enteredTrait.name === '' || duplicateErrorMessage || enteredTrait.name.toLowerCase() === originalTraitName?.toLowerCase()}
                         onClick={handleSubmit}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
