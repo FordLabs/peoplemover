@@ -15,22 +15,69 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import MyTraits from '../Traits/MyTraits';
 import RoleClient from './RoleClient';
 import warningIcon from '../Application/Assets/warningIcon.svg';
 
 import '../Traits/MyTraits.scss';
+import {Tag} from '../Tags/Tag';
+import EditTagRow from '../ModalFormComponents/EditTagRow';
+import ViewTagRow from '../ModalFormComponents/ViewTagRow';
+import {SpaceRole} from "./Role";
+
+const INACTIVE_EDIT_STATE_INDEX = -1;
 
 function MyRolesForm(): JSX.Element {
-    return (
-        <div data-testid="myRolesModalContainer" className="myTraitsContainer">
+    const RoleTags = () => {
+        const [roles, setRoles] = useState<Array<Tag>>([]);
+        const [editLocationIndex, setEditLocationIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
+
+        return (
             <MyTraits
                 traitClient={RoleClient}
                 colorSection
                 traitType="person"
                 traitName="role"
-            />
+            >
+                {roles.map((role: Tag, index: number) => {
+                    let colorToUse: string | undefined;
+                    const spaceRole: SpaceRole = role as SpaceRole;
+                    colorToUse = spaceRole.color ? spaceRole.color.color : '#FFFFFF';
+
+                    return (
+                        <React.Fragment key={index}>
+                            {editLocationIndex != index &&
+                            <ViewTagRow tag={role} index={index}>
+                                <div className="viewTagRowColorCircle">
+                                    <span data-testid="myRolesCircle"
+                                        style={{'backgroundColor': colorToUse}}
+                                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+                                    />
+                                </div>
+                            </ViewTagRow>
+                            }
+                            {editLocationIndex === index &&
+                                <EditTagRow
+                                    closeCallback={(): void => toggleEditSection(index)}
+                                    updateCallback={updateTraits}
+                                    trait={trait}
+                                    colorSection={colorSection}
+                                    traitClient={traitClient}
+                                    traitName={traitName}
+                                    currentSpace={currentSpace}
+                                />
+                            }
+                        </React.Fragment>
+                    );
+                })}
+            </MyTraits>
+        );
+    };
+    
+    return (
+        <div data-testid="myRolesModalContainer" className="myTraitsContainer">
+            <RoleTags />
             <div className="traitWarning">
                 <img src={warningIcon} className="warningIcon" alt="warning icon"/>
                 <p className="warningText">Editing or deleting a role will affect any person currently assigned to it.</p>

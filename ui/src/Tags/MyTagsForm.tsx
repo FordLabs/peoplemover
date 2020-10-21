@@ -15,32 +15,97 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import MyTraits from '../Traits/MyTraits';
 import warningIcon from '../Application/Assets/warningIcon.svg';
 
 import '../Traits/MyTraits.scss';
+import {Tag} from './Tag';
+import EditTagRow from '../ModalFormComponents/EditTagRow';
+import {GlobalStateProps} from '../Redux/Reducers';
+import {Dispatch} from 'redux';
+import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
+import {connect} from 'react-redux';
+import {Space} from '../Space/Space';
+import ViewTagRow from "../ModalFormComponents/ViewTagRow";
 
-function MyTagsForm(): JSX.Element {
-    return (
-        <div data-testid="myTagsModal" className="myTraitsContainer">
+const INACTIVE_EDIT_STATE_INDEX = -1;
+
+interface Props {
+    currentSpace: Space;
+}
+
+function MyTagsForm({ currentSpace }: Props): JSX.Element {
+
+    const LocationTags = (): JSX.Element => {
+        const [locations, setLocations] = useState<Array<Tag>>([]);
+        const [editLocationIndex, setEditLocationIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
+
+        function sortTraitsAlphabetically(traitsList: Array<Tag>): void {
+            traitsList.sort( (trait1: Tag, trait2: Tag) => {
+                return trait1.name.toLowerCase().localeCompare(trait2.name.toLowerCase());
+            });
+        }
+
+        useEffect(() => {
+            async function setup(): Promise<void> {
+                const response = await LocationClient.get(currentSpace.uuid!!);
+                sortTraitsAlphabetically(response.data);
+                setLocations(response.data);
+                // setEditLocationIndex(new Array(traitResponse.length).fill(false));
+            }
+
+            setup().then();
+        }, [currentSpace.uuid]);
+
+        return (
             <MyTraits
                 title="Location Tags"
                 traitClient={LocationClient}
                 colorSection={false}
                 traitType="product"
                 traitName="location"
-            />
+            >
+                {locations.map((trait: Tag, index: number) => {
+                    return (
+                        <React.Fragment key={index}>
+                            {editLocationIndex != index &&
+                                <ViewTagRow tag={trait} index={index}/>
+                            }
+                            {editLocationIndex === index &&
+                               <EditTagRow
+                                   closeCallback={(): void => toggleEditSection(index)}
+                                   updateCallback={updateTraits}
+                                   trait={trait}
+                                   colorSection={colorSection}
+                                   traitClient={traitClient}
+                                   traitName={traitName}
+                                   currentSpace={currentSpace}
+                                   listOfTraits={locations}
+                               />
+                            }
+                        </React.Fragment>
+                    );
+                })}
+
+            </MyTraits>
+        );
+    };
+
+    return (
+        <div data-testid="myTagsModal" className="myTraitsContainer">
+            <LocationTags />
             <div className="lineSeparator"/>
-            <MyTraits
-                title="Product Tags"
-                traitClient={ProductTagClient}
-                colorSection={false}
-                traitType="product"
-                traitName="product tag"
-            />
+            {/*<MyTraits*/}
+            {/*    title="Product Tags"*/}
+            {/*    traitClient={ProductTagClient}*/}
+            {/*    colorSection={false}*/}
+            {/*    traitType="product"*/}
+            {/*    traitName="product tag"*/}
+            {/*/>*/}
             <div className="traitWarning">
                 <img src={warningIcon} className="warningIcon" alt="warning icon"/>
                 <p className="warningText">
@@ -51,4 +116,16 @@ function MyTagsForm(): JSX.Element {
     );
 }
 
-export default MyTagsForm;
+/* eslint-disable */
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
+        dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyTagsForm);
+/* eslint-enable */
