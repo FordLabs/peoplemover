@@ -58,7 +58,11 @@ function AccountDropdown({ hideSpaceButtons }: AccountDropdownProps): JSX.Elemen
 
     return (
         <>
-            <button data-testid="accountDropdownToggle" className="accountDropdownToggle" onClick={showDropdown}>
+            <button
+                aria-label="Account Menu"
+                data-testid="accountDropdownToggle"
+                className="accountDropdownToggle"
+                onClick={showDropdown}>
                 <i className="fas fa-user" data-testid="userIcon"/>
                 {userName && (
                     <div className="welcomeUser">

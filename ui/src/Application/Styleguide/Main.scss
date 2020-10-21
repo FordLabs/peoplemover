@@ -18,6 +18,8 @@
 @import './Colors';
 @import './Buttons';
 
+$focus-state-border: 2px solid $prime-1;
+
 body {
   margin: 0;
   font-family: Helvetica, sans-serif;
@@ -61,6 +63,12 @@ a.deleteLink {
 
 input[type="text"] {
   padding-left: 8px;
+
+  &:focus {
+    outline: none;
+    border: $focus-state-border !important;
+    border-radius: 4px;
+  }
 }
 
 .alignSelfCenter {
