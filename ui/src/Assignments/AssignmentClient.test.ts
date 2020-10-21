@@ -22,7 +22,7 @@ import TestUtils from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 
@@ -46,7 +46,7 @@ describe('the assignment client', () => {
         originalWindow = window;
     });
 
-    afterEach(function () {
+    afterEach(function() {
         cookies.remove('accessToken');
         (window as Window) = originalWindow;
     });
@@ -81,7 +81,7 @@ describe('the assignment client', () => {
         await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest);
 
         expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
-        expect(window._paq).toContainEqual(['trackEvent', 'person', 'assign', TestUtils.person1.name])
+        expect(window._paq).toContainEqual(['trackEvent', 'person', 'assign', TestUtils.person1.name]);
     });
 
     it('should send matomo error event if assign person fails', async () => {
@@ -95,8 +95,8 @@ describe('the assignment client', () => {
         };
 
         try {
-            await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest)
-        } catch(err) {
+            await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest);
+        } catch (err) {
             expect(window._paq).toContainEqual(['trackEvent', 'personError', 'assign', TestUtils.person1.name, 417]);
         }
 

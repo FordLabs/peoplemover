@@ -56,7 +56,7 @@ describe('ProductClient', () => {
 
         try {
             await ProductClient.createProduct('a uuid', product);
-            fail("Did not catch an exception from the product creation");
+            fail('Did not catch an exception from the product creation');
         } catch (err)  {
             expect(window._paq).toContainEqual(['trackEvent', 'Product', 'createError', expectedName, expectedResponse.code]);
         }

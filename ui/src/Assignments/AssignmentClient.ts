@@ -21,7 +21,7 @@ import moment from 'moment';
 import {Assignment} from './Assignment';
 import {Person} from '../People/Person';
 import {getToken} from '../Auth/TokenProvider';
-import MatomoEvents from "../Matomo/MatomoEvents";
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 class AssignmentClient {
 

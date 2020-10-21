@@ -19,8 +19,8 @@ import Axios, {AxiosResponse} from 'axios';
 import {Product} from './Product';
 import moment from 'moment';
 import {getToken} from '../Auth/TokenProvider';
-import {MatomoWindow} from "../CommonTypes/MatomoWindow";
-import MatomoEvents from "../Matomo/MatomoEvents";
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 declare let window: MatomoWindow;
 
@@ -39,7 +39,7 @@ class ProductClient {
         };
 
         return Axios.post(url, product, config).then(result => {
-            MatomoEvents.pushEvent('Product', 'create', product.name)
+            MatomoEvents.pushEvent('Product', 'create', product.name);
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent('Product', 'createError', product.name, err.code);

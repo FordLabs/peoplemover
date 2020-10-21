@@ -1,10 +1,10 @@
-import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 
 export default {
 
-    pushEvent: function (category: string, action: string, name: string, value?: number) {
+    pushEvent: function(category: string, action: string, name: string, value?: number) {
         if (!window._paq) {
             window._paq = [];
         }
@@ -13,5 +13,5 @@ export default {
             eventArray.push(value);
         }
         window._paq.push(eventArray);
-    }
-}
+    },
+};
