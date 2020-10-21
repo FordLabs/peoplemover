@@ -22,9 +22,13 @@ import TestUtils from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+
+declare let window: MatomoWindow;
 
 describe('the assignment client', () => {
 
+    let originalWindow: Window;
     const cookies = new Cookies();
     const expectedConfig = {
         headers: {
@@ -39,10 +43,12 @@ describe('the assignment client', () => {
         Axios.get = jest.fn(() => Promise.resolve({} as AxiosResponse));
         Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
         Axios.delete = jest.fn(() => Promise.resolve({} as AxiosResponse));
+        originalWindow = window;
     });
 
     afterEach(function() {
         cookies.remove('accessToken');
+        (window as Window) = originalWindow;
     });
 
     it('should get all assignments for given personId and date', async () => {
@@ -56,7 +62,7 @@ describe('the assignment client', () => {
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
-    it('should create assignments for given date', async () => {
+    it('should create assignments for given date and send matomo event', async () => {
         const date = new Date('2019-01-10');
         const productPlaceholderPair: ProductPlaceholderPair = {
             productId: 1,
@@ -75,6 +81,25 @@ describe('the assignment client', () => {
         await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest);
 
         expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
+        expect(window._paq).toContainEqual(['trackEvent', 'person', 'assign', TestUtils.person1.name]);
+    });
+
+    it('should send matomo error event if assign person fails', async () => {
+        Axios.post = jest.fn(() => Promise.reject({code: 417} as any));
+
+        const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
+            requestedDate: moment(new Date()).format('YYYY-MM-DD'),
+            person: TestUtils.person1,
+            products: [],
+
+        };
+
+        try {
+            await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest);
+        } catch (err) {
+            expect(window._paq).toContainEqual(['trackEvent', 'personError', 'assign', TestUtils.person1.name, 417]);
+        }
+
     });
 
     it('should get all effective dates given space', async () => {

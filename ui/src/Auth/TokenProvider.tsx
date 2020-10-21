@@ -17,6 +17,7 @@
 
 import Cookies from 'universal-cookie';
 import jwtDecoder from 'jwt-decode';
+import {addUserToMatomo} from "../Matomo/MatomoUserTracking";
 
 export const getToken = (): string => {
     const cookies = new Cookies();
@@ -28,7 +29,7 @@ export const removeToken = (): void => {
     cookie.remove('accessToken', {path: '/'});
 };
 
-export const getDecodedToken = (): unknown | null  => {
+export const getDecodedToken = (): unknown | null => {
     const accessToken = getToken();
     return jwtDecoder(accessToken);
 };
@@ -38,6 +39,8 @@ export const getUserNameFromAccessToken = (): string => {
         const decodedAccessToken = getDecodedToken();
         // @ts-ignore
         const userName = decodedAccessToken.sub;
+        addUserToMatomo(userName);
+
         return userName;
     } catch {
         return '';
