@@ -1,5 +1,4 @@
 import {getUserNameFromAccessToken} from './TokenProvider';
-import Cookies from 'universal-cookie';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
