@@ -139,5 +139,17 @@ describe('Product Client', function() {
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'deleteProduct', expectedName]);
 
         });
+
+        it('should push edit product action on edit', async () => {
+            const expectedResponse = {};
+            axios.put = jest.fn(() => Promise.resolve(expectedResponse as any));
+
+            const axiosResponse = await ProductClient.editProduct(TestUtils.space, product);
+
+            expect(axiosResponse).toBe(expectedResponse);
+
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'editProduct', expectedName]);
+
+        });
     });
 });

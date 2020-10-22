@@ -57,7 +57,10 @@ class ProductClient {
             },
         };
 
-        return Axios.put(url, product, config);
+        return Axios.put(url, product, config).then(result => {
+            MatomoEvents.pushEvent(space.name, 'editProduct', product.name);
+            return result;
+        });
     }
 
     static async deleteProduct(space: Space, product: Product): Promise<AxiosResponse> {
