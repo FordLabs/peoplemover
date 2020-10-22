@@ -186,6 +186,9 @@ function EditTraitSection({
         setSelectedColor(color);
     };
 
+
+    let isTraitNameInvalid = enteredTrait.name === '' || duplicateErrorMessage || enteredTrait.name.toLowerCase() === originalTraitName?.toLowerCase();
+
     return (
         <>
             <div className={`editTagRow ${traitNameClass}`} data-testid={createDataTestId('editTagRow', traitName)}>
@@ -210,7 +213,7 @@ function EditTraitSection({
                         aria-label="Close Edited Tag">
                         <img src={CloseIcon} alt=""/>
                     </button>
-                    <button disabled={enteredTrait.name === '' || duplicateErrorMessage || enteredTrait.name.toLowerCase() === originalTraitName?.toLowerCase()}
+                    <button disabled={isTraitNameInvalid}
                         onClick={handleSubmit}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
