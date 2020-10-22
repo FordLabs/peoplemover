@@ -70,7 +70,7 @@ describe('PeopleMover Role Modal', () => {
             const saveButton = await app.findByTestId('saveTagButton');
             expect(saveButton).toBeDisabled();
 
-            await app.findByText('A role with this name already exists. Enter a different name.');
+            await app.findByText('Oops! You already have this role. Please try using a different one.');
         });
 
         it('should add new role section when you click Add New Role', async () => {
@@ -155,7 +155,7 @@ describe('PeopleMover Role Modal', () => {
             const saveButton = await app.findByTestId('saveTagButton');
             expect(saveButton).toBeDisabled();
 
-            await app.findByText('A role with this name already exists. Enter a different name.');
+            await app.findByText('Oops! You already have this role. Please try using a different one.');
         });
 
         it('should show edit section when clicking the pencil', async () => {

@@ -206,7 +206,7 @@ function EditTraitSection({
             </div>
             {duplicateErrorMessage && (
                 <div className="duplicateErrorMessage">
-                    A {traitName} with this name already exists. Enter a different name.
+                    Oops! You already have this {traitName}. Please try using a different one.
                 </div>
             )}
         </>

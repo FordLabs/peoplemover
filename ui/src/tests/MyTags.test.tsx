@@ -117,7 +117,7 @@ describe('PeopleMover My Tags', () => {
                 const saveButton = await app.findByTestId('saveTagButton');
                 fireEvent.click(saveButton);
 
-                await app.findByText('A location with this name already exists. Enter a different name.');
+                await app.findByText('Oops! You already have this location. Please try using a different one.');
             });
         });
 
@@ -148,41 +148,13 @@ describe('PeopleMover My Tags', () => {
                 expect(queryByText(myTagsModal, 'FordX')).not.toBeInTheDocument();
             });
 
-            it('should display error message when you try to edit product tag to have some existed tag name', async () => {
-                ProductTagClient.edit = jest.fn(() => Promise.reject({
-                    response: { status: 409 },
-                }));
-
-                const updatedProductTag = 'av';
-
-                const editProductTagText = await app.findByTestId('tagNameInput');
-                fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
-
-                const saveButton = await app.findByTestId('saveTagButton');
-                fireEvent.click(saveButton);
-
-                await app.findByText('A product tag with this name already exists. Enter a different name.');
-            });
-
             it('should display error message only for corresponding edit product tag section', async () => {
-                // ProductTagClient.edit = jest.fn(() => Promise.reject({
-                //     response: { status: 409 },
-                // }));
-
-                const updatedProductTag = 'av';
-
                 const editProductTagText = await app.findByTestId('tagNameInput');
                 fireEvent.change(editProductTagText, {target: {value: 'FordX'}});
-                // fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
-
-                // const secondEditProductTagIcon = editIcons[1];
-                // fireEvent.click(secondEditProductTagIcon);
-
                 const saveButton = await app.findByTestId('saveTagButton');
-                expect(saveButton).toBeDisabled()
-                // fireEvent.click(saveButton);
+                expect(saveButton).toBeDisabled();
 
-                const errorMessage = await app.findAllByText('A product tag with this name already exists. Enter a different name.');
+                const errorMessage = await app.findAllByText('Oops! You already have this product tag. Please try using a different one.');
                 expect(errorMessage.length).toEqual(1);
             });
         });
@@ -291,7 +263,7 @@ describe('PeopleMover My Tags', () => {
 
                 fireEvent.click(saveButton);
 
-                await app.findByText('A location with this name already exists. Enter a different name.');
+                await app.findByText('Oops! You already have this location. Please try using a different one.');
             });
         });
 
@@ -360,7 +332,7 @@ describe('PeopleMover My Tags', () => {
 
                 fireEvent.click(saveButton);
 
-                await app.findByText('A product tag with this name already exists. Enter a different name.');
+                await app.findByText('Oops! You already have this product tag. Please try using a different one.');
             });
         });
 
