@@ -511,7 +511,7 @@ describe('Products', () => {
                 expect(ProductClient.editProduct).toBeCalledTimes(1);
                 const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestUtils.productWithoutAssignments));
                 cloneWithEndDateSet.endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
-                expect(ProductClient.editProduct).toBeCalledWith(TestUtils.space.uuid, cloneWithEndDateSet);
+                expect(ProductClient.editProduct).toBeCalledWith(TestUtils.space, cloneWithEndDateSet);
             });
         });
     });

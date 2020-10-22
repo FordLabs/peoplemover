@@ -52,7 +52,7 @@ describe('Product Client', function() {
 
     it('should update a product and return that product', function(done) {
         const expectedUrl = `${baseProductsUrl}/${TestUtils.productWithAssignments.id}`;
-        ProductClient.editProduct(TestUtils.space.uuid!!, TestUtils.productWithAssignments)
+        ProductClient.editProduct(TestUtils.space, TestUtils.productWithAssignments)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, TestUtils.productWithAssignments, expectedConfig);
                 expect(response.data).toBe('Updated Product');

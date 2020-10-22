@@ -48,8 +48,8 @@ class ProductClient {
         });
     }
 
-    static async editProduct(spaceUuid: string, product: Product): Promise<AxiosResponse> {
-        const url = this.getBaseProductsUrl(spaceUuid) + `/${product.id}`;
+    static async editProduct(space: Space, product: Product): Promise<AxiosResponse> {
+        const url = this.getBaseProductsUrl(space.uuid!!) + `/${product.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
