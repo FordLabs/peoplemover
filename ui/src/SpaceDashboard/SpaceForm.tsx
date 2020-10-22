@@ -83,6 +83,7 @@ function SpaceForm({
             <div className="createSpaceButtonContainer">
                 <FormButton
                     buttonStyle="secondary"
+                    type="button"
                     onClick={closeModal}>
                     Cancel
                 </FormButton>
