@@ -78,7 +78,7 @@ describe('the assignment client', () => {
 
         const expectedUrl = '/api/assignment/create';
 
-        await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest);
+        await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space);
 
         expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
         expect(window._paq).toContainEqual(['trackEvent', 'person', 'assign', TestUtils.person1.name]);

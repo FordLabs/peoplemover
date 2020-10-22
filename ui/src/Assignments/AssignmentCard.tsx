@@ -33,8 +33,10 @@ import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignme
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from '../tests/TestUtils';
+import {Space} from "../Space/Space";
 
 interface AssignmentCardProps {
+    currentSpace: Space;
     viewingDate: Date;
     assignment: Assignment;
     container?: string;
@@ -48,6 +50,7 @@ interface AssignmentCardProps {
 }
 
 function AssignmentCard({
+    currentSpace,
     viewingDate,
     assignment = {id: 0} as Assignment,
     container,
@@ -108,7 +111,7 @@ function AssignmentCard({
 
         toggleEditMenu();
 
-        AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace).then(fetchProducts);
     }
 
     async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
@@ -128,7 +131,7 @@ function AssignmentCard({
         };
 
         toggleEditMenu();
-        AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace).then(fetchProducts);
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -198,6 +201,7 @@ function AssignmentCard({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     whichEditMenuOpen: state.whichEditMenuOpen,
+    currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
 });
 

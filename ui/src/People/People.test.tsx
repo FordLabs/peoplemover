@@ -261,7 +261,7 @@ describe('people actions', () => {
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: expectedPerson,
                 products: [],
-            });
+            }, TestUtils.space);
         };
 
         it('assigns the person created by the PersonForm', async () => {
@@ -484,7 +484,7 @@ describe('people actions', () => {
 
                 let person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('Placeholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate, TestUtils.space);
 
                 const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
                 fireEvent.click(editPersonButton);
@@ -503,7 +503,7 @@ describe('people actions', () => {
 
                 person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate, TestUtils.space);
             });
         });
 
@@ -519,7 +519,7 @@ describe('people actions', () => {
             };
 
             await wait(() => {
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate, TestUtils.space);
             });
         });
     });

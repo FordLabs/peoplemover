@@ -22,10 +22,11 @@ import {Assignment} from './Assignment';
 import {Person} from '../People/Person';
 import {getToken} from '../Auth/TokenProvider';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {Space} from "../Space/Space";
 
 class AssignmentClient {
 
-    static async createAssignmentForDate(assignment: CreateAssignmentsRequest): Promise<AxiosResponse> {
+    static async createAssignmentForDate(assignment: CreateAssignmentsRequest, space: Space): Promise<AxiosResponse> {
         const url = `/api/assignment/create`;
         const headers = {
             'Content-Type': 'application/json',
