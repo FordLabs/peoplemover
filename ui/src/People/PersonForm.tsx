@@ -179,7 +179,7 @@ function PersonForm({
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
             } else {
-                const response = await PeopleClient.createPersonForSpace(currentSpace.uuid!!, person);
+                const response = await PeopleClient.createPersonForSpace(currentSpace, person);
                 const newPerson: Person = response.data;
                 addPerson(newPerson);
                 await AssignmentClient.createAssignmentForDate(

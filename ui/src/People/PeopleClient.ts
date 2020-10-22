@@ -18,6 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Person} from './Person';
 import {getToken} from '../Auth/TokenProvider';
+import {Space} from "../Space/Space";
 
 class PeopleClient {
     private static getBasePeopleUrl(spaceUuid: string): string {
@@ -36,8 +37,8 @@ class PeopleClient {
         return Axios.get(url, config);
     }
 
-    static async createPersonForSpace(spaceUuid: string, person: Person): Promise<AxiosResponse> {
-        const url = this.getBasePeopleUrl(spaceUuid);
+    static async createPersonForSpace(space: Space, person: Person): Promise<AxiosResponse> {
+        const url = this.getBasePeopleUrl(space.uuid!!);
         let config = {
             headers: {
                 'Content-Type': 'application/json',

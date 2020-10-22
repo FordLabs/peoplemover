@@ -35,7 +35,6 @@ import moment from 'moment';
 
 describe('people actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
-    const spaceUuid = 'uuid';
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -130,7 +129,7 @@ describe('people actions', () => {
                 newPerson: true,
             };
             const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-            expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
+            expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
         });
     });
 
@@ -183,7 +182,7 @@ describe('people actions', () => {
                     spaceRole: {name: 'Product Manager', id: 2, spaceId: 1, color: {color: '2', id: 2}},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
             });
         });
 
@@ -209,7 +208,7 @@ describe('people actions', () => {
                     spaceRole: {name: 'Product Owner', id: 1, spaceId: -1, color: {color: '1', id: 2}},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
             });
         });
 
@@ -255,7 +254,7 @@ describe('people actions', () => {
 
         const checkForCreatedPerson = async (): Promise<void> => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-            expect(PeopleClient.createPersonForSpace).toBeCalledWith(spaceUuid, expectedPerson);
+            expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestUtils.space, expectedPerson);
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({

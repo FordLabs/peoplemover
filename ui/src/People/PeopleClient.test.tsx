@@ -21,8 +21,7 @@ import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 
 describe('People Client', function() {
-    const spaceUuid = 'uuid';
-    const basePeopleUrl = `/api/spaces/${spaceUuid}/people`;
+    const basePeopleUrl = `/api/spaces/${TestUtils.space.uuid!!}/people`;
     const cookies = new Cookies();
 
     const expectedConfig = {
@@ -53,7 +52,7 @@ describe('People Client', function() {
     });
 
     it('should return all people for space', function(done) {
-        PeopleClient.getAllPeopleInSpace(spaceUuid)
+        PeopleClient.getAllPeopleInSpace(TestUtils.space.uuid!!)
             .then((response) => {
                 expect(Axios.get).toHaveBeenCalledWith(basePeopleUrl, expectedConfig);
                 expect(response.data).toBe('Get All People');
@@ -64,7 +63,7 @@ describe('People Client', function() {
 
     it('should create a person and return that person', function(done) {
         const newPerson = TestUtils.person1;
-        PeopleClient.createPersonForSpace(spaceUuid, newPerson)
+        PeopleClient.createPersonForSpace(TestUtils.space, newPerson)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(basePeopleUrl, newPerson, expectedConfig);
                 expect(response.data).toBe('Created Person');
@@ -75,7 +74,7 @@ describe('People Client', function() {
     it('should edit a person and return that person', function(done) {
         const updatedPerson = TestUtils.person1;
         const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
-        PeopleClient.updatePerson(spaceUuid, updatedPerson)
+        PeopleClient.updatePerson(TestUtils.space.uuid!!, updatedPerson)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson, expectedConfig);
                 expect(response.data).toBe('Updated Person');
@@ -85,7 +84,7 @@ describe('People Client', function() {
 
     it('should delete a person', function(done) {
         const expectedUrl = basePeopleUrl + `/${TestUtils.person1.id}`;
-        PeopleClient.removePerson(spaceUuid, TestUtils.person1.id)
+        PeopleClient.removePerson(TestUtils.space.uuid!!, TestUtils.person1.id)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Person');
