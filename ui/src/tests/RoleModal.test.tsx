@@ -150,7 +150,6 @@ describe('PeopleMover Role Modal', () => {
 
             const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: 'Product Manager'}});
-            // fireEvent.change(roleNameField, {target: {value: 'Product Designer'}});
 
             const saveButton = await app.findByTestId('saveTagButton');
             expect(saveButton).toBeDisabled();
