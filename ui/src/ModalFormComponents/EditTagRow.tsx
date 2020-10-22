@@ -23,18 +23,18 @@ import {Tag} from '../Tags/Tag';
 import {TagAddRequest} from '../Tags/TagAddRequest';
 import {TagClient} from '../Tags/TagClient';
 import {TagEditRequest} from '../Tags/TagEditRequest';
-import {TraitNameType} from '../Traits/MyTraits';
+import {TraitNameType} from './TagRowsContainer';
+import Select, {OptionType} from '../ModalFormComponents/Select';
+import ColorCircle from '../ModalFormComponents/ColorCircle';
 import {RoleAddRequest} from '../Roles/RoleAddRequest';
 import {RoleEditRequest} from '../Roles/RoleEditRequest';
 import {Space} from '../Space/Space';
 import SaveIcon from '../Application/Assets/saveIcon.png';
 import CloseIcon from '../Application/Assets/closeIcon.png';
 import {JSX} from '@babel/types';
-import ColorCircle from '../ModalFormComponents/ColorCircle';
-import Select, {OptionType} from '../ModalFormComponents/Select';
 import {createDataTestId} from '../tests/TestUtils';
 
-import '../Traits/MyTraits.scss';
+import './TagRowsContainer.scss';
 
 const colorMapping: { [key: string]: string } = {
     '#81C0FA': 'Blue',

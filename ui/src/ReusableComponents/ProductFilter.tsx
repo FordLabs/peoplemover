@@ -39,8 +39,10 @@ export type LocalStorageFilters = {
     roleTagsFilters: Array<string>;
 }
 
+export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
+
 export interface AllGroupedTagFilterOptions {
-    label: string;
+    label: LabelType;
     options: Array<FilterOption>;
 }
 

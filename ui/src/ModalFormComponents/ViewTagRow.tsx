@@ -17,40 +17,68 @@
 
 import {Tag} from '../Tags/Tag';
 import {JSX} from '@babel/types';
-import {SpaceRole} from '../Roles/Role';
 import React, {ReactNode} from 'react';
+import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 
 
 interface Props {
-    children?: ReactNode;
+    colorCircleComponent?: ReactNode;
+    editTagCallback: Function;
+    showEditButtons: boolean;
+    setConfirmDeleteModal: Function;
 
     tag: Tag;
     index: number;
 }
 
-function ViewTagRow({ children, tag, index }: Props): JSX.Element {
+function ViewTagRow({
+    colorCircleComponent,
+    editTagCallback,
+    showEditButtons,
+    setConfirmDeleteModal,
+    tag,
+    index,
+}: Props): JSX.Element {
 
     const testIdTraitName = traitName.replace(' ', '');
-    const userIsNotEditingATag = !editSectionsOpen.find(value => value);
+
+    // function toggleEditSection(index: number): void {
+    //     const editSectionChanges: Array<boolean> = [...editSectionsOpen];
+    //     editSectionChanges[index] = !editSectionChanges[index];
+    //     setEditSectionsOpen(editSectionChanges);
+    // }
+
+    const openEditViewOnEnter = (event: React.KeyboardEvent): void => {
+        if (event.key === 'Enter') {
+            editTagCallback();
+        }
+    };
+
+    const showDeleteConfirmationModalOnEnter = (event: React.KeyboardEvent): void => {
+        if (event.key === 'Enter') {
+            setConfirmDeleteModal();
+        }
+    };
+    
     return (
         <div className={`viewTagRow ${traitNameClass}`} data-testid="traitRow">
-            {children}
+            {colorCircleComponent}
             <span className="traitName" data-testid={`given${testIdTraitName}Name`}>
                 {tag.name}
             </span>
-            {userIsNotEditingATag && !showEditState && (
+            {showEditButtons && (
                 <div>
                     <button
                         className="traitEditIcon"
                         data-testid={`${testIdTraitName}EditIcon`}
-                        onClick={(): void => toggleEditSection(index)}
-                        onKeyDown={(e): void => handleKeyDownForToggleEditSection(e, index)}>
+                        onClick={(): void => editTagCallback()}
+                        onKeyDown={(e): void => openEditViewOnEnter(e)}>
                         <i className="fas fa-pen fa-s"/>
                     </button>
                     <button className="traitDeleteIcon"
                         data-testid={`${testIdTraitName}DeleteIcon`}
                         onClick={(): void => showDeleteConfirmationModal(tag)}
-                        onKeyDown={(e): void => handleKeyDownForShowDeleteConfirmationModal(e, tag)}
+                        onKeyDown={(e): void => showDeleteConfirmationModalOnEnter(e, tag)}
                     >
                         <i className="fas fa-trash fa-s" />
                     </button>

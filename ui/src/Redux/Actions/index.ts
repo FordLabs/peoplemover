@@ -39,7 +39,7 @@ export enum AvailableActions {
     SET_PEOPLE,
     REGISTER_PRODUCT_REF,
     UNREGISTER_PRODUCT_REF,
-    SET_GROUPED_TAG_FILTER_OPTIONS,
+    SET_ALL_FILTER_OPTIONS,
     SET_CURRENT_SPACE,
     SET_VIEWING_DATE,
     SET_PRODUCTS,
@@ -107,7 +107,7 @@ export const unregisterProductRefAction = (productRef: ProductCardRefAndProductP
 });
 
 export const setAllGroupedTagFilterOptions = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
-    type: AvailableActions.SET_GROUPED_TAG_FILTER_OPTIONS,
+    type: AvailableActions.SET_ALL_FILTER_OPTIONS,
     allGroupedTagFilterOptions: allGroupedTagFilterOptions,
 });
 
