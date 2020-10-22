@@ -36,6 +36,18 @@ import {TraitNameType} from './MyTraits';
 import '../Traits/MyTraits.scss';
 import {createDataTestId} from '../tests/TestUtils';
 
+const colorMapping: { [key: string]: string } = {
+    '#81C0FA': 'Blue',
+    '#83DDC2': 'Aquamarine',
+    '#A7E9F2': 'Light Blue',
+    '#C9E9B0': 'Light Green',
+    '#DBB5FF': 'Purple',
+    '#FFD7B3': 'Orange',
+    '#FCBAE9': 'Pink',
+    '#FFEAAA': 'Yellow',
+    '#FFFFFF': 'White',
+};
+
 interface EditTraitSectionProps {
     closeCallback: () => void;
     updateCallback: (newRole: Trait) => void;
@@ -150,6 +162,7 @@ function EditTraitSection({
         const color = selectedColor ? selectedColor : { id: -1, color: 'transparent'};
         return {
             value: color,
+            ariaLabel: colorMapping[color.color],
             displayValue: <ColorCircle color={color} />,
         };
     };
@@ -158,6 +171,7 @@ function EditTraitSection({
         return colors.map((color): OptionType => {
             return {
                 value: color,
+                ariaLabel: colorMapping[color.color],
                 displayValue: <ColorCircle color={color} />,
             };
         });
@@ -177,6 +191,7 @@ function EditTraitSection({
             <div className={`editTagRow ${traitNameClass}`} data-testid={createDataTestId('editTagRow', traitName)}>
                 {colorSection && (
                     <Select
+                        ariaLabel="Color"
                         selectedOption={selectedColorOption()}
                         options={colorOptions()}
                         onChange={handleColorChange}

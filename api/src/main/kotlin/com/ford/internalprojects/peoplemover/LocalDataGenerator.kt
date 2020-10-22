@@ -55,7 +55,17 @@ class LocalDataGenerator(
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "AQ-866ed9fa-06ca-41e7-b256-30770b98195f", spaceId = createdSpace.id))
 
         if (addColors) {
-            colorService.addColors(listOf("#FFFF00", "#FF00FF", "#00FFFF"))
+            colorService.addColors(listOf(
+                "#81C0FA",
+                "#83DDC2",
+                "#A7E9F2",
+                "#C9E9B0",
+                "#DBB5FF",
+                "#FFD7B3",
+                "#FCBAE9",
+                "#FFEAAA",
+                "#FFFFFF"
+            ))
         }
         val colors: List<Color?> = colorService.getColors()
 

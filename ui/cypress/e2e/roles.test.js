@@ -3,9 +3,9 @@ import person from '../fixtures/person';
 
 describe('Roles', () => {
     const mockRole = person.role;
-    const mockColor = { id: 2, color: '#FF00FF' };
-    const pink = 'rgb(255, 0, 255)';
-    const defaultColor = 'rgb(0, 255, 255)';
+    const mockColor = { id: 7, color: '#FCBAE9' };
+    const pink = 'rgb(252, 186, 233)';
+    const defaultColor = 'rgb(255, 255, 255)';
 
     beforeEach(() => {
         cy.visitBoard();
@@ -32,7 +32,7 @@ describe('Roles', () => {
         cy.get('@colorDropdownToggle')
             .find('[data-testid=selectDropdownToggle]').click();
 
-        cy.get('[data-testid=selectOption__1]').as('colorOption');
+        cy.get('[data-testid=selectOption__6]').as('colorOption');
 
         cy.get('@colorOption')
             .find('[data-testid=selectRoleCircle]')
