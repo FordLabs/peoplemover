@@ -19,6 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {Person} from './Person';
 import {getToken} from '../Auth/TokenProvider';
 import {Space} from "../Space/Space";
+import MatomoEvents from "../Matomo/MatomoEvents";
 
 class PeopleClient {
     private static getBasePeopleUrl(spaceUuid: string): string {
@@ -46,7 +47,10 @@ class PeopleClient {
             },
         };
 
-        return Axios.post(url, person, config);
+        return Axios.post(url, person, config).then(result => {
+            MatomoEvents.pushEvent(space.name, 'addPerson', person.name);
+            return result;
+        });
     }
 
     static async updatePerson(spaceUuid: string, person: Person): Promise<AxiosResponse> {

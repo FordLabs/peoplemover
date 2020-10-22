@@ -19,6 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import PeopleClient from './PeopleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
+import {Person} from "./Person";
 
 describe('People Client', function() {
     const basePeopleUrl = `/api/spaces/${TestUtils.space.uuid!!}/people`;
@@ -90,5 +91,30 @@ describe('People Client', function() {
                 expect(response.data).toBe('Deleted Person');
                 done();
             });
+    });
+
+    describe('Matomo', () => {
+        let originalWindow: Window;
+        const expectedName = 'New Person';
+        const person: Person = {
+            spaceId: 1,
+            id: -1,
+            name: expectedName,
+            spaceRole: TestUtils.softwareEngineer,
+            newPerson: false,
+        };
+
+        beforeEach(() => {
+            originalWindow = window;
+        });
+
+        afterEach(() => {
+            (window as Window) = originalWindow;
+        });
+
+        it('should send an event to matomo when a person is created', async () => {
+            await PeopleClient.createPersonForSpace(TestUtils.space, person);
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addPerson', expectedName]);
+        });
     });
 });
