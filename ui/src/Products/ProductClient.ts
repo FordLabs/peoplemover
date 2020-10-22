@@ -69,7 +69,10 @@ class ProductClient {
             },
         };
 
-        return Axios.delete(url, config);
+        return Axios.delete(url, config).then(result => {
+            MatomoEvents.pushEvent(space.name, 'deleteProduct', product.name);
+            return result;
+        });
     }
 
     static async getProductsForDate(spaceUuid: string, date: Date): Promise<AxiosResponse> {

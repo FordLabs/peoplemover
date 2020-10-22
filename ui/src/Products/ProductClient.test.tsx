@@ -138,7 +138,28 @@ describe('Product Client', function() {
             }
 
         });
+
+        it('should push delete product action on delete', async () => {
+            const expectedName = 'Floam';
+            const product: Product = {
+                archived: false,
+                assignments: [],
+                id: 0,
+                name: expectedName,
+                productTags: [],
+                spaceId: 0,
+            };
+
+            const expectedResponse = {};
+            axios.delete = jest.fn(() => Promise.resolve(expectedResponse as any));
+
+            const axiosResponse = await ProductClient.deleteProduct(TestUtils.space, product);
+
+            expect(axiosResponse).toBe(expectedResponse);
+
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'deleteProduct', expectedName]);
+
+        });
     });
 
 });
-
