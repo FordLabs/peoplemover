@@ -85,6 +85,15 @@ describe('Product Client', function() {
     describe('Matomo', () => {
 
         let originalWindow: Window;
+        const expectedName = 'Floam';
+        const product: Product = {
+            archived: false,
+            assignments: [],
+            id: 0,
+            name: expectedName,
+            productTags: [],
+            spaceId: 0,
+        };
 
         beforeEach(() => {
             originalWindow = window;
@@ -95,16 +104,6 @@ describe('Product Client', function() {
         });
 
         it('should push create product action on create', async () => {
-            const expectedName = 'Floam';
-            const product: Product = {
-                archived: false,
-                assignments: [],
-                id: 0,
-                name: expectedName,
-                productTags: [],
-                spaceId: 0,
-            };
-
             const expectedResponse = {};
             axios.post = jest.fn(() => Promise.resolve(expectedResponse as any));
 
@@ -117,16 +116,6 @@ describe('Product Client', function() {
         });
 
         it('should push createError on create with failure code', async () => {
-            const expectedName = 'Floam';
-            const product: Product = {
-                archived: false,
-                assignments: [],
-                id: 0,
-                name: expectedName,
-                productTags: [],
-                spaceId: 0,
-            };
-
             const expectedResponse = {code: 417};
             axios.post = jest.fn(() => Promise.reject(expectedResponse as any));
 
@@ -140,16 +129,6 @@ describe('Product Client', function() {
         });
 
         it('should push delete product action on delete', async () => {
-            const expectedName = 'Floam';
-            const product: Product = {
-                archived: false,
-                assignments: [],
-                id: 0,
-                name: expectedName,
-                productTags: [],
-                spaceId: 0,
-            };
-
             const expectedResponse = {};
             axios.delete = jest.fn(() => Promise.resolve(expectedResponse as any));
 
@@ -161,5 +140,4 @@ describe('Product Client', function() {
 
         });
     });
-
 });
