@@ -113,7 +113,7 @@ function ProductForm({
                 });
 
         } else {
-            ProductClient.createProduct(currentSpace.uuid, currentProduct)
+            ProductClient.createProduct(currentSpace, currentProduct)
                 .then(() => setDuplicateProductNameWarning(false))
                 .then(closeModal)
                 .catch(error => {

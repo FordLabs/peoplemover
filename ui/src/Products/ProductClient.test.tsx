@@ -54,7 +54,7 @@ describe('Product Client', function() {
 
     it('should create a product and return that product', function(done) {
         const expectedUrl = baseProductsUrl;
-        ProductClient.createProduct(spaceUuid, TestUtils.productWithAssignments)
+        ProductClient.createProduct(TestUtils.space, TestUtils.productWithAssignments)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(expectedUrl, TestUtils.productWithAssignments, expectedConfig);
                 expect(response.data).toBe('Created Product');
