@@ -147,7 +147,10 @@ function EditTraitSection({
     function updateEnteredRoleText(event: React.ChangeEvent<HTMLInputElement>): void {
         const input: string = event.target ? event.target.value : '';
 
-        if (listOfTraits?.find(trait => {return trait.name.toLowerCase() === input.toLowerCase();}) && originalTraitName?.toLowerCase() !== input.toLowerCase()) {
+        const doesInputTraitAlreadyExist = listOfTraits?.find(trait => {
+            return trait.name.toLowerCase().trim() === input.toLowerCase().trim();
+        });
+        if (doesInputTraitAlreadyExist) {
             setDuplicateErrorMessage(true);
         } else {
             setDuplicateErrorMessage(false);
