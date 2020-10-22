@@ -16,7 +16,7 @@
  */
 
 import {Color, SpaceRole} from '../Roles/Role';
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, ReactNode, useEffect, useState} from 'react';
 import ColorClient from '../Roles/ColorClient';
 import {AxiosResponse} from 'axios';
 import {Tag} from '../Tags/Tag';
@@ -36,19 +36,12 @@ import {createDataTestId} from '../tests/TestUtils';
 
 import './TagRowsContainer.scss';
 
-const colorMapping: { [key: string]: string } = {
-    '#81C0FA': 'Blue',
-    '#83DDC2': 'Aquamarine',
-    '#A7E9F2': 'Light Blue',
-    '#C9E9B0': 'Light Green',
-    '#DBB5FF': 'Purple',
-    '#FFD7B3': 'Orange',
-    '#FCBAE9': 'Pink',
-    '#FFEAAA': 'Yellow',
-    '#FFFFFF': 'White',
-};
-
 interface EditTraitSectionProps {
+    colorDropdownComponent?: ReactNode;
+    tagInputValue: string;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    onSave: () => void;
+
     closeCallback: () => void;
     updateCallback: (newRole: Tag) => void;
     trait?: Tag;
@@ -60,6 +53,11 @@ interface EditTraitSectionProps {
 }
 
 function EditTagRow({
+    colorDropdownComponent,
+    tagInputValue = '',
+    onChange,
+    onSave,
+
     closeCallback,
     updateCallback,
     trait,
@@ -69,6 +67,7 @@ function EditTagRow({
     currentSpace,
     listOfTraits,
 }: EditTraitSectionProps): JSX.Element {
+    // const [tagInputValue, setTagInputValue] = useState<string>('');
     const [colors, setColors] = useState<Array<Color>>([]);
     const [selectedColor, setSelectedColor] = useState<Color>();
     const [enteredTrait, setEnteredTrait] = useState<TagAddRequest>({name:''});
@@ -80,29 +79,29 @@ function EditTagRow({
     useEffect(() => {
         let mounted = false;
         async function setColorsAndTraits(): Promise<void> {
-            if (colorSection) {
-                ColorClient.getAllColors().then(response => {
-                    if (mounted) {
-                        const colors: Array<Color> = response.data;
-                        setColors(colors);
-
-                        const spaceRole: SpaceRole = trait as SpaceRole;
-
-                        const roleColor = spaceRole && spaceRole.color ? spaceRole.color : colors[colors.length - 1];
-                        const roleAddRequest: RoleAddRequest = {
-                            name: spaceRole ? spaceRole.name : '',
-                            colorId: roleColor.id,
-                        };
-                        setSelectedColor(roleColor);
-                        setEnteredTrait(roleAddRequest);
-                    }
-                });
-            } else {
-                const traitAddRequest: TagAddRequest = {
-                    name: trait ? trait.name : '',
-                };
-                setEnteredTrait(traitAddRequest);
-            }
+            // if (colorSection) {
+            //     ColorClient.getAllColors().then(response => {
+            //         if (mounted) {
+            //             const colors: Array<Color> = response.data;
+            //             setColors(colors);
+            //
+            //             const spaceRole: SpaceRole = trait as SpaceRole;
+            //
+            //             const roleColor = spaceRole && spaceRole.color ? spaceRole.color : colors[colors.length - 1];
+            //             const roleAddRequest: RoleAddRequest = {
+            //                 name: spaceRole ? spaceRole.name : '',
+            //                 colorId: roleColor.id,
+            //             };
+            //             setSelectedColor(roleColor);
+            //             setEnteredTrait(roleAddRequest);
+            //         }
+            //     });
+            // } else {
+            const traitAddRequest: TagAddRequest = {
+                name: trait ? trait.name : '',
+            };
+            setTagInputValue(traitAddRequest);
+            // }
         }
 
         mounted = true;
@@ -112,29 +111,31 @@ function EditTagRow({
 
     function handleEnterSubmit(event: React.KeyboardEvent): void {
         if (event.key === 'Enter') {
-            handleSubmit().then();
+            onSave();
         }
     }
 
+
+    // @TODO FIX THIS NOW
     async function handleSubmit(): Promise<void> {
         setDuplicateErrorMessage(false);
-        if (enteredTrait && enteredTrait.name !== '') {
+        if (tagInputValue && tagInputValue.name !== '') {
             let clientResponse: AxiosResponse;
             try {
                 if (trait) {
                     let editRequest: TagEditRequest = {
                         id: trait.id,
-                        updatedName: enteredTrait.name,
+                        updatedName: tagInputValue.name,
                     };
                     if (colorSection) {
                         editRequest = {
                             ...editRequest,
-                            updatedColorId: (enteredTrait as RoleAddRequest).colorId,
+                            updatedColorId: (tagInputValue as RoleAddRequest).colorId,
                         } as RoleEditRequest;
                     }
                     clientResponse = await traitClient.edit(editRequest, currentSpace.uuid!!);
                 } else {
-                    clientResponse = await traitClient.add(enteredTrait, currentSpace.uuid!!);
+                    clientResponse = await traitClient.add(tagInputValue, currentSpace.uuid!!);
                 }
             } catch (error) {
                 return;
@@ -156,39 +157,12 @@ function EditTagRow({
         } else {
             setDuplicateErrorMessage(false);
         }
-        setEnteredTrait(prevEnteredTrait => ({
+
+        setTagInputValue(prevEnteredTrait => ({
             ...prevEnteredTrait,
             name: input,
         }));
     }
-
-    const selectedColorOption = (): OptionType => {
-        const color = selectedColor ? selectedColor : { id: -1, color: 'transparent'};
-        return {
-            value: color,
-            ariaLabel: colorMapping[color.color],
-            displayValue: <ColorCircle color={color} />,
-        };
-    };
-
-    const colorOptions = (): OptionType[] => {
-        return colors.map((color): OptionType => {
-            return {
-                value: color,
-                ariaLabel: colorMapping[color.color],
-                displayValue: <ColorCircle color={color} />,
-            };
-        });
-    };
-
-    const handleColorChange = (selectedOption: OptionType): void => {
-        const color = selectedOption.value as Color;
-        setEnteredTrait(prevEnteredTrait => ({
-            ...prevEnteredTrait,
-            colorId: color.id,
-        }));
-        setSelectedColor(color);
-    };
 
 
     let isTraitNameInvalid = enteredTrait.name === '' || duplicateErrorMessage || (enteredTrait.name.toLowerCase() === originalTraitName?.toLowerCase() && originalTraitColor?.color === selectedColor?.color);
@@ -196,20 +170,13 @@ function EditTagRow({
     return (
         <>
             <div className={`editTagRow ${traitNameClass}`} data-testid={createDataTestId('editTagRow', traitName)}>
-                {colorSection && (
-                    <Select
-                        ariaLabel="Color"
-                        selectedOption={selectedColorOption()}
-                        options={colorOptions()}
-                        onChange={handleColorChange}
-                    />
-                )}
+                {colorDropdownComponent}
                 <input className={`editTagInput ${traitNameClass}`}
                     data-testid="tagNameInput"
                     type="text"
-                    value={enteredTrait.name}
-                    onChange={updateEnteredRoleText}
-                    onKeyPress={(e): void => handleEnterSubmit(e)}/>
+                    value={tagInputValue}
+                    onChange={onChange}
+                    onKeyPress={handleEnterSubmit}/>
                 <div className="traitEditIcons">
                     <button onClick={closeCallback}
                         data-testid="cancelTagButton"
@@ -218,7 +185,7 @@ function EditTagRow({
                         <img src={CloseIcon} alt=""/>
                     </button>
                     <button disabled={isTraitNameInvalid}
-                        onClick={handleSubmit}
+                        onClick={onSave}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
                         aria-label="Save Edited Tag">

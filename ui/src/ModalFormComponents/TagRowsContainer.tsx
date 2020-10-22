@@ -38,6 +38,7 @@ export type TraitType = 'product' | 'person'
 interface MyTraitsProps {
     tagRows: ReactNode;
     confirmDeleteModal: ReactNode;
+    addNewButtonLabel: string;
 
     currentSpace: Space;
     traitClient: TagClient;
@@ -56,32 +57,17 @@ enum TagAction {
 
 function TagRowsContainer({
     tagRows,
+    addNewButtonLabel,
 
     currentSpace,
     traitClient,
     colorSection,
     traitName,
-    traitType,
-    allGroupedTagFilterOptions,
-    setAllGroupedTagFilterOptions,
 }: MyTraitsProps): JSX.Element {
     const [traits, setTraits] = useState<Array<Tag>>([]);
-    const [showEditState, setShowEditState] = useState<boolean>(false);
     const [editSectionsOpen, setEditSectionsOpen] = useState<Array<boolean>>([]);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const traitNameClass = traitName.replace(' ', '_');
-
-    useEffect(() => {
-        async function setup(): Promise<void> {
-            const response = await traitClient.get(currentSpace.uuid!!);
-            const traitResponse: Array<Tag> = response.data;
-            sortTraitsAlphabetically(traitResponse);
-            setTraits(traitResponse);
-            setEditSectionsOpen(new Array(traitResponse.length).fill(false));
-        }
-
-        setup().then();
-    }, [currentSpace.uuid, traitClient]);
 
     function sortTraitsAlphabetically(traitsList: Array<Tag>): void {
         traitsList.sort( (trait1: Tag, trait2: Tag) => {
@@ -106,19 +92,9 @@ function TagRowsContainer({
         });
     }
 
-    function toTitleCase(phrase: string): string {
-        return phrase
-            .toLowerCase()
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-    }
+    const AddNewTagRow = ({ addNewButtonLabel }: { addNewButtonLabel: string }): JSX.Element => {
+        const [showEditState, setShowEditState] = useState<boolean>(false);
 
-    function isEditBoxOpen(): boolean {
-        return editSectionsOpen.includes(true);
-    }
-
-    const AddNewTagRow = (): JSX.Element => {
         const handleAddNewTagClick = (event: React.KeyboardEvent, isAddSectionOpen: boolean): void => {
             if (event.key === 'Enter') {
                 setShowEditState(isAddSectionOpen);
@@ -127,7 +103,7 @@ function TagRowsContainer({
 
         return !showEditState ? (
             <button className="addNewTagRow"
-                disabled={isEditBoxOpen()}
+                disabled={!!showEditState}
                 data-testid={createDataTestId('addNewButton', traitName)}
                 onClick={(): void => setShowEditState(true)}
                 onKeyDown={(e): void => handleAddNewTagClick(e, true)}>
@@ -135,7 +111,7 @@ function TagRowsContainer({
                     <img src={PlusIcon} alt="Add Tag Icon"/>
                 </div>
                 <span className="traitName addNewTraitText">
-                    Add New {toTitleCase(traitName)}
+                    Add New {addNewButtonLabel}
                 </span>
             </button>
         ) : (
@@ -153,7 +129,7 @@ function TagRowsContainer({
         <div data-testid={createDataTestId('tagsModalContainer', traitName)}
             className="myTraitsModalContainer">
             {tagRows}
-            <AddNewTagRow />
+            <AddNewTagRow addNewButtonLabel={addNewButtonLabel} />
             {confirmDeleteModal}
         </div>
     );
