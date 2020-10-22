@@ -129,7 +129,7 @@ function ProductForm({
             console.error('No current space uuid');
             return Promise.resolve();
         }
-        return ProductClient.deleteProduct(currentSpace.uuid, currentProduct).then(closeModal);
+        return ProductClient.deleteProduct(currentSpace, currentProduct).then(closeModal);
     }
 
     function archiveProduct(): Promise<void> {
