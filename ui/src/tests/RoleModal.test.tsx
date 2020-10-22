@@ -61,20 +61,16 @@ describe('PeopleMover Role Modal', () => {
         });
 
         it('should show error message when duplicated role is added', async () => {
-            (RoleClient.add as Function) = jest.fn(() => Promise.reject({
-                response: { status: 409 },
-            }));
-
             const addNewRoleButton = await app.findByText('Add New Role');
             fireEvent.click(addNewRoleButton);
 
             const roleNameField = await app.findByTestId('tagNameInput');
-            fireEvent.change(roleNameField, {target: {value: 'I am a duplicate'}});
+            fireEvent.change(roleNameField, {target: {value: 'Software Engineer'}});
 
             const saveButton = await app.findByTestId('saveTagButton');
-            fireEvent.click(saveButton);
+            expect(saveButton).toBeDisabled();
 
-            await app.findByText('A role with this name already exists. Enter a different name.');
+            await app.findByText('Oops! You already have this role. Please try using a different one.');
         });
 
         it('should add new role section when you click Add New Role', async () => {
@@ -147,22 +143,18 @@ describe('PeopleMover Role Modal', () => {
         });
 
         it('should display error message when name is changed to existing role name', async () => {
-            (RoleClient.edit as Function) = jest.fn(() => Promise.reject({
-                response: { status: 409 },
-            }));
-
             const roleEditIcons = await app.findAllByTestId('roleEditIcon');
 
             const myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
 
             const roleNameField = await app.findByTestId('tagNameInput');
-            fireEvent.change(roleNameField, {target: {value: 'Product Designer'}});
+            fireEvent.change(roleNameField, {target: {value: 'Product Manager'}});
 
             const saveButton = await app.findByTestId('saveTagButton');
-            fireEvent.click(saveButton);
+            expect(saveButton).toBeDisabled();
 
-            await app.findByText('A role with this name already exists. Enter a different name.');
+            await app.findByText('Oops! You already have this role. Please try using a different one.');
         });
 
         it('should show edit section when clicking the pencil', async () => {
@@ -193,7 +185,7 @@ describe('PeopleMover Role Modal', () => {
             fireEvent.click(myFirstPencil);
 
             const saveButton = await app.findByTestId('saveTagButton');
-            expect(saveButton).not.toBeDisabled();
+            expect(saveButton).toBeDisabled();
 
             const roleNameField = await app.findByTestId('tagNameInput');
             fireEvent.change(roleNameField, {target: {value: ''}});

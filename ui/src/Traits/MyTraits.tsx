@@ -279,7 +279,8 @@ function MyTraits({
                 traitClient={traitClient}
                 traitName={traitName}
                 colorSection={colorSection}
-                currentSpace={currentSpace}/>
+                currentSpace={currentSpace}
+                listOfTraits={traits}/>
         );
     };
 
@@ -302,7 +303,7 @@ function MyTraits({
                             traitClient={traitClient}
                             traitName={traitName}
                             currentSpace={currentSpace}
-                        />
+                            listOfTraits={traits}/>
                         }
                     </React.Fragment>
                 );
