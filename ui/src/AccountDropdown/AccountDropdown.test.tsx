@@ -25,6 +25,7 @@ import {MemoryHistory} from 'history/createMemoryHistory';
 import SpaceClient from '../Space/SpaceClient';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
+import {GlobalStateProps} from "../Redux/Reducers";
 
 describe('Account Dropdown',  () => {
     let app: RenderResult;
@@ -46,8 +47,7 @@ describe('Account Dropdown',  () => {
                 app = renderWithRedux(
                     <Router history={history}>
                         <PeopleMover/>
-                    </Router>
-                );
+                    </Router>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
             });
             const userIconButton = await app.findByTestId('userIcon');
             fireEvent.click(userIconButton);
@@ -80,7 +80,7 @@ describe('Account Dropdown',  () => {
             const saveButton = await app.findByText('Invite');
             fireEvent.click(saveButton);
         });
-        expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith('teamName', ['some1@email.com', 'some2@email.com', 'some3@email.com']);
+        expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(TestUtils.space, ['some1@email.com', 'some2@email.com', 'some3@email.com']);
     });
 
     it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {

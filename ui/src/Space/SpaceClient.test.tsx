@@ -21,6 +21,11 @@ import Axios, {AxiosResponse} from 'axios';
 import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {createEmptySpace} from './Space';
+import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+import TestUtils from "../tests/TestUtils";
+
+
+declare let window: MatomoWindow;
 
 describe('Space Client', function() {
     const baseSpaceUrl = `/api/spaces`;
@@ -33,15 +38,19 @@ describe('Space Client', function() {
         },
     };
 
+    let originalWindow: Window;
+
     beforeEach(function() {
         cookies.set('accessToken', '123456');
         Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse));
         Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse));
         Axios.get = jest.fn(x => Promise.resolve({} as AxiosResponse));
+        originalWindow = window;
     });
 
     afterEach(function() {
         cookies.remove('accessToken');
+        (window as Window) = originalWindow;
     });
 
     it('should return the space given a user', function(done) {
@@ -80,15 +89,16 @@ describe('Space Client', function() {
         });
     });
 
-    it('should invite users to a space', function(done) {
-        const expectedUrl = `/api/spaces/${uuid}:invite`;
+    it('should invite users to a space and send event to matomo', function(done) {
+        const expectedUrl = `/api/spaces/${TestUtils.space.uuid}:invite`;
         const expectedData = {
             emails: ['email1@mail.com', 'email2@mail.com'],
         };
 
-        SpaceClient.inviteUsersToSpace('spaceUUID', ['email1@mail.com', 'email2@mail.com'])
+        SpaceClient.inviteUsersToSpace(TestUtils.space, ['email1@mail.com', 'email2@mail.com'])
             .then(() => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'inviteUser', expectedData.emails.join(', ')]);
                 done();
             });
     });
