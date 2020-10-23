@@ -81,7 +81,7 @@ describe('the assignment client', () => {
         await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space);
 
         expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
-        expect(window._paq).toContainEqual(['trackEvent', 'person', 'assign', TestUtils.person1.name]);
+        expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]);
     });
 
     it('should send matomo error event if assign person fails', async () => {
@@ -95,9 +95,9 @@ describe('the assignment client', () => {
         };
 
         try {
-            await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest);
+            await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space);
         } catch (err) {
-            expect(window._paq).toContainEqual(['trackEvent', 'personError', 'assign', TestUtils.person1.name, 417]);
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]);
         }
 
     });

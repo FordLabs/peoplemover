@@ -34,10 +34,10 @@ class AssignmentClient {
         };
 
         return Axios.post(url, assignment, {headers}).then(result => {
-            MatomoEvents.pushEvent('person', 'assign', assignment.person.name);
+            MatomoEvents.pushEvent(space.name, 'assignPerson', assignment.person.name);
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent('personError', 'assign', assignment.person.name, err.code);
+            MatomoEvents.pushEvent(space.name, 'assignPersonError', assignment.person.name, err.code);
             return Promise.reject(err);
         });
     }
