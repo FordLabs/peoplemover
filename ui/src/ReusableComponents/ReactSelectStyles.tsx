@@ -24,14 +24,15 @@ import {Option} from '../CommonTypes/Option';
 import {useOnLoad} from './UseOnLoad';
 
 export const reactSelectStyles = {
-    control: (provided: CSSProperties): CSSProperties => ({
+    // @ts-ignore
+    control: (provided: CSSProperties, { isFocused }): CSSProperties => ({
         ...provided,
         minHeight: '32px',
         borderRadius: '2px',
         padding: '0',
         // These lines disable the blue border
         boxShadow: 'none',
-        border: '1px solid hsl(0, 0%, 80%) !important',
+        border: isFocused ? '2px solid #5463B0' : '1px solid hsl(0, 0%, 80%)' ,
         backgroundColor: 'transparent',
         // @ts-ignore
         '&:hover': {
