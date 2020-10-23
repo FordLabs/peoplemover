@@ -63,12 +63,6 @@ a.deleteLink {
 
 input[type="text"] {
   padding-left: 8px;
-
-  &:focus {
-    outline: none;
-    border: $focus-state-border;
-    border-radius: 4px;
-  }
 }
 
 .alignSelfCenter {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Main.scss';
 
 .myTraitsContainer {
   display: flex;
@@ -114,7 +114,7 @@
 
       &:focus {
         outline: none;
-        border: 2px solid #5463B0;
+        border: $focus-state-border;
         border-radius: 4px;
       }
 
