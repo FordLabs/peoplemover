@@ -34,6 +34,7 @@ import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from '../tests/TestUtils';
 import {Space} from "../Space/Space";
+import MatomoEvents from "../Matomo/MatomoEvents";
 
 interface AssignmentCardProps {
     currentSpace: Space;
@@ -111,7 +112,14 @@ function AssignmentCard({
 
         toggleEditMenu();
 
-        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace).then(fetchProducts);
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace, false).then(() => {
+            if (assignment.placeholder) {
+                MatomoEvents.pushEvent(currentSpace.name, 'markAsPlaceholder', assignment.person.name);
+            } else {
+                MatomoEvents.pushEvent(currentSpace.name, 'unmarkAsPlaceholder', assignment.person.name);
+            }
+            if (fetchProducts) { fetchProducts(); }
+        });
     }
 
     async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
@@ -131,7 +139,11 @@ function AssignmentCard({
         };
 
         toggleEditMenu();
-        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace).then(fetchProducts);
+
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace, false).then(() => {
+            MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignment', assignment.person.name);
+            if (fetchProducts) { fetchProducts(); }
+        });
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {

@@ -32,6 +32,10 @@ import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import ProductClient from '../Products/ProductClient';
 import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
+import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+
+
+declare let window: MatomoWindow;
 
 describe('people actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
@@ -443,12 +447,21 @@ describe('people actions', () => {
             }],
         };
 
+        let originalWindow: Window;
+
         beforeEach(async () => {
-            const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(2019, 0, 1)} as GlobalStateProps;
+            const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(2019, 0, 1), currentSpace: TestUtils.space} as GlobalStateProps;
             app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
             const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
             fireEvent.click(editPersonButton);
+
+            originalWindow = window;
+            window._paq = [];
+        });
+
+        afterEach(function() {
+            (window as Window) = originalWindow;
         });
 
         it('should show Edit Person Modal when you click on edit person option', async () => {
@@ -469,6 +482,8 @@ describe('people actions', () => {
                     fireEvent.mouseDown(markAsPlaceholderButton);
                     fireEvent.mouseUp(markAsPlaceholderButton);
                 });
+
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'markAsPlaceholder', TestUtils.person1.name]);
             };
 
             beforeEach(async () => {
@@ -484,7 +499,7 @@ describe('people actions', () => {
 
                 let person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('Placeholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate, TestUtils.space);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate, TestUtils.space, false);
 
                 const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
                 fireEvent.click(editPersonButton);
@@ -503,7 +518,8 @@ describe('people actions', () => {
 
                 person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate, TestUtils.space);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate, TestUtils.space, false);
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'unmarkAsPlaceholder', TestUtils.person1.name]);
             });
         });
 
@@ -519,7 +535,8 @@ describe('people actions', () => {
             };
 
             await wait(() => {
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate, TestUtils.space);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate, TestUtils.space, false);
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'cancelAssignment', TestUtils.person1.name]);
             });
         });
     });

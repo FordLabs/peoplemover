@@ -26,7 +26,7 @@ import {Space} from "../Space/Space";
 
 class AssignmentClient {
 
-    static async createAssignmentForDate(assignment: CreateAssignmentsRequest, space: Space): Promise<AxiosResponse> {
+    static async createAssignmentForDate(assignment: CreateAssignmentsRequest, space: Space, sendEvent = true): Promise<AxiosResponse> {
         const url = `/api/assignment/create`;
         const headers = {
             'Content-Type': 'application/json',
@@ -34,10 +34,14 @@ class AssignmentClient {
         };
 
         return Axios.post(url, assignment, {headers}).then(result => {
-            MatomoEvents.pushEvent(space.name, 'assignPerson', assignment.person.name);
+            if (sendEvent) {
+                MatomoEvents.pushEvent(space.name, 'assignPerson', assignment.person.name);
+            }
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'assignPersonError', assignment.person.name, err.code);
+            if (sendEvent) {
+                MatomoEvents.pushEvent(space.name, 'assignPersonError', assignment.person.name, err.code);
+            }
             return Promise.reject(err);
         });
     }

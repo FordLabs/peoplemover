@@ -44,6 +44,7 @@ describe('the assignment client', () => {
         Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
         Axios.delete = jest.fn(() => Promise.resolve({} as AxiosResponse));
         originalWindow = window;
+        window._paq = [];
     });
 
     afterEach(function() {
@@ -98,6 +99,35 @@ describe('the assignment client', () => {
             await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space);
         } catch (err) {
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]);
+        }
+
+    });
+
+    it('should not send matomo event if sendEvent is false', async () => {
+        const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
+            requestedDate: moment(new Date()).format('YYYY-MM-DD'),
+            person: TestUtils.person1,
+            products: [],
+
+        };
+        await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space, false);
+        expect(window._paq).not.toContainEqual(['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]);
+    });
+
+    it('should send not matomo error event if sendEvent is false', async () => {
+        Axios.post = jest.fn(() => Promise.reject({code: 417} as any));
+
+        const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
+            requestedDate: moment(new Date()).format('YYYY-MM-DD'),
+            person: TestUtils.person1,
+            products: [],
+
+        };
+
+        try {
+            await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space, false);
+        } catch (err) {
+            expect(window._paq).not.toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]);
         }
 
     });
