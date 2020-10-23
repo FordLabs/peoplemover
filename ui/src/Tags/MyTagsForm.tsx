@@ -22,7 +22,6 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
 import warningIcon from '../Application/Assets/warningIcon.svg';
 import LocationClient from '../Locations/LocationClient';
-import TagRowsContainer from '../ModalFormComponents/TagRowsContainer';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import {Tag} from './Tag';
@@ -34,9 +33,10 @@ import '../ModalFormComponents/TagRowsContainer.scss';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
-import RoleClient from '../Roles/RoleClient';
 import {SpaceRole} from '../Roles/Role';
 import {FilterOption} from '../CommonTypes/Option';
+import {createDataTestId} from '../tests/TestUtils';
+import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 
 const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -90,7 +90,31 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.El
         return options;
     };
 
+    // function sortTraitsAlphabetically(traitsList: Array<Tag>): void {
+    //     traitsList.sort( (trait1: Tag, trait2: Tag) => {
+    //         return trait1.name.toLowerCase().localeCompare(trait2.name.toLowerCase());
+    //     });
+    // }
+    //
+    // function updateTraits(trait: Tag): void {
+    //     setTraits(prevTraits => {
+    //         const updating: boolean = prevTraits.some(prevTrait => prevTrait.id === trait.id);
+    //         if (updating) {
+    //             updateGroupedTagFilterOptions(traitName, trait, TagAction.EDIT);
+    //             const traits = prevTraits.map(prevTrait => prevTrait.id !== trait.id ? prevTrait : trait);
+    //             sortTraitsAlphabetically(traits);
+    //             return traits;
+    //         } else {
+    //             updateGroupedTagFilterOptions(traitName, trait, TagAction.ADD);
+    //             const traits = [...prevTraits, trait];
+    //             sortTraitsAlphabetically(traits);
+    //             return traits;
+    //         }
+    //     });
+    // }
+
     const LocationTags = (): JSX.Element => {
+        const testIdSuffix = 'location';
         const [locations, setLocations] = useState<Array<Tag>>([]);
         const [editLocationIndex, setEditLocationIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
         const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
@@ -151,47 +175,50 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.El
             // update input value
         };
 
+        const onCancel = (): void => {
+            setEditLocationIndex(INACTIVE_EDIT_STATE_INDEX);
+        };
+
         return (
-            <TagRowsContainer
-                addNewButtonLabel="Location"
-                confirmDeleteModal={confirmDeleteModal}
-            >
+            <div data-testid={createDataTestId('tagsModalContainer', testIdSuffix)}
+                className="myTraitsModalContainer">
                 <div className="title">Location Tags</div>
                 {locations.map((location: Tag, index: number) => {
                     return (
                         <React.Fragment key={index}>
                             {editLocationIndex != index &&
-                            <ViewTagRow
-                                tag={location}
-                                index={index}
-                                setConfirmDeleteModal={(): void => showDeleteConfirmationModal(location)}
-                                showEditButtons={editLocationIndex === INACTIVE_EDIT_STATE_INDEX}
-                                editTagCallback={(): void => setEditLocationIndex(index)}
-                            />
+                                <ViewTagRow
+                                    testIdSuffix={testIdSuffix}
+                                    index={index}
+                                    tag={location}
+                                    setConfirmDeleteModal={(): void => showDeleteConfirmationModal(location)}
+                                    showEditButtons={editLocationIndex === INACTIVE_EDIT_STATE_INDEX}
+                                    editTagCallback={(): void => setEditLocationIndex(index)}
+                                />
                             }
                             {editLocationIndex === index &&
                                <EditTagRow
-                                   onChange={(): void => onChange(location)}
+                                   defaultInputValue=""
                                    onSave={(): void => onSave(location)}
-
-                                   closeCallback={(): void => toggleEditSection(index)}
-                                   updateCallback={updateTraits}
-                                   trait={location}
-                                   colorSection={colorSection}
-                                   traitClient={traitClient}
-                                   traitName={traitName}
-                                   currentSpace={currentSpace}
-                                   listOfTraits={locations}
+                                   onCancel={onCancel}
+                                   tagName="Location"
+                                   testIdSuffix={testIdSuffix}
                                />
                             }
                         </React.Fragment>
                     );
                 })}
-            </TagRowsContainer>
+                <AddNewTagRow
+                    addNewButtonLabel="Location"
+                    testIdSuffix={testIdSuffix}
+                />
+                {confirmDeleteModal}
+            </div>
         );
     };
 
     const ProductTags = (): JSX.Element => {
+        const testIdSuffix = 'product tag';
         const [productTags, setProductTags] = useState<Array<Tag>>([]);
         const [editProductTagIndex, setEditProductTagIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
         const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
@@ -244,45 +271,46 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.El
             // edit productTag
         };
 
-        const onChange = (productTag: Tag): void => {
-            // update input value
+        const onCancel = (): void => {
+            setEditProductTagIndex(INACTIVE_EDIT_STATE_INDEX);
         };
 
         return (
-            <TagRowsContainer
-                addNewButtonLabel="Product Tag"
-                confirmDeleteModal={confirmDeleteModal} >
+            <div data-testid={createDataTestId('tagsModalContainer', testIdSuffix)}
+                className="myTraitsModalContainer">
                 <div className="title">Product Tags</div>
                 {productTags.map((productTag: Tag, index: number) => {
                     return (
                         <React.Fragment key={index}>
-                            {editProductTagIndex != index &&
+                            {editProductTagIndex !== index &&
                                 <ViewTagRow
-                                    tag={productTag}
+                                    testIdSuffix={testIdSuffix}
+                                    testIdSuffix={testIdSuffix}
                                     index={index}
-                                    setConfirmDeleteModal={(): void => showDeleteConfirmationModal(productTag)}
+                                    tag={productTag}
+                                    setConfirmDeleteModal={(): void => showDeleteConfirmationModal(location)}
                                     showEditButtons={editProductTagIndex === INACTIVE_EDIT_STATE_INDEX}
                                     editTagCallback={(): void => setEditProductTagIndex(index)}
                                 />
                             }
                             {editProductTagIndex === index &&
                                 <EditTagRow
-                                    onChange={(): void => onChange(productTag)}
+                                    defaultInputValue=""
                                     onSave={(): void => onSave(productTag)}
-
-                                    closeCallback={(): void => toggleEditSection(index)}
-                                    updateCallback={updateTraits}
-                                    trait={productTag}
-                                    colorSection={colorSection}
-                                    traitClient={traitClient}
-                                    traitName={traitName}
-                                    currentSpace={currentSpace}
+                                    onCancel={onCancel}
+                                    tagName="Product Tag"
+                                    testIdSuffix={testIdSuffix}
                                 />
                             }
                         </React.Fragment>
                     );
                 })}
-            </TagRowsContainer>
+                <AddNewTagRow
+                    addNewButtonLabel="Product Tag"
+                    testIdSuffix={testIdSuffix}
+                />
+                {confirmDeleteModal}
+            </div>
         );
     };
 

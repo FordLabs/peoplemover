@@ -16,28 +16,29 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import TagRowsContainer from '../ModalFormComponents/TagRowsContainer';
-import EditTagRow from '../ModalFormComponents/EditTagRow';
-import ViewTagRow from '../ModalFormComponents/ViewTagRow';
-import RoleClient from './RoleClient';
-import warningIcon from '../Application/Assets/warningIcon.svg';
-import {Color, SpaceRole} from './Role';
-import {Tag} from '../Tags/Tag';
-import {JSX} from '@babel/types';
-
-import '../ModalFormComponents/TagRowsContainer.scss';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {Space} from '../Space/Space';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {JSX} from '@babel/types';
+import {Dispatch} from 'redux';
+
+import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
 import {FilterOption} from '../CommonTypes/Option';
-import ColorClient from "./ColorClient";
-import {RoleAddRequest} from "./RoleAddRequest";
-import Select, {OptionType} from "../ModalFormComponents/Select";
-import ColorCircle from "../ModalFormComponents/ColorCircle";
+import EditTagRow from '../ModalFormComponents/EditTagRow';
+import ViewTagRow from '../ModalFormComponents/ViewTagRow';
+import Select, {OptionType} from '../ModalFormComponents/Select';
+import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {Color, SpaceRole} from './Role';
+import RoleClient from './RoleClient';
+import {Tag} from '../Tags/Tag';
+import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import {Space} from '../Space/Space';
+import ColorClient from './ColorClient';
+import ColorCircle from '../ModalFormComponents/ColorCircle';
+import warningIcon from '../Application/Assets/warningIcon.svg';
+import {createDataTestId} from '../tests/TestUtils';
+import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
+
+import '../ModalFormComponents/TagRowsContainer.scss';
 
 const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -67,6 +68,7 @@ interface Props {
 
 function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.Element {
     const RoleTags = () => {
+        const testIdSuffix = 'role';
         const [selectedColor, setSelectedColor] = useState<Color>();
         const [colors, setColors] = useState<Array<Color>>([]);
         const [roles, setRoles] = useState<Array<SpaceRole>>([]);
@@ -84,17 +86,17 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                 const colors: Array<Color> = response.data;
                 setColors(colors);
 
-                const spaceRole: SpaceRole = trait as SpaceRole;
-
-                const roleColor = spaceRole && spaceRole.color ? spaceRole.color : colors[colors.length - 1];
-                const roleAddRequest: RoleAddRequest = {
-                    name: spaceRole ? spaceRole.name : '',
-                    colorId: roleColor.id,
-                };
+                // const spaceRole: SpaceRole = trait as SpaceRole;
+                //
+                // const roleColor = spaceRole && spaceRole.color ? spaceRole.color : colors[colors.length - 1];
+                // const roleAddRequest: RoleAddRequest = {
+                //     name: spaceRole ? spaceRole.name : '',
+                //     colorId: roleColor.id,
+                // };
                 // setSelectedColor(roleColor);
                 // setEnteredTrait(roleAddRequest);
             });
-        });
+        }, []);
 
         useEffect(() => {
             async function setup(): Promise<void> {
@@ -189,10 +191,10 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
 
         const handleColorChange = (selectedOption: OptionType): void => {
             const color = selectedOption.value as Color;
-            setEnteredTrait(prevEnteredTrait => ({
-                ...prevEnteredTrait,
-                colorId: color.id,
-            }));
+            // setEnteredTrait(prevEnteredTrait => ({
+            //     ...prevEnteredTrait,
+            //     colorId: color.id,
+            // }));
             setSelectedColor(color);
         };
 
@@ -200,15 +202,22 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             // edit role
         };
 
-        const onChange = (role: Tag): void => {
-            // update input value
+        const onCancel = (): void => {
+            setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
         };
+        
+        const ColorDropdown = (): JSX.Element => (
+            <Select
+                ariaLabel="Color"
+                selectedOption={selectedColorOption()}
+                options={colorOptions()}
+                onChange={handleColorChange}
+            />
+        );
 
         return (
-            <TagRowsContainer
-                addNewButtonLabel="Role"
-                confirmDeleteModal={confirmDeleteModal}
-            >
+            <div data-testid={createDataTestId('tagsModalContainer', testIdSuffix)}
+                className="myTraitsModalContainer">
                 {roles.map((role: Tag, index: number) => {
                     let colorToUse: string | undefined;
                     const spaceRole: SpaceRole = role as SpaceRole;
@@ -216,12 +225,12 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
 
                     return (
                         <React.Fragment key={index}>
-                            {editRoleIndex != index &&
+                            {editRoleIndex !== index &&
                                 <ViewTagRow
                                     tag={role}
-                                    index={index}
-                                    setConfirmDeleteModal={(): void => showDeleteConfirmationModal(role)}
                                     showEditButtons={editRoleIndex === INACTIVE_EDIT_STATE_INDEX}
+                                    setConfirmDeleteModal={(): void => showDeleteConfirmationModal(role)}
+                                    testIdSuffix={testIdSuffix}
                                     editTagCallback={(): void => setEditRoleIndex(index)}>
                                     <div className="viewTagRowColorCircle">
                                         <span data-testid="myRolesCircle"
@@ -233,29 +242,24 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                             }
                             {editRoleIndex === index &&
                                 <EditTagRow
-                                    onChange={(): void => onChange(role)}
+                                    defaultInputValue=""
                                     onSave={(): void => onSave(role)}
-
-                                    closeCallback={(): void => toggleEditSection(index)}
-                                    updateCallback={updateTraits}
-                                    trait={trait}
-                                    colorSection={colorSection}
-                                    traitClient={traitClient}
-                                    traitName={traitName}
-                                    currentSpace={currentSpace}
-                                >
-                                    <Select
-                                        ariaLabel="Color"
-                                        selectedOption={selectedColorOption()}
-                                        options={colorOptions()}
-                                        onChange={handleColorChange}
-                                    />
-                                </EditTagRow>
+                                    onCancel={onCancel}
+                                    testIdSuffix={testIdSuffix}
+                                    tagName="Role"
+                                    colorDropdown={<ColorDropdown />}
+                                />
                             }
                         </React.Fragment>
                     );
                 })}
-            </TagRowsContainer>
+                <AddNewTagRow
+                    addNewButtonLabel="Role"
+                    testIdSuffix={testIdSuffix}
+                    colorDropdown={<ColorDropdown />}
+                />
+                {confirmDeleteModal}
+            </div>
         );
     };
     

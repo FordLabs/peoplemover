@@ -18,29 +18,27 @@
 import {Tag} from '../Tags/Tag';
 import {JSX} from '@babel/types';
 import React, {ReactNode} from 'react';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-
+import {TagType} from './EditTagRow';
 
 interface Props {
-    colorCircleComponent?: ReactNode;
+    children?: ReactNode;
     editTagCallback: Function;
     showEditButtons: boolean;
     setConfirmDeleteModal: Function;
+    testIdSuffix: TagType;
 
     tag: Tag;
-    index: number;
 }
 
 function ViewTagRow({
-    colorCircleComponent,
+    children,
     editTagCallback,
     showEditButtons,
     setConfirmDeleteModal,
+    testIdSuffix,
     tag,
-    index,
 }: Props): JSX.Element {
-
-    const testIdTraitName = traitName.replace(' ', '');
+    const traitNameClass = testIdSuffix.replace(' ', '_');
 
     // function toggleEditSection(index: number): void {
     //     const editSectionChanges: Array<boolean> = [...editSectionsOpen];
@@ -59,26 +57,31 @@ function ViewTagRow({
             setConfirmDeleteModal();
         }
     };
+
+    const showDeleteConfirmationModal = (tag: Tag): void => {
+        // show delete confirmation modal
+        setConfirmDeleteModal();
+    };
     
     return (
         <div className={`viewTagRow ${traitNameClass}`} data-testid="traitRow">
-            {colorCircleComponent}
-            <span className="traitName" data-testid={`given${testIdTraitName}Name`}>
+            {children}
+            <span className="traitName" data-testid={`given${testIdSuffix}Name`}>
                 {tag.name}
             </span>
             {showEditButtons && (
                 <div>
                     <button
                         className="traitEditIcon"
-                        data-testid={`${testIdTraitName}EditIcon`}
+                        data-testid={`${testIdSuffix}EditIcon`}
                         onClick={(): void => editTagCallback()}
                         onKeyDown={(e): void => openEditViewOnEnter(e)}>
                         <i className="fas fa-pen fa-s"/>
                     </button>
                     <button className="traitDeleteIcon"
-                        data-testid={`${testIdTraitName}DeleteIcon`}
+                        data-testid={`${testIdSuffix}DeleteIcon`}
                         onClick={(): void => showDeleteConfirmationModal(tag)}
-                        onKeyDown={(e): void => showDeleteConfirmationModalOnEnter(e, tag)}
+                        onKeyDown={(e): void => showDeleteConfirmationModalOnEnter(e)}
                     >
                         <i className="fas fa-trash fa-s" />
                     </button>
