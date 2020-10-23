@@ -191,8 +191,13 @@ function EditTagRow({
                         aria-label="Close Edited Tag">
                         <img src={CloseIcon} alt=""/>
                     </button>
+<<<<<<< HEAD
                     <button disabled={isTraitNameInvalid}
                         onClick={onSave}
+=======
+                    <button disabled={!tagInputValue}
+                        onClick={() => onSave(tagInputValue)}
+>>>>>>> Back in a working state - OnSave logs to console for all tags
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
                         aria-label="Save Edited Tag">

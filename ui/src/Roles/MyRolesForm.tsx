@@ -198,14 +198,14 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             setSelectedColor(color);
         };
 
-        const onSave = (role: Tag): void => {
+        const onSave = (role: string): void => {
             console.log('SAVE ROLE: ', role);
         };
 
         const onCancel = (): void => {
             setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
         };
-        
+
         const ColorDropdown = (): JSX.Element => (
             <Select
                 ariaLabel="Color"
@@ -243,7 +243,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                             {editRoleIndex === index &&
                                 <EditTagRow
                                     defaultInputValue=""
-                                    onSave={(): void => onSave(role)}
+                                    onSave={onSave}
                                     onCancel={onCancel}
                                     testIdSuffix={testIdSuffix}
                                     tagName="Role"
@@ -257,12 +257,13 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                     addNewButtonLabel="Role"
                     testIdSuffix={testIdSuffix}
                     colorDropdown={<ColorDropdown />}
+                    onSave={onSave}
                 />
                 {confirmDeleteModal}
             </div>
         );
     };
-    
+
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
             <RoleTags />
