@@ -27,29 +27,22 @@ interface Props {
     colorDropdown?: ReactNode;
     addNewButtonLabel: string;
     testIdSuffix: TagType;
+
+    onSave: (value: string) => void;
 }
 
 const AddNewTagRow = ({ 
     colorDropdown,
     addNewButtonLabel,
     testIdSuffix,
+    onSave,
 }: Props): JSX.Element => {
     const [showEditState, setShowEditState] = useState<boolean>(false);
-    const [tagInputValue, setTagInputValue] = useState<string>('');
 
     const openEditTagRow = (event: React.KeyboardEvent): void => {
         if (event.key === 'Enter') {
             setShowEditState(true);
         }
-    };
-
-    const onSave = (): void => {
-        // edit role
-    };
-
-    const onChange = (value: unknown): void => {
-        const newValue = '';
-        setTagInputValue(newValue);
     };
 
     const onCancel = (): void => {
@@ -58,7 +51,7 @@ const AddNewTagRow = ({
 
     return !showEditState ? (
         <button className="addNewTagRow"
-            disabled={!!showEditState}
+            disabled={showEditState}
             data-testid={createDataTestId('addNewButton', testIdSuffix)}
             onClick={(): void => setShowEditState(true)}
             onKeyDown={(e): void => openEditTagRow(e)}>
@@ -71,7 +64,7 @@ const AddNewTagRow = ({
         </button>
     ) : (
         <EditTagRow
-            onSave={(): void => onSave()}
+            onSave={onSave}
             onCancel={onCancel}
             testIdSuffix={testIdSuffix}
             tagName="Role"

@@ -30,8 +30,8 @@ export type TagNameType = 'Role' | 'Product Tag' | 'Location'
 interface EditTraitSectionProps {
     colorDropdown?: ReactNode;
     defaultInputValue?: string;
+    onSave: (value: string) => void;
     onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    onSave: () => void;
     onCancel: () => void;
     tagName: TagNameType;
     testIdSuffix: TagType;

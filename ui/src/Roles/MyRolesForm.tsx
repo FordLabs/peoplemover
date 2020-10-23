@@ -199,7 +199,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         };
 
         const onSave = (role: Tag): void => {
-            // edit role
+            console.log('SAVE ROLE: ', role);
         };
 
         const onCancel = (): void => {
