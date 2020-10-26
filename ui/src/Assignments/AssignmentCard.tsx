@@ -97,8 +97,8 @@ function AssignmentCard({
         const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
 
         const assignmentIndex: number = assignments.findIndex(fetchedAssignment => (fetchedAssignment.productId === assignment.productId));
-        assignments[assignmentIndex].placeholder = !assignment.placeholder;
         const markedAsPlaceholder = !assignment.placeholder;
+        assignments[assignmentIndex].placeholder = markedAsPlaceholder;
 
         const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments.map(fetchedAssignment => ({
             productId: fetchedAssignment.productId,
@@ -115,9 +115,9 @@ function AssignmentCard({
 
         AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace, false).then(() => {
             if (markedAsPlaceholder) {
-                MatomoEvents.pushEvent(currentSpace.name, 'unmarkAsPlaceholder', assignment.person.name);
-            } else {
                 MatomoEvents.pushEvent(currentSpace.name, 'markAsPlaceholder', assignment.person.name);
+            } else {
+                MatomoEvents.pushEvent(currentSpace.name, 'unmarkAsPlaceholder', assignment.person.name);
             }
             if (fetchProducts) { fetchProducts(); }
         });
