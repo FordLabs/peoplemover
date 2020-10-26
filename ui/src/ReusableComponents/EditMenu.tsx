@@ -35,7 +35,7 @@ export interface EditMenuProps {
 function EditMenu(props: EditMenuProps): JSX.Element {
 
     const hiddenInputRef: any = React.useRef();
-    const node: any = React.useRef();
+    const editMenuRef: any = React.useRef();
 
     useOnLoad(() => {
         const inputField = hiddenInputRef.current;
@@ -44,7 +44,7 @@ function EditMenu(props: EditMenuProps): JSX.Element {
     });
 
     function handleClick(event: any): void {
-        if (node && node.current && !node.current.contains(event.target)) {
+        if (editMenuRef && editMenuRef.current && !editMenuRef.current.contains(event.target)) {
             close();
         }
     }
@@ -62,7 +62,7 @@ function EditMenu(props: EditMenuProps): JSX.Element {
     }
 
     return (
-        <div ref={node} className="editMenuContainer" data-testid="editMenu">
+        <div ref={editMenuRef} className="editMenuContainer" data-testid="editMenu">
             <input className={'hiddenInputField'} type={'text'} ref={hiddenInputRef} onBlur={close}/>
             {props.menuOptionList.map((menuOption, index) =>
                 <div key={index}
