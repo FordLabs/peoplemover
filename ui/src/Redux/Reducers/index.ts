@@ -36,6 +36,7 @@ import {Product} from '../../Products/Product';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import {SpaceLocation} from '../../Locations/SpaceLocation';
 import userSpacesReducer from './userSpacesReducer';
+import whichEditMenuOpenReducer from './whichEditMenuOpenReducer';
 
 export type SortByType = 'location' | 'product-tag' | 'name'
 
@@ -43,6 +44,7 @@ export default combineReducers({
     currentModal: currentModalReducer,
     people: peopleReducer,
     isUnassignedDrawerOpen: isUnassignedDrawerOpenReducer,
+    whichEditMenuOpen: whichEditMenuOpenReducer,
     productRefs: productRefsReducer,
     productSortBy: productSortByReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,

@@ -66,14 +66,8 @@ function ProductCard({
     fetchProducts,
 }: ProductCardProps): JSX.Element {
 
-    const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
-    function onEditMenuClosed(): void {
-        setEditMenuIsOpened(false);
-    }
-
-    /* eslint-disable */
     useEffect(() => {
         registerProductRef({ref: productRef, product});
 
@@ -81,19 +75,16 @@ function ProductCard({
             unregisterProductRef({ref: productRef, product});
         };
     }, []);
-    /* eslint-enable */
 
     function toggleEditMenu(): void {
         if (ourEditMenuIsOpen()) {
             setWhichEditMenuOpen(null);
-            setEditMenuIsOpened(false);
         } else {
             const editMenuOption: EditMenuToOpen = {
                 id: product.id,
                 type: 'product',
             };
             setWhichEditMenuOpen(editMenuOption);
-            setEditMenuIsOpened(true);
         }
     }
 
@@ -118,7 +109,6 @@ function ProductCard({
 
     function editProductAndCloseEditMenu(): void {
         setWhichEditMenuOpen(null);
-        setEditMenuIsOpened(false);
         const newModal: CurrentModalState = {
             modal: AvailableModals.EDIT_PRODUCT,
             item: product,
@@ -192,9 +182,9 @@ function ProductCard({
                                     onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
                             {
-                                editMenuIsOpened &&
+                                ourEditMenuIsOpen() &&
                                 <EditMenu menuOptionList={getMenuOptionList()}
-                                    onClosed={onEditMenuClosed}/>
+                                    onClosed={toggleEditMenu}/>
                             }
                         </div>
                         {product.assignments.length === 0 && (

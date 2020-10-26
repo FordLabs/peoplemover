@@ -32,7 +32,7 @@ export interface EditMenuProps {
     onClosed(): void;
 }
 
-function EditMenu(props: EditMenuProps) {
+function EditMenu(props: EditMenuProps): JSX.Element {
 
     const hiddenInputRef: any = React.useRef();
 
@@ -41,13 +41,13 @@ function EditMenu(props: EditMenuProps) {
         setTimeout(() => inputField.focus());
     });
 
-    function onOptionSelected(event: any, callback: any) {
+    function onOptionSelected(event: any, callback: any): void {
         event.stopPropagation();
         event.preventDefault();
         callback();
     }
 
-    function close() {
+    function close(): void {
         props.onClosed();
     }
 
@@ -57,7 +57,7 @@ function EditMenu(props: EditMenuProps) {
             {props.menuOptionList.map((menuOption, index) =>
                 <div key={index}
                     className="editMenuContainerOption"
-                    onMouseDown={event => onOptionSelected(event, menuOption.callback)}>
+                    onMouseDown={(event): void => onOptionSelected(event, menuOption.callback)}>
                     <i className={`fas ${menuOption.icon}`}
                         data-testid={createDataTestId('editMenuOption', menuOption.text)}/>
                     <span>{menuOption.text}</span>
