@@ -21,9 +21,8 @@ import Axios, {AxiosResponse} from 'axios';
 import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {createEmptySpace} from './Space';
-import {MatomoWindow} from "../CommonTypes/MatomoWindow";
-import TestUtils from "../tests/TestUtils";
-
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import TestUtils from '../tests/TestUtils';
 
 declare let window: MatomoWindow;
 

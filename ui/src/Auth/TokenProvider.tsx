@@ -17,7 +17,7 @@
 
 import Cookies from 'universal-cookie';
 import jwtDecoder from 'jwt-decode';
-import {addUserToMatomo} from "../Matomo/MatomoUserTracking";
+import {addUserToMatomo} from '../Matomo/MatomoUserTracking';
 
 export const getToken = (): string => {
     const cookies = new Cookies();

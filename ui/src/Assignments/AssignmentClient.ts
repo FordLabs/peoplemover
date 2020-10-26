@@ -22,7 +22,7 @@ import {Assignment} from './Assignment';
 import {Person} from '../People/Person';
 import {getToken} from '../Auth/TokenProvider';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {Space} from "../Space/Space";
+import {Space} from '../Space/Space';
 
 class AssignmentClient {
 

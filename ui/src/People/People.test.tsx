@@ -32,8 +32,7 @@ import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import ProductClient from '../Products/ProductClient';
 import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
-import {MatomoWindow} from "../CommonTypes/MatomoWindow";
-
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 

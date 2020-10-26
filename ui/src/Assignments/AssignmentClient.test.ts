@@ -108,7 +108,6 @@ describe('the assignment client', () => {
             requestedDate: moment(new Date()).format('YYYY-MM-DD'),
             person: TestUtils.person1,
             products: [],
-
         };
         await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space, false);
         expect(window._paq).not.toContainEqual(['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]);
@@ -121,7 +120,6 @@ describe('the assignment client', () => {
             requestedDate: moment(new Date()).format('YYYY-MM-DD'),
             person: TestUtils.person1,
             products: [],
-
         };
 
         try {

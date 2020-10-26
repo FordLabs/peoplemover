@@ -42,7 +42,7 @@ import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
 import moment from 'moment';
 import FormButton from '../ModalFormComponents/FormButton';
-import {Space} from "../Space/Space";
+import {Space} from '../Space/Space';
 
 interface AssignmentFormProps {
     products: Array<Product>;

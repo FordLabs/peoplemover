@@ -21,7 +21,7 @@ import moment from 'moment';
 import {getToken} from '../Auth/TokenProvider';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {Space} from "../Space/Space";
+import {Space} from '../Space/Space';
 
 declare let window: MatomoWindow;
 

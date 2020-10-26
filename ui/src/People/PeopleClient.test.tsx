@@ -19,7 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import PeopleClient from './PeopleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
-import {Person} from "./Person";
+import {Person} from './Person';
 
 describe('People Client', function() {
     const basePeopleUrl = `/api/spaces/${TestUtils.space.uuid!!}/people`;

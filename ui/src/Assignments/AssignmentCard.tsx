@@ -33,8 +33,8 @@ import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignme
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from '../tests/TestUtils';
-import {Space} from "../Space/Space";
-import MatomoEvents from "../Matomo/MatomoEvents";
+import {Space} from '../Space/Space';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface AssignmentCardProps {
     currentSpace: Space;

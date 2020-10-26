@@ -35,7 +35,7 @@ import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignme
 import moment from 'moment';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import { getSelectedFilterLabels } from '../Redux/Reducers/allGroupedTagOptionsReducer';
-import {Space} from "../Space/Space";
+import {Space} from '../Space/Space';
 
 interface AssignmentCardListProps {
     container: string;

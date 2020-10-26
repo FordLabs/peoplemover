@@ -18,8 +18,8 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Person} from './Person';
 import {getToken} from '../Auth/TokenProvider';
-import {Space} from "../Space/Space";
-import MatomoEvents from "../Matomo/MatomoEvents";
+import {Space} from '../Space/Space';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 class PeopleClient {
     private static getBasePeopleUrl(spaceUuid: string): string {

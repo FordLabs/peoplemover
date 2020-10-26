@@ -25,7 +25,7 @@ import {MemoryHistory} from 'history/createMemoryHistory';
 import SpaceClient from '../Space/SpaceClient';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
-import {GlobalStateProps} from "../Redux/Reducers";
+import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('Account Dropdown',  () => {
     let app: RenderResult;

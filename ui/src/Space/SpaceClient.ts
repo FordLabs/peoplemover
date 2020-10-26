@@ -19,7 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 import {getToken} from '../Auth/TokenProvider';
-import MatomoEvents from "../Matomo/MatomoEvents";
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 const baseSpaceUrl = `/api/spaces`;
 
