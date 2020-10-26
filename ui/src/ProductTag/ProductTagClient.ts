@@ -17,9 +17,8 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {ProductTag} from './ProductTag';
-import {TagAddRequest} from '../Tags/TagAddRequest';
-import {TagEditRequest} from '../Tags/TagEditRequest';
-import {TagClient} from '../Tags/TagClient';
+import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
 
 class ProductTagClient implements TagClient {
@@ -39,7 +38,7 @@ class ProductTagClient implements TagClient {
         return Axios.get(url, config);
     }
 
-    async add(productTagAddRequest: TagAddRequest, spaceUuid: string ): Promise<AxiosResponse> {
+    async add(productTagAddRequest: TagRequest, spaceUuid: string ): Promise<AxiosResponse> {
         const url = this.getBaseProductTagsUrl(spaceUuid);
         const config = {
             headers: {
@@ -51,7 +50,7 @@ class ProductTagClient implements TagClient {
         return Axios.post(url, productTagAddRequest, config);
     }
 
-    async edit(productTagEditRequest: TagEditRequest, spaceUuid: string): Promise<AxiosResponse<ProductTag>> {
+    async edit(productTagEditRequest: TagRequest, spaceUuid: string): Promise<AxiosResponse<ProductTag>> {
         const url = this.getBaseProductTagsUrl(spaceUuid);
         const config = {
             headers: {

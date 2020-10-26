@@ -26,8 +26,8 @@ import LocationClient from '../Locations/LocationClient';
 import RoleClient from '../Roles/RoleClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
-import {TagClient} from '../Tags/TagClient';
-import {Tag} from '../Tags/Tag';
+import {TagClient} from '../Tags/TagClient.interface';
+import {Tag} from '../Tags/Tag.interface';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 

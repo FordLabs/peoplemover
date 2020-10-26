@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-import {TagEditRequest} from '../Tags/TagEditRequest';
-
-export interface RoleEditRequest extends TagEditRequest{
-    updatedColorId?: number;
+export interface TagRequest {
+    id?: number;
+    name: string;
 }

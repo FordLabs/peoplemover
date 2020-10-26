@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-export interface LocationEditRequest {
-    id: number;
-    updatedName: string;
+import {TagRequest} from '../Tags/TagRequest.interface';
+
+export interface RoleEditRequest extends TagRequest {
+    colorId?: number;
 }

@@ -26,7 +26,7 @@ import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import ProductTagClient from '../../ProductTag/ProductTagClient';
-import {SpaceLocation} from '../../Locations/SpaceLocation';
+import {Location} from '../../Locations/Location.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
 
@@ -131,7 +131,7 @@ export const setProductTagsAction = (productTags: Array<ProductTag>) => ({
     productTags,
 });
 
-export const setLocationsAction = (locations: Array<SpaceLocation>) => ({
+export const setLocationsAction = (locations: Array<Location>) => ({
     type: AvailableActions.SET_LOCATIONS,
     locations,
 });
@@ -192,7 +192,7 @@ export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, nul
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return LocationClient.get(getState().currentSpace.uuid,)
             .then(result => {
-                let locations: Array<SpaceLocation> = result.data || [];
+                let locations: Array<Location> = result.data || [];
                 locations = locations.sort((a, b) => {
                     if (a.name.toLowerCase() < b.name.toLowerCase()) {
                         return -1;

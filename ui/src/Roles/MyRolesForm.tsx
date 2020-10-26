@@ -27,9 +27,9 @@ import EditTagRow from '../ModalFormComponents/EditTagRow';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import Select, {OptionType} from '../ModalFormComponents/Select';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import {Color, SpaceRole} from './Role';
+import {Color, SpaceRole} from './Role.interface';
 import RoleClient from './RoleClient';
-import {Tag} from '../Tags/Tag';
+import {Tag} from '../Tags/Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Space} from '../Space/Space';
 import ColorClient from './ColorClient';
@@ -39,6 +39,8 @@ import {createDataTestId} from '../tests/TestUtils';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
+import {TagRequest} from "../Tags/TagRequest.interface";
+import sortTagsAlphabetically from "../Tags/sortTagsAlphabetically";
 
 const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -75,12 +77,6 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
         const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
 
-        const sortTraitsAlphabetically = (traitsList: Array<SpaceRole>): void => {
-            traitsList.sort( (trait1: SpaceRole, trait2: SpaceRole) => {
-                return trait1.name.toLowerCase().localeCompare(trait2.name.toLowerCase());
-            });
-        };
-
         useEffect(() => {
             ColorClient.getAllColors().then(response => {
                 const colors: Array<Color> = response.data;
@@ -101,7 +97,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         useEffect(() => {
             async function setup(): Promise<void> {
                 const response = await RoleClient.get(currentSpace.uuid!!);
-                sortTraitsAlphabetically(response.data);
+                sortTagsAlphabetically(response.data);
                 setRoles(response.data);
             }
 
@@ -198,8 +194,14 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             setSelectedColor(color);
         };
 
-        const onSave = (role: string): void => {
+        const editRole = async (role: TagRequest): Promise<unknown> => {
             console.log('SAVE ROLE: ', role);
+            return await RoleClient.edit(role, currentSpace.uuid!!);
+        };
+
+        const addRole = async (role: TagRequest): Promise<unknown> => {
+            console.log('SAVE ROLE: ', role);
+            return await RoleClient.edit(role, currentSpace.uuid!!);
         };
 
         const onCancel = (): void => {
@@ -242,8 +244,8 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                             }
                             {editRoleIndex === index &&
                                 <EditTagRow
-                                    defaultInputValue=""
-                                    onSave={onSave}
+                                    initialValue={role}
+                                    onSave={editRole}
                                     onCancel={onCancel}
                                     testIdSuffix={testIdSuffix}
                                     tagName="Role"
@@ -254,10 +256,11 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                     );
                 })}
                 <AddNewTagRow
+                    tagName="Role"
                     addNewButtonLabel="Role"
                     testIdSuffix={testIdSuffix}
                     colorDropdown={<ColorDropdown />}
-                    onSave={onSave}
+                    onSave={addRole}
                 />
                 {confirmDeleteModal}
             </div>

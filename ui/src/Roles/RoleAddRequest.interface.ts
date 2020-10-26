@@ -15,14 +15,9 @@
  * limitations under the License.
  */
 
-import {AxiosResponse} from 'axios';
-import {Tag} from './Tag';
-import {TagAddRequest} from './TagAddRequest';
-import {TagEditRequest} from './TagEditRequest';
 
-export interface TagClient {
-     get(spaceUuid: string): Promise<AxiosResponse<Tag[]>>;
-     add(addRequest: TagAddRequest, spaceUuid: string): Promise<AxiosResponse<Tag>>;
-     edit(editRequest: TagEditRequest, spaceUuid: string): Promise<AxiosResponse<Tag>>;
-     delete(id: number, spaceUuid: string): Promise<AxiosResponse>;
+import {TagRequest} from '../Tags/TagRequest.interface';
+
+export interface RoleAddRequest extends TagRequest {
+    colorId?: number;
 }

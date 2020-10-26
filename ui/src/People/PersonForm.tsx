@@ -25,7 +25,7 @@ import {addPersonAction, closeModalAction, editPersonAction, setIsUnassignedDraw
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
-import {SpaceRole} from '../Roles/Role';
+import {SpaceRole} from '../Roles/Role.interface';
 import {Product} from '../Products/Product';
 import {
     CreateNewText,
@@ -38,7 +38,7 @@ import MultiSelect from '../ReusableComponents/MultiSelect';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
-import {RoleAddRequest} from '../Roles/RoleAddRequest';
+import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';

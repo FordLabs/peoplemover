@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import {Tag} from '../Tags/Tag';
+import {Tag} from '../Tags/Tag.interface';
 import {JSX} from '@babel/types';
 import React, {ReactNode} from 'react';
-import {TagType} from './EditTagRow';
+import {TagType} from './TagForms.types';
 
 interface Props {
     children?: ReactNode;
@@ -62,7 +62,7 @@ function ViewTagRow({
         // show delete confirmation modal
         setConfirmDeleteModal();
     };
-    
+
     return (
         <div className={`viewTagRow ${traitNameClass}`} data-testid="traitRow">
             {children}

@@ -45,7 +45,7 @@ import SpaceClient from '../Space/SpaceClient';
 import {Product} from '../Products/Product';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import {ProductTag} from '../ProductTag/ProductTag';
-import {SpaceLocation} from '../Locations/SpaceLocation';
+import {Location} from '../Locations/Location.interface';
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
@@ -55,7 +55,7 @@ export interface PeopleMoverProps {
 
     fetchProducts(): Array<Product>;
     fetchProductTags(): Array<ProductTag>;
-    fetchLocations(): Array<SpaceLocation>;
+    fetchLocations(): Array<Location>;
     setCurrentSpace(space: Space): Space;
     setPeople(people: Array<Person>): Array<Person>;
 }

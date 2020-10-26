@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-export interface TagEditRequest {
-    id: number;
-    updatedName?: string;
-}
+import {Tag} from '../Tags/Tag.interface';
+
+export type Location = Tag;

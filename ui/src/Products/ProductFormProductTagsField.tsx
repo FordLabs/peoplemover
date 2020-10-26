@@ -6,14 +6,14 @@ import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {customStyles} from './ProductForm';
 import {Product} from './Product';
-import {Tag} from '../Tags/Tag';
+import {Tag} from '../Tags/Tag.interface';
 import {Space} from '../Space/Space';
-import {TagAddRequest} from '../Tags/TagAddRequest';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {AxiosResponse} from 'axios';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
+import {TagRequest} from "../Tags/TagRequest.interface";
 
 interface Props {
     spaceId: number;
@@ -71,10 +71,10 @@ function ProductFormProductTagsField({
         }
         return [];
     }
-    
+
     function handleCreateProductTag(inputValue: string): void {
         setIsLoading(true);
-        const productTag: TagAddRequest = { name: inputValue };
+        const productTag: TagRequest = { name: inputValue };
 
         ProductTagClient.add(productTag, currentSpace.uuid!!)
             .then((response: AxiosResponse) => {
@@ -96,7 +96,7 @@ function ProductFormProductTagsField({
             setSelectedProductTags([]);
         }
     }
-    
+
     return (
         <div className="formItem">
             <label className="formItemLabel" htmlFor="productTags">Product Tags</label>

@@ -30,7 +30,7 @@ import {reactSelectStyles} from '../ReusableComponents/ReactSelectStyles';
 import {ProductTag} from '../ProductTag/ProductTag';
 import {FilterOption} from '../CommonTypes/Option';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import {Tag} from '../Tags/Tag';
+import {Tag} from '../Tags/Tag.interface';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';

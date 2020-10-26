@@ -16,9 +16,9 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {RoleAddRequest} from './RoleAddRequest';
-import {RoleEditRequest} from './RoleEditRequest';
-import {TagClient} from '../Tags/TagClient';
+import {RoleAddRequest} from './RoleAddRequest.interface';
+import {RoleEditRequest} from './RoleEditRequest.interface';
+import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
 
 class RoleClient implements TagClient {

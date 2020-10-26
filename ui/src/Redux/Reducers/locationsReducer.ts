@@ -17,9 +17,9 @@
  */
 
 import {AvailableActions} from '../Actions';
-import {SpaceLocation} from '../../Locations/SpaceLocation';
+import {Location} from '../../Locations/Location.interface';
 
-const locationsReducer = (state: Array<SpaceLocation> = [], action: {type: AvailableActions; locations: Array<SpaceLocation>} ): Array<SpaceLocation> => {
+const locationsReducer = (state: Array<Location> = [], action: {type: AvailableActions; locations: Array<Location>} ): Array<Location> => {
     if (action.type === AvailableActions.SET_LOCATIONS) {
         return [...action.locations];
     } else {

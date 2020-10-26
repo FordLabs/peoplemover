@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {Color} from '../Roles/Role';
+import {Color} from '../Roles/Role.interface';
 import './ColorCircle.scss';
 
 interface Props {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Tag} from '../Tags/Tag';
+import {Tag} from '../Tags/Tag.interface';
 
 export interface SpaceRole extends Tag {
     color?: Color;

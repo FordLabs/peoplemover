@@ -21,7 +21,7 @@ import AssignmentCard from './AssignmentCard';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {Color, SpaceRole} from '../Roles/Role';
+import {Color, SpaceRole} from '../Roles/Role.interface';
 
 jest.useFakeTimers();
 

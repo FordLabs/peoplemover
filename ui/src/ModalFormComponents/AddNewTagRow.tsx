@@ -16,26 +16,27 @@
  */
 
 import {JSX} from '@babel/types';
-import React, {ChangeEvent, ReactNode, useState} from 'react';
+import React, {ReactNode, useState} from 'react';
 import {createDataTestId} from '../tests/TestUtils';
 import PlusIcon from '../Application/Assets/plusIcon.png';
 import EditTagRow from './EditTagRow';
-
-type TagType = 'role' | 'product tag' | 'location'
+import {TagNameType, TagType} from './TagForms.types';
+import {TagRequest} from '../Tags/TagRequest.interface';
 
 interface Props {
     colorDropdown?: ReactNode;
     addNewButtonLabel: string;
     testIdSuffix: TagType;
-
-    onSave: (value: string) => void;
+    tagName: TagNameType;
+    onSave: (value: TagRequest) => Promise<unknown>;
 }
 
-const AddNewTagRow = ({ 
+const AddNewTagRow = ({
     colorDropdown,
     addNewButtonLabel,
     testIdSuffix,
     onSave,
+    tagName,
 }: Props): JSX.Element => {
     const [showEditState, setShowEditState] = useState<boolean>(false);
 
@@ -47,6 +48,12 @@ const AddNewTagRow = ({
 
     const onCancel = (): void => {
         setShowEditState(false);
+    };
+
+    const onSaveTag = async (value: TagRequest): Promise<unknown> => {
+        return await onSave(value).then(() => {
+            setShowEditState(false);
+        });
     };
 
     return !showEditState ? (
@@ -64,10 +71,10 @@ const AddNewTagRow = ({
         </button>
     ) : (
         <EditTagRow
-            onSave={onSave}
+            tagName={tagName}
+            onSave={onSaveTag}
             onCancel={onCancel}
             testIdSuffix={testIdSuffix}
-            tagName="Role"
             colorDropdown={colorDropdown}
         />
     );

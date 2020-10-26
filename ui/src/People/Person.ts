@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {SpaceRole} from '../Roles/Role';
+import {SpaceRole} from '../Roles/Role.interface';
 
 export interface Person {
     id: number;

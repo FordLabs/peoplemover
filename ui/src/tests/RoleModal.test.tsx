@@ -19,7 +19,7 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult, wait} from '@testing-library/react';
 import RoleClient from '../Roles/RoleClient';
-import {RoleAddRequest} from '../Roles/RoleAddRequest';
+import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import MyRolesForm from '../Roles/MyRolesForm';

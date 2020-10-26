@@ -20,43 +20,31 @@ import SaveIcon from '../Application/Assets/saveIcon.png';
 import CloseIcon from '../Application/Assets/closeIcon.png';
 import {JSX} from '@babel/types';
 import {createDataTestId} from '../tests/TestUtils';
+import {TagNameType, TagType} from './TagForms.types';
+import {TagRequest} from '../Tags/TagRequest.interface';
 
 import './TagRowsContainer.scss';
-import {Tag} from "../Tags/Tag";
 
-export type TagType = 'role' | 'product tag' | 'location';
-export type TagNameType = 'Role' | 'Product Tag' | 'Location'
-
-interface EditTraitSectionProps {
+interface Props {
     colorDropdown?: ReactNode;
-    defaultInputValue?: string;
-    onSave: (value: string) => void;
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    initialValue?: TagRequest;
+    onSave: (value: TagRequest) => Promise<unknown>;
     onCancel: () => void;
     tagName: TagNameType;
     testIdSuffix: TagType;
-    showErrorMessage?: boolean;
-    closeCallback: () => void;
-    updateCallback: (newRole: Tag) => void;
-    colorSection: boolean;
-    listOfTraits?: Tag[];
 }
 
 function EditTagRow({
     colorDropdown,
     tagName,
-    defaultInputValue = '',
+    initialValue = { name: '' },
     testIdSuffix,
     onSave,
-    closeCallback,
-    updateCallback,
-    colorSection,
-    listOfTraits,
-    showErrorMessage,
-}: EditTraitSectionProps): JSX.Element {
-    const [tagInputValue, setTagInputValue] = useState<string>('');
-    const [duplicateErrorMessage, setDuplicateErrorMessage] = useState<boolean>(false);
-    const traitNameClass = tagName.replace(' ', '_');
+    onCancel,
+}: Props): JSX.Element {
+    const traitNameClass = testIdSuffix.replace(' ', '_');
+    const [tagInputValue, setTagInputValue] = useState<TagRequest>(initialValue);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 
     // useEffect(() => {
     //     let mounted = false;
@@ -159,19 +147,29 @@ function EditTagRow({
     //     }));
     // }
 
+    const saveTag = (tagValue: TagRequest): void => {
+        onSave(tagValue).catch((error) => {
+            if (error.response.status === 409) {
+                setShowErrorMessage(true);
+            }
+        });
+    };
+
     const handleEnterSubmit = (event: React.KeyboardEvent): void => {
         if (event.key === 'Enter') {
-            onSave(tagInputValue);
+            saveTag(tagInputValue);
         }
     };
 
     const handleOnChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newInputValue = event.target.value;
-        setTagInputValue(newInputValue);
+        setTagInputValue({
+            id: initialValue.id,
+            name: newInputValue,
+        });
     };
 
-
-    let isTraitNameInvalid = tagInputValue === '' || duplicateErrorMessage || (tagInputValue.toLowerCase() === originalTraitName?.toLowerCase() && originalTraitColor?.color === selectedColor?.color);
+    let isTraitNameInvalid = tagInputValue === '' || showErrorMessage || (tagInputValue.toLowerCase() === originalTraitName?.toLowerCase() && originalTraitColor?.color === selectedColor?.color);
 
     return (
         <>
@@ -181,7 +179,7 @@ function EditTagRow({
                 <input className={`editTagInput ${traitNameClass}`}
                     data-testid="tagNameInput"
                     type="text"
-                    value={tagInputValue}
+                    value={tagInputValue.name}
                     onChange={handleOnChange}
                     onKeyPress={handleEnterSubmit}/>
                 <div className="traitEditIcons">
@@ -191,13 +189,8 @@ function EditTagRow({
                         aria-label="Close Edited Tag">
                         <img src={CloseIcon} alt=""/>
                     </button>
-<<<<<<< HEAD
-                    <button disabled={isTraitNameInvalid}
-                        onClick={onSave}
-=======
                     <button disabled={!tagInputValue}
-                        onClick={() => onSave(tagInputValue)}
->>>>>>> Back in a working state - OnSave logs to console for all tags
+                        onClick={(): void => saveTag(tagInputValue)}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
                         aria-label="Save Edited Tag">

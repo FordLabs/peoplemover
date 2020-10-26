@@ -16,10 +16,9 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {SpaceLocation} from './SpaceLocation';
-import {TagAddRequest} from '../Tags/TagAddRequest';
-import {TagEditRequest} from '../Tags/TagEditRequest';
-import {TagClient} from '../Tags/TagClient';
+import {Location} from './Location.interface';
+import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
 
 class LocationClient implements TagClient {
@@ -27,7 +26,7 @@ class LocationClient implements TagClient {
         return '/api/spaces/' + spaceUuid + '/locations';
     }
 
-    async get(spaceUuid: string): Promise<AxiosResponse<SpaceLocation[]>> {
+    async get(spaceUuid: string): Promise<AxiosResponse<Location[]>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -39,7 +38,7 @@ class LocationClient implements TagClient {
         return Axios.get(url, config);
     }
 
-    async add(locationAddRequest: TagAddRequest, spaceUuid: string): Promise<AxiosResponse> {
+    async add(location: TagRequest, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -48,10 +47,10 @@ class LocationClient implements TagClient {
             },
         };
 
-        return Axios.post(url, locationAddRequest, config);
+        return Axios.post(url, location, config);
     }
 
-    async edit(locationEditRequest: TagEditRequest, spaceUuid: string): Promise<AxiosResponse<SpaceLocation>> {
+    async edit(location: TagRequest, spaceUuid: string): Promise<AxiosResponse<Location>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -60,7 +59,7 @@ class LocationClient implements TagClient {
             },
         };
 
-        return Axios.put(url, locationEditRequest, config);
+        return Axios.put(url, location, config);
     }
 
     async delete(locationId: number, spaceUuid: string): Promise<AxiosResponse> {
