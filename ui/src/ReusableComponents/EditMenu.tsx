@@ -39,7 +39,7 @@ function EditMenu(props: EditMenuProps): JSX.Element {
 
     useOnLoad(() => {
         const inputField = hiddenInputRef.current;
-        setTimeout(() => inputField.focus())
+        setTimeout(() => inputField.focus());
         document.addEventListener('mousedown', handleClick, false);
     });
 
