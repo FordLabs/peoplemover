@@ -213,7 +213,6 @@ function AssignmentCard({
 }
 
 const mapStateToProps = (state: GlobalStateProps) => ({
-    whichEditMenuOpen: state.whichEditMenuOpen,
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
 });

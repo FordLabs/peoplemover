@@ -20,7 +20,6 @@ import currentModalReducer, {CurrentModalState} from './currentModalReducer';
 import peopleReducer from './peopleReducer';
 import isUnassignedDrawerOpenReducer from './isUnassignedDrawerOpenReducer';
 import {Person} from '../../People/Person';
-import {EditMenuToOpen} from '../../ReusableComponents/EditMenuToOpen';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import productSortByReducer from './productSortByReducer';
@@ -36,7 +35,6 @@ import {Product} from '../../Products/Product';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import {SpaceLocation} from '../../Locations/SpaceLocation';
 import userSpacesReducer from './userSpacesReducer';
-import whichEditMenuOpenReducer from './whichEditMenuOpenReducer';
 
 export type SortByType = 'location' | 'product-tag' | 'name'
 
@@ -44,7 +42,6 @@ export default combineReducers({
     currentModal: currentModalReducer,
     people: peopleReducer,
     isUnassignedDrawerOpen: isUnassignedDrawerOpenReducer,
-    whichEditMenuOpen: whichEditMenuOpenReducer,
     productRefs: productRefsReducer,
     productSortBy: productSortByReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
@@ -60,7 +57,6 @@ export interface GlobalStateProps {
     currentModal: CurrentModalState;
     people: Array<Person>;
     isUnassignedDrawerOpen: boolean;
-    whichEditMenuOpen: EditMenuToOpen;
     productRefs: Array<ProductCardRefAndProductPair>;
     productSortBy: SortByType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;

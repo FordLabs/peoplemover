@@ -28,7 +28,6 @@ import {
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
 import {ProductCardRefAndProductPair} from './ProductDnDHelper';
-import {EditMenuToOpen} from '../ReusableComponents/EditMenuToOpen';
 import {Product} from './Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -197,7 +196,6 @@ function ProductCard({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
-    whichEditMenuOpen: state.whichEditMenuOpen,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

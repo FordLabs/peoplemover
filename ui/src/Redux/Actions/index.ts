@@ -16,7 +16,6 @@
  */
 
 import {Person} from '../../People/Person';
-import {EditMenuToOpen} from '../../ReusableComponents/EditMenuToOpen';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
@@ -35,7 +34,6 @@ export enum AvailableActions {
     SET_CURRENT_MODAL,
     CLOSE_MODAL,
     SET_IS_UNASSIGNED_DRAWER_OPEN,
-    SET_WHICH_EDIT_MENU_OPEN,
     ADD_PERSON,
     EDIT_PERSON,
     SET_PEOPLE,
@@ -81,11 +79,6 @@ export const closeModalAction = () => ({
 export const setIsUnassignedDrawerOpenAction = (open: boolean) => ({
     type: AvailableActions.SET_IS_UNASSIGNED_DRAWER_OPEN,
     open,
-});
-
-export const setWhichEditMenuOpenAction = (menu: EditMenuToOpen) => ({
-    type: AvailableActions.SET_WHICH_EDIT_MENU_OPEN,
-    menu,
 });
 
 export const addPersonAction = (person: Person) => ({
