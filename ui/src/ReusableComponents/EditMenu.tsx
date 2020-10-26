@@ -35,24 +35,34 @@ export interface EditMenuProps {
 function EditMenu(props: EditMenuProps): JSX.Element {
 
     const hiddenInputRef: any = React.useRef();
+    const node: any = React.useRef();
 
     useOnLoad(() => {
         const inputField = hiddenInputRef.current;
-        setTimeout(() => inputField.focus());
+        setTimeout(() => inputField.focus())
+        document.addEventListener('mousedown', handleClick, false);
     });
+
+    function handleClick(event: any): void {
+        if (node && node.current && !node.current.contains(event.target)) {
+            close();
+        }
+    }
 
     function onOptionSelected(event: any, callback: any): void {
         event.stopPropagation();
         event.preventDefault();
+        document.removeEventListener('mousedown', handleClick, false);
         callback();
     }
 
     function close(): void {
+        document.removeEventListener('mousedown', handleClick, false);
         props.onClosed();
     }
 
     return (
-        <div className="editMenuContainer" data-testid="editMenu">
+        <div ref={node} className="editMenuContainer" data-testid="editMenu">
             <input className={'hiddenInputField'} type={'text'} ref={hiddenInputRef} onBlur={close}/>
             {props.menuOptionList.map((menuOption, index) =>
                 <div key={index}
