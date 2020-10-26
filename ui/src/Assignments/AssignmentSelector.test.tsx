@@ -48,7 +48,7 @@ describe('the assignment form', () => {
         await act(async () => {
             const component = <AssignmentForm products={products}
                 initiallySelectedProduct={products[2]}/>;
-            const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, viewingDate: viewingDate} as GlobalStateProps;
+            const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, currentSpace: TestUtils.space, viewingDate: viewingDate} as GlobalStateProps;
             const wrapper = await renderWithRedux(component, undefined, initialState);
 
             const labelElement = await wrapper.findByLabelText('Name');
@@ -80,7 +80,7 @@ describe('the assignment form', () => {
                         placeholder: TestUtils.assignmentForHank.placeholder,
                     },
                 ],
-            });
+            }, TestUtils.space);
             
         });
     });

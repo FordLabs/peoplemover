@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Main.scss';
 
 .myTraitsContainer {
   display: flex;
@@ -111,6 +111,12 @@
       border-radius: 4px;
       font-size: 14px;
       line-height: 24px;
+
+      &:focus {
+        outline: none;
+        border: $focus-state-border;
+        border-radius: 4px;
+      }
 
       .role {
         width: 170px;

@@ -175,11 +175,11 @@ function PersonForm({
                     requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                     person: assignment.person,
                     products: getSelectedProductPairs(),
-                });
+                }, currentSpace);
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
             } else {
-                const response = await PeopleClient.createPersonForSpace(currentSpace.uuid!!, person);
+                const response = await PeopleClient.createPersonForSpace(currentSpace, person);
                 const newPerson: Person = response.data;
                 addPerson(newPerson);
                 await AssignmentClient.createAssignmentForDate(
@@ -187,7 +187,7 @@ function PersonForm({
                         requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                         person: newPerson,
                         products: getSelectedProductPairs(),
-                    }
+                    }, currentSpace
                 );
             }
             closeModal();
