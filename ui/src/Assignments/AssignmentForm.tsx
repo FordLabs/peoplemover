@@ -42,11 +42,13 @@ import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
 import moment from 'moment';
 import FormButton from '../ModalFormComponents/FormButton';
+import {Space} from '../Space/Space';
 
 interface AssignmentFormProps {
     products: Array<Product>;
     initiallySelectedProduct: Product;
     people: Array<Person>;
+    currentSpace: Space;
     viewingDate: Date;
 
     closeModal(): void;
@@ -57,6 +59,7 @@ function AssignmentForm({
     products,
     initiallySelectedProduct,
     people,
+    currentSpace,
     viewingDate,
     closeModal,
     setCurrentModal,
@@ -120,7 +123,7 @@ function AssignmentForm({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: selectedPerson,
                 products: getProductPairsForPerson(),
-            });
+            }, currentSpace);
 
             closeModal();
         }
@@ -264,6 +267,7 @@ function AssignmentForm({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     people: state.people,
+    currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
 });
 

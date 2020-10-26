@@ -86,6 +86,7 @@ function PeopleMover({
                     await SpaceClient.getSpaceFromUuid(uuid)
                         .then(response => {
                             setCurrentSpace(response.data);
+                            document.title = `${response.data.name} | PeopleMover`;
                         });
                     await fetchProducts();
                     await fetchProductTags();

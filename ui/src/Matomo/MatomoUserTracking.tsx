@@ -1,4 +1,4 @@
-import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 

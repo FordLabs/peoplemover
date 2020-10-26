@@ -16,11 +16,7 @@ import {Product} from './Product';
 describe('ProductForm', function() {
     const mockStore = configureStore([]);
     const store = mockStore({
-        currentSpace: {
-            uuid: 'aaa-aaa-aaa-aaaaa',
-            id: 1,
-            name: 'Test Space',
-        } as Space,
+        currentSpace: TestUtils.space,
         viewingDate: new Date(2020, 4, 14),
     });
 
@@ -71,7 +67,7 @@ describe('ProductForm', function() {
         });
 
         expect(ProductClient.createProduct).toHaveBeenCalledWith(
-            'aaa-aaa-aaa-aaaaa',
+            TestUtils.space,
             {
                 id: -1,
                 spaceId: 1,

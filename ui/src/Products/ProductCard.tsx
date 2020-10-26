@@ -137,7 +137,7 @@ function ProductCard({
             return Promise.resolve();
         }
         const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(currentSpace.uuid, archivedProduct);
+        return ProductClient.editProduct(currentSpace, archivedProduct);
     }
 
     const setCurrentModalToCreateAssignment = () => setCurrentModal({

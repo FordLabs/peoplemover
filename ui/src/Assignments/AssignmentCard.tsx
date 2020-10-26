@@ -33,8 +33,11 @@ import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignme
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from '../tests/TestUtils';
+import {Space} from '../Space/Space';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface AssignmentCardProps {
+    currentSpace: Space;
     viewingDate: Date;
     assignment: Assignment;
     container?: string;
@@ -48,6 +51,7 @@ interface AssignmentCardProps {
 }
 
 function AssignmentCard({
+    currentSpace,
     viewingDate,
     assignment = {id: 0} as Assignment,
     container,
@@ -93,7 +97,8 @@ function AssignmentCard({
         const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
 
         const assignmentIndex: number = assignments.findIndex(fetchedAssignment => (fetchedAssignment.productId === assignment.productId));
-        assignments[assignmentIndex].placeholder = !assignment.placeholder;
+        const markedAsPlaceholder = !assignment.placeholder;
+        assignments[assignmentIndex].placeholder = markedAsPlaceholder;
 
         const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments.map(fetchedAssignment => ({
             productId: fetchedAssignment.productId,
@@ -108,7 +113,14 @@ function AssignmentCard({
 
         toggleEditMenu();
 
-        AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace, false).then(() => {
+            if (markedAsPlaceholder) {
+                MatomoEvents.pushEvent(currentSpace.name, 'markAsPlaceholder', assignment.person.name);
+            } else {
+                MatomoEvents.pushEvent(currentSpace.name, 'unmarkAsPlaceholder', assignment.person.name);
+            }
+            if (fetchProducts) { fetchProducts(); }
+        });
     }
 
     async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
@@ -128,7 +140,11 @@ function AssignmentCard({
         };
 
         toggleEditMenu();
-        AssignmentClient.createAssignmentForDate(assignmentToUpdate).then(fetchProducts);
+
+        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace, false).then(() => {
+            MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignment', assignment.person.name);
+            if (fetchProducts) { fetchProducts(); }
+        });
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -198,6 +214,7 @@ function AssignmentCard({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     whichEditMenuOpen: state.whichEditMenuOpen,
+    currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
 });
 
