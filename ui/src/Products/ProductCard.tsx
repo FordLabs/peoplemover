@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useEffect} from 'react';
+import React, {RefObject, useEffect, useState} from 'react';
 import './Product.scss';
 import {connect} from 'react-redux';
 import {
@@ -23,7 +23,6 @@ import {
     fetchProductsAction,
     registerProductRefAction,
     setCurrentModalAction,
-    setWhichEditMenuOpenAction,
     unregisterProductRefAction,
 } from '../Redux/Actions';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
@@ -44,11 +43,9 @@ interface ProductCardProps {
     product: Product;
     currentSpace: Space;
     viewingDate: Date;
-    whichEditMenuOpen: EditMenuToOpen;
 
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
-    setWhichEditMenuOpen(whichEditMenuOption: EditMenuToOpen | null): void;
     setCurrentModal(modalState: CurrentModalState): void;
     fetchProducts(): void;
 }
@@ -58,14 +55,13 @@ function ProductCard({
     product,
     currentSpace,
     viewingDate,
-    whichEditMenuOpen,
     registerProductRef,
     unregisterProductRef,
-    setWhichEditMenuOpen,
     setCurrentModal,
     fetchProducts,
 }: ProductCardProps): JSX.Element {
 
+    const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
     /* eslint-disable */
@@ -79,19 +75,11 @@ function ProductCard({
     /* eslint-enable */
 
     function toggleEditMenu(): void {
-        if (ourEditMenuIsOpen()) {
-            setWhichEditMenuOpen(null);
+        if (isEditMenuOpen) {
+            setIsEditMenuOpen(false);
         } else {
-            const editMenuOption: EditMenuToOpen = {
-                id: product.id,
-                type: 'product',
-            };
-            setWhichEditMenuOpen(editMenuOption);
+            setIsEditMenuOpen(true);
         }
-    }
-
-    function ourEditMenuIsOpen(): boolean {
-        return whichEditMenuOpen && whichEditMenuOpen.id === product.id && whichEditMenuOpen.type === 'product';
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -110,7 +98,7 @@ function ProductCard({
     }
 
     function editProductAndCloseEditMenu(): void {
-        setWhichEditMenuOpen(null);
+        setIsEditMenuOpen(false);
         const newModal: CurrentModalState = {
             modal: AvailableModals.EDIT_PRODUCT,
             item: product,
@@ -184,7 +172,7 @@ function ProductCard({
                                     onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
                             {
-                                ourEditMenuIsOpen() &&
+                                isEditMenuOpen &&
                                 <EditMenu menuOptionList={getMenuOptionList()}
                                     onClosed={toggleEditMenu}/>
                             }
@@ -215,7 +203,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     fetchProducts: () => dispatch(fetchProductsAction()),
-    setWhichEditMenuOpen: (menu: EditMenuToOpen) => dispatch(setWhichEditMenuOpenAction(menu)),
     registerProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(registerProductRefAction(productRef)),
     unregisterProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(unregisterProductRefAction(productRef)),
 });
