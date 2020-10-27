@@ -57,7 +57,7 @@ describe('filter products', () => {
         });
 
         it('should show the edited location tag from my tags modal', async () => {
-            const editIcons = await app.findAllByTestId('locationEditIcon');
+            const editIcons = await app.findAllByTestId('editIcon__location');
             const locationTagIcon: HTMLElement = editIcons[0];
             fireEvent.click(locationTagIcon);
 
@@ -84,7 +84,7 @@ describe('filter products', () => {
             let locationTagDeleteIcon: HTMLElement;
             const deleteLocationWarning = 'Deleting this location will remove it from any product that has been given this location.';
 
-            const deleteIcons = await app.findAllByTestId('locationDeleteIcon');
+            const deleteIcons = await app.findAllByTestId('deleteIcon__location');
             locationTagDeleteIcon = deleteIcons[0];
             fireEvent.click(locationTagDeleteIcon);
 
@@ -160,7 +160,7 @@ describe('filter products', () => {
         });
 
         it('should show the edited product tag from my tags modal', async () => {
-            let editIcons: Array<HTMLElement> = await app.findAllByTestId('producttagEditIcon');
+            let editIcons: Array<HTMLElement> = await app.findAllByTestId('editIcon__product_tag');
             let productTagIcon: HTMLElement = editIcons[0];
             fireEvent.click(productTagIcon);
             await app.findByTestId('saveTagButton');
@@ -186,7 +186,7 @@ describe('filter products', () => {
         it('should remove filter option when product tag is deleted from my tags modal', async () => {
             let productTagDeleteIcon: HTMLElement;
             const deleteProductTagWarning = 'Deleting this product tag will remove it from any product that has been given this product tag.';
-            const deleteIcons = await app.findAllByTestId('producttagDeleteIcon');
+            const deleteIcons = await app.findAllByTestId('deleteIcon__product_tag');
             productTagDeleteIcon = deleteIcons[0];
 
             fireEvent.click(productTagDeleteIcon);

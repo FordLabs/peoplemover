@@ -129,7 +129,7 @@ describe('My Tags Form', () => {
 
             beforeEach(async () => {
                 editIcons = await app.findAllByTestId('editIcon__product_tag');
-                productTagIcon = editIcons[2];
+                productTagIcon = editIcons[0];
                 fireEvent.click(productTagIcon);
 
                 await app.findByTestId('saveTagButton');

@@ -64,7 +64,7 @@ describe('Filter products', () => {
         const app = renderWithRedux(<PeopleMover/>);
         const myTagsButton = await app.findByText('My Tags');
         fireEvent.click(myTagsButton);
-        const editIcons = await app.findAllByTestId('locationEditIcon');
+        const editIcons = await app.findAllByTestId('editIcon__location');
         const locationTagIcon: HTMLElement = editIcons[0];
         fireEvent.click(locationTagIcon);
 

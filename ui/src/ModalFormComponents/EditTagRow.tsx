@@ -85,7 +85,7 @@ function EditTagRow({
                         aria-label="Close Edited Tag">
                         <img src={CloseIcon} alt=""/>
                     </button>
-                    <button disabled={!tagInputValue}
+                    <button disabled={!tagInputValue.name}
                         onClick={(): void => saveTag(tagInputValue)}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"

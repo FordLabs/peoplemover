@@ -138,12 +138,20 @@ describe('My Roles Form', () => {
 
     describe('editing a role', () => {
         it('should show pencil icon', async () => {
-            const roleEditIcons = await app.findAllByTestId('roleEditIcon');
+            const roleEditIcons = await app.findAllByTestId('editIcon__role');
             expect(roleEditIcons.length).toEqual(3);
         });
 
         it('should display error message when name is changed to existing role name', async () => {
+<<<<<<< HEAD
             const roleEditIcons = await app.findAllByTestId('roleEditIcon');
+=======
+            (RoleClient.edit as Function) = jest.fn(() => Promise.reject({
+                response: { status: 409 },
+            }));
+
+            const roleEditIcons = await app.findAllByTestId('editIcon__role');
+>>>>>>> Update data-testids in unit tests
 
             const myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
@@ -158,7 +166,7 @@ describe('My Roles Form', () => {
         });
 
         it('should show edit section when clicking the pencil', async () => {
-            let roleEditIcons = await app.findAllByTestId('roleEditIcon');
+            let roleEditIcons = await app.findAllByTestId('editIcon__role');
             expect(roleEditIcons.length).toEqual(3);
 
             const myFirstPencil = roleEditIcons[0];
@@ -169,7 +177,7 @@ describe('My Roles Form', () => {
         });
 
         it('should auto-populate name field when opening edit role section', async () => {
-            const roleEditIcons = await app.findAllByTestId('roleEditIcon');
+            const roleEditIcons = await app.findAllByTestId('editIcon__role');
 
             const myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
@@ -180,7 +188,7 @@ describe('My Roles Form', () => {
         });
 
         it('should not allow saving empty role', async () => {
-            let roleEditIcons = await app.findAllByTestId('roleEditIcon');
+            let roleEditIcons = await app.findAllByTestId('editIcon__role');
             let myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
 
@@ -198,12 +206,12 @@ describe('My Roles Form', () => {
         const deleteWarning = 'Deleting this role will remove it from any person that has been given this role.';
 
         it('should show trashcan icon', async () => {
-            const roleDeleteIcons = await app.findAllByTestId('roleDeleteIcon');
+            const roleDeleteIcons = await app.findAllByTestId('deleteIcon__role');
             expect(roleDeleteIcons.length).toEqual(3);
         });
 
         it('should show the confirm delete modal if clicking the trash', async () => {
-            const roleDeleteIcons = await app.findAllByTestId('roleDeleteIcon');
+            const roleDeleteIcons = await app.findAllByTestId('deleteIcon__role');
             const firstTrashIcon = roleDeleteIcons[0];
             fireEvent.click(firstTrashIcon);
 
@@ -211,7 +219,7 @@ describe('My Roles Form', () => {
         });
 
         it('should delete role after confirmation', async () => {
-            const roleDeleteIcons = await app.findAllByTestId('roleDeleteIcon');
+            const roleDeleteIcons = await app.findAllByTestId('deleteIcon__role');
             const secondTrashIcon = roleDeleteIcons[1];
             fireEvent.click(secondTrashIcon);
 
@@ -233,27 +241,27 @@ describe('My Roles Form', () => {
     describe('interaction between editing and creating role', () => {
 
         it('should not show pen and trash can when add new tag is clicked', async () => {
-            expect(app.queryAllByTestId('roleEditIcon').length).toEqual(3);
-            expect(app.queryAllByTestId('roleDeleteIcon').length).toEqual(3);
+            expect(app.queryAllByTestId('editIcon__role').length).toEqual(3);
+            expect(app.queryAllByTestId('deleteIcon__role').length).toEqual(3);
 
             const addNewLocationButton = await app.findByText('Add New Role');
             fireEvent.click(addNewLocationButton);
 
-            expect(app.queryAllByTestId('roleEditIcon').length).toEqual(0);
-            expect(app.queryAllByTestId('roleDeleteIcon').length).toEqual(0);
+            expect(app.queryAllByTestId('editIcon__role').length).toEqual(0);
+            expect(app.queryAllByTestId('deleteIcon__role').length).toEqual(0);
         });
 
         it('should not show pen and trash icons when editing role', async () => {
-            expect(app.queryAllByTestId('roleEditIcon').length).toEqual(3);
-            expect(app.queryAllByTestId('roleDeleteIcon').length).toEqual(3);
-            fireEvent.click(app.queryAllByTestId('roleEditIcon')[0]);
+            expect(app.queryAllByTestId('editIcon__role').length).toEqual(3);
+            expect(app.queryAllByTestId('deleteIcon__role').length).toEqual(3);
+            fireEvent.click(app.queryAllByTestId('editIcon__role')[0]);
 
-            expect(app.queryAllByTestId('roleEditIcon').length).toEqual(0);
-            expect(app.queryAllByTestId('roleDeleteIcon').length).toEqual(0);
+            expect(app.queryAllByTestId('editIcon__role').length).toEqual(0);
+            expect(app.queryAllByTestId('deleteIcon__role').length).toEqual(0);
         });
 
         it('should have create role button disabled when editing role', async () => {
-            fireEvent.click(app.queryAllByTestId('roleEditIcon')[0]);
+            fireEvent.click(app.queryAllByTestId('editIcon__role')[0]);
 
             const addNewLocationButton = await app.findByText('Add New Role');
             expect(addNewLocationButton).toBeDisabled();
