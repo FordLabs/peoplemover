@@ -65,7 +65,7 @@ const AddNewTagRow = ({
             <div className="addNewTagCircle" data-testid="addNewTraitCircle">
                 <img src={PlusIcon} alt="Add Tag Icon"/>
             </div>
-            <span className="traitName addNewTraitText">
+            <span className="tagName addNewTraitText">
                 Add New {addNewButtonLabel}
             </span>
         </button>

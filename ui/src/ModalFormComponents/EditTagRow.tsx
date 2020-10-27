@@ -42,7 +42,7 @@ function EditTagRow({
     onSave,
     onCancel,
 }: Props): JSX.Element {
-    const traitNameClass = testIdSuffix.replace(' ', '_');
+    const tagNameClass = testIdSuffix.replace(' ', '_');
     const [tagInputValue, setTagInputValue] = useState<TagRequest>(initialValue);
     const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 
@@ -173,16 +173,16 @@ function EditTagRow({
 
     return (
         <>
-            <div className={`editTagRow ${traitNameClass}`}
+            <div className={`editTagRow ${tagNameClass}`}
                 data-testid={createDataTestId('editTagRow', testIdSuffix)}>
                 {colorDropdown}
-                <input className={`editTagInput ${traitNameClass}`}
+                <input className={`editTagInput ${tagNameClass}`}
                     data-testid="tagNameInput"
                     type="text"
                     value={tagInputValue.name}
                     onChange={handleOnChange}
                     onKeyPress={handleEnterSubmit}/>
-                <div className="traitEditIcons">
+                <div className="editTagIcons">
                     <button onClick={onCancel}
                         data-testid="cancelTagButton"
                         className="closeEditTagButton"

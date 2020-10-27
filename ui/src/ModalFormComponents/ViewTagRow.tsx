@@ -19,6 +19,7 @@ import {Tag} from '../Tags/Tag.interface';
 import {JSX} from '@babel/types';
 import React, {ReactNode} from 'react';
 import {TagType} from './TagForms.types';
+import {createDataTestId} from '../tests/TestUtils';
 
 interface Props {
     children?: ReactNode;
@@ -26,7 +27,6 @@ interface Props {
     showEditButtons: boolean;
     setConfirmDeleteModal: Function;
     testIdSuffix: TagType;
-
     tag: Tag;
 }
 
@@ -38,50 +38,39 @@ function ViewTagRow({
     testIdSuffix,
     tag,
 }: Props): JSX.Element {
-    const traitNameClass = testIdSuffix.replace(' ', '_');
-
-    // function toggleEditSection(index: number): void {
-    //     const editSectionChanges: Array<boolean> = [...editSectionsOpen];
-    //     editSectionChanges[index] = !editSectionChanges[index];
-    //     setEditSectionsOpen(editSectionChanges);
-    // }
+    const tagNameClass = testIdSuffix.replace(' ', '_');
 
     const openEditViewOnEnter = (event: React.KeyboardEvent): void => {
-        if (event.key === 'Enter') {
-            editTagCallback();
-        }
+        if (event.key === 'Enter') editTagCallback();
     };
 
-    const showDeleteConfirmationModalOnEnter = (event: React.KeyboardEvent): void => {
-        if (event.key === 'Enter') {
-            setConfirmDeleteModal();
-        }
-    };
-
-    const showDeleteConfirmationModal = (tag: Tag): void => {
-        // show delete confirmation modal
+    const showDeleteConfirmationModal = (): void => {
         setConfirmDeleteModal();
     };
 
+    const showDeleteConfirmationModalOnEnter = (event: React.KeyboardEvent): void => {
+        if (event.key === 'Enter') showDeleteConfirmationModal();
+    };
+
     return (
-        <div className={`viewTagRow ${traitNameClass}`} data-testid="traitRow">
+        <div className={`viewTagRow ${tagNameClass}`} data-testid="viewTagRow">
             {children}
-            <span className="traitName" data-testid={`given${testIdSuffix}Name`}>
+            <span className="tagName" data-testid={createDataTestId('tagName', testIdSuffix)}>
                 {tag.name}
             </span>
             {showEditButtons && (
                 <div>
                     <button
-                        className="traitEditIcon"
-                        data-testid={`${testIdSuffix}EditIcon`}
+                        className="editTagIcon"
+                        data-testid={createDataTestId('editIcon', testIdSuffix)}
                         onClick={(): void => editTagCallback()}
-                        onKeyDown={(e): void => openEditViewOnEnter(e)}>
+                        onKeyDown={openEditViewOnEnter}>
                         <i className="fas fa-pen fa-s"/>
                     </button>
-                    <button className="traitDeleteIcon"
-                        data-testid={`${testIdSuffix}DeleteIcon`}
-                        onClick={(): void => showDeleteConfirmationModal(tag)}
-                        onKeyDown={(e): void => showDeleteConfirmationModalOnEnter(e)}
+                    <button className="deleteTagIcon"
+                        data-testid={createDataTestId('deleteIcon', testIdSuffix)}
+                        onClick={(): void => showDeleteConfirmationModal()}
+                        onKeyDown={showDeleteConfirmationModalOnEnter}
                     >
                         <i className="fas fa-trash fa-s" />
                     </button>

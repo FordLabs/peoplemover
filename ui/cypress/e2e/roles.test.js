@@ -19,7 +19,7 @@ describe('Roles', () => {
 
         cy.getModal().should('contain', 'My Roles');
 
-        cy.get('[data-testid=givenroleName]').contains(mockRole).should('not.exist');
+        cy.get('[data-testid=tagName__role]').contains(mockRole).should('not.exist');
 
         cy.get('[data-testid=addNewButton__role]').click();
 
@@ -54,9 +54,9 @@ describe('Roles', () => {
             expect(xhr?.response?.body.color).to.deep.equal(mockColor);
         });
 
-        cy.contains(mockRole).parent('[data-testid=traitRow]').should(($lis) => {
-            expect($lis).to.have.descendants('[data-testid=roleEditIcon]');
-            expect($lis).to.have.descendants('[data-testid=roleDeleteIcon]');
+        cy.contains(mockRole).parent('[data-testid=viewTagRow]').should(($lis) => {
+            expect($lis).to.have.descendants('[data-testid=editIcon__role]');
+            expect($lis).to.have.descendants('[data-testid=deleteIcon__role]');
             expect($lis).to.have.descendants('[data-testid=myRolesCircle]');
         }).then(($lis) => {
             cy.get($lis).find('[data-testid=myRolesCircle]').should('have.css', 'background-color', pink);
