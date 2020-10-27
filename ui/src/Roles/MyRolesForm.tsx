@@ -39,9 +39,9 @@ import {createDataTestId} from '../tests/TestUtils';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
-import {TagRequest} from "../Tags/TagRequest.interface";
-import sortTagsAlphabetically from "../Tags/sortTagsAlphabetically";
-import {RoleAddRequest} from "./RoleAddRequest.interface";
+import {TagRequest} from '../Tags/TagRequest.interface';
+import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
+import {RoleAddRequest} from './RoleAddRequest.interface';
 
 const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -71,7 +71,7 @@ interface Props {
 
 function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.Element {
     const RoleTags = () => {
-        const testIdSuffix = 'role';
+        const tagType = 'role';
         let selectedColor: Color;
         const [colors, setColors] = useState<Array<Color>>([]);
         const [roles, setRoles] = useState<Array<RoleTag>>([]);
@@ -230,7 +230,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         );
 
         return (
-            <div data-testid={createDataTestId('tagsModalContainer', testIdSuffix)}
+            <div data-testid={createDataTestId('tagsModalContainer', tagType)}
                 className="myTraitsModalContainer">
                 {roles.map((role: RoleTag, index: number) => {
                     let colorToUse: string | undefined;
@@ -243,7 +243,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                                     tag={role}
                                     showEditButtons={editRoleIndex === INACTIVE_EDIT_STATE_INDEX}
                                     setConfirmDeleteModal={(): void => showDeleteConfirmationModal(role)}
-                                    testIdSuffix={testIdSuffix}
+                                    tagType={tagType}
                                     editTagCallback={(): void => setEditRoleIndex(index)}>
                                     <div className="viewTagRowColorCircle">
                                         <span data-testid="myRolesCircle"
@@ -258,8 +258,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                                     initialValue={role}
                                     onSave={editRole}
                                     onCancel={onCancel}
-                                    testIdSuffix={testIdSuffix}
-                                    tagName="Role"
+                                    tagType={tagType}
                                     colorDropdown={
                                         <ColorDropdown
                                             selectedColor={role.color}
@@ -271,15 +270,14 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                     );
                 })}
                 <AddNewTagRow
-                    tagName="Role"
                     addNewButtonLabel="Role"
-                    testIdSuffix={testIdSuffix}
+                    tagType={tagType}
+                    onSave={addRole}
                     colorDropdown={
                         <ColorDropdown
                             selectedColor={colors[colors.length - 1]}
                         />
                     }
-                    onSave={addRole}
                 />
                 {confirmDeleteModal}
             </div>

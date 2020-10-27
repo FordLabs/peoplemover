@@ -24,7 +24,7 @@ import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import MyRolesForm from '../Roles/MyRolesForm';
 
-describe('PeopleMover Role Modal', () => {
+describe('My Roles Form', () => {
     let app: RenderResult;
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions} as GlobalStateProps;
 
@@ -37,7 +37,7 @@ describe('PeopleMover Role Modal', () => {
         });
     });
 
-    it('Should open the My Roles Modal on click on My Roles text', async () => {
+    it('should open the My Roles Modal on click on My Roles text', async () => {
         await app.findByTestId('myRolesModalContainer');
     });
 

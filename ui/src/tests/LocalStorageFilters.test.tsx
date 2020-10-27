@@ -23,7 +23,7 @@ import {LocalStorageFilters} from '../ReusableComponents/ProductFilter';
 import selectEvent from 'react-select-event';
 import {wait} from '@testing-library/react';
 
-describe('filter products', () => {
+describe('Filter products', () => {
     class MockLocalStorage {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         store: any = {};

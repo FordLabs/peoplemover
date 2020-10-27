@@ -26,7 +26,7 @@ interface Props {
     editTagCallback: Function;
     showEditButtons: boolean;
     setConfirmDeleteModal: Function;
-    testIdSuffix: TagType;
+    tagType: TagType;
     tag: Tag;
 }
 
@@ -35,9 +35,10 @@ function ViewTagRow({
     editTagCallback,
     showEditButtons,
     setConfirmDeleteModal,
-    testIdSuffix,
+    tagType,
     tag,
 }: Props): JSX.Element {
+    const testIdSuffix = tagType;
     const tagNameClass = testIdSuffix.replace(' ', '_');
 
     const openEditViewOnEnter = (event: React.KeyboardEvent): void => {

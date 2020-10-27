@@ -25,19 +25,18 @@ import {TagRequest} from '../Tags/TagRequest.interface';
 
 interface Props {
     colorDropdown?: ReactNode;
-    addNewButtonLabel: string;
-    testIdSuffix: TagType;
-    tagName: TagNameType;
+    addNewButtonLabel: TagNameType;
+    tagType: TagType;
     onSave: (value: TagRequest) => Promise<unknown>;
 }
 
 const AddNewTagRow = ({
     colorDropdown,
     addNewButtonLabel,
-    testIdSuffix,
     onSave,
-    tagName,
+    tagType,
 }: Props): JSX.Element => {
+    const testIdSuffix = tagType;
     const [showEditState, setShowEditState] = useState<boolean>(false);
 
     const openEditTagRow = (event: React.KeyboardEvent): void => {
@@ -71,10 +70,9 @@ const AddNewTagRow = ({
         </button>
     ) : (
         <EditTagRow
-            tagName={tagName}
+            tagType={tagType}
             onSave={onSaveTag}
             onCancel={onCancel}
-            testIdSuffix={testIdSuffix}
             colorDropdown={colorDropdown}
         />
     );

@@ -130,19 +130,21 @@ describe('My Tags', () => {
 
             beforeEach(async () => {
                 editIcons = await app.findAllByTestId('editIcon__product_tag');
-                productTagIcon = editIcons[0];
+                productTagIcon = editIcons[2];
                 fireEvent.click(productTagIcon);
 
                 await app.findByTestId('saveTagButton');
             });
 
-            it('should call ProductTag client to edit a tag and then display the updated product tag', async () => {
+            it('should call Product Tag client to edit a tag and then display the updated product tag', async () => {
                 const updatedProductTag = 'Finance';
 
                 const editProductTagText = await app.findByTestId('tagNameInput');
+                // @ts-ignore
+                expect(editProductTagText.value).toBe('FordX');
                 fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
 
-                const saveButton =  await app.findByTestId('saveTagButton');
+                const saveButton = await app.findByTestId('saveTagButton');
                 fireEvent.click(saveButton);
 
                 await app.findByText(updatedProductTag);
