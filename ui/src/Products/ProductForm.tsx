@@ -57,6 +57,29 @@ export const customStyles: StylesConfig = {
         height: '22px',
         marginRight: '3px',
     }),
+    noOptionsMessage: (base, state) => {
+        console.log("base", base)
+        return {
+            ...base,
+            backgroundColor: 'transparent',
+            // color: props.data.__isNew__ ? '#5463B0' : '#403D3D',
+            fontFamily: 'Helvetica, sans-serif',
+            fontSize: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0px 17px 0 11px',
+            height: '30px',
+            margin: '3px 0px',
+            // @ts-ignore
+            '&:hover': {
+                cursor: 'pointer',
+                backgroundColor: '#F2F2F2',
+            },
+            color: '#999694',
+            textAlign: 'left',
+        }
+    }
 };
 
 interface ProductFormProps {

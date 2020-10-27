@@ -115,6 +115,7 @@ function ProductFormLocationField({
                 placeholder="Add a location tag"
                 hideSelectedOptions={true}
                 isClearable={true}
+                noOptionsMessage={() => `+ Create "${typedInLocation}"` }
                 value={locationOptionValue()}
             />
         </div>

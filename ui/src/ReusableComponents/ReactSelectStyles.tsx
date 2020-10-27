@@ -25,14 +25,14 @@ import {useOnLoad} from './UseOnLoad';
 
 export const reactSelectStyles = {
     // @ts-ignore
-    control: (provided: CSSProperties, { isFocused }): CSSProperties => ({
+    control: (provided: CSSProperties, {isFocused}): CSSProperties => ({
         ...provided,
         minHeight: '32px',
         borderRadius: '2px',
         padding: '0',
         // These lines disable the blue border
         boxShadow: 'none',
-        border: isFocused ? '2px solid #5463B0' : '1px solid hsl(0, 0%, 80%)' ,
+        border: isFocused ? '2px solid #5463B0' : '1px solid hsl(0, 0%, 80%)',
         backgroundColor: 'transparent',
         // @ts-ignore
         '&:hover': {
@@ -258,18 +258,23 @@ export const filterByStyles = {
 
 export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Element => (
     <components.DropdownIndicator {...props}>
-        {props.selectProps.menuIsOpen
-            ?
-            <i className="fas fa-caret-up greyIcon" data-testid={props.selectProps.name}/> :
-            <i className="fas fa-caret-down greyIcon" data-testid={props.selectProps.name}/>}
+        {
+            props.options.length === 0 ?
+                <i style={{display: 'none'}}/>
+                :
+                (props.selectProps.menuIsOpen
+                    ?
+                    <i className="fas fa-caret-up greyIcon" data-testid={props.selectProps.name}/> :
+                    <i className="fas fa-caret-down greyIcon" data-testid={props.selectProps.name}/>)}
     </components.DropdownIndicator>
 );
+
 
 export const SortByOption = (props: OptionProps<OptionTypeBase>): JSX.Element => {
     const {label, innerProps, isSelected} = props;
     return (
         <div className="sortby-option" {...innerProps}>
-            <span className="sortby-label-name" >{label}</span>
+            <span className="sortby-label-name">{label}</span>
             {isSelected && <img className="sortby-option-check" src={CheckIcon} alt={''}/>}
         </div>
     );
@@ -280,7 +285,7 @@ export const FilterOptions = (props: OptionProps<OptionTypeBase>): JSX.Element =
     return (
         <div className="filter-option" {...innerProps}>
             <input className={'checkbox'} type="checkbox" name="optionCheckbox" checked={isSelected} readOnly/>
-            <div className="filter-label-name" >{label}</div>
+            <div className="filter-label-name">{label}</div>
         </div>
     );
 };
@@ -373,6 +378,6 @@ export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Elem
 
 export const CreateNewText = (text: string): JSX.Element => (
     <span>
-        <span className="fa fa-plus createNewPersonIcon"/>{text}
+        + {text}
     </span>
 );
