@@ -17,7 +17,7 @@
 
 import {Tag} from '../Tags/Tag.interface';
 
-export interface SpaceRole extends Tag {
+export interface RoleTag extends Tag {
     color?: Color;
 }
 

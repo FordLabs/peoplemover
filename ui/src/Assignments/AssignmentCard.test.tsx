@@ -21,7 +21,7 @@ import AssignmentCard from './AssignmentCard';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {Color, SpaceRole} from '../Roles/Role.interface';
+import {Color, RoleTag} from '../Roles/Role.interface';
 
 jest.useFakeTimers();
 
@@ -85,7 +85,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
                 isUnassignedProduct={false}/>);
             const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
-            const person1Role: SpaceRole = (TestUtils.people[0].spaceRole as SpaceRole);
+            const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
             const person1RoleColor: Color = (person1Role.color as Color);
             expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
                 assignmentCardEditContainer,

@@ -25,7 +25,7 @@ import {addPersonAction, closeModalAction, editPersonAction, setIsUnassignedDraw
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
-import {SpaceRole} from '../Roles/Role.interface';
+import {RoleTag} from '../Roles/Role.interface';
 import {Product} from '../Products/Product';
 import {
     CreateNewText,
@@ -84,11 +84,11 @@ function PersonForm({
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
-    const [roles, setRoles] = useState<Array<SpaceRole>>([]);
+    const [roles, setRoles] = useState<Array<RoleTag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
 
-    const alphabetize = (roles: Array<SpaceRole | Product>): Array<SpaceRole | Product> => {
+    const alphabetize = (roles: Array<RoleTag | Product>): Array<RoleTag | Product> => {
         return roles.sort((a, b) => {
             if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
             if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
@@ -222,12 +222,12 @@ function PersonForm({
         setSelectedProducts(updatedProducts.filter(product => product != null));
     };
 
-    const updatePersonField = (fieldName: string, fieldValue: string | boolean | SpaceRole | undefined): void => {
+    const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | undefined): void => {
         setPerson((updatingPerson: Person) => ({...updatingPerson, [fieldName]: fieldValue}));
     };
 
     const updateSpaceRole = (input: string): void => {
-        const roleMatch: SpaceRole | undefined = roles.find((role: SpaceRole) => role.name === input);
+        const roleMatch: RoleTag | undefined = roles.find((role: RoleTag) => role.name === input);
         updatePersonField('spaceRole', roleMatch);
     };
 
@@ -259,7 +259,7 @@ function PersonForm({
         if (currentSpace.uuid) {
             const roleAddRequest: RoleAddRequest = {name: inputValue};
             RoleClient.add(roleAddRequest, currentSpace.uuid).then((response: AxiosResponse) => {
-                const newRole: SpaceRole = response.data;
+                const newRole: RoleTag = response.data;
                 setRoles(roles => alphabetize([...roles, newRole]));
                 updatePersonField('spaceRole', newRole);
                 setIsLoading(false);

@@ -24,7 +24,7 @@ import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUt
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {Color, SpaceRole} from '../Roles/Role.interface';
+import {Color, RoleTag} from '../Roles/Role.interface';
 import moment from 'moment';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 
@@ -173,7 +173,7 @@ describe('AssignmentForm', () => {
                 fireEvent.change(labelElement, {target: {value: 'Person 1'}});
 
                 const person1ColorBadge = await app.findByTestId('RoleColorBadge');
-                const person1Role: SpaceRole = (TestUtils.people[0].spaceRole as SpaceRole);
+                const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
                 const person1RoleColor: Color = (person1Role.color as Color);
 
                 expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(

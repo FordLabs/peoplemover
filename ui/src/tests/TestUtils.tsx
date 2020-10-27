@@ -33,7 +33,7 @@ import {Product} from '../Products/Product';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {ProductTag} from '../ProductTag/ProductTag';
 import ColorClient from '../Roles/ColorClient';
-import {Color, SpaceRole} from '../Roles/Role.interface';
+import {Color, RoleTag} from '../Roles/Role.interface';
 import {Location} from '../Locations/Location.interface';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
@@ -250,7 +250,7 @@ class TestUtils {
     static productManager = {name: 'Product Manager', id: 2, spaceId: 1, color: {id: 2, color: '#45'}};
     static productDesigner = {name: 'Product Designer', id: 3, spaceId: 1, color: {id: 3, color: '#46'}};
 
-    static roles: SpaceRole[] = [
+    static roles: RoleTag[] = [
         TestUtils.softwareEngineer,
         TestUtils.productManager,
         TestUtils.productDesigner,

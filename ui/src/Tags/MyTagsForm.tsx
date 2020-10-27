@@ -32,12 +32,12 @@ import '../ModalFormComponents/TagRowsContainer.scss';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
-import {SpaceRole} from '../Roles/Role.interface';
+import {RoleTag} from '../Roles/Role.interface';
 import {FilterOption} from '../CommonTypes/Option';
 import {createDataTestId} from '../tests/TestUtils';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import {TagRequest} from './TagRequest.interface';
-import sortTagsAlphabetically from "./sortTagsAlphabetically";
+import sortTagsAlphabetically from './sortTagsAlphabetically';
 
 const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -55,7 +55,7 @@ interface Props {
 }
 
 function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Element {
-
+    //@todo check location and products are labeled correctly
     // @todo abstract away to redux please
     const updateFilterValuesInGroupedTags = (index: number, trait: Tag, action: TagAction): Array<FilterOption> => {
         let options: Array<FilterOption>;
@@ -122,7 +122,7 @@ function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Elem
                 if (currentSpace.uuid) {
                     await LocationClient.delete(locationToDelete.id, currentSpace.uuid);
                     setConfirmDeleteModal(null);
-                    setLocations(prevTraits => prevTraits.filter((location: SpaceRole) => location.id !== locationToDelete.id));
+                    setLocations(prevTraits => prevTraits.filter((location: RoleTag) => location.id !== locationToDelete.id));
                     updateLocationFilterOptions(locationToDelete, TagAction.DELETE);
                 }
             } catch {
@@ -130,11 +130,11 @@ function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Elem
             }
         };
 
-        const showDeleteConfirmationModal = (roleToDelete: Tag): void => {
+        const showDeleteConfirmationModal = (locationToDelete: Tag): void => {
             const propsForDeleteConfirmationModal: ConfirmationModalProps = {
-                submit: () => deleteLocation(roleToDelete),
+                submit: () => deleteLocation(locationToDelete),
                 close: () => setConfirmDeleteModal(null),
-                warningMessage: `Deleting this product tag will remove it from any product that has been given this product tag.`,
+                warningMessage: `Deleting this location will remove it from any product that has been given this location.`,
             };
             const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
             setConfirmDeleteModal(deleteConfirmationModal);
@@ -146,13 +146,9 @@ function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Elem
 
         const editLocation = async (location: TagRequest): Promise<unknown> => {
             return await LocationClient.edit(location, currentSpace.uuid!!)
-                .then(() => {
+                .then((response) => {
                     setLocations(prevLocations => {
-                        const newLocation: Tag = {
-                            id: location.id!!,
-                            name: location.name,
-                            spaceId: currentSpace.id!!,
-                        };
+                        const newLocation: Tag = response.data;
                         updateLocationFilterOptions(newLocation, TagAction.EDIT);
                         const locations = prevLocations.map(prevTrait => prevTrait.id !== location.id ? prevTrait : newLocation);
                         sortTagsAlphabetically(locations);
@@ -253,7 +249,7 @@ function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Elem
                     await ProductTagClient.delete(productTagToDelete.id, currentSpace.uuid);
                     setConfirmDeleteModal(null);
                     setProductTags(prevTraits =>
-                        prevTraits.filter((productTag: SpaceRole) => productTag.id !== productTagToDelete.id)
+                        prevTraits.filter((productTag: RoleTag) => productTag.id !== productTagToDelete.id)
                     );
                     updateProductTagFilterOptions(productTagToDelete, TagAction.DELETE);
                 }
@@ -277,21 +273,18 @@ function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Elem
         };
 
         const editProductTag = async (productTag: TagRequest): Promise<unknown> => {
-            return await ProductTagClient.edit(productTag, currentSpace.uuid!!).then(() => {
-                setProductTags(prevProductTag => {
-                    const newProductTag: Tag = {
-                        id: productTag.id!!,
-                        name: productTag.name,
-                        spaceId: currentSpace.id!!,
-                    };
-                    updateProductTagFilterOptions(newProductTag, TagAction.EDIT);
-                    const productTags = prevProductTag.map(prevTrait => prevTrait.id !== productTag.id ? prevTrait : newProductTag);
-                    sortTagsAlphabetically(productTags);
-                    return productTags;
-                });
+            return await ProductTagClient.edit(productTag, currentSpace.uuid!!)
+                .then((response) => {
+                    setProductTags(prevProductTag => {
+                        const newProductTag: Tag = response.data;
+                        updateProductTagFilterOptions(newProductTag, TagAction.EDIT);
+                        const productTags = prevProductTag.map(prevTrait => prevTrait.id !== productTag.id ? prevTrait : newProductTag);
+                        sortTagsAlphabetically(productTags);
+                        return productTags;
+                    });
 
-                returnToViewState();
-            });
+                    returnToViewState();
+                });
         };
 
         const addProductTag = async (productTag: TagRequest): Promise<unknown> => {

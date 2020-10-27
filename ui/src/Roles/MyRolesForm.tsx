@@ -27,7 +27,7 @@ import EditTagRow from '../ModalFormComponents/EditTagRow';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import Select, {OptionType} from '../ModalFormComponents/Select';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import {Color, SpaceRole} from './Role.interface';
+import {Color, RoleTag} from './Role.interface';
 import RoleClient from './RoleClient';
 import {Tag} from '../Tags/Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
@@ -41,6 +41,7 @@ import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import '../ModalFormComponents/TagRowsContainer.scss';
 import {TagRequest} from "../Tags/TagRequest.interface";
 import sortTagsAlphabetically from "../Tags/sortTagsAlphabetically";
+import {RoleAddRequest} from "./RoleAddRequest.interface";
 
 const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -71,9 +72,9 @@ interface Props {
 function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.Element {
     const RoleTags = () => {
         const testIdSuffix = 'role';
-        const [selectedColor, setSelectedColor] = useState<Color>();
+        let selectedColor: Color;
         const [colors, setColors] = useState<Array<Color>>([]);
-        const [roles, setRoles] = useState<Array<SpaceRole>>([]);
+        const [roles, setRoles] = useState<Array<RoleTag>>([]);
         const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
         const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
 
@@ -81,16 +82,6 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             ColorClient.getAllColors().then(response => {
                 const colors: Array<Color> = response.data;
                 setColors(colors);
-
-                // const spaceRole: SpaceRole = trait as SpaceRole;
-                //
-                // const roleColor = spaceRole && spaceRole.color ? spaceRole.color : colors[colors.length - 1];
-                // const roleAddRequest: RoleAddRequest = {
-                //     name: spaceRole ? spaceRole.name : '',
-                //     colorId: roleColor.id,
-                // };
-                // setSelectedColor(roleColor);
-                // setEnteredTrait(roleAddRequest);
             });
         }, []);
 
@@ -135,7 +126,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         };
 
         // @todo refactor
-        function updateRoleFilterOptions(traitName: string, role: Tag, action: TagAction ): void {
+        function updateRoleFilterOptions(role: Tag, action: TagAction ): void {
             const groupedFilterOptions = [...allGroupedTagFilterOptions];
             const roleFiltersIndex = 2;
             groupedFilterOptions[roleFiltersIndex]
@@ -148,8 +139,8 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                 if (currentSpace.uuid) {
                     await RoleClient.delete(roleToDelete.id, currentSpace.uuid);
                     setConfirmDeleteModal(null);
-                    setRoles(prevTraits => prevTraits.filter((role: SpaceRole) => role.id !== roleToDelete.id));
-                    updateRoleFilterOptions('role', roleToDelete, TagAction.DELETE);
+                    setRoles(prevTraits => prevTraits.filter((role: RoleTag) => role.id !== roleToDelete.id));
+                    updateRoleFilterOptions(roleToDelete, TagAction.DELETE);
                 }
             } catch {
                 return;
@@ -166,7 +157,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             setConfirmDeleteModal(deleteConfirmationModal);
         };
 
-        const selectedColorOption = (): OptionType => {
+        const selectedColorOption = (selectedColor?: Color): OptionType => {
             const color = selectedColor ? selectedColor : { id: -1, color: 'transparent'};
             return {
                 value: color,
@@ -186,32 +177,53 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         };
 
         const handleColorChange = (selectedOption: OptionType): void => {
-            const color = selectedOption.value as Color;
-            // setEnteredTrait(prevEnteredTrait => ({
-            //     ...prevEnteredTrait,
-            //     colorId: color.id,
-            // }));
-            setSelectedColor(color);
+            selectedColor = selectedOption.value as Color;
         };
 
-        const editRole = async (role: TagRequest): Promise<unknown> => {
-            console.log('SAVE ROLE: ', role);
-            return await RoleClient.edit(role, currentSpace.uuid!!);
-        };
-
-        const addRole = async (role: TagRequest): Promise<unknown> => {
-            console.log('SAVE ROLE: ', role);
-            return await RoleClient.edit(role, currentSpace.uuid!!);
-        };
-
-        const onCancel = (): void => {
+        const returnToViewState = (): void => {
             setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
         };
 
-        const ColorDropdown = (): JSX.Element => (
+        const editRole = async (role: TagRequest): Promise<unknown> => {
+            const editedRole = {...role, colorId: selectedColor?.id};
+            return await RoleClient.edit(editedRole, currentSpace.uuid!!)
+                .then((response) => {
+                    setRoles(prevRoles => {
+                        const newRole: RoleTag = response.data;
+                        updateRoleFilterOptions(newRole, TagAction.EDIT);
+                        const locations = prevRoles.map(prevTrait => prevTrait.id !== role.id ? prevTrait : newRole);
+                        sortTagsAlphabetically(locations);
+                        return locations;
+                    });
+
+                    returnToViewState();
+                });
+        };
+
+        const addRole = async (role: TagRequest): Promise<unknown> => {
+            const newRole = {...role, colorId: selectedColor?.id};
+            return await RoleClient.add(newRole, currentSpace.uuid!!)
+                .then((response) => {
+                    const newRole: RoleTag = response.data;
+                    setRoles(prevRoles => {
+                        updateRoleFilterOptions(newRole, TagAction.ADD);
+                        const roles = [...prevRoles, newRole];
+                        sortTagsAlphabetically(roles);
+                        return roles;
+                    });
+
+                    returnToViewState();
+                });
+        };
+
+        const onCancel = (): void => {
+            returnToViewState();
+        };
+
+        const ColorDropdown = ({ selectedColor }: { selectedColor?: Color }): JSX.Element => (
             <Select
                 ariaLabel="Color"
-                selectedOption={selectedColorOption()}
+                selectedOption={selectedColorOption(selectedColor)}
                 options={colorOptions()}
                 onChange={handleColorChange}
             />
@@ -220,10 +232,9 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         return (
             <div data-testid={createDataTestId('tagsModalContainer', testIdSuffix)}
                 className="myTraitsModalContainer">
-                {roles.map((role: Tag, index: number) => {
+                {roles.map((role: RoleTag, index: number) => {
                     let colorToUse: string | undefined;
-                    const spaceRole: SpaceRole = role as SpaceRole;
-                    colorToUse = spaceRole.color ? spaceRole.color.color : '#FFFFFF';
+                    colorToUse = role.color ? role.color.color : '#FFFFFF';
 
                     return (
                         <React.Fragment key={index}>
@@ -249,7 +260,11 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                                     onCancel={onCancel}
                                     testIdSuffix={testIdSuffix}
                                     tagName="Role"
-                                    colorDropdown={<ColorDropdown />}
+                                    colorDropdown={
+                                        <ColorDropdown
+                                            selectedColor={role.color}
+                                        />
+                                    }
                                 />
                             }
                         </React.Fragment>
@@ -259,7 +274,11 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                     tagName="Role"
                     addNewButtonLabel="Role"
                     testIdSuffix={testIdSuffix}
-                    colorDropdown={<ColorDropdown />}
+                    colorDropdown={
+                        <ColorDropdown
+                            selectedColor={colors[colors.length - 1]}
+                        />
+                    }
                     onSave={addRole}
                 />
                 {confirmDeleteModal}
