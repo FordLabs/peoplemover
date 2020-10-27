@@ -180,6 +180,19 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             selectedColor = selectedOption.value as Color;
         };
 
+        const getDefaultColor = () => {
+            return colors[colors.length - 1];
+        };
+
+        const ColorDropdown = ({ selectedColor }: { selectedColor?: Color }): JSX.Element => (
+            <Select
+                ariaLabel="Color"
+                selectedOption={selectedColorOption(selectedColor)}
+                options={colorOptions()}
+                onChange={handleColorChange}
+            />
+        );
+
         const returnToViewState = (): void => {
             setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
         };
@@ -201,7 +214,11 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         };
 
         const addRole = async (role: TagRequest): Promise<unknown> => {
-            const newRole = {...role, colorId: selectedColor?.id};
+            const defaultColor = getDefaultColor();
+            const newRole = {
+                name: role.name,
+                colorId: selectedColor ? selectedColor?.id : defaultColor.id,
+            };
             return await RoleClient.add(newRole, currentSpace.uuid!!)
                 .then((response) => {
                     const newRole: RoleTag = response.data;
@@ -220,28 +237,24 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             returnToViewState();
         };
 
-        const ColorDropdown = ({ selectedColor }: { selectedColor?: Color }): JSX.Element => (
-            <Select
-                ariaLabel="Color"
-                selectedOption={selectedColorOption(selectedColor)}
-                options={colorOptions()}
-                onChange={handleColorChange}
-            />
-        );
+        const showEditButtons = (): boolean => editRoleIndex === INACTIVE_EDIT_STATE_INDEX;
+
+        const showViewState = (index: number): boolean => editRoleIndex !== index;
+
+        const showEditState = (index: number): boolean => editRoleIndex === index;
 
         return (
             <div data-testid={createDataTestId('tagsModalContainer', tagType)}
                 className="myTraitsModalContainer">
                 {roles.map((role: RoleTag, index: number) => {
-                    let colorToUse: string | undefined;
-                    colorToUse = role.color ? role.color.color : '#FFFFFF';
+                    const colorToUse = role.color ? role.color.color : '#FFFFFF';
 
                     return (
                         <React.Fragment key={index}>
-                            {editRoleIndex !== index &&
+                            {showViewState(index) &&
                                 <ViewTagRow
                                     tag={role}
-                                    showEditButtons={editRoleIndex === INACTIVE_EDIT_STATE_INDEX}
+                                    showEditButtons={showEditButtons()}
                                     setConfirmDeleteModal={(): void => showDeleteConfirmationModal(role)}
                                     tagType={tagType}
                                     editTagCallback={(): void => setEditRoleIndex(index)}>
@@ -253,7 +266,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                                     </div>
                                 </ViewTagRow>
                             }
-                            {editRoleIndex === index &&
+                            {showEditState(index) &&
                                 <EditTagRow
                                     initialValue={role}
                                     onSave={editRole}
@@ -275,7 +288,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                     onSave={addRole}
                     colorDropdown={
                         <ColorDropdown
-                            selectedColor={colors[colors.length - 1]}
+                            selectedColor={getDefaultColor()}
                         />
                     }
                 />

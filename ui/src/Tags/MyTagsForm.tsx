@@ -178,6 +178,12 @@ function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Elem
             returnToViewState();
         };
 
+        const showEditButtons = (): boolean => editLocationIndex === INACTIVE_EDIT_STATE_INDEX;
+
+        const showViewState = (index: number): boolean => editLocationIndex !== index;
+
+        const showEditState = (index: number): boolean => editLocationIndex === index;
+
         return (
             <div data-testid={createDataTestId('tagsModalContainer', tagType)}
                 className="myTraitsModalContainer">
@@ -304,6 +310,12 @@ function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Elem
             returnToViewState();
         };
 
+        const showEditButtons = (): boolean => editProductTagIndex === INACTIVE_EDIT_STATE_INDEX;
+
+        const showViewState = (index: number): boolean => editProductTagIndex !== index;
+
+        const showEditState = (index: number): boolean => editProductTagIndex === index;
+
         return (
             <div data-testid={createDataTestId('tagsModalContainer', tagType)}
                 className="myTraitsModalContainer">
@@ -311,17 +323,17 @@ function MyTagsForm({currentSpace, allGroupedTagFilterOptions}: Props): JSX.Elem
                 {productTags.map((productTag: Tag, index: number) => {
                     return (
                         <React.Fragment key={index}>
-                            {editProductTagIndex !== index &&
+                            {showViewState(index) &&
                                 <ViewTagRow
                                     tagType={tagType}
                                     index={index}
                                     tag={productTag}
-                                    setConfirmDeleteModal={(): void => showDeleteConfirmationModal(location)}
-                                    showEditButtons={editProductTagIndex === INACTIVE_EDIT_STATE_INDEX}
+                                    setConfirmDeleteModal={(): void => showDeleteConfirmationModal(productTag)}
+                                    showEditButtons={showEditButtons()}
                                     editTagCallback={(): void => setEditProductTagIndex(index)}
                                 />
                             }
-                            {editProductTagIndex === index &&
+                            {showEditState(index) &&
                                 <EditTagRow
                                     initialValue={productTag}
                                     onSave={editProductTag}

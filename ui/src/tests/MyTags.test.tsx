@@ -17,19 +17,18 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
+import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult, wait} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import MyTagsForm from '../Tags/MyTagsForm';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 
-describe('My Tags', () => {
+describe('My Tags Form', () => {
     let app: RenderResult;
     const initialState: PreloadedState<GlobalStateProps> = {
         currentSpace: TestUtils.space,
-        allGroupedTagFilterOptions:
-        TestUtils.allGroupedTagFilterOptions
+        allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
     } as GlobalStateProps;
 
     beforeEach(async () => {
@@ -37,7 +36,7 @@ describe('My Tags', () => {
         TestUtils.mockClientCalls();
 
         await act(async () => {
-            app = renderWithRedux(<MyTagsForm/>, undefined, initialState);
+            app = await renderWithRedux(<MyTagsForm/>, undefined, initialState);
         });
     });
 
