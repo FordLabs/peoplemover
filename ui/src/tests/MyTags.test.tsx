@@ -140,7 +140,7 @@ describe('My Tags Form', () => {
 
                 const editProductTagText = await app.findByTestId('tagNameInput');
                 // @ts-ignore
-                expect(editProductTagText.value).toBe('FordX');
+                expect(editProductTagText.value).toBe('AV');
                 fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
 
                 const saveButton = await app.findByTestId('saveTagButton');
@@ -149,7 +149,7 @@ describe('My Tags Form', () => {
                 await app.findByText(updatedProductTag);
 
                 const myTagsModal = await app.findByTestId('myTagsModal');
-                expect(queryByText(myTagsModal, 'FordX')).not.toBeInTheDocument();
+                expect(queryByText(myTagsModal, 'AV')).not.toBeInTheDocument();
             });
 
             it('should display error message only for corresponding edit product tag section', async () => {

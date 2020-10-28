@@ -26,41 +26,48 @@ import {TagRequest} from '../Tags/TagRequest.interface';
 interface Props {
     colorDropdown?: ReactNode;
     addNewButtonLabel: TagNameType;
+    disabled: boolean;
     tagType: TagType;
     onSave: (value: TagRequest) => Promise<unknown>;
+    onAddingTag: (isAdding: boolean) => void;
 }
 
 const AddNewTagRow = ({
     colorDropdown,
     addNewButtonLabel,
+    disabled,
     onSave,
     tagType,
+    onAddingTag,
 }: Props): JSX.Element => {
     const testIdSuffix = tagType;
-    const [showEditState, setShowEditState] = useState<boolean>(false);
+    const [showAddTagState, setShowAddTagState] = useState<boolean>(false);
 
-    const openEditTagRow = (event: React.KeyboardEvent): void => {
-        if (event.key === 'Enter') {
-            setShowEditState(true);
-        }
+    const updateViewState = (isAdding: boolean): void => {
+        onAddingTag(isAdding);
+        setShowAddTagState(isAdding);
+    };
+    
+    const openAddTagRow = (event: React.KeyboardEvent): void => {
+        if (event.key === 'Enter') updateViewState(true);
     };
 
     const onCancel = (): void => {
-        setShowEditState(false);
+        updateViewState(false);
     };
 
     const onSaveTag = async (value: TagRequest): Promise<unknown> => {
         return await onSave(value).then(() => {
-            setShowEditState(false);
+            updateViewState(false);
         });
     };
 
-    return !showEditState ? (
+    return !showAddTagState ? (
         <button className="addNewTagRow"
-            disabled={showEditState}
+            disabled={disabled}
             data-testid={createDataTestId('addNewButton', testIdSuffix)}
-            onClick={(): void => setShowEditState(true)}
-            onKeyDown={(e): void => openEditTagRow(e)}>
+            onClick={(): void => updateViewState(true)}
+            onKeyDown={(e): void => openAddTagRow(e)}>
             <div className="addNewTagCircle" data-testid="addNewTraitCircle">
                 <img src={PlusIcon} alt="Add Tag Icon"/>
             </div>

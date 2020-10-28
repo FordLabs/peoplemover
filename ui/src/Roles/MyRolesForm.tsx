@@ -37,11 +37,10 @@ import ColorCircle from '../ModalFormComponents/ColorCircle';
 import warningIcon from '../Application/Assets/warningIcon.svg';
 import {createDataTestId} from '../tests/TestUtils';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
-
-import '../ModalFormComponents/TagRowsContainer.scss';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
-import {RoleAddRequest} from './RoleAddRequest.interface';
+
+import '../ModalFormComponents/TagRowsContainer.scss';
 
 const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -77,6 +76,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
         const [roles, setRoles] = useState<Array<RoleTag>>([]);
         const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
         const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
+        const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
         useEffect(() => {
             ColorClient.getAllColors().then(response => {
@@ -237,7 +237,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             returnToViewState();
         };
 
-        const showEditButtons = (): boolean => editRoleIndex === INACTIVE_EDIT_STATE_INDEX;
+        const showEditButtons = (): boolean => editRoleIndex === INACTIVE_EDIT_STATE_INDEX && !isAddingNewTag;
 
         const showViewState = (index: number): boolean => editRoleIndex !== index;
 
@@ -283,9 +283,11 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                     );
                 })}
                 <AddNewTagRow
+                    disabled={!showEditButtons()}
                     addNewButtonLabel="Role"
                     tagType={tagType}
                     onSave={addRole}
+                    onAddingTag={setIsAddingNewTag}
                     colorDropdown={
                         <ColorDropdown
                             selectedColor={getDefaultColor()}
