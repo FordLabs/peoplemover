@@ -32,10 +32,12 @@ import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import ProductClient from '../Products/ProductClient';
 import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+
+declare let window: MatomoWindow;
 
 describe('people actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
-    const spaceUuid = 'uuid';
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -130,7 +132,7 @@ describe('people actions', () => {
                 newPerson: true,
             };
             const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-            expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
+            expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
         });
     });
 
@@ -183,7 +185,7 @@ describe('people actions', () => {
                     spaceRole: {name: 'Product Manager', id: 2, spaceId: 1, color: {color: '2', id: 2}},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
             });
         });
 
@@ -209,7 +211,7 @@ describe('people actions', () => {
                     spaceRole: {name: 'Product Owner', id: 1, spaceId: -1, color: {color: '1', id: 2}},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([spaceUuid, expectedPerson]);
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
             });
         });
 
@@ -255,14 +257,14 @@ describe('people actions', () => {
 
         const checkForCreatedPerson = async (): Promise<void> => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-            expect(PeopleClient.createPersonForSpace).toBeCalledWith(spaceUuid, expectedPerson);
+            expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestUtils.space, expectedPerson);
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
                 requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                 person: expectedPerson,
                 products: [],
-            });
+            }, TestUtils.space);
         };
 
         it('assigns the person created by the PersonForm', async () => {
@@ -444,12 +446,21 @@ describe('people actions', () => {
             }],
         };
 
+        let originalWindow: Window;
+
         beforeEach(async () => {
-            const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(2019, 0, 1)} as GlobalStateProps;
+            const initialState: PreloadedState<GlobalStateProps> = {viewingDate: new Date(2019, 0, 1), currentSpace: TestUtils.space} as GlobalStateProps;
             app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
             const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
             fireEvent.click(editPersonButton);
+
+            originalWindow = window;
+            window._paq = [];
+        });
+
+        afterEach(function() {
+            (window as Window) = originalWindow;
         });
 
         it('should show Edit Person Modal when you click on edit person option', async () => {
@@ -470,6 +481,8 @@ describe('people actions', () => {
                     fireEvent.mouseDown(markAsPlaceholderButton);
                     fireEvent.mouseUp(markAsPlaceholderButton);
                 });
+
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'markAsPlaceholder', TestUtils.person1.name]);
             };
 
             beforeEach(async () => {
@@ -485,7 +498,7 @@ describe('people actions', () => {
 
                 let person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('Placeholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate, TestUtils.space, false);
 
                 const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
                 fireEvent.click(editPersonButton);
@@ -504,7 +517,8 @@ describe('people actions', () => {
 
                 person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate, TestUtils.space, false);
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'unmarkAsPlaceholder', TestUtils.person1.name]);
             });
         });
 
@@ -520,7 +534,8 @@ describe('people actions', () => {
             };
 
             await wait(() => {
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate, TestUtils.space, false);
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'cancelAssignment', TestUtils.person1.name]);
             });
         });
     });

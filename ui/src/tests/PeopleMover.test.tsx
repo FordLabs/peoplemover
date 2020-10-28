@@ -66,6 +66,10 @@ describe('PeopleMover', () => {
         await app.findByText('FordLabs');
     });
 
+    it('should update the page title with the space name', () => {
+        expect(document.title).toEqual('testSpace | PeopleMover');
+    });
+
     describe('Products', () => {
         it('should sort products by name by default',  async () => {
             const productNameElements = await app.findAllByTestId('productName');

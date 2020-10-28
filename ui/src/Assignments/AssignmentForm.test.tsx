@@ -64,7 +64,7 @@ describe('AssignmentForm', () => {
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: TestUtils.assignmentForPerson1.placeholder,
                 }],
-            });
+            }, TestUtils.space);
         });
 
         it('submits an assignment when submit event fires', async () => {
@@ -81,7 +81,7 @@ describe('AssignmentForm', () => {
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: TestUtils.assignmentForPerson1.placeholder,
                 }],
-            });
+            }, TestUtils.space);
         });
 
         it('submits an assignment with the given placeholder status', async () => {
@@ -101,7 +101,7 @@ describe('AssignmentForm', () => {
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: true,
                 }],
-            });
+            }, TestUtils.space);
         });
 
         it('does not assign if person does not exist', async () => {
@@ -198,6 +198,7 @@ const renderComponent = (store: Store|undefined = undefined): {
     const viewingDate = new Date(2020, 5, 5);
     const initialState = {
         viewingDate: viewingDate,
+        currentSpace: TestUtils.space,
         people: TestUtils.people,
     } as GlobalStateProps;
     const app = renderWithRedux(

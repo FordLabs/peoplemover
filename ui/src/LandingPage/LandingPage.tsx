@@ -26,8 +26,8 @@ import './LandingPage.scss';
 function LandingPage(): JSX.Element {
     const LoginButton = () => (
         <a href="/user/login">
-            <FormButton>
-                Login
+            <FormButton className="getStartedButton">
+                Get Started
             </FormButton>
         </a>
     );
@@ -45,8 +45,6 @@ function LandingPage(): JSX.Element {
                         helping you create and fluidly maintain balanced teams well suited for the product at hand – 
                         because we understand that a great team sets the stage for incredible results.
                     </div>
-                    <div className="landingPageInfoSubHeading">Give it a shot!</div>
-                    <div className="landingPageInfoText">Login with your CDSID to create your own PeopleMover&nbsp;space.</div>
                     <LoginButton />
                 </div>
                 <img className="landingPageImage"

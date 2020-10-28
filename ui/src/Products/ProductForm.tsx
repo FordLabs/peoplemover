@@ -127,7 +127,7 @@ function ProductForm({
             return;
         }
         if (editing) {
-            ProductClient.editProduct(currentSpace.uuid, currentProduct)
+            ProductClient.editProduct(currentSpace, currentProduct)
                 .then(closeModal)
                 .catch(error => {
                     if (error.response.status === 409) {
@@ -136,7 +136,7 @@ function ProductForm({
                 });
 
         } else {
-            ProductClient.createProduct(currentSpace.uuid, currentProduct)
+            ProductClient.createProduct(currentSpace, currentProduct)
                 .then(() => setDuplicateProductNameWarning(false))
                 .then(closeModal)
                 .catch(error => {
@@ -152,7 +152,7 @@ function ProductForm({
             console.error('No current space uuid');
             return Promise.resolve();
         }
-        return ProductClient.deleteProduct(currentSpace.uuid, currentProduct).then(closeModal);
+        return ProductClient.deleteProduct(currentSpace, currentProduct).then(closeModal);
     }
 
     function archiveProduct(): Promise<void> {
@@ -161,7 +161,7 @@ function ProductForm({
             return Promise.resolve();
         }
         const archivedProduct = {...currentProduct, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(currentSpace.uuid, archivedProduct).then(closeModal);
+        return ProductClient.editProduct(currentSpace, archivedProduct).then(closeModal);
     }
 
     function determineIfProductIsArchived() {

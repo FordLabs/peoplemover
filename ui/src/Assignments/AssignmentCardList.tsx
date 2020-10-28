@@ -35,11 +35,13 @@ import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignme
 import moment from 'moment';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import { getSelectedFilterLabels } from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import {Space} from '../Space/Space';
 
 interface AssignmentCardListProps {
     container: string;
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
+    currentSpace: Space;
     viewingDate: Date;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     fetchProducts(): void;
@@ -50,6 +52,7 @@ function AssignmentCardList({
     container,
     product,
     productRefs,
+    currentSpace,
     viewingDate,
     allGroupedTagFilterOptions,
     fetchProducts,
@@ -149,7 +152,7 @@ function AssignmentCardList({
                     };
 
                     try {
-                        await AssignmentClient.createAssignmentForDate(createAssignmentsRequest);
+                        await AssignmentClient.createAssignmentForDate(createAssignmentsRequest, currentSpace);
                         fetchProducts();
                         assignmentUpdated = true;
                     } catch (error) {
@@ -234,6 +237,7 @@ function AssignmentCardList({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     productRefs: state.productRefs,
+    currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });

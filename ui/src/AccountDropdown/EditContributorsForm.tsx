@@ -15,38 +15,33 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
-import {useLocation} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {AvailableModals, closeModalAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import FormButton from '../ModalFormComponents/FormButton';
 
 import './EditContributorsForm.scss';
+import {GlobalStateProps} from '../Redux/Reducers';
+import {Space} from '../Space/Space';
 
 interface Props {
+    currentSpace: Space;
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function EditContributorsForm({closeModal, setCurrentModal}: Props): JSX.Element {
-    const pathname = useLocation().pathname;
-
-    const [spaceUuid, setSpaceUuid] = useState<string>('');
+function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props): JSX.Element {
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
 
 
-    useEffect(() => {
-        setSpaceUuid(pathname.substring(1, pathname.length));
-    }, [pathname]);
-
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
 
-        await SpaceClient.inviteUsersToSpace(spaceUuid, invitedUserEmails)
+        await SpaceClient.inviteUsersToSpace(currentSpace, invitedUserEmails)
             .catch(console.error)
             .finally(() => {
                 setCurrentModal({modal: AvailableModals.CONTRIBUTORS_CONFIRMATION});
@@ -101,5 +96,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(null, mapDispatchToProps)(EditContributorsForm);
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditContributorsForm);
 /* eslint-enable */

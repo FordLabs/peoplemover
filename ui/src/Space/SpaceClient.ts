@@ -19,10 +19,12 @@ import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 import {getToken} from '../Auth/TokenProvider';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 const baseSpaceUrl = `/api/spaces`;
 
 class SpaceClient {
+
     static async getSpacesForUser(): Promise<AxiosResponse<Space[]>> {
         const url = baseSpaceUrl + '/user';
         const config = {
@@ -73,8 +75,8 @@ class SpaceClient {
         return Axios.put(url, data, config);
     }
 
-    static async inviteUsersToSpace(spaceUuid: string, emails: string[]): Promise<AxiosResponse<void>> {
-        const url = `${baseSpaceUrl}/${spaceUuid}:invite`;
+    static async inviteUsersToSpace(space: Space, emails: string[]): Promise<AxiosResponse<void>> {
+        const url = `${baseSpaceUrl}/${space.uuid}:invite`;
         const data = { emails };
         const config = {
             headers: {
@@ -82,7 +84,10 @@ class SpaceClient {
                 'Authorization': `Bearer ${getToken()}`,
             },
         };
-        return Axios.put(url, data, config);
+        return Axios.put(url, data, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, 'inviteUser', emails.join(', '));
+            return result;
+        });
     }
 }
 

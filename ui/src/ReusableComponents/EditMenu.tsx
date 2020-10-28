@@ -32,32 +32,42 @@ export interface EditMenuProps {
     onClosed(): void;
 }
 
-function EditMenu(props: EditMenuProps) {
+function EditMenu(props: EditMenuProps): JSX.Element {
 
     const hiddenInputRef: any = React.useRef();
+    const editMenuRef: any = React.useRef();
 
     useOnLoad(() => {
         const inputField = hiddenInputRef.current;
         setTimeout(() => inputField.focus());
+        document.addEventListener('mousedown', handleClick, false);
     });
 
-    function onOptionSelected(event: any, callback: any) {
+    function handleClick(event: any): void {
+        if (editMenuRef && editMenuRef.current && !editMenuRef.current.contains(event.target)) {
+            close();
+        }
+    }
+
+    function onOptionSelected(event: any, callback: any): void {
         event.stopPropagation();
         event.preventDefault();
+        document.removeEventListener('mousedown', handleClick, false);
         callback();
     }
 
-    function close() {
+    function close(): void {
+        document.removeEventListener('mousedown', handleClick, false);
         props.onClosed();
     }
 
     return (
-        <div className="editMenuContainer" data-testid="editMenu">
+        <div ref={editMenuRef} className="editMenuContainer" data-testid="editMenu">
             <input className={'hiddenInputField'} type={'text'} ref={hiddenInputRef} onBlur={close}/>
             {props.menuOptionList.map((menuOption, index) =>
                 <div key={index}
                     className="editMenuContainerOption"
-                    onMouseDown={event => onOptionSelected(event, menuOption.callback)}>
+                    onMouseDown={(event): void => onOptionSelected(event, menuOption.callback)}>
                     <i className={`fas ${menuOption.icon}`}
                         data-testid={createDataTestId('editMenuOption', menuOption.text)}/>
                     <span>{menuOption.text}</span>

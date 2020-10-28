@@ -20,7 +20,6 @@ import currentModalReducer, {CurrentModalState} from './currentModalReducer';
 import peopleReducer from './peopleReducer';
 import isUnassignedDrawerOpenReducer from './isUnassignedDrawerOpenReducer';
 import {Person} from '../../People/Person';
-import {EditMenuToOpen} from '../../ReusableComponents/EditMenuToOpen';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import productSortByReducer from './productSortByReducer';
@@ -58,7 +57,6 @@ export interface GlobalStateProps {
     currentModal: CurrentModalState;
     people: Array<Person>;
     isUnassignedDrawerOpen: boolean;
-    whichEditMenuOpen: EditMenuToOpen;
     productRefs: Array<ProductCardRefAndProductPair>;
     productSortBy: SortByType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;

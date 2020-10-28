@@ -23,13 +23,11 @@ import {
     fetchProductsAction,
     registerProductRefAction,
     setCurrentModalAction,
-    setWhichEditMenuOpenAction,
     unregisterProductRefAction,
 } from '../Redux/Actions';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
 import {ProductCardRefAndProductPair} from './ProductDnDHelper';
-import {EditMenuToOpen} from '../ReusableComponents/EditMenuToOpen';
 import {Product} from './Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -44,11 +42,9 @@ interface ProductCardProps {
     product: Product;
     currentSpace: Space;
     viewingDate: Date;
-    whichEditMenuOpen: EditMenuToOpen;
 
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
-    setWhichEditMenuOpen(whichEditMenuOption: EditMenuToOpen | null): void;
     setCurrentModal(modalState: CurrentModalState): void;
     fetchProducts(): void;
 }
@@ -58,20 +54,14 @@ function ProductCard({
     product,
     currentSpace,
     viewingDate,
-    whichEditMenuOpen,
     registerProductRef,
     unregisterProductRef,
-    setWhichEditMenuOpen,
     setCurrentModal,
     fetchProducts,
 }: ProductCardProps): JSX.Element {
 
-    const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
+    const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
-
-    function onEditMenuClosed(): void {
-        setEditMenuIsOpened(false);
-    }
 
     /* eslint-disable */
     useEffect(() => {
@@ -84,21 +74,11 @@ function ProductCard({
     /* eslint-enable */
 
     function toggleEditMenu(): void {
-        if (ourEditMenuIsOpen()) {
-            setWhichEditMenuOpen(null);
-            setEditMenuIsOpened(false);
+        if (isEditMenuOpen) {
+            setIsEditMenuOpen(false);
         } else {
-            const editMenuOption: EditMenuToOpen = {
-                id: product.id,
-                type: 'product',
-            };
-            setWhichEditMenuOpen(editMenuOption);
-            setEditMenuIsOpened(true);
+            setIsEditMenuOpen(true);
         }
-    }
-
-    function ourEditMenuIsOpen(): boolean {
-        return whichEditMenuOpen && whichEditMenuOpen.id === product.id && whichEditMenuOpen.type === 'product';
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -117,8 +97,7 @@ function ProductCard({
     }
 
     function editProductAndCloseEditMenu(): void {
-        setWhichEditMenuOpen(null);
-        setEditMenuIsOpened(false);
+        setIsEditMenuOpen(false);
         const newModal: CurrentModalState = {
             modal: AvailableModals.EDIT_PRODUCT,
             item: product,
@@ -137,7 +116,7 @@ function ProductCard({
             return Promise.resolve();
         }
         const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(currentSpace.uuid, archivedProduct);
+        return ProductClient.editProduct(currentSpace, archivedProduct);
     }
 
     const setCurrentModalToCreateAssignment = () => setCurrentModal({
@@ -192,9 +171,9 @@ function ProductCard({
                                     onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
                             {
-                                editMenuIsOpened &&
+                                isEditMenuOpen &&
                                 <EditMenu menuOptionList={getMenuOptionList()}
-                                    onClosed={onEditMenuClosed}/>
+                                    onClosed={toggleEditMenu}/>
                             }
                         </div>
                         {product.assignments.length === 0 && (
@@ -217,13 +196,11 @@ function ProductCard({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
-    whichEditMenuOpen: state.whichEditMenuOpen,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     fetchProducts: () => dispatch(fetchProductsAction()),
-    setWhichEditMenuOpen: (menu: EditMenuToOpen) => dispatch(setWhichEditMenuOpenAction(menu)),
     registerProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(registerProductRefAction(productRef)),
     unregisterProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(unregisterProductRefAction(productRef)),
 });
