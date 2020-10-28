@@ -36,7 +36,7 @@ import OAuthRedirect from './ReusableComponents/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
-import UnsupportedBrowserPage from "./UnsupportedBrowserPage/UnsupportedBrowserPage";
+import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
