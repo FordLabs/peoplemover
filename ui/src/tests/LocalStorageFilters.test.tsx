@@ -61,7 +61,9 @@ describe('Filter products', () => {
     it('should show unedited location tags in the filter as checked from local storage', async () => {
         filters.locationTagsFilters.push(TestUtils.detroit.name);
         localStorage.setItem('filters', JSON.stringify(filters));
+
         const app = renderWithRedux(<PeopleMover/>);
+
         const myTagsButton = await app.findByText('My Tags');
         fireEvent.click(myTagsButton);
         const editIcons = await app.findAllByTestId('editIcon__location');

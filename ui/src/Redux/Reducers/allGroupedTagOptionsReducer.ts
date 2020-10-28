@@ -44,20 +44,19 @@ const allGroupedTagFilterOptionsReducer = (
     action: {type: AvailableActions; allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>}
 ): Array<AllGroupedTagFilterOptions> => {
 
-    switch (action.type) {
-        case AvailableActions.SET_ALL_FILTER_OPTIONS:
-            const copiedFilters: Array<AllGroupedTagFilterOptions> = {...action.allGroupedTagFilterOptions};
-            const sortedLocations: Array<FilterOption> = sortTags(copiedFilters[0].options);
-            const sortedProductTags: Array<FilterOption> = sortTags(copiedFilters[1].options);
-            const sortedRoleTags: Array<FilterOption> = sortTags(copiedFilters[2].options);
+    if (action.type === AvailableActions.SET_ALL_FILTER_OPTIONS) {
+        const copiedFilters: Array<AllGroupedTagFilterOptions> = {...action.allGroupedTagFilterOptions};
+        const sortedLocations: Array<FilterOption> = sortTags(copiedFilters[0].options);
+        const sortedProductTags: Array<FilterOption> = sortTags(copiedFilters[1].options);
+        const sortedRoleTags: Array<FilterOption> = sortTags(copiedFilters[2].options);
 
-            updateLocalStorage(action.allGroupedTagFilterOptions);
+        updateLocalStorage(action.allGroupedTagFilterOptions);
 
-            return [
-                { label: 'Location Tags:', options: sortedLocations},
-                { label: 'Product Tags:', options: sortedProductTags},
-                { label: 'Role Tags:', options: sortedRoleTags},
-            ];
+        return [
+            { label: 'Location Tags:', options: sortedLocations},
+            { label: 'Product Tags:', options: sortedProductTags},
+            { label: 'Role Tags:', options: sortedRoleTags},
+        ];
     }
     return state;
 };

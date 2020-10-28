@@ -106,7 +106,7 @@ export const unregisterProductRefAction = (productRef: ProductCardRefAndProductP
     productRef,
 });
 
-export const setAllGroupedTagFilterOptions = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
+export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
     type: AvailableActions.SET_ALL_FILTER_OPTIONS,
     allGroupedTagFilterOptions: allGroupedTagFilterOptions,
 });

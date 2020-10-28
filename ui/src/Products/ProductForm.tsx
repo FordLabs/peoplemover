@@ -19,7 +19,7 @@ import React, {ChangeEvent, CSSProperties, FormEvent, useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {closeModalAction, setAllGroupedTagFilterOptions} from '../Redux/Actions';
+import {closeModalAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {JSX} from '@babel/types';
 import {StylesConfig} from 'react-select';
 import moment from 'moment';
@@ -307,7 +307,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
+        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductForm);

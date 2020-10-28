@@ -21,7 +21,7 @@ import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 
 import {GlobalStateProps} from '../Redux/Reducers';
-import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
+import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {FilterOption} from '../CommonTypes/Option';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
@@ -62,90 +62,84 @@ const colorMapping: { [key: string]: string } = {
     '#FFFFFF': 'White',
 };
 
+interface RoleTagsProps {
+    colors: Array<Color>;
+    roles: Array<RoleTag>;
+    setRoles: any;
+}
+
 interface Props {
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.Element {
-    const RoleTags = () => {
+function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
+    const [colors, setColors] = useState<Array<Color>>([]);
+    const [roles, setRoles] = useState<Array<RoleTag>>([]);
+
+    useEffect(() => {
+        const rolesPromise = RoleClient.get(currentSpace.uuid!!);
+        const colorsPromise = ColorClient.getAllColors();
+
+        const fetchData = !roles.length && !colors.length;
+        if (fetchData) {
+            Promise.all([rolesPromise, colorsPromise])
+                .then(values => {
+                    const rolesData = values[0].data;
+                    sortTagsAlphabetically(rolesData);
+                    setRoles(rolesData);
+
+                    const colorsData = values[1].data;
+                    setColors(colorsData);
+                });
+        }
+    }, [currentSpace.uuid, roles.length, colors.length]);
+
+    // @todo abstract filter methods away to redux please
+    const getUpdatedFilterOptions = (index: number, trait: Tag, action: TagAction): Array<FilterOption> => {
+        let options: Array<FilterOption>;
+        switch (action) {
+            case TagAction.ADD:
+                options = [
+                    ...allGroupedTagFilterOptions[index].options,
+                    {label: trait.name, value: trait.id.toString() + '_' + trait.name, selected: false},
+                ];
+                break;
+            case TagAction.EDIT:
+                options = allGroupedTagFilterOptions[index].options.map(val =>
+                    !val.value.includes(trait.id.toString() + '_') ?
+                        val :
+                        {
+                            label: trait.name,
+                            value: trait.id.toString() + '_' + trait.name,
+                            selected: val.selected,
+                        }
+                );
+                break;
+            case TagAction.DELETE:
+                options = allGroupedTagFilterOptions[index].options.filter(val => val.label !== trait.name);
+                break;
+            default:
+                options = [];
+        }
+        return options;
+    };
+
+    function updateFilterOptions(optionIndex: number, tag: Tag, action: TagAction): void {
+        const groupedFilterOptions = [...allGroupedTagFilterOptions];
+        groupedFilterOptions[optionIndex]
+            .options = getUpdatedFilterOptions(optionIndex, tag, action);
+        setAllGroupedTagFilterOptions(groupedFilterOptions);
+    }
+
+    const RoleTags = ({ colors, roles, setRoles }: RoleTagsProps): JSX.Element => {
         const tagType = 'role';
         let selectedColor: Color;
-        const [colors, setColors] = useState<Array<Color>>([]);
-        const [roles, setRoles] = useState<Array<RoleTag>>([]);
+        const roleFiltersIndex = 2;
         const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
         const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
         const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
-
-        useEffect(() => {
-            ColorClient.getAllColors().then(response => {
-                const colors: Array<Color> = response.data;
-                setColors(colors);
-            });
-        }, []);
-
-        useEffect(() => {
-            async function setup(): Promise<void> {
-                const response = await RoleClient.get(currentSpace.uuid!!);
-                sortTagsAlphabetically(response.data);
-                setRoles(response.data);
-            }
-
-            setup().then();
-        }, [currentSpace.uuid]);
-
-        // @todo abstract away to redux please
-        const updateFilterValuesInGroupedTags = (index: number, trait: Tag, action: TagAction): Array<FilterOption> => {
-            let options: Array<FilterOption>;
-            switch (action) {
-                case TagAction.ADD:
-                    options = [
-                        ...allGroupedTagFilterOptions[index].options,
-                        {label: trait.name, value: trait.id.toString() + '_' + trait.name, selected: false},
-                    ];
-                    break;
-                case TagAction.EDIT:
-                    options = allGroupedTagFilterOptions[index].options.map(val =>
-                        !val.value.includes(trait.id.toString() + '_') ?
-                            val :
-                            {
-                                label: trait.name,
-                                value: trait.id.toString() + '_' + trait.name,
-                                selected: val.selected,
-                            }
-                    );
-                    break;
-                case TagAction.DELETE:
-                    options = allGroupedTagFilterOptions[index].options.filter(val => val.label !== trait.name);
-                    break;
-                default:
-                    options = [];
-            }
-            return options;
-        };
-
-        // @todo refactor
-        function updateRoleFilterOptions(role: Tag, action: TagAction ): void {
-            const groupedFilterOptions = [...allGroupedTagFilterOptions];
-            const roleFiltersIndex = 2;
-            groupedFilterOptions[roleFiltersIndex]
-                .options = updateFilterValuesInGroupedTags(roleFiltersIndex, role, action);
-            setAllGroupedTagFilterOptions(groupedFilterOptions);
-        }
-
-        const deleteRole = async (roleToDelete: Tag): Promise<void> => {
-            try {
-                if (currentSpace.uuid) {
-                    await RoleClient.delete(roleToDelete.id, currentSpace.uuid);
-                    setConfirmDeleteModal(null);
-                    setRoles(prevTraits => prevTraits.filter((role: RoleTag) => role.id !== roleToDelete.id));
-                    updateRoleFilterOptions(roleToDelete, TagAction.DELETE);
-                }
-            } catch {
-                return;
-            }
-        };
 
         const showDeleteConfirmationModal = (roleToDelete: Tag): void => {
             const propsForDeleteConfirmationModal: ConfirmationModalProps = {
@@ -201,9 +195,9 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             const editedRole = {...role, colorId: selectedColor?.id};
             return await RoleClient.edit(editedRole, currentSpace.uuid!!)
                 .then((response) => {
-                    setRoles(prevRoles => {
+                    setRoles((prevRoles: Array<RoleTag>) => {
                         const newRole: RoleTag = response.data;
-                        updateRoleFilterOptions(newRole, TagAction.EDIT);
+                        updateFilterOptions(roleFiltersIndex, newRole, TagAction.EDIT);
                         const locations = prevRoles.map(prevTrait => prevTrait.id !== role.id ? prevTrait : newRole);
                         sortTagsAlphabetically(locations);
                         return locations;
@@ -222,8 +216,8 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
             return await RoleClient.add(newRole, currentSpace.uuid!!)
                 .then((response) => {
                     const newRole: RoleTag = response.data;
-                    setRoles(prevRoles => {
-                        updateRoleFilterOptions(newRole, TagAction.ADD);
+                    setRoles((prevRoles: Array<RoleTag>) => {
+                        updateFilterOptions(roleFiltersIndex, newRole, TagAction.ADD);
                         const roles = [...prevRoles, newRole];
                         sortTagsAlphabetically(roles);
                         return roles;
@@ -233,8 +227,17 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                 });
         };
 
-        const onCancel = (): void => {
-            returnToViewState();
+        const deleteRole = async (roleToDelete: Tag): Promise<void> => {
+            try {
+                if (currentSpace.uuid) {
+                    await RoleClient.delete(roleToDelete.id, currentSpace.uuid);
+                    setConfirmDeleteModal(null);
+                    setRoles((prevRoles: Array<RoleTag>) => prevRoles.filter((role: RoleTag) => role.id !== roleToDelete.id));
+                    updateFilterOptions(roleFiltersIndex, roleToDelete, TagAction.DELETE);
+                }
+            } catch {
+                return;
+            }
         };
 
         const showEditButtons = (): boolean => editRoleIndex === INACTIVE_EDIT_STATE_INDEX && !isAddingNewTag;
@@ -270,7 +273,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
                                 <EditTagRow
                                     initialValue={role}
                                     onSave={editRole}
-                                    onCancel={onCancel}
+                                    onCancel={returnToViewState}
                                     tagType={tagType}
                                     colorDropdown={
                                         <ColorDropdown
@@ -301,7 +304,11 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions }: Props): JSX.E
 
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
-            <RoleTags />
+            <RoleTags
+                colors={colors}
+                roles={roles}
+                setRoles={setRoles}
+            />
             <div className="traitWarning">
                 <img src={warningIcon} className="warningIcon" alt="warning icon"/>
                 <p className="warningText">Editing or deleting a role will affect any person currently assigned to it.</p>
@@ -318,7 +325,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
+        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyRolesForm);
