@@ -36,6 +36,7 @@ import OAuthRedirect from './ReusableComponents/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
+import UnsupportedBrowserPage from "./UnsupportedBrowserPage/UnsupportedBrowserPage";
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -76,47 +77,67 @@ export interface RunConfig {
     adfs_resource: string;
 }
 
-Axios.get(`/api/config`,
-    {headers: { 'Content-Type': 'application/json'}}
-).then( (response) => {
+function isUnsupportedBrowser(): boolean {
+    // Safari 3.0+ "[object HTMLElementConstructor]"
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    var isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean { return p.toString() === '[object SafariRemoteNotification]'; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
 
-    window.runConfig = Object.freeze(response.data);
+    // Internet Explorer 6-11
+    // @ts-ignore
+    var isIE = /*@cc_on!@*/!!document.documentMode;
 
-    ReactDOM.render(
-        <Provider store={store}>
-            <Router>
-                <Switch>
+    // Edge 20+
+    var isEdge = !isIE && !!window.StyleMedia;
 
-                    <Route exact path="/">
-                        <LandingPage/>
-                    </Route>
+    return isSafari || isIE || isEdge;
+}
 
-                    <Route exact path={'/adfs/catch'}>
-                        <OAuthRedirect redirectUrl={'/user/dashboard'}/>
-                    </Route>
+if (isUnsupportedBrowser()) {
+    ReactDOM.render(<UnsupportedBrowserPage/>, document.getElementById('root'));
+} else {
+    Axios.get(`/api/config`,
+        {headers: { 'Content-Type': 'application/json'}}
+    ).then( (response) => {
 
-                    <AuthenticatedRoute exact path={'/user/login'}>
-                        <RedirectWrapper redirectUrl={'/user/dashboard'}/>
-                    </AuthenticatedRoute>
+        window.runConfig = Object.freeze(response.data);
 
-                    <AuthenticatedRoute exact path="/user/dashboard">
-                        <SpaceDashboard/>
-                    </AuthenticatedRoute>
+        ReactDOM.render(
+            <Provider store={store}>
+                <Router>
+                    <Switch>
 
-                    <AuthorizedRoute exact path="/:teamName">
-                        <PeopleMover/>
-                    </AuthorizedRoute>
+                        <Route exact path="/">
+                            <LandingPage/>
+                        </Route>
 
-                    <Route path="/error/404">
-                        <Error404Page/>
-                    </Route>
+                        <Route exact path={'/adfs/catch'}>
+                            <OAuthRedirect redirectUrl={'/user/dashboard'}/>
+                        </Route>
 
-                    <Route>
-                        <Redirect to={`/error/404`} />
-                    </Route>
-                </Switch>
-            </Router>
-        </Provider>,
-        document.getElementById('root')
-    );
-});
+                        <AuthenticatedRoute exact path={'/user/login'}>
+                            <RedirectWrapper redirectUrl={'/user/dashboard'}/>
+                        </AuthenticatedRoute>
+
+                        <AuthenticatedRoute exact path="/user/dashboard">
+                            <SpaceDashboard/>
+                        </AuthenticatedRoute>
+
+                        <AuthorizedRoute exact path="/:teamName">
+                            <PeopleMover/>
+                        </AuthorizedRoute>
+
+                        <Route path="/error/404">
+                            <Error404Page/>
+                        </Route>
+
+                        <Route>
+                            <Redirect to={`/error/404`} />
+                        </Route>
+                    </Switch>
+                </Router>
+            </Provider>,
+            document.getElementById('root')
+        );
+    });
+}
