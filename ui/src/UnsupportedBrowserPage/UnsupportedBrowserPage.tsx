@@ -18,15 +18,25 @@
 import React from 'react';
 
 import './UnsupportedBrowserPage.scss';
+import Chrome from './chrome.png';
+import FireFox from './firefox.png';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
+import Branding from '../ReusableComponents/Branding';
 
 function UnsupportedBrowserPage(): JSX.Element {
 
     return (
-        <>
-            <PeopleMoverLogo />
-            For the best PeopleMover experience, please use Chrome or Firefox
-        </>
+        <div className="unsupported-browser-container">
+            <div className="peoplemover-logo">
+                <PeopleMoverLogo />
+            </div>
+            <div className="unsupported-browser-text">
+                For the best PeopleMover experience, <br/> please use Chrome
+                <img className="unsupported-browser-img" src={Chrome} alt="Chrome Logo"/> or Firefox
+                <img className="unsupported-browser-img" src={FireFox} alt="FireFox Logo"/>
+            </div>
+            <Branding brand="FordLabs" message="Powered by"/>
+        </div>
     );
 }
 export default UnsupportedBrowserPage;
