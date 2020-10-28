@@ -1,0 +1,26 @@
+
+.unsupported-browser-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+
+  .peoplemover-logo {
+    margin-top: auto;
+  }
+
+  .unsupported-browser-text{
+    margin-top: 32px;
+    font-size: 42px;
+    max-width: 75vw;
+    font-weight: 500;
+  }
+
+  .unsupported-browser-img{
+    height: 30px;
+    width: 30px;
+    margin-left: 4px;
+  }
+}
