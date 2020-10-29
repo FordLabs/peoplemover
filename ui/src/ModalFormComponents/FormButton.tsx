@@ -19,7 +19,7 @@ import React, {ReactNode} from 'react';
 import './FormButton.scss';
 
 type ButtonStyle = 'primary' | 'secondary';
-type ButtonType = 'submit' | 'reset' | 'button' | undefined;
+type ButtonType = 'submit' | 'reset' | 'button';
 
 interface Props {
     children: ReactNode;
@@ -34,7 +34,7 @@ interface Props {
 const FormButton = ({
     children,
     onClick,
-    type,
+    type = 'button',
     buttonStyle = 'primary',
     className,
     testId,
