@@ -37,22 +37,21 @@ describe('filter products', () => {
         });
     });
 
-    describe('add/edit/delete location tags should reflect in filter dropdown', () => {
+    describe('Add/edit/delete location tags should reflect in filter dropdown', () => {
         it('should show the newly added location tag from my tags modal', async () => {
             const addNewLocationButton = await app.findByText('Add New Location');
             fireEvent.click(addNewLocationButton);
             await app.findByTestId('saveTagButton');
             const newLocation = 'Ahmedabad';
             const saveButton = await app.findByTestId('saveTagButton');
-
             const addLocationTagText = await app.findByTestId('tagNameInput');
             fireEvent.change(addLocationTagText, {target: {value: newLocation}});
-
             fireEvent.click(saveButton);
             await app.findByText(newLocation);
             fireEvent.click(await app.findByTestId('modalCloseButton'));
             const location = await app.findByLabelText('Filter:');
             await selectEvent.openMenu(location);
+            await app.findByText('Ahmedabad');
             await app.findByText(newLocation);
         });
 
@@ -122,7 +121,7 @@ describe('filter products', () => {
         });
     });
 
-    describe('add/edit/delete product tags should reflect in filter dropdown', () => {
+    describe('Add/edit/delete product tags should reflect in filter dropdown', () => {
         it('should show filter option when new location tag is created from edit product modal', async () => {
             const newProductButton = await app.findByText('New Product');
             fireEvent.click(newProductButton);
@@ -167,6 +166,8 @@ describe('filter products', () => {
             const updatedProductTag = 'Finance';
 
             const editProductTagText = await app.findByTestId('tagNameInput');
+            // @ts-ignore
+            expect(editProductTagText.value).toBe('AV');
             fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
 
             const saveButton = await app.findByTestId('saveTagButton');
@@ -175,7 +176,7 @@ describe('filter products', () => {
             await app.findByText(updatedProductTag);
 
             const modalContainer = await app.findByTestId('modalContainer');
-            expect(queryByText(modalContainer, 'FordX')).not.toBeInTheDocument();
+            expect(queryByText(modalContainer, 'AV')).not.toBeInTheDocument();
 
             fireEvent.click(await app.findByTestId('modalCloseButton'));
             const productTag = await app.findByLabelText('Filter:');

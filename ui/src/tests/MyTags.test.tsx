@@ -17,7 +17,7 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult, wait} from '@testing-library/react';
+import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import MyTagsForm from '../Tags/MyTagsForm';
@@ -27,6 +27,8 @@ import {GlobalStateProps} from '../Redux/Reducers';
 describe('My Tags Form', () => {
     let app: RenderResult;
     const initialState: PreloadedState<GlobalStateProps> = {
+        locations: TestUtils.locations,
+        productTags: TestUtils.productTags,
         currentSpace: TestUtils.space,
         allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
     } as GlobalStateProps;
@@ -44,13 +46,13 @@ describe('My Tags Form', () => {
         await app.findByTestId('myTagsModal');
     });
 
-    it('Should contain all location tags available in the space in alphabetical order', async () => {
+    it('should contain all location tags available in the space in the order they are provided', async () => {
         const locationTags: Array<HTMLSpanElement> = await app.findAllByTestId('tagName__location');
         expect(locationTags.length).toEqual(4);
 
         expect(locationTags[0].innerHTML).toEqual(TestUtils.annarbor.name);
-        expect(locationTags[1].innerHTML).toEqual(TestUtils.dearborn.name);
-        expect(locationTags[2].innerHTML).toEqual(TestUtils.detroit.name);
+        expect(locationTags[1].innerHTML).toEqual(TestUtils.detroit.name);
+        expect(locationTags[2].innerHTML).toEqual(TestUtils.dearborn.name);
         expect(locationTags[3].innerHTML).toEqual(TestUtils.southfield.name);
     });
 

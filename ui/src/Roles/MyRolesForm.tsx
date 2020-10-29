@@ -195,14 +195,13 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
             const editedRole = {...role, colorId: selectedColor?.id};
             return await RoleClient.edit(editedRole, currentSpace.uuid!!)
                 .then((response) => {
+                    const newRole: RoleTag = response.data;
+                    updateFilterOptions(roleFiltersIndex, newRole, TagAction.EDIT);
                     setRoles((prevRoles: Array<RoleTag>) => {
-                        const newRole: RoleTag = response.data;
-                        updateFilterOptions(roleFiltersIndex, newRole, TagAction.EDIT);
                         const locations = prevRoles.map(prevTrait => prevTrait.id !== role.id ? prevTrait : newRole);
                         sortTagsAlphabetically(locations);
                         return locations;
                     });
-
                     returnToViewState();
                 });
         };
@@ -216,13 +215,12 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
             return await RoleClient.add(newRole, currentSpace.uuid!!)
                 .then((response) => {
                     const newRole: RoleTag = response.data;
+                    updateFilterOptions(roleFiltersIndex, newRole, TagAction.ADD);
                     setRoles((prevRoles: Array<RoleTag>) => {
-                        updateFilterOptions(roleFiltersIndex, newRole, TagAction.ADD);
                         const roles = [...prevRoles, newRole];
                         sortTagsAlphabetically(roles);
                         return roles;
                     });
-
                     returnToViewState();
                 });
         };
@@ -232,8 +230,8 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
                 if (currentSpace.uuid) {
                     await RoleClient.delete(roleToDelete.id, currentSpace.uuid);
                     setConfirmDeleteModal(null);
-                    setRoles((prevRoles: Array<RoleTag>) => prevRoles.filter((role: RoleTag) => role.id !== roleToDelete.id));
                     updateFilterOptions(roleFiltersIndex, roleToDelete, TagAction.DELETE);
+                    setRoles((prevRoles: Array<RoleTag>) => prevRoles.filter((role: RoleTag) => role.id !== roleToDelete.id));
                 }
             } catch {
                 return;

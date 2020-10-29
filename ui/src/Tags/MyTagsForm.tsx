@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -35,8 +35,11 @@ import {createDataTestId} from '../tests/TestUtils';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import {TagRequest} from './TagRequest.interface';
 import sortTagsAlphabetically from './sortTagsAlphabetically';
+import {Location} from '../Locations/Location.interface';
+import {ProductTag} from '../ProductTag/ProductTag';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
+import ViewTagRow from "../ModalFormComponents/ViewTagRow";
 
 const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -57,34 +60,16 @@ interface ProductTagsProps {
 }
 
 interface Props {
+    locations: Array<Location>;
+    productTags: Array<ProductTag>;
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
-    const [locations, setLocations] = useState<Array<Tag>>([]);
-    const [productTags, setProductTags] = useState<Array<Tag>>([]);
-
-    useEffect(() => {
-        const locationsPromise = LocationClient.get(currentSpace.uuid!!);
-        const productTagsPromise =  ProductTagClient.get(currentSpace.uuid!!);
-
-        const fetchData = !locations.length && !productTags.length;
-        if (fetchData) {
-            Promise.all([locationsPromise, productTagsPromise])
-                .then(values => {
-                    const locationData = values[0].data;
-                    sortTagsAlphabetically(locationData);
-                    setLocations(locationData);
-
-                    const productTagsData = values[1].data;
-                    sortTagsAlphabetically(productTagsData);
-                    setProductTags(productTagsData);
-                });
-        }
-    }, [currentSpace.uuid, locations.length, productTags.length]);
-
+function MyTagsForm({ locations, productTags, currentSpace, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
+    const [locationTagsList, setLocationTagsList] = useState<Array<Tag>>(locations);
+    const [productTagsList, setProductTagsList] = useState<Array<Tag>>(productTags);
     // @todo abstract filter methods away to redux please
     const getUpdatedFilterOptions = (index: number, tag: Tag, action: TagAction): Array<FilterOption> => {
         let options: Array<FilterOption>;
@@ -130,25 +115,6 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
         const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
         const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
-        function sortTraitsAlphabetically(traitsList: Array<Tag>): void {
-            traitsList.sort( (trait1: Tag, trait2: Tag) => {
-                return trait1.name.toLowerCase().localeCompare(trait2.name.toLowerCase());
-            });
-        }
-
-        const deleteLocation = async (locationToDelete: Tag): Promise<void> => {
-            try {
-                if (currentSpace.uuid) {
-                    await LocationClient.delete(locationToDelete.id, currentSpace.uuid);
-                    setConfirmDeleteModal(null);
-                    setLocations((prevLocations: Array<Tag>) => prevLocations.filter((location: RoleTag) => location.id !== locationToDelete.id));
-                    updateFilterOptions(locationFilterIndex, locationToDelete, TagAction.DELETE);
-                }
-            } catch {
-                return;
-            }
-        };
-
         const showDeleteConfirmationModal = (locationToDelete: Tag): void => {
             const propsForDeleteConfirmationModal: ConfirmationModalProps = {
                 submit: () => deleteLocation(locationToDelete),
@@ -166,14 +132,13 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
         const editLocation = async (location: TagRequest): Promise<unknown> => {
             return await LocationClient.edit(location, currentSpace.uuid!!)
                 .then((response) => {
+                    const newLocation: Tag = response.data;
+                    updateFilterOptions(locationFilterIndex, newLocation, TagAction.EDIT);
                     setLocations((prevLocations: Array<Tag>) => {
-                        const newLocation: Tag = response.data;
-                        updateFilterOptions(locationFilterIndex, newLocation, TagAction.EDIT);
                         const locations = prevLocations.map(tag => tag.id !== location.id ? tag : newLocation);
                         sortTagsAlphabetically(locations);
                         return locations;
                     });
-
                     returnToViewState();
                 });
         };
@@ -182,8 +147,8 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
             return await LocationClient.add(location, currentSpace.uuid!!)
                 .then((response) => {
                     const newLocation: Tag = response.data;
+                    updateFilterOptions(locationFilterIndex, newLocation, TagAction.ADD);
                     setLocations((prevLocations: Array<Tag>) => {
-                        updateFilterOptions(locationFilterIndex, newLocation, TagAction.ADD);
                         const locations = [...prevLocations, newLocation];
                         sortTagsAlphabetically(locations);
                         return locations;
@@ -191,6 +156,19 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
 
                     returnToViewState();
                 });
+        };
+
+        const deleteLocation = async (locationToDelete: Tag): Promise<void> => {
+            try {
+                if (currentSpace.uuid) {
+                    await LocationClient.delete(locationToDelete.id, currentSpace.uuid);
+                    setConfirmDeleteModal(null);
+                    updateFilterOptions(locationFilterIndex, locationToDelete, TagAction.DELETE);
+                    setLocations((prevLocations: Array<Tag>) => prevLocations.filter((location: RoleTag) => location.id !== locationToDelete.id));
+                }
+            } catch {
+                return;
+            }
         };
 
         const showEditButtons = (): boolean => editLocationIndex === INACTIVE_EDIT_STATE_INDEX && !isAddingNewTag;
@@ -263,9 +241,9 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
         const editProductTag = async (productTag: TagRequest): Promise<unknown> => {
             return await ProductTagClient.edit(productTag, currentSpace.uuid!!)
                 .then((response) => {
+                    const newProductTag: Tag = response.data;
+                    updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.EDIT);
                     setProductTags((prevProductTag: Array<Tag>) => {
-                        const newProductTag: Tag = response.data;
-                        updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.EDIT);
                         const productTags = prevProductTag.map((tag: Tag) => tag.id !== productTag.id ? tag : newProductTag);
                         sortTagsAlphabetically(productTags);
                         return productTags;
@@ -279,8 +257,8 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
             return await ProductTagClient.add(productTag, currentSpace.uuid!!)
                 .then((response) => {
                     const newProductTag: Tag = response.data;
+                    updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.ADD);
                     setProductTags((prevProductTag: Array<Tag>) => {
-                        updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.ADD);
                         const productTags = [...prevProductTag, newProductTag];
                         sortTagsAlphabetically(productTags);
                         return productTags;
@@ -295,10 +273,10 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
                 if (currentSpace.uuid) {
                     await ProductTagClient.delete(productTagToDelete.id, currentSpace.uuid);
                     setConfirmDeleteModal(null);
+                    updateFilterOptions(productTagFilterIndex, productTagToDelete, TagAction.DELETE);
                     setProductTags((prevProductTags: Array<Tag>) =>
                         prevProductTags.filter((productTag: RoleTag) => productTag.id !== productTagToDelete.id)
                     );
-                    updateFilterOptions(productTagFilterIndex, productTagToDelete, TagAction.DELETE);
                 }
             } catch {
                 return;
@@ -353,9 +331,9 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
 
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
-            <LocationTags locations={locations} setLocations={setLocations} />
+            <LocationTags locations={locationTagsList} setLocations={setLocationTagsList} />
             <div className="lineSeparator"/>
-            <ProductTags productTags={productTags} setProductTags={setProductTags}  />
+            <ProductTags productTags={productTagsList} setProductTags={setProductTagsList}  />
             <div className="traitWarning">
                 <img src={warningIcon} className="warningIcon" alt="warning icon"/>
                 <p className="warningText">
@@ -368,6 +346,8 @@ function MyTagsForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTag
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
+    locations: state.locations,
+    productTags: state.productTags,
     currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });

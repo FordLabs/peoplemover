@@ -18,10 +18,13 @@
 
 import {AvailableActions} from '../Actions';
 import {Location} from '../../Locations/Location.interface';
+import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 
 const locationsReducer = (state: Array<Location> = [], action: {type: AvailableActions; locations: Array<Location>} ): Array<Location> => {
     if (action.type === AvailableActions.SET_LOCATIONS) {
-        return [...action.locations];
+        const locations = [...action.locations];
+        sortTagsAlphabetically(locations);
+        return locations;
     } else {
         return state;
     }
