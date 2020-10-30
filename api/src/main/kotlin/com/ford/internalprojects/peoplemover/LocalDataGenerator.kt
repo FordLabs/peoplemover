@@ -7,11 +7,17 @@ import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.color.ColorService
+import com.ford.internalprojects.peoplemover.location.LocationAddRequest
+import com.ford.internalprojects.peoplemover.location.LocationService
+import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonService
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
+import com.ford.internalprojects.peoplemover.producttag.ProductTag
+import com.ford.internalprojects.peoplemover.producttag.ProductTagAddRequest
+import com.ford.internalprojects.peoplemover.producttag.ProductTagService
 import com.ford.internalprojects.peoplemover.role.RoleService
 import com.ford.internalprojects.peoplemover.role.SpaceRole
 import com.ford.internalprojects.peoplemover.space.Space
@@ -33,7 +39,9 @@ class LocalDataGenerator(
         private val colorService: ColorService,
         private val personService: PersonService,
         private val productRepository: ProductRepository,
-        private val assignmentService: AssignmentService
+        private val assignmentService: AssignmentService,
+        private val productTagService: ProductTagService,
+        private val locationService: LocationService
 ) {
 
     fun setSpace(uuid: String) {
@@ -97,13 +105,29 @@ class LocalDataGenerator(
                 ),
                 createdSpace.uuid
         )
+
+        val productTagAddRequest = ProductTagAddRequest(
+                name = "productTag1"
+        )
+
+        val locationAddRequest = LocationAddRequest(
+                name = "location1"
+        )
+
+        val productTag: ProductTag = productTagService.createProductTagForSpace(productTagAddRequest, uuid)
+        val location: SpaceLocation = locationService.addLocationToSpace(uuid, locationAddRequest)
+
+        val productTags: Set<ProductTag> = HashSet(listOf(productTag))
+
         productRepository.save(Product(
                 name = "My Product",
+                productTags = productTags,
                 spaceId = createdSpace.id,
                 startDate = LocalDate.parse("2019-01-01")
         ))
         productRepository.save(Product(
                 name = "Baguette Bakery",
+                spaceLocation = location,
                 spaceId = createdSpace.id,
                 startDate = LocalDate.parse("2019-01-01")
         ))
