@@ -49,7 +49,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
     };
 
     const parseEmails = (event: ChangeEvent<HTMLTextAreaElement>): void => {
-        const emails: string[] = event.target.value.split(',');
+        const emails: string[] = event.target.value.split(',').map((email: string) => email.trim());
         if (validateEmail(emails[0])) {
             setEnableInviteButton(true);
         } else {
