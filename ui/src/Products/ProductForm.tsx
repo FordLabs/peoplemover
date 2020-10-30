@@ -103,6 +103,12 @@ function ProductForm({
             console.error('No current space uuid');
             return;
         }
+
+        if (currentProduct.name.trim() === '') {
+            console.error('No product name set');
+            return;
+        }
+
         if (editing) {
             ProductClient.editProduct(currentSpace, currentProduct)
                 .then(closeModal)
