@@ -12,7 +12,6 @@ import ProductTagClient from '../ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';
 import selectEvent from 'react-select-event';
 import {Product} from './Product';
-import {SpaceLocation} from "../Locations/SpaceLocation";
 
 describe('ProductForm', function() {
     const mockStore = configureStore([]);

@@ -17,11 +17,12 @@
 
 import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
 import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useEffect} from 'react';
-import './ReactSelectStyles.scss';
 import {ThemeApplier} from './ThemeApplier';
 import CheckIcon from '../Application/Assets/checkIcon.svg';
 import {Option} from '../CommonTypes/Option';
 import {useOnLoad} from './UseOnLoad';
+
+import './ReactSelectStyles.scss';
 
 export const reactSelectStyles = {
     // @ts-ignore
@@ -259,13 +260,14 @@ export const filterByStyles = {
 export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Element => (
     <components.DropdownIndicator {...props}>
         {
-            props.options.length === 0 ?
-                <i style={{display: 'none'}}/>
-                :
-                (props.selectProps.menuIsOpen
-                    ?
-                    <i className="fas fa-caret-up greyIcon" data-testid={props.selectProps.name}/> :
-                    <i className="fas fa-caret-down greyIcon" data-testid={props.selectProps.name}/>)}
+            props.options.length === 0
+                ? <i style={{display: 'none'}}/>
+                : (
+                    props.selectProps.menuIsOpen
+                        ? <i className="fas fa-caret-up greyIcon" data-testid={props.selectProps.name} />
+                        : <i className="fas fa-caret-down greyIcon" data-testid={props.selectProps.name} />
+                )
+        }
     </components.DropdownIndicator>
 );
 
