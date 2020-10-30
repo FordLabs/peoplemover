@@ -75,6 +75,7 @@ function EditTraitSection({
     const [duplicateErrorMessage, setDuplicateErrorMessage] = useState<boolean>(false);
     const traitNameClass = traitName.replace(' ', '_');
     const originalTraitName = trait?.name;
+    const originalTraitColor = (trait as SpaceRole)?.color;
 
     useEffect(() => {
         let mounted = false;
@@ -148,7 +149,7 @@ function EditTraitSection({
         const input: string = event.target ? event.target.value : '';
 
         const doesInputTraitAlreadyExist = listOfTraits?.find(trait => {
-            return trait.name.toLowerCase().trim() === input.toLowerCase().trim();
+            return trait.name.toLowerCase().trim() === input.toLowerCase().trim() && input.toLowerCase().trim() !== originalTraitName?.toLowerCase().trim();
         });
         if (doesInputTraitAlreadyExist) {
             setDuplicateErrorMessage(true);
@@ -190,7 +191,7 @@ function EditTraitSection({
     };
 
 
-    let isTraitNameInvalid = enteredTrait.name === '' || duplicateErrorMessage || enteredTrait.name.toLowerCase() === originalTraitName?.toLowerCase();
+    let isTraitNameInvalid = enteredTrait.name === '' || duplicateErrorMessage || (enteredTrait.name.toLowerCase() === originalTraitName?.toLowerCase() && originalTraitColor?.color === selectedColor?.color);
 
     return (
         <>
