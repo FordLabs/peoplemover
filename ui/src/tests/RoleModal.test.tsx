@@ -143,15 +143,13 @@ describe('My Roles Form', () => {
         });
 
         it('should display error message when name is changed to existing role name', async () => {
-<<<<<<< HEAD
-            const roleEditIcons = await app.findAllByTestId('roleEditIcon');
-=======
-            (RoleClient.edit as Function) = jest.fn(() => Promise.reject({
-                response: { status: 409 },
-            }));
+
+            //@todo figure out whether we need this
+            // (RoleClient.edit as Function) = jest.fn(() => Promise.reject({
+            //     response: { status: 409 },
+            // }));
 
             const roleEditIcons = await app.findAllByTestId('editIcon__role');
->>>>>>> Update data-testids in unit tests
 
             const myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);

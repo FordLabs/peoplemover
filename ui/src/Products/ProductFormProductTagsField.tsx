@@ -13,7 +13,7 @@ import {AxiosResponse} from 'axios';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
-import {TagRequest} from "../Tags/TagRequest.interface";
+import {TagRequest} from '../Tags/TagRequest.interface';
 
 interface Props {
     spaceId: number;
