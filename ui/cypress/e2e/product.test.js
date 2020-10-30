@@ -101,7 +101,7 @@ describe('Product', () => {
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
 
-    })
+    });
 });
 
 const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}, defaultStartDate) => {
