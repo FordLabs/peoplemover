@@ -374,7 +374,7 @@ describe('Products', () => {
             await app.findByText(addProductModalTitle);
             fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Product 1'}});
 
-            fireEvent.click(app.getByText('Create'));
+            fireEvent.click(app.getByText('Add'));
             await app.findByText('A product with this name already exists. Please enter a different name.');
         });
 

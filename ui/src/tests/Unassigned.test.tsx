@@ -26,12 +26,14 @@ import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('Unassigned Products', () => {
+    const submitFormButtonText = 'Add';
+
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
-    describe('showing the unassigned product', () => {
+    describe('Showing the unassigned product', () => {
         it('has the unassigned product drawer closed by default', async () => {
             const app = renderWithRedux(<PeopleMover/>);
             await TestUtils.waitForHomePageToLoad(app);
@@ -94,7 +96,7 @@ describe('Unassigned Products', () => {
             fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Person Name'}});
             fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
 
-            fireEvent.click(app.getByText('Create'));
+            fireEvent.click(app.getByText(submitFormButtonText));
 
             await app.findByTestId('unassignedPeopleContainer');
         });
@@ -127,7 +129,7 @@ describe('Unassigned Products', () => {
                 }
             ));
 
-            const createButton = await app.findByText('Create');
+            const createButton = await app.findByText(submitFormButtonText);
             fireEvent.click(createButton);
 
             await wait(() => {
@@ -136,7 +138,7 @@ describe('Unassigned Products', () => {
         });
     });
 
-    describe('edit menus', () => {
+    describe('Edit menus', () => {
         const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, productTags: [TestUtils.productTag1]} as GlobalStateProps;
 
         it('should open edit person dialog when clicking on ellipsis', async () => {

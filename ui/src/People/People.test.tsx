@@ -40,6 +40,7 @@ describe('people actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
     const addPersonButtonText = 'Add Person';
     const addPersonModalTitle = 'Add New Person';
+    const submitFormButtonText = 'Add';
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -106,7 +107,7 @@ describe('people actions', () => {
         const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
-        fireEvent.click(app.getByText('Create'));
+        fireEvent.click(app.getByText(submitFormButtonText));
 
         await wait(() => {
             expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
@@ -124,7 +125,7 @@ describe('people actions', () => {
 
         fireEvent.click(app.getByLabelText('Mark as New'));
 
-        fireEvent.click(app.getByText('Create'));
+        fireEvent.click(app.getByText(submitFormButtonText));
 
         await wait(() => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
@@ -145,7 +146,7 @@ describe('people actions', () => {
         fireEvent.click(createPersonButton);
 
         fireEvent.change(app.getByLabelText('Name'), {target: {value: ''}});
-        fireEvent.click(app.getByText('Create'));
+        fireEvent.click(app.getByText(submitFormButtonText));
 
         await wait(() => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0);
@@ -175,7 +176,7 @@ describe('people actions', () => {
 
             fireEvent.click(app.getByLabelText('Mark as New'));
 
-            fireEvent.click(app.getByText('Create'));
+            fireEvent.click(app.getByText(submitFormButtonText));
 
             await wait(() => {
                 expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
@@ -202,7 +203,7 @@ describe('people actions', () => {
 
             expect(personForm).toHaveFormValues({role: 'Product Owner'});
 
-            fireEvent.click(app.getByText('Create'));
+            fireEvent.click(app.getByText(submitFormButtonText));
 
             await wait(() => {
                 expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
@@ -284,7 +285,7 @@ describe('people actions', () => {
 
             fireEvent.click(app.getByLabelText('Mark as New'));
 
-            fireEvent.click(app.getByText('Create'));
+            fireEvent.click(app.getByText(submitFormButtonText));
 
             await wait(checkForCreatedPerson);
         });
@@ -403,7 +404,7 @@ describe('people actions', () => {
         };
         (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve({data: [unassignedProduct]}));
 
-        fireEvent.click(app.getByText('Create'));
+        fireEvent.click(app.getByText(submitFormButtonText));
 
         await app.findByText('John');
         expect(app.queryByText('Submit')).toBeNull();

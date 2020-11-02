@@ -279,7 +279,7 @@ function ProductForm({
                         type="submit"
                         buttonStyle="primary"
                         testId="productFormSubmitButton">
-                        {editing ? 'Save' : 'Create'}
+                        {editing ? 'Save' : 'Add'}
                     </FormButton>
                 </div>
                 {editing && (

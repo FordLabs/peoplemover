@@ -63,7 +63,7 @@ describe('ProductForm', function() {
             const tagsLabelElement = await app.findByLabelText('Product Tags');
             await selectEvent.select(tagsLabelElement, /FordX/);
 
-            fireEvent.click(app.getByText('Create'));
+            fireEvent.click(app.getByText('Add'));
         });
 
         expect(ProductClient.createProduct).toHaveBeenCalledWith(
