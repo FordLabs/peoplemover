@@ -59,7 +59,7 @@ class AuthController(
 
         val failures = arrayListOf<String>();
         request.emails.forEach {email ->
-            val userId = email.substringBefore('@').toUpperCase()
+            val userId = email.substringBefore('@').toUpperCase().trim()
             try {
                 userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
             } catch (e: DataIntegrityViolationException) {
