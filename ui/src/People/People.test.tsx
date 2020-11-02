@@ -38,6 +38,8 @@ declare let window: MatomoWindow;
 
 describe('people actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
+    const addPersonButtonText = 'Add Person';
+    const addPersonModalTitle = 'Add New Person';
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -59,10 +61,10 @@ describe('people actions', () => {
     it('opens PersonForm component when Add Person button is clicked', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
-        const createPersonButton = await app.findByText('Add Person');
+        const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
-        await app.findByText('Create New Person');
+        await app.findByText(addPersonModalTitle);
     });
 
 
@@ -92,7 +94,7 @@ describe('people actions', () => {
     it('should show placeholder text for the person name', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
-        const createPersonButton = await app.findByText('Add Person');
+        const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
         await app.findByPlaceholderText('e.g. Jane Smith');
@@ -101,7 +103,7 @@ describe('people actions', () => {
     it('should not submit assignment when nothing changed', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
-        const createPersonButton = await app.findByText('Add Person');
+        const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
         fireEvent.click(app.getByText('Create'));
@@ -114,7 +116,7 @@ describe('people actions', () => {
     it('creates the person specified by the PersonForm', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
-        const createPersonButton = await app.findByText('Add Person');
+        const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
         fireEvent.change(app.getByLabelText('Name'), {target: {value: 'New Bobby'}});
@@ -139,7 +141,7 @@ describe('people actions', () => {
     it('should not create person with empty value and display proper error message', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
-        const createPersonButton = await app.findByText('Add Person');
+        const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
         fireEvent.change(app.getByLabelText('Name'), {target: {value: ''}});
@@ -159,7 +161,7 @@ describe('people actions', () => {
             await act(async () => {
                 app = renderWithRedux(<PeopleMover/>);
 
-                const createPersonButton = await app.findByText('Add Person');
+                const createPersonButton = await app.findByText(addPersonButtonText);
                 fireEvent.click(createPersonButton);
 
                 fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
@@ -237,7 +239,7 @@ describe('people actions', () => {
 
             fireEvent.keyDown(app.getByLabelText('Role'), {key: 'Enter', code: 13});
             await app.findByText('Product Owner');
-            await app.findByText('Add Person');
+            await app.findByText(addPersonButtonText);
         });
     });
 
@@ -269,7 +271,7 @@ describe('people actions', () => {
 
         it('assigns the person created by the PersonForm', async () => {
             const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-            const createPersonButton = await app.findByText('Add Person');
+            const createPersonButton = await app.findByText(addPersonButtonText);
             fireEvent.click(createPersonButton);
 
             fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
@@ -340,10 +342,10 @@ describe('people actions', () => {
     it('should auto populate the role of the selected person name', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
-        const createPersonButton = await app.findByText('Add Person');
+        const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
-        await app.findByText('Create New Person');
+        await app.findByText(addPersonModalTitle);
         fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Person 1'}});
         expect(app.getByTestId('personForm')).toHaveFormValues({
             role: 'Software Engineer',
@@ -353,10 +355,10 @@ describe('people actions', () => {
     it('should auto populate the notes of the selected person name', async () => {
         const app = renderWithRedux(<PeopleMover/>);
 
-        const createPersonButton = await app.findByText('Add Person');
+        const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
-        await app.findByText('Create New Person');
+        await app.findByText(addPersonModalTitle);
         fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Person 1'}});
         expect((app.getByLabelText('Notes') as HTMLInputElement).value).toEqual('I love the theater');
     });
@@ -368,10 +370,10 @@ describe('people actions', () => {
         fireEvent.click(unassignedDrawerCaret);
 
         expect(app.queryByText('John')).not.toBeInTheDocument();
-        const createPersonButton = await app.findByText('Add Person');
+        const createPersonButton = await app.findByText(addPersonButtonText);
         fireEvent.click(createPersonButton);
 
-        await app.findByText('Create New Person');
+        await app.findByText(addPersonModalTitle);
         fireEvent.change(app.getByLabelText('Name'), {target: {value: 'John'}});
         fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
 

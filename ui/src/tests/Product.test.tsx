@@ -34,7 +34,9 @@ import selectEvent from 'react-select-event';
 import moment from 'moment';
 
 describe('Products', () => {
-
+    const addProductButtonText = 'Add Product';
+    const addProductModalTitle = 'Add New Product';
+    
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
@@ -247,7 +249,7 @@ describe('Products', () => {
         it('ProductForm allows choices of locations provided by the API', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
             await app.findByLabelText('Name');
@@ -260,7 +262,7 @@ describe('Products', () => {
         it('should allow to create new location', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
             await app.findByLabelText('Name');
@@ -284,7 +286,7 @@ describe('Products', () => {
         it('ProductForm allows choices of product tags provided by the API', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
             await app.findByLabelText('Name');
@@ -296,7 +298,7 @@ describe('Products', () => {
         it('ProductForm allows to create product tag provided by user', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
             await app.findByLabelText('Name');
@@ -330,7 +332,7 @@ describe('Products', () => {
         it('opens ProductForm with correct placeholder text in input fields', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
             await app.findByLabelText('Name');
@@ -342,19 +344,19 @@ describe('Products', () => {
         it('opens ProductForm component when button clicked', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByText('Create New Product');
+            await app.findByText(addProductModalTitle);
         });
 
         it('opens ProductForm with product tag field', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByText('Create New Product');
+            await app.findByText(addProductModalTitle);
             await app.findByLabelText('Product Tags');
         });
 
@@ -366,10 +368,10 @@ describe('Products', () => {
             }));
             const app = renderWithRedux(<PeopleMover/>);
 
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByText('Create New Product');
+            await app.findByText(addProductModalTitle);
             fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Product 1'}});
 
             fireEvent.click(app.getByText('Create'));
