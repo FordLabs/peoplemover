@@ -107,6 +107,7 @@ function ProductForm({
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
 
     const [duplicateProductNameWarning, setDuplicateProductNameWarning] = useState<boolean>(false);
+    const [emptyProductNameWarning, setEmptyProductNameWarning] = useState<boolean>(false);
 
     function initializeProduct(): Product {
         if (product == null) {
@@ -118,6 +119,9 @@ function ProductForm({
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
 
+        setEmptyProductNameWarning(false);
+        setDuplicateProductNameWarning(false);
+
         currentProduct.productTags = selectedProductTags;
         if (!currentSpace.uuid) {
             console.error('No current space uuid');
@@ -125,6 +129,7 @@ function ProductForm({
         }
 
         if (currentProduct.name.trim() === '') {
+            setEmptyProductNameWarning(true);
             console.error('No product name set');
             return;
         }
@@ -239,7 +244,15 @@ function ProductForm({
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('name', e.target.value)}
                         placeholder="e.g. Product 1"/>
                     {duplicateProductNameWarning &&
-                    <span className="personNameWarning">A product with this name already exists. Please enter a different name.</span>}
+                        <span data-testid="duplicateProductNameWarning" className="personNameWarning">
+                            A product with this name already exists. Please enter a different name.
+                        </span>
+                    }
+                    {emptyProductNameWarning &&
+                        <span data-testid="emptyProductNameWarning" className="personNameWarning">
+                            Please enter a product name.
+                        </span>
+                    }
                 </div>
                 <ProductFormLocationField
                     spaceId={currentSpace.id}
