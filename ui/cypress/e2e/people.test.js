@@ -18,11 +18,11 @@ describe('People', () => {
 
         cy.get('[data-testid=addPersonButton]').click();
 
-        cy.getModal().should('contain', 'Create New Person');
+        cy.getModal().should('contain', 'Add New Person');
 
         populatePersonForm(person);
 
-        submitPersonForm('Create');
+        submitPersonForm('Add');
 
         let assignmentId;
         cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
