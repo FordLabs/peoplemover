@@ -17,6 +17,13 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
+.productNameWarning {
+  color: $error-message;
+  font-size: 12px;
+  padding-top: 6px;
+  font-style: italic;
+}
+
 .notes {
   box-sizing: border-box;
   padding: 8px;
