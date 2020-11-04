@@ -16,12 +16,12 @@ describe('Product', () => {
 
         cy.get('[data-testid=newProductButton]').click();
 
-        cy.getModal().should('contain', 'Create New Product');
+        cy.getModal().should('contain', 'Add New Product');
 
         const todayDate = Cypress.moment().format('MM/DD/yyyy');
         populateProductForm(product, todayDate);
 
-        submitProductForm();
+        submitProductForm('Add');
 
         cy.wait('@postNewProduct').should(xhr => {
             expect(xhr?.status).to.equal(200);
@@ -63,7 +63,7 @@ describe('Product', () => {
         };
         populateProductForm(updateProduct, '01/01/2019');
 
-        submitProductForm();
+        submitProductForm('Save');
 
         cy.wait('@updateProduct').should(xhr => {
             expect(xhr?.status).to.equal(200);
@@ -158,7 +158,7 @@ const dateSelector = (moment) => {
     return `[aria-label="Choose ${dateLabel}"]`;
 };
 
-const submitProductForm = () => {
-    cy.get('[data-testid=productFormSubmitButton]').click();
+const submitProductForm = (expectedSubmitButtonText) => {
+    cy.get('[data-testid=productFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
     cy.get('@productForm').should('not.be.visible');
 };

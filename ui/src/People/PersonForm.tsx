@@ -384,7 +384,7 @@ function PersonForm({
                         testId="personFormSubmitButton"
                         buttonStyle="primary"
                         type="submit">
-                        {editing ? 'Save' : 'Create'}
+                        {editing ? 'Save' : 'Add'}
                     </FormButton>
                 </div>
                 {editing && (

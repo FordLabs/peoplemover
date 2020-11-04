@@ -99,11 +99,11 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
 
     switch (modal) {
         case AvailableModals.CREATE_PRODUCT:
-            return 'Create New Product';
+            return 'Add New Product';
         case AvailableModals.EDIT_PRODUCT:
             return 'Edit Product';
         case AvailableModals.CREATE_PERSON:
-            return 'Create New Person';
+            return 'Add New Person';
         case AvailableModals.EDIT_PERSON:
             return 'Edit Person';
         case AvailableModals.CREATE_ASSIGNMENT:

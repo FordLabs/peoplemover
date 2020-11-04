@@ -34,7 +34,7 @@ function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}
             onClick={() => setCurrentModal(modalState)}
             data-testid="newProductButton">
             <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
-            <h2 className="newProductText">New Product</h2>
+            <h2 className="newProductText">Add Product</h2>
         </button>
     );
 }
