@@ -147,13 +147,13 @@ function ProductCard({
                                     {product.name}
                                 </h2>
                                 <p className="productTagContainer">
-                                    <i>{product.spaceLocation && product.spaceLocation.name}</i>
-                                    {product.spaceLocation && product.spaceLocation.name !== '' && product.productTags.length > 0 && <i>, </i>}
+                                    <span>{product.spaceLocation && product.spaceLocation.name}</span>
+                                    {product.spaceLocation && product.spaceLocation.name !== '' && product.productTags.length > 0 && <span>, </span>}
                                     {product.productTags.map((tag, index) => {
                                         if (index < product.productTags.length - 1) {
-                                            return <i key={tag.id}>{tag.name}, </i>;
+                                            return <span key={tag.id}>{tag.name}, </span>;
                                         }
-                                        return <i key={tag.id}>{tag.name}</i>;
+                                        return <span key={tag.id}>{tag.name}</span>;
                                     })}
                                 </p>
                             </div>
