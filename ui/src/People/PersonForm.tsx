@@ -15,13 +15,18 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, FormEvent, useState} from 'react';
+import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import Creatable from 'react-select/creatable';
 import {connect} from 'react-redux';
-import {addPersonAction, closeModalAction, editPersonAction, setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
+import {
+    addPersonAction,
+    closeModalAction,
+    editPersonAction,
+    setIsUnassignedDrawerOpenAction,
+} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
@@ -51,12 +56,11 @@ import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import './PersonForm.scss';
 
 interface PersonFormProps {
-    editing: boolean;
+    isEditPersonForm: boolean;
     products: Array<Product>;
     initiallySelectedProduct?: Product;
     initialPersonName?: string;
     assignment?: Assignment;
-    people: Array<Person>;
     currentSpace: Space;
     viewingDate: Date;
 
@@ -67,11 +71,10 @@ interface PersonFormProps {
 }
 
 function PersonForm({
-    editing,
+    isEditPersonForm,
     products,
     initiallySelectedProduct,
     initialPersonName,
-    people,
     currentSpace,
     viewingDate,
     assignment,
@@ -80,6 +83,8 @@ function PersonForm({
     editPerson,
     setIsUnassignedDrawerOpen,
 }: PersonFormProps): JSX.Element {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const spaceUuid = currentSpace.uuid!!;
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
@@ -96,43 +101,33 @@ function PersonForm({
         });
     };
 
-    const getSpaceIdFromPersonName = (name: string): number => {
-        const person: Person | undefined = people.find(x => x.name === name);
-        if (person && person.spaceId) return person.spaceId;
-        return -1;
+    const populatedEntirePersonForm = (assignment: Assignment): void => {
+        setPerson({...assignment.person});
+
+        AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)
+            .then((response) => {
+                const assignments: Array<Assignment> = response.data;
+                setSelectedProducts(createProductsFromAssignments(assignments));
+            });
     };
 
     useOnLoad(() => {
-        const setup = async (): Promise<void> => {
-            if (currentSpace.uuid) {
-                const rolesResponse: AxiosResponse = await RoleClient.get(currentSpace.uuid);
-                setRoles(alphabetize(rolesResponse.data));
+        RoleClient.get(spaceUuid)
+            .then((response) => {
+                setRoles(alphabetize(response.data));
+            });
+
+        if (isEditPersonForm && assignment) {
+            populatedEntirePersonForm(assignment);
+        } else {
+            if (initialPersonName) {
+                setPerson(
+                    (updatingPerson: Person) => ({...updatingPerson, name: initialPersonName})
+                );
             }
 
-            if (editing && assignment) {
-                const personFromAssignment: Person = {
-                    id: assignment.person.id,
-                    name: assignment.person.name,
-                    spaceRole: assignment.person.spaceRole,
-                    notes: assignment.person.notes,
-                    newPerson: assignment.person.newPerson,
-                    spaceId: getSpaceIdFromPersonName(assignment.person.name),
-                };
-                setPerson(personFromAssignment);
-                const assignmentsResponse: AxiosResponse = await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate);
-                const assignments: Array<Assignment> = assignmentsResponse.data;
-                setSelectedProducts(createProductsFromAssignments(assignments));
-            } else {
-                if (initialPersonName) {
-                    setPerson((updatingPerson: Person) => ({...updatingPerson, name: initialPersonName}));
-                }
-                if (initiallySelectedProduct) {
-                    setSelectedProducts([initiallySelectedProduct]);
-                }
-            }
-        };
-
-        setup().then();
+            if (initiallySelectedProduct) setSelectedProducts([initiallySelectedProduct]);
+        }
     });
 
     const getUnassignedProductId = (): number => {
@@ -169,8 +164,8 @@ function PersonForm({
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
             }
-            if (editing && assignment) {
-                const response = await PeopleClient.updatePerson(currentSpace.uuid!!, person);
+            if (isEditPersonForm && assignment) {
+                const response = await PeopleClient.updatePerson(spaceUuid, person);
                 await AssignmentClient.createAssignmentForDate({
                     requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                     person: assignment.person,
@@ -197,13 +192,8 @@ function PersonForm({
     const removePerson = (): void => {
         const assignmentId = assignment && assignment.person.id;
         if (assignmentId) {
-            PeopleClient.removePerson(currentSpace.uuid!!, assignmentId).then(closeModal);
+            PeopleClient.removePerson(spaceUuid, assignmentId).then(closeModal);
         }
-    };
-
-    const getPersonFromListWithName = (name: string): Person | null => {
-        const person = people.find(x => x.name === name);
-        return person || null;
     };
 
     const getItemFromListWithName = (name: string, productsList: Array<Product>): Product | null => {
@@ -231,22 +221,6 @@ function PersonForm({
         updatePersonField('spaceRole', roleMatch);
     };
 
-    const changeName = (event: ChangeEvent<HTMLInputElement>): void => {
-        const name = event.target.value;
-        const otherPerson = getPersonFromListWithName(name);
-        if (otherPerson !== null) {
-            const updatedPerson: Person = {
-                ...person,
-                name,
-                spaceRole: otherPerson.spaceRole,
-                notes: otherPerson.notes,
-            };
-            setPerson(updatedPerson);
-        } else {
-            updatePersonField('name', name);
-        }
-    };
-
     const createOption = (label: string): Option => {
         return ({
             label,
@@ -256,15 +230,13 @@ function PersonForm({
 
     const handleCreateRole = (inputValue: string): void => {
         setIsLoading(true);
-        if (currentSpace.uuid) {
-            const roleAddRequest: RoleAddRequest = {name: inputValue};
-            RoleClient.add(roleAddRequest, currentSpace.uuid).then((response: AxiosResponse) => {
-                const newRole: SpaceRole = response.data;
-                setRoles(roles => alphabetize([...roles, newRole]));
-                updatePersonField('spaceRole', newRole);
-                setIsLoading(false);
-            });
-        }
+        const roleAddRequest: RoleAddRequest = {name: inputValue};
+        RoleClient.add(roleAddRequest, spaceUuid).then((response: AxiosResponse) => {
+            const newRole: SpaceRole = response.data;
+            setRoles(roles => alphabetize([...roles, newRole]));
+            updatePersonField('spaceRole', newRole);
+            setIsLoading(false);
+        });
     };
 
     const displayRemovePersonModal = (): void => {
@@ -279,10 +251,6 @@ function PersonForm({
         setConfirmDeleteModal(deleteConfirmationModal);
     };
 
-    // eslint-disable-next-line  jsx-a11y/accessible-emoji
-    const peopleList = people.map((person, index) => <option key={index} value={person.name}>
-        👤 {person.name}</option>);
-
     const getColorFromLabel = (label: string): string => {
         const matchingRole = roles.find(role => role.name === label);
         if (matchingRole && matchingRole.color) {
@@ -291,26 +259,17 @@ function PersonForm({
         return '';
     };
 
-    const notesChanged = (notes: string): void => {
-        updatePersonField('notes', notes);
-    };
-
     const getSelectables = (): Array<Product> => {
         const filteredProducts: Array<Product> = products.filter(product => !product.archived && product.name !== 'unassigned');
         return alphabetize(filteredProducts) as Array<Product>;
     };
 
     function handleKeyDownForDisplayRemovePersonModal(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            displayRemovePersonModal();
-        }
+        if (event.key === 'Enter') displayRemovePersonModal();
     }
 
     return (
         <div className="formContainer">
-            <datalist id="peopleList">
-                {peopleList}
-            </datalist>
             <form className="form"
                 data-testid="personForm"
                 onSubmit={(event): Promise<void> => handleSubmit(event)}>
@@ -322,9 +281,12 @@ function PersonForm({
                         name="name"
                         id="name"
                         value={person.name}
-                        onChange={changeName}
+                        onChange={(event): void => {
+                            updatePersonField('name', event.target.value);
+                        }}
                         autoComplete="off"
-                        placeholder={'e.g. Jane Smith'}/>
+                        placeholder="e.g. Jane Smith"
+                    />
                     {isPersonNameInvalid && <span className="personNameWarning">Please enter a person name.</span>}
                     <div className="isNewContainer">
                         <input className="checkbox"
@@ -372,7 +334,12 @@ function PersonForm({
                     />
                 </div>
                 <div className="formItem">
-                    <FormNotesTextArea notes={person.notes} callBack={notesChanged}/>
+                    <FormNotesTextArea 
+                        notes={person.notes} 
+                        callBack={(notes): void => {
+                            updatePersonField('notes', notes);
+                        }}
+                    />
                 </div>
                 <div className="yesNoButtons">
                     <FormButton
@@ -384,17 +351,19 @@ function PersonForm({
                         testId="personFormSubmitButton"
                         buttonStyle="primary"
                         type="submit">
-                        {editing ? 'Save' : 'Add'}
+                        {isEditPersonForm ? 'Save' : 'Add'}
                     </FormButton>
                 </div>
-                {editing && (
-                    <div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
+                {isEditPersonForm && (
+                    <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
                         <i className="fas fa-trash"/>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             data-testid="deletePersonButton"
                             onClick={displayRemovePersonModal}
-                            onKeyDown={(e): void => {handleKeyDownForDisplayRemovePersonModal(e);}}>Delete</span>
+                            onKeyDown={handleKeyDownForDisplayRemovePersonModal}>
+                            Delete
+                        </span>
                     </div>
                 )}
             </form>
@@ -405,7 +374,6 @@ function PersonForm({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    people: state.people,
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
 });

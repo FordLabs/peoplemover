@@ -36,7 +36,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 
-describe('people actions', () => {
+describe('People actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
     const addPersonButtonText = 'Add Person';
     const addPersonModalTitle = 'Add New Person';
@@ -155,7 +155,7 @@ describe('people actions', () => {
         expect(await app.findByText('Please enter a person name.')).toBeInTheDocument();
     });
 
-    describe('roles', () => {
+    describe('Roles', () => {
         let app: RenderResult;
 
         beforeEach(async () => {
@@ -244,7 +244,7 @@ describe('people actions', () => {
         });
     });
 
-    describe('creating person and assignments', () => {
+    describe('Creating person and assignments', () => {
         const expectedPerson: Person = {
             ...emptyPerson(),
             name: 'Some Name',
@@ -293,9 +293,9 @@ describe('people actions', () => {
 
     it('should have initially selected product selected', async () => {
         const products: Product[] = [];
-        const component = <PersonForm editing={false}
+        const component = <PersonForm isEditPersonForm={false}
             products={products}
-            initialPersonName={'BRADLEY'}
+            initialPersonName="BRADLEY"
             initiallySelectedProduct={TestUtils.productWithAssignments}
         />;
 
@@ -307,9 +307,9 @@ describe('people actions', () => {
 
     it('should not show the unassigned product or archived products in product list', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
-        const component = <PersonForm editing={false}
+        const component = <PersonForm isEditPersonForm={false}
             products={products}
-            initialPersonName={'BRADLEY'}/>;
+            initialPersonName="BRADLEY"/>;
 
         await act(async () => {
             const wrapper = await renderWithReduxEnzyme(component, undefined, initialState);
@@ -326,9 +326,9 @@ describe('people actions', () => {
 
     it('should remove the unassigned product when a product is selected from dropdown', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.unassignedProduct];
-        const component = <PersonForm editing={false}
+        const component = <PersonForm isEditPersonForm={false}
             products={products}
-            initialPersonName={'BRADLEY'}/>;
+            initialPersonName="BRADLEY"/>;
 
         await act(async () => {
             const wrapper = await renderWithRedux(component, undefined, initialState);
@@ -338,30 +338,6 @@ describe('people actions', () => {
 
             expect(wrapper.queryByText('unassigned')).not.toBeInTheDocument();
         });
-    });
-
-    it('should auto populate the role of the selected person name', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        await app.findByText(addPersonModalTitle);
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Person 1'}});
-        expect(app.getByTestId('personForm')).toHaveFormValues({
-            role: 'Software Engineer',
-        });
-    });
-
-    it('should auto populate the notes of the selected person name', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        await app.findByText(addPersonModalTitle);
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Person 1'}});
-        expect((app.getByLabelText('Notes') as HTMLInputElement).value).toEqual('I love the theater');
     });
 
     it('displays new assignment when submitted, opening Unassigned drawer if needed', async () => {
@@ -416,7 +392,7 @@ describe('people actions', () => {
         store.dispatch = jest.fn();
 
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments];
-        const component = <PersonForm editing={true}
+        const component = <PersonForm isEditPersonForm={true}
             products={products}
             assignment={TestUtils.assignmentForPerson1}
         />;
