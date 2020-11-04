@@ -1,9 +1,9 @@
 /// <reference types="Cypress" />
 
 describe('Tags',  () => {
-    const locationTag = 'Middle Earth';
-    const productTag = 'Flippin Sweet';
-    
+    const locationTag = 'Middle Earth ' + Date.now();
+    const productTag = 'Flippin Sweet ' + Date.now();
+
     beforeEach(() => {
         cy.visitBoard();
     });
@@ -22,14 +22,17 @@ describe('Tags',  () => {
 
         it('location tag',  () => {
             cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postLocation');
-            cy.get('[data-testid=viewTagRow]').should('not.exist');
+            cy.get('[data-testid=tagsModalContainer__location]')
+                .find('[data-testid=viewTagRow]')
+                .should('have.length', 1);
 
             cy.get('[data-testid=addNewButton__location]').click();
             cy.get('[data-testid=tagNameInput]').focus().type(locationTag).should('have.value', locationTag);
             cy.get('[data-testid=saveTagButton]').click();
 
             cy.wait('@postLocation').then(() => {
-                cy.get('[data-testid=tagsModalContainer__location]').find('[data-testid=viewTagRow]')
+                cy.get('[data-testid=tagsModalContainer__location]')
+                    .find('[data-testid=viewTagRow]')
                     .should(($row) => {
                         expect($row).to.contain(locationTag);
                         expect($row).to.have.descendants('[data-testid=editIcon__location]');
@@ -44,7 +47,8 @@ describe('Tags',  () => {
 
         it('product tag',  () => {
             cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postProductTag');
-            cy.get('[data-testid=viewTagRow]').should('not.exist');
+            cy.get('[data-testid=tagsModalContainer__product_tag]')
+                .find('[data-testid=viewTagRow]').should('have.length', 1);
 
             cy.get('[data-testid=addNewButton__product_tag]').click();
             cy.get('[data-testid=tagNameInput]').focus().type(productTag).should('have.value', productTag);

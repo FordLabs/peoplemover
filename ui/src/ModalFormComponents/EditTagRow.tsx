@@ -65,20 +65,20 @@ function EditTagRow({
             name: event.target.value,
         };
         setTagInputValue(newInputValue);
-        if(newNameIsDuplicated()){
+        if(newNameIsDuplicated(newInputValue.name)){
             setShowDuplicatedTagErrorMessage(true)
         } else if(showDuplicatedTagErrorMessage === true){
             setShowDuplicatedTagErrorMessage(false);
         }
     };
 
-    function newNameIsDuplicated() {
-        return existingTags.map<string>(tag => tag.name).includes(tagInputValue.name);
+    function newNameIsDuplicated(newName: string) {
+        return existingTags.map<string>(tag => tag.name).includes(newName);
     }
 
     let isTraitNameInvalid = tagInputValue.name === ''
         || showDuplicatedTagErrorMessage
-        || newNameIsDuplicated()
+        || newNameIsDuplicated(tagInputValue.name)
         || (tagInputValue.name.toLowerCase() === initialValue?.name?.toLowerCase() );
             // && initialValue.name?.color === initialValue.name?.color);
 
@@ -111,7 +111,7 @@ function EditTagRow({
             </div>
             {showDuplicatedTagErrorMessage && (
                 <div className="duplicateErrorMessage">
-                    Oops! You already have this {tagType} Please try using a different one.
+                    Oops! You already have this {tagType}. Please try using a different one.
                 </div>
             )}
         </>
