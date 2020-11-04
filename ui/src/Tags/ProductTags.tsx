@@ -39,10 +39,10 @@ interface Props {
     currentSpace: Space;
 }
 
-const ProductTags = ({ 
-    productTags, 
-    updateProductTags, 
-    currentSpace, 
+const ProductTags = ({
+    productTags,
+    updateProductTags,
+    currentSpace,
     updateFilterOptions,
 }: Props): JSX.Element => {
     const tagType = 'product tag';
@@ -138,6 +138,7 @@ const ProductTags = ({
                                 onSave={editProductTag}
                                 onCancel={returnToViewState}
                                 tagType={tagType}
+                                existingTags={productTags}
                             />
                         }
                     </React.Fragment>
@@ -149,6 +150,7 @@ const ProductTags = ({
                 tagType={tagType}
                 onSave={addProductTag}
                 onAddingTag={setIsAddingNewTag}
+                existingTags={productTags}
             />
             {confirmDeleteModal}
         </div>

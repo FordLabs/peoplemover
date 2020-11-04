@@ -39,11 +39,11 @@ interface Props {
     currentSpace: Space;
 }
 
-const LocationTags = ({ 
-    locations, 
+const LocationTags = ({
+    locations,
     updateLocations,
     updateFilterOptions,
-    currentSpace, 
+    currentSpace,
 }: Props): JSX.Element => {
     const tagType = 'location';
     const locationFilterIndex = 0;
@@ -134,6 +134,7 @@ const LocationTags = ({
                                 onSave={editLocation}
                                 onCancel={returnToViewState}
                                 tagType={tagType}
+                                existingTags={locations}
                             />
                         }
                     </React.Fragment>
@@ -145,6 +146,7 @@ const LocationTags = ({
                 tagType={tagType}
                 onSave={addLocation}
                 onAddingTag={setIsAddingNewTag}
+                existingTags={locations}
             />
             {confirmDeleteModal}
         </div>

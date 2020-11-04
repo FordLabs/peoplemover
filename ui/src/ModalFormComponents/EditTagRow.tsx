@@ -31,6 +31,7 @@ interface Props {
     onSave: (value: TagRequest) => Promise<unknown>;
     onCancel: () => void;
     tagType: TagType;
+    existingTags: Array<TagRequest>;
 }
 
 function EditTagRow({
@@ -39,16 +40,17 @@ function EditTagRow({
     initialValue = { name: '' },
     onSave,
     onCancel,
+    existingTags = [],
 }: Props): JSX.Element {
     const testIdSuffix = tagType;
     const tagNameClass = tagType.replace(' ', '_');
     const [tagInputValue, setTagInputValue] = useState<TagRequest>(initialValue);
-    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const [showDuplicatedTagErrorMessage, setShowDuplicatedTagErrorMessage] = useState<boolean>(false);
 
     const saveTag = (tagValue: TagRequest): void => {
         onSave(tagValue).catch((error) => {
             if (error.response.status === 409) {
-                setShowErrorMessage(true);
+                setShowDuplicatedTagErrorMessage(true);
             }
         });
     };
@@ -63,9 +65,22 @@ function EditTagRow({
             name: event.target.value,
         };
         setTagInputValue(newInputValue);
+        if(newNameIsDuplicated()){
+            setShowDuplicatedTagErrorMessage(true)
+        } else if(showDuplicatedTagErrorMessage === true){
+            setShowDuplicatedTagErrorMessage(false);
+        }
     };
 
-    let isTraitNameInvalid = tagInputValue === '' || showErrorMessage || (tagInputValue.toLowerCase() === originalTraitName?.toLowerCase() && originalTraitColor?.color === selectedColor?.color);
+    function newNameIsDuplicated() {
+        return existingTags.map<string>(tag => tag.name).includes(tagInputValue.name);
+    }
+
+    let isTraitNameInvalid = tagInputValue.name === ''
+        || showDuplicatedTagErrorMessage
+        || newNameIsDuplicated()
+        || (tagInputValue.name.toLowerCase() === initialValue?.name?.toLowerCase() );
+            // && initialValue.name?.color === initialValue.name?.color);
 
     return (
         <>
@@ -85,7 +100,7 @@ function EditTagRow({
                         aria-label="Close Edited Tag">
                         <img src={CloseIcon} alt=""/>
                     </button>
-                    <button disabled={!tagInputValue.name}
+                    <button disabled={isTraitNameInvalid}
                         onClick={(): void => saveTag(tagInputValue)}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
@@ -94,7 +109,7 @@ function EditTagRow({
                     </button>
                 </div>
             </div>
-            {showErrorMessage && (
+            {showDuplicatedTagErrorMessage && (
                 <div className="duplicateErrorMessage">
                     Oops! You already have this {tagType} Please try using a different one.
                 </div>

@@ -105,7 +105,7 @@ describe('My Tags Form', () => {
                 expect(queryByText(myTagsModal, 'Ann Arbor')).not.toBeInTheDocument();
             });
 
-            it('should display error message when location with existed name is edited', async () => {
+            it('should display error message when location with existing name is edited', async () => {
                 LocationClient.edit = jest.fn(() => Promise.reject({
                     response: { status: 409 },
                 }));
@@ -156,7 +156,7 @@ describe('My Tags Form', () => {
 
             it('should display error message only for corresponding edit product tag section', async () => {
                 const editProductTagText = await app.findByTestId('tagNameInput');
-                fireEvent.change(editProductTagText, {target: {value: 'FordX'}});
+                fireEvent.change(editProductTagText, {target: {value: TestUtils.productTag2.name}});
                 const saveButton = await app.findByTestId('saveTagButton');
                 expect(saveButton).toBeDisabled();
 

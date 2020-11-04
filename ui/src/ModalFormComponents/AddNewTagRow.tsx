@@ -30,6 +30,7 @@ interface Props {
     tagType: TagType;
     onSave: (value: TagRequest) => Promise<unknown>;
     onAddingTag: (isAdding: boolean) => void;
+    existingTags: Array<TagRequest>;
 }
 
 const AddNewTagRow = ({
@@ -39,6 +40,7 @@ const AddNewTagRow = ({
     onSave,
     tagType,
     onAddingTag,
+    existingTags,
 }: Props): JSX.Element => {
     const testIdSuffix = tagType;
     const [showAddTagState, setShowAddTagState] = useState<boolean>(false);
@@ -47,7 +49,7 @@ const AddNewTagRow = ({
         onAddingTag(isAdding);
         setShowAddTagState(isAdding);
     };
-    
+
     const openAddTagRow = (event: React.KeyboardEvent): void => {
         if (event.key === 'Enter') updateViewState(true);
     };
@@ -81,6 +83,7 @@ const AddNewTagRow = ({
             onSave={onSaveTag}
             onCancel={onCancel}
             colorDropdown={colorDropdown}
+            existingTags={existingTags}
         />
     );
 };

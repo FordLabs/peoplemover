@@ -144,11 +144,6 @@ describe('My Roles Form', () => {
 
         it('should display error message when name is changed to existing role name', async () => {
 
-            //@todo figure out whether we need this
-            // (RoleClient.edit as Function) = jest.fn(() => Promise.reject({
-            //     response: { status: 409 },
-            // }));
-
             const roleEditIcons = await app.findAllByTestId('editIcon__role');
 
             const myFirstPencil = roleEditIcons[0];

@@ -178,6 +178,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
                                 onSave={editRole}
                                 onCancel={returnToViewState}
                                 tagType={tagType}
+                                existingTags={roles}
                                 colorDropdown={
                                     <ColorDropdown
                                         selectedColor={role.color}
@@ -194,6 +195,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
                 tagType={tagType}
                 onSave={addRole}
                 onAddingTag={setIsAddingNewTag}
+                existingTags={roles}
                 colorDropdown={
                     <ColorDropdown
                         selectedColor={getDefaultColor()}
