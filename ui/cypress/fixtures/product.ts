@@ -16,7 +16,7 @@ const product: Product = {
     tags: ['Tag 1', 'Tag 2'],
     startDate: Cypress.moment(),
     nextPhaseDate: Cypress.moment().add(1, 'days'),
-    notes: 'These are some VERY interesting product notes. You\'re welcome.',
+    notes: 'Product note.',
 };
 
 export default product;

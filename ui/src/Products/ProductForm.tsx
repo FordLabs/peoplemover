@@ -37,10 +37,10 @@ import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import {Space} from '../Space/Space';
-
 import 'react-datepicker/dist/react-datepicker.css';
-import './ProductForm.scss';
 import FormButton from '../ModalFormComponents/FormButton';
+
+import './ProductForm.scss';
 
 export const customStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -87,7 +87,6 @@ interface ProductFormProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-
     closeModal(): void;
 }
 
@@ -102,12 +101,12 @@ function ProductForm({
 }: ProductFormProps): JSX.Element {
     const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct());
     const [selectedProductTags, setSelectedProductTags] = useState<Array<ProductTag>>([]);
-
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
 
-    const [duplicateProductNameWarning, setDuplicateProductNameWarning] = useState<boolean>(false);
-    const [emptyProductNameWarning, setEmptyProductNameWarning] = useState<boolean>(false);
+    const duplicateProductNameWarningMessage = 'A product with this name already exists. Please enter a different name.';
+    const emptyProductNameWarningMessage = 'Please enter a product name.';
+    const [nameWarningMessage, setNameWarningMessage] = useState<string>('');
 
     function initializeProduct(): Product {
         if (product == null) {
@@ -119,8 +118,7 @@ function ProductForm({
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
 
-        setEmptyProductNameWarning(false);
-        setDuplicateProductNameWarning(false);
+        setNameWarningMessage('');
 
         currentProduct.productTags = selectedProductTags;
         if (!currentSpace.uuid) {
@@ -129,8 +127,7 @@ function ProductForm({
         }
 
         if (currentProduct.name.trim() === '') {
-            setEmptyProductNameWarning(true);
-            console.error('No product name set');
+            setNameWarningMessage(emptyProductNameWarningMessage);
             return;
         }
 
@@ -139,17 +136,16 @@ function ProductForm({
                 .then(closeModal)
                 .catch(error => {
                     if (error.response.status === 409) {
-                        setDuplicateProductNameWarning(true);
+                        setNameWarningMessage(duplicateProductNameWarningMessage);
                     }
                 });
 
         } else {
             ProductClient.createProduct(currentSpace, currentProduct)
-                .then(() => setDuplicateProductNameWarning(false))
                 .then(closeModal)
                 .catch(error => {
                     if (error.response.status === 409) {
-                        setDuplicateProductNameWarning(true);
+                        setNameWarningMessage(duplicateProductNameWarningMessage);
                     }
                 });
         }
@@ -172,7 +168,7 @@ function ProductForm({
         return ProductClient.editProduct(currentSpace, archivedProduct).then(closeModal);
     }
 
-    function determineIfProductIsArchived() {
+    function determineIfProductIsArchived(): boolean {
         return product?.endDate! < moment(viewingDate).format('YYYY-MM-DD');
     }
 
@@ -243,14 +239,9 @@ function ProductForm({
                         value={currentProduct.name}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('name', e.target.value)}
                         placeholder="e.g. Product 1"/>
-                    {duplicateProductNameWarning &&
-                        <span data-testid="duplicateProductNameWarning" className="personNameWarning">
-                            A product with this name already exists. Please enter a different name.
-                        </span>
-                    }
-                    {emptyProductNameWarning &&
-                        <span data-testid="emptyProductNameWarning" className="personNameWarning">
-                            Please enter a product name.
+                    {nameWarningMessage &&
+                        <span data-testid="productNameWarningMessage" className="productNameWarning">
+                            {nameWarningMessage}
                         </span>
                     }
                 </div>
