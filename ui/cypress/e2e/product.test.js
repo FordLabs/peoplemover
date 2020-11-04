@@ -103,35 +103,37 @@ describe('Product', () => {
 
     });
 
-    it('Display duplicate product name warning if product name is a duplicate', () => {
-        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
-        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
-        cy.route('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
+    context('Product Name input warnings', () => {
+        it('Display duplicate product name warning if product name is a duplicate', () => {
+            cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+            cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+            cy.route('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
 
-        cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
-        cy.get('[data-testid=editMenuOption__edit_product]').click();
+            cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
+            cy.get('[data-testid=editMenuOption__edit_product]').click();
 
-        const productName = 'Baguette Bakery';
-        cy.get('[data-testid=productFormNameField]').clear().focus().type(productName).should('have.value', productName);
+            const productName = 'My Product';
+            cy.get('[data-testid=productFormNameField]').clear().focus().type(productName).should('have.value', productName);
 
-        cy.get('[data-testid=productFormSubmitButton]').should('have.text', 'Save').click();
+            cy.get('[data-testid=productFormSubmitButton]').should('have.text', 'Save').click();
 
-        cy.get('[data-testid=duplicateProductNameWarning]');
-    });
+            cy.get('[data-testid=duplicateProductNameWarning]');
+        });
 
-    it('Display empty product name warning if product name is empty', () => {
-        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
-        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
-        cy.route('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
+        it('Display empty product name warning if product name is empty', () => {
+            cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+            cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+            cy.route('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
 
-        cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
-        cy.get('[data-testid=editMenuOption__edit_product]').click();
+            cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
+            cy.get('[data-testid=editMenuOption__edit_product]').click();
 
-        cy.get('[data-testid=productFormNameField]').clear().focus().type('').should('have.value', '');
+            cy.get('[data-testid=productFormNameField]').clear();
 
-        cy.get('[data-testid=productFormSubmitButton]').should('have.text', 'Save').click();
+            cy.get('[data-testid=productFormSubmitButton]').should('have.text', 'Save').click();
 
-        cy.get('[data-testid=emptyProductNameWarning]');
+            cy.get('[data-testid=emptyProductNameWarning]');
+        });
     });
 });
 
