@@ -99,3 +99,16 @@
     display: flex;
     flex-direction: column;
 }
+
+// Remove default outline when user is tabbing
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+}
+
+// Use box shadow to make focus ring for all buttons, inputs, selects and textareas except in React Select Library
+:not([class*="-Input"]) > div > *:focus {
+    box-shadow: 0 0 0 2px #4C8EF5;
+}
