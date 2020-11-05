@@ -54,8 +54,12 @@ function EditTagRow({
     const [tagInputValue, setTagInputValue] = useState<TagRequest>(initialValue);
     const [showDuplicatedTagErrorMessage, setShowDuplicatedTagErrorMessage] = useState<boolean>(false);
 
-    const saveTag = (tagValue: TagRequest): void => {
-        onSave(tagValue).catch((error) => {
+    const saveTag = (): void => {
+        let newTag = tagInputValue as RoleEditRequest;
+        if (colors && !(tagInputValue as RoleEditRequest).colorId) {
+            newTag = ( {...tagInputValue, colorId: colors[colors.length - 1].id});
+        }
+        onSave(newTag).catch((error) => {
             if (error.response.status === 409) {
                 setShowDuplicatedTagErrorMessage(true);
             }
@@ -63,7 +67,7 @@ function EditTagRow({
     };
 
     const handleEnterSubmit = (event: React.KeyboardEvent): void => {
-        if (event.key === 'Enter') saveTag(tagInputValue);
+        if (event.key === 'Enter') saveTag();
     };
 
     const handleOnChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -111,7 +115,7 @@ function EditTagRow({
                         <img src={CloseIcon} alt=""/>
                     </button>
                     <button disabled={isTraitNameInvalid()}
-                        onClick={(): void => saveTag(tagInputValue)}
+                        onClick={(): void => saveTag()}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
                         aria-label="Save Edited Tag">

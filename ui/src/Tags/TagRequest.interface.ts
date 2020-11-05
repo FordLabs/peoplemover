@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-import {Color} from "../Roles/Role.interface";
-
 export interface TagRequest {
     id?: number;
     name: string;

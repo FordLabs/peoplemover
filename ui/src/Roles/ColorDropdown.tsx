@@ -23,8 +23,9 @@ interface Props {
 }
 
 const ColorDropdown = ({ selectedColorId, colors, handleColorChange }: Props, ): JSX.Element => {
+    console.log(colors)
     const selectedColorOption = (selectedColorId?: number): OptionType => {
-        const color = colors.find(color => color.id === selectedColorId ) || { id: -1, color: 'transparent'};
+        const color = colors.find(color => color.id === selectedColorId ) || colors[colors.length - 1];
         return {
             value: color,
             ariaLabel: colorMapping[color.color],
