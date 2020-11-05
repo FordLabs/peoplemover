@@ -63,12 +63,12 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
             return <ProductForm editing={true}
                 product={item} />;
         case AvailableModals.CREATE_PERSON:
-            return <PersonForm editing={false}
+            return <PersonForm isEditPersonForm={false}
                 products={products}
                 initiallySelectedProduct={item ? item.initiallySelectedProduct : undefined}
                 initialPersonName={item ? item.initialPersonName : ''}/>;
         case AvailableModals.EDIT_PERSON:
-            return <PersonForm editing={true}
+            return <PersonForm isEditPersonForm={true}
                 assignment={item}
                 products={products}/>;
         case AvailableModals.CREATE_ASSIGNMENT:
