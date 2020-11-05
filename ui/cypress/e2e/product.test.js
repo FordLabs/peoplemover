@@ -16,12 +16,12 @@ describe('Product', () => {
 
         cy.get('[data-testid=newProductButton]').click();
 
-        cy.getModal().should('contain', 'Create New Product');
+        cy.getModal().should('contain', 'Add New Product');
 
         const todayDate = Cypress.moment().format('MM/DD/yyyy');
         populateProductForm(product, todayDate);
 
-        submitProductForm();
+        submitProductForm('Add');
 
         cy.wait('@postNewProduct').should(xhr => {
             expect(xhr?.status).to.equal(200);
@@ -63,7 +63,7 @@ describe('Product', () => {
         };
         populateProductForm(updateProduct, '01/01/2019');
 
-        submitProductForm();
+        submitProductForm('Save');
 
         cy.wait('@updateProduct').should(xhr => {
             expect(xhr?.status).to.equal(200);
@@ -101,6 +101,39 @@ describe('Product', () => {
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
 
+    });
+
+    context('Product name field warnings', () => {
+        beforeEach(() => {
+            cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
+            cy.get('[data-testid=editMenuOption__edit_product]').click();
+
+            cy.get('[data-testid=productFormNameField]').clear();
+        });
+
+        it('Display duplicate product name warning if product name is a duplicate', () => {
+            const productName = 'My Product';
+            cy.get('[data-testid=productFormNameField]')
+                .focus()
+                .type(productName)
+                .should('have.value', productName);
+
+            cy.get('[data-testid=productFormSubmitButton]')
+                .should('have.text', 'Save').click();
+
+            const expectedDuplicateProductNameWarningMessage = 'A product with this name already exists. Please enter a different name.';
+            cy.get('[data-testid=productNameWarningMessage]')
+                .should('have.text', expectedDuplicateProductNameWarningMessage);
+        });
+
+        it('Display empty product name warning if product name is empty', () => {
+            cy.get('[data-testid=productFormSubmitButton]')
+                .should('have.text', 'Save').click();
+
+            const expectedEmptyProductNameWarningMessage = 'Please enter a product name.';
+            cy.get('[data-testid=productNameWarningMessage]')
+                .should('have.text', expectedEmptyProductNameWarningMessage);
+        });
     });
 });
 
@@ -158,7 +191,7 @@ const dateSelector = (moment) => {
     return `[aria-label="Choose ${dateLabel}"]`;
 };
 
-const submitProductForm = () => {
-    cy.get('[data-testid=productFormSubmitButton]').click();
+const submitProductForm = (expectedSubmitButtonText) => {
+    cy.get('[data-testid=productFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
     cy.get('@productForm').should('not.be.visible');
 };
