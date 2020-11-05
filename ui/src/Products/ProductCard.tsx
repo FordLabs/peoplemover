@@ -165,10 +165,12 @@ function ProductCard({
                                         onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
                                     />
                                 </div>
-                                <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
+                                <div className="editIcon material-icons greyIcon clickableIcon"
                                     data-testid={createDataTestId('editProductIcon', product.name)}
                                     onClick={toggleEditMenu}
-                                    onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
+                                    onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
+                                    more_vert
+                                </div>
                             </div>
                             {
                                 isEditMenuOpen &&

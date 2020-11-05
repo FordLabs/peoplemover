@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 @import "../Application/Styleguide/Colors.scss";
 
 .spaceTile {
@@ -51,17 +50,22 @@
   }
 }
 
-.ellipsisButton {
-  margin: 3rem 1.5rem 0;
-  background: transparent;
-  height: 1.5rem;
-  width: 1rem;
-  position: relative;
+.ellipsisButtonContainer {
+  padding-left: 1rem;
+  padding-right: 1rem;
 
-  .icon {
-    text-align: right;
+  .ellipsisButton {
+    margin: 3rem 0 0;
     background: transparent;
+    height: 1.5rem;
+    position: relative;
     color: white;
+
+    .icon {
+      text-align: right;
+      background: transparent;
+      color: white;
+    }
   }
 }
 

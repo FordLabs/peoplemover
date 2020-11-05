@@ -100,7 +100,9 @@ function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces, setCurren
     function NewSpaceButton(): JSX.Element {
         return (
             <button className="createNewSpaceButton" onClick={onCreateNewSpaceButtonClicked}>
-                <img className="createNewSpaceIcon" src={plusIcon} alt=""/>
+                <i className="material-icons createNewSpaceIcon">
+                    add_circle_outline
+                </i>
                 Create New Space
             </button>
         );
