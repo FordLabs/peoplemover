@@ -22,9 +22,10 @@ import PlusIcon from '../Application/Assets/plusIcon.png';
 import EditTagRow from './EditTagRow';
 import {TagNameType, TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
+import {Color} from "../Roles/Role.interface";
 
 interface Props {
-    colorDropdown?: ReactNode;
+    colors?: Array<Color>;
     addNewButtonLabel: TagNameType;
     disabled: boolean;
     tagType: TagType;
@@ -34,7 +35,7 @@ interface Props {
 }
 
 const AddNewTagRow = ({
-    colorDropdown,
+    colors,
     addNewButtonLabel,
     disabled,
     onSave,
@@ -82,7 +83,7 @@ const AddNewTagRow = ({
             tagType={tagType}
             onSave={onSaveTag}
             onCancel={onCancel}
-            colorDropdown={colorDropdown}
+            colors={colors}
             existingTags={existingTags}
         />
     );

@@ -17,18 +17,19 @@ import {connect} from 'react-redux';
 import {INACTIVE_EDIT_STATE_INDEX} from './MyRolesForm';
 import {Space} from '../Space/Space';
 import {TagAction} from '../Tags/MyTagsForm';
+import {RoleEditRequest} from "./RoleEditRequest.interface";
 
-const colorMapping: { [key: string]: string } = {
-    '#81C0FA': 'Blue',
-    '#83DDC2': 'Aquamarine',
-    '#A7E9F2': 'Light Blue',
-    '#C9E9B0': 'Light Green',
-    '#DBB5FF': 'Purple',
-    '#FFD7B3': 'Orange',
-    '#FCBAE9': 'Pink',
-    '#FFEAAA': 'Yellow',
-    '#FFFFFF': 'White',
-};
+// const colorMapping: { [key: string]: string } = {
+//     '#81C0FA': 'Blue',
+//     '#83DDC2': 'Aquamarine',
+//     '#A7E9F2': 'Light Blue',
+//     '#C9E9B0': 'Light Green',
+//     '#DBB5FF': 'Purple',
+//     '#FFD7B3': 'Orange',
+//     '#FCBAE9': 'Pink',
+//     '#FFEAAA': 'Yellow',
+//     '#FFFFFF': 'White',
+// };
 
 interface Props {
     colors: Array<Color>;
@@ -56,49 +57,42 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
         setConfirmDeleteModal(deleteConfirmationModal);
     };
 
-    const selectedColorOption = (selectedColor?: Color): OptionType => {
-        const color = selectedColor ? selectedColor : { id: -1, color: 'transparent'};
-        return {
-            value: color,
-            ariaLabel: colorMapping[color.color],
-            displayValue: <ColorCircle color={color} />,
-        };
-    };
+    // const selectedColorOption = (selectedColor?: Color): OptionType => {
+    //     const color = selectedColor ? selectedColor : { id: -1, color: 'transparent'};
+    //     return {
+    //         value: color,
+    //         ariaLabel: colorMapping[color.color],
+    //         displayValue: <ColorCircle color={color} />,
+    //     };
+    // };
 
-    const colorOptions = (): OptionType[] => {
-        return colors.map((color): OptionType => {
-            return {
-                value: color,
-                ariaLabel: colorMapping[color.color],
-                displayValue: <ColorCircle color={color} />,
-            };
-        });
-    };
+    // const colorOptions = (): OptionType[] => {
+    //     return colors.map((color): OptionType => {
+    //         return {
+    //             value: color,
+    //             ariaLabel: colorMapping[color.color],
+    //             displayValue: <ColorCircle color={color} />,
+    //         };
+    //     });
+    // };
 
     const handleColorChange = (selectedOption: OptionType): void => {
         selectedColor = selectedOption.value as Color;
     };
 
-    const getDefaultColor = (): Color => {
-        return colors[colors.length - 1];
-    };
+    // const getDefaultColor = (): Color => {
+    //     return colors[colors.length - 1];
+    // };
 
-    const ColorDropdown = ({ selectedColor }: { selectedColor?: Color }): JSX.Element => (
-        <Select
-            ariaLabel="Color"
-            selectedOption={selectedColorOption(selectedColor)}
-            options={colorOptions()}
-            onChange={handleColorChange}
-        />
-    );
+
 
     const returnToViewState = (): void => {
         setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
     };
 
-    const editRole = async (role: TagRequest): Promise<unknown> => {
-        const editedRole = {...role, colorId: selectedColor?.id};
-        return await RoleClient.edit(editedRole, currentSpace.uuid!!)
+    const editRole = async (role: RoleEditRequest): Promise<unknown> => {
+        // const editedRole = {...role, colorId: role.color?.id};
+        return await RoleClient.edit(role , currentSpace.uuid!!)
             .then((response) => {
                 const newRole: RoleTag = response.data;
                 updateFilterOptions(roleFiltersIndex, newRole, TagAction.EDIT);
@@ -111,11 +105,10 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
             });
     };
 
-    const addRole = async (role: TagRequest): Promise<unknown> => {
-        const defaultColor = getDefaultColor();
+    const addRole = async (role: RoleEditRequest): Promise<unknown> => {
         const newRole = {
             name: role.name,
-            colorId: selectedColor ? selectedColor?.id : defaultColor.id,
+            colorId: role.colorId,
         };
         return await RoleClient.add(newRole, currentSpace.uuid!!)
             .then((response) => {
@@ -149,6 +142,10 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
 
     const showEditState = (index: number): boolean => editRoleIndex === index;
 
+    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleEditRequest =>{
+        return {id: role.id, name: role.name, colorId: role.color?.id}
+    };
+
     return (
         <div data-testid={createDataTestId('tagsModalContainer', tagType)}
             className="myTraitsModalContainer">
@@ -174,16 +171,12 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
                         }
                         {showEditState(index) &&
                             <EditTagRow
-                                initialValue={role}
+                                initialValue={transformTagIntoRoleEditRequest(role)}
                                 onSave={editRole}
                                 onCancel={returnToViewState}
                                 tagType={tagType}
                                 existingTags={roles}
-                                colorDropdown={
-                                    <ColorDropdown
-                                        selectedColor={role.color}
-                                    />
-                                }
+                                colors={colors}
                             />
                         }
                     </React.Fragment>
@@ -196,11 +189,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
                 onSave={addRole}
                 onAddingTag={setIsAddingNewTag}
                 existingTags={roles}
-                colorDropdown={
-                    <ColorDropdown
-                        selectedColor={getDefaultColor()}
-                    />
-                }
+                colors={colors}
             />
             {confirmDeleteModal}
         </div>

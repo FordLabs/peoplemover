@@ -24,9 +24,18 @@ import {TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
 
 import './TagRowsContainer.scss';
+import {Color, RoleTag} from '../Roles/Role.interface';
+import {OptionType} from './Select';
+import ColorCircle from './ColorCircle';
+import ColorDropdown from '../Roles/ColorDropdown';
+import {Tag} from '../Tags/Tag.interface';
+import RoleTags from '../Roles/RoleTags';
+import {RoleEditRequest} from "../Roles/RoleEditRequest.interface";
+
+
 
 interface Props {
-    colorDropdown?: ReactNode;
+    colors?: Array<Color>;
     initialValue?: TagRequest;
     onSave: (value: TagRequest) => Promise<unknown>;
     onCancel: () => void;
@@ -35,7 +44,7 @@ interface Props {
 }
 
 function EditTagRow({
-    colorDropdown,
+    colors,
     tagType,
     initialValue = { name: '' },
     onSave,
@@ -48,6 +57,7 @@ function EditTagRow({
     const [showDuplicatedTagErrorMessage, setShowDuplicatedTagErrorMessage] = useState<boolean>(false);
 
     const saveTag = (tagValue: TagRequest): void => {
+        console.log(tagValue);
         onSave(tagValue).catch((error) => {
             if (error.response.status === 409) {
                 setShowDuplicatedTagErrorMessage(true);
@@ -60,14 +70,12 @@ function EditTagRow({
     };
 
     const handleOnChange = (event: ChangeEvent<HTMLInputElement>): void => {
-        const newInputValue = {
-            id: initialValue.id,
-            name: event.target.value,
-        };
+        const newInputValue = {...tagInputValue, name: event.target.value};
+        console.log(newInputValue)
         setTagInputValue(newInputValue);
-        if(newNameIsDuplicated(newInputValue.name)){
-            setShowDuplicatedTagErrorMessage(true)
-        } else if(showDuplicatedTagErrorMessage === true){
+        if (newNameIsDuplicated(newInputValue.name)) {
+            setShowDuplicatedTagErrorMessage(true);
+        } else if (showDuplicatedTagErrorMessage === true) {
             setShowDuplicatedTagErrorMessage(false);
         }
     };
@@ -76,17 +84,22 @@ function EditTagRow({
         return existingTags.map<string>(tag => tag.name).includes(newName);
     }
 
+    const handleColorChange = (selectedOption: OptionType): void => {
+        console.log("gg", ({...tagInputValue, colorId: ((selectedOption.value as Color).id) }) as RoleEditRequest)
+        setTagInputValue(({...tagInputValue, colorId: ((selectedOption.value as Color).id) }) as RoleEditRequest);
+    };
+
     let isTraitNameInvalid = tagInputValue.name === ''
         || showDuplicatedTagErrorMessage
         || newNameIsDuplicated(tagInputValue.name)
         || (tagInputValue.name.toLowerCase() === initialValue?.name?.toLowerCase() );
-            // && initialValue.name?.color === initialValue.name?.color);
+    // && initialValue.name?.color === initialValue.name?.color);
 
     return (
         <>
             <div className={`editTagRow ${tagNameClass}`}
                 data-testid={createDataTestId('editTagRow', testIdSuffix)}>
-                {colorDropdown}
+                { colors && <ColorDropdown selectedColorId={(tagInputValue as RoleEditRequest).colorId} colors={colors} handleColorChange={handleColorChange} />}
                 <input className={`editTagInput ${tagNameClass}`}
                     data-testid="tagNameInput"
                     type="text"
