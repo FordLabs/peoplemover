@@ -32,8 +32,6 @@ import {Tag} from '../Tags/Tag.interface';
 import RoleTags from '../Roles/RoleTags';
 import {RoleEditRequest} from "../Roles/RoleEditRequest.interface";
 
-
-
 interface Props {
     colors?: Array<Color>;
     initialValue?: TagRequest;
@@ -57,7 +55,6 @@ function EditTagRow({
     const [showDuplicatedTagErrorMessage, setShowDuplicatedTagErrorMessage] = useState<boolean>(false);
 
     const saveTag = (tagValue: TagRequest): void => {
-        console.log(tagValue);
         onSave(tagValue).catch((error) => {
             if (error.response.status === 409) {
                 setShowDuplicatedTagErrorMessage(true);
@@ -71,7 +68,6 @@ function EditTagRow({
 
     const handleOnChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newInputValue = {...tagInputValue, name: event.target.value};
-        console.log(newInputValue)
         setTagInputValue(newInputValue);
         if (newNameIsDuplicated(newInputValue.name)) {
             setShowDuplicatedTagErrorMessage(true);
@@ -80,20 +76,21 @@ function EditTagRow({
         }
     };
 
-    function newNameIsDuplicated(newName: string) {
+    const newNameIsDuplicated = (newName: string): boolean => {
         return existingTags.map<string>(tag => tag.name).includes(newName);
-    }
+    };
+
+    const isColorTheSame = (): boolean => {
+        return (tagInputValue as RoleEditRequest).colorId === (initialValue as RoleEditRequest).colorId;
+    };
 
     const handleColorChange = (selectedOption: OptionType): void => {
-        console.log("gg", ({...tagInputValue, colorId: ((selectedOption.value as Color).id) }) as RoleEditRequest)
         setTagInputValue(({...tagInputValue, colorId: ((selectedOption.value as Color).id) }) as RoleEditRequest);
     };
 
-    let isTraitNameInvalid = tagInputValue.name === ''
+    const isTraitNameInvalid = (): boolean => {return tagInputValue.name === ''
         || showDuplicatedTagErrorMessage
-        || newNameIsDuplicated(tagInputValue.name)
-        || (tagInputValue.name.toLowerCase() === initialValue?.name?.toLowerCase() );
-    // && initialValue.name?.color === initialValue.name?.color);
+        || (newNameIsDuplicated(tagInputValue.name) && isColorTheSame())};
 
     return (
         <>
@@ -113,7 +110,7 @@ function EditTagRow({
                         aria-label="Close Edited Tag">
                         <img src={CloseIcon} alt=""/>
                     </button>
-                    <button disabled={isTraitNameInvalid}
+                    <button disabled={isTraitNameInvalid()}
                         onClick={(): void => saveTag(tagInputValue)}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"

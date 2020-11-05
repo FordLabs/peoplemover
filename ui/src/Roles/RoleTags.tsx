@@ -19,18 +19,6 @@ import {Space} from '../Space/Space';
 import {TagAction} from '../Tags/MyTagsForm';
 import {RoleEditRequest} from "./RoleEditRequest.interface";
 
-// const colorMapping: { [key: string]: string } = {
-//     '#81C0FA': 'Blue',
-//     '#83DDC2': 'Aquamarine',
-//     '#A7E9F2': 'Light Blue',
-//     '#C9E9B0': 'Light Green',
-//     '#DBB5FF': 'Purple',
-//     '#FFD7B3': 'Orange',
-//     '#FCBAE9': 'Pink',
-//     '#FFEAAA': 'Yellow',
-//     '#FFFFFF': 'White',
-// };
-
 interface Props {
     colors: Array<Color>;
     roles: Array<RoleTag>;
@@ -41,7 +29,6 @@ interface Props {
 
 const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }: Props): JSX.Element => {
     const tagType = 'role';
-    let selectedColor: Color;
     const roleFiltersIndex = 2;
     const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
@@ -57,42 +44,12 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
         setConfirmDeleteModal(deleteConfirmationModal);
     };
 
-    // const selectedColorOption = (selectedColor?: Color): OptionType => {
-    //     const color = selectedColor ? selectedColor : { id: -1, color: 'transparent'};
-    //     return {
-    //         value: color,
-    //         ariaLabel: colorMapping[color.color],
-    //         displayValue: <ColorCircle color={color} />,
-    //     };
-    // };
-
-    // const colorOptions = (): OptionType[] => {
-    //     return colors.map((color): OptionType => {
-    //         return {
-    //             value: color,
-    //             ariaLabel: colorMapping[color.color],
-    //             displayValue: <ColorCircle color={color} />,
-    //         };
-    //     });
-    // };
-
-    const handleColorChange = (selectedOption: OptionType): void => {
-        selectedColor = selectedOption.value as Color;
-    };
-
-    // const getDefaultColor = (): Color => {
-    //     return colors[colors.length - 1];
-    // };
-
-
-
     const returnToViewState = (): void => {
         setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
     };
 
     const editRole = async (role: RoleEditRequest): Promise<unknown> => {
-        // const editedRole = {...role, colorId: role.color?.id};
-        return await RoleClient.edit(role , currentSpace.uuid!!)
+        return await RoleClient.edit(role, currentSpace.uuid!!)
             .then((response) => {
                 const newRole: RoleTag = response.data;
                 updateFilterOptions(roleFiltersIndex, newRole, TagAction.EDIT);
@@ -175,7 +132,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
                                 onSave={editRole}
                                 onCancel={returnToViewState}
                                 tagType={tagType}
-                                existingTags={roles}
+                                existingTags={roles.map(transformTagIntoRoleEditRequest)}
                                 colors={colors}
                             />
                         }
@@ -188,7 +145,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
                 tagType={tagType}
                 onSave={addRole}
                 onAddingTag={setIsAddingNewTag}
-                existingTags={roles}
+                existingTags={roles.map(transformTagIntoRoleEditRequest)}
                 colors={colors}
             />
             {confirmDeleteModal}
