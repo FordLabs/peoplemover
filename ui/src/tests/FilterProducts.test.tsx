@@ -23,8 +23,9 @@ import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import selectEvent from 'react-select-event';
 
-describe('filter products', () => {
+describe('Filter products', () => {
     let app: RenderResult;
+    const addProductButtonText = 'Add Product';
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -100,7 +101,7 @@ describe('filter products', () => {
         });
 
         it('should show filter option when new location tag is created from edit product modal', async () => {
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
             await app.findByLabelText('Name');
@@ -123,7 +124,7 @@ describe('filter products', () => {
 
     describe('Add/edit/delete product tags should reflect in filter dropdown', () => {
         it('should show filter option when new location tag is created from edit product modal', async () => {
-            const newProductButton = await app.findByText('New Product');
+            const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
             await app.findByLabelText('Name');

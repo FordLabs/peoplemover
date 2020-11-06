@@ -26,6 +26,7 @@ import selectEvent from 'react-select-event';
 
 describe('PeopleMover', () => {
     let app: RenderResult;
+    const addProductButtonText = 'Add Product';
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -95,22 +96,22 @@ describe('PeopleMover', () => {
             const productGroup1 = productGroups[0];
             expect(productGroup1).toHaveTextContent('Ann Arbor');
             expect(productGroup1).toHaveTextContent('Hanky Product');
-            expect(productGroup1).toHaveTextContent('New Product');
+            expect(productGroup1).toHaveTextContent(addProductButtonText);
 
             const productGroup2 = productGroups[1];
             expect(productGroup2).toHaveTextContent('Dearborn');
             expect(productGroup2).toHaveTextContent('Product 3');
-            expect(productGroup2).toHaveTextContent('New Product');
+            expect(productGroup2).toHaveTextContent(addProductButtonText);
 
             const productGroup3 = productGroups[2];
             expect(productGroup3).toHaveTextContent('Southfield');
             expect(productGroup3).toHaveTextContent('Product 1');
-            expect(productGroup3).toHaveTextContent('New Product');
+            expect(productGroup3).toHaveTextContent(addProductButtonText);
 
             const productGroup4 = productGroups[3];
             expect(productGroup4).toHaveTextContent('No Location');
             expect(productGroup4).toHaveTextContent('Awesome Product');
-            expect(productGroup4).toHaveTextContent('New Product');
+            expect(productGroup4).toHaveTextContent(addProductButtonText);
         });
 
         it('should group products by product tag',  async () => {
@@ -124,17 +125,17 @@ describe('PeopleMover', () => {
             const productGroup1 = productGroups[0];
             expect(productGroup1).toHaveTextContent('AV');
             expect(productGroup1).toHaveTextContent('Product 3');
-            expect(productGroup1).toHaveTextContent('New Product');
+            expect(productGroup1).toHaveTextContent(addProductButtonText);
 
             const productGroup2 = productGroups[1];
             expect(productGroup2).toHaveTextContent('FordX');
             expect(productGroup2).toHaveTextContent('Product 1');
-            expect(productGroup2).toHaveTextContent('New Product');
+            expect(productGroup2).toHaveTextContent(addProductButtonText);
 
             const productGroup3 = productGroups[2];
             expect(productGroup3).toHaveTextContent('No Product Tag');
             expect(productGroup3).toHaveTextContent('Hanky Product');
-            expect(productGroup3).toHaveTextContent('New Product');
+            expect(productGroup3).toHaveTextContent(addProductButtonText);
         });
     });
 

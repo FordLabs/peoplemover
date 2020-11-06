@@ -92,7 +92,7 @@ function SpaceForm({
                     buttonStyle="primary"
                     type="submit"
                     disabled={spaceNameLength <= 0}>
-                    {editing ? 'Save' : 'Add Space'}
+                    {editing ? 'Save' : 'Create'}
                 </FormButton>
             </div>
         </form>
