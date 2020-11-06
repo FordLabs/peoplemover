@@ -58,6 +58,7 @@
   margin: 0;
 
   &:focus {
+    outline: none;
     border: $focus-state-border !important;
     border-radius: 4px;
   }
