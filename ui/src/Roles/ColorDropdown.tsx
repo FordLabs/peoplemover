@@ -1,8 +1,8 @@
-import {Color} from "./RoleTag.interface";
-import {JSX} from "@babel/types";
-import Select, {OptionType} from "../ModalFormComponents/Select";
-import React from "react";
-import ColorCircle from "../ModalFormComponents/ColorCircle";
+import {Color} from './RoleTag.interface';
+import {JSX} from '@babel/types';
+import Select, {OptionType} from '../ModalFormComponents/Select';
+import React from 'react';
+import ColorCircle from '../ModalFormComponents/ColorCircle';
 
 const colorMapping: { [key: string]: string } = {
     '#81C0FA': 'Blue',
@@ -23,7 +23,6 @@ interface Props {
 }
 
 const ColorDropdown = ({ selectedColorId, colors, handleColorChange }: Props, ): JSX.Element => {
-    console.log(colors)
     const selectedColorOption = (selectedColorId?: number): OptionType => {
         const color = colors.find(color => color.id === selectedColorId ) || colors[colors.length - 1];
         return {

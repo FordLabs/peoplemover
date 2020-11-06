@@ -16,13 +16,13 @@
  */
 
 import {JSX} from '@babel/types';
-import React, {ReactNode, useState} from 'react';
+import React, {useState} from 'react';
 import {createDataTestId} from '../tests/TestUtils';
 import PlusIcon from '../Application/Assets/plusIcon.png';
 import EditTagRow from './EditTagRow';
 import {TagNameType, TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
-import {Color} from "../Roles/RoleTag.interface";
+import {Color} from '../Roles/RoleTag.interface';
 
 interface Props {
     colors?: Array<Color>;

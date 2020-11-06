@@ -14,7 +14,7 @@ import {connect} from 'react-redux';
 import {INACTIVE_EDIT_STATE_INDEX} from './MyRolesForm';
 import {Space} from '../Space/Space';
 import {TagAction} from '../Tags/MyTagsForm';
-import {RoleEditRequest} from "./RoleEditRequest.interface";
+import {RoleEditRequest} from './RoleEditRequest.interface';
 
 interface Props {
     colors: Array<Color>;
@@ -96,8 +96,8 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
 
     const showEditState = (index: number): boolean => editRoleIndex === index;
 
-    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleEditRequest =>{
-        return {id: role.id, name: role.name, colorId: role.color?.id}
+    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleEditRequest => {
+        return {id: role.id, name: role.name, colorId: role.color?.id};
     };
 
     return (

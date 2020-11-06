@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, ReactNode, useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import SaveIcon from '../Application/Assets/saveIcon.png';
 import CloseIcon from '../Application/Assets/closeIcon.png';
 import {JSX} from '@babel/types';
@@ -24,13 +24,10 @@ import {TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
 
 import './TagRowsContainer.scss';
-import {Color, RoleTag} from '../Roles/RoleTag.interface';
+import {Color} from '../Roles/RoleTag.interface';
 import {OptionType} from './Select';
-import ColorCircle from './ColorCircle';
 import ColorDropdown from '../Roles/ColorDropdown';
-import {Tag} from '../Tags/Tag.interface';
-import RoleTags from '../Roles/RoleTags';
-import {RoleEditRequest} from "../Roles/RoleEditRequest.interface";
+import {RoleEditRequest} from '../Roles/RoleEditRequest.interface';
 
 interface Props {
     colors?: Array<Color>;
@@ -92,9 +89,11 @@ function EditTagRow({
         setTagInputValue(({...tagInputValue, colorId: ((selectedOption.value as Color).id) }) as RoleEditRequest);
     };
 
-    const isTraitNameInvalid = (): boolean => {return tagInputValue.name === ''
+    const isTraitNameInvalid = (): boolean => {
+        return tagInputValue.name === ''
         || showDuplicatedTagErrorMessage
-        || (newNameIsDuplicated(tagInputValue.name) && isColorTheSame())};
+        || (newNameIsDuplicated(tagInputValue.name) && isColorTheSame());
+    };
 
     return (
         <>
