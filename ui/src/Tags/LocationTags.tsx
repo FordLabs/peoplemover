@@ -22,7 +22,7 @@ import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationMo
 import {TagRequest} from './TagRequest.interface';
 import LocationClient from '../Locations/LocationClient';
 import sortTagsAlphabetically from './sortTagsAlphabetically';
-import {RoleTag} from '../Roles/Role.interface';
+import {RoleTag} from '../Roles/RoleTag.interface';
 import {createDataTestId} from '../tests/TestUtils';
 import {INACTIVE_EDIT_STATE_INDEX, TagAction} from './MyTagsForm';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';

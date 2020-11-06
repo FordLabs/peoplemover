@@ -1,5 +1,5 @@
 import {JSX} from '@babel/types';
-import {Color, RoleTag} from './Role.interface';
+import {Color, RoleTag} from './RoleTag.interface';
 import React, {useState} from 'react';
 import {Tag} from '../Tags/Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';

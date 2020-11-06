@@ -24,7 +24,7 @@ import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUt
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {Color, RoleTag} from '../Roles/Role.interface';
+import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import moment from 'moment';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 

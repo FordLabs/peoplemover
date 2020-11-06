@@ -24,7 +24,7 @@ import {TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
 
 import './TagRowsContainer.scss';
-import {Color, RoleTag} from '../Roles/Role.interface';
+import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import {OptionType} from './Select';
 import ColorCircle from './ColorCircle';
 import ColorDropdown from '../Roles/ColorDropdown';

@@ -1,4 +1,4 @@
-import {Color} from "./Role.interface";
+import {Color} from "./RoleTag.interface";
 import {JSX} from "@babel/types";
 import Select, {OptionType} from "../ModalFormComponents/Select";
 import React from "react";

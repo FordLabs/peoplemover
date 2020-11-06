@@ -22,7 +22,7 @@ import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationMo
 import {TagRequest} from './TagRequest.interface';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import sortTagsAlphabetically from './sortTagsAlphabetically';
-import {RoleTag} from '../Roles/Role.interface';
+import {RoleTag} from '../Roles/RoleTag.interface';
 import {createDataTestId} from '../tests/TestUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';

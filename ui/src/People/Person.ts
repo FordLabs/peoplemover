@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {RoleTag} from '../Roles/Role.interface';
+import {RoleTag} from '../Roles/RoleTag.interface';
 
 export interface Person {
     id: number;

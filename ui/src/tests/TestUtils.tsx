@@ -33,7 +33,7 @@ import {Product} from '../Products/Product';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {ProductTag} from '../ProductTag/ProductTag';
 import ColorClient from '../Roles/ColorClient';
-import {Color, RoleTag} from '../Roles/Role.interface';
+import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import {Location} from '../Locations/Location.interface';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';

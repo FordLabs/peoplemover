@@ -25,7 +25,7 @@ import {addPersonAction, closeModalAction, editPersonAction, setIsUnassignedDraw
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
-import {RoleTag} from '../Roles/Role.interface';
+import {RoleTag} from '../Roles/RoleTag.interface';
 import {Product} from '../Products/Product';
 import {
     CreateNewText,

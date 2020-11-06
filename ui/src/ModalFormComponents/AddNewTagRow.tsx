@@ -22,7 +22,7 @@ import PlusIcon from '../Application/Assets/plusIcon.png';
 import EditTagRow from './EditTagRow';
 import {TagNameType, TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
-import {Color} from "../Roles/Role.interface";
+import {Color} from "../Roles/RoleTag.interface";
 
 interface Props {
     colors?: Array<Color>;

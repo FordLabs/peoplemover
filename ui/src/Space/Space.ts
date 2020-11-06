@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {RoleTag} from '../Roles/Role.interface';
+import {RoleTag} from '../Roles/RoleTag.interface';
 import {Location} from '../Locations/Location.interface';
 
 export interface Space {
