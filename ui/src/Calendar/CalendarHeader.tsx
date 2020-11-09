@@ -23,7 +23,7 @@ function CalendarHeader({
                 onClick={decreaseMonth}
                 disabled={prevMonthButtonDisabled}
             >
-                <i className="fas fa-caret-left greyIcon" />
+                <i className="material-icons greyIcon">arrow_left</i>
             </button>
             <div className="monthText">
                 {enUS.localize!.month(date.getMonth())}
@@ -34,7 +34,7 @@ function CalendarHeader({
                 onClick={increaseMonth}
                 disabled={nextMonthButtonDisabled}
             >
-                <i className="fas fa-caret-right greyIcon" />
+                <i className="material-icons greyIcon">arrow_right</i>
             </button>
         </div>
     );

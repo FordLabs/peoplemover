@@ -88,10 +88,15 @@
           margin: 23px 0 16px 0;
           display: flex;
           justify-content: center;
+          align-items: center;
           color: $gray-1;
 
           .calendarMonthArrows {
             background-color: transparent;
+
+            i {
+              font-size: 24px;
+            }
           }
 
           .monthText {
