@@ -33,7 +33,7 @@ import locationsReducer from './locationsReducer';
 import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import {ProductTag} from '../../ProductTag/ProductTag';
-import {Location} from '../../Locations/Location.interface';
+import {LocationTag} from '../../Locations/LocationTag.interface';
 import userSpacesReducer from './userSpacesReducer';
 
 export type SortByType = 'location' | 'product-tag' | 'name'
@@ -64,6 +64,6 @@ export interface GlobalStateProps {
     viewingDate: Date;
     products: Array<Product>;
     productTags: Array<ProductTag>;
-    locations: Array<Location>;
+    locations: Array<LocationTag>;
     userSpaces: Array<Space>;
 }

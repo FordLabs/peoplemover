@@ -17,7 +17,7 @@
 
 import {ProductTag} from '../ProductTag/ProductTag';
 import {Assignment} from '../Assignments/Assignment';
-import {Location} from '../Locations/Location.interface';
+import {LocationTag} from '../Locations/LocationTag.interface';
 
 export interface Product {
     id: number;
@@ -26,7 +26,7 @@ export interface Product {
     startDate?: string;
     endDate?: string;
     dorf?: string;
-    spaceLocation?: Location;
+    spaceLocation?: LocationTag;
     productTags: Array<ProductTag>;
     archived: boolean;
     notes?: string;

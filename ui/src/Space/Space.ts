@@ -16,14 +16,14 @@
  */
 
 import {RoleTag} from '../Roles/RoleTag.interface';
-import {Location} from '../Locations/Location.interface';
+import {LocationTag} from '../Locations/LocationTag.interface';
 
 export interface Space {
     id?: number;
     uuid?: string;
     name: string;
     roles: RoleTag[];
-    locations:    Location[];
+    locations:    LocationTag[];
     lastModifiedDate: string;
 }
 

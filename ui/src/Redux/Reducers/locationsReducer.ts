@@ -17,10 +17,10 @@
  */
 
 import {AvailableActions} from '../Actions';
-import {Location} from '../../Locations/Location.interface';
+import {LocationTag} from '../../Locations/LocationTag.interface';
 import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 
-const locationsReducer = (state: Array<Location> = [], action: {type: AvailableActions; locations: Array<Location>} ): Array<Location> => {
+const locationsReducer = (state: Array<LocationTag> = [], action: {type: AvailableActions; locations: Array<LocationTag>} ): Array<LocationTag> => {
     if (action.type === AvailableActions.SET_LOCATIONS) {
         const locations = [...action.locations];
         sortTagsAlphabetically(locations);

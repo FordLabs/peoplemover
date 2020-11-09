@@ -16,7 +16,7 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {Location} from './Location.interface';
+import {LocationTag} from './LocationTag.interface';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
@@ -26,7 +26,7 @@ class LocationClient implements TagClient {
         return '/api/spaces/' + spaceUuid + '/locations';
     }
 
-    async get(spaceUuid: string): Promise<AxiosResponse<Location[]>> {
+    async get(spaceUuid: string): Promise<AxiosResponse<LocationTag[]>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -50,7 +50,7 @@ class LocationClient implements TagClient {
         return Axios.post(url, location, config);
     }
 
-    async edit(location: TagRequest, spaceUuid: string): Promise<AxiosResponse<Location>> {
+    async edit(location: TagRequest, spaceUuid: string): Promise<AxiosResponse<LocationTag>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {

@@ -25,7 +25,7 @@ import {Tag} from '../Tags/Tag.interface';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {ProductTag} from '../ProductTag/ProductTag';
-import {Location} from '../Locations/Location.interface';
+import {LocationTag} from '../Locations/LocationTag.interface';
 
 import './ProductListGrouped.scss';
 
@@ -33,7 +33,7 @@ interface GroupedByListProps {
     products: Array<Product>;
     productSortBy: SortByType;
     productTags: Array<ProductTag>;
-    locations: Array<Location>;
+    locations: Array<LocationTag>;
 }
 
 interface GroupedListDataProps {

@@ -34,7 +34,7 @@ import ProductTagClient from '../ProductTag/ProductTagClient';
 import {ProductTag} from '../ProductTag/ProductTag';
 import ColorClient from '../Roles/ColorClient';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
-import {Location} from '../Locations/Location.interface';
+import {LocationTag} from '../Locations/LocationTag.interface';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import {Space} from '../Space/Space';
@@ -215,7 +215,7 @@ class TestUtils {
     static dearborn = {id: 3, name: 'Dearborn', spaceId: 1};
     static southfield = {id: 4, name: 'Southfield', spaceId: 1};
 
-    static locations: Location[] = [
+    static locations: LocationTag[] = [
         TestUtils.annarbor,
         TestUtils.detroit,
         TestUtils.dearborn,

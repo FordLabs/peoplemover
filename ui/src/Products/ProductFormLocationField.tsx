@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Option} from '../CommonTypes/Option';
 import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
-import {Location} from '../Locations/Location.interface';
+import {LocationTag} from '../Locations/LocationTag.interface';
 import {Tag} from '../Tags/Tag.interface';
 import Creatable from 'react-select/creatable';
 import {CreateNewText, CustomIndicator, CustomOption} from '../ReusableComponents/ReactSelectStyles';
@@ -35,7 +35,7 @@ function ProductFormLocationField({
     currentSpace,
     addGroupedTagFilterOptions,
 }: Props): JSX.Element {
-    const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
+    const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
     const [typedInLocation, setTypedInLocation] = useState<string>('');
 
     useEffect(() => {
@@ -45,7 +45,7 @@ function ProductFormLocationField({
             });
     }, [currentSpace.uuid]);
 
-    function optionToSpaceLocation(option: Option): Location {
+    function optionToSpaceLocation(option: Option): LocationTag {
         return {
             id: Number.parseInt(option.value.split('_')[0], 10),
             name: option.label,
@@ -53,7 +53,7 @@ function ProductFormLocationField({
         };
     }
 
-    function createLocationOption(location: Location): Option {
+    function createLocationOption(location: LocationTag): Option {
         return {
             label: location.name,
             value: location.id!.toString(),
@@ -78,7 +78,7 @@ function ProductFormLocationField({
             name: inputValue,
         };
         LocationClient.add(location, currentSpace.uuid!!).then((result: AxiosResponse) => {
-            const newLocation: Location = result.data;
+            const newLocation: LocationTag = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
             addGroupedTagFilterOptions(0, newLocation as Tag);
             setCurrentProduct({

@@ -99,7 +99,11 @@ function EditTagRow({
         <>
             <div className={`editTagRow ${tagNameClass}`}
                 data-testid={createDataTestId('editTagRow', testIdSuffix)}>
-                { colors && <ColorDropdown selectedColorId={(tagInputValue as RoleEditRequest).colorId} colors={colors} handleColorChange={handleColorChange} />}
+                { colors && <ColorDropdown
+                    selectedColorId={(tagInputValue as RoleEditRequest).colorId}
+                    colors={colors} 
+                    handleColorChange={handleColorChange}
+                />}
                 <input className={`editTagInput ${tagNameClass}`}
                     data-testid="tagNameInput"
                     type="text"

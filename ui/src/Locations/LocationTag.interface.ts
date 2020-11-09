@@ -17,4 +17,4 @@
 
 import {Tag} from '../Tags/Tag.interface';
 
-export type Location = Tag;
+export type LocationTag = Tag;

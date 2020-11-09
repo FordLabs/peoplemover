@@ -25,7 +25,7 @@ import {Tag} from './Tag.interface';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {JSX} from '@babel/types';
 import {FilterOption} from '../CommonTypes/Option';
-import {Location} from '../Locations/Location.interface';
+import {LocationTag} from '../Locations/LocationTag.interface';
 import {ProductTag} from '../ProductTag/ProductTag';
 import LocationTags from './LocationTags';
 import ProductTags from './ProductTags';
@@ -43,7 +43,7 @@ export enum TagAction {
 }
 
 interface Props {
-    locations: Array<Location>;
+    locations: Array<LocationTag>;
     productTags: Array<ProductTag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
