@@ -24,9 +24,7 @@ import ProductCard from '../Products/ProductCard';
 
 interface UnassignedDrawerProps {
     isUnassignedDrawerOpen: boolean;
-
     setIsUnassignedDrawerOpen(isOpen: boolean): void;
-
     product: Product;
 }
 

@@ -60,8 +60,8 @@
 .productNameEditContainer {
   display: flex;
   justify-content: space-between;
-  padding: 6px 5px 6px 9px;
-  align-items: flex-start;
+  padding: 0 5px 6px 9px;
+  align-items: center;
   position: relative;
 }
 
@@ -73,7 +73,7 @@
 .editIcon {
   cursor: pointer;
   color: $font-color;
-  margin: 0 2px;
+  margin-left: 2px;
 }
 
 button.clickableIcon {
@@ -82,7 +82,7 @@ button.clickableIcon {
 }
 
 .clickableIcon {
-  padding: 3px;
+  padding: 3px 0;
 }
 
 .productName {
@@ -199,4 +199,8 @@ button.archivedProduct,
 
 .productPeopleContainer {
   position: relative;
+}
+
+.addPersonIcon {
+  font-size: 20px;
 }

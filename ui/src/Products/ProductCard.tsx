@@ -160,10 +160,11 @@ function ProductCard({
                             <div className="productControlsContainer">
                                 <div className="addPersonIconContainer">
                                     <div data-testid={createDataTestId('addPersonToProductIcon', product.name)}
-                                        className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
+                                        className="material-icons greyIcon clickableIcon addPersonIcon"
                                         onClick={setCurrentModalToCreateAssignment}
-                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
-                                    />
+                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
+                                        person_add
+                                    </div>
                                 </div>
                                 <div className="editIcon material-icons greyIcon clickableIcon"
                                     data-testid={createDataTestId('editProductIcon', product.name)}
@@ -182,7 +183,7 @@ function ProductCard({
                             <div className="emptyProductText">
                                 <div className="emptyProductTextHint">
                                     <p>Add a person by clicking</p>
-                                    <i className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon"/>
+                                    <i className="material-icons greyIcon addPersonIcon">person_add</i>
                                 </div>
                                 <p>above, or drag them in.</p>
                             </div>
