@@ -32,7 +32,7 @@ function ArchivedProduct({product, setCurrentModal}: ArchiveProductProps): JSX.E
     return (
         <div>
             <button className="archivedProduct" data-testid={`archivedProduct_${product.id}`}
-                onClick={() => setCurrentModal({modal: AvailableModals.EDIT_PRODUCT, item: product})}>
+                onClick={(): void => setCurrentModal({modal: AvailableModals.EDIT_PRODUCT, item: product})}>
                 <span className="archivedProductName">{product.name}</span>
                 <div className="productInfoContainer">
                     <i>{product.spaceLocation && product.spaceLocation.name}</i>
