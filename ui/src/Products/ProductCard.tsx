@@ -86,12 +86,12 @@ function ProductCard({
             {
                 callback: editProductAndCloseEditMenu,
                 text: 'Edit Product',
-                icon: 'fa-pen',
+                icon: 'create',
             },
             {
                 callback: archiveProductAndCloseEditMenu,
                 text: 'Archive Product',
-                icon: 'fa-inbox',
+                icon: 'inbox',
             },
         ];
     }

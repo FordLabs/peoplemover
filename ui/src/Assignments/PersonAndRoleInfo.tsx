@@ -62,9 +62,10 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, isUnassignedPro
                 onMouseLeave={e => onNoteHover(false)}>
                 {assignment.person.name}
                 {!!assignment.person.notes &&
-                    <div className="fas fa-file notesIcon" data-testid="notesIcon">
+                    <i className="material-icons notesIcon" data-testid="notesIcon">
+                        note
                         {showHoverBox && <HoverBox notes={assignment.person.notes}/>}
-                    </div>
+                    </i>
                 }
             </div>
             <div className="personRole">
