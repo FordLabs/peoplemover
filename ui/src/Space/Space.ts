@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import {SpaceRole} from '../Roles/Role';
-import {SpaceLocation} from '../Locations/SpaceLocation';
+import {RoleTag} from '../Roles/RoleTag.interface';
+import {LocationTag} from '../Locations/LocationTag.interface';
 
 export interface Space {
     id?: number;
     uuid?: string;
     name: string;
-    roles: SpaceRole[];
-    locations:    SpaceLocation[];
+    roles: RoleTag[];
+    locations:    LocationTag[];
     lastModifiedDate: string;
 }
 

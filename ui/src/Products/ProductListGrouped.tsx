@@ -21,11 +21,11 @@ import {Product} from './Product';
 import NewProductButton from './NewProductButton';
 import {AvailableModals} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Trait} from '../Traits/Trait';
+import {Tag} from '../Tags/Tag.interface';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {ProductTag} from '../ProductTag/ProductTag';
-import {SpaceLocation} from '../Locations/SpaceLocation';
+import {LocationTag} from '../Locations/LocationTag.interface';
 
 import './ProductListGrouped.scss';
 
@@ -33,12 +33,12 @@ interface GroupedByListProps {
     products: Array<Product>;
     productSortBy: SortByType;
     productTags: Array<ProductTag>;
-    locations: Array<SpaceLocation>;
+    locations: Array<LocationTag>;
 }
 
 interface GroupedListDataProps {
     traitTitle: string;
-    traits: Array<Trait>;
+    traits: Array<Tag>;
     modalType: AvailableModals | null;
     filterByTraitFunction: (product: Product, tagName: string) => boolean;
     filterByNoTraitFunction: (product: Product) => boolean;
@@ -51,8 +51,8 @@ interface ProductGroupProps {
     useGrayBackground?: boolean;
 }
 
-function GroupedByList({ 
-    productSortBy, 
+function GroupedByList({
+    productSortBy,
     products,
     productTags,
     locations,
@@ -118,9 +118,9 @@ function GroupedByList({
         );
     }
 
-    return ( 
+    return (
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
-            {productGroupList.traits.map((trait: Trait) => {
+            {productGroupList.traits.map((trait: Tag) => {
                 return (
                     <span key={trait.id}>
                         <ProductGroup

@@ -26,7 +26,7 @@ import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import ProductTagClient from '../../ProductTag/ProductTagClient';
-import {SpaceLocation} from '../../Locations/SpaceLocation';
+import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
 
@@ -39,7 +39,7 @@ export enum AvailableActions {
     SET_PEOPLE,
     REGISTER_PRODUCT_REF,
     UNREGISTER_PRODUCT_REF,
-    SET_GROUPED_TAG_FILTER_OPTIONS,
+    SET_ALL_FILTER_OPTIONS,
     SET_CURRENT_SPACE,
     SET_VIEWING_DATE,
     SET_PRODUCTS,
@@ -106,8 +106,8 @@ export const unregisterProductRefAction = (productRef: ProductCardRefAndProductP
     productRef,
 });
 
-export const setAllGroupedTagFilterOptions = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
-    type: AvailableActions.SET_GROUPED_TAG_FILTER_OPTIONS,
+export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
+    type: AvailableActions.SET_ALL_FILTER_OPTIONS,
     allGroupedTagFilterOptions: allGroupedTagFilterOptions,
 });
 
@@ -131,7 +131,7 @@ export const setProductTagsAction = (productTags: Array<ProductTag>) => ({
     productTags,
 });
 
-export const setLocationsAction = (locations: Array<SpaceLocation>) => ({
+export const setLocationsAction = (locations: Array<LocationTag>) => ({
     type: AvailableActions.SET_LOCATIONS,
     locations,
 });
@@ -192,7 +192,7 @@ export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, nul
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return LocationClient.get(getState().currentSpace.uuid,)
             .then(result => {
-                let locations: Array<SpaceLocation> = result.data || [];
+                let locations: Array<LocationTag> = result.data || [];
                 locations = locations.sort((a, b) => {
                     if (a.name.toLowerCase() < b.name.toLowerCase()) {
                         return -1;

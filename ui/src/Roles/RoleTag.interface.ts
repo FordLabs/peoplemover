@@ -15,7 +15,13 @@
  * limitations under the License.
  */
 
-export interface TraitEditRequest {
+import {Tag} from '../Tags/Tag.interface';
+
+export interface RoleTag extends Tag {
+    color?: Color;
+}
+
+export interface Color {
     id: number;
-    updatedName?: string;
+    color: string;
 }

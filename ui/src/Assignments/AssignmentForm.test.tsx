@@ -24,7 +24,7 @@ import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUt
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {Color, SpaceRole} from '../Roles/Role';
+import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import moment from 'moment';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 
@@ -140,7 +140,7 @@ describe('AssignmentForm', () => {
             const state = { people: TestUtils.people };
             const store = createStore(rootReducer, state);
             store.dispatch = jest.fn();
-            
+
             const { app } = renderComponent(store);
             const labelElement = await app.findByLabelText('Name');
             await selectEvent.openMenu(labelElement);
@@ -148,9 +148,9 @@ describe('AssignmentForm', () => {
             fireEvent.click(getByText(await app.findByTestId('assignmentForm'), '+ Create "XYZ ABC 123"'));
 
             expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
-                modal: AvailableModals.CREATE_PERSON, 
+                modal: AvailableModals.CREATE_PERSON,
                 item: {
-                    initiallySelectedProduct: TestUtils.productWithAssignments, 
+                    initiallySelectedProduct: TestUtils.productWithAssignments,
                     initialPersonName: 'XYZ ABC 123',
                 },
             }));
@@ -173,7 +173,7 @@ describe('AssignmentForm', () => {
                 fireEvent.change(labelElement, {target: {value: 'Person 1'}});
 
                 const person1ColorBadge = await app.findByTestId('RoleColorBadge');
-                const person1Role: SpaceRole = (TestUtils.people[0].spaceRole as SpaceRole);
+                const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
                 const person1RoleColor: Color = (person1Role.color as Color);
 
                 expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
