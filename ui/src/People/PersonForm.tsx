@@ -356,7 +356,7 @@ function PersonForm({
                 </div>
                 {isEditPersonForm && (
                     <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
-                        <i className="fas fa-trash"/>
+                        <i className="material-icons">delete</i>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             data-testid="deletePersonButton"
