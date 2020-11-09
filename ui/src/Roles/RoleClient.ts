@@ -52,8 +52,11 @@ class RoleClient implements TraitClient {
         };
 
         return Axios.post(url, addRequest, config).then((result) => {
-            MatomoEvents.pushEvent(space.name, "addRole", addRequest.name)
+            MatomoEvents.pushEvent(space.name, "addRole", addRequest.name);
             return result;
+        }).catch((err) => {
+            MatomoEvents.pushEvent(space.name, "addRoleError", addRequest.name, err.code);
+            return Promise.reject(err);
         });
     }
 
