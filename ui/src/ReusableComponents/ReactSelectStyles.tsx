@@ -264,8 +264,8 @@ export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Elem
                 ? <i style={{display: 'none'}}/>
                 : (
                     props.selectProps.menuIsOpen
-                        ? <i className="fas fa-caret-up greyIcon" data-testid={props.selectProps.name} />
-                        : <i className="fas fa-caret-down greyIcon" data-testid={props.selectProps.name} />
+                        ? <i className="material-icons greyIcon" data-testid={props.selectProps.name}>arrow_drop_up</i>
+                        : <i className="material-icons greyIcon" data-testid={props.selectProps.name}>arrow_drop_down</i>
                 )
         }
     </components.DropdownIndicator>

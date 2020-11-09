@@ -71,7 +71,7 @@ function AccountDropdown({ hideSpaceButtons }: AccountDropdownProps): JSX.Elemen
                         Welcome, <span className="userName">{userName}</span>
                     </div>
                 )}
-                <i className="material-icons" data-testid="userIcon">
+                <i className="material-icons">
                     arrow_drop_down
                 </i>
             </button>
