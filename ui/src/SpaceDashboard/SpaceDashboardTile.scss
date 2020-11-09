@@ -70,6 +70,7 @@
 }
 
 .dropdownOptions {
+  display: flex;
   text-align: left;
   padding: 4px 6px;
   color: #333333;
@@ -80,6 +81,11 @@
 
   &:hover {
     color: $orange-hover;
+  }
+
+  .material-icons {
+    font-size: 18px;
+    line-height: 18px;
   }
 }
 
