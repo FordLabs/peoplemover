@@ -38,7 +38,7 @@ function ArchivedProduct({product, setCurrentModal}: ArchiveProductProps): JSX.E
                     <i>{product.spaceLocation && product.spaceLocation.name}</i>
                     <div className="assignmentCountContainer">
                         <span className="archivedAssignmentCount">{product.assignments ? product.assignments.length : 0}</span>
-                        <i className="fa fa-user"/>
+                        <i className="material-icons">person</i>
                     </div>
                 </div>
             </button>
