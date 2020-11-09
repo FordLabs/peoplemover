@@ -37,7 +37,7 @@ function UnassignedDrawer({
         <ProductCard product={product}
             container={'productDrawerContainer'}/>;
     return (
-        <DrawerContainer drawerIcon="fas fa-user-friends"
+        <DrawerContainer drawerIcon="supervisor_account"
             testId="unassignedDrawer"
             numberForCountBadge={product.assignments ? product.assignments.length : 0}
             containerTitle="Unassigned"

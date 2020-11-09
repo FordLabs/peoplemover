@@ -46,7 +46,7 @@ function ProductGraveyard({products, viewingDate}: ProductGraveyardProps): JSX.E
         })}
     </div>;
     return (
-        <DrawerContainer drawerIcon="fas fa-inbox"
+        <DrawerContainer drawerIcon="inbox"
             containerTitle="Archived Products"
             containee={containee}
             isDrawerOpen={showDrawer}
