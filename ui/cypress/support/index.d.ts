@@ -9,7 +9,7 @@ declare namespace Cypress {
 
         resetSpace(uuid: string): Chainable<any>;
 
-        selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: number): Chainable<any>;
+        selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: string): Chainable<any>;
     }
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

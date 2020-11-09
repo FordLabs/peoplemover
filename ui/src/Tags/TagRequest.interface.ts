@@ -15,13 +15,7 @@
  * limitations under the License.
  */
 
-import {Trait} from '../Traits/Trait';
-
-export interface SpaceRole extends Trait {
-    color?: Color;
-}
-
-export interface Color {
-    id: number;
-    color: string;
+export interface TagRequest {
+    id?: number;
+    name: string;
 }

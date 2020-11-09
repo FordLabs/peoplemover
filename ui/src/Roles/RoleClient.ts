@@ -16,12 +16,12 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {RoleAddRequest} from './RoleAddRequest';
-import {RoleEditRequest} from './RoleEditRequest';
-import {TraitClient} from '../Traits/TraitClient';
+import {RoleAddRequest} from './RoleAddRequest.interface';
+import {RoleEditRequest} from './RoleEditRequest.interface';
+import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
 
-class RoleClient implements TraitClient {
+class RoleClient implements TagClient {
     private getBaseRolesUrl(spaceUuid: string): string {
         return '/api/spaces/' + spaceUuid + '/roles';
     }

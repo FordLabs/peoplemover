@@ -19,5 +19,5 @@ package com.ford.internalprojects.peoplemover.producttag
 
 data class ProductTagEditRequest (
     val id: Int,
-    val updatedName: String
+    val name: String
 )

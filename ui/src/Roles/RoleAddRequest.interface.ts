@@ -15,14 +15,9 @@
  * limitations under the License.
  */
 
-import {AxiosResponse} from 'axios';
-import {Trait} from './Trait';
-import {TraitAddRequest} from './TraitAddRequest';
-import {TraitEditRequest} from './TraitEditRequest';
 
-export interface TraitClient {
-     get(spaceUuid: string): Promise<AxiosResponse<Trait[]>>;
-     add(addRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
-     edit(editRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
-     delete(id: number, spaceUuid: string): Promise<AxiosResponse>;
+import {TagRequest} from '../Tags/TagRequest.interface';
+
+export interface RoleAddRequest extends TagRequest {
+    colorId?: number;
 }

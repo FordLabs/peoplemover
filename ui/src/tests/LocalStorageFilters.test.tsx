@@ -23,7 +23,7 @@ import {LocalStorageFilters} from '../ReusableComponents/ProductFilter';
 import selectEvent from 'react-select-event';
 import {wait} from '@testing-library/react';
 
-describe('filter products', () => {
+describe('Filter products', () => {
     class MockLocalStorage {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         store: any = {};
@@ -61,10 +61,12 @@ describe('filter products', () => {
     it('should show unedited location tags in the filter as checked from local storage', async () => {
         filters.locationTagsFilters.push(TestUtils.detroit.name);
         localStorage.setItem('filters', JSON.stringify(filters));
+
         const app = renderWithRedux(<PeopleMover/>);
+
         const myTagsButton = await app.findByText('My Tags');
         fireEvent.click(myTagsButton);
-        const editIcons = await app.findAllByTestId('locationEditIcon');
+        const editIcons = await app.findAllByTestId('editIcon__location');
         const locationTagIcon: HTMLElement = editIcons[0];
         fireEvent.click(locationTagIcon);
 

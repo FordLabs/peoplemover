@@ -32,10 +32,8 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
-import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -221,7 +219,7 @@ class RoleControllerApiTest {
         val person2: Person = personRepository.save(Person(name = "Jill", spaceRole = originalSpaceRole, spaceId = space.id!!))
 
         val updatedRoleName = "Blobware Engineer"
-        val roleEditRequest = RoleEditRequest(id = originalSpaceRole.id!!, updatedName = updatedRoleName)
+        val roleEditRequest = RoleEditRequest(id = originalSpaceRole.id!!, name = updatedRoleName)
 
         mockMvc.perform(put(baseRolesUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
@@ -240,7 +238,7 @@ class RoleControllerApiTest {
     fun `PUT should return 409 when trying to edit role name to existing role name`() {
         val spaceRole1: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Firefighter", spaceId = space.id!!))
         val spaceRole2: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Astronaut", spaceId = space.id!!))
-        val roleEditRequest = RoleEditRequest(id = spaceRole2.id!!, updatedName = spaceRole1.name)
+        val roleEditRequest = RoleEditRequest(id = spaceRole2.id!!, name = spaceRole1.name)
 
         mockMvc.perform(put(baseRolesUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
@@ -254,7 +252,7 @@ class RoleControllerApiTest {
         mockMvc.perform(put(baseRolesUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(RoleEditRequest(updatedName = "role1", id = 0 ))))
+            .content(objectMapper.writeValueAsString(RoleEditRequest(name = "role1", id = 0 ))))
             .andExpect(status().isBadRequest)
     }
 
@@ -265,7 +263,7 @@ class RoleControllerApiTest {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Fireman Astronaut", spaceId = space.id!!, color = blueColor))
 
         val updatedRoleName = "Herr Doktor-Professor"
-        val roleEditRequest = RoleEditRequest(id = spaceRole.id!!, updatedName = updatedRoleName, updatedColorId = greenColor.id)
+        val roleEditRequest = RoleEditRequest(id = spaceRole.id!!, name = updatedRoleName, colorId = greenColor.id)
 
         val result = mockMvc.perform(put(baseRolesUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
