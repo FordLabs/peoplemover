@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import {SpaceRole} from '../Roles/Role';
+import {RoleTag} from '../Roles/RoleTag.interface';
 
 export interface Person {
     id: number;
     name: string;
-    spaceRole?: SpaceRole;
+    spaceRole?: RoleTag;
     notes?: string;
     newPerson: boolean;
     spaceId: number;

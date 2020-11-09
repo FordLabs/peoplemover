@@ -38,27 +38,26 @@ describe('Filter products', () => {
         });
     });
 
-    describe('add/edit/delete location tags should reflect in filter dropdown', () => {
+    describe('Add/edit/delete location tags should reflect in filter dropdown', () => {
         it('should show the newly added location tag from my tags modal', async () => {
             const addNewLocationButton = await app.findByText('Add New Location');
             fireEvent.click(addNewLocationButton);
             await app.findByTestId('saveTagButton');
             const newLocation = 'Ahmedabad';
             const saveButton = await app.findByTestId('saveTagButton');
-
             const addLocationTagText = await app.findByTestId('tagNameInput');
             fireEvent.change(addLocationTagText, {target: {value: newLocation}});
-
             fireEvent.click(saveButton);
             await app.findByText(newLocation);
             fireEvent.click(await app.findByTestId('modalCloseButton'));
             const location = await app.findByLabelText('Filter:');
             await selectEvent.openMenu(location);
+            await app.findByText('Ahmedabad');
             await app.findByText(newLocation);
         });
 
         it('should show the edited location tag from my tags modal', async () => {
-            const editIcons = await app.findAllByTestId('locationEditIcon');
+            const editIcons = await app.findAllByTestId('editIcon__location');
             const locationTagIcon: HTMLElement = editIcons[0];
             fireEvent.click(locationTagIcon);
 
@@ -85,7 +84,7 @@ describe('Filter products', () => {
             let locationTagDeleteIcon: HTMLElement;
             const deleteLocationWarning = 'Deleting this location will remove it from any product that has been given this location.';
 
-            const deleteIcons = await app.findAllByTestId('locationDeleteIcon');
+            const deleteIcons = await app.findAllByTestId('deleteIcon__location');
             locationTagDeleteIcon = deleteIcons[0];
             fireEvent.click(locationTagDeleteIcon);
 
@@ -123,7 +122,7 @@ describe('Filter products', () => {
         });
     });
 
-    describe('add/edit/delete product tags should reflect in filter dropdown', () => {
+    describe('Add/edit/delete product tags should reflect in filter dropdown', () => {
         it('should show filter option when new location tag is created from edit product modal', async () => {
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
@@ -161,13 +160,15 @@ describe('Filter products', () => {
         });
 
         it('should show the edited product tag from my tags modal', async () => {
-            let editIcons: Array<HTMLElement> = await app.findAllByTestId('producttagEditIcon');
+            let editIcons: Array<HTMLElement> = await app.findAllByTestId('editIcon__product_tag');
             let productTagIcon: HTMLElement = editIcons[0];
             fireEvent.click(productTagIcon);
             await app.findByTestId('saveTagButton');
             const updatedProductTag = 'Finance';
 
             const editProductTagText = await app.findByTestId('tagNameInput');
+            // @ts-ignore
+            expect(editProductTagText.value).toBe('AV');
             fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
 
             const saveButton = await app.findByTestId('saveTagButton');
@@ -176,7 +177,7 @@ describe('Filter products', () => {
             await app.findByText(updatedProductTag);
 
             const modalContainer = await app.findByTestId('modalContainer');
-            expect(queryByText(modalContainer, 'FordX')).not.toBeInTheDocument();
+            expect(queryByText(modalContainer, 'AV')).not.toBeInTheDocument();
 
             fireEvent.click(await app.findByTestId('modalCloseButton'));
             const productTag = await app.findByLabelText('Filter:');
@@ -187,7 +188,7 @@ describe('Filter products', () => {
         it('should remove filter option when product tag is deleted from my tags modal', async () => {
             let productTagDeleteIcon: HTMLElement;
             const deleteProductTagWarning = 'Deleting this product tag will remove it from any product that has been given this product tag.';
-            const deleteIcons = await app.findAllByTestId('producttagDeleteIcon');
+            const deleteIcons = await app.findAllByTestId('deleteIcon__product_tag');
             productTagDeleteIcon = deleteIcons[0];
 
             fireEvent.click(productTagDeleteIcon);

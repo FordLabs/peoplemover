@@ -18,10 +18,13 @@
 
 import {AvailableActions} from '../Actions';
 import {ProductTag} from '../../ProductTag/ProductTag';
+import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 
 const productTagsReducer = (state: Array<ProductTag> = [], action: {type: AvailableActions; productTags: Array<ProductTag>} ): Array<ProductTag> => {
     if (action.type === AvailableActions.SET_PRODUCT_TAGS) {
-        return [...action.productTags];
+        const productTags = [...action.productTags];
+        sortTagsAlphabetically(productTags);
+        return productTags;
     } else {
         return state;
     }

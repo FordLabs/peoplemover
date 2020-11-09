@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
-import {Trait} from '../Traits/Trait';
+import {TagRequest} from '../Tags/TagRequest.interface';
 
-export type SpaceLocation = Trait;
+export interface RoleEditRequest extends TagRequest {
+    colorId?: number;
+}
