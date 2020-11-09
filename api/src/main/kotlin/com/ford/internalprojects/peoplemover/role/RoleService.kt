@@ -70,9 +70,9 @@ class RoleService(
         throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest, space)
         val roleToUpdate = spaceRolesRepository.findByIdOrNull(roleEditRequest.id) ?:
                 throw RoleNotExistsException(roleEditRequest.id.toString())
-        roleToUpdate.name = roleEditRequest.updatedName
+        roleToUpdate.name = roleEditRequest.name
 
-        roleEditRequest.updatedColorId?.let {
+        roleEditRequest.colorId?.let {
             val colorFound = colorRepository.findByIdOrNull(it) ?:
                     throw ColorDoesNotExistException()
             roleToUpdate.color = colorFound
@@ -102,11 +102,11 @@ class RoleService(
     private fun throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest: RoleEditRequest, space: Space) {
         spaceRolesRepository.findBySpaceIdAndNameAllIgnoreCase(
                 space.id!!,
-                roleEditRequest.updatedName
+                roleEditRequest.name
         )?.let { spaceRole ->
             val updatedRoleNameAlreadyUsedInOtherSpaceRole = spaceRole.id != roleEditRequest.id
             if (updatedRoleNameAlreadyUsedInOtherSpaceRole) {
-                throw RoleAlreadyExistsException(roleEditRequest.updatedName)
+                throw RoleAlreadyExistsException(roleEditRequest.name)
             }
         }
     }

@@ -64,13 +64,13 @@ class ProductTagService(
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
         productTagRepository.findByNameAllIgnoreCaseAndSpaceId(
-                tagEditRequest.updatedName,
+                tagEditRequest.name,
                 space.id!!
         )?.let { throw ProductTagAlreadyExistsForSpaceException() }
 
         val tagFound = productTagRepository.findByIdOrNull(tagEditRequest.id)
                 ?: throw ProductTagNotExistsForSpaceException()
-        tagFound.name = tagEditRequest.updatedName
+        tagFound.name = tagEditRequest.name
         return productTagRepository.saveAndUpdateSpaceLastModified(tagFound)
     }
 

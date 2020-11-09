@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-import {Trait} from '../Traits/Trait';
+import {Tag} from '../Tags/Tag.interface';
 
-export type ProductTag = Trait;
+export type ProductTag = Tag;

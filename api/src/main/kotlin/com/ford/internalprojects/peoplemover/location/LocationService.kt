@@ -47,11 +47,11 @@ class LocationService(
     fun editLocation(spaceUuid: String, locationEditRequest: LocationEditRequest): SpaceLocation {
         val space: Space = spaceRepository.findByUuid(spaceUuid)
                 ?: throw SpaceNotExistsException(spaceUuid)
-        throwIfSpaceLocationAlreadyExists(space, locationEditRequest.updatedName)
+        throwIfSpaceLocationAlreadyExists(space, locationEditRequest.name)
         val spaceLocationToEdit = SpaceLocation(
                 id = locationEditRequest.id,
                 spaceId = space.id!!,
-                name = locationEditRequest.updatedName
+                name = locationEditRequest.name
         )
         return spaceLocationRepository.saveAndUpdateSpaceLastModified(spaceLocationToEdit)
     }

@@ -19,5 +19,5 @@ package com.ford.internalprojects.peoplemover.location
 
 data class LocationEditRequest (
     val id: Int,
-    val updatedName: String
+    val name: String
 )

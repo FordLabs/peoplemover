@@ -30,10 +30,8 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
-import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -177,7 +175,7 @@ class ProductTagControllerTest {
     @Test
     fun `PUT should update product tag`() {
         val productTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "FordX"))
-        val updatedTag = ProductTagEditRequest(id = productTag.id!!, updatedName = "Fin Tech")
+        val updatedTag = ProductTagEditRequest(id = productTag.id!!, name = "Fin Tech")
         val result = mockMvc.perform(put(baseProductTagsUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
@@ -188,12 +186,12 @@ class ProductTagControllerTest {
             result.response.contentAsString,
             ProductTag::class.java
         )
-        assertThat(actualProductTag.name).isEqualTo(updatedTag.updatedName)
+        assertThat(actualProductTag.name).isEqualTo(updatedTag.name)
     }
 
     @Test
     fun `PUT should return 400 when trying to edit non existent product tag`() {
-        val attemptedEditRequest = ProductTagEditRequest(id = 700, updatedName = "")
+        val attemptedEditRequest = ProductTagEditRequest(id = 700, name = "")
         mockMvc.perform(put(baseProductTagsUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
@@ -205,7 +203,7 @@ class ProductTagControllerTest {
     fun `PUT should return 409 when trying to edit product tag name to existing name`() {
         val productTag1: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "FordX"))
         val productTag2: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech"))
-        val updatedTag = ProductTagEditRequest(id = productTag1.id!!, updatedName = productTag2.name)
+        val updatedTag = ProductTagEditRequest(id = productTag1.id!!, name = productTag2.name)
 
         mockMvc.perform(put(baseProductTagsUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
