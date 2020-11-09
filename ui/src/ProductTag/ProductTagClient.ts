@@ -53,8 +53,8 @@ class ProductTagClient implements TraitClient {
         return Axios.post(url, addRequest, config);
     }
 
-    async edit(productTagEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<ProductTag>> {
-        const url = this.getBaseProductTagsUrl(spaceUuid);
+    async edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>> {
+        const url = this.getBaseProductTagsUrl(space.uuid!!);
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ class ProductTagClient implements TraitClient {
             },
         };
 
-        return Axios.put(url, productTagEditRequest, config);
+        return Axios.put(url, editRequest, config);
     }
 
     async delete(productTagId: number, spaceUuid: string): Promise<AxiosResponse> {

@@ -67,7 +67,7 @@ describe('Role Client', function() {
 
     });
 
-    it('should create a role and send matomo and return that role', function(done) {
+    it('should create a role and send matomo event and return that role', function(done) {
         const expectedRoleAddRequest = { name: TestUtils.softwareEngineer.name };
         RoleClient.add(expectedRoleAddRequest, TestUtils.space)
             .then((response) => {
@@ -80,12 +80,12 @@ describe('Role Client', function() {
             });
     });
 
-    it('should edit a role and return that role', function(done) {
+    it('should edit a role and event and return that role', function(done) {
         const expectedRoleEditRequest = {
             id: TestUtils.softwareEngineer.id,
             name: TestUtils.softwareEngineer.name,
         };
-        RoleClient.edit(expectedRoleEditRequest, spaceUuid)
+        RoleClient.edit(expectedRoleEditRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(
                     baseRolesUrl, expectedRoleEditRequest, expectedConfig

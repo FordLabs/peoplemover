@@ -77,7 +77,7 @@ describe('Product Tags Client', function() {
             id: TestUtils.productTag1.id,
             name: TestUtils.productTag1.name,
         };
-        ProductTag.edit(expectedProductEditRequest, spaceUuid)
+        ProductTag.edit(expectedProductEditRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Product Tag');

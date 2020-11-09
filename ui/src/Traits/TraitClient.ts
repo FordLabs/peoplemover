@@ -25,6 +25,7 @@ export interface TraitClient {
      get(spaceUuid: string): Promise<AxiosResponse<Trait[]>>;
 
     add(addRequest: TraitAddRequest, space: Space): Promise<AxiosResponse<Trait>>;
-     edit(editRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<Trait>>;
+
+    edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>>;
      delete(id: number, spaceUuid: string): Promise<AxiosResponse>;
 }

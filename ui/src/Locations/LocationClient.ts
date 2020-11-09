@@ -53,8 +53,8 @@ class LocationClient implements TraitClient {
         return Axios.post(url, addRequest, config);
     }
 
-    async edit(locationEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<SpaceLocation>> {
-        const url = this.getBaseLocationsUrl(spaceUuid);
+    async edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>> {
+        const url = this.getBaseLocationsUrl(space.uuid!!);
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ class LocationClient implements TraitClient {
             },
         };
 
-        return Axios.put(url, locationEditRequest, config);
+        return Axios.put(url, editRequest, config);
     }
 
     async delete(locationId: number, spaceUuid: string): Promise<AxiosResponse> {

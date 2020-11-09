@@ -77,7 +77,7 @@ describe('Location Client', function() {
             id: TestUtils.annarbor.id,
             name: TestUtils.annarbor.name,
         };
-        LocationClient.edit(expectedLocationEditRequest, spaceUuid)
+        LocationClient.edit(expectedLocationEditRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Location');
