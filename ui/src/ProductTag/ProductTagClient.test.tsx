@@ -64,7 +64,7 @@ describe('Product Tags Client', function() {
 
     it('should create a product tag and return that product tag', function(done) {
         const expectedProductAddRequest = { name: TestUtils.productTag1.name };
-        ProductTag.add(expectedProductAddRequest, spaceUuid)
+        ProductTag.add(expectedProductAddRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductAddRequest, expectedConfig);
                 expect(response.data).toBe('Created Product Tag');

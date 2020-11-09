@@ -64,7 +64,7 @@ describe('Location Client', function() {
 
     it('should create a location and return that location', function(done) {
         const expectedLocationAddRequest = { name: TestUtils.annarbor.name };
-        LocationClient.add(expectedLocationAddRequest, spaceUuid)
+        LocationClient.add(expectedLocationAddRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationAddRequest, expectedConfig);
                 expect(response.data).toBe('Created Location');

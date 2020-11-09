@@ -21,6 +21,8 @@ import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import {TraitEditRequest} from '../Traits/TraitEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
 import {getToken} from '../Auth/TokenProvider';
+import {Trait} from "../Traits/Trait";
+import {Space} from "../Space/Space";
 
 class ProductTagClient implements TraitClient {
     private getBaseProductTagsUrl(spaceUuid: string): string {
@@ -39,8 +41,8 @@ class ProductTagClient implements TraitClient {
         return Axios.get(url, config);
     }
 
-    async add(productTagAddRequest: TraitAddRequest, spaceUuid: string ): Promise<AxiosResponse> {
-        const url = this.getBaseProductTagsUrl(spaceUuid);
+    async add(addRequest: TraitAddRequest, space: Space): Promise<AxiosResponse<Trait>> {
+        const url = this.getBaseProductTagsUrl(space.uuid!!);
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -48,7 +50,7 @@ class ProductTagClient implements TraitClient {
             },
         };
 
-        return Axios.post(url, productTagAddRequest, config);
+        return Axios.post(url, addRequest, config);
     }
 
     async edit(productTagEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<ProductTag>> {

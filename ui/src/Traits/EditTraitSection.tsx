@@ -134,7 +134,7 @@ function EditTraitSection({
                     }
                     clientResponse = await traitClient.edit(editRequest, currentSpace.uuid!!);
                 } else {
-                    clientResponse = await traitClient.add(enteredTrait, currentSpace.uuid!!);
+                    clientResponse = await traitClient.add(enteredTrait, currentSpace);
                 }
             } catch (error) {
                 return;

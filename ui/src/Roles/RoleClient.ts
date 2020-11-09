@@ -20,6 +20,10 @@ import {RoleAddRequest} from './RoleAddRequest';
 import {RoleEditRequest} from './RoleEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
 import {getToken} from '../Auth/TokenProvider';
+import MatomoEvents from "../Matomo/MatomoEvents";
+import {Trait} from "../Traits/Trait";
+import {TraitAddRequest} from "../Traits/TraitAddRequest";
+import {Space} from "../Space/Space";
 
 class RoleClient implements TraitClient {
     private getBaseRolesUrl(spaceUuid: string): string {
@@ -38,8 +42,8 @@ class RoleClient implements TraitClient {
         return Axios.get(url, config);
     }
 
-    async add(role: RoleAddRequest, spaceUuid: string): Promise<AxiosResponse> {
-        const url = this.getBaseRolesUrl(spaceUuid);
+    async add(addRequest: TraitAddRequest, space: Space): Promise<AxiosResponse<Trait>> {
+        const url = this.getBaseRolesUrl(space.uuid!!);
         let config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -47,7 +51,10 @@ class RoleClient implements TraitClient {
             },
         };
 
-        return Axios.post(url, role, config);
+        return Axios.post(url, addRequest, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, "addRole", addRequest.name)
+            return result;
+        });
     }
 
     async edit(role: RoleEditRequest, spaceUuid: string): Promise<AxiosResponse> {

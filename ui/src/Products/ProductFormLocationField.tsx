@@ -77,7 +77,7 @@ function ProductFormLocationField({
         const location: TraitAddRequest = {
             name: inputValue,
         };
-        LocationClient.add(location, currentSpace.uuid!!).then((result: AxiosResponse) => {
+        LocationClient.add(location, currentSpace).then((result: AxiosResponse) => {
             const newLocation: SpaceLocation = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
             addGroupedTagFilterOptions(0, newLocation as Trait);

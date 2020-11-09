@@ -231,7 +231,7 @@ function PersonForm({
     const handleCreateRole = (inputValue: string): void => {
         setIsLoading(true);
         const roleAddRequest: RoleAddRequest = {name: inputValue};
-        RoleClient.add(roleAddRequest, spaceUuid).then((response: AxiosResponse) => {
+        RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
             const newRole: SpaceRole = response.data;
             setRoles(roles => alphabetize([...roles, newRole]));
             updatePersonField('spaceRole', newRole);

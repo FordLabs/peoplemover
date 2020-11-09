@@ -112,7 +112,7 @@ describe('PeopleMover Role Modal', () => {
                 name: expectedNewRoleName,
                 colorId: TestUtils.whiteColor.id,
             };
-            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace.uuid!!);
+            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace);
         });
 
         it('should not allow saving empty role', async () => {
