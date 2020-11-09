@@ -125,18 +125,16 @@
 .calendar {
 
   .calendarCustomInput {
+    display: flex;
+    align-items: center;
     font-weight: bold;
     font-size: 14px;
     line-height: 16px;
     color: $gray-1;
     max-width: 227px;
     margin-left: 20px;
-    margin-top: 12px;
+    margin-top: 8px;
     cursor: pointer;
-
-    .drawerCaret {
-      margin-left: 4px;
-    }
   }
 }
 

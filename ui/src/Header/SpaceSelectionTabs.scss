@@ -39,11 +39,17 @@
 }
 
 button.selectionTabButton {
+    display: flex;
+    align-items: center;
     color: $prime-1;
     padding-right: 20px;
     font-weight: bold;
     font-size: 14px;
     line-height: 16px;
+
+    i {
+        font-size: 18px;
+    }
 }
 
 .addBoardIcon,
@@ -52,14 +58,14 @@ button.selectionTabButton {
     color: $purple-title;
 }
 
-.myTagsIcon{
+.myTagsIcon {
     margin-right: 5px;
     color: $purple-title;
 }
 
-button.createButton,
-input[type="button"].createButton,
-input[type="submit"].createButton {
+button.addPersonButton {
+    display: flex;
+    align-items: center;
     background-color: $prime-1;
     color: $white;
 
@@ -70,15 +76,14 @@ input[type="submit"].createButton {
     white-space: nowrap;
 
     margin: 5px 11px;
-    padding: 0 30px;
 
-    i {
-        padding-right: 8px;
-    }
-}
-
-.squareButton {
     padding: 10px 30px;
     border-radius: 6px;
+
+    i {
+        font-size: 20px;
+        padding-right: 8px;
+        font-weight: bold
+    }
 }
 

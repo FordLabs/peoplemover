@@ -35,8 +35,8 @@ function CalendarCustomInput(
             Viewing: {viewingDate.toLocaleString('en-us', dateFormatOptions)}
             {
                 isOpen
-                    ? <i className="material-icons greyIcon" data-testid={`calendar_up-arrow`}>arrow_drop_up</i>
-                    : <i className="material-icons greyIcon" data-testid={`calendar_down-arrow`}>arrow_drop_down</i>
+                    ? <i className="material-icons greyIcon" data-testid="calendar_up-arrow">arrow_drop_up</i>
+                    : <i className="material-icons greyIcon" data-testid="calendar_down-arrow">arrow_drop_down</i>
             }
         </div>
     );

@@ -175,6 +175,10 @@ export const sortByStyle = {
         margin: '3px 0px',
         cursor: 'pointer',
     }),
+    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0px',
+    }),
 };
 
 export const filterByStyles = {
@@ -254,6 +258,10 @@ export const filterByStyles = {
     group: (provided: CSSProperties): CSSProperties => ({
         ...provided,
         fontSize: '12px',
+    }),
+    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0px',
     }),
 };
 
