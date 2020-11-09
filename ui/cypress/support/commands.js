@@ -22,7 +22,7 @@ Cypress.Commands.add('visitBoard', () => {
         '@getProductsByDate',
         '@getRoles',
         '@getLocations',
-        '@getProductTags'
+        '@getProductTags',
     ];
     cy.wait(waitForEndpointsToComplete)
         .then(() => {

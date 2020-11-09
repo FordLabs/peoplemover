@@ -25,9 +25,9 @@ import ProductTagClient from '../ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
 import RoleClient from '../Roles/RoleClient';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {setAllGroupedTagFilterOptions} from '../Redux/Actions';
-import {TraitClient} from '../Traits/TraitClient';
-import {Trait} from '../Traits/Trait';
+import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {TagClient} from '../Tags/TagClient.interface';
+import {Tag} from '../Tags/Tag.interface';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 
@@ -39,8 +39,10 @@ export type LocalStorageFilters = {
     roleTagsFilters: Array<string>;
 }
 
+export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
+
 export interface AllGroupedTagFilterOptions {
-    label: string;
+    label: LabelType;
     options: Array<FilterOption>;
 }
 
@@ -94,10 +96,10 @@ function ProductFilter({
         }
     }, [allGroupedTagFilterOptions, currentSpace]);
 
-    async function buildTagOptions(tagClient: TraitClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
-        const tagsResponse: AxiosResponse<Array<Trait>> = await tagClient.get(currentSpace.uuid!!);
-        const tags: Array<Trait> = tagsResponse.data;
-        return tags.map((tag: Trait): FilterOption => ({
+    async function buildTagOptions(tagClient: TagClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
+        const tagsResponse: AxiosResponse<Array<Tag>> = await tagClient.get(currentSpace.uuid!!);
+        const tags: Array<Tag> = tagsResponse.data;
+        return tags.map((tag: Tag): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: tagFilters.includes(tag.name),
@@ -186,7 +188,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
+        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductFilter);

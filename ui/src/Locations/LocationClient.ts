@@ -16,18 +16,17 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {SpaceLocation} from './SpaceLocation';
-import {TraitAddRequest} from '../Traits/TraitAddRequest';
-import {TraitEditRequest} from '../Traits/TraitEditRequest';
-import {TraitClient} from '../Traits/TraitClient';
+import {LocationTag} from './LocationTag.interface';
+import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
 
-class LocationClient implements TraitClient {
+class LocationClient implements TagClient {
     private getBaseLocationsUrl(spaceUuid: string): string {
         return '/api/spaces/' + spaceUuid + '/locations';
     }
 
-    async get(spaceUuid: string): Promise<AxiosResponse<SpaceLocation[]>> {
+    async get(spaceUuid: string): Promise<AxiosResponse<LocationTag[]>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -39,7 +38,7 @@ class LocationClient implements TraitClient {
         return Axios.get(url, config);
     }
 
-    async add(locationAddRequest: TraitAddRequest, spaceUuid: string): Promise<AxiosResponse> {
+    async add(location: TagRequest, spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -48,10 +47,10 @@ class LocationClient implements TraitClient {
             },
         };
 
-        return Axios.post(url, locationAddRequest, config);
+        return Axios.post(url, location, config);
     }
 
-    async edit(locationEditRequest: TraitEditRequest, spaceUuid: string): Promise<AxiosResponse<SpaceLocation>> {
+    async edit(location: TagRequest, spaceUuid: string): Promise<AxiosResponse<LocationTag>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -60,7 +59,7 @@ class LocationClient implements TraitClient {
             },
         };
 
-        return Axios.put(url, locationEditRequest, config);
+        return Axios.put(url, location, config);
     }
 
     async delete(locationId: number, spaceUuid: string): Promise<AxiosResponse> {

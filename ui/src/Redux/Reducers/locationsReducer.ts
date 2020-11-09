@@ -17,11 +17,14 @@
  */
 
 import {AvailableActions} from '../Actions';
-import {SpaceLocation} from '../../Locations/SpaceLocation';
+import {LocationTag} from '../../Locations/LocationTag.interface';
+import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 
-const locationsReducer = (state: Array<SpaceLocation> = [], action: {type: AvailableActions; locations: Array<SpaceLocation>} ): Array<SpaceLocation> => {
+const locationsReducer = (state: Array<LocationTag> = [], action: {type: AvailableActions; locations: Array<LocationTag>} ): Array<LocationTag> => {
     if (action.type === AvailableActions.SET_LOCATIONS) {
-        return [...action.locations];
+        const locations = [...action.locations];
+        sortTagsAlphabetically(locations);
+        return locations;
     } else {
         return state;
     }
