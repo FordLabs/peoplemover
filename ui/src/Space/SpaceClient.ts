@@ -62,7 +62,7 @@ class SpaceClient {
         return Axios.post(url, data, config);
     }
 
-    static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+    static async editSpace(uuid: string, editedSpace: Space, oldSpaceName: string): Promise<AxiosResponse> {
         const url = `${baseSpaceUrl}/${uuid}`;
         const data = editedSpace;
         const config = {
@@ -72,7 +72,13 @@ class SpaceClient {
             },
         };
 
-        return Axios.put(url, data, config);
+        return Axios.put(url, data, config).then(result => {
+            MatomoEvents.pushEvent(oldSpaceName, "editSpaceName", editedSpace.name);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(oldSpaceName, "editSpaceNameError", editedSpace.name, err.code);
+            return Promise.reject(err);
+        });
     }
 
     static async inviteUsersToSpace(space: Space, emails: string[]): Promise<AxiosResponse<void>> {

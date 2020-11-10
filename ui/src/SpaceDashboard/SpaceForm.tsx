@@ -36,7 +36,6 @@ function SpaceForm({
     fetchUserSpaces,
 }: SpaceFormProps): JSX.Element {
     const maxLength = 40;
-    const editing = !!space;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
 
     function initializeSpace(): Space {
@@ -46,8 +45,8 @@ function SpaceForm({
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
 
-        if (editing && formSpace.uuid) {
-            SpaceClient.editSpace(formSpace.uuid, formSpace)
+        if (!!space && formSpace.uuid) {
+            SpaceClient.editSpace(formSpace.uuid, formSpace, space.name!!)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         } else {
@@ -92,7 +91,7 @@ function SpaceForm({
                     buttonStyle="primary"
                     type="submit"
                     disabled={spaceNameLength <= 0}>
-                    {editing ? 'Save' : 'Create'}
+                    {!!space ? 'Save' : 'Create'}
                 </FormButton>
             </div>
         </form>
