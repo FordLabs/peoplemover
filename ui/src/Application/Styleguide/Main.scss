@@ -114,3 +114,9 @@ input[type="text"] {
   width: 100%;
   margin-left: 5px;
 }
+
+.readOnly {
+  color: currentColor;
+  cursor: not-allowed;
+  opacity: 0.6;
+}

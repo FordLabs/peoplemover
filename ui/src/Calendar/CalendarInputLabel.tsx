@@ -1,13 +1,14 @@
 import React, {forwardRef, Ref} from 'react';
 
 interface CustomInputProps {
+    isReadOnly: boolean;
     value?: string;
     isOpen: boolean;
     setIsOpen: (isCalendarOpen: boolean) => void;
 }
 
 function CalendarCustomInput(
-    {isOpen, setIsOpen, value}: CustomInputProps,
+    {isReadOnly, isOpen, setIsOpen, value}: CustomInputProps,
     forwardedRef: Ref<HTMLDivElement>
 ): JSX.Element {
     const viewingDate: Date = value === '' ? new Date() : new Date(value!);
@@ -18,24 +19,28 @@ function CalendarCustomInput(
     };
 
     function calendarClicked(): void {
-        setIsOpen(!isOpen);
+        if (!isReadOnly) {
+            setIsOpen(!isOpen);
+        }
     }
 
     function handleKeyDownForCalendarClicked(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
+        if (!isReadOnly && event.key === 'Enter') {
             calendarClicked();
         }
     }
 
     const caretDirectionIcon = isOpen ? 'fa-caret-up' : 'fa-caret-down';
     return (
-        <div className="calendarCustomInput"
+        <div className={`calendarCustomInput ${isReadOnly ? 'readOnly' : ''}`}
             onClick={calendarClicked}
             onKeyDown={(e): void => handleKeyDownForCalendarClicked(e)}
             data-testid="calendarToggle">
             Viewing: {viewingDate.toLocaleString('en-us', dateFormatOptions)}
-            <i className={`fas ${caretDirectionIcon} drawerCaret`}
-                data-testid={`calendar-${caretDirectionIcon}`}/>
+            {!isReadOnly &&
+                <i className={`fas ${caretDirectionIcon} drawerCaret`}
+                    data-testid={`calendar-${caretDirectionIcon}`}/>
+            }
         </div>
     );
 }

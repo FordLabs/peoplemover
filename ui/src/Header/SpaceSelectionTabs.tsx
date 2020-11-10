@@ -23,31 +23,38 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
+import {GlobalStateProps} from '../Redux/Reducers';
 
-interface SpaceSelectionTabsProps {
+interface Props {
+    isReadOnly: boolean;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SpaceSelectionTabs({
-    setCurrentModal,
-}: SpaceSelectionTabsProps): JSX.Element {
+function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element {
     return (
         <div className="spaceSelectionContainer">
             <Calendar/>
             <div className="spaceFiller"/>
-            <button className="selectionTabButton tab"
+            <button
+                disabled={isReadOnly}
+                className="selectionTabButton tab"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
                 data-testid="myTagsButton">
                 <div className="fas fa-tags myTagsIcon" data-testid="myTagsIcon"/>
                 My Tags
             </button>
-            <button className="selectionTabButton tab"
+            <button
+                disabled={isReadOnly}
+                className="selectionTabButton tab"
                 data-testid="myRolesButton"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
                 <div className="fas fa-id-badge myRolesIcon" data-testid="myRolesIcon"/>
                 My Roles
             </button>
-            <button type="button" className="squareButton createButton"
+            <button
+                type="button"
+                disabled={isReadOnly}
+                className="squareButton createButton"
                 data-testid="addPersonButton"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
                 <i className="fa fa-plus fa-sm"/>
@@ -57,8 +64,12 @@ function SpaceSelectionTabs({
     );
 }
 
+const mapStateToProps = (state: GlobalStateProps) => ({
+    isReadOnly: state.isReadOnly,
+});
+
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(null, mapDispatchToProps)(SpaceSelectionTabs);
+export default connect(mapStateToProps, mapDispatchToProps)(SpaceSelectionTabs);

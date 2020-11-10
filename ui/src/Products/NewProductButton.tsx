@@ -22,16 +22,24 @@ import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
 
 import './NewProductButton.scss';
+import {GlobalStateProps} from '../Redux/Reducers';
 
-interface NewProductButtonProps {
+interface Props {
+  isReadOnly: boolean;
   setCurrentModal(modalState: CurrentModalState): void;
   modalState?: CurrentModalState;
 }
 
-function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: NewProductButtonProps): JSX.Element {
+function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: Props): JSX.Element {
+    const openModal = (): void => {
+        if (!isReadOnly) setCurrentModal(modalState);
+    };
+
     return (
-        <button className="newProduct productCardContainer"
-            onClick={() => setCurrentModal(modalState)}
+        <button
+            disabled={isReadOnly}
+            className="newProduct productCardContainer"
+            onClick={openModal}
             data-testid="newProductButton">
             <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
             <h2 className="newProductText">Add Product</h2>
@@ -39,8 +47,12 @@ function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}
     );
 }
 
+const mapStateToProps = (state: GlobalStateProps) => ({
+    isReadOnly: state.isReadOnly,
+});
+
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(null, mapDispatchToProps)(NewProductButton);
+export default connect(mapStateToProps, mapDispatchToProps)(NewProductButton);

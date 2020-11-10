@@ -134,6 +134,11 @@
     margin-top: 12px;
     cursor: pointer;
 
+    &.readOnly {
+      cursor: initial;
+      opacity: 1;
+    }
+
     .drawerCaret {
       margin-left: 4px;
     }
