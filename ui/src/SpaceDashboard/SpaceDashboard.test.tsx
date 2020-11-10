@@ -29,9 +29,36 @@ import {RunConfig} from '../index';
 import {createEmptySpace} from '../Space/Space';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import {setCurrentSpaceAction} from '../Redux/Actions';
+import {setCurrentSpaceAction, setViewingDateAction} from '../Redux/Actions';
+
+class MockDate extends Date {
+    constructor() {
+        super('2020-05-14T11:01:58.135Z'); // add whatever date you'll expect to get
+    }
+}
 
 describe('SpaceDashboard', () => {
+    describe('Resetting Space Date', () => {
+        let tempDate = Date;
+        beforeEach(() => {
+            // @ts-ignore
+            global.Date = MockDate;
+        });
+
+        afterEach(() => {
+            global.Date = tempDate;
+        });
+        it('should reset current date on load', () => {
+            let store = createStore(rootReducer, {});
+            store.dispatch = jest.fn();
+
+            renderWithRedux(<SpaceDashboard/>, store);
+
+            expect(store.dispatch).toHaveBeenCalledWith(setViewingDateAction(new Date('Date is overwritten so anything returns the same date'))
+            );
+        });
+    });
+
     it('should reset currentSpace on load', () => {
         let store = createStore(rootReducer, {});
         store.dispatch = jest.fn();
@@ -116,8 +143,12 @@ describe('SpaceDashboard', () => {
         const cookies = new Cookies();
         cookies.set('accessToken', fakeAccessToken);
         const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
-        const responseData = hasSpaces ? [{name: 'Space1', uuid: 'SpaceUUID', lastModifiedDate: '2020-04-14T18:06:11.791+0000'}] : [];
-        SpaceClient.getSpacesForUser = jest.fn(() => Promise.resolve({ data: responseData } as AxiosResponse));
+        const responseData = hasSpaces ? [{
+            name: 'Space1',
+            uuid: 'SpaceUUID',
+            lastModifiedDate: '2020-04-14T18:06:11.791+0000',
+        }] : [];
+        SpaceClient.getSpacesForUser = jest.fn(() => Promise.resolve({data: responseData} as AxiosResponse));
 
         // @ts-ignore
         let component: RenderResult = null;
