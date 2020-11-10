@@ -26,6 +26,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
 import {Person} from '../People/Person';
 import {fetchProductsAction} from '../Redux/Actions';
+import MatomoEvents from "../Matomo/MatomoEvents";
 
 interface ReassignedDrawerProps {
     products: Array<Product>;
@@ -92,7 +93,15 @@ function ReassignedDrawer({
     }
 
     async function revert(person: Person): Promise<void> {
-        await AssignmentClient.deleteAssignmentForDate(viewingDate, person).then(fetchProducts);
+        const reassignment = reassignments.find(reassignment => reassignment.person.id === person.id);
+        await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
+            .then(() => {
+                fetchProducts();
+                MatomoEvents.pushEvent(currentSpace.name, "revert", `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`);
+            }).catch(err => {
+                MatomoEvents.pushEvent(currentSpace.name, "revert", `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`, err.code);
+                return Promise.reject(err);
+            });
     }
 }
 
