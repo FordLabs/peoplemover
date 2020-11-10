@@ -16,7 +16,6 @@
  */
 
 import React, {RefObject, useEffect, useState} from 'react';
-import './Product.scss';
 import {connect} from 'react-redux';
 import {
     AvailableModals,
@@ -37,11 +36,14 @@ import moment from 'moment';
 import {Space} from '../Space/Space';
 import {createDataTestId} from '../tests/TestUtils';
 
+import './Product.scss';
+
 interface ProductCardProps {
     container: string;
     product: Product;
     currentSpace: Space;
     viewingDate: Date;
+    isReadOnly: boolean;
 
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
@@ -54,6 +56,7 @@ function ProductCard({
     product,
     currentSpace,
     viewingDate,
+    isReadOnly,
     registerProductRef,
     unregisterProductRef,
     setCurrentModal,
@@ -159,24 +162,27 @@ function ProductCard({
                             </div>
                             <div className="productControlsContainer">
                                 <div className="addPersonIconContainer">
-                                    <div data-testid={createDataTestId('addPersonToProductIcon', product.name)}
+                                    <button
+                                        disabled={isReadOnly}
+                                        data-testid={createDataTestId('addPersonToProductIcon', product.name)}
                                         className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
                                         onClick={setCurrentModalToCreateAssignment}
                                         onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
                                     />
                                 </div>
-                                <div className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
+                                <button
+                                    disabled={isReadOnly}
+                                    className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
                                     data-testid={createDataTestId('editProductIcon', product.name)}
                                     onClick={toggleEditMenu}
                                     onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
-                            {
-                                isEditMenuOpen &&
+                            {isEditMenuOpen &&
                                 <EditMenu menuOptionList={getMenuOptionList()}
                                     onClosed={toggleEditMenu}/>
                             }
                         </div>
-                        {product.assignments.length === 0 && (
+                        {!isReadOnly && product.assignments.length === 0 && (
                             <div className="emptyProductText">
                                 <div className="emptyProductTextHint">
                                     <p>Add a person by clicking</p>
@@ -196,6 +202,7 @@ function ProductCard({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
+    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
