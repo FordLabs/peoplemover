@@ -72,7 +72,7 @@ const AddNewTagRow = ({
             onClick={(): void => updateViewState(true)}
             onKeyDown={(e): void => openAddTagRow(e)}>
             <div className="addNewTagCircle" data-testid="addNewTraitCircle">
-                <img src={PlusIcon} alt="Add Tag Icon"/>
+                <i className="material-icons">add_circle</i>
             </div>
             <span className="tagName addNewTraitText">
                 Add New {addNewButtonLabel}

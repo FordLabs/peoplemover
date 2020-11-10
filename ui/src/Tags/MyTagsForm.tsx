@@ -109,7 +109,7 @@ function MyTagsForm({
                 updateFilterOptions={updateFilterOptions}
             />
             <div className="traitWarning">
-                <img src={warningIcon} className="warningIcon" alt="warning icon"/>
+                <i className="material-icons warningIcon">error</i>
                 <p className="warningText">
                     Editing or deleting a tag will affect any product currently tagged with it.
                 </p>

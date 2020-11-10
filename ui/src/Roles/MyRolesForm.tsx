@@ -118,7 +118,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
                 updateFilterOptions={updateFilterOptions}
             />
             <div className="traitWarning">
-                <img src={warningIcon} className="warningIcon" alt="warning icon"/>
+                <i className="material-icons warningIcon">error</i>
                 <p className="warningText">Editing or deleting a role will affect any person currently assigned to it.</p>
             </div>
         </div>

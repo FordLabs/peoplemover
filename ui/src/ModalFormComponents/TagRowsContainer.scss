@@ -94,9 +94,9 @@
       padding-right: 10px;
       box-sizing: border-box;
 
-      img {
-        height: 24px;
-        width: 24px;
+      i {
+        font-size: 28px;
+        color: $prime-1;
       }
     }
   }
@@ -160,6 +160,10 @@
       color: $prime-1;
       cursor: pointer;
     }
+
+    i {
+      font-size: 24px;
+    }
   }
 
   .editTagIcon {
@@ -215,6 +219,7 @@
     height: 15px;
     width: 15px;
     font-size: 15px;
+    color: $prime-1;
     margin: 6px 12px 8px 10px;
   }
 
