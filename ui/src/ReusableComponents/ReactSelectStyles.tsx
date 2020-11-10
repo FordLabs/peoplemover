@@ -18,7 +18,6 @@
 import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
 import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useEffect} from 'react';
 import {ThemeApplier} from './ThemeApplier';
-import CheckIcon from '../Application/Assets/checkIcon.svg';
 import {Option} from '../CommonTypes/Option';
 import {useOnLoad} from './UseOnLoad';
 
@@ -285,7 +284,7 @@ export const SortByOption = (props: OptionProps<OptionTypeBase>): JSX.Element =>
     return (
         <div className="sortby-option" {...innerProps}>
             <span className="sortby-label-name">{label}</span>
-            {isSelected && <img className="sortby-option-check" src={CheckIcon} alt={''}/>}
+            {isSelected && <i className="material-icons sortby-option-check">check</i>}
         </div>
     );
 };

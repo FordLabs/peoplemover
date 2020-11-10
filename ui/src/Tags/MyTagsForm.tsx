@@ -20,7 +20,6 @@ import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import warningIcon from '../Application/Assets/warningIcon.svg';
 import {Tag} from './Tag.interface';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {JSX} from '@babel/types';

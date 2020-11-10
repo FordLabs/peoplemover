@@ -28,7 +28,6 @@ import RoleClient from './RoleClient';
 import {Tag} from '../Tags/Tag.interface';
 import {Space} from '../Space/Space';
 import ColorClient from './ColorClient';
-import warningIcon from '../Application/Assets/warningIcon.svg';
 import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
 import RoleTags from './RoleTags';
 
