@@ -19,10 +19,9 @@
 
 .unassignedPeopleContainer {
     max-height: 450px;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 .unassignedPeopleContainer:hover {
-    overflow-y: auto;
     scrollbar-color: $scrollbar-color;
 }
