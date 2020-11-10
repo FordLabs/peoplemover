@@ -22,6 +22,8 @@ import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import './ProductFilterOrSortBy.scss';
 import {setProductSortByAction} from '../Redux/Actions';
+import {Space} from "../Space/Space";
+import MatomoEvents from "../Matomo/MatomoEvents";
 
 interface SortByOption {
     label: string;
@@ -30,11 +32,13 @@ interface SortByOption {
 
 interface ProductSortByProps {
     productSortBy: SortByType;
+    currentSpace: Space;
     setProductSortBy(productSortBy: SortByType): void;
 }
 
 function ProductSortBy({
     productSortBy,
+    currentSpace,
     setProductSortBy,
 }: ProductSortByProps): JSX.Element {
     const [originalSortOption, setOriginalSortOption] = useState<SortByOption>();
@@ -65,7 +69,11 @@ function ProductSortBy({
                 inputId="sortby-dropdown"
                 options={sortByOptions}
                 value={originalSortOption}
-                onChange={(value): void => setProductSortBy((value as SortByOption).value)}
+                onChange={(value): void => {
+                    const sortByOption = (value as SortByOption).value;
+                    setProductSortBy(sortByOption);
+                    MatomoEvents.pushEvent(currentSpace.name, "productSort", sortByOption);
+                }}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
         </div>
     );
@@ -73,6 +81,7 @@ function ProductSortBy({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     productSortBy: state.productSortBy,
+    currentSpace: state.currentSpace,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
