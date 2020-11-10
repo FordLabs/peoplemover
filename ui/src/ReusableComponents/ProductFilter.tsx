@@ -32,6 +32,7 @@ import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 
 import './ProductFilterOrSortBy.scss';
+import MatomoEvents from "../Matomo/MatomoEvents";
 
 export type LocalStorageFilters = {
     locationTagsFilters: Array<string>;
@@ -154,6 +155,9 @@ function ProductFilter({
             {...allGroupedTagFilterOptions[1], options: updatedProductTags},
             {...allGroupedTagFilterOptions[2], options: updatedRoleTags},
         ]);
+
+        const selectedOptionsString = selectedOptions.filter(option => option.selected).map(option => option.label).join(", ");
+        MatomoEvents.pushEvent(currentSpace.name, "filterProducts", selectedOptionsString);
     }
 
     return (
