@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ProductTagRepository : PeopleMoverRepository<ProductTag, Int> {
     fun findByNameAllIgnoreCaseAndSpaceId(name: String, spaceId: Int): ProductTag?
+    fun findAllByNameAndSpaceId(name: String, spaceId: Int): ProductTag?
 
     //Sorting can not be done with ignore case in JPA
     fun findAllBySpaceId(spaceId: Int, name: Sort): List<ProductTag>

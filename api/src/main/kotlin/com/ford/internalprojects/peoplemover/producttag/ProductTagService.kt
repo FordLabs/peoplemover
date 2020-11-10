@@ -63,7 +63,7 @@ class ProductTagService(
     ): ProductTag {
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
-        productTagRepository.findByNameAllIgnoreCaseAndSpaceId(
+        productTagRepository.findAllByNameAndSpaceId(
                 tagEditRequest.name,
                 space.id!!
         )?.let { throw ProductTagAlreadyExistsForSpaceException() }
