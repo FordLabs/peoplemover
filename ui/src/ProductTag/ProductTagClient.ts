@@ -65,8 +65,8 @@ class ProductTagClient implements TraitClient {
         return Axios.put(url, editRequest, config);
     }
 
-    async delete(productTagId: number, spaceUuid: string): Promise<AxiosResponse> {
-        const url = this.getBaseProductTagsUrl(spaceUuid) + `/${productTagId}`;
+    async delete(trait: Trait, space: Space): Promise<AxiosResponse> {
+        const url = this.getBaseProductTagsUrl(space.uuid!!) + `/${trait.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',

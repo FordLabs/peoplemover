@@ -65,8 +65,8 @@ class LocationClient implements TraitClient {
         return Axios.put(url, editRequest, config);
     }
 
-    async delete(locationId: number, spaceUuid: string): Promise<AxiosResponse> {
-        const url = this.getBaseLocationsUrl(spaceUuid) + `/${locationId}`;
+    async delete(trait: Trait, space: Space): Promise<AxiosResponse> {
+        const url = this.getBaseLocationsUrl(space.uuid!!) + `/${trait.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',

@@ -87,7 +87,7 @@ describe('Location Client', function() {
 
     it('should delete a location', function(done) {
         const expectedUrl = `${baseLocationsUrl}/${TestUtils.annarbor.id}`;
-        LocationClient.delete(TestUtils.annarbor.id, spaceUuid)
+        LocationClient.delete(TestUtils.annarbor, TestUtils.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Location');

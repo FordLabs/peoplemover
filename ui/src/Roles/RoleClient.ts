@@ -79,8 +79,8 @@ class RoleClient implements TraitClient {
         });
     }
 
-    async delete(roleId: number, spaceUuid: string): Promise<AxiosResponse> {
-        const url = this.getBaseRolesUrl(spaceUuid) + `/${roleId}`;
+    async delete(trait: Trait, space: Space): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(space.uuid!!) + `/${trait.id}`;
         let config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -88,7 +88,13 @@ class RoleClient implements TraitClient {
             },
         };
 
-        return Axios.delete(url, config);
+        return Axios.delete(url, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, "deleteRole", trait.name);
+            return result;
+        }).catch((err) => {
+            MatomoEvents.pushEvent(space.name, "deleteRoleError", trait.name, err.code);
+            return Promise.reject(err);
+        });
     }
 }
 

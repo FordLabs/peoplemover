@@ -219,8 +219,7 @@ describe('PeopleMover Role Modal', () => {
             const confirmDeleteButton = await app.findByTestId('confirmDeleteButton');
             fireEvent.click(confirmDeleteButton);
 
-            const expectedRoleId = 2;
-            expect(RoleClient.delete).toHaveBeenCalledWith(expectedRoleId, initialState.currentSpace.uuid);
+            expect(RoleClient.delete).toHaveBeenCalledWith(TestUtils.productManager, initialState.currentSpace);
             await wait(() => {
                 expect(app.queryByText(deleteWarning)).not.toBeInTheDocument();
             });

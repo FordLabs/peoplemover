@@ -115,7 +115,7 @@ function MyTraits({
     async function deleteTrait(traitToDelete: Trait): Promise<void> {
         try {
             if (currentSpace.uuid) {
-                await traitClient.delete(traitToDelete.id, currentSpace.uuid);
+                await traitClient.delete(traitToDelete, currentSpace);
                 setConfirmDeleteModal(null);
                 setTraits(prevTraits => prevTraits.filter(trait => trait.id !== traitToDelete.id));
                 updateGroupedTagFilterOptions(traitName, traitToDelete, TraitAction.DELETE);
