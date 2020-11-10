@@ -120,19 +120,12 @@ function ProductFilter({
         tagFilterOptions: AllGroupedTagFilterOptions
     ): Array<FilterOption> {
         return tagFilterOptions.options.map(
-            option => {
-                if (selectedOptions && selectedOptions.includes(option)) {
-                    return {
-                        ...option,
-                        selected: true,
-                    };
-                } else {
-                    return {
-                        ...option,
-                        selected: false,
-                    };
+            option => (
+                {
+                    ...option,
+                    selected: selectedOptions.includes(option),
                 }
-            }
+            )
         );
     }
 
