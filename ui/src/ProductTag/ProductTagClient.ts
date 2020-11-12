@@ -23,6 +23,7 @@ import {TraitClient} from '../Traits/TraitClient';
 import {getToken} from '../Auth/TokenProvider';
 import {Trait} from "../Traits/Trait";
 import {Space} from "../Space/Space";
+import MatomoEvents from "../Matomo/MatomoEvents";
 
 class ProductTagClient implements TraitClient {
     private getBaseProductTagsUrl(spaceUuid: string): string {
@@ -50,7 +51,13 @@ class ProductTagClient implements TraitClient {
             },
         };
 
-        return Axios.post(url, addRequest, config);
+        return Axios.post(url, addRequest, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'addProductTag', addRequest.name);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'addProductTagError', addRequest.name, err.code);
+            return Promise.reject(err.code);
+        });
     }
 
     async edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>> {
@@ -62,7 +69,13 @@ class ProductTagClient implements TraitClient {
             },
         };
 
-        return Axios.put(url, editRequest, config);
+        return Axios.put(url, editRequest, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'editProductTag', editRequest.updatedName!!);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'editProductTagError', editRequest.updatedName!!, err.code);
+            return Promise.reject(err.code);
+        });
     }
 
     async delete(trait: Trait, space: Space): Promise<AxiosResponse> {
@@ -74,7 +87,13 @@ class ProductTagClient implements TraitClient {
             },
         };
 
-        return Axios.delete(url, config);
+        return Axios.delete(url, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'deleteProductTag', trait.name);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'deleteProductTagError', trait.name, err.code);
+            return Promise.reject(err.code);
+        });
     }
 }
 export default new ProductTagClient();
