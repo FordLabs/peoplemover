@@ -112,12 +112,6 @@
       font-size: 14px;
       line-height: 24px;
 
-      &:focus {
-        outline: none;
-        border: $focus-state-border;
-        border-radius: 4px;
-      }
-
       .role {
         width: 170px;
       }

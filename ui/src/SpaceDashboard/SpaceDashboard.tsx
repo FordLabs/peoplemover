@@ -24,6 +24,7 @@ import {
     fetchUserSpacesAction,
     setCurrentModalAction,
     setCurrentSpaceAction,
+    setViewingDateAction,
 } from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
@@ -39,11 +40,19 @@ interface SpaceDashboardProps {
     fetchUserSpaces(): void;
     userSpaces: Array<Space>;
     setCurrentSpace(space: Space): Space;
+    setCurrentDateOnState(): void;
 }
 
-function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces, setCurrentSpace}: SpaceDashboardProps): JSX.Element {
+function SpaceDashboard({
+    setCurrentModal,
+    fetchUserSpaces,
+    userSpaces,
+    setCurrentSpace,
+    setCurrentDateOnState,
+}: SpaceDashboardProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [redirectPage, setRedirectPage] = useState<JSX.Element | null>(null);
+    setCurrentDateOnState();
 
     function onCreateNewSpaceButtonClicked(): void {
         setCurrentModal({modal: AvailableModals.CREATE_SPACE});
@@ -126,6 +135,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
+    setCurrentDateOnState: () => dispatch(setViewingDateAction(new Date())),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboard);
