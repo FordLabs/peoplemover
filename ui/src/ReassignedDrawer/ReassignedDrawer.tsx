@@ -59,7 +59,8 @@ function ReassignedDrawer({
     const containee: JSX.Element = <div className="reassignmentContainer" data-testid="reassignmentContainer">{listOfHTMLReassignments}</div>;
 
     return (
-        <DrawerContainer drawerIcon="how_to_reg"
+        <DrawerContainer
+            drawerIcon="how_to_reg"
             testId="reassignmentDrawer"
             containerTitle="Reassigned"
             containee={containee}
