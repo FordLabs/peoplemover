@@ -165,7 +165,7 @@ function PersonForm({
                 setIsUnassignedDrawerOpen(true);
             }
             if (isEditPersonForm && assignment) {
-                const response = await PeopleClient.updatePerson(spaceUuid, person);
+                const response = await PeopleClient.updatePerson(currentSpace, person);
                 await AssignmentClient.createAssignmentForDate({
                     requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                     person: assignment.person,

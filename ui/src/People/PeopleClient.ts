@@ -50,11 +50,14 @@ class PeopleClient {
         return Axios.post(url, person, config).then(result => {
             MatomoEvents.pushEvent(space.name, 'addPerson', person.name);
             return result;
+        }).catch( err => {
+            MatomoEvents.pushEvent(space.name, 'addPersonError', person.name, err.code);
+            return Promise.reject(err.code);
         });
     }
 
-    static async updatePerson(spaceUuid: string, person: Person): Promise<AxiosResponse> {
-        const url = this.getBasePeopleUrl(spaceUuid) + `/${person.id}`;
+    static async updatePerson(space: Space, person: Person): Promise<AxiosResponse> {
+        const url = this.getBasePeopleUrl(space.uuid!!) + `/${person.id}`;
         let config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -62,7 +65,13 @@ class PeopleClient {
             },
         };
 
-        return Axios.put(url, person, config);
+        return Axios.put(url, person, config).then(result => {
+            MatomoEvents.pushEvent(space.name, 'editPerson', person.name);
+            return result;
+        }).catch( err => {
+            MatomoEvents.pushEvent(space.name, 'editPersonError', person.name, err.code);
+            return Promise.reject(err.code);
+        });
     }
 
     static async removePerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
