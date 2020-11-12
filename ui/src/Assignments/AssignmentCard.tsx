@@ -42,6 +42,7 @@ interface AssignmentCardProps {
     assignment: Assignment;
     container?: string;
     isUnassignedProduct: boolean;
+    isReadOnly: boolean;
 
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
 
@@ -56,6 +57,7 @@ function AssignmentCard({
     assignment = {id: 0} as Assignment,
     container,
     isUnassignedProduct,
+    isReadOnly,
     startDraggingAssignment,
     setCurrentModal,
     fetchProducts,
@@ -69,18 +71,20 @@ function AssignmentCard({
     }
 
     function toggleEditMenu(): void {
-        if (!isUnassignedProduct) {
-            if (editMenuIsOpened) {
-                setEditMenuIsOpened(false);
+        if (!isReadOnly) {
+            if (!isUnassignedProduct) {
+                if (editMenuIsOpened) {
+                    setEditMenuIsOpened(false);
+                } else {
+                    setEditMenuIsOpened(true);
+                }
             } else {
-                setEditMenuIsOpened(true);
+                const newModalState: CurrentModalState = {
+                    modal: AvailableModals.EDIT_PERSON,
+                    item: assignment,
+                };
+                setCurrentModal!!(newModalState);
             }
-        } else {
-            const newModalState: CurrentModalState = {
-                modal: AvailableModals.EDIT_PERSON,
-                item: assignment,
-            };
-            setCurrentModal!!(newModalState);
         }
     }
 
@@ -178,18 +182,18 @@ function AssignmentCard({
         }
     }, [assignment]);
 
-    function handleKeyDown(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
+    function handleKeyDownForToggleEditMenu(event: React.KeyboardEvent): void {
+        if (!isReadOnly && event.key === 'Enter') {
             toggleEditMenu();
         }
     }
 
     return (
         <div
-            className={`personContainer ${container === 'productDrawerContainer' ? 'borderedPeople' : ''} ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}`}
+            className={`personContainer ${container === 'productDrawerContainer' ? 'borderedPeople' : ''} ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'} ${isReadOnly ? 'readOnlyAssignmentCard' : ''}`}
             data-testid={createDataTestId('assignmentCard', assignment.person.name)}
             ref={assignmentRef}
-            onMouseDown={(e): void => startDraggingAssignment!!(assignmentRef, assignment, e)}
+            onMouseDown={(e): void => {if (!isReadOnly) startDraggingAssignment!!(assignmentRef, assignment, e);}}
         >
             {assignment.person.newPerson ? <NewBadge/> : null}
             <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={isUnassignedProduct} />
@@ -198,8 +202,10 @@ function AssignmentCard({
                 className="personRoleColor"
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
-                onKeyDown={(e): void => {handleKeyDown(e);}}>
-                <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>
+                onKeyDown={(e): void => {handleKeyDownForToggleEditMenu(e);}}>
+                {
+                    !isReadOnly && <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>
+                }
             </div>
             {
                 editMenuIsOpened &&
@@ -215,6 +221,7 @@ function AssignmentCard({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
+    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -17,7 +17,7 @@
 
 import React, {useState} from 'react';
 import '../Application/Styleguide/Main.scss';
-import './ProductGraveyard.scss';
+import './ArchivedProductsDrawer.scss';
 import ArchivedProduct from './ArchivedProduct';
 import {Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
@@ -25,12 +25,12 @@ import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
 
-interface ProductGraveyardProps{
+interface ArchivedProductsDrawerProps{
     products: Array<Product>;
     viewingDate: Date;
 }
 
-function ProductGraveyard({products, viewingDate}: ProductGraveyardProps): JSX.Element {
+function ArchivedProductsDrawer({products, viewingDate}: ArchivedProductsDrawerProps): JSX.Element {
     const [showDrawer, setShowDrawer] = useState(false);
 
     const containee = <div className="archivedProductListContainer">
@@ -48,6 +48,7 @@ function ProductGraveyard({products, viewingDate}: ProductGraveyardProps): JSX.E
     return (
         <DrawerContainer drawerIcon="fas fa-inbox"
             containerTitle="Archived Products"
+            testId="archivedProductsDrawer"
             containee={containee}
             isDrawerOpen={showDrawer}
             setIsDrawerOpen={setShowDrawer}/>
@@ -59,4 +60,4 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: state.viewingDate,
 });
 
-export default connect(mapStateToProps)(ProductGraveyard);
+export default connect(mapStateToProps)(ArchivedProductsDrawer);

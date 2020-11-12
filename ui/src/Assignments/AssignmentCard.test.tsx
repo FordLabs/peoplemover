@@ -22,6 +22,7 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 jest.useFakeTimers();
 
@@ -68,6 +69,42 @@ describe('Assignment Card', () => {
 
         fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
         expect(getByText('Unmark as Placeholder')).toBeInTheDocument();
+    });
+
+    describe('Read-Only Functionality', function() {
+        let initialState: GlobalStateProps;
+
+        beforeEach(function() {
+            initialState = {
+                isReadOnly: true,
+            } as GlobalStateProps;
+        });
+
+        it('should not display edit Menu if in read only mode', function() {
+
+            const underTest = renderWithRedux(
+                <AssignmentCard assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>,
+                undefined,
+                initialState);
+
+            underTest.getByTestId('editPersonIconContainer__billiam_handy').click();
+            expect(underTest.queryByTestId('editMenu')).toBeNull();
+        });
+
+        it('should not allow drag and drop if in read only mode', function() {
+            const startDraggingAssignment = jest.fn();
+
+            const underTest = renderWithRedux(
+                <AssignmentCard assignment={assignmentToRender}
+                    isUnassignedProduct={false}
+                    startDraggingAssignment={startDraggingAssignment}/>,
+                undefined,
+                initialState);
+
+            fireEvent.mouseDown(underTest.getByTestId('assignmentCard__billiam_handy'));
+            expect(startDraggingAssignment).not.toBeCalled();
+        });
     });
 
     describe('Role color', () => {
@@ -166,6 +203,7 @@ describe('Assignment Card', () => {
             expect(getByText('Mark as Placeholder')).toBeInTheDocument();
             expect(getByText('Cancel Assignment')).toBeInTheDocument();
         });
+
     });
 
     describe('New Person Badge', () => {

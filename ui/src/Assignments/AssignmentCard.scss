@@ -73,6 +73,10 @@
   }
 }
 
+.readOnlyAssignmentCard {
+  cursor: initial;
+}
+
 .personContainer:hover .personEditIcon {
   margin-left: 0;
   visibility: visible;
