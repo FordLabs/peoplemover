@@ -23,6 +23,7 @@ import {TraitClient} from '../Traits/TraitClient';
 import {getToken} from '../Auth/TokenProvider';
 import {Trait} from "../Traits/Trait";
 import {Space} from "../Space/Space";
+import MatomoEvents from "../Matomo/MatomoEvents";
 
 class LocationClient implements TraitClient {
     private getBaseLocationsUrl(spaceUuid: string): string {
@@ -50,7 +51,13 @@ class LocationClient implements TraitClient {
             },
         };
 
-        return Axios.post(url, addRequest, config);
+        return Axios.post(url, addRequest, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'addLocationTag', addRequest.name);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'addLocationTagError', addRequest.name, err.code);
+            return Promise.reject(err.code);
+        });
     }
 
     async edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>> {
@@ -62,7 +69,13 @@ class LocationClient implements TraitClient {
             },
         };
 
-        return Axios.put(url, editRequest, config);
+        return Axios.put(url, editRequest, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'editLocationTag', editRequest.updatedName!!);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'editLocationTagError', editRequest.updatedName!!, err.code);
+            return Promise.reject(err.code);
+        });
     }
 
     async delete(trait: Trait, space: Space): Promise<AxiosResponse> {
@@ -74,7 +87,13 @@ class LocationClient implements TraitClient {
             },
         };
 
-        return Axios.delete(url, config);
+        return Axios.delete(url, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'deleteLocationTag', trait.name);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'deleteLocationTagError', trait.name, err.code);
+            return Promise.reject(err.code);
+        });
     }
 }
 
