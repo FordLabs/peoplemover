@@ -16,8 +16,6 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {RoleAddRequest} from './RoleAddRequest';
-import {RoleEditRequest} from './RoleEditRequest';
 import {TraitClient} from '../Traits/TraitClient';
 import {getToken} from '../Auth/TokenProvider';
 import MatomoEvents from "../Matomo/MatomoEvents";
