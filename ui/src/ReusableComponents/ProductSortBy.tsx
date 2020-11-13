@@ -22,8 +22,8 @@ import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import './ProductFilterOrSortBy.scss';
 import {setProductSortByAction} from '../Redux/Actions';
-import {Space} from "../Space/Space";
-import MatomoEvents from "../Matomo/MatomoEvents";
+import {Space} from '../Space/Space';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface SortByOption {
     label: string;

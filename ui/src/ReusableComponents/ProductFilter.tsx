@@ -32,7 +32,7 @@ import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 
 import './ProductFilterOrSortBy.scss';
-import MatomoEvents from "../Matomo/MatomoEvents";
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 export type LocalStorageFilters = {
     locationTagsFilters: Array<string>;

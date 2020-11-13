@@ -26,7 +26,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
 import {Person} from '../People/Person';
 import {fetchProductsAction} from '../Redux/Actions';
-import MatomoEvents from "../Matomo/MatomoEvents";
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface ReassignedDrawerProps {
     products: Array<Product>;

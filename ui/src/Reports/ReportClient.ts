@@ -21,7 +21,7 @@ import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
 import moment from 'moment';
 import {getToken} from '../Auth/TokenProvider';
-import MatomoEvents from "../Matomo/MatomoEvents";
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 const baseReportsUrl = '/api/reports';
 

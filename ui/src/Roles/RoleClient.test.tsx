@@ -19,7 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import RoleClient from './RoleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 

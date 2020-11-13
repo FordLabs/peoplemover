@@ -18,7 +18,7 @@
 import {AxiosResponse} from 'axios';
 import {Tag} from './Tag.interface';
 import {TagRequest} from './TagRequest.interface';
-import {Space} from "../Space/Space";
+import {Space} from '../Space/Space';
 
 export interface TagClient {
      get(spaceUuid: string): Promise<AxiosResponse<Tag[]>>;
