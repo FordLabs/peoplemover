@@ -1,11 +1,10 @@
 import {JSX} from '@babel/types';
 import {connect} from 'react-redux';
 import {Option} from '../CommonTypes/Option';
-import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
-import {SpaceLocation} from '../Locations/SpaceLocation';
-import {Trait} from '../Traits/Trait';
+import {LocationTag} from '../Locations/LocationTag.interface';
+import {Tag} from '../Tags/Tag.interface';
 import Creatable from 'react-select/creatable';
 import {CreateNewText, CustomIndicator, CustomOption} from '../ReusableComponents/ReactSelectStyles';
 import React, {useEffect, useState} from 'react';
@@ -13,12 +12,13 @@ import {Product} from './Product';
 import {Space} from '../Space/Space';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {customStyles} from './ProductForm';
+import {TagRequest} from '../Tags/TagRequest.interface';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
     currentProductState: { currentProduct: Product; setCurrentProduct: (updatedProduct: Product) => void };
     spaceId: number;
-    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Trait) => void;
+    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Tag) => void;
     currentSpace: Space;
 }
 
@@ -35,7 +35,7 @@ function ProductFormLocationField({
     currentSpace,
     addGroupedTagFilterOptions,
 }: Props): JSX.Element {
-    const [availableLocations, setAvailableLocations] = useState<SpaceLocation[]>([]);
+    const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
     const [typedInLocation, setTypedInLocation] = useState<string>('');
 
     useEffect(() => {
@@ -45,7 +45,7 @@ function ProductFormLocationField({
             });
     }, [currentSpace.uuid]);
 
-    function optionToSpaceLocation(option: Option): SpaceLocation {
+    function optionToSpaceLocation(option: Option): LocationTag {
         return {
             id: Number.parseInt(option.value.split('_')[0], 10),
             name: option.label,
@@ -53,7 +53,7 @@ function ProductFormLocationField({
         };
     }
 
-    function createLocationOption(location: SpaceLocation): Option {
+    function createLocationOption(location: LocationTag): Option {
         return {
             label: location.name,
             value: location.id!.toString(),
@@ -74,13 +74,13 @@ function ProductFormLocationField({
     function handleCreateLocationTag(inputValue: string): void {
         setIsLoading(true);
 
-        const location: TraitAddRequest = {
+        const location: TagRequest = {
             name: inputValue,
         };
         LocationClient.add(location, currentSpace).then((result: AxiosResponse) => {
-            const newLocation: SpaceLocation = result.data;
+            const newLocation: LocationTag = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
-            addGroupedTagFilterOptions(0, newLocation as Trait);
+            addGroupedTagFilterOptions(0, newLocation as Tag);
             setCurrentProduct({
                 ...currentProduct,
                 spaceLocation: newLocation,

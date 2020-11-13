@@ -152,17 +152,17 @@ function AssignmentCard({
             {
                 callback: editPersonAndCloseEditMenu,
                 text: 'Edit Person',
-                icon: 'fa-user-circle',
+                icon: 'account_circle',
             },
             {
                 callback: markAsPlaceholderAndCloseEditMenu,
                 text: assignment.placeholder ? 'Unmark as Placeholder' : 'Mark as Placeholder',
-                icon: 'fa-pen',
+                icon: 'create',
             },
             {
                 callback: cancelAssignmentAndCloseEditMenu,
                 text: 'Cancel Assignment',
-                icon: 'fa-trash',
+                icon: 'delete',
             }];
     }
 
@@ -199,7 +199,7 @@ function AssignmentCard({
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
                 onKeyDown={(e): void => {handleKeyDown(e);}}>
-                <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>
+                <i className="material-icons personEditIcon greyIcon">more_vert</i>
             </div>
             {
                 editMenuIsOpened &&

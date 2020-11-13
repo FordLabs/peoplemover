@@ -19,7 +19,7 @@ import React, {ChangeEvent, CSSProperties, FormEvent, useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {closeModalAction, setAllGroupedTagFilterOptions} from '../Redux/Actions';
+import {closeModalAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {JSX} from '@babel/types';
 import {StylesConfig} from 'react-select';
 import moment from 'moment';
@@ -30,7 +30,7 @@ import {reactSelectStyles} from '../ReusableComponents/ReactSelectStyles';
 import {ProductTag} from '../ProductTag/ProductTag';
 import {FilterOption} from '../CommonTypes/Option';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import {Trait} from '../Traits/Trait';
+import {Tag} from '../Tags/Tag.interface';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
 import ProductFormStartDateField from './ProductFormStartDateField';
@@ -195,7 +195,7 @@ function ProductForm({
         setCurrentProduct(updatedProduct);
     }
 
-    function addGroupedTagFilterOptions(tagFilterIndex: number, trait: Trait): void {
+    function addGroupedTagFilterOptions(tagFilterIndex: number, trait: Tag): void {
         const addedFilterOption: FilterOption = {
             label: trait.name,
             value: trait.id.toString() + '_' + trait.name,
@@ -288,7 +288,7 @@ function ProductForm({
                 </div>
                 {editing && (
                     <div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
-                        <i className="fas fa-trash"/>
+                        <i className="material-icons">delete</i>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             data-testid="deleteProduct"
@@ -311,7 +311,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptions(allGroupedTagFilterOptions)),
+        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductForm);

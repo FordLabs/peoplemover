@@ -6,14 +6,14 @@ import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {customStyles} from './ProductForm';
 import {Product} from './Product';
-import {Trait} from '../Traits/Trait';
+import {Tag} from '../Tags/Tag.interface';
 import {Space} from '../Space/Space';
-import {TraitAddRequest} from '../Traits/TraitAddRequest';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {AxiosResponse} from 'axios';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
+import {TagRequest} from '../Tags/TagRequest.interface';
 
 interface Props {
     spaceId: number;
@@ -23,7 +23,7 @@ interface Props {
         selectedProductTags: Array<ProductTag>;
         setSelectedProductTags: (productTags: Array<ProductTag>) => void;
     };
-    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Trait) => void;
+    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Tag) => void;
     currentSpace: Space;
 }
 
@@ -71,10 +71,10 @@ function ProductFormProductTagsField({
         }
         return [];
     }
-    
+
     function handleCreateProductTag(inputValue: string): void {
         setIsLoading(true);
-        const productTag: TraitAddRequest = { name: inputValue };
+        const productTag: TagRequest = { name: inputValue };
 
         ProductTagClient.add(productTag, currentSpace)
             .then((response: AxiosResponse) => {
@@ -83,7 +83,7 @@ function ProductFormProductTagsField({
                     id: newProductTag.id,
                     name: newProductTag.name,
                 }] as Array<ProductTag>);
-                addGroupedTagFilterOptions(1, newProductTag as Trait);
+                addGroupedTagFilterOptions(1, newProductTag as Tag);
                 updateSelectedProductTags([...selectedProductTags, newProductTag]);
                 setIsLoading(false);
             });
@@ -96,7 +96,7 @@ function ProductFormProductTagsField({
             setSelectedProductTags([]);
         }
     }
-    
+
     return (
         <div className="formItem">
             <label className="formItemLabel" htmlFor="productTags">Product Tags</label>

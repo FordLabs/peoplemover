@@ -65,7 +65,7 @@ class RoleController(
     ): ResponseEntity<SpaceRole> {
         val updatedRole: SpaceRole = roleService.editRole(spaceUuid, roleEditRequest)
         logger.logInfoMessage("Role with id [${roleEditRequest.id}] edited to: " +
-                        "[${roleEditRequest.updatedName}] in space [$spaceUuid].")
+                        "[${roleEditRequest.name}] in space [$spaceUuid].")
         return ResponseEntity.ok(updatedRole)
     }
 }

@@ -16,21 +16,19 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {SpaceLocation} from './SpaceLocation';
-import {TraitAddRequest} from '../Traits/TraitAddRequest';
-import {TraitEditRequest} from '../Traits/TraitEditRequest';
-import {TraitClient} from '../Traits/TraitClient';
+import {LocationTag} from './LocationTag.interface';
+import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
-import {Trait} from "../Traits/Trait";
 import {Space} from "../Space/Space";
 import MatomoEvents from "../Matomo/MatomoEvents";
 
-class LocationClient implements TraitClient {
+class LocationClient implements TagClient {
     private getBaseLocationsUrl(spaceUuid: string): string {
         return '/api/spaces/' + spaceUuid + '/locations';
     }
 
-    async get(spaceUuid: string): Promise<AxiosResponse<SpaceLocation[]>> {
+    async get(spaceUuid: string): Promise<AxiosResponse<LocationTag[]>> {
         const url = this.getBaseLocationsUrl(spaceUuid);
         const config = {
             headers: {
@@ -42,7 +40,7 @@ class LocationClient implements TraitClient {
         return Axios.get(url, config);
     }
 
-    async add(addRequest: TraitAddRequest, space: Space): Promise<AxiosResponse<Trait>> {
+    async add(location: TagRequest, space: Space): Promise<AxiosResponse> {
         const url = this.getBaseLocationsUrl(space.uuid!!);
         const config = {
             headers: {
@@ -51,16 +49,16 @@ class LocationClient implements TraitClient {
             },
         };
 
-        return Axios.post(url, addRequest, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'addLocationTag', addRequest.name);
+        return Axios.post(url, location, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'addLocationTag', location.name);
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'addLocationTagError', addRequest.name, err.code);
+            MatomoEvents.pushEvent(space.name, 'addLocationTagError', location.name, err.code);
             return Promise.reject(err.code);
         });
     }
 
-    async edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>> {
+    async edit(location: TagRequest, space: Space): Promise<AxiosResponse<LocationTag>> {
         const url = this.getBaseLocationsUrl(space.uuid!!);
         const config = {
             headers: {
@@ -69,17 +67,17 @@ class LocationClient implements TraitClient {
             },
         };
 
-        return Axios.put(url, editRequest, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'editLocationTag', editRequest.updatedName!!);
+        return Axios.put(url, location, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'editLocationTag', location.name);
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'editLocationTagError', editRequest.updatedName!!, err.code);
+            MatomoEvents.pushEvent(space.name, 'editLocationTagError', location.name, err.code);
             return Promise.reject(err.code);
         });
     }
 
-    async delete(trait: Trait, space: Space): Promise<AxiosResponse> {
-        const url = this.getBaseLocationsUrl(space.uuid!!) + `/${trait.id}`;
+    async delete(locationId: number, space: Space): Promise<AxiosResponse> {
+        const url = this.getBaseLocationsUrl(space.uuid!!) + `/${locationId}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -88,10 +86,10 @@ class LocationClient implements TraitClient {
         };
 
         return Axios.delete(url, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'deleteLocationTag', trait.name);
+            MatomoEvents.pushEvent(space.name, 'deleteLocationTag', locationId.toString());
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'deleteLocationTagError', trait.name, err.code);
+            MatomoEvents.pushEvent(space.name, 'deleteLocationTagError', locationId.toString(), err.code);
             return Promise.reject(err.code);
         });
     }

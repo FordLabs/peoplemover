@@ -87,7 +87,7 @@ describe('Product Tags Client', function() {
 
     it('should delete a product tag', function(done) {
         const expectedUrl = `${baseProductTagsUrl}/${TestUtils.productTag1.id}`;
-        ProductTag.delete(TestUtils.productTag1, TestUtils.space)
+        ProductTag.delete(TestUtils.productTag1.id, TestUtils.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Product Tag');

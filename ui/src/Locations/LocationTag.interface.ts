@@ -15,18 +15,6 @@
  * limitations under the License.
  */
 
-import {AxiosResponse} from 'axios';
-import {Trait} from './Trait';
-import {TraitAddRequest} from './TraitAddRequest';
-import {TraitEditRequest} from './TraitEditRequest';
-import {Space} from "../Space/Space";
+import {Tag} from '../Tags/Tag.interface';
 
-export interface TraitClient {
-     get(spaceUuid: string): Promise<AxiosResponse<Trait[]>>;
-
-    add(addRequest: TraitAddRequest, space: Space): Promise<AxiosResponse<Trait>>;
-
-    edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>>;
-
-    delete(trait: Trait, space: Space): Promise<AxiosResponse>;
-}
+export type LocationTag = Tag;

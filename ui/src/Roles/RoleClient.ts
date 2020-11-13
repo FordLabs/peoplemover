@@ -16,15 +16,14 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {TraitClient} from '../Traits/TraitClient';
+import {RoleAddRequest} from './RoleAddRequest.interface';
+import {RoleEditRequest} from './RoleEditRequest.interface';
+import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
 import MatomoEvents from "../Matomo/MatomoEvents";
-import {Trait} from "../Traits/Trait";
-import {TraitAddRequest} from "../Traits/TraitAddRequest";
 import {Space} from "../Space/Space";
-import {TraitEditRequest} from "../Traits/TraitEditRequest";
 
-class RoleClient implements TraitClient {
+class RoleClient implements TagClient {
     private getBaseRolesUrl(spaceUuid: string): string {
         return '/api/spaces/' + spaceUuid + '/roles';
     }
@@ -41,7 +40,7 @@ class RoleClient implements TraitClient {
         return Axios.get(url, config);
     }
 
-    async add(addRequest: TraitAddRequest, space: Space): Promise<AxiosResponse<Trait>> {
+    async add(role: RoleAddRequest, space: Space): Promise<AxiosResponse> {
         const url = this.getBaseRolesUrl(space.uuid!!);
         let config = {
             headers: {
@@ -50,16 +49,16 @@ class RoleClient implements TraitClient {
             },
         };
 
-        return Axios.post(url, addRequest, config).then((result) => {
-            MatomoEvents.pushEvent(space.name, "addRole", addRequest.name);
+        return Axios.post(url, role, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, "addRole", role.name);
             return result;
         }).catch((err) => {
-            MatomoEvents.pushEvent(space.name, "addRoleError", addRequest.name, err.code);
+            MatomoEvents.pushEvent(space.name, "addRoleError", role.name, err.code);
             return Promise.reject(err);
         });
     }
 
-    async edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>> {
+    async edit(role: RoleEditRequest, space: Space): Promise<AxiosResponse> {
         const url = this.getBaseRolesUrl(space.uuid!!);
         let config = {
             headers: {
@@ -68,17 +67,17 @@ class RoleClient implements TraitClient {
             },
         };
 
-        return Axios.put(url, editRequest, config).then((result) => {
-            MatomoEvents.pushEvent(space.name, "editRole", editRequest.updatedName!!);
+        return Axios.put(url, role, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, "editRole", role.name);
             return result;
         }).catch((err) => {
-            MatomoEvents.pushEvent(space.name, "editRoleError", editRequest.updatedName!!, err.code);
+            MatomoEvents.pushEvent(space.name, "editRoleError", role.name, err.code);
             return Promise.reject(err);
         });
     }
 
-    async delete(trait: Trait, space: Space): Promise<AxiosResponse> {
-        const url = this.getBaseRolesUrl(space.uuid!!) + `/${trait.id}`;
+    async delete(roleId: number, space: Space): Promise<AxiosResponse> {
+        const url = this.getBaseRolesUrl(space.uuid!!) + `/${roleId}`;
         let config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -87,10 +86,10 @@ class RoleClient implements TraitClient {
         };
 
         return Axios.delete(url, config).then((result) => {
-            MatomoEvents.pushEvent(space.name, "deleteRole", trait.name);
+            MatomoEvents.pushEvent(space.name, "deleteRole", roleId.toString());
             return result;
         }).catch((err) => {
-            MatomoEvents.pushEvent(space.name, "deleteRoleError", trait.name, err.code);
+            MatomoEvents.pushEvent(space.name, "deleteRoleError", roleId.toString(), err.code);
             return Promise.reject(err);
         });
     }

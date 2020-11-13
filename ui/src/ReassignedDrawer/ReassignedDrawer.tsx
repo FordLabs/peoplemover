@@ -60,7 +60,8 @@ function ReassignedDrawer({
     const containee: JSX.Element = <div className="reassignmentContainer" data-testid="reassignmentContainer">{listOfHTMLReassignments}</div>;
 
     return (
-        <DrawerContainer drawerIcon="fas fa-user-check"
+        <DrawerContainer
+            drawerIcon="how_to_reg"
             testId="reassignmentDrawer"
             containerTitle="Reassigned"
             containee={containee}
@@ -82,12 +83,18 @@ function ReassignedDrawer({
                 <div className="name">{reassignment.person.name}</div>
                 <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
                 {!oneWayReassignment &&
-                    <div className="additionalInfo">{reassignment.fromProductName} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName}</div>
+                    <div className="additionalInfo">{reassignment.fromProductName}
+                        <i className="material-icons">east</i>
+                        {reassignment.toProductName}
+                    </div>
                 }
                 {oneWayReassignment &&
                     <div className="additionalInfo">{oneWayReassignment}</div>
                 }
-                <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}><i className="fas fa-undo-alt"/>Revert</button>
+                <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}>
+                    <i className="material-icons">undo</i>
+                    Revert
+                </button>
             </div>
         );
     }

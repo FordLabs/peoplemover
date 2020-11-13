@@ -30,7 +30,7 @@ import {
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
-import {SpaceRole} from '../Roles/Role';
+import {RoleTag} from '../Roles/RoleTag.interface';
 import {Product} from '../Products/Product';
 import {
     CreateNewText,
@@ -43,7 +43,7 @@ import MultiSelect from '../ReusableComponents/MultiSelect';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
-import {RoleAddRequest} from '../Roles/RoleAddRequest';
+import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
@@ -89,11 +89,11 @@ function PersonForm({
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
-    const [roles, setRoles] = useState<Array<SpaceRole>>([]);
+    const [roles, setRoles] = useState<Array<RoleTag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [typedInRole, setTypedInRole] = useState<string>('');
 
-    const alphabetize = (roles: Array<SpaceRole | Product>): Array<SpaceRole | Product> => {
+    const alphabetize = (roles: Array<RoleTag | Product>): Array<RoleTag | Product> => {
         return roles.sort((a, b) => {
             if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
             if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
@@ -212,12 +212,12 @@ function PersonForm({
         setSelectedProducts(updatedProducts.filter(product => product != null));
     };
 
-    const updatePersonField = (fieldName: string, fieldValue: string | boolean | SpaceRole | undefined): void => {
+    const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | undefined): void => {
         setPerson((updatingPerson: Person) => ({...updatingPerson, [fieldName]: fieldValue}));
     };
 
     const updateSpaceRole = (input: string): void => {
-        const roleMatch: SpaceRole | undefined = roles.find((role: SpaceRole) => role.name === input);
+        const roleMatch: RoleTag | undefined = roles.find((role: RoleTag) => role.name === input);
         updatePersonField('spaceRole', roleMatch);
     };
 
@@ -232,7 +232,7 @@ function PersonForm({
         setIsLoading(true);
         const roleAddRequest: RoleAddRequest = {name: inputValue};
         RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
-            const newRole: SpaceRole = response.data;
+            const newRole: RoleTag = response.data;
             setRoles(roles => alphabetize([...roles, newRole]));
             updatePersonField('spaceRole', newRole);
             setIsLoading(false);
@@ -334,8 +334,8 @@ function PersonForm({
                     />
                 </div>
                 <div className="formItem">
-                    <FormNotesTextArea 
-                        notes={person.notes} 
+                    <FormNotesTextArea
+                        notes={person.notes}
                         callBack={(notes): void => {
                             updatePersonField('notes', notes);
                         }}
@@ -356,7 +356,7 @@ function PersonForm({
                 </div>
                 {isEditPersonForm && (
                     <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
-                        <i className="fas fa-trash"/>
+                        <i className="material-icons">delete</i>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             data-testid="deletePersonButton"

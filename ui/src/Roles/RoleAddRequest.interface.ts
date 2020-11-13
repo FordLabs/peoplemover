@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
-export interface TraitAddRequest {
-    name: string;
+
+import {TagRequest} from '../Tags/TagRequest.interface';
+
+export interface RoleAddRequest extends TagRequest {
+    colorId?: number;
 }

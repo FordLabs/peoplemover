@@ -97,7 +97,7 @@ describe('Role Client', function() {
 
     it('should delete a role', function(done) {
         const expectedUrl = `${baseRolesUrl}/${TestUtils.softwareEngineer.id}`;
-        RoleClient.delete(TestUtils.softwareEngineer, TestUtils.space)
+        RoleClient.delete(TestUtils.softwareEngineer.id, TestUtils.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Role');

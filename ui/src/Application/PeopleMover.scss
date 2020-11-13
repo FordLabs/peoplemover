@@ -47,8 +47,9 @@
     flex-direction: column;
 }
 
-.unassignedTitleAndIcon,
-.archivedTitleAndIcon {
+.drawerContainerTitleAndIcon {
+    display: flex;
+    align-items: center;
     padding-left: 20px;
 }
 
@@ -98,4 +99,17 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+// Remove default outline when user is tabbing
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+}
+
+// Use box shadow to make focus ring for all buttons, inputs, selects and textareas except in React Select Library
+:not([class*="css-"]) > div > *:focus {
+    box-shadow: 0 0 0 2px $outline-focus-blue;
 }

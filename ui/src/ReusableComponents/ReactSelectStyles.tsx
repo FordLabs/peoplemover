@@ -18,7 +18,6 @@
 import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
 import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useEffect} from 'react';
 import {ThemeApplier} from './ThemeApplier';
-import CheckIcon from '../Application/Assets/checkIcon.svg';
 import {Option} from '../CommonTypes/Option';
 import {useOnLoad} from './UseOnLoad';
 
@@ -32,8 +31,8 @@ export const reactSelectStyles = {
         borderRadius: '2px',
         padding: '0',
         // These lines disable the blue border
-        boxShadow: 'none',
-        border: isFocused ? '2px solid #5463B0' : '1px solid hsl(0, 0%, 80%)',
+        boxShadow: isFocused ? '0 0 0 2px #4C8EF5' : 'none',
+        border: '1px solid hsl(0, 0%, 80%)',
         backgroundColor: 'transparent',
         // @ts-ignore
         '&:hover': {
@@ -175,6 +174,10 @@ export const sortByStyle = {
         margin: '3px 0px',
         cursor: 'pointer',
     }),
+    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0px',
+    }),
 };
 
 export const filterByStyles = {
@@ -255,6 +258,10 @@ export const filterByStyles = {
         ...provided,
         fontSize: '12px',
     }),
+    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0px',
+    }),
 };
 
 export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Element => (
@@ -264,8 +271,8 @@ export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Elem
                 ? <i style={{display: 'none'}}/>
                 : (
                     props.selectProps.menuIsOpen
-                        ? <i className="fas fa-caret-up greyIcon" data-testid={props.selectProps.name} />
-                        : <i className="fas fa-caret-down greyIcon" data-testid={props.selectProps.name} />
+                        ? <i className="material-icons greyIcon" data-testid={props.selectProps.name}>arrow_drop_up</i>
+                        : <i className="material-icons greyIcon" data-testid={props.selectProps.name}>arrow_drop_down</i>
                 )
         }
     </components.DropdownIndicator>
@@ -277,7 +284,7 @@ export const SortByOption = (props: OptionProps<OptionTypeBase>): JSX.Element =>
     return (
         <div className="sortby-option" {...innerProps}>
             <span className="sortby-label-name">{label}</span>
-            {isSelected && <img className="sortby-option-check" src={CheckIcon} alt={''}/>}
+            {isSelected && <i className="material-icons sortby-option-check">check</i>}
         </div>
     );
 };

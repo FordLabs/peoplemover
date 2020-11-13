@@ -164,7 +164,7 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
     cy.get('@calendarStartDate')
         .should('have.value', defaultStartDate)
         .click();
-    
+
     const today = defaultStartDate ? Cypress.moment(startDate) : Cypress.moment();
     cy.get(dateSelector(today)).click({force: true});
 

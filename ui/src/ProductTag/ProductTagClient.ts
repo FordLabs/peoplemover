@@ -17,15 +17,13 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {ProductTag} from './ProductTag';
-import {TraitAddRequest} from '../Traits/TraitAddRequest';
-import {TraitEditRequest} from '../Traits/TraitEditRequest';
-import {TraitClient} from '../Traits/TraitClient';
+import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
-import {Trait} from "../Traits/Trait";
 import {Space} from "../Space/Space";
 import MatomoEvents from "../Matomo/MatomoEvents";
 
-class ProductTagClient implements TraitClient {
+class ProductTagClient implements TagClient {
     private getBaseProductTagsUrl(spaceUuid: string): string {
         return '/api/spaces/' + spaceUuid + '/product-tags';
     }
@@ -42,7 +40,7 @@ class ProductTagClient implements TraitClient {
         return Axios.get(url, config);
     }
 
-    async add(addRequest: TraitAddRequest, space: Space): Promise<AxiosResponse<Trait>> {
+    async add(productTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
         const url = this.getBaseProductTagsUrl(space.uuid!!);
         const config = {
             headers: {
@@ -51,16 +49,16 @@ class ProductTagClient implements TraitClient {
             },
         };
 
-        return Axios.post(url, addRequest, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'addProductTag', addRequest.name);
+        return Axios.post(url, productTagAddRequest, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'addProductTag', productTagAddRequest.name);
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'addProductTagError', addRequest.name, err.code);
+            MatomoEvents.pushEvent(space.name, 'addProductTagError', productTagAddRequest.name, err.code);
             return Promise.reject(err.code);
         });
     }
 
-    async edit(editRequest: TraitEditRequest, space: Space): Promise<AxiosResponse<Trait>> {
+    async edit(productTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<ProductTag>> {
         const url = this.getBaseProductTagsUrl(space.uuid!!);
         const config = {
             headers: {
@@ -69,17 +67,17 @@ class ProductTagClient implements TraitClient {
             },
         };
 
-        return Axios.put(url, editRequest, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'editProductTag', editRequest.updatedName!!);
+        return Axios.put(url, productTagEditRequest, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'editProductTag', productTagEditRequest.name);
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'editProductTagError', editRequest.updatedName!!, err.code);
+            MatomoEvents.pushEvent(space.name, 'editProductTagError', productTagEditRequest.name, err.code);
             return Promise.reject(err.code);
         });
     }
 
-    async delete(trait: Trait, space: Space): Promise<AxiosResponse> {
-        const url = this.getBaseProductTagsUrl(space.uuid!!) + `/${trait.id}`;
+    async delete(productTagId: number, space: Space): Promise<AxiosResponse> {
+        const url = this.getBaseProductTagsUrl(space.uuid!!) + `/${productTagId}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -88,10 +86,10 @@ class ProductTagClient implements TraitClient {
         };
 
         return Axios.delete(url, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'deleteProductTag', trait.name);
+            MatomoEvents.pushEvent(space.name, 'deleteProductTag', productTagId.toString());
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'deleteProductTagError', trait.name, err.code);
+            MatomoEvents.pushEvent(space.name, 'deleteProductTagError', productTagId.toString(), err.code);
             return Promise.reject(err.code);
         });
     }

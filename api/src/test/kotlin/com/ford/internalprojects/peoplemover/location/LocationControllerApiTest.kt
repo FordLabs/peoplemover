@@ -165,7 +165,7 @@ class LocationControllerApiTest {
     @Test
     fun `PUT should update a location and return 200`() {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
-        val locationEditRequest = LocationEditRequest(id = spaceLocation.id!!, updatedName = "Dearborn")
+        val locationEditRequest = LocationEditRequest(id = spaceLocation.id!!, name = "Dearborn")
         val result = mockMvc.perform(put(baseLocationsUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
@@ -177,7 +177,7 @@ class LocationControllerApiTest {
             SpaceLocation::class.java
         )
         assertThat(actualSpaceLocation.id).isEqualTo(spaceLocation.id!!)
-        assertThat(actualSpaceLocation.name).isEqualTo(locationEditRequest.updatedName)
+        assertThat(actualSpaceLocation.name).isEqualTo(locationEditRequest.name)
 
         assertThat(spaceLocationRepository.findBySpaceIdAndNameIgnoreCase(
             actualSpaceLocation.spaceId,

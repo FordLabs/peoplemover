@@ -44,7 +44,7 @@
   min-width: 280px;
   width: 100%;
 
-  .traitName {
+  .tagName {
     padding-left: 8px;
     margin-right: 14px;
     font-size: 14px;
@@ -94,9 +94,9 @@
       padding-right: 10px;
       box-sizing: border-box;
 
-      img {
-        height: 24px;
-        width: 24px;
+      i {
+        font-size: 28px;
+        color: $prime-1;
       }
     }
   }
@@ -111,12 +111,6 @@
       border-radius: 4px;
       font-size: 14px;
       line-height: 24px;
-
-      &:focus {
-        outline: none;
-        border: $focus-state-border;
-        border-radius: 4px;
-      }
 
       .role {
         width: 170px;
@@ -148,8 +142,8 @@
     }
   }
 
-  .traitEditIcon,
-  .traitDeleteIcon {
+  .editTagIcon,
+  .deleteTagIcon {
     background: transparent;
     right: 0;
     padding: 0;
@@ -160,17 +154,21 @@
       color: $prime-1;
       cursor: pointer;
     }
+
+    i {
+      font-size: 24px;
+    }
   }
 
-  .traitEditIcon {
+  .editTagIcon {
     margin-right: 10px;
   }
 
-  .traitDeleteIcon {
+  .deleteTagIcon {
     margin-left: 10px;
   }
 
-  .traitEditIcons {
+  .editTagIcons {
     display: flex;
   }
 
@@ -215,6 +213,7 @@
     height: 15px;
     width: 15px;
     font-size: 15px;
+    color: $prime-1;
     margin: 6px 12px 8px 10px;
   }
 
@@ -234,11 +233,6 @@
   color: $gray-1;
   text-align: left;
   margin: 0 2rem 18px;
-}
-
-.editTraitName {
-  font-size: 14px;
-  margin-bottom: 6px;
 }
 
 .saveEditTagButton,

@@ -61,11 +61,15 @@ function DrawerContainer({
 
                 {canRenderCountBadge() && <div className="countBadge" data-testid="countBadge">{numberForCountBadge}</div>}
 
-                <div className="unassignedTitleAndIcon">
-                    <i className={drawerIcon}/>
+                <div className="drawerContainerTitleAndIcon">
+                    <i className="material-icons">{drawerIcon}</i>
                     <span className="accordionText">{containerTitle}</span>
                 </div>
-                <i className={isDrawerOpen ? 'fas fa-caret-up drawerCaret' : 'fas fa-caret-down drawerCaret'}/>
+                {
+                    isDrawerOpen
+                        ? <i className="material-icons greyIcon" data-testid="calendar_up-arrow">arrow_drop_up</i>
+                        : <i className="material-icons greyIcon" data-testid="calendar_down-arrow">arrow_drop_down</i>
+                }
             </div>
             {isDrawerOpen && (
                 <React.Fragment>{containee}</React.Fragment>
