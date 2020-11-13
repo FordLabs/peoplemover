@@ -63,7 +63,7 @@ function ProductFormStartDateField({ currentProduct, viewingDate, updateProductF
                     mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
                     placeholder="MM/DD/YYYY"
                 />
-                <i className="far fa-calendar-alt calendar-icon" />
+                <i className="material-icons calendar-icon">date_range</i>
             </div>
         );
     };

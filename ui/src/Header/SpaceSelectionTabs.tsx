@@ -38,19 +38,19 @@ function SpaceSelectionTabs({
             <button className="selectionTabButton tab"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
                 data-testid="myTagsButton">
-                <div className="fas fa-tags myTagsIcon" data-testid="myTagsIcon"/>
+                <i className="material-icons myTagsIcon" data-testid="myTagsIcon">local_offer</i>
                 My Tags
             </button>
             <button className="selectionTabButton tab"
                 data-testid="myRolesButton"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
-                <div className="fas fa-id-badge myRolesIcon" data-testid="myRolesIcon"/>
+                <i className="material-icons myRolesIcon" data-testid="myRolesIcon">assignment_ind</i>
                 My Roles
             </button>
-            <button type="button" className="squareButton createButton"
+            <button type="button" className="addPersonButton"
                 data-testid="addPersonButton"
                 onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
-                <i className="fa fa-plus fa-sm"/>
+                <i className="material-icons">add</i>
                 Add Person
             </button>
         </div>

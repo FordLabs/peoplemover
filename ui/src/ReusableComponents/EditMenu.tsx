@@ -68,7 +68,9 @@ function EditMenu(props: EditMenuProps): JSX.Element {
                 <div key={index}
                     className="editMenuContainerOption"
                     onMouseDown={(event): void => onOptionSelected(event, menuOption.callback)}>
-                    <i className={`fas ${menuOption.icon}`} data-testid={createDataTestId('editMenuOption', menuOption.text)} />
+                    <i className="material-icons" data-testid={createDataTestId('editMenuOption', menuOption.text)}>
+                        {menuOption.icon}
+                    </i>
                     <span>{menuOption.text}</span>
                 </div>
             )}
