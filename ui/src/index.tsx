@@ -65,7 +65,9 @@ const store = createStore(
 );
 
 declare global {
-    interface Window { runConfig: RunConfig }
+    interface Window {
+        runConfig: RunConfig;
+    }
 }
 
 export interface RunConfig {
@@ -75,6 +77,22 @@ export interface RunConfig {
     adfs_client_id: string;
     adfs_resource: string;
 }
+
+function turnOnFocusRingWhenTabbing(e: KeyboardEvent): void {
+    if (e.key === 'Tab') {
+        document.body.classList.add('user-is-tabbing');
+        window.removeEventListener('keydown', turnOnFocusRingWhenTabbing);
+        window.addEventListener('click', turnOffFocusRingWhenClicking);
+    }
+}
+
+function turnOffFocusRingWhenClicking(e: MouseEvent): void {
+    document.body.classList.remove('user-is-tabbing');
+    window.removeEventListener('click', turnOffFocusRingWhenClicking);
+    window.addEventListener('keydown', turnOnFocusRingWhenTabbing);
+}
+
+window.addEventListener('keydown', turnOnFocusRingWhenTabbing);
 
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
@@ -96,8 +114,8 @@ if (isUnsupportedBrowser()) {
     ReactDOM.render(<UnsupportedBrowserPage/>, document.getElementById('root'));
 } else {
     Axios.get(`/api/config`,
-        {headers: { 'Content-Type': 'application/json'}}
-    ).then( (response) => {
+        {headers: {'Content-Type': 'application/json'}}
+    ).then((response) => {
 
         window.runConfig = Object.freeze(response.data);
 
@@ -131,7 +149,7 @@ if (isUnsupportedBrowser()) {
                         </Route>
 
                         <Route>
-                            <Redirect to={`/error/404`} />
+                            <Redirect to={`/error/404`}/>
                         </Route>
                     </Switch>
                 </Router>
