@@ -8,7 +8,7 @@ Resolves #XXX (where XXX is the related issue)
 1.
 
 ### FOR DEVS
-Feature URL: https://featurebranchui.apps.pd01i.edc1.cf.ford.com/
+Feature URL: See feature branch
 
 ### FOR APPROVAL
-Approval URL: https://approvalbranchui.apps.pd01i.edc1.cf.ford.com/
+Approval URL: See Approval branch
