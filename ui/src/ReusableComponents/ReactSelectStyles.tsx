@@ -77,7 +77,9 @@ export const reactSelectStyles = {
         alignItems: 'center',
         fontFamily: 'Helvetica, sans-serif',
         fontSize: '12px',
-        maxWidth: 'unset',
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        maxWidth: '140px',
     }),
     clearIndicator: (provided: CSSProperties): CSSProperties => ({
         ...provided,
