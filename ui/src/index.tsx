@@ -21,7 +21,6 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import axe from 'react-axe';
 import PeopleMover from './Application/PeopleMover';
-import '@fortawesome/fontawesome-free/css/all.css';
 import {Provider} from 'react-redux';
 import {applyMiddleware, compose, createStore, StoreEnhancer} from 'redux';
 import rootReducer from './Redux/Reducers';

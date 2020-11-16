@@ -31,9 +31,9 @@ interface NewProductButtonProps {
 function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: NewProductButtonProps): JSX.Element {
     return (
         <button className="newProduct productCardContainer"
-            onClick={() => setCurrentModal(modalState)}
+            onClick={(): void => setCurrentModal(modalState)}
             data-testid="newProductButton">
-            <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
+            <i className="material-icons greyIcon addProductIcon">add</i>
             <h2 className="newProductText">Add Product</h2>
         </button>
     );

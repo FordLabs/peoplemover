@@ -87,9 +87,11 @@ function Modal({
                         <div className="modalTitleAndCloseButtonContainer">
                             <div className="modalTitleSpacer"/>
                             <div className="modalTitle">{title}</div>
-                            <button className="fa fa-times fa-lg closeButton"
+                            <button className="material-icons closeButton"
                                 onClick={close}
-                                data-testid="modalCloseButton"/>
+                                data-testid="modalCloseButton">
+                                close
+                            </button>
                         </div>
                         {customModalForm ? customModalForm : modalForm}
                         {confirmCloseModal}
