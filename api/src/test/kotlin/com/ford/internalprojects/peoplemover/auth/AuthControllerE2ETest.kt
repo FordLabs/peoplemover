@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.producttag.ProductTag
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -37,7 +36,8 @@ import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Instant
 import java.util.*
@@ -64,7 +64,6 @@ class AuthControllerE2ETest {
 
     final var uuid: String = "spaceUUID"
     var inviteUserToSpaceUrl: String = "/api/spaces/${uuid}:invite"
-    var checkAccessToSpaceUrl: String = "/api/spaces/${uuid}:checkAccess"
 
     @Before
     fun setUp() {
@@ -178,24 +177,6 @@ class AuthControllerE2ETest {
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
                 .andExpect(status().isForbidden)
-    }
-
-    @Test
-    fun `GET Authentication status for space -- Successful case`(){
-
-        `when`(jwtDecoder.decode("GOOD_TOKEN")).thenReturn(getJwt("GOOD_TOKEN"))
-
-        val result = mockMvc.perform(get(checkAccessToSpaceUrl)
-                .header("Authorization", "Bearer fake_access_token"))
-                .andExpect(status().isOk)
-                .andReturn()
-
-        val actualAccessToSpace: Boolean = objectMapper.readValue(
-                result.response.contentAsString,
-                Boolean::class.java
-        )
-
-        assertThat(actualAccessToSpace).isTrue();
     }
 
     private fun getJwt(accessToken: String): Jwt {

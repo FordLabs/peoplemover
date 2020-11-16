@@ -71,13 +71,4 @@ class AuthController(
         }
         return ResponseEntity.ok(failures)
     }
-
-    @GetMapping("/api/spaces/{uuid}:invite")
-    fun checkSpaceAccess(
-            @PathVariable uuid: String
-    ): ResponseEntity<Boolean> {
-        return ResponseEntity.ok(true)
-    }
-
-
 }

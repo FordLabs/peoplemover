@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//Test comment - DELETE @todo
+
 import React, {useEffect, useState} from 'react';
 
 import './Styleguide/Main.scss';
