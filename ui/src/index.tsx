@@ -36,6 +36,7 @@ import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
+import FocusRing from "./FocusRing";
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -78,21 +79,7 @@ export interface RunConfig {
     adfs_resource: string;
 }
 
-function turnOnFocusRingWhenTabbing(e: KeyboardEvent): void {
-    if (e.key === 'Tab') {
-        document.body.classList.add('user-is-tabbing');
-        window.removeEventListener('keydown', turnOnFocusRingWhenTabbing);
-        window.addEventListener('click', turnOffFocusRingWhenClicking);
-    }
-}
-
-function turnOffFocusRingWhenClicking(e: MouseEvent): void {
-    document.body.classList.remove('user-is-tabbing');
-    window.removeEventListener('click', turnOffFocusRingWhenClicking);
-    window.addEventListener('keydown', turnOnFocusRingWhenTabbing);
-}
-
-window.addEventListener('keydown', turnOnFocusRingWhenTabbing);
+window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
 
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
