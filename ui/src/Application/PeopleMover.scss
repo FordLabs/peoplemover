@@ -115,9 +115,10 @@ textarea:focus {
   box-shadow: 0 0 0 2px $outline-focus-blue;
 }
 
-body:not(.user-is-tabbing)  {
-    button:focus,
-    a:focus {
-        box-shadow: none;
-    }
+body:not(.user-is-tabbing) {
+  button:focus,
+  a:focus,
+  div:focus {
+    box-shadow: none;
+  }
 }
