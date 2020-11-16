@@ -8,7 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup Java JDK
-      uses: actions/setup-java@v1.3.0
+      uses: actions/setup-java@v1.4.3
       with:
         java-version: '11.x'
     - name: Test
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
-        uses: actions/setup-node@v1.4.2
+        uses: actions/setup-node@v1.4.4
         with:
           node-version: 13.x
       - name: NPM Install
@@ -55,14 +55,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
-        uses: actions/setup-node@v1.4.2
+        uses: actions/setup-node@v1.4.4
         with:
           node-version: 13.x
       - name: NPM Install
         run: npm install
         working-directory: ./ui
       - name: Setup Java JDK
-        uses: actions/setup-java@v1.3.0
+        uses: actions/setup-java@v1.4.3
         with:
           java-version: '11.x'
       - name: Test
