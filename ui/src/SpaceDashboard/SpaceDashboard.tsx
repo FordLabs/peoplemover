@@ -18,7 +18,6 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
-import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import {
     AvailableModals,
@@ -109,7 +108,9 @@ function SpaceDashboard({
     function NewSpaceButton(): JSX.Element {
         return (
             <button className="createNewSpaceButton" onClick={onCreateNewSpaceButtonClicked}>
-                <img className="createNewSpaceIcon" src={plusIcon} alt=""/>
+                <i className="material-icons createNewSpaceIcon">
+                    add_circle_outline
+                </i>
                 Create New Space
             </button>
         );

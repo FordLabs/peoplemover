@@ -49,10 +49,10 @@ describe('Calendar', () => {
         const app = renderWithRedux(<Calendar/>, undefined, initialState);
         const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
 
-        await app.findByTestId('calendar-fa-caret-down');
+        await app.findByTestId('calendar_down-arrow');
 
         fireEvent.click(datePickerOpener);
-        await app.findByTestId('calendar-fa-caret-up');
+        await app.findByTestId('calendar_up-arrow');
         fireEvent.click(datePickerOpener);
 
         const calendar = await app.findByTestId('calendar');

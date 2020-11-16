@@ -20,7 +20,6 @@ import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import warningIcon from '../Application/Assets/warningIcon.svg';
 import {Tag} from './Tag.interface';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {JSX} from '@babel/types';
@@ -109,7 +108,7 @@ function MyTagsForm({
                 updateFilterOptions={updateFilterOptions}
             />
             <div className="traitWarning">
-                <img src={warningIcon} className="warningIcon" alt="warning icon"/>
+                <i className="material-icons warningIcon">error</i>
                 <p className="warningText">
                     Editing or deleting a tag will affect any product currently tagged with it.
                 </p>

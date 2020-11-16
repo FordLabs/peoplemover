@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -17,6 +17,7 @@
 
 @import './Colors';
 @import './Buttons';
+@import './Material-Icons';
 
 $focus-state-border: 2px solid $prime-1;
 
@@ -117,4 +118,8 @@ input[type="text"] {
   text-align: left;
   width: 100%;
   margin-left: 5px;
+}
+
+.material-icons {
+  font-size: 20px;
 }

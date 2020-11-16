@@ -55,7 +55,7 @@ function ProductFormEndDateField({ currentProduct, updateProductField }: Props):
                     mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
                     placeholder="MM/DD/YYYY"
                 />
-                {!endDate && <i className="far fa-calendar-alt calendar-icon" />}
+                {!endDate && <i className="material-icons calendar-icon">date_range</i>}
             </div>
         );
     };

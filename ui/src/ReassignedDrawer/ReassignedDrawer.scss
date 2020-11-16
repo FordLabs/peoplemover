@@ -38,6 +38,12 @@
       font-weight: normal;
       font-size: 10px;
       line-height: 11px;
+
+      i {
+        font-size: 10px;
+        margin: 0 2px;
+        font-weight: 900;
+      }
     }
 
     .revertButton {
@@ -51,7 +57,7 @@
 
       i {
         margin-right: 4px;
-        font-size: 9px;
+        font-size: 10px;
       }
     }
   }
