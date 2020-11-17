@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import AssignmentClient from './AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import TestUtils from '../tests/TestUtils';
@@ -26,7 +26,9 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 
-describe('the assignment client', () => {
+jest.mock('axios');
+
+describe('Assignment client', () => {
 
     let originalWindow: Window;
     const cookies = new Cookies();
@@ -40,9 +42,9 @@ describe('the assignment client', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         cookies.set('accessToken', '123456');
-        Axios.get = jest.fn(() => Promise.resolve({} as AxiosResponse));
-        Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
-        Axios.delete = jest.fn(() => Promise.resolve({} as AxiosResponse));
+        Axios.get = jest.fn().mockResolvedValue({});
+        Axios.post = jest.fn().mockResolvedValue({});
+        Axios.delete = jest.fn().mockResolvedValue({});
         originalWindow = window;
         window._paq = [];
     });
@@ -86,7 +88,7 @@ describe('the assignment client', () => {
     });
 
     it('should send matomo error event if assign person fails', async () => {
-        Axios.post = jest.fn(() => Promise.reject({code: 417} as any));
+        Axios.post = jest.fn().mockRejectedValue({code: 417});
 
         const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
             requestedDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -98,9 +100,10 @@ describe('the assignment client', () => {
         try {
             await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space);
         } catch (err) {
-            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]);
+            expect(window._paq).toContainEqual(
+                ['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]
+            );
         }
-
     });
 
     it('should not send matomo event if sendEvent is false', async () => {
@@ -110,11 +113,13 @@ describe('the assignment client', () => {
             products: [],
         };
         await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space, false);
-        expect(window._paq).not.toContainEqual(['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]);
+        expect(window._paq).not.toContainEqual(
+            ['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]
+        );
     });
 
     it('should send not matomo error event if sendEvent is false', async () => {
-        Axios.post = jest.fn(() => Promise.reject({code: 417} as any));
+        Axios.post = jest.fn().mockRejectedValue({code: 417});
 
         const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
             requestedDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -125,14 +130,15 @@ describe('the assignment client', () => {
         try {
             await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space, false);
         } catch (err) {
-            expect(window._paq).not.toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]);
+            expect(window._paq).not.toContainEqual(
+                ['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]
+            );
         }
 
     });
 
     it('should get all effective dates given space', async () => {
         const spaceUuid = 'UUUUUUUUUIDDDD';
-
         const expectedUrl = `/api/assignment/dates/${spaceUuid}`;
 
         await AssignmentClient.getAssignmentEffectiveDates(spaceUuid);
@@ -142,7 +148,6 @@ describe('the assignment client', () => {
 
     it('should delete assignment given assignment', async () => {
         const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
-
         const expectedUrl = '/api/assignment/delete';
         const expectedConfig = {
             headers: {
