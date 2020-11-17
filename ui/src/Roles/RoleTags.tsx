@@ -26,7 +26,7 @@ interface Props {
 
 const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }: Props): JSX.Element => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!!;
+    const uuid = currentSpace.uuid!;
     const tagType = 'role';
     const roleFiltersIndex = 2;
     const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);

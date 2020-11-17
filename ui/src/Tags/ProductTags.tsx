@@ -46,7 +46,7 @@ const ProductTags = ({
     updateFilterOptions,
 }: Props): JSX.Element => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!!;
+    const uuid = currentSpace.uuid!;
     const tagType = 'product tag';
     const productTagFilterIndex = 1;
     const [editProductTagIndex, setEditProductTagIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);

@@ -46,7 +46,7 @@ const LocationTags = ({
     currentSpace,
 }: Props): JSX.Element => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!!;
+    const uuid = currentSpace.uuid!;
     const tagType = 'location';
     const locationFilterIndex = 0;
     const [editLocationIndex, setEditLocationIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);

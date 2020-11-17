@@ -36,7 +36,7 @@ function ProductFormLocationField({
     addGroupedTagFilterOptions,
 }: Props): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!!;
+    const uuid = currentSpace.uuid!;
     const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
     const [typedInLocation, setTypedInLocation] = useState<string>('');
 

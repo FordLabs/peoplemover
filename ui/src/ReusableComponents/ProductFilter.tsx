@@ -58,7 +58,7 @@ function ProductFilter({
     allGroupedTagFilterOptions,
 }: ProductFilterProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!!;
+    const uuid = currentSpace.uuid!;
     const [checkBoxFilterValues, setCheckBoxFilterValues] = useState<Array<FilterOption>>([]);
 
     /* eslint-disable */

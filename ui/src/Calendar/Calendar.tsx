@@ -43,7 +43,7 @@ function Calendar({
 }: CalendarProps
 ): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!!;
+    const uuid = currentSpace.uuid!;
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     const [daysHighlighted, setDaysHighlighted] = useState<Array<Date>>([]);
     const calendarRef = createRef<ReactDatePicker>();

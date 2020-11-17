@@ -44,7 +44,7 @@ function ProductFormProductTagsField({
     addGroupedTagFilterOptions,
 }: Props): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!!;
+    const uuid = currentSpace.uuid!;
     const [typedInProductTag, setTypedInProductTag] = useState<string>('');
     const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
 
