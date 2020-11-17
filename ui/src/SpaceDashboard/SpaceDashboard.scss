@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 $spaceTileWidth: 400px;
 
@@ -44,6 +45,11 @@ $spaceTileWidth: 400px;
   justify-content: center;
   width: 400px;
   height: 128px;
+  margin: 0 auto;
+
+  @include desktop  {
+    margin: 0;
+  }
 
   .createNewSpaceIcon {
     font-size: 34px;
