@@ -33,23 +33,23 @@ export interface EditMenuProps {
 }
 
 function EditMenu(props: EditMenuProps): JSX.Element {
-
-    const hiddenInputRef: any = React.useRef();
-    const editMenuRef: any = React.useRef();
+    const hiddenInputRef = React.useRef<HTMLInputElement>(null);
+    const editMenuRef = React.useRef<HTMLDivElement>(null);
 
     useOnLoad(() => {
         const inputField = hiddenInputRef.current;
-        setTimeout(() => inputField.focus());
+        if (inputField) setTimeout(() => inputField.focus());
         document.addEventListener('mousedown', handleClick, false);
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function handleClick(event: any): void {
         if (editMenuRef && editMenuRef.current && !editMenuRef.current.contains(event.target)) {
             close();
         }
     }
 
-    function onOptionSelected(event: any, callback: any): void {
+    function onOptionSelected(event: React.MouseEvent, callback: Function): void {
         event.stopPropagation();
         event.preventDefault();
         document.removeEventListener('mousedown', handleClick, false);
@@ -67,8 +67,11 @@ function EditMenu(props: EditMenuProps): JSX.Element {
             {props.menuOptionList.map((menuOption, index) =>
                 <div key={index}
                     className="editMenuContainerOption"
-                    onMouseDown={(event): void => onOptionSelected(event, menuOption.callback)}>
-                    <i className="material-icons" data-testid={createDataTestId('editMenuOption', menuOption.text)}>
+                    onMouseDown={(event): void =>
+                        onOptionSelected(event, menuOption.callback)
+                    }>
+                    <i className="material-icons" 
+                        data-testid={createDataTestId('editMenuOption', menuOption.text)}>
                         {menuOption.icon}
                     </i>
                     <span>{menuOption.text}</span>

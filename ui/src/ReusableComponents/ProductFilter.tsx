@@ -57,6 +57,8 @@ function ProductFilter({
     setAllGroupedTagFilterOptions,
     allGroupedTagFilterOptions,
 }: ProductFilterProps): JSX.Element {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const uuid = currentSpace.uuid!!;
     const [checkBoxFilterValues, setCheckBoxFilterValues] = useState<Array<FilterOption>>([]);
 
     /* eslint-disable */
@@ -97,7 +99,7 @@ function ProductFilter({
     }, [allGroupedTagFilterOptions, currentSpace]);
 
     async function buildTagOptions(tagClient: TagClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
-        const tagsResponse: AxiosResponse<Array<Tag>> = await tagClient.get(currentSpace.uuid!!);
+        const tagsResponse: AxiosResponse<Array<Tag>> = await tagClient.get(uuid);
         const tags: Array<Tag> = tagsResponse.data;
         return tags.map((tag: Tag): FilterOption => ({
             label: tag.name,
@@ -181,6 +183,7 @@ function ProductFilter({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
@@ -192,3 +195,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductFilter);
+/* eslint-enable */

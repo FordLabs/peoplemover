@@ -71,7 +71,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
                     setColors(colorsData);
                 });
         }
-    }, [currentSpace.uuid, roles.length, colors.length]);
+    }, [uuid, roles.length, colors.length]);
 
     // @todo abstract filter methods away to redux please
     const getUpdatedFilterOptions = (index: number, trait: Tag, action: TagAction): Array<FilterOption> => {
