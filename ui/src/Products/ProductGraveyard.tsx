@@ -16,14 +16,15 @@
  */
 
 import React, {useState} from 'react';
-import '../Application/Styleguide/Main.scss';
-import './ProductGraveyard.scss';
 import ArchivedProduct from './ArchivedProduct';
 import {Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
+
+import '../Application/Styleguide/Main.scss';
+import './ProductGraveyard.scss';
 
 interface ProductGraveyardProps{
     products: Array<Product>;
@@ -35,7 +36,9 @@ function ProductGraveyard({products, viewingDate}: ProductGraveyardProps): JSX.E
 
     const containee = <div className="archivedProductListContainer">
         {products.map(product => {
-            if (product.archived || product.endDate! < moment(viewingDate).format('YYYY-MM-DD')) {
+            const isArchived = product.archived
+                || (!!product.endDate && product.endDate < moment(viewingDate).format('YYYY-MM-DD'));
+            if (isArchived) {
                 return (
                     <div key={product.id}>
                         <ArchivedProduct product={product}/>
@@ -54,9 +57,11 @@ function ProductGraveyard({products, viewingDate}: ProductGraveyardProps): JSX.E
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
     viewingDate: state.viewingDate,
 });
 
 export default connect(mapStateToProps)(ProductGraveyard);
+/* eslint-enable */

@@ -56,7 +56,13 @@ function ReassignedDrawer({
         mapsReassignments(reassignment, index)
     ));
 
-    const containee: JSX.Element = <div className="reassignmentContainer" data-testid="reassignmentContainer">{listOfHTMLReassignments}</div>;
+    const containee: JSX.Element = (
+        <div 
+            className="reassignmentContainer" 
+            data-testid="reassignmentContainer">
+            {listOfHTMLReassignments}
+        </div>
+    );
 
     return (
         <DrawerContainer
@@ -103,6 +109,7 @@ function ReassignedDrawer({
     }
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
     viewingDate: state.viewingDate,
@@ -114,3 +121,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReassignedDrawer);
+/* eslint-enable */
