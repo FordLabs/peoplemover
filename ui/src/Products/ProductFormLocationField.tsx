@@ -45,7 +45,7 @@ function ProductFormLocationField({
             .then(result => {
                 setAvailableLocations(result.data);
             });
-    }, [currentSpace.uuid]);
+    }, [uuid]);
 
     function optionToSpaceLocation(option: Option): LocationTag {
         return {
