@@ -17,27 +17,36 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
-
 import {closeModalAction} from '../Redux/Actions';
-
-import './AssignmentExistsWarning.scss';
 import {Dispatch} from 'redux';
 
-export interface AssignmentExistsWarningProps {
+import './AssignmentExistsWarning.scss';
+
+export interface Props {
     closeModal(): void;
 }
 
-function AssignmentExistsWarning(props: AssignmentExistsWarningProps) {
-    return (<>
-        <div className="warningText">This person is already assigned to this product.</div>
-        <div>
-            <button className="formButton warningOkayButton" onClick={props.closeModal}>Okay</button>
-        </div>
-    </>);
+function AssignmentExistsWarning(props: Props): JSX.Element {
+    return (
+        <>
+            <div className="warningText">
+                This person is already assigned to this product.
+            </div>
+            <div>
+                <button
+                    className="formButton warningOkayButton"
+                    onClick={props.closeModal}>
+                    Okay
+                </button>
+            </div>
+        </>
+    );
 }
 
+/* eslint-disable */
 const mapDispatchToProps = (dispatch:  Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
 });
 
 export default connect(null, mapDispatchToProps)(AssignmentExistsWarning);
+/* eslint-enable */
