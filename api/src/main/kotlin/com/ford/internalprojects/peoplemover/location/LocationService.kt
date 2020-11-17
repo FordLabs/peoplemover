@@ -50,10 +50,7 @@ class LocationService(
     fun editLocation(spaceUuid: String, locationEditRequest: LocationEditRequest): SpaceLocation {
         val space: Space = spaceRepository.findByUuid(spaceUuid)
                 ?: throw SpaceNotExistsException(spaceUuid)
-        spaceLocationRepository.findBySpaceIdAndName(
-                space.id!!,
-                locationEditRequest.name
-        )?.let { throw LocationAlreadyExistsException(locationEditRequest.name) }
+
         val spaceLocationToEdit = SpaceLocation(
                 id = locationEditRequest.id,
                 spaceId = space.id!!,

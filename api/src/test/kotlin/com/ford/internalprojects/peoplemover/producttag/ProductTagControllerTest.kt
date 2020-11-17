@@ -210,16 +210,4 @@ class ProductTagControllerTest {
             .andExpect(status().isBadRequest)
     }
 
-    @Test
-    fun `PUT should return 409 when trying to edit product tag name to existing name`() {
-        val productTag1: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "FordX"))
-        val productTag2: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech"))
-        val updatedTag = ProductTagEditRequest(id = productTag1.id!!, name = productTag2.name)
-
-        mockMvc.perform(put(baseProductTagsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updatedTag)))
-            .andExpect(status().isConflict)
-    }
 }
