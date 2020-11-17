@@ -71,6 +71,7 @@ function ProductSortBy({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     productSortBy: state.productSortBy,
 });
@@ -80,3 +81,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSortBy);
+/* eslint-enable */

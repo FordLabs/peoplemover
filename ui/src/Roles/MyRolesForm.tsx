@@ -50,11 +50,13 @@ interface Props {
 }
 
 function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const uuid = currentSpace.uuid!!;
     const [colors, setColors] = useState<Array<Color>>([]);
     const [roles, setRoles] = useState<Array<RoleTag>>([]);
 
     useEffect(() => {
-        const rolesPromise = RoleClient.get(currentSpace.uuid!!);
+        const rolesPromise = RoleClient.get(uuid);
         const colorsPromise = ColorClient.getAllColors();
 
         const fetchData = !roles.length && !colors.length;
