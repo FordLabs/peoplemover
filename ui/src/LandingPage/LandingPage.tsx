@@ -24,7 +24,7 @@ import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import './LandingPage.scss';
 
 function LandingPage(): JSX.Element {
-    const LoginButton = () => (
+    const LoginButton = (): JSX.Element => (
         <a href="/user/login">
             <FormButton className="getStartedButton">
                 Get Started
