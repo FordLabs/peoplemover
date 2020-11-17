@@ -35,11 +35,13 @@ function ProductFormLocationField({
     currentSpace,
     addGroupedTagFilterOptions,
 }: Props): JSX.Element {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const uuid = currentSpace.uuid!!;
     const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
     const [typedInLocation, setTypedInLocation] = useState<string>('');
 
     useEffect(() => {
-        LocationClient.get(currentSpace.uuid!!)
+        LocationClient.get(uuid)
             .then(result => {
                 setAvailableLocations(result.data);
             });
@@ -56,7 +58,7 @@ function ProductFormLocationField({
     function createLocationOption(location: LocationTag): Option {
         return {
             label: location.name,
-            value: location.id!.toString(),
+            value: location.id ? location.id.toString() : '',
         };
     }
 
@@ -77,7 +79,7 @@ function ProductFormLocationField({
         const location: TagRequest = {
             name: inputValue,
         };
-        LocationClient.add(location, currentSpace.uuid!!).then((result: AxiosResponse) => {
+        LocationClient.add(location, uuid).then((result: AxiosResponse) => {
             const newLocation: LocationTag = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
             addGroupedTagFilterOptions(0, newLocation as Tag);
@@ -115,15 +117,17 @@ function ProductFormLocationField({
                 placeholder="Add a location tag"
                 hideSelectedOptions={true}
                 isClearable={true}
-                noOptionsMessage={() => `+ Create "${typedInLocation}"` }
+                noOptionsMessage={(): string => `+ Create "${typedInLocation}"` }
                 value={locationOptionValue()}
             />
         </div>
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
 });
 
 export default connect(mapStateToProps)(ProductFormLocationField);
+/* eslint-enable */
