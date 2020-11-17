@@ -34,7 +34,7 @@ import {Space} from '../Space/Space';
 
 interface Props {
     locations: Array<Tag>;
-    updateLocations: any;
+    updateLocations(Function: (prevProductTag: Array<Tag>) => Tag[]): void;
     updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
     currentSpace: Space;
 }
@@ -45,6 +45,8 @@ const LocationTags = ({
     updateFilterOptions,
     currentSpace,
 }: Props): JSX.Element => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const uuid = currentSpace.uuid!!;
     const tagType = 'location';
     const locationFilterIndex = 0;
     const [editLocationIndex, setEditLocationIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
@@ -66,7 +68,7 @@ const LocationTags = ({
     };
 
     const editLocation = async (location: TagRequest): Promise<unknown> => {
-        return await LocationClient.edit(location, currentSpace.uuid!!)
+        return await LocationClient.edit(location, uuid)
             .then((response) => {
                 const newLocation: Tag = response.data;
                 updateFilterOptions(locationFilterIndex, newLocation, TagAction.EDIT);
@@ -80,7 +82,7 @@ const LocationTags = ({
     };
 
     const addLocation = async (location: TagRequest): Promise<unknown> => {
-        return await LocationClient.add(location, currentSpace.uuid!!)
+        return await LocationClient.add(location, uuid)
             .then((response) => {
                 const newLocation: Tag = response.data;
                 updateFilterOptions(locationFilterIndex, newLocation, TagAction.ADD);

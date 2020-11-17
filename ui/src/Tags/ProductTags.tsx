@@ -34,7 +34,7 @@ import {Space} from '../Space/Space';
 
 interface Props {
     productTags: Array<Tag>;
-    updateProductTags: any;
+    updateProductTags(Function: (prevProductTag: Array<Tag>) => Tag[]): void;
     updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
     currentSpace: Space;
 }
@@ -45,6 +45,8 @@ const ProductTags = ({
     currentSpace,
     updateFilterOptions,
 }: Props): JSX.Element => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const uuid = currentSpace.uuid!!;
     const tagType = 'product tag';
     const productTagFilterIndex = 1;
     const [editProductTagIndex, setEditProductTagIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
@@ -66,7 +68,7 @@ const ProductTags = ({
     };
 
     const editProductTag = async (productTag: TagRequest): Promise<unknown> => {
-        return await ProductTagClient.edit(productTag, currentSpace.uuid!!)
+        return await ProductTagClient.edit(productTag, uuid)
             .then((response) => {
                 const newProductTag: Tag = response.data;
                 updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.EDIT);
@@ -81,7 +83,7 @@ const ProductTags = ({
     };
 
     const addProductTag = async (productTag: TagRequest): Promise<unknown> => {
-        return await ProductTagClient.add(productTag, currentSpace.uuid!!)
+        return await ProductTagClient.add(productTag, uuid)
             .then((response) => {
                 const newProductTag: Tag = response.data;
                 updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.ADD);
