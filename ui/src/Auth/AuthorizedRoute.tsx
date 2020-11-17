@@ -20,13 +20,24 @@ import React, {useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
+import {AxiosError} from 'axios';
+import {setIsReadOnlyAction} from '../Redux/Actions';
+import {connect} from 'react-redux';
 
-export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Element {
-    const {children, ...rest} = props;
+const HTTP_UNAUTHORIZED = 401;
+const HTTP_FORBIDDEN = 403;
+
+interface AuthorizedRouteProps extends RouteProps {
+    setIsReadOnly(isReadOnly: boolean): boolean;
+}
+
+function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX.Element {
+    const {children, setIsReadOnly, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     useOnLoad(() => {
         if (!window.runConfig.auth_enabled) {
+            setIsReadOnly(false);
             setRenderedElement(<>{children}</>);
         } else {
             const cookie = new Cookies();
@@ -35,10 +46,31 @@ export default function AuthorizedRoute<T extends RouteProps>(props: T): JSX.Ele
             const uuid = window.location.pathname.replace('/', '');
 
             AccessTokenClient.userCanAccessSpace(accessToken, uuid)
-                .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
-                .catch(() => setRenderedElement(<Redirect to={'/user/login'}/>));
+                .then(() => {
+                    setRenderedElement(<Route {...rest}>{children}</Route>);
+                    setIsReadOnly(false);
+                })
+                .catch((error: AxiosError) => {
+                    setIsReadOnly(true);
+                    switch (error.response!.status) {
+                        case HTTP_FORBIDDEN: {
+                            setRenderedElement(<Route {...rest}>{children}</Route>);
+                            break;
+                        }
+                        case HTTP_UNAUTHORIZED:
+                        default: {
+                            setRenderedElement(<Redirect to={'/user/login'}/>);
+                        }
+                    }
+                });
         }
     });
 
     return <>{renderedElement}</>;
 }
+
+const mapDispatchToProps = (dispatch: any) => ({
+    setIsReadOnly: (isReadOnly: boolean) => dispatch(setIsReadOnlyAction(isReadOnly)),
+});
+
+export default connect(null, mapDispatchToProps)(AuthorizedRoute);
