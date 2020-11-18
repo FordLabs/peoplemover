@@ -125,10 +125,18 @@ function ProductFilter({
             option => (
                 {
                     ...option,
-                    selected: selectedOptions.includes(option),
+                    selected: selectedOptions && selectedOptions.includes(option),
                 }
             )
         );
+    }
+
+    function sendMatomoEvent(selectedOptions: Array<FilterOption>): void {
+        let selectedOptionsString = 'filter selected';
+        if (selectedOptions) {
+            selectedOptionsString = selectedOptions.filter(option => option.selected).map(option => option.label).join(', ');
+        }
+        MatomoEvents.pushEvent(currentSpace.name, 'filterProducts', selectedOptionsString);
     }
 
     function applyFilter(selectedOptions: Array<FilterOption>): void {
@@ -151,8 +159,7 @@ function ProductFilter({
             {...allGroupedTagFilterOptions[2], options: updatedRoleTags},
         ]);
 
-        const selectedOptionsString = selectedOptions.filter(option => option.selected).map(option => option.label).join(", ");
-        MatomoEvents.pushEvent(currentSpace.name, "filterProducts", selectedOptionsString);
+        sendMatomoEvent(selectedOptions);
     }
 
     return (
