@@ -58,15 +58,14 @@
 }
 
 .productNameEditContainer {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
   padding: 6px 5px 6px 9px;
   position: relative;
 }
 
 .productDetails {
-  align-self: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .productName {
     margin: 0;
@@ -75,14 +74,15 @@
     color: $gray-1;
     word-break: break-word;
   }
+}
 
-  .productTagContainer {
-    margin-bottom: 6px;
-    margin-top: 4px;
-    font-size: 10px;
-    line-height: 11px;
-    color: $gray-1;
-  }
+.productTagContainer {
+  margin-bottom: 6px;
+  margin-top: 0;
+  font-size: 10px;
+  line-height: 11px;
+  color: $gray-1;
+  overflow-wrap: break-word;
 }
 
 .productControlsContainer {

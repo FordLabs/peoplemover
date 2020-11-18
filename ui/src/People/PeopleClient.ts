@@ -39,7 +39,8 @@ class PeopleClient {
     }
 
     static async createPersonForSpace(space: Space, person: Person): Promise<AxiosResponse> {
-        const url = this.getBasePeopleUrl(space.uuid!!);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const url = this.getBasePeopleUrl(space.uuid!);
         let config = {
             headers: {
                 'Content-Type': 'application/json',

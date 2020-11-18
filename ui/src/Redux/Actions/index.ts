@@ -172,7 +172,7 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
 
 export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return ProductTagClient.get(getState().currentSpace.uuid!!,)
+        return ProductTagClient.get(getState().currentSpace.uuid!,)
             .then(result => {
                 let productTags: Array<ProductTag> = result.data || [];
                 productTags = productTags.sort((a, b) => {

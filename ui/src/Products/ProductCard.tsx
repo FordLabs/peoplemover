@@ -119,7 +119,7 @@ function ProductCard({
         return ProductClient.editProduct(currentSpace, archivedProduct);
     }
 
-    const setCurrentModalToCreateAssignment = () => setCurrentModal({
+    const setCurrentModalToCreateAssignment = (): void => setCurrentModal({
         modal: AvailableModals.CREATE_ASSIGNMENT,
         item: product,
     });
@@ -165,24 +165,24 @@ function ProductCard({
                                 <h2 className="productName" data-testid="productName">
                                     {product.name}
                                 </h2>
-                                <TagList />
-                            </div>
-                            <div className="productControlsContainer">
-                                <div className="addPersonIconContainer">
-                                    <div data-testid={createDataTestId('addPersonToProductIcon', product.name)}
-                                        className="addPersonIcon material-icons greyIcon clickableIcon"
-                                        onClick={setCurrentModalToCreateAssignment}
-                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
-                                        person_add
+                                <div className="productControlsContainer">
+                                    <div className="addPersonIconContainer">
+                                        <div data-testid={createDataTestId('addPersonToProductIcon', product.name)}
+                                            className="addPersonIcon material-icons greyIcon clickableIcon"
+                                            onClick={setCurrentModalToCreateAssignment}
+                                            onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
+                                            person_add
+                                        </div>
+                                    </div>
+                                    <div className="editIcon material-icons greyIcon clickableIcon"
+                                        data-testid={createDataTestId('editProductIcon', product.name)}
+                                        onClick={toggleEditMenu}
+                                        onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
+                                        more_vert
                                     </div>
                                 </div>
-                                <div className="editIcon material-icons greyIcon clickableIcon"
-                                    data-testid={createDataTestId('editProductIcon', product.name)}
-                                    onClick={toggleEditMenu}
-                                    onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
-                                    more_vert
-                                </div>
                             </div>
+                            <TagList />
                             {
                                 isEditMenuOpen &&
                                 <EditMenu menuOptionList={getMenuOptionList()}

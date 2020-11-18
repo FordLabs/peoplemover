@@ -78,11 +78,10 @@ describe('SpaceDashboard', () => {
 
     describe('if spaces are present', () => {
         let component: RenderResult;
-        let fakeAccessToken: string;
         let history: MemoryHistory;
 
         beforeEach(async () => {
-            ({component, fakeAccessToken, history} = await createTestComponent());
+            ({component, history} = await createTestComponent());
         });
 
         it('should redirect to space when a space in the dashboard is clicked', async () => {
@@ -135,7 +134,6 @@ describe('SpaceDashboard', () => {
 
     const createTestComponent = async (hasSpaces = true): Promise<{
         component: RenderResult;
-        fakeAccessToken: string;
         cookies: Cookies;
         history: MemoryHistory;
     }> => {
@@ -160,6 +158,6 @@ describe('SpaceDashboard', () => {
             );
         });
 
-        return {component, fakeAccessToken, cookies, history};
+        return {component, cookies, history};
     };
 });

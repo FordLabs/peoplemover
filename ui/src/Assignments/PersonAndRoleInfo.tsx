@@ -58,8 +58,8 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, isUnassignedPro
             className="personNameAndRoleContainer">
             <div className={`${assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
                 data-testid="personName"
-                onMouseEnter={e => onNoteHover(true)}
-                onMouseLeave={e => onNoteHover(false)}>
+                onMouseEnter={(): void => onNoteHover(true)}
+                onMouseLeave={(): void => onNoteHover(false)}>
                 {assignment.person.name}
                 {!!assignment.person.notes &&
                     <i className="material-icons notesIcon" data-testid="notesIcon">

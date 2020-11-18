@@ -1,6 +1,5 @@
 package com.ford.internalprojects.peoplemover
 
-import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile

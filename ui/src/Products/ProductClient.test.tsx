@@ -19,7 +19,6 @@
 
 import ProductClient from './ProductClient';
 import {Product} from './Product';
-import axios, {AxiosResponse} from 'axios';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
@@ -38,21 +37,20 @@ describe('Product Client', function() {
     };
     const cookies = new Cookies();
 
-
     beforeEach(() => {
         cookies.set('accessToken', '123456');
-        Axios.post = jest.fn(x => Promise.resolve({
+        Axios.post = jest.fn().mockResolvedValue({
             data: 'Created Product',
-        } as AxiosResponse));
-        Axios.put = jest.fn(x => Promise.resolve({
+        });
+        Axios.put = jest.fn().mockResolvedValue({
             data: 'Updated Product',
-        } as AxiosResponse));
-        Axios.delete = jest.fn(x => Promise.resolve({
+        });
+        Axios.delete = jest.fn().mockResolvedValue({
             data: 'Deleted Product',
-        } as AxiosResponse));
-        Axios.get = jest.fn(x => Promise.resolve({
+        });
+        Axios.get = jest.fn().mockResolvedValue({
             data: 'Get Products',
-        } as AxiosResponse));
+        });
     });
 
     afterEach(() => {
@@ -92,17 +90,16 @@ describe('Product Client', function() {
     it('should return the products given a date', function(done) {
         const date = '2019-01-10';
         const expectedUrl = baseProductsUrl + `?requestedDate=${date}`;
-        ProductClient.getProductsForDate(TestUtils.space.uuid!!, new Date(2019, 0, 10))
+        const spaceUuid = TestUtils?.space?.uuid || '';
+        ProductClient.getProductsForDate(spaceUuid, new Date(2019, 0, 10))
             .then((response) => {
                 expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Get Products');
                 done();
             });
-
     });
 
     describe('Matomo', () => {
-
         let originalWindow: Window;
         const expectedName = 'Floam';
         const product: Product = {
@@ -123,20 +120,18 @@ describe('Product Client', function() {
         });
 
         it('should push create product action on create', async () => {
-            const expectedResponse = {};
-            axios.post = jest.fn(() => Promise.resolve(expectedResponse as any));
+            const expectedResponse = { post: true };
+            Axios.post = jest.fn().mockResolvedValue(expectedResponse);
 
             const axiosResponse = await ProductClient.createProduct(TestUtils.space, product);
-
             expect(axiosResponse).toBe(expectedResponse);
 
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'createProduct', expectedName]);
-
         });
 
         it('should push createError on create with failure code', async () => {
-            const expectedResponse = {code: 417};
-            axios.post = jest.fn(() => Promise.reject(expectedResponse as any));
+            const expectedResponse = { code: 417 };
+            Axios.post = jest.fn().mockRejectedValue(expectedResponse);
 
             try {
                 await ProductClient.createProduct(TestUtils.space, product);
@@ -144,31 +139,26 @@ describe('Product Client', function() {
             } catch (err)  {
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'createProductError', expectedName, expectedResponse.code]);
             }
-
         });
 
         it('should push delete product action on delete', async () => {
-            const expectedResponse = {};
-            axios.delete = jest.fn(() => Promise.resolve(expectedResponse as any));
+            const expectedResponse = { delete: true };
+            Axios.delete = jest.fn().mockResolvedValue(expectedResponse);
 
             const axiosResponse = await ProductClient.deleteProduct(TestUtils.space, product);
-
             expect(axiosResponse).toBe(expectedResponse);
 
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'deleteProduct', expectedName]);
-
         });
 
         it('should push edit product action on edit', async () => {
-            const expectedResponse = {};
-            axios.put = jest.fn(() => Promise.resolve(expectedResponse as any));
+            const expectedResponse = { put: true };
+            Axios.put = jest.fn().mockResolvedValue(expectedResponse);
 
             const axiosResponse = await ProductClient.editProduct(TestUtils.space, product);
-
             expect(axiosResponse).toBe(expectedResponse);
 
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'editProduct', expectedName]);
-
         });
     });
 });

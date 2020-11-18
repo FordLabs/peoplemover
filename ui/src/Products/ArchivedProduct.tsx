@@ -46,8 +46,10 @@ function ArchivedProduct({product, setCurrentModal}: ArchiveProductProps): JSX.E
     );
 }
 
+/* eslint-disable */
 const mapDispatchToProps = (dispatch:  Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(null, mapDispatchToProps)(ArchivedProduct);
+/* eslint-enable */

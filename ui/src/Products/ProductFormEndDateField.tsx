@@ -23,7 +23,7 @@ import {Product} from './Product';
 
 interface Props {
     currentProduct: Product;
-    updateProductField: (fieldName: string, fieldValue: any) => void;
+    updateProductField: (fieldName: string, fieldValue: string) => void;
 }
 
 function ProductFormEndDateField({ currentProduct, updateProductField }: Props): JSX.Element {

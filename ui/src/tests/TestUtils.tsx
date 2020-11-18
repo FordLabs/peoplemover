@@ -80,6 +80,7 @@ export const mockDate = (expected: Date): () => void => {
 
     // Our mock is not a full implementation of Date
     // Types will not match but it's good enough for our tests
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     global.Date = MockDate as any;
 
     // Callback function to remove the Date mock
@@ -385,7 +386,7 @@ class TestUtils {
         name: 'I am archived',
         spaceId: 1,
         startDate: '',
-        endDate: '',
+        endDate: '2020-11-02',
         spaceLocation: TestUtils.detroit,
         assignments: [],
         archived: true,

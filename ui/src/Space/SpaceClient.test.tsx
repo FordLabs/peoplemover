@@ -28,7 +28,6 @@ declare let window: MatomoWindow;
 
 describe('Space Client', function() {
     const baseSpaceUrl = `/api/spaces`;
-    const uuid = 'spaceUUID';
     const cookies = new Cookies();
     const expectedConfig = {
         headers: {

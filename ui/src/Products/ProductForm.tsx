@@ -169,7 +169,8 @@ function ProductForm({
     }
 
     function determineIfProductIsArchived(): boolean {
-        return product?.endDate! < moment(viewingDate).format('YYYY-MM-DD');
+        if (!product?.endDate) return false;
+        return product.endDate < moment(viewingDate).format('YYYY-MM-DD');
     }
 
     function displayDeleteProductModal(): void {
