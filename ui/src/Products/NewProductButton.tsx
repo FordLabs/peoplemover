@@ -39,8 +39,10 @@ function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}
     );
 }
 
+/* eslint-disable */
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(null, mapDispatchToProps)(NewProductButton);
+/* eslint-enable */

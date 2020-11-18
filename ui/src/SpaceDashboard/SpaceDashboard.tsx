@@ -127,6 +127,7 @@ function SpaceDashboard({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     userSpaces: state.userSpaces,
 });
@@ -139,3 +140,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboard);
+/* eslint-enable */

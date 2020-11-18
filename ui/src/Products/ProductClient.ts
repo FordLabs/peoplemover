@@ -19,11 +19,8 @@ import Axios, {AxiosResponse} from 'axios';
 import {Product} from './Product';
 import moment from 'moment';
 import {getToken} from '../Auth/TokenProvider';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {Space} from '../Space/Space';
-
-declare let window: MatomoWindow;
 
 class ProductClient {
     private static getBaseProductsUrl(spaceUuid: string): string {
@@ -31,7 +28,8 @@ class ProductClient {
     }
 
     static async createProduct(space: Space, product: Product): Promise<AxiosResponse> {
-        const url = this.getBaseProductsUrl(space.uuid!!);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const url = this.getBaseProductsUrl(space.uuid!);
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -49,7 +47,8 @@ class ProductClient {
     }
 
     static async editProduct(space: Space, product: Product): Promise<AxiosResponse> {
-        const url = this.getBaseProductsUrl(space.uuid!!) + `/${product.id}`;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const url = this.getBaseProductsUrl(space.uuid!) + `/${product.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -64,7 +63,8 @@ class ProductClient {
     }
 
     static async deleteProduct(space: Space, product: Product): Promise<AxiosResponse> {
-        const url = this.getBaseProductsUrl(space.uuid!!) + `/${product.id}`;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const url = this.getBaseProductsUrl(space.uuid!) + `/${product.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',

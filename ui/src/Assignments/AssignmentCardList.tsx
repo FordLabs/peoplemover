@@ -106,11 +106,17 @@ function AssignmentCardList({
         }
     }
 
+    function setAntiHighlightCoverDisplay(display: string): void {
+        if (antiHighlightCoverRef.current) {
+            antiHighlightCoverRef.current.style.display = display;
+        }
+    }
+
     function stopDraggingAssignment(): void {
         window.removeEventListener('mousemove', makeAssignmentCardDraggable);
         window.removeEventListener('mouseup', stopDraggingAssignment);
 
-        antiHighlightCoverRef.current!.style.display = 'none';
+        setAntiHighlightCoverDisplay('none');
 
         onDrop().then();
     }
@@ -182,7 +188,7 @@ function AssignmentCardList({
 
     function makeAssignmentCardDraggable(e: MouseEvent): void {
         if (draggingAssignmentRef != null && draggingAssignmentRef.ref.current != null) {
-            antiHighlightCoverRef.current!.style.display = 'block';
+            setAntiHighlightCoverDisplay('block');
             const top = e.clientY - draggingAssignmentRef.draggedCardOffset.y;
             const left = e.clientX - draggingAssignmentRef.draggedCardOffset.x;
             scrollWindowIfNeeded(top);
@@ -235,6 +241,7 @@ function AssignmentCardList({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     productRefs: state.productRefs,
     currentSpace: state.currentSpace,
@@ -248,3 +255,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCardList);
+/* eslint-enable */

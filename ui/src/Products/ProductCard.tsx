@@ -119,7 +119,7 @@ function ProductCard({
         return ProductClient.editProduct(currentSpace, archivedProduct);
     }
 
-    const setCurrentModalToCreateAssignment = () => setCurrentModal({
+    const setCurrentModalToCreateAssignment = (): void => setCurrentModal({
         modal: AvailableModals.CREATE_ASSIGNMENT,
         item: product,
     });
