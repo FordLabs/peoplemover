@@ -72,7 +72,7 @@ function ProductSortBy({
                 onChange={(value): void => {
                     const sortByOption = (value as SortByOption).value;
                     setProductSortBy(sortByOption);
-                    MatomoEvents.pushEvent(currentSpace.name, 'productSort', sortByOption);
+                    MatomoEvents.pushEvent(currentSpace.name, 'sort', sortByOption);
                 }}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
         </div>

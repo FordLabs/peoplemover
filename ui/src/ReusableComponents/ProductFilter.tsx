@@ -138,7 +138,7 @@ function ProductFilter({
         if (selectedOptions) {
             selectedOptionsString = selectedOptions.filter(option => option.selected).map(option => option.label).join(', ');
         }
-        MatomoEvents.pushEvent(currentSpace.name, 'filterProducts', selectedOptionsString);
+        MatomoEvents.pushEvent(currentSpace.name, 'filter', selectedOptionsString);
     }
 
     function applyFilter(selectedOptions: Array<FilterOption>): void {
