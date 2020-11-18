@@ -34,7 +34,7 @@ class ProductTagService(
 ) {
     fun createProductTagForSpace(addRequest: ProductTagAddRequest, spaceUuid: String): ProductTag {
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        productTagRepository.findByNameAllIgnoreCaseAndSpaceId(addRequest.name, space.id!!)
+        productTagRepository.findAllByNameIgnoreCaseAndSpaceId(addRequest.name, space.id!!)
                 ?.let { throw ProductTagAlreadyExistsForSpaceException() }
         return productTagRepository.saveAndUpdateSpaceLastModified(ProductTag(spaceId = space.id, name = addRequest.name))
     }
@@ -61,12 +61,7 @@ class ProductTagService(
             spaceUuid: String,
             tagEditRequest: ProductTagEditRequest
     ): ProductTag {
-        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
-
-        productTagRepository.findByNameAllIgnoreCaseAndSpaceId(
-                tagEditRequest.name,
-                space.id!!
-        )?.let { throw ProductTagAlreadyExistsForSpaceException() }
+        spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
 
         val tagFound = productTagRepository.findByIdOrNull(tagEditRequest.id)
                 ?: throw ProductTagNotExistsForSpaceException()
