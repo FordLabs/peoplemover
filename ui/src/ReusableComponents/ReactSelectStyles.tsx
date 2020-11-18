@@ -52,12 +52,14 @@ export const reactSelectStyles = {
         color: props.data.__isNew__ ? '#5463B0' : '#403D3D',
         fontFamily: 'Helvetica, sans-serif',
         fontSize: '12px',
+        lineHeight: '13.8px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0px 17px 0 0px',
-        height: '30px',
+        padding: '6px 17px 6px 0px',
+        minHeight: '30px',
         margin: '3px 0px',
+        overflowWrap: 'break-word',
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
@@ -75,7 +77,9 @@ export const reactSelectStyles = {
         alignItems: 'center',
         fontFamily: 'Helvetica, sans-serif',
         fontSize: '12px',
-        maxWidth: 'unset',
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        maxWidth: '140px',
     }),
     clearIndicator: (provided: CSSProperties): CSSProperties => ({
         ...provided,
