@@ -57,8 +57,10 @@ function SpaceSelectionTabs({
     );
 }
 
+/* eslint-disable */
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(null, mapDispatchToProps)(SpaceSelectionTabs);
+/* eslint-enable */

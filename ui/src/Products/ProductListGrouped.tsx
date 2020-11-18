@@ -141,9 +141,11 @@ function GroupedByList({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     productTags: state.productTags,
     locations: state.locations,
 });
 
 export default connect(mapStateToProps)(GroupedByList);
+/* eslint-enable */

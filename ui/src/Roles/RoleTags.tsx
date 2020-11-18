@@ -19,12 +19,14 @@ import {RoleEditRequest} from './RoleEditRequest.interface';
 interface Props {
     colors: Array<Color>;
     roles: Array<RoleTag>;
-    setRoles: any;
+    setRoles(Function: (roles: Array<Tag>) => Tag[]): void;
     updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
     currentSpace: Space;
 }
 
 const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }: Props): JSX.Element => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const uuid = currentSpace.uuid!;
     const tagType = 'role';
     const roleFiltersIndex = 2;
     const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
@@ -46,7 +48,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
     };
 
     const editRole = async (role: RoleEditRequest): Promise<unknown> => {
-        return await RoleClient.edit(role, currentSpace.uuid!!)
+        return await RoleClient.edit(role, uuid)
             .then((response) => {
                 const newRole: RoleTag = response.data;
                 updateFilterOptions(roleFiltersIndex, newRole, TagAction.EDIT);
@@ -64,7 +66,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
             name: role.name,
             colorId: role.colorId,
         };
-        return await RoleClient.add(newRole, currentSpace.uuid!!)
+        return await RoleClient.add(newRole, uuid)
             .then((response) => {
                 const newRole: RoleTag = response.data;
                 updateFilterOptions(roleFiltersIndex, newRole, TagAction.ADD);

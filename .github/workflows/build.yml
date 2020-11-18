@@ -1,6 +1,12 @@
 name: build
 
-on: push
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - stage
+  pull_request:
 
 jobs:
   build-api:

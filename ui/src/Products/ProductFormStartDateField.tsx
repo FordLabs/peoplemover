@@ -18,14 +18,14 @@
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import MaskedInput from 'react-text-mask';
-import React, {useState} from 'react';
+import React, {PropsWithChildren, useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Product} from './Product';
 
 interface Props {
     currentProduct: Product;
-    updateProductField: (fieldName: string, fieldValue: any) => void;
+    updateProductField: (fieldName: string, fieldValue: string) => void;
     viewingDate: string;
 }
 
@@ -51,7 +51,7 @@ function ProductFormStartDateField({ currentProduct, viewingDate, updateProductF
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const CustomInput = ({ value, onClick, onChange }: any): JSX.Element => {
+    const CustomInput = ({ value, onClick, onChange }: React.PropsWithChildren<any>): JSX.Element => {
         return (
             <div onClick={onClick} onKeyDown={(e): void => handleKeyDownForOnClick(e, onClick)}>
                 <MaskedInput
@@ -68,7 +68,9 @@ function ProductFormStartDateField({ currentProduct, viewingDate, updateProductF
         );
     };
 
-    const DateInput = React.forwardRef((props, ref) => <CustomInput innerRef={ref} {...props} />);
+    const DateInput = React.forwardRef(
+        (props, ref) => <CustomInput innerRef={ref} {...props} />
+    );
 
     return (
         <div className="formItem" data-testid="productFormStartDateField">
@@ -82,8 +84,10 @@ function ProductFormStartDateField({ currentProduct, viewingDate, updateProductF
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
 });
 
 export default connect(mapStateToProps)(ProductFormStartDateField);
+/* eslint-enable */
