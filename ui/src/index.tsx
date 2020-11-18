@@ -36,6 +36,7 @@ import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
+import FocusRing from "./FocusRing";
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -65,7 +66,9 @@ const store = createStore(
 );
 
 declare global {
-    interface Window { runConfig: RunConfig }
+    interface Window {
+        runConfig: RunConfig;
+    }
 }
 
 export interface RunConfig {
@@ -75,6 +78,8 @@ export interface RunConfig {
     adfs_client_id: string;
     adfs_resource: string;
 }
+
+window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
 
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
@@ -96,8 +101,8 @@ if (isUnsupportedBrowser()) {
     ReactDOM.render(<UnsupportedBrowserPage/>, document.getElementById('root'));
 } else {
     Axios.get(`/api/config`,
-        {headers: { 'Content-Type': 'application/json'}}
-    ).then( (response) => {
+        {headers: {'Content-Type': 'application/json'}}
+    ).then((response) => {
 
         window.runConfig = Object.freeze(response.data);
 
@@ -131,7 +136,7 @@ if (isUnsupportedBrowser()) {
                         </Route>
 
                         <Route>
-                            <Redirect to={`/error/404`} />
+                            <Redirect to={`/error/404`}/>
                         </Route>
                     </Switch>
                 </Router>
