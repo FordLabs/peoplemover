@@ -58,7 +58,7 @@
 }
 
 .productNameEditContainer {
-  padding: 6px 5px 6px 9px;
+  padding: 6px 0 6px 9px;
   position: relative;
 }
 
@@ -99,12 +99,13 @@
     font-weight: bold;
     color: $font-color;
     margin-left: 2px;
-    font-size: 24px;
+    font-size: 20px;
   }
 }
 
 .material-icons.addPersonIcon {
   font-size: 18px;
+  padding-left: 6px;
 }
 
 button.clickableIcon {
