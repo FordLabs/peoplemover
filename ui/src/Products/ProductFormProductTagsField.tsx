@@ -43,11 +43,13 @@ function ProductFormProductTagsField({
     currentSpace,
     addGroupedTagFilterOptions,
 }: Props): JSX.Element {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const uuid = currentSpace.uuid!;
     const [typedInProductTag, setTypedInProductTag] = useState<string>('');
     const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
 
     useOnLoad(() => {
-        ProductTagClient.get(currentSpace.uuid!!).then(result => setAvailableProductTags(result.data));
+        ProductTagClient.get(uuid).then(result => setAvailableProductTags(result.data));
 
         setSelectedProductTags(currentProduct.productTags);
     });
@@ -122,8 +124,10 @@ function ProductFormProductTagsField({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
 });
 
 export default connect(mapStateToProps)(ProductFormProductTagsField);
+/* eslint-enable */

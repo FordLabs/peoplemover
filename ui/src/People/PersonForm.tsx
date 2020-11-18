@@ -84,7 +84,7 @@ function PersonForm({
     setIsUnassignedDrawerOpen,
 }: PersonFormProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const spaceUuid = currentSpace.uuid!!;
+    const spaceUuid = currentSpace.uuid!;
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());

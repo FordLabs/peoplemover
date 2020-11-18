@@ -41,6 +41,7 @@ class LocationClient implements TagClient {
     }
 
     async add(location: TagRequest, space: Space): Promise<AxiosResponse> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBaseLocationsUrl(space.uuid!!);
         const config = {
             headers: {
@@ -59,6 +60,7 @@ class LocationClient implements TagClient {
     }
 
     async edit(location: TagRequest, space: Space): Promise<AxiosResponse<LocationTag>> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBaseLocationsUrl(space.uuid!!);
         const config = {
             headers: {
@@ -77,6 +79,7 @@ class LocationClient implements TagClient {
     }
 
     async delete(locationId: number, space: Space): Promise<AxiosResponse> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBaseLocationsUrl(space.uuid!!) + `/${locationId}`;
         const config = {
             headers: {

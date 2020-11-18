@@ -72,13 +72,14 @@ function ProductSortBy({
                 onChange={(value): void => {
                     const sortByOption = (value as SortByOption).value;
                     setProductSortBy(sortByOption);
-                    MatomoEvents.pushEvent(currentSpace.name, "productSort", sortByOption);
+                    MatomoEvents.pushEvent(currentSpace.name, 'productSort', sortByOption);
                 }}
                 components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
         </div>
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     productSortBy: state.productSortBy,
     currentSpace: state.currentSpace,
@@ -89,3 +90,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductSortBy);
+/* eslint-enable */

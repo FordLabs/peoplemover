@@ -34,7 +34,7 @@ import {Space} from '../Space/Space';
 
 interface Props {
     locations: Array<Tag>;
-    updateLocations: any;
+    updateLocations(Function: (prevProductTag: Array<Tag>) => Tag[]): void;
     updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
     currentSpace: Space;
 }

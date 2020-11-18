@@ -47,7 +47,7 @@ function ReassignedDrawer({
 
     /* eslint-disable */
     useEffect(() => {
-        const reassignments = AssignmentClient.getReassignments(currentSpace.uuid!!, viewingDate).then( reassignmentResponse =>
+        const reassignments = AssignmentClient.getReassignments(currentSpace.uuid!, viewingDate).then( reassignmentResponse =>
             setReassignments(reassignmentResponse.data)
         );
     }, [products]);
@@ -57,7 +57,13 @@ function ReassignedDrawer({
         mapsReassignments(reassignment, index)
     ));
 
-    const containee: JSX.Element = <div className="reassignmentContainer" data-testid="reassignmentContainer">{listOfHTMLReassignments}</div>;
+    const containee: JSX.Element = (
+        <div 
+            className="reassignmentContainer" 
+            data-testid="reassignmentContainer">
+            {listOfHTMLReassignments}
+        </div>
+    );
 
     return (
         <DrawerContainer
@@ -104,14 +110,15 @@ function ReassignedDrawer({
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
                 fetchProducts();
-                MatomoEvents.pushEvent(currentSpace.name, "revert", `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`);
+                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`);
             }).catch(err => {
-                MatomoEvents.pushEvent(currentSpace.name, "revert", `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`, err.code);
+                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`, err.code);
                 return Promise.reject(err);
             });
     }
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
     viewingDate: state.viewingDate,
@@ -123,3 +130,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReassignedDrawer);
+/* eslint-enable */

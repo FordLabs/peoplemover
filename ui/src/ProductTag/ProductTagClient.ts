@@ -41,6 +41,7 @@ class ProductTagClient implements TagClient {
     }
 
     async add(productTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBaseProductTagsUrl(space.uuid!!);
         const config = {
             headers: {
@@ -59,6 +60,7 @@ class ProductTagClient implements TagClient {
     }
 
     async edit(productTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<ProductTag>> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBaseProductTagsUrl(space.uuid!!);
         const config = {
             headers: {
@@ -77,6 +79,7 @@ class ProductTagClient implements TagClient {
     }
 
     async delete(productTagId: number, space: Space): Promise<AxiosResponse> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBaseProductTagsUrl(space.uuid!!) + `/${productTagId}`;
         const config = {
             headers: {

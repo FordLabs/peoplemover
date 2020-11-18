@@ -19,7 +19,7 @@ import {RoleEditRequest} from './RoleEditRequest.interface';
 interface Props {
     colors: Array<Color>;
     roles: Array<RoleTag>;
-    setRoles: any;
+    setRoles(Function: (roles: Array<Tag>) => Tag[]): void;
     updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
     currentSpace: Space;
 }

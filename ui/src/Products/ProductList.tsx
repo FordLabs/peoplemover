@@ -105,6 +105,7 @@ function ProductList({
     return <ListOfProducts/>;
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
     productTags: state.productTags,
@@ -114,3 +115,4 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 export default connect(mapStateToProps)(ProductList);
+/* eslint-enable */

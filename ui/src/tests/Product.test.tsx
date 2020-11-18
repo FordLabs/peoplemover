@@ -42,7 +42,7 @@ describe('Products', () => {
         TestUtils.mockClientCalls();
     });
 
-    describe('home page', () => {
+    describe('Home page', () => {
         it('displays the product names', async () => {
             const app = renderWithRedux(<PeopleMover/>);
             await app.findByText('Product 1');
@@ -432,7 +432,7 @@ describe('Products', () => {
         });
     });
 
-    describe('deleting a product', () => {
+    describe('Deleting a product', () => {
         it('should show a delete button in the product modal', async () => {
             const app = renderWithRedux(<PeopleMover/>);
 
@@ -491,9 +491,9 @@ describe('Products', () => {
             expect(app.queryByText('Archive')).not.toBeInTheDocument();
         });
 
-        describe('archiving a product via the delete modal', () => {
+        describe('Archiving a product via the delete modal', () => {
             it('should use the product client to archive products', async () => {
-                ProductClient.editProduct = jest.fn(() => Promise.resolve({} as AxiosResponse));
+                ProductClient.editProduct = jest.fn().mockResolvedValue({});
 
                 const viewingDate = new Date(2020, 6, 17);
                 const initialState: PreloadedState<GlobalStateProps> = { viewingDate: viewingDate } as GlobalStateProps;

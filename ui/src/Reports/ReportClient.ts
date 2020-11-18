@@ -39,9 +39,9 @@ class ReportClient {
             const jsonAsCsv = ReportClient.convertToCSV(response.data);
             const fileName = `${spaceName}_${date.toISOString().split('T')[0]}.csv`;
             fileDownload(jsonAsCsv, fileName);
-            MatomoEvents.pushEvent(spaceName, "downloadReport", dateAsString);
+            MatomoEvents.pushEvent(spaceName, 'downloadReport', dateAsString);
         }).catch(err => {
-            MatomoEvents.pushEvent(spaceName, "downloadReportError", dateAsString, err.code);
+            MatomoEvents.pushEvent(spaceName, 'downloadReportError', dateAsString, err.code);
             Promise.reject(err);
         });
     }

@@ -46,7 +46,7 @@ function SpaceForm({
         event.preventDefault();
 
         if (!!space && formSpace.uuid) {
-            SpaceClient.editSpace(formSpace.uuid, formSpace, space.name!!)
+            SpaceClient.editSpace(formSpace.uuid, formSpace, space.name)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         } else {
@@ -91,7 +91,7 @@ function SpaceForm({
                     buttonStyle="primary"
                     type="submit"
                     disabled={spaceNameLength <= 0}>
-                    {!!space ? 'Save' : 'Create'}
+                    {space ? 'Save' : 'Create'}
                 </FormButton>
             </div>
         </form>

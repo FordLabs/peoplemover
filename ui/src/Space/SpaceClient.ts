@@ -73,10 +73,10 @@ class SpaceClient {
         };
 
         return Axios.put(url, data, config).then(result => {
-            MatomoEvents.pushEvent(oldSpaceName, "editSpaceName", editedSpace.name);
+            MatomoEvents.pushEvent(oldSpaceName, 'editSpaceName', editedSpace.name);
             return result;
         }).catch(err => {
-            MatomoEvents.pushEvent(oldSpaceName, "editSpaceNameError", editedSpace.name, err.code);
+            MatomoEvents.pushEvent(oldSpaceName, 'editSpaceNameError', editedSpace.name, err.code);
             return Promise.reject(err);
         });
     }

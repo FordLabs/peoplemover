@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import PeopleClient from './PeopleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 import {Person} from './Person';
 
+jest.mock('axios');
+
 describe('People Client', function() {
-    const basePeopleUrl = `/api/spaces/${TestUtils.space.uuid!!}/people`;
+    const uuid = TestUtils.space.uuid || '';
+    const basePeopleUrl = `/api/spaces/${uuid}/people`;
     const cookies = new Cookies();
 
     const expectedConfig = {
@@ -34,18 +37,18 @@ describe('People Client', function() {
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
-        Axios.post = jest.fn(x => Promise.resolve({
+        Axios.post = jest.fn().mockResolvedValue({
             data: 'Created Person',
-        } as AxiosResponse));
-        Axios.put = jest.fn(x => Promise.resolve({
+        });
+        Axios.put = jest.fn().mockResolvedValue({
             data: 'Updated Person',
-        } as AxiosResponse));
-        Axios.delete = jest.fn(x => Promise.resolve({
+        });
+        Axios.delete = jest.fn().mockResolvedValue({
             data: 'Deleted Person',
-        } as AxiosResponse));
-        Axios.get = jest.fn(x => Promise.resolve({
+        });
+        Axios.get = jest.fn().mockResolvedValue({
             data: 'Get All People',
-        } as AxiosResponse));
+        });
     });
 
     afterEach(function() {
@@ -53,7 +56,7 @@ describe('People Client', function() {
     });
 
     it('should return all people for space', function(done) {
-        PeopleClient.getAllPeopleInSpace(TestUtils.space.uuid!!)
+        PeopleClient.getAllPeopleInSpace(uuid)
             .then((response) => {
                 expect(Axios.get).toHaveBeenCalledWith(basePeopleUrl, expectedConfig);
                 expect(response.data).toBe('Get All People');
@@ -85,7 +88,7 @@ describe('People Client', function() {
 
     it('should delete a person', function(done) {
         const expectedUrl = basePeopleUrl + `/${TestUtils.person1.id}`;
-        PeopleClient.removePerson(TestUtils.space.uuid!!, TestUtils.person1.id)
+        PeopleClient.removePerson(uuid, TestUtils.person1.id)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Person');
@@ -114,6 +117,7 @@ describe('People Client', function() {
 
         it('should send an event to matomo when a person is created', async () => {
             await PeopleClient.createPersonForSpace(TestUtils.space, person);
+            // @ts-ignore
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addPerson', expectedName]);
         });
     });
