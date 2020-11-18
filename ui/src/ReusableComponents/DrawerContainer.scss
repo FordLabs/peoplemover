@@ -37,6 +37,11 @@
   word-wrap: break-word;
 }
 
+.upArrow,
+.downArrow {
+  padding-right: 3px;
+}
+
 .countBadge {
   $size: 22px;
 
