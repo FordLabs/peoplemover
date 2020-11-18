@@ -18,6 +18,7 @@
 import React, {useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
 import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
+import FocusRing from '../FocusRing';
 
 interface ModalProps {
     modalForm: JSX.Element | null;
@@ -81,8 +82,14 @@ function Modal({
                 <div className="modalDialogContainer">
                     <div className="modalPopupContainer"
                         data-testid="modalPopupContainer"
-                        onClick={(e): void => { e.stopPropagation(); }}
-                        onKeyDown={(e): void => { e.stopPropagation(); }}>
+                        onClick={(e): void => {
+                            e.stopPropagation();
+                            FocusRing.turnOffWhenClicking();
+                        }}
+                        onKeyDown={(e): void => {
+                            e.stopPropagation();
+                            FocusRing.turnOnWhenTabbing(e);
+                        }}>
                         <input type="text" aria-hidden={true} className="hiddenInputField"/>
                         <div className="modalTitleAndCloseButtonContainer">
                             <div className="modalTitleSpacer"/>

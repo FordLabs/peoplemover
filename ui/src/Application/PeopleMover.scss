@@ -18,98 +18,107 @@
 @import '../Application/Styleguide/Colors.scss';
 
 .spaceButtons button {
-    margin: 0 12px;
+  margin: 0 12px;
 }
 
 .logo-image {
-    height: 25px;
-    width: 25px;
+  height: 25px;
+  width: 25px;
 }
 
 .productAndAccordionContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .accordionContainer {
-    flex-grow: 0;
-    min-width: 204px;
-    max-height: 82vh;
-    margin-top: 2px;
+  flex-grow: 0;
+  min-width: 204px;
+  max-height: 82vh;
+  margin-top: 2px;
 
-    font-size: 14px;
-    color: $gray-1;
+  font-size: 14px;
+  color: $gray-1;
 }
 
 .unassignedContainer {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .drawerContainerTitleAndIcon {
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
 }
 
 .drawerCaret {
-    margin-right: 14px;
+  margin-right: 14px;
 }
 
 .archivedHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 46px;
-    flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 46px;
+  flex-grow: 1;
 }
 
 .accordionHeaderContainer {
-    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
-    border: 2px solid $gray-5;
-    border-bottom: 0;
-    border-radius: 2px;
-    font-weight: bold;
-    box-sizing: border-box;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+  border: 2px solid $gray-5;
+  border-bottom: 0;
+  border-radius: 2px;
+  font-weight: bold;
+  box-sizing: border-box;
 }
 
 .accordionText {
-    padding-left: 5px;
+  padding-left: 5px;
 }
 
 .addtionalFilterMultiValue {
-    background-color: $gray-5;
-    border-radius: 6px;
-    display: flex;
-    margin: 3px;
-    padding: 6px 4px;
-    min-width: 0;
-    box-sizing: border-box;
-    align-items: center;
-    height: 22px;
-    font-style: italic;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: 10vw;
-    white-space: nowrap;
+  background-color: $gray-5;
+  border-radius: 6px;
+  display: flex;
+  margin: 3px;
+  padding: 6px 4px;
+  min-width: 0;
+  box-sizing: border-box;
+  align-items: center;
+  height: 22px;
+  font-style: italic;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 10vw;
+  white-space: nowrap;
 }
 
 .App {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 // Remove default outline when user is tabbing
 button:focus,
 input:focus,
 select:focus,
+a:focus,
 textarea:focus {
-    outline: none;
+  outline: none;
 }
 
 // Use box shadow to make focus ring for all buttons, inputs, selects and textareas except in React Select Library
 :not([class*="css-"]) > div > *:focus {
-    box-shadow: 0 0 0 2px $outline-focus-blue;
+  box-shadow: 0 0 0 2px $outline-focus-blue;
+}
+
+body:not(.user-is-tabbing) {
+  button:focus,
+  a:focus,
+  div:focus {
+    box-shadow: none;
+  }
 }
