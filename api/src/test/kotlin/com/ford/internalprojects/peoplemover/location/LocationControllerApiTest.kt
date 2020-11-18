@@ -186,7 +186,7 @@ class LocationControllerApiTest {
     }
 
     @Test
-    fun `PUT should return 409 when updating name to existing space location in space`() {
+    fun `PUT should return 200 when updating name to existing space location in space with different case`() {
         val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "France"))
         val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name.toLowerCase())
@@ -194,7 +194,7 @@ class LocationControllerApiTest {
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(locationEditRequest)))
-            .andExpect(status().isConflict)
+            .andExpect(status().isOk)
     }
 
     @Test
