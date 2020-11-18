@@ -7,8 +7,6 @@ on:
     branches:
       - stage
   pull_request:
-    branches:
-      - *
 
 jobs:
   build-api:
