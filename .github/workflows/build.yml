@@ -5,6 +5,8 @@ on:
   # but only for the main branch
   push:
     pull_request:
+      branches:
+      - *
     branches:
       - stage
 
