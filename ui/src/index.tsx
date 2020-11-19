@@ -36,7 +36,8 @@ import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
-import FocusRing from "./FocusRing";
+import FocusRing from './FocusRing';
+import MatomoEvents from './Matomo/MatomoEvents';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -80,6 +81,29 @@ export interface RunConfig {
 }
 
 window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
+
+const UNAUTHORIZED = 401;
+const FORBIDDEN = 403;
+Axios.interceptors.response.use(
+    response => response,
+    error => {
+        const {status} = error.response;
+        let category = 'Error';
+        switch (status) {
+            case UNAUTHORIZED: {
+                category = 'Unauthorized';
+                window.location.href = '/user/login';
+                break;
+            }
+            case FORBIDDEN: {
+                category = 'Forbidden';
+                break;
+            }
+        }
+        MatomoEvents.pushEvent(category, error.response.data.method, error.response.data.url, status);
+        return Promise.reject(error);
+    }
+);
 
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
