@@ -23,11 +23,17 @@
   border-bottom-left-radius: 2px;
   padding: 4px 8px;
 
+  .personName {
+    display: flex;
+    align-items: center;
+  }
+
   .notesIcon {
     position: relative;
     color: $purple;
     margin-left: 4px;
-    font-size: 12px;
+    padding-top: 2px;
+    font-size: 16px;
   }
 
   .personName,
