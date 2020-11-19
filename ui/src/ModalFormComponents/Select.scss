@@ -27,13 +27,14 @@
   align-items: center;
   height: 36px;
   cursor: pointer;
+  padding-left: 0;
 
   &:focus {
     border: $focus-state-border;
   }
 
   .selectDropdownArrow {
-    padding-right: 0.5rem;
+    padding: 0 3px 0 5px;
   }
 
   .colorCircle:hover {
