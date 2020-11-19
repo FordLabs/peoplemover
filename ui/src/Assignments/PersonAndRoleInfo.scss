@@ -25,7 +25,7 @@
 
   .personName {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
   }
 
   .notesIcon {
@@ -67,5 +67,6 @@
   .hoverBoxNotes {
     margin: 16px 20px;
     line-height: 18px;
+    white-space: pre-wrap;
   }
 }
