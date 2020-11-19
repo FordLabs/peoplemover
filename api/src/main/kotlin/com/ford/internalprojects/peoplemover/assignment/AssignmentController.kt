@@ -20,6 +20,7 @@ package com.ford.internalprojects.peoplemover.assignment
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -49,6 +50,7 @@ class AssignmentController(
         return ResponseEntity.ok(reassignmentsByExactDate)
     }
 
+    @PreAuthorize("hasPermission(#createAssignmentRequest.person.spaceId, 'id', 'modify')")
     @PostMapping(path = ["/api/assignment/create"])
     fun createAssignmentsForDate(@RequestBody createAssignmentRequest: CreateAssignmentsRequest): ResponseEntity<Set<Assignment>> {
         val assignmentsCreated: Set<Assignment> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest)

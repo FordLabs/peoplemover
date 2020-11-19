@@ -18,6 +18,8 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
@@ -38,9 +40,15 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.bind.annotation.RequestMethod
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -61,6 +69,9 @@ class AssignmentControllerInTimeApiTest {
 
     @Autowired
     private lateinit var spaceLocationRepository: SpaceLocationRepository
+
+    @Autowired
+    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -87,6 +98,7 @@ class AssignmentControllerInTimeApiTest {
         productThree = productRepository.save(Product(name = "Misfits", spaceId = space.id!!))
         unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = space.id!!))
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
     }
 
     @After
@@ -180,7 +192,7 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return 400 when retrieving effective dates given an invalid spaceuuid` () {
+    fun `GET should return 400 when retrieving effective dates given an invalid spaceuuid`() {
         val bogusUuidSpaceId = 99999999
 
         mockMvc.perform(get("/api/assignment/dates/$bogusUuidSpaceId")
@@ -208,8 +220,8 @@ class AssignmentControllerInTimeApiTest {
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
                 products = Sets.newSet(
-                    ProductPlaceholderPair(productId = productTwo.id!!, placeholder = false),
-                    ProductPlaceholderPair(productId = productThree.id!!, placeholder = true)
+                        ProductPlaceholderPair(productId = productTwo.id!!, placeholder = false),
+                        ProductPlaceholderPair(productId = productThree.id!!, placeholder = true)
                 )
         )
 
@@ -232,13 +244,25 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `POST should not assign person to unassigned when given set of products` () {
+    fun `POST should return 403 if user does not write access`() {
+
+        val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()), Person("", -9999), HashSet())
+
+        mockMvc.perform(post("/api/assignment/create")
+                .header("Authorization", "Bearer VALID_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createAssignmentsRequest)))
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `POST should not assign person to unassigned when given set of products`() {
         val assignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
                 products = Sets.newSet(
-                    ProductPlaceholderPair (productId= unassignedProduct.id!!, placeholder = false ),
-                    ProductPlaceholderPair (productId= productOne.id!!, placeholder = false )
+                        ProductPlaceholderPair(productId = unassignedProduct.id!!, placeholder = false),
+                        ProductPlaceholderPair(productId = productOne.id!!, placeholder = false)
                 )
         )
 
@@ -262,17 +286,17 @@ class AssignmentControllerInTimeApiTest {
         )
 
         assertThat(assignmentRepository.count()).isOne()
-        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment,"id")
+        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
         assertThat(actualAssignments.first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
     }
 
     @Test
-    fun `POST should assign person to unassigned when given only unassigned product` () {
+    fun `POST should assign person to unassigned when given only unassigned product`() {
         val unassignedAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
                 person = person,
                 products = Sets.newSet(
-                    ProductPlaceholderPair(productId = unassignedProduct.id!!, placeholder = false)
+                        ProductPlaceholderPair(productId = unassignedProduct.id!!, placeholder = false)
                 )
         )
 
@@ -296,12 +320,12 @@ class AssignmentControllerInTimeApiTest {
         )
 
         assertThat(assignmentRepository.count()).isOne()
-        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment,"id")
+        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
         assertThat(actualAssignments.first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
     }
 
     @Test
-    fun `POST should assign person to unassigned when given an empty set of products` () {
+    fun `POST should assign person to unassigned when given an empty set of products`() {
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
@@ -335,15 +359,15 @@ class AssignmentControllerInTimeApiTest {
         )
 
         assertThat(assignmentRepository.count()).isOne()
-        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment,"id")
+        assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
         assertThat(actualAssignments.first()).isEqualToIgnoringGivenFields(expectedAssignment, "id")
     }
 
     @Test
-    fun `POST should return 400 when creating assignments given an invalid person` () {
+    fun `POST should return 400 when creating assignments given an invalid person`() {
         val bogusPerson = Person(id = 99999999, name = "fake person", spaceId = space.id!!)
 
-        val bogusAssignmentRequest = CreateAssignmentsRequest (
+        val bogusAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
                 person = bogusPerson,
                 products = Sets.newSet(ProductPlaceholderPair(
