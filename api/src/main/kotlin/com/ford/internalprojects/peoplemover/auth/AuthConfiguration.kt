@@ -13,7 +13,7 @@ class AuthConfiguration : WebSecurityConfigurerAdapter(){
 
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
-                .antMatchers("/", "/error", "/api/config", "/h2-console", "/api/reset/**").permitAll()
+                .antMatchers("/", "/error", "/api/config", "/h2-console", "/api/reset/**", "/actuator/info").permitAll()
                 .anyRequest().authenticated()
             .and().exceptionHandling().authenticationEntryPoint(HttpStatusEntryPoint(UNAUTHORIZED))
             .and().csrf().disable()
