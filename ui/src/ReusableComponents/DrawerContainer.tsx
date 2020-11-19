@@ -65,11 +65,10 @@ function DrawerContainer({
                     <i className="material-icons">{drawerIcon}</i>
                     <span className="accordionText">{containerTitle}</span>
                 </div>
-                {
-                    isDrawerOpen
-                        ? <i className="material-icons greyIcon upArrow" data-testid="calendar_up-arrow">arrow_drop_up</i>
-                        : <i className="material-icons greyIcon downArrow" data-testid="calendar_down-arrow">arrow_drop_down</i>
-                }
+                <i className="material-icons greyIcon drawerArrow"
+                    data-testid={`calendar_${isDrawerOpen ? 'up-arrow' : 'down-arrow'}`}>
+                    {isDrawerOpen ? 'arrow_drop_up' : 'arrow_drop_down'}
+                </i>
             </div>
             {isDrawerOpen && (
                 <React.Fragment>{containee}</React.Fragment>
