@@ -36,12 +36,12 @@ describe('Assignment Card', () => {
                 spaceId: 0,
                 id: 1,
                 name: 'Billiam Handy',
-                spaceRole: {id: 1, spaceId: 0, name: 'Software Engineer', color: {id: 1, color: '#44'}},
+                spaceRole: TestUtils.softwareEngineer,
                 notes: 'This is a note',
             },
             placeholder: false,
             productId: 0,
-            spaceId: 1,
+            spaceId: 0,
         };
     });
 

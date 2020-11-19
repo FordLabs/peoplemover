@@ -46,9 +46,9 @@ class ProductClient {
         });
     }
 
-    static async editProduct(space: Space, product: Product): Promise<AxiosResponse> {
+    static async editProduct(space: Space, product: Product, isArchive = false): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseProductsUrl(space.uuid!) + `/${product.id}`;
+        const url = this.getBaseProductsUrl(space.uuid!!) + `/${product.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -57,8 +57,15 @@ class ProductClient {
         };
 
         return Axios.put(url, product, config).then(result => {
-            MatomoEvents.pushEvent(space.name, 'editProduct', product.name);
+            if (isArchive) {
+                MatomoEvents.pushEvent(space.name, 'archiveProduct', product.name);
+            } else {
+                MatomoEvents.pushEvent(space.name, 'editProduct', product.name);
+            }
             return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'editProductError', product.name, err.code);
+            return Promise.reject(err);
         });
     }
 

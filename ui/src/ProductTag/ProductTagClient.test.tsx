@@ -64,7 +64,7 @@ describe('Product Tags Client', function() {
 
     it('should create a product tag and return that product tag', function(done) {
         const expectedProductAddRequest = { name: TestUtils.productTag1.name };
-        ProductTag.add(expectedProductAddRequest, spaceUuid)
+        ProductTag.add(expectedProductAddRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductAddRequest, expectedConfig);
                 expect(response.data).toBe('Created Product Tag');
@@ -77,7 +77,7 @@ describe('Product Tags Client', function() {
             id: TestUtils.productTag1.id,
             name: TestUtils.productTag1.name,
         };
-        ProductTag.edit(expectedProductEditRequest, spaceUuid)
+        ProductTag.edit(expectedProductEditRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Product Tag');
@@ -87,7 +87,7 @@ describe('Product Tags Client', function() {
 
     it('should delete a product tag', function(done) {
         const expectedUrl = `${baseProductTagsUrl}/${TestUtils.productTag1.id}`;
-        ProductTag.delete(TestUtils.productTag1.id, spaceUuid)
+        ProductTag.delete(TestUtils.productTag1.id, TestUtils.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Product Tag');

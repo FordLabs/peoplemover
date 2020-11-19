@@ -165,7 +165,7 @@ function PersonForm({
                 setIsUnassignedDrawerOpen(true);
             }
             if (isEditPersonForm && assignment) {
-                const response = await PeopleClient.updatePerson(spaceUuid, person);
+                const response = await PeopleClient.updatePerson(currentSpace, person);
                 await AssignmentClient.createAssignmentForDate({
                     requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                     person: assignment.person,
@@ -231,7 +231,7 @@ function PersonForm({
     const handleCreateRole = (inputValue: string): void => {
         setIsLoading(true);
         const roleAddRequest: RoleAddRequest = {name: inputValue};
-        RoleClient.add(roleAddRequest, spaceUuid).then((response: AxiosResponse) => {
+        RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
             const newRole: RoleTag = response.data;
             setRoles(roles => alphabetize([...roles, newRole]));
             updatePersonField('spaceRole', newRole);

@@ -45,8 +45,6 @@ const LocationTags = ({
     updateFilterOptions,
     currentSpace,
 }: Props): JSX.Element => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!;
     const tagType = 'location';
     const locationFilterIndex = 0;
     const [editLocationIndex, setEditLocationIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
@@ -68,7 +66,7 @@ const LocationTags = ({
     };
 
     const editLocation = async (location: TagRequest): Promise<unknown> => {
-        return await LocationClient.edit(location, uuid)
+        return await LocationClient.edit(location, currentSpace)
             .then((response) => {
                 const newLocation: Tag = response.data;
                 updateFilterOptions(locationFilterIndex, newLocation, TagAction.EDIT);
@@ -82,7 +80,7 @@ const LocationTags = ({
     };
 
     const addLocation = async (location: TagRequest): Promise<unknown> => {
-        return await LocationClient.add(location, uuid)
+        return await LocationClient.add(location, currentSpace)
             .then((response) => {
                 const newLocation: Tag = response.data;
                 updateFilterOptions(locationFilterIndex, newLocation, TagAction.ADD);
@@ -98,7 +96,7 @@ const LocationTags = ({
     const deleteLocation = async (locationToDelete: Tag): Promise<void> => {
         try {
             if (currentSpace.uuid) {
-                await LocationClient.delete(locationToDelete.id, currentSpace.uuid);
+                await LocationClient.delete(locationToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
                 updateFilterOptions(locationFilterIndex, locationToDelete, TagAction.DELETE);
                 updateLocations((prevLocations: Array<Tag>) => prevLocations.filter((location: RoleTag) => location.id !== locationToDelete.id));

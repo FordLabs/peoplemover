@@ -247,9 +247,9 @@ class TestUtils {
         TestUtils.whiteColor,
     ];
 
-    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}};
-    static productManager = {name: 'Product Manager', id: 2, spaceId: 1, color: {id: 2, color: '#45'}};
-    static productDesigner = {name: 'Product Designer', id: 3, spaceId: 1, color: {id: 3, color: '#46'}};
+    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceId: 1, color: TestUtils.color1};
+    static productManager = {name: 'Product Manager', id: 2, spaceId: 1, color: TestUtils.color2};
+    static productDesigner = {name: 'Product Designer', id: 3, spaceId: 1, color: TestUtils.color3};
 
     static roles: RoleTag[] = [
         TestUtils.softwareEngineer,

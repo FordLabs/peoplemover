@@ -81,7 +81,7 @@ describe('Space Client', function() {
         const expectedUrl = baseSpaceUrl + '/uuidbob';
         const expectedBody = createEmptySpace();
 
-        SpaceClient.editSpace('uuidbob', createEmptySpace()).then(() => {
+        SpaceClient.editSpace('uuidbob', createEmptySpace(), '').then(() => {
             expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
             done();
         });

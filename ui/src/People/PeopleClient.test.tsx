@@ -78,7 +78,7 @@ describe('People Client', function() {
     it('should edit a person and return that person', function(done) {
         const updatedPerson = TestUtils.person1;
         const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
-        PeopleClient.updatePerson(uuid, updatedPerson)
+        PeopleClient.updatePerson(TestUtils.space, updatedPerson)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson, expectedConfig);
                 expect(response.data).toBe('Updated Person');

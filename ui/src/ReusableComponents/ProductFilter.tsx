@@ -32,6 +32,7 @@ import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 
 import './ProductFilterOrSortBy.scss';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 export type LocalStorageFilters = {
     locationTagsFilters: Array<string>;
@@ -123,20 +124,21 @@ function ProductFilter({
         tagFilterOptions: AllGroupedTagFilterOptions
     ): Array<FilterOption> {
         return tagFilterOptions.options.map(
-            option => {
-                if (selectedOptions && selectedOptions.includes(option)) {
-                    return {
-                        ...option,
-                        selected: true,
-                    };
-                } else {
-                    return {
-                        ...option,
-                        selected: false,
-                    };
+            option => (
+                {
+                    ...option,
+                    selected: selectedOptions && selectedOptions.includes(option),
                 }
-            }
+            )
         );
+    }
+
+    function sendMatomoEvent(selectedOptions: Array<FilterOption>): void {
+        let selectedOptionsString = 'filter selected';
+        if (selectedOptions) {
+            selectedOptionsString = selectedOptions.filter(option => option.selected).map(option => option.label).join(', ');
+        }
+        MatomoEvents.pushEvent(currentSpace.name, 'filter', selectedOptionsString);
     }
 
     function applyFilter(selectedOptions: Array<FilterOption>): void {
@@ -158,6 +160,8 @@ function ProductFilter({
             {...allGroupedTagFilterOptions[1], options: updatedProductTags},
             {...allGroupedTagFilterOptions[2], options: updatedRoleTags},
         ]);
+
+        sendMatomoEvent(selectedOptions);
     }
 
     return (

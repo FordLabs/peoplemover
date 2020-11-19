@@ -78,7 +78,7 @@ function ProductFormProductTagsField({
         setIsLoading(true);
         const productTag: TagRequest = { name: inputValue };
 
-        ProductTagClient.add(productTag, uuid)
+        ProductTagClient.add(productTag, currentSpace)
             .then((response: AxiosResponse) => {
                 const newProductTag: ProductTag = response.data;
                 setAvailableProductTags(productTags => [...productTags, {

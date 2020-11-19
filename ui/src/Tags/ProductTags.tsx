@@ -45,8 +45,6 @@ const ProductTags = ({
     currentSpace,
     updateFilterOptions,
 }: Props): JSX.Element => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!;
     const tagType = 'product tag';
     const productTagFilterIndex = 1;
     const [editProductTagIndex, setEditProductTagIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
@@ -68,7 +66,7 @@ const ProductTags = ({
     };
 
     const editProductTag = async (productTag: TagRequest): Promise<unknown> => {
-        return await ProductTagClient.edit(productTag, uuid)
+        return await ProductTagClient.edit(productTag, currentSpace)
             .then((response) => {
                 const newProductTag: Tag = response.data;
                 updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.EDIT);
@@ -83,7 +81,7 @@ const ProductTags = ({
     };
 
     const addProductTag = async (productTag: TagRequest): Promise<unknown> => {
-        return await ProductTagClient.add(productTag, uuid)
+        return await ProductTagClient.add(productTag, currentSpace)
             .then((response) => {
                 const newProductTag: Tag = response.data;
                 updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.ADD);
@@ -100,7 +98,7 @@ const ProductTags = ({
     const deleteProductTag = async (productTagToDelete: Tag): Promise<void> => {
         try {
             if (currentSpace.uuid) {
-                await ProductTagClient.delete(productTagToDelete.id, currentSpace.uuid);
+                await ProductTagClient.delete(productTagToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
                 updateFilterOptions(productTagFilterIndex, productTagToDelete, TagAction.DELETE);
                 updateProductTags((prevProductTags: Array<Tag>) =>

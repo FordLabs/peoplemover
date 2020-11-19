@@ -19,6 +19,9 @@ import Axios, {AxiosResponse} from 'axios';
 import RoleClient from './RoleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+
+declare let window: MatomoWindow;
 
 describe('Role Client', function() {
     const spaceUuid = 'uuid';
@@ -30,6 +33,8 @@ describe('Role Client', function() {
             'Authorization': 'Bearer 123456',
         },
     };
+
+    let originalWindow: Window;
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
@@ -49,6 +54,7 @@ describe('Role Client', function() {
 
     afterEach(function() {
         cookies.remove('accessToken');
+        (window as Window) = originalWindow;
     });
 
     it('should return all roles for space', function(done) {
@@ -61,10 +67,11 @@ describe('Role Client', function() {
 
     });
 
-    it('should create a role and return that role', function(done) {
+    it('should create a role and send matomo event and return that role', function(done) {
         const expectedRoleAddRequest = { name: TestUtils.softwareEngineer.name };
-        RoleClient.add(expectedRoleAddRequest, spaceUuid)
+        RoleClient.add(expectedRoleAddRequest, TestUtils.space)
             .then((response) => {
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addRole', TestUtils.softwareEngineer.name]);
                 expect(Axios.post).toHaveBeenCalledWith(
                     baseRolesUrl, expectedRoleAddRequest, expectedConfig
                 );
@@ -73,12 +80,12 @@ describe('Role Client', function() {
             });
     });
 
-    it('should edit a role and return that role', function(done) {
+    it('should edit a role and event and return that role', function(done) {
         const expectedRoleEditRequest = {
             id: TestUtils.softwareEngineer.id,
             name: TestUtils.softwareEngineer.name,
         };
-        RoleClient.edit(expectedRoleEditRequest, spaceUuid)
+        RoleClient.edit(expectedRoleEditRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(
                     baseRolesUrl, expectedRoleEditRequest, expectedConfig
@@ -90,7 +97,7 @@ describe('Role Client', function() {
 
     it('should delete a role', function(done) {
         const expectedUrl = `${baseRolesUrl}/${TestUtils.softwareEngineer.id}`;
-        RoleClient.delete(TestUtils.softwareEngineer.id, spaceUuid)
+        RoleClient.delete(TestUtils.softwareEngineer.id, TestUtils.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Role');
