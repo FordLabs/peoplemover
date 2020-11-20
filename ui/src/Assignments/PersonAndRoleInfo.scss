@@ -26,6 +26,7 @@
   .personName {
     display: flex;
     align-items: flex-end;
+    word-break: break-word;
   }
 
   .notesIcon {
