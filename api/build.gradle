@@ -23,7 +23,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'kotlin'
 
 group = 'com.ford'
-version = gitVersion()
+version = '1.1.1'
 sourceCompatibility = '11'
 
 repositories {
