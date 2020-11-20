@@ -83,24 +83,16 @@ export interface RunConfig {
 window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
 
 const UNAUTHORIZED = 401;
-const FORBIDDEN = 403;
 Axios.interceptors.response.use(
     response => response,
     error => {
-        const {status} = error.response;
-        let category = 'Error';
-        switch (status) {
-            case UNAUTHORIZED: {
-                category = 'Unauthorized';
-                window.location.href = '/user/login';
-                break;
-            }
-            case FORBIDDEN: {
-                category = 'Forbidden';
-                break;
-            }
+        const {status, statusText, config} = error.response;
+
+        MatomoEvents.pushEvent(statusText, config.method, config.url, status);
+
+        if (status === UNAUTHORIZED) {
+            window.location.href = '/user/login';
         }
-        MatomoEvents.pushEvent(category, error.response.data.method, error.response.data.url, status);
         return Promise.reject(error);
     }
 );
