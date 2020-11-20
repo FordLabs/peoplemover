@@ -19,19 +19,13 @@ package com.ford.internalprojects.peoplemover.space
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
-import com.ford.internalprojects.peoplemover.auth.AuthService
-import com.ford.internalprojects.peoplemover.auth.OAuthVerifyResponse
-import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
-import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
-import com.ford.internalprojects.peoplemover.person.PersonRepository
-import com.ford.internalprojects.peoplemover.product.Product
+import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -85,15 +79,15 @@ class SpaceControllerApiTest {
         val expectedUserId = "USER_ID"
 
         val result = mockMvc.perform(post("$baseSpaceUrl/user")
-            .content(objectMapper.writeValueAsString(request))
-            .header("Authorization", "Bearer $accessToken")
-            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk)
-            .andReturn()
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer $accessToken")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualSpaceResponse: SpaceResponse = objectMapper.readValue(
-            result.response.contentAsString,
-            SpaceResponse::class.java
+                result.response.contentAsString,
+                SpaceResponse::class.java
         )
         assertThat(actualSpaceResponse.space.name).isEqualTo(request.spaceName)
         assertThat(actualSpaceResponse.space.createdBy).isEqualTo(expectedUserId)
@@ -110,10 +104,10 @@ class SpaceControllerApiTest {
         val token = "INVALID_TOKEN"
 
         mockMvc.perform(post("$baseSpaceUrl/user")
-            .content(objectMapper.writeValueAsString(request))
-            .header("Authorization", "Bearer $token")
-            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer $token")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
 
         assertThat(spaceRepository.count()).isZero()
     }
@@ -125,11 +119,11 @@ class SpaceControllerApiTest {
         val space3: Space = spaceRepository.save(Space(name = "Ken Starr"))
 
         val result = mockMvc.perform(get(baseSpaceUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk).andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk).andReturn()
 
         val actual: List<Space> = objectMapper.readValue(result.response.contentAsString,
-            objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Space::class.java))
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Space::class.java))
 
         assertThat(actual[0]).isEqualTo(space1)
         assertThat(actual[1]).isEqualTo(space2)
@@ -143,8 +137,8 @@ class SpaceControllerApiTest {
         spaceRepository.save(Space(name = "Ken Starr"))
 
         val result = mockMvc.perform(get("$baseSpaceUrl/total")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk).andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk).andReturn()
 
         val actual: Int = result.response.contentAsString.toInt()
 
@@ -164,13 +158,13 @@ class SpaceControllerApiTest {
 
 
         val result = mockMvc.perform(get("$baseSpaceUrl/user")
-            .header("Authorization", "Bearer $accessToken"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer $accessToken"))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualUserSpaces: Array<Space> = objectMapper.readValue(
-            result.response.contentAsString,
-            Array<Space>::class.java
+                result.response.contentAsString,
+                Array<Space>::class.java
         )
 
         assertThat(actualUserSpaces).hasSize(2)
@@ -183,13 +177,13 @@ class SpaceControllerApiTest {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
         val result = mockMvc.perform(get(baseSpaceUrl + "/" + space1.uuid)
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualSpace: Space = objectMapper.readValue(
-            result.response.contentAsString,
-            Space::class.java
+                result.response.contentAsString,
+                Space::class.java
         )
 
         assertThat(actualSpace).isEqualTo(space1)
@@ -199,53 +193,114 @@ class SpaceControllerApiTest {
     fun `GET should return 401 when access token is invalid`() {
         val accessToken = "INVALID_TOKEN"
         mockMvc.perform(get("$baseSpaceUrl/user")
-            .header("Authorization", "Bearer $accessToken"))
-            .andExpect(status().isUnauthorized)
+                .header("Authorization", "Bearer $accessToken"))
+                .andExpect(status().isUnauthorized)
     }
 
     @Test
     fun `GET should return 400 if space does not exist`() {
         mockMvc.perform(get("$baseSpaceUrl/badSpace")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isBadRequest)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `PUT should return 200 if space is edited correctly`() {
         val space = spaceRepository.save(Space(name = "test"))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
         val editedSpace = SpaceRequest(name = "edited")
 
         mockMvc.perform(put(baseSpaceUrl + "/" + space.uuid)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(editedSpace)))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualSpace = spaceRepository.findByUuid(space.uuid)
         assertThat(actualSpace!!.name).isEqualTo("edited")
     }
 
     @Test
-    fun `PUT should return 400 if space does not exist`() {
-        val editedSpace = SpaceRequest(name = "edited")
-        val uuid = UUID.randomUUID().toString()
-        mockMvc.perform(put("$baseSpaceUrl/$uuid")
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(editedSpace)))
-            .andExpect(status().isBadRequest)
-    }
-
-    @Test
     fun `PUT New Space Name is Too Long`() {
         val space = spaceRepository.save(Space(name = "space"))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
+
         val editedSpace = SpaceRequest(name = "12345678901234567890123456789012345678901")
 
         mockMvc.perform(put(baseSpaceUrl + "/" + space.uuid)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(editedSpace)))
-            .andExpect(status().isBadRequest)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `PUT should return Ok and an empty list with a valid ADFS request`() {
+        val emails = listOf("email_1@email.com", "email_2@otheremail.com")
+
+        val space = spaceRepository.save(Space(name = "spaceName"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = space.id))
+
+        val request = AuthInviteUsersToSpaceRequest(emails = emails)
+
+        val result = mockMvc.perform(put("/api/spaces/${space.uuid}:invite")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json")
+        ).andExpect(
+                status().isOk
+        ).andReturn()
+
+        assertThat(result.response.contentLength).isEqualTo(0)
+
+        val savedIds: List<String> = userSpaceMappingRepository.findAll().map { it.userId!! }
+
+        assertThat(userSpaceMappingRepository.count()).isEqualTo(3)
+        assertThat(savedIds).contains("USER_ID")
+        assertThat(savedIds).contains("EMAIL_1")
+        assertThat(savedIds).contains("EMAIL_2")
+    }
+
+    @Test
+    fun `PUT should return BAD_REQUEST if no emails were provided`() {
+        val request = AuthInviteUsersToSpaceRequest(
+                emails = listOf()
+        )
+
+        val space = spaceRepository.save(Space(name = "spaceName"))
+
+        mockMvc.perform(put("/api/spaces/${space.uuid}:invite")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json")
+        ).andExpect(
+                status().isBadRequest
+        )
+    }
+
+
+    @Test
+    fun `PUT should return 403 when trying to add users to space without write authorization`() {
+        val space = spaceRepository.save(Space(name = "spaceName"))
+
+        val requestBodyObject = AuthInviteUsersToSpaceRequest(emails = listOf("email_1@email.com", "email_2@otheremail.com"))
+
+        mockMvc.perform(put("/api/spaces/${space.uuid}:invite")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `PUT should return 403 when trying to edit space without write authorization`() {
+        val requestBodyObject = SpaceRequest("not empty")
+
+        mockMvc.perform(put("/api/spaces/${UUID.randomUUID()}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isForbidden)
     }
 }

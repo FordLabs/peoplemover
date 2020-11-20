@@ -20,6 +20,8 @@ package com.ford.internalprojects.peoplemover.product
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
@@ -65,6 +67,9 @@ class ProductControllerInTimeApiTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
+    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
 
     private lateinit var space: Space
@@ -100,6 +105,8 @@ class ProductControllerInTimeApiTest {
         ))
 
         baseProductsUrl = "/api/spaces/" + space.uuid + "/products"
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
+
     }
 
     @After

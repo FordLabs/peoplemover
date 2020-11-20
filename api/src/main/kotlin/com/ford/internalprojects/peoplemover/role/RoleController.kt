@@ -19,6 +19,7 @@ package com.ford.internalprojects.peoplemover.role
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -34,6 +35,7 @@ class RoleController(
         return ResponseEntity.ok(rolesForSpace)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PostMapping
     fun addRoleForSpace(
         @PathVariable spaceUuid: String,
@@ -48,6 +50,7 @@ class RoleController(
         return ResponseEntity.ok(spaceRole)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @DeleteMapping("/{roleId}")
     fun deleteRole(
         @PathVariable spaceUuid: String,
@@ -58,6 +61,7 @@ class RoleController(
         return ResponseEntity.ok().build()
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PutMapping
     fun editRole(
         @PathVariable spaceUuid: String,

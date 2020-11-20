@@ -19,6 +19,7 @@ package com.ford.internalprojects.peoplemover.product
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import javax.validation.Valid
@@ -49,16 +50,18 @@ class ProductController(
         return ResponseEntity.ok(products)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PostMapping
     fun createProduct(
-        @PathVariable spaceUuid: String,
-        @Valid @RequestBody productAddRequest: ProductAddRequest
+            @PathVariable spaceUuid: String,
+            @Valid @RequestBody productAddRequest: ProductAddRequest
     ): ResponseEntity<Product> {
         val createdProduct = productService.create(productAddRequest, spaceUuid)
         logger.logInfoMessage("Product [${createdProduct.name}] created.")
         return ResponseEntity.ok(createdProduct)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PutMapping("/{productId}")
     fun updateProduct(
         @PathVariable spaceUuid: String,
@@ -70,6 +73,7 @@ class ProductController(
         return ResponseEntity.ok(updatedProduct)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @DeleteMapping("/{productId}")
     fun deleteProduct(
         @PathVariable spaceUuid: String,

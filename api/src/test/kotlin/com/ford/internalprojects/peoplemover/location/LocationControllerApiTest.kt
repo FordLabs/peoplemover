@@ -18,6 +18,8 @@
 package com.ford.internalprojects.peoplemover.location
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
@@ -43,6 +45,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @ActiveProfiles("test")
 @SpringBootTest
 class LocationControllerApiTest {
+
     @Autowired
     private lateinit var spaceRepository: SpaceRepository
 
@@ -58,6 +61,9 @@ class LocationControllerApiTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    @Autowired
+    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
     private lateinit var space: Space
 
     var baseLocationsUrl: String = ""
@@ -67,6 +73,7 @@ class LocationControllerApiTest {
         space = spaceRepository.save(Space(name = "tok"))
 
         baseLocationsUrl = "/api/spaces/" + space.uuid + "/locations"
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
     }
 
     @After
@@ -84,13 +91,13 @@ class LocationControllerApiTest {
         )
 
         val result = mockMvc.perform(get(baseLocationsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualSpaceLocations: Set<SpaceLocation> = objectMapper.readValue(
-            result.response.contentAsString,
-            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceLocation::class.java)
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceLocation::class.java)
         )
 
         assertThat(actualSpaceLocations).isEqualTo(expectedLocations)
@@ -100,19 +107,19 @@ class LocationControllerApiTest {
     fun `GET should return 400 when given bad space`() {
         val badLocationsUrl = "/api/spaces/tok1/locations"
         mockMvc.perform(get(badLocationsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isBadRequest)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET should return an empty set when no expected locations in db`() {
         val result = mockMvc.perform(get(baseLocationsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
         val actualSpaceLocations: Set<SpaceLocation> = objectMapper.readValue(
-            result.response.contentAsString,
-            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceLocation::class.java)
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceLocation::class.java)
         )
         assertThat(actualSpaceLocations).isEqualTo(emptySet<SpaceLocation>())
     }
@@ -122,44 +129,44 @@ class LocationControllerApiTest {
         spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val duplicateLocationAddRequest = LocationAddRequest(name = "Germany")
         mockMvc.perform(post(baseLocationsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(duplicateLocationAddRequest)))
-            .andExpect(status().isConflict)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(duplicateLocationAddRequest)))
+                .andExpect(status().isConflict)
     }
 
     @Test
     fun `POST should add new space location to db and return it`() {
         val locationAddRequest = LocationAddRequest(name = "Germany")
         val result = mockMvc.perform(post(baseLocationsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(locationAddRequest)))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(locationAddRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualSpaceLocation: SpaceLocation = objectMapper.readValue(
-            result.response.contentAsString,
-            SpaceLocation::class.java
+                result.response.contentAsString,
+                SpaceLocation::class.java
         )
         assertThat(actualSpaceLocation.name).isEqualTo(locationAddRequest.name)
         assertThat(actualSpaceLocation.spaceId).isEqualTo(space.id)
 
         assertThat(spaceLocationRepository.findBySpaceIdAndNameIgnoreCase(
-            space.id!!,
-            locationAddRequest.name
+                space.id!!,
+                locationAddRequest.name
         )).isNotNull()
     }
 
     @Test
-    fun `POST should return 400 when space does not exist`() {
-        val location = LocationAddRequest(name = "Germany")
-        val badLocationsUrl = "/api/spaces/okt/locations"
-        mockMvc.perform(post(badLocationsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(location)))
-            .andExpect(status().isBadRequest)
+    fun `POST should return 403 when trying to add location without write authorization`() {
+        val requestBodyObject = LocationAddRequest("it's lockdown there is no where BUT home")
+
+        mockMvc.perform(post("/api/spaces/-9999/locations")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isForbidden)
     }
 
     @Test
@@ -167,22 +174,33 @@ class LocationControllerApiTest {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val locationEditRequest = LocationEditRequest(id = spaceLocation.id!!, name = "Dearborn")
         val result = mockMvc.perform(put(baseLocationsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(locationEditRequest)))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(locationEditRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
         val actualSpaceLocation: SpaceLocation = objectMapper.readValue(
-            result.response.contentAsString,
-            SpaceLocation::class.java
+                result.response.contentAsString,
+                SpaceLocation::class.java
         )
         assertThat(actualSpaceLocation.id).isEqualTo(spaceLocation.id!!)
         assertThat(actualSpaceLocation.name).isEqualTo(locationEditRequest.name)
 
         assertThat(spaceLocationRepository.findBySpaceIdAndNameIgnoreCase(
-            actualSpaceLocation.spaceId,
-            actualSpaceLocation.name
-        )).isNotNull()
+                actualSpaceLocation.spaceId,
+                actualSpaceLocation.name
+        )).isNotNull
+    }
+
+    @Test
+    fun `PUT should return 403 when trying to edit location without write authorization`() {
+        val requestBodyObject = LocationEditRequest(1, "lockdown means I can't leave home")
+
+        mockMvc.perform(put("/api/spaces/-9999/locations")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isForbidden)
     }
 
     @Test
@@ -191,36 +209,44 @@ class LocationControllerApiTest {
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "France"))
         val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name.toLowerCase())
         mockMvc.perform(put(baseLocationsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(locationEditRequest)))
-            .andExpect(status().isConflict)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(locationEditRequest)))
+                .andExpect(status().isConflict)
     }
 
     @Test
     fun `DELETE should delete location from space`() {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         mockMvc.perform(delete("$baseLocationsUrl/${spaceLocation.id}")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
 
         assertThat(spaceLocationRepository.count()).isZero()
+    }
+
+    @Test
+    fun `DELETE should return 403 when trying to delete location without write authorization`() {
+
+        mockMvc.perform(delete("/api/spaces/-9999/locations/1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isForbidden)
     }
 
     @Test
     fun `DELETE should delete space location from product`() {
         val location: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
         val originalProduct: Product = productRepository.save(
-            Product(
-                name = "Product1",
-                spaceLocation = location,
-                spaceId = space.id!!
-            )
+                Product(
+                        name = "Product1",
+                        spaceLocation = location,
+                        spaceId = space.id!!
+                )
         )
         assertThat(spaceLocationRepository.count()).isOne()
         mockMvc.perform(delete("$baseLocationsUrl/${location.id}")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
         assertThat(spaceLocationRepository.count()).isZero()
 
         val updatedProduct: Product = productRepository.findById(originalProduct.id!!).get()

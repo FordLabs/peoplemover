@@ -437,6 +437,24 @@ class AssignmentControllerInTimeApiTest {
                 .andExpect(status().isOk)
     }
 
+
+    @Test
+    fun `DELETE should return 403 when trying to delete without write authorization`() {
+        val assignmentToDelete = Assignment(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = -9999
+        )
+
+        mockMvc.perform(delete("/api/assignment/delete")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(assignmentToDelete)))
+                .andExpect(status().isForbidden)
+
+    }
+
     @Test
     fun `DELETE should remove assignment(s) given person and date`() {
         val originalAssignmentForPerson: Assignment = assignmentRepository.save(Assignment(
@@ -489,5 +507,15 @@ class AssignmentControllerInTimeApiTest {
         assertThat(assignmentRepository.count()).isOne()
         assertThat(assignmentRepository.findAll().first()).isEqualToIgnoringGivenFields(unassignedAssignmentForPerson, "id")
         assertThat(assignmentRepository.findAll()).doesNotContain(originalAssignmentForPerson)
+    }
+
+    @Test
+    fun `DELETE for date should return 403 when trying to delete without write authorization`() {
+        mockMvc.perform(delete("/api/assignment/delete/$mar1")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(person.copy(spaceId = -999))))
+                .andExpect(status().isForbidden)
+
     }
 }
