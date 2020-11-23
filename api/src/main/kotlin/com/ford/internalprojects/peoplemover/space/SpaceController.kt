@@ -61,7 +61,7 @@ class SpaceController(
     }
 
     @PostMapping("/user")
-    fun createUserSpace(
+    fun createSpace(
             @RequestBody request: SpaceCreationRequest,
             @RequestHeader(name = "Authorization") token: String
     ): SpaceResponse {

@@ -14,9 +14,6 @@ class CustomPermissionEvaluator(
 ) : PermissionEvaluator {
     override fun hasPermission(
             auth: Authentication, targetDomainObject: Any, permission: Any): Boolean {
-        println("Auth: ${auth.name}, Target: $targetDomainObject, Permission: $permission")
-        println("repo: $userSpaceMappingRepository")
-
         val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(auth.name, Integer.parseInt(targetDomainObject.toString()))
         return mapping.isPresent
     }

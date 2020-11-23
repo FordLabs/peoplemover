@@ -246,7 +246,7 @@ class AssignmentControllerInTimeApiTest {
     @Test
     fun `POST should return 403 if user does not write access`() {
 
-        val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()), Person("", -9999), HashSet())
+        val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.now(), Person("", -9999), HashSet())
 
         mockMvc.perform(post("/api/assignment/create")
                 .header("Authorization", "Bearer VALID_TOKEN")

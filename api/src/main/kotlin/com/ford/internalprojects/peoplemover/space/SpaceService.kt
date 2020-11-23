@@ -86,4 +86,10 @@ class SpaceService(
 
         spaceRepository.save(editedSpace)
     }
+
+    fun userHasEditAccessToSpace(spaceUuid: String): Boolean {
+        val spaceToAccess = getSpace(spaceUuid)
+        val spacesUserHasEditAccess = getSpacesForUser(SecurityContextHolder.getContext().authentication.name)
+        return spacesUserHasEditAccess.contains(spaceToAccess);
+    }
 }
