@@ -33,6 +33,7 @@ export const reactSelectStyles = {
         // These lines disable the blue border
         boxShadow: isFocused ? '0 0 0 2px #4C8EF5' : 'none',
         border: '1px solid hsl(0, 0%, 80%)',
+        width: '216px',
         backgroundColor: 'transparent',
         // @ts-ignore
         '&:hover': {
