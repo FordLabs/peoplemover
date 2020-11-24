@@ -61,19 +61,17 @@ function ViewTagRow({
             </span>
             {showEditButtons && (
                 <div>
-                    <button
-                        className="editTagIcon"
+                    <button className="editTagIcon"
                         data-testid={createDataTestId('editIcon', testIdSuffix)}
                         onClick={(): void => editTagCallback()}
                         onKeyDown={openEditViewOnEnter}>
-                        <i className="fas fa-pen fa-s"/>
+                        <i className="material-icons">edit</i>
                     </button>
                     <button className="deleteTagIcon"
                         data-testid={createDataTestId('deleteIcon', testIdSuffix)}
                         onClick={(): void => showDeleteConfirmationModal()}
-                        onKeyDown={showDeleteConfirmationModalOnEnter}
-                    >
-                        <i className="fas fa-trash fa-s" />
+                        onKeyDown={showDeleteConfirmationModalOnEnter}>
+                        <i className="material-icons">delete</i>
                     </button>
                 </div>
             )}

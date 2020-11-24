@@ -27,18 +27,18 @@ describe('The edit menu', () => {
             {
                 callback: TestUtils.dummyCallback,
                 text: 'Edit Person',
-                icon: 'fa-user-circle',
+                icon: 'account_circle',
             },
             {
                 callback: TestUtils.dummyCallback,
                 text: 'Mark as Placeholder',
-                icon: 'fa-pen',
+                icon: 'create',
 
             },
             {
                 callback: TestUtils.dummyCallback,
                 text: 'Cancel Assignment',
-                icon: 'fa-trash',
+                icon: 'delete',
             },
         ];
 
@@ -47,15 +47,15 @@ describe('The edit menu', () => {
 
             await underTest.findByText('Edit Person');
             const firstIcon = await underTest.findByTestId('editMenuOption__edit_person');
-            expect(firstIcon).toHaveClass(menuOptionList[0].icon);
+            expect(firstIcon.innerHTML).toContain(menuOptionList[0].icon);
 
             await underTest.findByText('Mark as Placeholder');
             const secondIcon = await underTest.findByTestId('editMenuOption__mark_as_placeholder');
-            expect(secondIcon).toHaveClass(menuOptionList[1].icon);
+            expect(secondIcon.innerHTML).toContain(menuOptionList[1].icon);
 
             await underTest.findByText('Cancel Assignment');
             const thirdIcon = await underTest.findByTestId('editMenuOption__cancel_assignment');
-            expect(thirdIcon).toHaveClass(menuOptionList[2].icon);
+            expect(thirdIcon.innerHTML).toContain(menuOptionList[2].icon);
         });
 
         it('should call the right callback when menu option is clicked', () => {
@@ -81,22 +81,22 @@ describe('The edit menu', () => {
                 {
                     callback: TestUtils.dummyCallback,
                     text: 'Edit product',
-                    icon: 'fa-user-circle',
+                    icon: 'create',
                 },
                 {
                     callback: TestUtils.dummyCallback,
                     text: 'Archive product',
-                    icon: 'fa-inbox',
+                    icon: 'inbox',
                 },
             ];
             const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={TestUtils.dummyCallback}/>);
             await underTest.findByText('Edit product');
             const firstIcon = await underTest.findByTestId('editMenuOption__edit_product');
-            expect(firstIcon).toHaveClass(menuOptionList[0].icon);
+            expect(firstIcon.innerHTML).toContain(menuOptionList[0].icon);
 
             await underTest.findByText('Archive product');
             const secondIcon = await underTest.findByTestId('editMenuOption__archive_product');
-            expect(secondIcon).toHaveClass(menuOptionList[1].icon);
+            expect(secondIcon.innerHTML).toContain(menuOptionList[1].icon);
         });
     });
 });

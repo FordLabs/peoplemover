@@ -25,6 +25,7 @@ interface Props {
 }
 
 const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, isUnassignedProduct}: Props): ReactElement => {
+    const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
     const showHoverBox = hoverBoxIsOpened && !isUnassignedProduct;
@@ -35,7 +36,9 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, isUnassignedPro
         return (
             <div className="hoverBoxContainer"
                 data-testid="hoverBoxContainer">
-                <p className="hoverBoxNotes">{notes}</p>
+                <p className="hoverBoxNotes">
+                    {notes}
+                </p>
             </div>
         );
     };
@@ -56,20 +59,23 @@ const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, isUnassignedPro
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer">
-            <div className={`${assignment.person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
+            <div className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
                 data-testid="personName"
-                onMouseEnter={e => onNoteHover(true)}
-                onMouseLeave={e => onNoteHover(false)}>
-                {assignment.person.name}
-                {!!assignment.person.notes &&
-                    <div className="fas fa-file notesIcon" data-testid="notesIcon">
-                        {showHoverBox && <HoverBox notes={assignment.person.notes}/>}
-                    </div>
+                onMouseEnter={(): void => onNoteHover(true)}
+                onMouseLeave={(): void => onNoteHover(false)}>
+                {person.name}
+                {!!person.notes && !!person.notes.trim() &&
+                    <i className="material-icons notesIcon" data-testid="notesIcon">
+                        note
+                        {showHoverBox && <HoverBox notes={person.notes}/>}
+                    </i>
                 }
             </div>
-            <div className="personRole">
-                {assignment.person.spaceRole && assignment.person.spaceRole.name}
-            </div>
+            {person?.spaceRole?.name && (
+                <div className="personRole">
+                    {person.spaceRole.name}
+                </div>
+            )}
         </div>
     );
 };

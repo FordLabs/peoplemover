@@ -89,12 +89,12 @@ function ProductCard({
             {
                 callback: editProductAndCloseEditMenu,
                 text: 'Edit Product',
-                icon: 'fa-pen',
+                icon: 'create',
             },
             {
                 callback: archiveProductAndCloseEditMenu,
                 text: 'Archive Product',
-                icon: 'fa-inbox',
+                icon: 'inbox',
             },
         ];
     }
@@ -119,10 +119,10 @@ function ProductCard({
             return Promise.resolve();
         }
         const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(currentSpace, archivedProduct);
+        return ProductClient.editProduct(currentSpace, archivedProduct, true);
     }
 
-    const setCurrentModalToCreateAssignment = () => setCurrentModal({
+    const setCurrentModalToCreateAssignment = (): void => setCurrentModal({
         modal: AvailableModals.CREATE_ASSIGNMENT,
         item: product,
     });
@@ -139,45 +139,57 @@ function ProductCard({
         }
     }
 
+    const TagList = (): JSX.Element => {
+        const locationTag = product.spaceLocation?.name;
+        const locationTagExists = !!locationTag;
+        const productTagExists = product.productTags.length > 0;
+
+        return locationTagExists || productTagExists ?
+            <p className="productTagContainer">
+                <span>{locationTag}</span>
+                {locationTagExists && productTagExists && <span>, </span>}
+                {product.productTags.map((tag, index) => {
+                    if (index < product.productTags.length - 1) {
+                        return <span key={tag.id}>{tag.name}, </span>;
+                    }
+                    return <span key={tag.id}>{tag.name}</span>;
+                })}
+            </p>
+            : <></>;
+    };
+
     return (
         <div className={container} data-testid={createDataTestId(container, product.name)} ref={productRef}>
             <div key={product.name}>
                 {container === 'productCardContainer' && (
                     <div>
                         <div className="productNameEditContainer">
-                            <div>
+                            <div className="productDetails">
                                 <h2 className="productName" data-testid="productName">
                                     {product.name}
                                 </h2>
-                                <p className="productTagContainer">
-                                    <span>{product.spaceLocation && product.spaceLocation.name}</span>
-                                    {product.spaceLocation && product.spaceLocation.name !== '' && product.productTags.length > 0 && <span>, </span>}
-                                    {product.productTags.map((tag, index) => {
-                                        if (index < product.productTags.length - 1) {
-                                            return <span key={tag.id}>{tag.name}, </span>;
-                                        }
-                                        return <span key={tag.id}>{tag.name}</span>;
-                                    })}
-                                </p>
-                            </div>
-                            <div className="productControlsContainer">
-                                <div className="addPersonIconContainer">
-                                    <button
-                                        disabled={isReadOnly}
-                                        data-testid={createDataTestId('addPersonToProductIcon', product.name)}
-                                        className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon clickableIcon"
-                                        onClick={setCurrentModalToCreateAssignment}
-                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
-                                    />
+                                <div className="productControlsContainer">
+                                    <div className="addPersonIconContainer">
+                                        <button data-testid={createDataTestId('addPersonToProductIcon', product.name)}
+                                            className="addPersonIcon material-icons greyIcon clickableIcon"
+                                            disabled={isReadOnly}
+                                            onClick={setCurrentModalToCreateAssignment}
+                                            onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
+                                            person_add
+                                        </button>
+                                    </div>
+                                    <button disabled={isReadOnly}
+                                        className="editIcon material-icons greyIcon clickableIcon"
+                                        data-testid={createDataTestId('editProductIcon', product.name)}
+                                        onClick={toggleEditMenu}
+                                        onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
+                                        more_vert
+                                    </button>
                                 </div>
-                                <button
-                                    disabled={isReadOnly}
-                                    className="editIcon fas fa-ellipsis-v greyIcon clickableIcon"
-                                    data-testid={createDataTestId('editProductIcon', product.name)}
-                                    onClick={toggleEditMenu}
-                                    onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}/>
                             </div>
-                            {isEditMenuOpen &&
+                            <TagList />
+                            {
+                                isEditMenuOpen &&
                                 <EditMenu menuOptionList={getMenuOptionList()}
                                     onClosed={toggleEditMenu}/>
                             }
@@ -186,7 +198,7 @@ function ProductCard({
                             <div className="emptyProductText">
                                 <div className="emptyProductTextHint">
                                     <p>Add a person by clicking</p>
-                                    <i className="fas fa-user-plus fa-flip-horizontal fa-xs greyIcon"/>
+                                    <i className="material-icons greyIcon addPersonIcon">person_add</i>
                                 </div>
                                 <p>above, or drag them in.</p>
                             </div>
@@ -199,6 +211,7 @@ function ProductCard({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
@@ -213,3 +226,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductCard);
+/* eslint-enable */

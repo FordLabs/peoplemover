@@ -34,7 +34,7 @@ import {Space} from '../Space/Space';
 
 interface Props {
     locations: Array<Tag>;
-    updateLocations: any;
+    updateLocations(Function: (prevProductTag: Array<Tag>) => Tag[]): void;
     updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
     currentSpace: Space;
 }
@@ -66,7 +66,7 @@ const LocationTags = ({
     };
 
     const editLocation = async (location: TagRequest): Promise<unknown> => {
-        return await LocationClient.edit(location, currentSpace.uuid!!)
+        return await LocationClient.edit(location, currentSpace)
             .then((response) => {
                 const newLocation: Tag = response.data;
                 updateFilterOptions(locationFilterIndex, newLocation, TagAction.EDIT);
@@ -80,7 +80,7 @@ const LocationTags = ({
     };
 
     const addLocation = async (location: TagRequest): Promise<unknown> => {
-        return await LocationClient.add(location, currentSpace.uuid!!)
+        return await LocationClient.add(location, currentSpace)
             .then((response) => {
                 const newLocation: Tag = response.data;
                 updateFilterOptions(locationFilterIndex, newLocation, TagAction.ADD);
@@ -96,7 +96,7 @@ const LocationTags = ({
     const deleteLocation = async (locationToDelete: Tag): Promise<void> => {
         try {
             if (currentSpace.uuid) {
-                await LocationClient.delete(locationToDelete.id, currentSpace.uuid);
+                await LocationClient.delete(locationToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
                 updateFilterOptions(locationFilterIndex, locationToDelete, TagAction.DELETE);
                 updateLocations((prevLocations: Array<Tag>) => prevLocations.filter((location: RoleTag) => location.id !== locationToDelete.id));

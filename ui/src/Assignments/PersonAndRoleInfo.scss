@@ -27,7 +27,12 @@
     position: relative;
     color: $purple;
     margin-left: 4px;
-    font-size: 12px;
+    font-size: 16px;
+    vertical-align: text-bottom;
+  }
+
+  .personName {
+    word-break: break-word;
   }
 
   .personName,
@@ -61,5 +66,6 @@
   .hoverBoxNotes {
     margin: 16px 20px;
     line-height: 18px;
+    white-space: pre-wrap;
   }
 }

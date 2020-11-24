@@ -66,13 +66,17 @@ function AccountDropdown({ hideSpaceButtons, isReadOnly }: AccountDropdownProps)
                 data-testid="accountDropdownToggle"
                 className="accountDropdownToggle"
                 onClick={showDropdown}>
-                <i className="fas fa-user" data-testid="userIcon"/>
+                <i className="material-icons" data-testid="userIcon">
+                    person
+                </i>
                 {userName && (
                     <div className="welcomeUser">
                         Welcome, <span className="userName">{userName}</span>
                     </div>
                 )}
-                <i className="fas fa-caret-down drawerCaret"/>
+                <i className="material-icons">
+                    arrow_drop_down
+                </i>
             </button>
             {dropdownToggle && (
                 <div className="accountDropdown">

@@ -80,6 +80,7 @@ export const mockDate = (expected: Date): () => void => {
 
     // Our mock is not a full implementation of Date
     // Types will not match but it's good enough for our tests
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     global.Date = MockDate as any;
 
     // Callback function to remove the Date mock
@@ -246,9 +247,9 @@ class TestUtils {
         TestUtils.whiteColor,
     ];
 
-    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceId: 1, color: {id: 1, color: '#44'}};
-    static productManager = {name: 'Product Manager', id: 2, spaceId: 1, color: {id: 2, color: '#45'}};
-    static productDesigner = {name: 'Product Designer', id: 3, spaceId: 1, color: {id: 3, color: '#46'}};
+    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceId: 1, color: TestUtils.color1};
+    static productManager = {name: 'Product Manager', id: 2, spaceId: 1, color: TestUtils.color2};
+    static productDesigner = {name: 'Product Designer', id: 3, spaceId: 1, color: TestUtils.color3};
 
     static roles: RoleTag[] = [
         TestUtils.softwareEngineer,
@@ -385,7 +386,7 @@ class TestUtils {
         name: 'I am archived',
         spaceId: 1,
         startDate: '',
-        endDate: '',
+        endDate: '2020-11-02',
         spaceLocation: TestUtils.detroit,
         assignments: [],
         archived: true,

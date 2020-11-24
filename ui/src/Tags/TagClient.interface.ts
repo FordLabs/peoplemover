@@ -18,10 +18,11 @@
 import {AxiosResponse} from 'axios';
 import {Tag} from './Tag.interface';
 import {TagRequest} from './TagRequest.interface';
+import {Space} from '../Space/Space';
 
 export interface TagClient {
      get(spaceUuid: string): Promise<AxiosResponse<Tag[]>>;
-     add(addRequest: TagRequest, spaceUuid: string): Promise<AxiosResponse<Tag>>;
-     edit(editRequest: TagRequest, spaceUuid: string): Promise<AxiosResponse<Tag>>;
-     delete(id: number, spaceUuid: string): Promise<AxiosResponse>;
+     add(addRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>>;
+     edit(editRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>>;
+     delete(id: number, space: Space): Promise<AxiosResponse>;
 }

@@ -26,6 +26,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
 import {Person} from '../People/Person';
 import {fetchProductsAction} from '../Redux/Actions';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface ReassignedDrawerProps {
     products: Array<Product>;
@@ -46,7 +47,7 @@ function ReassignedDrawer({
 
     /* eslint-disable */
     useEffect(() => {
-        const reassignments = AssignmentClient.getReassignments(currentSpace.uuid!!, viewingDate).then( reassignmentResponse =>
+        const reassignments = AssignmentClient.getReassignments(currentSpace.uuid!, viewingDate).then( reassignmentResponse =>
             setReassignments(reassignmentResponse.data)
         );
     }, [products]);
@@ -56,10 +57,17 @@ function ReassignedDrawer({
         mapsReassignments(reassignment, index)
     ));
 
-    const containee: JSX.Element = <div className="reassignmentContainer" data-testid="reassignmentContainer">{listOfHTMLReassignments}</div>;
+    const containee: JSX.Element = (
+        <div 
+            className="reassignmentContainer" 
+            data-testid="reassignmentContainer">
+            {listOfHTMLReassignments}
+        </div>
+    );
 
     return (
-        <DrawerContainer drawerIcon="fas fa-user-check"
+        <DrawerContainer
+            drawerIcon="how_to_reg"
             testId="reassignmentDrawer"
             containerTitle="Reassigned"
             containee={containee}
@@ -81,21 +89,36 @@ function ReassignedDrawer({
                 <div className="name">{reassignment.person.name}</div>
                 <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
                 {!oneWayReassignment &&
-                    <div className="additionalInfo">{reassignment.fromProductName} <i className="fas fa-long-arrow-alt-right"/> {reassignment.toProductName}</div>
+                    <div className="additionalInfo">{reassignment.fromProductName}
+                        <i className="material-icons">east</i>
+                        {reassignment.toProductName}
+                    </div>
                 }
                 {oneWayReassignment &&
                     <div className="additionalInfo">{oneWayReassignment}</div>
                 }
-                <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}><i className="fas fa-undo-alt"/>Revert</button>
+                <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}>
+                    <i className="material-icons">undo</i>
+                    Revert
+                </button>
             </div>
         );
     }
 
     async function revert(person: Person): Promise<void> {
-        await AssignmentClient.deleteAssignmentForDate(viewingDate, person).then(fetchProducts);
+        const reassignment = reassignments.find(reassignment => reassignment.person.id === person.id);
+        await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
+            .then(() => {
+                fetchProducts();
+                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`);
+            }).catch(err => {
+                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`, err.code);
+                return Promise.reject(err);
+            });
     }
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
     viewingDate: state.viewingDate,
@@ -107,3 +130,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReassignedDrawer);
+/* eslint-enable */

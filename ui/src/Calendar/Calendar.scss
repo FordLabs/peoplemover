@@ -88,10 +88,15 @@
           margin: 23px 0 16px 0;
           display: flex;
           justify-content: center;
+          align-items: center;
           color: $gray-1;
 
           .calendarMonthArrows {
             background-color: transparent;
+
+            i {
+              font-size: 24px;
+            }
           }
 
           .monthText {
@@ -123,24 +128,23 @@
 }
 
 .calendar {
+  display: flex;
+  align-items: center;
 
   .calendarCustomInput {
+    display: flex;
+    align-items: flex-end;
     font-weight: bold;
     font-size: 14px;
     line-height: 16px;
     color: $gray-1;
     max-width: 227px;
     margin-left: 20px;
-    margin-top: 12px;
     cursor: pointer;
 
     &.readOnly {
       cursor: initial;
       opacity: 1;
-    }
-
-    .drawerCaret {
-      margin-left: 4px;
     }
   }
 }

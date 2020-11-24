@@ -21,6 +21,7 @@ import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
 import moment from 'moment';
 import {getToken} from '../Auth/TokenProvider';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 const baseReportsUrl = '/api/reports';
 
@@ -38,6 +39,10 @@ class ReportClient {
             const jsonAsCsv = ReportClient.convertToCSV(response.data);
             const fileName = `${spaceName}_${date.toISOString().split('T')[0]}.csv`;
             fileDownload(jsonAsCsv, fileName);
+            MatomoEvents.pushEvent(spaceName, 'downloadReport', dateAsString);
+        }).catch(err => {
+            MatomoEvents.pushEvent(spaceName, 'downloadReportError', dateAsString, err.code);
+            Promise.reject(err);
         });
     }
 

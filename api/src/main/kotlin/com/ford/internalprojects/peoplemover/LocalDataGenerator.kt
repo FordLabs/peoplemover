@@ -45,7 +45,7 @@ class LocalDataGenerator(
 ) {
 
     fun setSpace(uuid: String) {
-        generateSpaceData(uuid, true)
+//        generateSpaceData(uuid, true)
     }
 
     fun resetSpace(uuid: String) {
@@ -53,10 +53,12 @@ class LocalDataGenerator(
     }
 
     private fun generateSpaceData(uuid: String, addColors: Boolean) {
+
+
         val spaceName = "Flipping Sweet"
         val createdBy = "SSQUAREP"
         val createdSpace: Space = spaceRepository.save(
-                Space(name = spaceName, uuid = uuid ,lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
+                Space(name = spaceName, uuid = uuid, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
         )
         productService.createDefaultProducts(createdSpace);
 

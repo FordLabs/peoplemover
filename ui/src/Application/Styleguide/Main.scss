@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -17,6 +17,8 @@
 
 @import './Colors';
 @import './Buttons';
+@import './Material-Icons';
+@import './Breakpoints';
 
 $focus-state-border: 2px solid $prime-1;
 
@@ -47,6 +49,10 @@ a.link {
 
 a.deleteLink {
   color: $prime-1;
+}
+
+textarea {
+  font-family: inherit;
 }
 
 .deleteLinkColor {
@@ -119,4 +125,8 @@ input[type="text"] {
   color: currentColor;
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+.material-icons {
+  font-size: 20px;
 }

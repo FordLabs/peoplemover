@@ -84,7 +84,7 @@ function PersonForm({
     setIsUnassignedDrawerOpen,
 }: PersonFormProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const spaceUuid = currentSpace.uuid!!;
+    const spaceUuid = currentSpace.uuid!;
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
@@ -165,7 +165,7 @@ function PersonForm({
                 setIsUnassignedDrawerOpen(true);
             }
             if (isEditPersonForm && assignment) {
-                const response = await PeopleClient.updatePerson(spaceUuid, person);
+                const response = await PeopleClient.updatePerson(currentSpace, person);
                 await AssignmentClient.createAssignmentForDate({
                     requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
                     person: assignment.person,
@@ -231,7 +231,7 @@ function PersonForm({
     const handleCreateRole = (inputValue: string): void => {
         setIsLoading(true);
         const roleAddRequest: RoleAddRequest = {name: inputValue};
-        RoleClient.add(roleAddRequest, spaceUuid).then((response: AxiosResponse) => {
+        RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
             const newRole: RoleTag = response.data;
             setRoles(roles => alphabetize([...roles, newRole]));
             updatePersonField('spaceRole', newRole);
@@ -356,7 +356,7 @@ function PersonForm({
                 </div>
                 {isEditPersonForm && (
                     <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
-                        <i className="fas fa-trash"/>
+                        <i className="material-icons">delete</i>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             data-testid="deletePersonButton"

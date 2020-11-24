@@ -18,13 +18,13 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
-import plusIcon from '../Application/Assets/plus.svg';
 import CurrentModal from '../Redux/Containers/ModalContainer';
 import {
     AvailableModals,
     fetchUserSpacesAction,
     setCurrentModalAction,
     setCurrentSpaceAction,
+    setViewingDateAction,
 } from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
@@ -40,11 +40,19 @@ interface SpaceDashboardProps {
     fetchUserSpaces(): void;
     userSpaces: Array<Space>;
     setCurrentSpace(space: Space): Space;
+    setCurrentDateOnState(): void;
 }
 
-function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces, setCurrentSpace}: SpaceDashboardProps): JSX.Element {
+function SpaceDashboard({
+    setCurrentModal,
+    fetchUserSpaces,
+    userSpaces,
+    setCurrentSpace,
+    setCurrentDateOnState,
+}: SpaceDashboardProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [redirectPage, setRedirectPage] = useState<JSX.Element | null>(null);
+    setCurrentDateOnState();
 
     function onCreateNewSpaceButtonClicked(): void {
         setCurrentModal({modal: AvailableModals.CREATE_SPACE});
@@ -100,7 +108,9 @@ function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces, setCurren
     function NewSpaceButton(): JSX.Element {
         return (
             <button className="createNewSpaceButton" onClick={onCreateNewSpaceButtonClicked}>
-                <img className="createNewSpaceIcon" src={plusIcon} alt=""/>
+                <i className="material-icons createNewSpaceIcon">
+                    add_circle_outline
+                </i>
                 Create New Space
             </button>
         );
@@ -117,6 +127,7 @@ function SpaceDashboard({setCurrentModal, fetchUserSpaces, userSpaces, setCurren
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     userSpaces: state.userSpaces,
 });
@@ -125,6 +136,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
+    setCurrentDateOnState: () => dispatch(setViewingDateAction(new Date())),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboard);
+/* eslint-enable */

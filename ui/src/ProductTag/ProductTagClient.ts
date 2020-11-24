@@ -20,6 +20,8 @@ import {ProductTag} from './ProductTag';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
+import {Space} from '../Space/Space';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 class ProductTagClient implements TagClient {
     private getBaseProductTagsUrl(spaceUuid: string): string {
@@ -38,8 +40,9 @@ class ProductTagClient implements TagClient {
         return Axios.get(url, config);
     }
 
-    async add(productTagAddRequest: TagRequest, spaceUuid: string ): Promise<AxiosResponse> {
-        const url = this.getBaseProductTagsUrl(spaceUuid);
+    async add(productTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const url = this.getBaseProductTagsUrl(space.uuid!!);
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -47,11 +50,18 @@ class ProductTagClient implements TagClient {
             },
         };
 
-        return Axios.post(url, productTagAddRequest, config);
+        return Axios.post(url, productTagAddRequest, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'addProductTag', productTagAddRequest.name);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'addProductTagError', productTagAddRequest.name, err.code);
+            return Promise.reject(err.code);
+        });
     }
 
-    async edit(productTagEditRequest: TagRequest, spaceUuid: string): Promise<AxiosResponse<ProductTag>> {
-        const url = this.getBaseProductTagsUrl(spaceUuid);
+    async edit(productTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<ProductTag>> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const url = this.getBaseProductTagsUrl(space.uuid!!);
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -59,11 +69,18 @@ class ProductTagClient implements TagClient {
             },
         };
 
-        return Axios.put(url, productTagEditRequest, config);
+        return Axios.put(url, productTagEditRequest, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'editProductTag', productTagEditRequest.name);
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'editProductTagError', productTagEditRequest.name, err.code);
+            return Promise.reject(err.code);
+        });
     }
 
-    async delete(productTagId: number, spaceUuid: string): Promise<AxiosResponse> {
-        const url = this.getBaseProductTagsUrl(spaceUuid) + `/${productTagId}`;
+    async delete(productTagId: number, space: Space): Promise<AxiosResponse> {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const url = this.getBaseProductTagsUrl(space.uuid!!) + `/${productTagId}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -71,7 +88,13 @@ class ProductTagClient implements TagClient {
             },
         };
 
-        return Axios.delete(url, config);
+        return Axios.delete(url, config).then( result => {
+            MatomoEvents.pushEvent(space.name, 'deleteProductTag', productTagId.toString());
+            return result;
+        }).catch(err => {
+            MatomoEvents.pushEvent(space.name, 'deleteProductTagError', productTagId.toString(), err.code);
+            return Promise.reject(err.code);
+        });
     }
 }
 export default new ProductTagClient();

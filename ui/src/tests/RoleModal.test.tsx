@@ -112,7 +112,7 @@ describe('My Roles Form', () => {
                 name: expectedNewRoleName,
                 colorId: TestUtils.whiteColor.id,
             };
-            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace.uuid!!);
+            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace);
         });
 
         it('should not allow saving empty role', async () => {
@@ -220,8 +220,7 @@ describe('My Roles Form', () => {
             const confirmDeleteButton = await app.findByTestId('confirmDeleteButton');
             fireEvent.click(confirmDeleteButton);
 
-            const expectedRoleId = 2;
-            expect(RoleClient.delete).toHaveBeenCalledWith(expectedRoleId, initialState.currentSpace.uuid);
+            expect(RoleClient.delete).toHaveBeenCalledWith(TestUtils.productManager.id, initialState.currentSpace);
             await wait(() => {
                 expect(app.queryByText(deleteWarning)).not.toBeInTheDocument();
             });

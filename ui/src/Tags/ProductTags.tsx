@@ -34,7 +34,7 @@ import {Space} from '../Space/Space';
 
 interface Props {
     productTags: Array<Tag>;
-    updateProductTags: any;
+    updateProductTags(Function: (productTags: Array<Tag>) => Tag[]): void;
     updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
     currentSpace: Space;
 }
@@ -66,7 +66,7 @@ const ProductTags = ({
     };
 
     const editProductTag = async (productTag: TagRequest): Promise<unknown> => {
-        return await ProductTagClient.edit(productTag, currentSpace.uuid!!)
+        return await ProductTagClient.edit(productTag, currentSpace)
             .then((response) => {
                 const newProductTag: Tag = response.data;
                 updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.EDIT);
@@ -81,7 +81,7 @@ const ProductTags = ({
     };
 
     const addProductTag = async (productTag: TagRequest): Promise<unknown> => {
-        return await ProductTagClient.add(productTag, currentSpace.uuid!!)
+        return await ProductTagClient.add(productTag, currentSpace)
             .then((response) => {
                 const newProductTag: Tag = response.data;
                 updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.ADD);
@@ -98,7 +98,7 @@ const ProductTags = ({
     const deleteProductTag = async (productTagToDelete: Tag): Promise<void> => {
         try {
             if (currentSpace.uuid) {
-                await ProductTagClient.delete(productTagToDelete.id, currentSpace.uuid);
+                await ProductTagClient.delete(productTagToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
                 updateFilterOptions(productTagFilterIndex, productTagToDelete, TagAction.DELETE);
                 updateProductTags((prevProductTags: Array<Tag>) =>

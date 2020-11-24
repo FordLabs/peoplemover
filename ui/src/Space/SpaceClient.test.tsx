@@ -28,7 +28,6 @@ declare let window: MatomoWindow;
 
 describe('Space Client', function() {
     const baseSpaceUrl = `/api/spaces`;
-    const uuid = 'spaceUUID';
     const cookies = new Cookies();
     const expectedConfig = {
         headers: {
@@ -82,7 +81,7 @@ describe('Space Client', function() {
         const expectedUrl = baseSpaceUrl + '/uuidbob';
         const expectedBody = createEmptySpace();
 
-        SpaceClient.editSpace('uuidbob', createEmptySpace()).then(() => {
+        SpaceClient.editSpace('uuidbob', createEmptySpace(), '').then(() => {
             expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
             done();
         });

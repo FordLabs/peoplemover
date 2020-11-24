@@ -58,22 +58,53 @@
 }
 
 .productNameEditContainer {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 5px 6px 9px;
-  align-items: flex-start;
+  padding: 6px 0 6px 9px;
   position: relative;
 }
 
-.productNameContainer {
+.productDetails {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .productName {
+    margin: 5px 0;
+    font-size: 14px;
+    line-height: 16px;
+    color: $gray-1;
+    word-break: break-word;
+  }
 }
 
-.editIcon {
-  cursor: pointer;
-  color: $font-color;
-  margin: 0 2px;
+.productTagContainer {
+  margin: 0 9px 6px 0;
+  font-size: 10px;
+  line-height: 11px;
+  color: $gray-1;
+  overflow-wrap: break-word;
+}
+
+.productControlsContainer {
+  display: flex;
+  align-items: center;
+
+  .addPersonIconContainer {
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .editIcon {
+    cursor: pointer;
+    font-weight: bold;
+    color: $font-color;
+    margin-left: 2px;
+    font-size: 20px;
+  }
+}
+
+.material-icons.addPersonIcon {
+  font-size: 18px;
+  padding-left: 6px;
 }
 
 button.clickableIcon {
@@ -82,16 +113,7 @@ button.clickableIcon {
 }
 
 .clickableIcon {
-  padding: 3px;
-}
-
-.productName {
-  margin: 0 0 4px 0;
-
-  font-size: 14px;
-  line-height: 16px;
-  color: $gray-1;
-  word-break: break-word;
+  padding: 3px 0;
 }
 
 .textTruncated {
@@ -120,24 +142,6 @@ div.DefaultColor {
   bottom: 0;
   z-index: 10;
   display: none;
-}
-
-.productControlsContainer {
-  display: flex;
-  align-items: center;
-}
-
-.addPersonIconContainer {
-  cursor: pointer;
-}
-
-.productTagContainer {
-  margin-bottom: 6px;
-  margin-top: 0;
-
-  font-size: 10px;
-  line-height: 11px;
-  color: $gray-1;
 }
 
 .personRole {
@@ -187,6 +191,10 @@ button.archivedProduct,
   width: 20px;
   height: 11px;
   margin-right: 7px;
+
+  i {
+    font-size: 14px;
+  }
 }
 
 .archivedAssignmentCount {

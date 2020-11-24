@@ -21,7 +21,6 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import axe from 'react-axe';
 import PeopleMover from './Application/PeopleMover';
-import '@fortawesome/fontawesome-free/css/all.css';
 import {Provider} from 'react-redux';
 import {applyMiddleware, compose, createStore, StoreEnhancer} from 'redux';
 import rootReducer from './Redux/Reducers';
@@ -37,6 +36,8 @@ import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
+import FocusRing from './FocusRing';
+import MatomoEvents from './Matomo/MatomoEvents';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -66,7 +67,9 @@ const store = createStore(
 );
 
 declare global {
-    interface Window { runConfig: RunConfig }
+    interface Window {
+        runConfig: RunConfig;
+    }
 }
 
 export interface RunConfig {
@@ -76,6 +79,23 @@ export interface RunConfig {
     adfs_client_id: string;
     adfs_resource: string;
 }
+
+window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
+
+const UNAUTHORIZED = 401;
+Axios.interceptors.response.use(
+    response => response,
+    error => {
+        const {status, statusText, config} = error.response;
+
+        MatomoEvents.pushEvent(statusText, config.method, config.url, status);
+
+        if (status === UNAUTHORIZED) {
+            window.location.href = '/user/login';
+        }
+        return Promise.reject(error);
+    }
+);
 
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
@@ -97,8 +117,8 @@ if (isUnsupportedBrowser()) {
     ReactDOM.render(<UnsupportedBrowserPage/>, document.getElementById('root'));
 } else {
     Axios.get(`/api/config`,
-        {headers: { 'Content-Type': 'application/json'}}
-    ).then( (response) => {
+        {headers: {'Content-Type': 'application/json'}}
+    ).then((response) => {
 
         window.runConfig = Object.freeze(response.data);
 
@@ -132,7 +152,7 @@ if (isUnsupportedBrowser()) {
                         </Route>
 
                         <Route>
-                            <Redirect to={`/error/404`} />
+                            <Redirect to={`/error/404`}/>
                         </Route>
                     </Switch>
                 </Router>

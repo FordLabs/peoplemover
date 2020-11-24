@@ -46,9 +46,8 @@ interface AssignmentCardProps {
 
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
 
-    setCurrentModal?(modalState: CurrentModalState): void;
-
-    fetchProducts?(): void;
+    setCurrentModal(modalState: CurrentModalState): void;
+    fetchProducts(): void;
 }
 
 function AssignmentCard({
@@ -83,7 +82,7 @@ function AssignmentCard({
                     modal: AvailableModals.EDIT_PERSON,
                     item: assignment,
                 };
-                setCurrentModal!!(newModalState);
+                setCurrentModal(newModalState);
             }
         }
     }
@@ -94,7 +93,7 @@ function AssignmentCard({
             modal: AvailableModals.EDIT_PERSON,
             item: assignment,
         };
-        setCurrentModal!!(newModalState);
+        setCurrentModal(newModalState);
     }
 
     async function markAsPlaceholderAndCloseEditMenu(): Promise<void> {
@@ -156,17 +155,17 @@ function AssignmentCard({
             {
                 callback: editPersonAndCloseEditMenu,
                 text: 'Edit Person',
-                icon: 'fa-user-circle',
+                icon: 'account_circle',
             },
             {
                 callback: markAsPlaceholderAndCloseEditMenu,
                 text: assignment.placeholder ? 'Unmark as Placeholder' : 'Mark as Placeholder',
-                icon: 'fa-pen',
+                icon: 'create',
             },
             {
                 callback: cancelAssignmentAndCloseEditMenu,
                 text: 'Cancel Assignment',
-                icon: 'fa-trash',
+                icon: 'delete',
             }];
     }
 
@@ -176,9 +175,12 @@ function AssignmentCard({
             color = assignment.person.spaceRole.color.color;
         }
 
-        ThemeApplier.setBackgroundColorOnElement(assignmentEditRef.current!, color);
-        if (assignment.placeholder) {
-            ThemeApplier.setBorderColorOnElement(assignmentRef.current!, color);
+        if (assignmentEditRef.current) {
+            ThemeApplier.setBackgroundColorOnElement(assignmentEditRef.current, color);
+        }
+
+        if (assignment.placeholder && assignmentRef.current) {
+            ThemeApplier.setBorderColorOnElement(assignmentRef.current, color);
         }
     }, [assignment]);
 
@@ -188,27 +190,34 @@ function AssignmentCard({
         }
     }
 
+    const classNames = `personContainer 
+        ${container === 'productDrawerContainer' ? 'borderedPeople' : ''}
+        ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}
+        ${isReadOnly ? 'readOnlyAssignmentCard' : ''}`;
+
     return (
         <div
-            className={`personContainer ${container === 'productDrawerContainer' ? 'borderedPeople' : ''} ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'} ${isReadOnly ? 'readOnlyAssignmentCard' : ''}`}
+            className={classNames}
             data-testid={createDataTestId('assignmentCard', assignment.person.name)}
             ref={assignmentRef}
-            onMouseDown={(e): void => {if (!isReadOnly) startDraggingAssignment!!(assignmentRef, assignment, e);}}
+            onMouseDown={(e): void => {
+                if (!isReadOnly && startDraggingAssignment) {
+                    startDraggingAssignment(assignmentRef, assignment, e);
+                }
+            }}
         >
-            {assignment.person.newPerson ? <NewBadge/> : null}
+            {assignment.person.newPerson && <NewBadge/>}
             <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={isUnassignedProduct} />
-            <div
-                ref={assignmentEditRef}
+            <div ref={assignmentEditRef}
                 className="personRoleColor"
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
                 onKeyDown={(e): void => {handleKeyDownForToggleEditMenu(e);}}>
                 {
-                    !isReadOnly && <div className="fas fa-ellipsis-v personEditIcon greyIcon"/>
+                    !isReadOnly && <i className="material-icons personEditIcon greyIcon">more_vert</i>
                 }
             </div>
-            {
-                editMenuIsOpened &&
+            {editMenuIsOpened &&
                 <EditMenu
                     menuOptionList={getMenuOptionList()}
                     onClosed={onEditMenuClosed}
@@ -218,6 +227,7 @@ function AssignmentCard({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
@@ -230,3 +240,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCard);
+/* eslint-enable */

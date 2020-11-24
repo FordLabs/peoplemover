@@ -19,7 +19,7 @@ import {RoleEditRequest} from './RoleEditRequest.interface';
 interface Props {
     colors: Array<Color>;
     roles: Array<RoleTag>;
-    setRoles: any;
+    setRoles(Function: (roles: Array<Tag>) => Tag[]): void;
     updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
     currentSpace: Space;
 }
@@ -46,7 +46,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
     };
 
     const editRole = async (role: RoleEditRequest): Promise<unknown> => {
-        return await RoleClient.edit(role, currentSpace.uuid!!)
+        return await RoleClient.edit(role, currentSpace)
             .then((response) => {
                 const newRole: RoleTag = response.data;
                 updateFilterOptions(roleFiltersIndex, newRole, TagAction.EDIT);
@@ -64,7 +64,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
             name: role.name,
             colorId: role.colorId,
         };
-        return await RoleClient.add(newRole, currentSpace.uuid!!)
+        return await RoleClient.add(newRole, currentSpace)
             .then((response) => {
                 const newRole: RoleTag = response.data;
                 updateFilterOptions(roleFiltersIndex, newRole, TagAction.ADD);
@@ -80,7 +80,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
     const deleteRole = async (roleToDelete: Tag): Promise<void> => {
         try {
             if (currentSpace.uuid) {
-                await RoleClient.delete(roleToDelete.id, currentSpace.uuid);
+                await RoleClient.delete(roleToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
                 updateFilterOptions(roleFiltersIndex, roleToDelete, TagAction.DELETE);
                 setRoles((prevRoles: Array<RoleTag>) => prevRoles.filter((role: RoleTag) => role.id !== roleToDelete.id));

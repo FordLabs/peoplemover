@@ -18,7 +18,6 @@
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {createDataTestId} from '../tests/TestUtils';
-import PlusIcon from '../Application/Assets/plusIcon.png';
 import EditTagRow from './EditTagRow';
 import {TagNameType, TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
@@ -72,7 +71,7 @@ const AddNewTagRow = ({
             onClick={(): void => updateViewState(true)}
             onKeyDown={(e): void => openAddTagRow(e)}>
             <div className="addNewTagCircle" data-testid="addNewTraitCircle">
-                <img src={PlusIcon} alt="Add Tag Icon"/>
+                <i className="material-icons">add_circle</i>
             </div>
             <span className="tagName addNewTraitText">
                 Add New {addNewButtonLabel}

@@ -170,7 +170,9 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
                 onClick={toggleDropdown}
                 onKeyDown={handleKeyDownButton}
                 data-testid="selectDropdownToggle">
-                <i className={`selectDropdownArrow fas ${ dropdownToggle ? 'fa-caret-up' : 'fa-caret-down' }`} />
+                <i className="material-icons selectDropdownArrow">
+                    {dropdownToggle ? 'arrow_drop_up' : 'arrow_drop_down'}
+                </i>
                 {currentOption.displayValue}
             </button>
             {dropdownToggle && <Dropdown />}

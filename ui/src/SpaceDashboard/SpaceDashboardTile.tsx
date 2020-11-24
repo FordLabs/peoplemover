@@ -100,28 +100,37 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                 <div className="spaceName">{space.name}</div>
                 <div className="lastModifiedText">Last modified {timestamp}</div>
             </div>
-            <button data-testid="ellipsisButton"
-                className="ellipsisButton"
-                onClick={(e): boolean => handleDropdownClick(e)}
-                onKeyDown={(e): boolean => handleKeyDownForShowsDropdown(e)}>
-                <i className="fas fa-ellipsis-v icon"/>
-                {dropdownFlag && (
-                    <div className="ellipsisDropdownContainer">
-                        <div data-testid="editSpace"
-                            className="dropdownOptions"
-                            onClick={openEditModal}
-                            onKeyDown={(e): void => handleKeyDownForOpenEditModal(e)}>
-                            <i className="fas fa-pen"/>Edit
+
+            <div className="ellipsisButtonContainer">
+                <button data-testid="ellipsisButton"
+                    className="ellipsisButton"
+                    aria-label={`Open Menu for Space ${space.name}`}
+                    onClick={(e): boolean => handleDropdownClick(e)}
+                    onKeyDown={(e): boolean => handleKeyDownForShowsDropdown(e)}>
+                    <i className="material-icons">more_vert</i>
+                    {dropdownFlag && (
+                        <div className="ellipsisDropdownContainer">
+                            <div data-testid="editSpace"
+                                className="dropdownOptions"
+                                onClick={openEditModal}
+                                onKeyDown={(e): void => handleKeyDownForOpenEditModal(e)}>
+                                <i className="material-icons">
+                                    edit
+                                </i>
+                                Edit
+                            </div>
                         </div>
-                    </div>
-                )}
-            </button>
+                    )}
+                </button>
+            </div>
         </div>
     );
 }
 
+/* eslint-disable */
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(null, mapDispatchToProps)(SpaceDashboardTile);
+/* eslint-enable */

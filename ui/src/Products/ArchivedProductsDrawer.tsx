@@ -24,6 +24,7 @@ import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
+import '../Application/Styleguide/Main.scss';
 
 interface ArchivedProductsDrawerProps{
     products: Array<Product>;
@@ -35,7 +36,9 @@ function ArchivedProductsDrawer({products, viewingDate}: ArchivedProductsDrawerP
 
     const containee = <div className="archivedProductListContainer">
         {products.map(product => {
-            if (product.archived || product.endDate! < moment(viewingDate).format('YYYY-MM-DD')) {
+            const isArchived = product.archived
+                || (!!product.endDate && product.endDate < moment(viewingDate).format('YYYY-MM-DD'));
+            if (isArchived) {
                 return (
                     <div key={product.id}>
                         <ArchivedProduct product={product}/>
@@ -46,7 +49,7 @@ function ArchivedProductsDrawer({products, viewingDate}: ArchivedProductsDrawerP
         })}
     </div>;
     return (
-        <DrawerContainer drawerIcon="fas fa-inbox"
+        <DrawerContainer drawerIcon="inbox"
             containerTitle="Archived Products"
             testId="archivedProductsDrawer"
             containee={containee}
@@ -55,9 +58,11 @@ function ArchivedProductsDrawer({products, viewingDate}: ArchivedProductsDrawerP
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
     viewingDate: state.viewingDate,
 });
 
 export default connect(mapStateToProps)(ArchivedProductsDrawer);
+/* eslint-enable */

@@ -32,6 +32,7 @@ import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 
 import './ProductFilterOrSortBy.scss';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 export type LocalStorageFilters = {
     locationTagsFilters: Array<string>;
@@ -57,6 +58,8 @@ function ProductFilter({
     setAllGroupedTagFilterOptions,
     allGroupedTagFilterOptions,
 }: ProductFilterProps): JSX.Element {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const uuid = currentSpace.uuid!;
     const [checkBoxFilterValues, setCheckBoxFilterValues] = useState<Array<FilterOption>>([]);
 
     /* eslint-disable */
@@ -97,7 +100,7 @@ function ProductFilter({
     }, [allGroupedTagFilterOptions, currentSpace]);
 
     async function buildTagOptions(tagClient: TagClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
-        const tagsResponse: AxiosResponse<Array<Tag>> = await tagClient.get(currentSpace.uuid!!);
+        const tagsResponse: AxiosResponse<Array<Tag>> = await tagClient.get(uuid);
         const tags: Array<Tag> = tagsResponse.data;
         return tags.map((tag: Tag): FilterOption => ({
             label: tag.name,
@@ -121,20 +124,21 @@ function ProductFilter({
         tagFilterOptions: AllGroupedTagFilterOptions
     ): Array<FilterOption> {
         return tagFilterOptions.options.map(
-            option => {
-                if (selectedOptions && selectedOptions.includes(option)) {
-                    return {
-                        ...option,
-                        selected: true,
-                    };
-                } else {
-                    return {
-                        ...option,
-                        selected: false,
-                    };
+            option => (
+                {
+                    ...option,
+                    selected: selectedOptions && selectedOptions.includes(option),
                 }
-            }
+            )
         );
+    }
+
+    function sendMatomoEvent(selectedOptions: Array<FilterOption>): void {
+        let selectedOptionsString = 'filter selected';
+        if (selectedOptions) {
+            selectedOptionsString = selectedOptions.filter(option => option.selected).map(option => option.label).join(', ');
+        }
+        MatomoEvents.pushEvent(currentSpace.name, 'filter', selectedOptionsString);
     }
 
     function applyFilter(selectedOptions: Array<FilterOption>): void {
@@ -156,6 +160,8 @@ function ProductFilter({
             {...allGroupedTagFilterOptions[1], options: updatedProductTags},
             {...allGroupedTagFilterOptions[2], options: updatedRoleTags},
         ]);
+
+        sendMatomoEvent(selectedOptions);
     }
 
     return (
@@ -181,6 +187,7 @@ function ProductFilter({
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
@@ -192,3 +199,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductFilter);
+/* eslint-enable */

@@ -169,7 +169,8 @@ function ProductForm({
     }
 
     function determineIfProductIsArchived(): boolean {
-        return product?.endDate! < moment(viewingDate).format('YYYY-MM-DD');
+        if (!product?.endDate) return false;
+        return product.endDate < moment(viewingDate).format('YYYY-MM-DD');
     }
 
     function displayDeleteProductModal(): void {
@@ -288,7 +289,7 @@ function ProductForm({
                 </div>
                 {editing && (
                     <div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
-                        <i className="fas fa-trash"/>
+                        <i className="material-icons">delete</i>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             data-testid="deleteProduct"

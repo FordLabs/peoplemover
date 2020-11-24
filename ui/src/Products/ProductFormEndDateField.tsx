@@ -23,7 +23,7 @@ import {Product} from './Product';
 
 interface Props {
     currentProduct: Product;
-    updateProductField: (fieldName: string, fieldValue: any) => void;
+    updateProductField: (fieldName: string, fieldValue: string) => void;
 }
 
 function ProductFormEndDateField({ currentProduct, updateProductField }: Props): JSX.Element {
@@ -55,7 +55,7 @@ function ProductFormEndDateField({ currentProduct, updateProductField }: Props):
                     mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
                     placeholder="MM/DD/YYYY"
                 />
-                {!endDate && <i className="far fa-calendar-alt calendar-icon" />}
+                {!endDate && <i className="material-icons calendar-icon">date_range</i>}
             </div>
         );
     };

@@ -64,7 +64,7 @@ describe('Location Client', function() {
 
     it('should create a location and return that location', function(done) {
         const expectedLocationAddRequest = { name: TestUtils.annarbor.name };
-        LocationClient.add(expectedLocationAddRequest, spaceUuid)
+        LocationClient.add(expectedLocationAddRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationAddRequest, expectedConfig);
                 expect(response.data).toBe('Created Location');
@@ -77,7 +77,7 @@ describe('Location Client', function() {
             id: TestUtils.annarbor.id,
             name: TestUtils.annarbor.name,
         };
-        LocationClient.edit(expectedLocationEditRequest, spaceUuid)
+        LocationClient.edit(expectedLocationEditRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Location');
@@ -87,7 +87,7 @@ describe('Location Client', function() {
 
     it('should delete a location', function(done) {
         const expectedUrl = `${baseLocationsUrl}/${TestUtils.annarbor.id}`;
-        LocationClient.delete(TestUtils.annarbor.id, spaceUuid)
+        LocationClient.delete(TestUtils.annarbor.id, TestUtils.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Location');

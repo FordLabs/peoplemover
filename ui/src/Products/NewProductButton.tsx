@@ -41,12 +41,13 @@ function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CRE
             className="newProduct productCardContainer"
             onClick={openModal}
             data-testid="newProductButton">
-            <div className="fa fa-plus greyIcon addProductIcon fa-sm"/>
+            <i className="material-icons greyIcon addProductIcon">add</i>
             <h2 className="newProductText">Add Product</h2>
         </button>
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isReadOnly: state.isReadOnly,
 });
@@ -56,3 +57,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewProductButton);
+/* eslint-enable */
