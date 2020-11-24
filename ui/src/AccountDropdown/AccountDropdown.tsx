@@ -91,8 +91,10 @@ function AccountDropdown({ hideSpaceButtons, isReadOnly }: AccountDropdownProps)
     );
 }
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isReadOnly: state.isReadOnly,
 });
 
 export default connect(mapStateToProps)(AccountDropdown);
+/* eslint-enable */

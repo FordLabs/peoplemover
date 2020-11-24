@@ -52,7 +52,8 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
                 })
                 .catch((error: AxiosError) => {
                     setIsReadOnly(true);
-                    switch (error.response!.status) {
+                    if (!error.response) return;
+                    switch (error.response.status) {
                         case HTTP_FORBIDDEN: {
                             setRenderedElement(<Route {...rest}>{children}</Route>);
                             break;
@@ -69,8 +70,10 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
     return <>{renderedElement}</>;
 }
 
+/* eslint-disable */
 const mapDispatchToProps = (dispatch: any) => ({
     setIsReadOnly: (isReadOnly: boolean) => dispatch(setIsReadOnlyAction(isReadOnly)),
 });
 
 export default connect(null, mapDispatchToProps)(AuthorizedRoute);
+/* eslint-enable */

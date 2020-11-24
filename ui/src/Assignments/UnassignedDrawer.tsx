@@ -59,6 +59,7 @@ const getUnassignedProduct = (products: Array<Product>): Product => {
     return unassignedProducts.length === 1 ? unassignedProducts[0] : {} as Product;
 };
 
+/* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isUnassignedDrawerOpen: state.isUnassignedDrawerOpen,
     product: getUnassignedProduct(state.products ? state.products : []),
@@ -69,3 +70,4 @@ const mapDispatchToProps = (dispatch:  Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UnassignedDrawer);
+/* eslint-enable */
