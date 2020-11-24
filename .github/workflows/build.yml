@@ -26,8 +26,10 @@ jobs:
     - name: Release artifact
       uses: actions/upload-artifact@v2
       with:
-        name: peoplemover-api.jar
-        path: api/build/libs/PeopleMover-0.0.1-SNAPSHOT.jar
+#        name: peoplemover-api.jar
+        path: api/build/libs/
+#        PeopleMover-0.0.1-SNAPSHOT.jar
+
   build-ui:
     runs-on: ubuntu-latest
     steps:
