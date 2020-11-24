@@ -27,6 +27,10 @@ group = 'com.ford'
 //version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+gitProperties {
+    branch = System.getenv('GIT_BRANCH')
+}
+
 def details = versionDetails()
 details.lastTag
 details.commitDistance
