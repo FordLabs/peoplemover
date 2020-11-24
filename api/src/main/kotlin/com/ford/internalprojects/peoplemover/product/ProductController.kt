@@ -17,10 +17,9 @@
 
 package com.ford.internalprojects.peoplemover.product
 
-import com.ford.internalprojects.peoplemover.product.exceptions.ProductAccessForbiddenException
 import com.ford.internalprojects.peoplemover.space.SpaceService
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -43,7 +42,7 @@ class ProductController(
         val isRequestDateNotToday = requestedDate != LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
         if (!spaceService.userHasEditAccessToSpace(spaceUuid) && isRequestDateNotToday) {
-            throw ProductAccessForbiddenException()
+            throw SpaceIsReadOnlyException()
         }
 
         if (requestedDate != null) {

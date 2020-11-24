@@ -97,7 +97,7 @@ function AssignmentCard({
     }
 
     async function markAsPlaceholderAndCloseEditMenu(): Promise<void> {
-        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(undefined, assignment.person.id, viewingDate)).data;
 
         const assignmentIndex: number = assignments.findIndex(fetchedAssignment => (fetchedAssignment.productId === assignment.productId));
         const markedAsPlaceholder = !assignment.placeholder;
@@ -127,7 +127,7 @@ function AssignmentCard({
     }
 
     async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
-        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(undefined, assignment.person.id, viewingDate)).data;
 
         const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments
             .filter(fetchedAssignment => fetchedAssignment.id !== assignment.id)

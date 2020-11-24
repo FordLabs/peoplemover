@@ -88,8 +88,7 @@ class SpaceService(
     }
 
     fun userHasEditAccessToSpace(spaceUuid: String): Boolean {
-        val spaceToAccess = getSpace(spaceUuid)
-        val spacesUserHasEditAccess = getSpacesForUser(SecurityContextHolder.getContext().authentication.name)
-        return spacesUserHasEditAccess.contains(spaceToAccess);
+        val spacesForUser = getSpacesForUser(SecurityContextHolder.getContext().authentication.name).map { it.uuid }
+        return spacesForUser.contains(spaceUuid)
     }
 }

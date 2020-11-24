@@ -17,20 +17,31 @@
 
 package com.ford.internalprojects.peoplemover.assignment
 
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.person.Person
+import com.ford.internalprojects.peoplemover.space.SpaceService
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @RestController
 class AssignmentController(
         private val assignmentService: AssignmentService,
+        private val spaceService: SpaceService,
         private val logger: BasicLogger
 ) {
-    @GetMapping("/api/person/{personId}/assignments/date/{requestedDate}")
-    fun getAssignmentsByPersonIdForDate(@PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
+    @GetMapping("/api/spaces/{spaceUuid}/person/{personId}/assignments/date/{requestedDate}")
+    fun getAssignmentsByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
+        val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val isRequestedDateNotToday = requestedDate != today;
+
+        if(!spaceService.userHasEditAccessToSpace(spaceUuid) && isRequestedDateNotToday){
+            throw SpaceIsReadOnlyException()
+        }
+
         val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(requestedDate))
         logger.logInfoMessage("All assignments retrieved for person with id: [$personId] on date: [$requestedDate].")
         return ResponseEntity.ok(assignmentsForPerson)

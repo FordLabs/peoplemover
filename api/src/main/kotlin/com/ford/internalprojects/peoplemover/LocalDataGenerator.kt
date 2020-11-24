@@ -45,7 +45,7 @@ class LocalDataGenerator(
 ) {
 
     fun setSpace(uuid: String) {
-//        generateSpaceData(uuid, true)
+        generateSpaceData(uuid, true)
     }
 
     fun resetSpace(uuid: String) {

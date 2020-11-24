@@ -137,7 +137,7 @@ function AssignmentCardList({
                 const isDifferentProduct = oldAssignment.productId !== newProductId;
 
                 if (isDifferentProduct) {
-                    const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(oldAssignment.person.id, viewingDate)).data;
+                    const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(undefined, oldAssignment.person.id, viewingDate)).data;
                     const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
                         .map(existingAssignment => {
                             return ({
