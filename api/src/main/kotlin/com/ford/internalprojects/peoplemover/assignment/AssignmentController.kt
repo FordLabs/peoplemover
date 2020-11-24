@@ -36,7 +36,7 @@ class AssignmentController(
     @GetMapping("/api/spaces/{spaceUuid}/person/{personId}/assignments/date/{requestedDate}")
     fun getAssignmentsByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val isRequestedDateNotToday = requestedDate != today;
+        val isRequestedDateNotToday = requestedDate != today
 
         if(!spaceService.userHasEditAccessToSpace(spaceUuid) && isRequestedDateNotToday){
             throw SpaceIsReadOnlyException()
@@ -57,6 +57,13 @@ class AssignmentController(
 
     @GetMapping(path = ["/api/reassignment/{spaceUuid}/{requestedDate}"])
     fun getReassignmentsByExactDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
+        val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val isRequestedDateNotToday = requestedDate != today
+
+        if(!spaceService.userHasEditAccessToSpace(spaceUuid) && isRequestedDateNotToday){
+            throw SpaceIsReadOnlyException()
+        }
+
         val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceUuid, LocalDate.parse(requestedDate))
         logger.logInfoMessage("All reassignments retrieved for space with uuid: [$spaceUuid] on date: [$requestedDate].")
         return ResponseEntity.ok(reassignmentsByExactDate)
