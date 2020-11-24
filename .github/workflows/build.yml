@@ -23,7 +23,7 @@ jobs:
     - name: Build
       run: ./gradlew assemble
       env:
-        BASE_BRANCH: ${{ github.base_ref }}
+        HEAD_BRANCH: ${{ github.head_ref }}
       working-directory: ./api
     - name: Release artifact
       uses: actions/upload-artifact@v2

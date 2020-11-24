@@ -40,7 +40,7 @@ details.branchName // is null if the repository in detached HEAD mode
 details.isCleanTag
 
 gitProperties {
-    branch = System.getenv('BASE_BRANCH')
+    branch = System.getenv('HEAD_BRANCH')
 //    branch = details.gitHashFull
 }
 
