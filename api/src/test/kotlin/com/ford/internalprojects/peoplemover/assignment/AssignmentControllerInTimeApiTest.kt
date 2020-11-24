@@ -40,14 +40,9 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.web.bind.annotation.RequestMethod
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
 
 @RunWith(SpringRunner::class)
@@ -192,12 +187,12 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return 400 when retrieving effective dates given an invalid spaceuuid`() {
-        val bogusUuidSpaceId = 99999999
+    fun `GET dates with changes should return FORBIDDEN when a user does not have edit access`() {
+        val spaceWithoutAccess = 10
 
-        mockMvc.perform(get("/api/assignment/dates/$bogusUuidSpaceId")
+        mockMvc.perform(get("/api/assignment/dates/$spaceWithoutAccess")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
-                .andExpect(status().isBadRequest)
+                .andExpect(status().isForbidden)
     }
 
     @Test

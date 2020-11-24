@@ -85,6 +85,7 @@ class ProductControllerInTimeApiTest {
     val may2 = "2019-05-02"
     val jun1 = "2019-06-01"
     val sep1 = "2019-09-01"
+    val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
     var baseProductsUrl = ""
 
@@ -108,7 +109,7 @@ class ProductControllerInTimeApiTest {
         product3 = productRepository.save(Product(
                 name = "product three, no write access",
                 startDate = LocalDate.parse(may1),
-                endDate = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ISO_DATE)),
+                endDate = LocalDate.parse(today),
                 spaceId = spaceWithReadOnlyAccess.id!!
         ))
         baseProductsUrl = makeBaseProductsUrl()
@@ -154,6 +155,23 @@ class ProductControllerInTimeApiTest {
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
 
+    }
+
+    @Test
+    fun `GET should return products for read only space when requesting today's data`() {
+        val baseUrl = makeBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
+        val result = mockMvc.perform(get("$baseUrl?requestedDate=$today")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualProducts: List<Product> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Product::class.java)
+        )
+
+        val actualProduct: Product = actualProducts[0]
+        assertThat(actualProduct).isEqualTo(product3)
     }
 
     @Test

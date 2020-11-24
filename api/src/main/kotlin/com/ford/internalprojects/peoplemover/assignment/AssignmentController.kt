@@ -36,6 +36,7 @@ class AssignmentController(
         return ResponseEntity.ok(assignmentsForPerson)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'modify')")
     @GetMapping(path = ["/api/assignment/dates/{spaceUuid}"])
     fun getAllEffectiveDates(@PathVariable spaceUuid: String): ResponseEntity<Set<LocalDate>> {
         val dates = assignmentService.getEffectiveDates(spaceUuid)
