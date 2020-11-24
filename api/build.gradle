@@ -24,7 +24,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'kotlin'
 
 group = 'com.ford'
-//version = '0.0.1-SNAPSHOT'
+version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 gitProperties {
@@ -39,7 +39,7 @@ details.gitHashFull // full 40-character Git commit hash
 details.branchName // is null if the repository in detached HEAD mode
 details.isCleanTag
 
-version = details.branchName
+//version = details.branchName
 task changeDate(type: WriteProperties) {
     outputFile = file('git.properties')
     property 'git.bs', 'gegeg'
