@@ -195,6 +195,7 @@ function AssignmentCard({
         ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}
         ${isReadOnly ? 'readOnlyAssignmentCard' : ''}`;
 
+
     return (
         <div
             className={classNames}

@@ -184,6 +184,7 @@ function ProductCard({
                                         onClick={toggleEditMenu}
                                         onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
                                         more_vert
+
                                     </button>
                                 </div>
                             </div>
