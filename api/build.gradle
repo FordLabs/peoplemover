@@ -67,10 +67,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
-//gitProperties {
-//    branch = System.getenv('GIT_BRANCH')
-//}
-
 // DEPLOYMENT CONFIGURATION
 apply plugin: 'cf-app'
 cfConfig {
