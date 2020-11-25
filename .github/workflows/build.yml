@@ -22,15 +22,15 @@ jobs:
       working-directory: ./api
     - name: Build PR
       run: ./gradlew assemble
-      if: github.event_name == 'pull_request'
       env:
         HEAD_BRANCH: ${{ github.head_ref }}
+      if: github.event_name == 'pull_request'
     - name: Build
       run: ./gradlew assemble
-      if: github.event_name == 'push'
       env:
         HEAD_BRANCH: stage
       working-directory: ./api
+      if: github.event_name == 'push'
     - name: Release artifact
       uses: actions/upload-artifact@v2
       with:
