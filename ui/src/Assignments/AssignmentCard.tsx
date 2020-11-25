@@ -61,6 +61,8 @@ function AssignmentCard({
     setCurrentModal,
     fetchProducts,
 }: AssignmentCardProps): JSX.Element {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const spaceUuid = currentSpace.uuid!;
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     const assignmentEditRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
@@ -97,7 +99,7 @@ function AssignmentCard({
     }
 
     async function markAsPlaceholderAndCloseEditMenu(): Promise<void> {
-        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(undefined, assignment.person.id, viewingDate)).data;
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, assignment.person.id, viewingDate)).data;
 
         const assignmentIndex: number = assignments.findIndex(fetchedAssignment => (fetchedAssignment.productId === assignment.productId));
         const markedAsPlaceholder = !assignment.placeholder;
@@ -127,7 +129,7 @@ function AssignmentCard({
     }
 
     async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
-        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(undefined, assignment.person.id, viewingDate)).data;
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, assignment.person.id, viewingDate)).data;
 
         const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments
             .filter(fetchedAssignment => fetchedAssignment.id !== assignment.id)

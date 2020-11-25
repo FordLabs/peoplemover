@@ -58,7 +58,8 @@ function AssignmentCardList({
     fetchProducts,
     setCurrentModal,
 }: AssignmentCardListProps): JSX.Element {
-
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const spaceUuid = currentSpace.uuid!;
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
@@ -137,7 +138,7 @@ function AssignmentCardList({
                 const isDifferentProduct = oldAssignment.productId !== newProductId;
 
                 if (isDifferentProduct) {
-                    const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(undefined, oldAssignment.person.id, viewingDate)).data;
+                    const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, oldAssignment.person.id, viewingDate)).data;
                     const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
                         .map(existingAssignment => {
                             return ({
