@@ -20,9 +20,18 @@ jobs:
     - name: Test
       run: ./gradlew clean test
       working-directory: ./api
+    - name: Build PR
+      run: ./gradlew assemble
+      env:
+        HEAD_BRANCH: ${{ github.head_ref }}
+      working-directory: ./api
+      if: github.event_name == 'pull_request'
     - name: Build
       run: ./gradlew assemble
+      env:
+        HEAD_BRANCH: stage
       working-directory: ./api
+      if: github.event_name == 'push'
     - name: Release artifact
       uses: actions/upload-artifact@v2
       with:
