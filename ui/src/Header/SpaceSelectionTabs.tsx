@@ -34,33 +34,42 @@ function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element
     const readOnlyClass = isReadOnly ? 'readOnly' : '';
     return (
         <div className="spaceSelectionContainer">
-            <Calendar/>
-            <div className="spaceFiller"/>
-            <button
-                disabled={isReadOnly}
-                className={`selectionTabButton tab ${readOnlyClass}`}
-                onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
-                data-testid="myTagsButton">
-                <i className="material-icons myTagsIcon" data-testid="myTagsIcon">local_offer</i>
-                My Tags
-            </button>
-            <button
-                disabled={isReadOnly}
-                className={`selectionTabButton tab ${readOnlyClass}`}
-                data-testid="myRolesButton"
-                onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
-                <i className="material-icons myRolesIcon" data-testid="myRolesIcon">assignment_ind</i>
-                My Roles
-            </button>
-            <button
-                type="button"
-                disabled={isReadOnly}
-                className={`addPersonButton ${readOnlyClass}`}
-                data-testid="addPersonButton"
-                onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
-                <i className="material-icons">add</i>
-                Add Person
-            </button>
+            <div className="leftContent">
+                <Calendar/>
+                {isReadOnly && (
+                    <span className="viewState">
+                        <i className="material-icons">visibility</i>
+                        View only
+                    </span>
+                )}
+            </div>
+            <div className="rightContent">
+                <button
+                    disabled={isReadOnly}
+                    className={`selectionTabButton tab ${readOnlyClass}`}
+                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
+                    data-testid="myTagsButton">
+                    <i className="material-icons myTagsIcon" data-testid="myTagsIcon">local_offer</i>
+                    My Tags
+                </button>
+                <button
+                    disabled={isReadOnly}
+                    className={`selectionTabButton tab ${readOnlyClass}`}
+                    data-testid="myRolesButton"
+                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
+                    <i className="material-icons myRolesIcon" data-testid="myRolesIcon">assignment_ind</i>
+                    My Roles
+                </button>
+                <button
+                    type="button"
+                    disabled={isReadOnly}
+                    className={`addPersonButton ${readOnlyClass}`}
+                    data-testid="addPersonButton"
+                    onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
+                    <i className="material-icons">add</i>
+                    Add Person
+                </button>
+            </div>
         </div>
     );
 }

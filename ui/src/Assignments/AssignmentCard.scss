@@ -34,7 +34,11 @@
   box-sizing: border-box;
   overflow-wrap: break-word;
 
-  &:hover {
+  &.readOnlyAssignmentCard {
+    cursor: initial;
+  }
+
+  &:not(.readOnlyAssignmentCard):hover {
     box-shadow: 0 0 0 2px $prime-1;
 
     .personRoleColor {
@@ -71,10 +75,6 @@
     border-top-right-radius: inherit;
     border-bottom-right-radius: inherit;
   }
-}
-
-.readOnlyAssignmentCard {
-  cursor: initial;
 }
 
 .personContainer:hover .personEditIcon {
