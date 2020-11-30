@@ -50,7 +50,10 @@ function CalendarCustomInput(
             onClick={calendarClicked}
             onKeyDown={(e): void => handleKeyDownForCalendarClicked(e)}
             data-testid="calendarToggle">
-            Viewing: {viewingDate.toLocaleString('en-us', dateFormatOptions)}
+            Viewing:
+            <span className="calendarViewingDate">
+                {viewingDate.toLocaleString('en-us', dateFormatOptions)}
+            </ span>
             {   !isReadOnly &&
                 (
                     isOpen

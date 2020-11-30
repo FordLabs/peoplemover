@@ -134,7 +134,6 @@
   .calendarCustomInput {
     display: flex;
     align-items: flex-end;
-    font-weight: bold;
     font-size: 14px;
     line-height: 16px;
     color: $gray-1;
@@ -142,9 +141,15 @@
     margin-left: 20px;
     cursor: pointer;
 
+    .calendarViewingDate {
+      font-weight: bold;
+      padding-left: 4px;
+    }
+
     &.readOnly {
       cursor: initial;
       opacity: 1;
+      background-color: transparent;
     }
   }
 }

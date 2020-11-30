@@ -36,8 +36,9 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     useOnLoad(() => {
+        setIsReadOnly(false);
+
         if (!window.runConfig.auth_enabled) {
-            setIsReadOnly(false);
             setRenderedElement(<>{children}</>);
         } else {
             const cookie = new Cookies();
@@ -48,7 +49,6 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
             AccessTokenClient.userCanAccessSpace(accessToken, uuid)
                 .then(() => {
                     setRenderedElement(<Route {...rest}>{children}</Route>);
-                    setIsReadOnly(false);
                 })
                 .catch((error: AxiosError) => {
                     setIsReadOnly(true);

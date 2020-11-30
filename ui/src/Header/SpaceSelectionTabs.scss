@@ -49,18 +49,25 @@ button.selectionTabButton {
 
     i {
         font-size: 18px;
+        color: $purple-title;
+
+        &.myRolesIcon {
+            margin-right: 8px;
+        }
+
+        &.myTagsIcon {
+            margin-right: 5px;
+        }
     }
-}
 
-.addBoardIcon,
-.myRolesIcon {
-    margin-right: 8px;
-    color: $purple-title;
-}
+    &.readOnly {
+        color: $gray-4;
+        background-color: transparent;
 
-.myTagsIcon {
-    margin-right: 5px;
-    color: $purple-title;
+        i {
+            color: inherit;
+        }
+    }
 }
 
 button.addPersonButton {
@@ -85,4 +92,3 @@ button.addPersonButton {
         font-weight: bold
     }
 }
-

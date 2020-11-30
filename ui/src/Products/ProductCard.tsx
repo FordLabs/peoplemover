@@ -62,7 +62,7 @@ function ProductCard({
     setCurrentModal,
     fetchProducts,
 }: ProductCardProps): JSX.Element {
-
+    const readOnlyClass = isReadOnly ? 'readOnly' : '';
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
@@ -168,23 +168,22 @@ function ProductCard({
                                 <h2 className="productName" data-testid="productName">
                                     {product.name}
                                 </h2>
-                                <div className="productControlsContainer">
-                                    <div className="addPersonIconContainer">
-                                        <button data-testid={createDataTestId('addPersonToProductIcon', product.name)}
-                                            className="addPersonIcon material-icons greyIcon clickableIcon"
-                                            disabled={isReadOnly}
-                                            onClick={setCurrentModalToCreateAssignment}
-                                            onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
-                                            person_add
-                                        </button>
-                                    </div>
-                                    <button disabled={isReadOnly}
+                                <div className={`productControlsContainer ${readOnlyClass}`}>
+                                    <button
+                                        data-testid={createDataTestId('addPersonToProductIcon', product.name)}
+                                        className="addPersonIcon material-icons greyIcon clickableIcon"
+                                        disabled={isReadOnly}
+                                        onClick={setCurrentModalToCreateAssignment}
+                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
+                                        person_add
+                                    </button>
+                                    <button
+                                        disabled={isReadOnly}
                                         className="editIcon material-icons greyIcon clickableIcon"
                                         data-testid={createDataTestId('editProductIcon', product.name)}
                                         onClick={toggleEditMenu}
                                         onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
                                         more_vert
-
                                     </button>
                                 </div>
                             </div>

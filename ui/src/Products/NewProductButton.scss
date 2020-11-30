@@ -28,18 +28,18 @@ button.newProduct {
   width: 194px;
   padding: 8px 5px 4px 5px;
   letter-spacing: normal;
-}
 
-.addProductIcon.material-icons {
-  font-weight: bold;
-  font-size: 20px;
-  margin-left: 11px;
-  margin-right: 8px;
-  padding-bottom: 4px;
-}
+  .newProductText {
+    font-size: 14px;
+    color: $gray-1;
+    padding-bottom: 2px;
+  }
 
-.newProductText {
-  font-size: 14px;
-  color: $gray-1;
-  padding-bottom: 2px;
+  .addProductIcon.material-icons {
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: 11px;
+    margin-right: 8px;
+    padding-bottom: 4px;
+  }
 }
