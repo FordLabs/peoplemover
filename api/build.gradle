@@ -16,6 +16,7 @@ plugins {
     id 'jacoco'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.3.61'
     id "org.jetbrains.kotlin.plugin.spring" version "1.3.71"
+    id "com.gorylenko.gradle-git-properties" version "2.2.4"
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -24,6 +25,10 @@ apply plugin: 'kotlin'
 group = 'com.ford'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+gitProperties {
+    branch = System.getenv('HEAD_BRANCH')
+}
 
 repositories {
     mavenCentral()
@@ -40,6 +45,7 @@ dependencies {
     compile 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.7.RELEASE'
     compile 'com.microsoft.sqlserver:mssql-jdbc:7.2.2.jre11'
     compile 'org.flywaydb:flyway-maven-plugin:6.2.1'
+    compile 'org.springframework.boot:spring-boot-starter-actuator:2.4.0'
     compileOnly 'org.projectlombok:lombok:1.18.10'
 
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
