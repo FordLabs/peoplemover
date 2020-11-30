@@ -210,7 +210,10 @@ function AssignmentCard({
             }}
         >
             {assignment.person.newPerson && <NewBadge/>}
-            <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={isUnassignedProduct} />
+            <PersonAndRoleInfo
+                isReadOnly={isReadOnly}
+                assignment={assignment}
+                isUnassignedProduct={isUnassignedProduct} />
             <div ref={assignmentEditRef}
                 className="personRoleColor"
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
