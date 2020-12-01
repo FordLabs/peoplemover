@@ -66,7 +66,7 @@ class AssignmentController(
 
         val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceUuid, LocalDate.parse(requestedDate))
         logger.logInfoMessage("All reassignments retrieved for space with uuid: [$spaceUuid] on date: [$requestedDate].")
-        return ResponseEntity.ok(reassignmentsByExactDate)
+        return ResponseEntity.ok(reassignmentsByExactDate ?: emptyList())
     }
 
     @PreAuthorize("hasPermission(#createAssignmentRequest.person.spaceId, 'id', 'modify')")

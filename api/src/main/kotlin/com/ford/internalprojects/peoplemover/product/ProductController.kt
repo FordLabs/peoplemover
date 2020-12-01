@@ -29,14 +29,14 @@ import javax.validation.Valid
 @RequestMapping("/api/spaces/{spaceUuid}/products")
 @RestController
 class ProductController(
-        private val productService: ProductService,
-        private val spaceService: SpaceService,
-        private val logger: BasicLogger
+    private val productService: ProductService,
+    private val spaceService: SpaceService,
+    private val logger: BasicLogger
 ) {
     @GetMapping
     fun getProducts(
-            @PathVariable spaceUuid: String,
-            @RequestParam(name = "requestedDate", required = false) requestedDate: String
+        @PathVariable spaceUuid: String,
+        @RequestParam(name = "requestedDate", required = false) requestedDate: String?
     ): Set<Product> {
         val products: Set<Product>;
         val isRequestDateNotToday = requestedDate != LocalDate.now().format(DateTimeFormatter.ISO_DATE)
@@ -61,8 +61,8 @@ class ProductController(
     @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PostMapping
     fun createProduct(
-            @PathVariable spaceUuid: String,
-            @Valid @RequestBody productAddRequest: ProductAddRequest
+        @PathVariable spaceUuid: String,
+        @Valid @RequestBody productAddRequest: ProductAddRequest
     ): Product {
         val createdProduct = productService.create(productAddRequest, spaceUuid)
         logger.logInfoMessage("Product [${createdProduct.name}] created.")
@@ -72,9 +72,9 @@ class ProductController(
     @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PutMapping("/{productId}")
     fun updateProduct(
-            @PathVariable spaceUuid: String,
-            @PathVariable productId: Int,
-            @Valid @RequestBody productEditRequest: ProductEditRequest
+        @PathVariable spaceUuid: String,
+        @PathVariable productId: Int,
+        @Valid @RequestBody productEditRequest: ProductEditRequest
     ): Product {
         val updatedProduct: Product = productService.update(productEditRequest, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] updated.")
@@ -84,8 +84,8 @@ class ProductController(
     @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @DeleteMapping("/{productId}")
     fun deleteProduct(
-            @PathVariable spaceUuid: String,
-            @PathVariable productId: Int
+        @PathVariable spaceUuid: String,
+        @PathVariable productId: Int
     ) {
         productService.delete(productId, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] deleted.")
