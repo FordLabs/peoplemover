@@ -32,7 +32,7 @@ class ProductController(
     @GetMapping
     fun getProducts(
         @PathVariable spaceUuid: String,
-        @RequestParam(name = "requestedDate", required = false) requestedDate: String
+        @RequestParam(name = "requestedDate", required = false) requestedDate: String?
     ): ResponseEntity<Set<Product>> {
         val products: Set<Product>;
 

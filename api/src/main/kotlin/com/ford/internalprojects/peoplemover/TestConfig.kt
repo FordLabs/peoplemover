@@ -18,7 +18,6 @@ class TestConfig {
     fun mockJwtDecoder(): JwtDecoder {
         return MockJwtDecoder()
     }
-
 }
 
 private class MockJwtDecoder : JwtDecoder {
