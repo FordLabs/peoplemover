@@ -28,6 +28,10 @@ button.newProduct {
   width: 194px;
   padding: 8px 5px 4px 5px;
   letter-spacing: normal;
+  background-color: $gray-5;
+  margin: 10px 6px;
+  box-shadow: 1px 2px 3px rgba(black, 0.3);
+  border-radius: 6px;
 
   .newProductText {
     font-size: 14px;
@@ -41,5 +45,14 @@ button.newProduct {
     margin-left: 11px;
     margin-right: 8px;
     padding-bottom: 4px;
+  }
+
+  &.readOnly:disabled {
+    background-color: $gray-5;
+
+    .addProductIcon.material-icons,
+    .newProductText {
+      color: $gray-4;
+    }
   }
 }

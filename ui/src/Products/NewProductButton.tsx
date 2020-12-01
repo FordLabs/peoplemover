@@ -31,6 +31,7 @@ interface Props {
 }
 
 function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: Props): JSX.Element {
+    const readOnlyClass = isReadOnly ? 'readOnly' : '';
     const openModal = (): void => {
         if (!isReadOnly) setCurrentModal(modalState);
     };
@@ -38,7 +39,7 @@ function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CRE
     return (
         <button
             disabled={isReadOnly}
-            className="newProduct productCardContainer"
+            className={`newProduct ${readOnlyClass}`}
             onClick={openModal}
             data-testid="newProductButton">
             <i className="material-icons greyIcon addProductIcon">add</i>
