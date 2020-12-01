@@ -31,6 +31,14 @@ The ui application will start at localhost:3000.
 npm run test
 ```
 
+## Set up Analytics
+We support matomo out of the box, need to update matomo-url-placeholder 
+and matomo-site-id-placeholder with your instances url and site id in 
+analytics.js file
+
+Can also add google analytics, hotjar and more by adding the config scripts
+in analytics.js file
+
 ## License
 
 PeopleMover is licensed under the Apache 2.0 license.
