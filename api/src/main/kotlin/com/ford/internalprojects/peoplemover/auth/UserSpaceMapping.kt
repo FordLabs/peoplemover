@@ -1,5 +1,7 @@
 package com.ford.internalprojects.peoplemover.auth
 
+import com.ford.internalprojects.peoplemover.baserepository.Auditable
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
 @Entity
@@ -13,4 +15,5 @@ data class UserSpaceMapping(
 
         @Column(name = "space_id")
         val spaceId: Int?
-)
+
+) : Auditable()

@@ -38,7 +38,7 @@ class LocationService(
                 locationAddRequest.name
         )?.let { throw LocationAlreadyExistsException(locationAddRequest.name) }
 
-        val spaceLocationToSave = SpaceLocation(spaceId = space.id!!, name = locationAddRequest.name)
+        val spaceLocationToSave = SpaceLocation(spaceId = space.id, name = locationAddRequest.name)
         return spaceLocationRepository.saveAndUpdateSpaceLastModified(spaceLocationToSave)
     }
 

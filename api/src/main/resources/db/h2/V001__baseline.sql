@@ -106,6 +106,10 @@ create table user_space_mapping
     id          int not null identity primary key,
     user_id     varchar(255),
     space_id    varchar(255),
+    last_modified_date datetime,
+    last_modified_by varchar(30),
+    created_date datetime,
+    created_by varchar(30),
 
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
     constraint UQ_User_Space_Mapping unique (user_id, space_id)
