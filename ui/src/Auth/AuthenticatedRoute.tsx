@@ -38,7 +38,7 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
     return <>{renderedElement}</>;
 }
 
-function RedirectToADFS(): null {
+export function RedirectToADFS(): null {
     /* eslint-disable @typescript-eslint/camelcase */
     let oauthUri: string = window.runConfig.adfs_url_template;
     const clientId: string = window.runConfig.adfs_client_id;

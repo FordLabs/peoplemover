@@ -32,12 +32,13 @@ import LandingPage from './LandingPage/LandingPage';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute';
 import OAuthRedirect from './ReusableComponents/OAuthRedirect';
-import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
+import {AuthenticatedRoute, RedirectToADFS} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
 import FocusRing from './FocusRing';
 import MatomoEvents from './Matomo/MatomoEvents';
+import {removeToken} from './Auth/TokenProvider';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -91,7 +92,8 @@ Axios.interceptors.response.use(
         MatomoEvents.pushEvent(statusText, config.method, config.url, status);
 
         if (status === UNAUTHORIZED) {
-            window.location.href = '/user/login';
+            removeToken();
+            RedirectToADFS();
         }
         return Promise.reject(error);
     }
@@ -131,12 +133,12 @@ if (isUnsupportedBrowser()) {
                             <LandingPage/>
                         </Route>
 
-                        <Route exact path={'/adfs/catch'}>
-                            <OAuthRedirect redirectUrl={'/user/dashboard'}/>
+                        <Route exact path="/adfs/catch">
+                            <OAuthRedirect redirectUrl="/user/dashboard"/>
                         </Route>
 
-                        <AuthenticatedRoute exact path={'/user/login'}>
-                            <RedirectWrapper redirectUrl={'/user/dashboard'}/>
+                        <AuthenticatedRoute exact path="/user/login">
+                            <RedirectWrapper redirectUrl="/user/dashboard"/>
                         </AuthenticatedRoute>
 
                         <AuthenticatedRoute exact path="/user/dashboard">
@@ -152,7 +154,7 @@ if (isUnsupportedBrowser()) {
                         </Route>
 
                         <Route>
-                            <Redirect to={`/error/404`}/>
+                            <Redirect to="/error/404"/>
                         </Route>
                     </Switch>
                 </Router>

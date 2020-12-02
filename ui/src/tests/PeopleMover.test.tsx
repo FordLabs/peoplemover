@@ -20,24 +20,34 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
-import {createMemoryHistory} from 'history';
-import ProductClient from '../Products/ProductClient';
+import {createBrowserHistory, History} from 'history';
 import selectEvent from 'react-select-event';
+import SpaceClient from '../Space/SpaceClient';
+
+jest.mock('axios');
 
 describe('PeopleMover', () => {
     let app: RenderResult;
+    let history: History;
     const addProductButtonText = 'Add Product';
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        await wait(() => {
-            app = renderWithRedux(<PeopleMover/>);
+        history = createBrowserHistory();
+        history.push('/uuid');
+
+        await wait(async () => {
+            app = await renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
         });
     });
 
-    it('Should contains My Tags on initial load of People Mover', async () => {
+    it('should contains My Tags on initial load of People Mover', async () => {
         await app.findByText('My Tags');
         await app.findByTestId('myTagsIcon');
     });
@@ -140,21 +150,25 @@ describe('PeopleMover', () => {
     });
 
     describe('Routing', () => {
+        const BAD_REQUEST = 400;
+        const expectedSpaceUuid = 'somebadName';
+
         beforeEach(() => {
             jest.clearAllMocks();
+            history = createBrowserHistory();
+            history.push('/' + expectedSpaceUuid);
         });
 
-        it('should show 404 page when bad space name is provided',  async () => {
-            ProductClient.getProductsForDate = jest.fn(() => Promise.reject());
+        it('should route to 404 page when bad space name is provided',  async () => {
+            SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: BAD_REQUEST}});
 
-            const history = createMemoryHistory({ initialEntries: ['/somebadName'] });
-
-            renderWithRedux(
+            await renderWithRedux(
                 <Router history={history}>
                     <PeopleMover/>
                 </Router>
             );
 
+            expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(expectedSpaceUuid);
             await wait(() => {
                 expect(history.location.pathname).toEqual('/error/404');
             });
