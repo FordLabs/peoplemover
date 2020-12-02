@@ -28,7 +28,7 @@ class CustomPermissionEvaluator(
             auth: Authentication, targetId: Serializable, targetType: String, permission: Any): Boolean {
         val targetIdString = targetId.toString()
 
-        return if (permission == "write" || (permission == "read" && readOnlyOff)) {
+        return if (permission == "write" || permission == "modify" || (permission == "read" && readOnlyOff)) {
             val spaceId = if (targetType == "uuid") {
                 spaceRepository.findByUuid(targetIdString)?.id ?: return false
             } else {
