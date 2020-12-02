@@ -33,6 +33,8 @@ import ProductClient from '../Products/ProductClient';
 import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {Router} from 'react-router-dom';
+import {createBrowserHistory, History} from 'history';
 
 declare let window: MatomoWindow;
 
@@ -47,120 +49,128 @@ describe('People actions', () => {
         TestUtils.mockClientCalls();
     });
 
-    it('opens PersonForm component in editing mode when hambaga icon is clicked', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
+    describe('Person Form', () => {
+        let app: RenderResult;
+        let history: History;
 
-        const editPersonIcon = await app.findByTestId('editPersonIconContainer__person_1');
-        fireEvent.click(editPersonIcon);
+        beforeEach(() => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
 
-        const editPersonButton = await app.findByText('Edit Person');
-        fireEvent.mouseDown(editPersonButton);
+            history = createBrowserHistory();
+            history.push('/uuid');
 
-        await app.findByText('Save');
-    });
-
-    it('opens PersonForm component when Add Person button is clicked', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        await app.findByText(addPersonModalTitle);
-    });
-
-
-    it('While editing, queries the Assignment Client on load for products this person is assigned to', async () => {
-        const initialState: PreloadedState<GlobalStateProps> = {
-            people: TestUtils.people,
-            viewingDate: new Date(2020, 5, 5),
-        } as GlobalStateProps;
-        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-
-        const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
-        fireEvent.click(editPersonButton);
-
-        await app.findByText('Edit Person');
-
-        fireEvent.mouseDown(app.getByText('Edit Person'));
-        fireEvent.mouseUp(app.getByText('Edit Person'));
-
-        const saveButton = await app.findByText('Save');
-        fireEvent.click(saveButton);
-
-        await wait(() => {
-            expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toBeCalledWith(TestUtils.person1.id, new Date(2020, 5, 5));
-        });
-    });
-
-    it('should show placeholder text for the person name', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        await app.findByPlaceholderText('e.g. Jane Smith');
-    });
-
-    it('should not submit assignment when nothing changed', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        fireEvent.click(app.getByText(submitFormButtonText));
-
-        await wait(() => {
-            expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
-        });
-    });
-
-    it('creates the person specified by the PersonForm', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: 'New Bobby'}});
-        fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
-
-        fireEvent.click(app.getByLabelText('Mark as New'));
-
-        fireEvent.click(app.getByText(submitFormButtonText));
-
-        await wait(() => {
-            expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-            const expectedPerson: Person = {
-                ...emptyPerson(),
-                name: 'New Bobby',
-                newPerson: true,
-            };
-            const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-            expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
-        });
-    });
-
-    it('should not create person with empty value and display proper error message', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: ''}});
-        fireEvent.click(app.getByText(submitFormButtonText));
-
-        await wait(() => {
-            expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0);
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
         });
 
-        expect(await app.findByText('Please enter a person name.')).toBeInTheDocument();
+        it('opens PersonForm component in editing mode when hamburger icon is clicked', async () => {
+            const editPersonIcon = await app.findByTestId('editPersonIconContainer__person_1');
+            fireEvent.click(editPersonIcon);
+
+            const editPersonButton = await app.findByText('Edit Person');
+            fireEvent.mouseDown(editPersonButton);
+
+            await app.findByText('Save');
+        });
+
+        it('opens PersonForm component when Add Person button is clicked', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            await app.findByText(addPersonModalTitle);
+        });
+
+        it('While editing, queries the Assignment Client on load for products this person is assigned to', async () => {
+            const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
+            fireEvent.click(editPersonButton);
+
+            await app.findByText('Edit Person');
+
+            fireEvent.mouseDown(app.getByText('Edit Person'));
+            fireEvent.mouseUp(app.getByText('Edit Person'));
+
+            const saveButton = await app.findByText('Save');
+            fireEvent.click(saveButton);
+
+            await wait(() => {
+                expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toBeCalledWith(TestUtils.person1.id, new Date(2020, 5, 5));
+            });
+        });
+
+        it('should show placeholder text for the person name', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            await app.findByPlaceholderText('e.g. Jane Smith');
+        });
+
+        it('should not submit assignment when nothing changed', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            fireEvent.click(app.getByText(submitFormButtonText));
+
+            await wait(() => {
+                expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
+            });
+        });
+
+        it('creates the person specified by the PersonForm', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'New Bobby'}});
+            fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
+
+            fireEvent.click(app.getByLabelText('Mark as New'));
+
+            fireEvent.click(app.getByText(submitFormButtonText));
+
+            await wait(() => {
+                expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
+                const expectedPerson: Person = {
+                    ...emptyPerson(),
+                    name: 'New Bobby',
+                    newPerson: true,
+                };
+                const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
+            });
+        });
+
+        it('should not create person with empty value and display proper error message', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            fireEvent.change(app.getByLabelText('Name'), {target: {value: ''}});
+            fireEvent.click(app.getByText(submitFormButtonText));
+
+            await wait(() => {
+                expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0);
+            });
+
+            expect(await app.findByText('Please enter a person name.')).toBeInTheDocument();
+        });
     });
 
     describe('Roles', () => {
         let app: RenderResult;
+        let history: History;
 
         beforeEach(async () => {
             await act(async () => {
-                app = renderWithRedux(<PeopleMover/>);
+                history = createBrowserHistory();
+                history.push('/uuid');
+
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>
+                );
 
                 const createPersonButton = await app.findByText(addPersonButtonText);
                 fireEvent.click(createPersonButton);
@@ -451,7 +461,7 @@ describe('People actions', () => {
             await app.findByText('Save');
         });
 
-        describe('toggle placeholder from edit menu', () => {
+        describe('Toggle placeholder from edit menu', () => {
             const originalImpl = ThemeApplier.setBorderColorOnElement;
 
             const markAsPlaceHolder = async (): Promise<void> => {

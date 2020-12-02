@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {AxiosResponse} from 'axios';
-import {act, fireEvent} from '@testing-library/react';
+import {act, fireEvent, RenderResult} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from '../Products/ProductClient';
@@ -32,40 +32,53 @@ import {Person} from '../People/Person';
 import LocationClient from '../Locations/LocationClient';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
+import {createBrowserHistory, History} from 'history';
+import {Router} from 'react-router-dom';
+import SpaceClient from "../Space/SpaceClient";
+
+jest.mock('axios');
 
 describe('Products', () => {
+    let app: RenderResult;
+    let history: History;
     const addProductButtonText = 'Add Product';
     const addProductModalTitle = 'Add New Product';
     
-    beforeEach(() => {
+    beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+        history = createBrowserHistory();
+        history.push('/uuid');
+
+        await wait(() => {
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>,
+            );
+        });
     });
 
     describe('Home page', () => {
         it('displays the product names', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
             await app.findByText('Product 1');
             await app.findByText('Product 3');
             expect(app.queryByText('unassigned')).toBeNull();
         });
 
         it('displays the product location', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
             await app.findByText('Southfield');
             await app.findByText('Dearborn');
             expect(app.queryByText('Detroit')).not.toBeInTheDocument();
         });
 
         it('displays the product tags', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
             await app.findByText('AV');
             await app.findByText('FordX');
             expect(app.queryByText('Fin Tech')).not.toBeInTheDocument();
         });
 
         it('displays the empty product text', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
             await app.findAllByText('Add a person by clicking');
         });
 
@@ -90,8 +103,12 @@ describe('Products', () => {
                     compose(applyMiddleware(thunk)),
                 );
 
-                const component = <PeopleMover/>;
-                const wrapper = await renderWithRedux(component, store);
+                const wrapper = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>,
+                    store
+                );
                 await TestUtils.waitForHomePageToLoad(wrapper);
 
                 AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({} as AxiosResponse));
@@ -220,22 +237,17 @@ describe('Products', () => {
         });
 
         it('displays the add person icon', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             await app.findByTestId('addPersonToProductIcon__product_1');
             await app.findByTestId('addPersonToProductIcon__product_3');
         });
 
         it('does not display the add person icon on the unassigned product', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
             await TestUtils.waitForHomePageToLoad(app);
 
             expect(app.queryByTestId('addPersonToProductIcon-999')).not.toBeInTheDocument();
         });
 
         it('opens AssignmentForm component when button clicked with product populated', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const addPersonButton = await app.findByTestId('addPersonToProductIcon__product_1');
             fireEvent.click(addPersonButton);
 
@@ -247,8 +259,6 @@ describe('Products', () => {
         });
 
         it('ProductForm allows choices of locations provided by the API', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -260,8 +270,6 @@ describe('Products', () => {
         });
 
         it('should allow to create new location', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -284,8 +292,6 @@ describe('Products', () => {
         });
 
         it('ProductForm allows choices of product tags provided by the API', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -296,8 +302,6 @@ describe('Products', () => {
         });
 
         it('ProductForm allows to create product tag provided by user', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -330,8 +334,6 @@ describe('Products', () => {
         });
 
         it('opens ProductForm with correct placeholder text in input fields', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -342,8 +344,6 @@ describe('Products', () => {
         });
 
         it('opens ProductForm component when button clicked', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -351,8 +351,6 @@ describe('Products', () => {
         });
 
         it('opens ProductForm with product tag field', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -403,8 +401,6 @@ describe('Products', () => {
         });
 
         it('should show length of notes on initial render', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const editProductMenuButton = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
 
@@ -418,14 +414,10 @@ describe('Products', () => {
         });
 
         it('displays people on each product', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             await app.findByText('Person 1');
         });
 
         it('displays persons role on each assignment', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             await app.findByText('Person 1');
             await app.findByText('Software Engineer');
             expect(app.queryByText('Product Designer')).not.toBeInTheDocument();
@@ -434,8 +426,6 @@ describe('Products', () => {
 
     describe('Deleting a product', () => {
         it('should show a delete button in the product modal', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
             const editProductMenuOption = await app.findByText('Edit Product');
@@ -446,8 +436,6 @@ describe('Products', () => {
         });
 
         it('should show the confirmation modal when a deletion is requested', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
             const editProductMenuOption = await app.findByText('Edit Product');
@@ -476,8 +464,6 @@ describe('Products', () => {
         });
 
         it('should not show archive button option in delete modal if product is already archived', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
             const archivedProductsDrawer = drawerCarets[1];
@@ -520,8 +506,6 @@ describe('Products', () => {
 
     describe('Edit Menu for Product', () => {
         it('should pop the edit menu options', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
@@ -530,8 +514,6 @@ describe('Products', () => {
         });
 
         it('should open edit modal when click on edit product', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
@@ -558,7 +540,11 @@ describe('Products', () => {
                 ));
             }
 
-            const app = renderWithRedux(<PeopleMover/>);
+            const app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
 
             const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
@@ -579,5 +565,4 @@ describe('Products', () => {
             await app.findByText('Product 1');
         });
     });
-
 });

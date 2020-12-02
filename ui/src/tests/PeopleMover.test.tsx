@@ -38,8 +38,8 @@ describe('PeopleMover', () => {
         history = createBrowserHistory();
         history.push('/uuid');
 
-        await wait(async () => {
-            app = await renderWithRedux(
+        await wait( () => {
+            app = renderWithRedux(
                 <Router history={history}>
                     <PeopleMover/>
                 </Router>
@@ -162,7 +162,7 @@ describe('PeopleMover', () => {
         it('should route to 404 page when bad space name is provided',  async () => {
             SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: BAD_REQUEST}});
 
-            await renderWithRedux(
+            renderWithRedux(
                 <Router history={history}>
                     <PeopleMover/>
                 </Router>
