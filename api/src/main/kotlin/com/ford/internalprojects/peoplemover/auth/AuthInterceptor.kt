@@ -14,8 +14,8 @@ class CustomPermissionEvaluator(
         private val spaceRepository: SpaceRepository
 ) : PermissionEvaluator {
 
-    @Value("\${read-only-off-flag:true}")
-    private val readOnlyOff: Boolean = true
+    @Value("\${read-only-off-flag:false}")
+    private val readOnlyOff: Boolean = false
 
 
     override fun hasPermission(
