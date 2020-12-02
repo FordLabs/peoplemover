@@ -33,6 +33,7 @@ class ProductController(
     private val spaceService: SpaceService,
     private val logger: BasicLogger
 ) {
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getProducts(
         @PathVariable spaceUuid: String,

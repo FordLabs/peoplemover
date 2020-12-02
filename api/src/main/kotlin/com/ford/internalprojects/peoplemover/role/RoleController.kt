@@ -28,6 +28,7 @@ class RoleController(
     private val roleService: RoleService,
     private val logger: BasicLogger
 ) {
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getRolesForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceRole>> {
         val rolesForSpace = roleService.getRolesForSpace(spaceUuid)

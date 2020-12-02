@@ -34,6 +34,8 @@ class PersonController(
         private val personService: PersonService,
         private val assignmentService: AssignmentService
 ) {
+
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getAllPeopleInSpace(@PathVariable spaceUuid: String): List<Person> {
         val space: Space = spaceRepository.findByUuid(spaceUuid)

@@ -28,6 +28,7 @@ class LocationController(
     private val locationService: LocationService,
     private val logger: BasicLogger
 ) {
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getLocationsForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceLocation>> {
         val locationsForSpace: Set<SpaceLocation> = locationService.getLocationsForSpace(spaceUuid)

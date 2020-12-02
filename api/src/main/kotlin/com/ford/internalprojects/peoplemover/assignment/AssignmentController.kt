@@ -33,6 +33,7 @@ class AssignmentController(
         private val spaceService: SpaceService,
         private val logger: BasicLogger
 ) {
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping("/api/spaces/{spaceUuid}/person/{personId}/assignments/date/{requestedDate}")
     fun getAssignmentsByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
@@ -55,6 +56,7 @@ class AssignmentController(
         return ResponseEntity.ok(dates)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping(path = ["/api/reassignment/{spaceUuid}/{requestedDate}"])
     fun getReassignmentsByExactDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)

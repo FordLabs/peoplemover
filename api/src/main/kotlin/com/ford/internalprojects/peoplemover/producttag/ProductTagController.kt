@@ -41,6 +41,7 @@ class ProductTagController (
         return ResponseEntity.ok(createdProductTag)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getAllProductTags(@PathVariable spaceUuid: String): ResponseEntity<List<ProductTag>> {
         return ResponseEntity.ok(productTagService.getAllProductTags(spaceUuid))

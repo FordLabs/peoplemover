@@ -49,6 +49,7 @@ class SpaceController(
         return ResponseEntity.ok(spaces.size)
     }
 
+    @PreAuthorize("hasPermission(#uuid, 'uuid', 'read')")
     @GetMapping("/{uuid}")
     fun getSpace(@PathVariable uuid: String): Space {
         return spaceService.getSpace(uuid)
