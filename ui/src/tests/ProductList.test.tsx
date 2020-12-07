@@ -25,6 +25,8 @@ import ProductList from '../Products/ProductList';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
 import {Product} from '../Products/Product';
+import {createBrowserHistory} from 'history';
+import {Router} from 'react-router-dom';
 
 describe('Product List tests', () => {
     let app: RenderResult;
@@ -41,8 +43,16 @@ describe('Product List tests', () => {
     });
 
     it('should only have one edit menu open at a time', async () => {
+        let history = createBrowserHistory();
+        history.push('/uuid');
+
         await act(async () => {
-            app = await renderWithRedux(<PeopleMover/>);
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>,
+            );
+
             const editPerson1Button = await app.findByTestId('editPersonIconContainer__person_1');
             const editPerson3Button = await app.findByTestId('editPersonIconContainer__hank');
 

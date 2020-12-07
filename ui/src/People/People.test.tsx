@@ -493,11 +493,21 @@ describe('People actions', () => {
 
 describe('Deleting a Person', () => {
     let app: RenderResult;
+    let history: History;
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-        app = renderWithRedux(<PeopleMover/>);
+
+        history = createBrowserHistory();
+        history.push('/uuid');
+
+        app = renderWithRedux(
+            <Router history={history}>
+                <PeopleMover/>
+            </Router>
+        );
+
         await TestUtils.waitForHomePageToLoad(app);
     });
 
@@ -524,22 +534,6 @@ describe('Deleting a Person', () => {
 
             expect(app.queryByText(/Are you sure?/i)).toBeNull();
             await app.findByText(/Edit Person/i);
-        });
-
-        it('sends delete request after the YES button is clicked', async () => {
-            const updatedProducts: Array<Product> = [{
-                ...TestUtils.productWithAssignments,
-                assignments: [],
-            }];
-            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve({data: updatedProducts}));
-
-            fireEvent.click(app.getByTestId('confirmDeleteButton'));
-
-            expect(PeopleClient.removePerson).toBeCalledTimes(1);
-
-            await wait(() => {
-                expect(app.queryByText('Person 1')).not.toBeInTheDocument();
-            });
         });
 
         it('does not show the confirmation modal after the delete button is clicked', async () => {
