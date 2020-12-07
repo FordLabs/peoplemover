@@ -25,17 +25,40 @@
     z-index: 1;
     position: sticky;
     top: 68px;
-}
 
-.spaceSelectionContainer .tab {
-    background-color: $gray-5;
-    min-height: 40px;
-}
+    .tab {
+        background-color: $gray-5;
+        min-height: 40px;
+    }
 
-.spaceSelectionContainer .spaceFiller {
-    background-color: $gray-5;
-    display: flex;
-    flex-grow: 10;
+    .leftContent,
+    .rightContent {
+        display: flex;
+    }
+
+    .leftContent {
+        align-items: center;
+    }
+
+    .viewState {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        width: 102px;
+        height: 24px;
+        background: #5463B0;
+        border-radius: 6px;
+        font-size: 14px;
+        line-height: 16.1px;
+        margin: 1px 0 0 30px;
+        white-space: nowrap;
+        padding: 0 3px;
+
+        i {
+            padding-right: 3px;
+        }
+    }
 }
 
 button.selectionTabButton {
@@ -49,18 +72,25 @@ button.selectionTabButton {
 
     i {
         font-size: 18px;
+        color: $purple-title;
+
+        &.myRolesIcon {
+            margin-right: 8px;
+        }
+
+        &.myTagsIcon {
+            margin-right: 5px;
+        }
     }
-}
 
-.addBoardIcon,
-.myRolesIcon {
-    margin-right: 8px;
-    color: $purple-title;
-}
+    &.readOnly {
+        color: $gray-4;
+        background-color: transparent;
 
-.myTagsIcon {
-    margin-right: 5px;
-    color: $purple-title;
+        i {
+            color: inherit;
+        }
+    }
 }
 
 button.addPersonButton {
@@ -85,4 +115,3 @@ button.addPersonButton {
         font-weight: bold
     }
 }
-

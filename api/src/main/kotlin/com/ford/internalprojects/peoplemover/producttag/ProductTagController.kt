@@ -19,6 +19,7 @@ package com.ford.internalprojects.peoplemover.producttag
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -28,6 +29,7 @@ class ProductTagController (
         private val productTagService: ProductTagService,
         private val logger: BasicLogger
 ) {
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PostMapping
     fun createProductTag(
         @PathVariable spaceUuid: String,
@@ -39,11 +41,13 @@ class ProductTagController (
         return ResponseEntity.ok(createdProductTag)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getAllProductTags(@PathVariable spaceUuid: String): ResponseEntity<List<ProductTag>> {
         return ResponseEntity.ok(productTagService.getAllProductTags(spaceUuid))
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @DeleteMapping(path = ["/{productTagId}"])
     fun deleteProductTag(
             @PathVariable spaceUuid: String,
@@ -53,6 +57,7 @@ class ProductTagController (
         return ResponseEntity.ok().build()
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PutMapping
     fun editProductTag(
             @PathVariable spaceUuid: String,

@@ -22,12 +22,15 @@ import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
 
 import './AccountDropdown.scss';
+import {GlobalStateProps} from '../Redux/Reducers';
+import {connect} from 'react-redux';
 
 interface AccountDropdownProps {
     hideSpaceButtons?: boolean;
+    isReadOnly: boolean;
 }
 
-function AccountDropdown({ hideSpaceButtons }: AccountDropdownProps): JSX.Element {
+function AccountDropdown({ hideSpaceButtons, isReadOnly }: AccountDropdownProps): JSX.Element {
     const [userName, setUserName] = useState<string>('');
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [redirect, setRedirect] = useState<JSX.Element>();
@@ -77,7 +80,7 @@ function AccountDropdown({ hideSpaceButtons }: AccountDropdownProps): JSX.Elemen
             </button>
             {dropdownToggle && (
                 <div className="accountDropdown">
-                    { !hideSpaceButtons && (<>
+                    { !hideSpaceButtons && !isReadOnly && (<>
                         <ShareAccessButton />
                         <DownloadReportButton />
                     </>)}
@@ -88,4 +91,10 @@ function AccountDropdown({ hideSpaceButtons }: AccountDropdownProps): JSX.Elemen
     );
 }
 
-export default AccountDropdown;
+/* eslint-disable */
+const mapStateToProps = (state: GlobalStateProps) => ({
+    isReadOnly: state.isReadOnly,
+});
+
+export default connect(mapStateToProps)(AccountDropdown);
+/* eslint-enable */
