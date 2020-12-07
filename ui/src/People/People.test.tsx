@@ -53,6 +53,11 @@ describe('People actions', () => {
         let app: RenderResult;
         let history: History;
 
+        const initialState: PreloadedState<GlobalStateProps> = {
+            people: TestUtils.people,
+            viewingDate: new Date(2020, 5, 5),
+        } as GlobalStateProps;
+
         beforeEach(() => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
@@ -63,7 +68,9 @@ describe('People actions', () => {
             app = renderWithRedux(
                 <Router history={history}>
                     <PeopleMover/>
-                </Router>
+                </Router>,
+                undefined,
+                initialState
             );
         });
 
@@ -348,52 +355,6 @@ describe('People actions', () => {
 
             expect(wrapper.queryByText('unassigned')).not.toBeInTheDocument();
         });
-    });
-
-    it('displays new assignment when submitted, opening Unassigned drawer if needed', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-        const drawerCarets = await app.findAllByTestId('drawerCaret');
-        const unassignedDrawerCaret = drawerCarets[0];
-        fireEvent.click(unassignedDrawerCaret);
-
-        expect(app.queryByText('John')).not.toBeInTheDocument();
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        await app.findByText(addPersonModalTitle);
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: 'John'}});
-        fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
-
-        const unassignedProduct: Product = {
-            spaceId: 0,
-            productTags: [],
-            archived: false,
-            id: 999,
-            name: 'unassigned',
-            startDate: '',
-            endDate: '',
-            assignments: [
-                {
-                    id: 2,
-                    person: {
-                        name: 'John',
-                        spaceRole: {name: 'Software Engineer', spaceId: 0, id: 2},
-                        newPerson: false,
-                        id: 2,
-                        spaceId: 0,
-                    },
-                    productId: 999,
-                    spaceId: 0,
-                    placeholder: false,
-                },
-            ],
-        };
-        (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve({data: [unassignedProduct]}));
-
-        fireEvent.click(app.getByText(submitFormButtonText));
-
-        await app.findByText('John');
-        expect(app.queryByText('Submit')).toBeNull();
     });
 
     it('should open the unassigned drawer from the Edit Person form when a person is edited into Unassigned product', async () => {
