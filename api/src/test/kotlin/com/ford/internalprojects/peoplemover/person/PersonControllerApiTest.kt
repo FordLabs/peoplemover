@@ -20,6 +20,8 @@ package com.ford.internalprojects.peoplemover.person
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
@@ -41,6 +43,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -72,6 +75,9 @@ class PersonControllerApiTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    @Autowired
+    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
     private lateinit var space: Space
 
     var basePeopleUrl: String = ""
@@ -81,6 +87,8 @@ class PersonControllerApiTest {
         space = spaceRepository.save(Space(name = "spaceWithThisName"))
 
         basePeopleUrl = "/api/spaces/" + space.uuid + "/people"
+
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
     }
 
     @After
@@ -98,19 +106,19 @@ class PersonControllerApiTest {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
 
         val personToCreate = Person(
-            name = "John",
-            spaceRole = spaceRole,
-            notes = "Some Notes",
-            newPerson = true,
-            spaceId = space.id!!
+                name = "John",
+                spaceRole = spaceRole,
+                notes = "Some Notes",
+                newPerson = true,
+                spaceId = space.id!!
         )
         assertThat(personRepository.count()).isZero()
         val result = mockMvc.perform(post(basePeopleUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(personToCreate)))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(personToCreate)))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val actualPerson: Person = objectMapper.readValue(result.response.contentAsString, Person::class.java)
 
@@ -126,16 +134,40 @@ class PersonControllerApiTest {
     }
 
     @Test
+    fun `POST should return 403 when trying to add person to a space without write authorization`() {
+        val requestBodyObject = Person("name", -9999)
+
+        mockMvc.perform(post("/api/spaces/${UUID.randomUUID()}/people")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isForbidden)
+
+    }
+
+
+    @Test
+    fun `PUT should return 403 when trying to edit a person in a space without write authorization`() {
+        val requestBodyObject = Person("name", -9999)
+
+        mockMvc.perform(put("/api/spaces/${UUID.randomUUID()}/people/55555")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
         val result = mockMvc
-            .perform(get("/api/spaces/" + emptySpace.uuid + "/people")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .perform(get("/api/spaces/${emptySpace.uuid}/people")
+                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
-            result.response.contentAsString,
-            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
         )
         assertThat(actualPeople).isEqualTo(emptySet<Person>())
     }
@@ -144,21 +176,21 @@ class PersonControllerApiTest {
     fun `GET should only return people in requested space`() {
         val otherSpace: Space = spaceRepository.save(Space(name = "other"))
         val expectedPerson: Person = personRepository.save(Person(
-            name = "HEY I SHOULD SHOW UP IN THE RESULTS",
-            spaceId = space.id!!
+                name = "HEY I SHOULD SHOW UP IN THE RESULTS",
+                spaceId = space.id!!
         ))
         val unexpectedPerson: Person = personRepository.save(Person(
-            name = "HEY I SHOULD NOT SHOW UP",
-            spaceId = otherSpace.id!!
+                name = "HEY I SHOULD NOT SHOW UP",
+                spaceId = otherSpace.id!!
         ))
         val result = mockMvc
-            .perform(get(basePeopleUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .perform(get(basePeopleUrl)
+                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
-            result.response.contentAsString,
-            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
         )
         assertThat(actualPeople).containsExactly(expectedPerson)
         assertThat(actualPeople).doesNotContain(unexpectedPerson)
@@ -167,9 +199,9 @@ class PersonControllerApiTest {
     @Test
     fun `GET should return 400 when requesting people from invalid space`() {
         mockMvc.perform(get("/api/spaces/FiveNightsAtFreddys/people")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isBadRequest)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isBadRequest)
+                .andReturn()
     }
 
     @Test
@@ -178,21 +210,21 @@ class PersonControllerApiTest {
         val engineer = spaceRolesRepository.save(SpaceRole(name = "Engineer", spaceId = space.id!!))
         val person: Person = personRepository.save(Person(name = "John", spaceId = space.id!!, spaceRole = softwareEngineer))
         val updatePersonRequest = Person(
-            id = person.id,
-            name = "New John",
-            spaceId = space.id!!,
-            spaceRole = engineer
+                id = person.id,
+                name = "New John",
+                spaceId = space.id!!,
+                spaceRole = engineer
         )
         val result = mockMvc.perform(put(basePeopleUrl + "/${person.id}")
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updatePersonRequest)))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatePersonRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val updatedPerson: Person = objectMapper.readValue(
-            result.response.contentAsString,
-            Person::class.java
+                result.response.contentAsString,
+                Person::class.java
         )
 
         val updatedPersonInDb: Person = personRepository.findById(person.id!!).get()
@@ -204,10 +236,18 @@ class PersonControllerApiTest {
     fun `DELETE should return 400 when person does not exist`() {
         val notSavedPersonId = 1103
         mockMvc.perform(delete("$basePeopleUrl/$notSavedPersonId")
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
     }
+
+      @Test
+      fun `DELETE should return 403 when trying to delete a person without write authorization`() {
+        mockMvc.perform(delete("/api/spaces/baduuid/people/999")
+              .header("Authorization", "Bearer GOOD_TOKEN"))
+              .andExpect(status().isForbidden)
+
+      }
 
     @Test
     fun `DELETE should remove person and associated assignments`() {
@@ -221,9 +261,9 @@ class PersonControllerApiTest {
         assertThat(assignmentRepository.count()).isEqualTo(2)
 
         mockMvc.perform(delete("$basePeopleUrl/${personToDelete.id}")
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
 
         assertThat(personRepository.findAll()).containsExactly(personToRemain)
         assertThat(assignmentRepository.findAll()).containsExactly(assignmentToRemain)
@@ -239,9 +279,9 @@ class PersonControllerApiTest {
         personRepository.save(Person(name = "Jill", spaceId = space.id!!))
 
         val request = mockMvc.perform(get("${basePeopleUrl}/total")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
-            .andExpect(status().isOk)
-            .andReturn()
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
 
         val totalPersonCount = request.response.contentAsString.toLong()
 

@@ -42,6 +42,7 @@ interface AssignmentCardProps {
     assignment: Assignment;
     container?: string;
     isUnassignedProduct: boolean;
+    isReadOnly: boolean;
 
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
 
@@ -55,10 +56,13 @@ function AssignmentCard({
     assignment = {id: 0} as Assignment,
     container,
     isUnassignedProduct,
+    isReadOnly,
     startDraggingAssignment,
     setCurrentModal,
     fetchProducts,
 }: AssignmentCardProps): JSX.Element {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const spaceUuid = currentSpace.uuid!;
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     const assignmentEditRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
@@ -68,18 +72,20 @@ function AssignmentCard({
     }
 
     function toggleEditMenu(): void {
-        if (!isUnassignedProduct) {
-            if (editMenuIsOpened) {
-                setEditMenuIsOpened(false);
+        if (!isReadOnly) {
+            if (!isUnassignedProduct) {
+                if (editMenuIsOpened) {
+                    setEditMenuIsOpened(false);
+                } else {
+                    setEditMenuIsOpened(true);
+                }
             } else {
-                setEditMenuIsOpened(true);
+                const newModalState: CurrentModalState = {
+                    modal: AvailableModals.EDIT_PERSON,
+                    item: assignment,
+                };
+                setCurrentModal(newModalState);
             }
-        } else {
-            const newModalState: CurrentModalState = {
-                modal: AvailableModals.EDIT_PERSON,
-                item: assignment,
-            };
-            setCurrentModal(newModalState);
         }
     }
 
@@ -93,7 +99,7 @@ function AssignmentCard({
     }
 
     async function markAsPlaceholderAndCloseEditMenu(): Promise<void> {
-        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, assignment.person.id, viewingDate)).data;
 
         const assignmentIndex: number = assignments.findIndex(fetchedAssignment => (fetchedAssignment.productId === assignment.productId));
         const markedAsPlaceholder = !assignment.placeholder;
@@ -123,7 +129,7 @@ function AssignmentCard({
     }
 
     async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
-        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)).data;
+        const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, assignment.person.id, viewingDate)).data;
 
         const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments
             .filter(fetchedAssignment => fetchedAssignment.id !== assignment.id)
@@ -180,15 +186,17 @@ function AssignmentCard({
         }
     }, [assignment]);
 
-    function handleKeyDown(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
+    function handleKeyDownForToggleEditMenu(event: React.KeyboardEvent): void {
+        if (!isReadOnly && event.key === 'Enter') {
             toggleEditMenu();
         }
     }
 
     const classNames = `personContainer 
         ${container === 'productDrawerContainer' ? 'borderedPeople' : ''}
-        ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}`;
+        ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}
+        ${isReadOnly ? 'readOnlyAssignmentCard' : ''}`;
+
 
     return (
         <div
@@ -196,19 +204,24 @@ function AssignmentCard({
             data-testid={createDataTestId('assignmentCard', assignment.person.name)}
             ref={assignmentRef}
             onMouseDown={(e): void => {
-                if (startDraggingAssignment) {
+                if (!isReadOnly && startDraggingAssignment) {
                     startDraggingAssignment(assignmentRef, assignment, e);
                 }
             }}
         >
             {assignment.person.newPerson && <NewBadge/>}
-            <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={isUnassignedProduct} />
+            <PersonAndRoleInfo
+                isReadOnly={isReadOnly}
+                assignment={assignment}
+                isUnassignedProduct={isUnassignedProduct} />
             <div ref={assignmentEditRef}
                 className="personRoleColor"
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
-                onKeyDown={(e): void => {handleKeyDown(e);}}>
-                <i className="material-icons personEditIcon greyIcon">more_vert</i>
+                onKeyDown={(e): void => {handleKeyDownForToggleEditMenu(e);}}>
+                {
+                    !isReadOnly && <i className="material-icons personEditIcon greyIcon">more_vert</i>
+                }
             </div>
             {editMenuIsOpened &&
                 <EditMenu
@@ -224,6 +237,7 @@ function AssignmentCard({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
+    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

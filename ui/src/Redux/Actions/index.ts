@@ -47,6 +47,7 @@ export enum AvailableActions {
     SET_LOCATIONS,
     SET_PRODUCT_SORT_BY,
     SET_USER_SPACES,
+    SET_IS_READ_ONLY
 }
 
 export enum AvailableModals {
@@ -144,6 +145,11 @@ export const setProductSortByAction = (productSortBy: string) => ({
 export const setUserSpacesAction = (userSpaces: Array<Space>) => ({
     type: AvailableActions.SET_USER_SPACES,
     userSpaces,
+});
+
+export const setIsReadOnlyAction = (isReadOnly: boolean) => ({
+    type: AvailableActions.SET_IS_READ_ONLY,
+    isReadOnly,
 });
 
 export const fetchUserSpacesAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>

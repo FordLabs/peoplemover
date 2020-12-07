@@ -11,7 +11,9 @@ describe('Calendar', () => {
 
     it('Calendar should show current month and day', () => {
         const expectedCurrentDate = Cypress.moment().format('MMMM D, YYYY');
-        cy.get('@calendarToggle').should('contain', `Viewing: ${expectedCurrentDate}`);
+        cy.get('@calendarToggle')
+            .should('contain', 'Viewing:')
+            .should('contain', expectedCurrentDate);
 
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();

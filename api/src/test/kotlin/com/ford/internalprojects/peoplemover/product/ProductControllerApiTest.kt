@@ -20,6 +20,8 @@ package com.ford.internalprojects.peoplemover.product
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
@@ -68,6 +70,9 @@ class ProductControllerApiTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
+    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
     private lateinit var space: Space
 
@@ -77,6 +82,7 @@ class ProductControllerApiTest {
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok", uuid = "aaa-aaa-aaaa-aaaaa"))
         baseProductsUrl = "/api/spaces/" + space.uuid + "/products/"
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
     }
 
     @After
@@ -138,6 +144,17 @@ class ProductControllerApiTest {
                 .content(objectMapper.writeValueAsString(productAddRequest)))
                 .andExpect(status().isConflict)
     }
+
+      @Test
+      fun `POST should return 403 when trying to create a product without write authorization`() {
+        val requestBodyObject = ProductAddRequest("Not blank")
+
+        mockMvc.perform(post("/api/spaces/someuuid/products")
+              .header("Authorization", "Bearer GOOD_TOKEN")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(requestBodyObject)))
+              .andExpect(status().isForbidden)
+      }
 
     @Test
     fun `PUT should return 406 when trying to update product with too many characters in notes field`() {
@@ -217,6 +234,18 @@ class ProductControllerApiTest {
         assertThat(response).contains("Invalid Product")
     }
 
+
+    @Test
+    fun `PUT should return 403 when trying to edit a product without write authorization`() {
+        val requestBodyObject = ProductAddRequest("Not blank")
+
+        mockMvc.perform(put("/api/spaces/someuuid/products/1111")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isForbidden)
+    }
+
     @Test
     fun `DELETE should delete product`() {
         val product: Product = productRepository.save(Product(name = "test", spaceId = space.id!!))
@@ -253,4 +282,12 @@ class ProductControllerApiTest {
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
+
+    @Test
+    fun `DELETE should return 403 when trying to delete a product without write authorization`() {
+        mockMvc.perform(delete("/api/spaces/someuuid/products/1111")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isForbidden)
+    }
+
 }
