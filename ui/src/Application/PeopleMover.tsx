@@ -46,6 +46,7 @@ import {Product} from '../Products/Product';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import {ProductTag} from '../ProductTag/ProductTag';
 import {LocationTag} from '../Locations/LocationTag.interface';
+import {AxiosError} from 'axios';
 
 const BAD_REQUEST = 400;
 
@@ -79,9 +80,10 @@ function PeopleMover({
         return Boolean(products && products.length > 0 && currentSpace);
     }
 
-    const handleErrors = useCallback((error: any) => {
-        if (error.response.status !== BAD_REQUEST) return error;
+    const handleErrors = useCallback((error: AxiosError): Error | null => {
+        if (error?.response?.status !== BAD_REQUEST) return error;
         setRedirect(<Redirect to="/error/404"/>);
+        return null;
     }, []);
 
     useEffect(() => {

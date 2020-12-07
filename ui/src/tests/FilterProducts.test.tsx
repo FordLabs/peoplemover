@@ -22,8 +22,8 @@ import {act, fireEvent, queryByText, RenderResult, wait} from '@testing-library/
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import selectEvent from 'react-select-event';
-import {createBrowserHistory, History} from "history";
-import {Router} from "react-router-dom";
+import {createBrowserHistory, History} from 'history';
+import {Router} from 'react-router-dom';
 
 describe('Filter products', () => {
     let app: RenderResult;

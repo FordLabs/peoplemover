@@ -29,7 +29,6 @@ import {emptyPerson, Person} from './Person';
 import {Product} from '../Products/Product';
 import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import ProductClient from '../Products/ProductClient';
 import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';

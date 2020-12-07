@@ -20,8 +20,6 @@ import React from 'react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {Product} from '../Products/Product';
-import {Assignment} from '../Assignments/Assignment';
-import ProductClient from '../Products/ProductClient';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {createBrowserHistory, History} from 'history';
