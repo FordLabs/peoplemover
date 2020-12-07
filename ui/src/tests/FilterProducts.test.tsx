@@ -22,17 +22,26 @@ import {act, fireEvent, queryByText, RenderResult, wait} from '@testing-library/
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import selectEvent from 'react-select-event';
+import {createBrowserHistory, History} from "history";
+import {Router} from "react-router-dom";
 
 describe('Filter products', () => {
     let app: RenderResult;
     const addProductButtonText = 'Add Product';
+    let history: History;
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+        history = createBrowserHistory();
+        history.push('/uuid');
 
         await act(async () => {
-            app = renderWithRedux(<PeopleMover/>);
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
             const myTagsButton = await app.findByText('My Tags');
             fireEvent.click(myTagsButton);
         });

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent, wait} from '@testing-library/react';
+import {fireEvent, RenderResult, wait} from '@testing-library/react';
 import React from 'react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
@@ -24,26 +24,41 @@ import {Assignment} from '../Assignments/Assignment';
 import ProductClient from '../Products/ProductClient';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {createBrowserHistory, History} from 'history';
+import {Router} from 'react-router-dom';
+import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
+    let app: RenderResult;
+    let history: History;
 
-    beforeEach(() => {
+    async function applicationSetup(): void {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-    });
+
+        history = createBrowserHistory();
+        history.push('/uuid');
+
+        await wait(() => {
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
+        });
+    }
 
     describe('Showing the unassigned product', () => {
         it('has the unassigned product drawer closed by default', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
+            await applicationSetup();
             await TestUtils.waitForHomePageToLoad(app);
 
             expect(app.queryByText(/unassigned/)).toBeNull();
         });
 
         it('shows the unassigned product drawer when the handle is clicked', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
+            await applicationSetup();
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawerCaret = drawerCarets[0];
             fireEvent.click(unassignedDrawerCaret);
@@ -52,7 +67,7 @@ describe('Unassigned Products', () => {
         });
 
         it('hides the unassigned product drawer when the handle is clicked again', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
+            await applicationSetup();
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawerCaret = drawerCarets[0];
 
@@ -65,28 +80,37 @@ describe('Unassigned Products', () => {
         });
 
         it('hides the number of unassigned people when there are less than 1', async () => {
+            const initialState: PreloadedState<GlobalStateProps> = {
+                allGroupedTagFilterOptions: [
+                    { label: 'Location Tags:', options: []},
+                    { label: 'Product Tags:', options: [{}]},
+                    { label: 'Role Tags:', options: []},
+                ],
+            } as GlobalStateProps;
+
             const emptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
                 assignments: [],
                 spaceId: 2,
             };
 
-            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve(
-                {
-                    data: [emptyUnassignedProduct],
-                }
-            ));
+            const app2 = renderWithRedux(
+                <UnassignedDrawer
+                    product={emptyUnassignedProduct}
+                    isUnassignedDrawerOpen={true}
+                    setIsUnassignedDrawerOpen={jest.fn()}
+                />,
+                undefined,
+                initialState
+            );
 
-            const app = renderWithRedux(<PeopleMover/>);
-            await TestUtils.waitForHomePageToLoad(app);
-
-            expect(app.queryByTestId('countBadge')).toBeNull();
+            expect(app2.queryByTestId('countBadge')).toBeNull();
         });
     });
 
     describe('Automated linkage between modals and drawers', () => {
         it('opens the unassigned drawer when an unassigned person is created', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
+            await applicationSetup();
             await TestUtils.waitForHomePageToLoad(app);
 
             expect(app.queryByTestId('unassignedPeopleContainer')).not.toBeInTheDocument();
@@ -100,50 +124,30 @@ describe('Unassigned Products', () => {
 
             await app.findByTestId('unassignedPeopleContainer');
         });
-
-        it('should show a count badge on unassigned drawer', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
-            const countBadge = await app.findByTestId('countBadge');
-            expect(countBadge.innerHTML).toEqual('1');
-
-            const createPersonButton = await app.findByText('Add Person');
-            fireEvent.click(createPersonButton);
-
-            const nameField = await app.findByLabelText('Name');
-            fireEvent.change(nameField, {target: {value: 'Some Person Name'}});
-
-            const newUnassignment: Assignment = {
-                ...TestUtils.assignmentForUnassigned,
-                id: 222,
-            };
-            const definitelyNotEmptyUnassignedProduct: Product = {
-                ...TestUtils.unassignedProduct,
-                assignments: [newUnassignment, TestUtils.assignmentForUnassigned],
-                spaceId: 2,
-            };
-
-            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve(
-                {
-                    data: [definitelyNotEmptyUnassignedProduct],
-                }
-            ));
-
-            const createButton = await app.findByText(submitFormButtonText);
-            fireEvent.click(createButton);
-
-            await wait(() => {
-                expect(countBadge.innerHTML).toEqual('2');
-            });
-        });
     });
 
     describe('Edit menus', () => {
         const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, productTags: [TestUtils.productTag1]} as GlobalStateProps;
 
-        it('should open edit person dialog when clicking on ellipsis', async () => {
-            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+        beforeEach(async () => {
+            history = createBrowserHistory();
+            history.push('/uuid');
 
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+
+            await wait( () => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>,
+                    undefined,
+                    initialState
+                );
+            });
+        });
+
+        it('should open edit person dialog when clicking on ellipsis', async () => {
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawer = drawerCarets[0];
             fireEvent.click(unassignedDrawer);
@@ -156,8 +160,6 @@ describe('Unassigned Products', () => {
         });
 
         it('should close unassigned edit menu when opening an edit menu in product list', async () => {
-            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawer = drawerCarets[0];
             fireEvent.click(unassignedDrawer);
@@ -166,6 +168,7 @@ describe('Unassigned Products', () => {
             fireEvent.click(editUnassignment);
 
             const unassignedPersonName = await app.findByLabelText('Name');
+            // @ts-ignore
             expect(unassignedPersonName.value).toEqual(TestUtils.assignmentForUnassigned.person.name);
 
             const closeForm = await app.findByTestId('modalCloseButton');
@@ -181,6 +184,7 @@ describe('Unassigned Products', () => {
             fireEvent.mouseUp(editPerson1);
 
             const person1Name = await app.findByLabelText('Name');
+            // @ts-ignore
             expect(person1Name.value).toEqual(TestUtils.assignmentForPerson1.person.name);
         });
     });
