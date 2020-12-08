@@ -1,3 +1,0 @@
-pushstate: enabled
-force_https: true
-location_include: includes/*.conf
