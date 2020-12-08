@@ -25,19 +25,19 @@ import {RunConfig} from '../index';
 
 describe('The Validation Guard', () => {
     it('should redirect to login when security is enabled and you are not authorized', async () => {
-        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+        Axios.post = jest.fn().mockRejectedValue({});
         let {history} = await renderComponent(true);
         expect(history.location.pathname).toEqual('/user/login');
     });
 
     it('should show the child element when security is enabled and you are authorized', async () => {
-        Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
+        Axios.post = jest.fn().mockResolvedValue({});
         let {result} = await renderComponent(true);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
     });
 
     it('should show the child element when security is disabled', async () => {
-        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+        Axios.post = jest.fn().mockRejectedValue({});
         let {result} = await renderComponent(false);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
         expect(Axios.post.mock.calls.length).toBe(0);

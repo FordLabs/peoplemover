@@ -31,20 +31,18 @@ describe('Unassigned Products', () => {
     let app: RenderResult;
     let history: History;
 
-    async function applicationSetup(): void {
+    function applicationSetup(): void {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
         history = createBrowserHistory();
         history.push('/uuid');
 
-        await wait(() => {
-            app = renderWithRedux(
-                <Router history={history}>
-                    <PeopleMover/>
-                </Router>
-            );
-        });
+        app = renderWithRedux(
+            <Router history={history}>
+                <PeopleMover/>
+            </Router>
+        );
     }
 
     describe('Showing the unassigned product', () => {
