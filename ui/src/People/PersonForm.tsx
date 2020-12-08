@@ -104,7 +104,7 @@ function PersonForm({
     const populatedEntirePersonForm = (assignment: Assignment): void => {
         setPerson({...assignment.person});
 
-        AssignmentClient.getAssignmentsUsingPersonIdAndDate(assignment.person.id, viewingDate)
+        AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, assignment.person.id, viewingDate)
             .then((response) => {
                 const assignments: Array<Assignment> = response.data;
                 setSelectedProducts(createProductsFromAssignments(assignments));

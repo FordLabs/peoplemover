@@ -50,25 +50,4 @@ class AuthController(
         }
     }
 
-    @PutMapping("/api/spaces/{uuid}:invite")
-    fun inviteUsersToSpace(
-        @Valid @RequestBody request: AuthInviteUsersToSpaceRequest,
-        @PathVariable uuid: String
-    ): ResponseEntity<ArrayList<String>> {
-        val space = spaceRepository.findByUuid(uuid)!!
-
-        val failures = arrayListOf<String>();
-        request.emails.forEach {email ->
-            val userId = email.substringBefore('@').toUpperCase().trim()
-            try {
-                userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
-            } catch (e: DataIntegrityViolationException) {
-                System.out.println("$userId already has access to this space.");
-            } catch (e: Exception) {
-                failures.add(email)
-                System.out.println(e)
-            }
-        }
-        return ResponseEntity.ok(failures)
-    }
 }

@@ -30,6 +30,7 @@ import {Router} from 'react-router-dom';
 
 describe('Product List tests', () => {
     let app: RenderResult;
+    let initialState: GlobalStateProps;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -40,6 +41,10 @@ describe('Product List tests', () => {
                 data: TestUtils.products,
             } as AxiosResponse
         ));
+
+        initialState = {
+            currentSpace: TestUtils.space,
+        } as GlobalStateProps;
     });
 
     it('should only have one edit menu open at a time', async () => {
@@ -51,6 +56,8 @@ describe('Product List tests', () => {
                 <Router history={history}>
                     <PeopleMover/>
                 </Router>,
+                undefined,
+                initialState
             );
 
             const editPerson1Button = await app.findByTestId('editPersonIconContainer__person_1');
@@ -88,6 +95,7 @@ describe('Product List tests', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
                 productSortBy: 'name',
+                currentSpace: TestUtils.space,
             } as GlobalStateProps;
 
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
@@ -122,6 +130,7 @@ describe('Product List tests', () => {
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
                 productSortBy: 'name',
+                currentSpace: TestUtils.space,
             } as GlobalStateProps;
 
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
@@ -159,6 +168,7 @@ describe('Product List tests', () => {
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
                 productSortBy: 'name',
+                currentSpace: TestUtils.space,
             } as GlobalStateProps;
     
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);

@@ -22,13 +22,14 @@ import './PersonAndRoleInfo.scss';
 interface Props {
     assignment: Assignment;
     isUnassignedProduct: boolean;
+    isReadOnly: boolean;
 }
 
-const PersonAndRoleInfo = ({ assignment = {id: 0} as Assignment, isUnassignedProduct}: Props): ReactElement => {
+const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct }: Props): ReactElement => {
     const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
-    const showHoverBox = hoverBoxIsOpened && !isUnassignedProduct;
+    const showHoverBox = !isReadOnly && hoverBoxIsOpened && !isUnassignedProduct;
 
     const HoverBox = ({notes}: {
         notes: string;

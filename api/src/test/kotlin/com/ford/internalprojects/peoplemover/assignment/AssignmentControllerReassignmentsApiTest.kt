@@ -18,6 +18,8 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
@@ -33,14 +35,13 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -63,34 +64,47 @@ class AssignmentControllerReassignmentsApiTest {
     private lateinit var spaceLocationRepository: SpaceLocationRepository
 
     @Autowired
+    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private lateinit var space: Space
+    private lateinit var editableSpace: Space
+    private lateinit var readOnlySpace: Space
     private lateinit var productOne: Product
     private lateinit var productTwo: Product
     private lateinit var productThree: Product
     private lateinit var productFour: Product
     private lateinit var unassignedProduct: Product
+    private lateinit var readOnlyProductOne: Product
+    private lateinit var readOnlyProductTwo: Product
     private lateinit var person: Person
     private lateinit var personTwo: Person
+    private lateinit var personInReadOnlySpace: Person
 
     val mar1 = "2019-03-01"
     val apr1 = "2019-04-01"
     val apr2 = "2019-04-02"
+    val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
     @Before
     fun setup() {
-        space = spaceRepository.save(Space(name = "tok"))
-        productOne = productRepository.save(Product(name = "Justice League", spaceId = space.id!!))
-        productTwo = productRepository.save(Product(name = "Avengers", spaceId = space.id!!))
-        productThree = productRepository.save(Product(name = "Misfits", spaceId = space.id!!))
-        productFour = productRepository.save(Product(name = "Fantastic 4", spaceId = space.id!!))
-        unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = space.id!!))
-        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = space.id!!))
-        personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceId = space.id!!))
+        editableSpace = spaceRepository.save(Space(name = "tik"))
+        readOnlySpace = spaceRepository.save(Space(name = "tok"))
+        productOne = productRepository.save(Product(name = "Justice League", spaceId = editableSpace.id!!))
+        productTwo = productRepository.save(Product(name = "Avengers", spaceId = editableSpace.id!!))
+        productThree = productRepository.save(Product(name = "Misfits", spaceId = editableSpace.id!!))
+        productFour = productRepository.save(Product(name = "Fantastic 4", spaceId = editableSpace.id!!))
+        unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = editableSpace.id!!))
+        readOnlyProductOne = productRepository.save(Product(name = "Readable Product", spaceId = readOnlySpace.id!!))
+        readOnlyProductTwo = productRepository.save(Product(name = "Another Readable Product", spaceId = readOnlySpace.id!!))
+        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = editableSpace.id!!))
+        personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceId = editableSpace.id!!))
+        personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceId = readOnlySpace.id!!))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = editableSpace.id!!, userId = "USER_ID"))
     }
 
     @After
@@ -108,20 +122,20 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr2),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         val reassignment = Reassignment(
@@ -130,7 +144,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productTwo.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -150,26 +164,26 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         val reassignment = Reassignment(
@@ -178,7 +192,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productThree.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -199,20 +213,20 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr2),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         val reassignment = Reassignment(
@@ -221,7 +235,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productThree.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr2")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr2")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -242,7 +256,7 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         val reassignment = Reassignment(
@@ -251,7 +265,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$mar1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$mar1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -271,10 +285,10 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$mar1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$mar1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -295,26 +309,26 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         val reassignmentForPerson = Reassignment(
@@ -329,7 +343,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -350,28 +364,28 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         val reassignmentForPerson = Reassignment(
@@ -380,7 +394,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = ""
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -400,35 +414,35 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         val reassignmentForPerson = Reassignment(
@@ -443,7 +457,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -464,35 +478,35 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         val reassignmentForPerson = Reassignment(
@@ -507,7 +521,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -528,28 +542,28 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productFour.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = space.id!!
+                spaceId = editableSpace.id!!
         ))
 
 
@@ -560,7 +574,7 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
 
-        val result = mockMvc.perform(get("/api/reassignment/${space.uuid}/$apr1")
+        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -572,5 +586,56 @@ class AssignmentControllerReassignmentsApiTest {
 
         assertThat(actualReassignments.size).isEqualTo(1)
         assertThat(actualReassignments).contains(reassignmentForPerson)
+    }
+
+    @Test
+    fun `GET should return all reassignments when requested date is today for read only space`() {
+        assignmentRepository.save(Assignment(
+                person = personInReadOnlySpace,
+                productId = readOnlyProductOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceId = readOnlySpace.id!!
+        ))
+
+        assignmentRepository.save(Assignment(
+                person = personInReadOnlySpace,
+                productId = readOnlyProductTwo.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceId = readOnlySpace.id!!
+        ))
+        assignmentRepository.save(Assignment(
+                person = personInReadOnlySpace,
+                productId = readOnlyProductOne.id!!,
+                effectiveDate = LocalDate.parse(today),
+                spaceId = readOnlySpace.id!!
+        ))
+
+        val reassignment = Reassignment(
+                person = personInReadOnlySpace,
+                fromProductName = readOnlyProductTwo.name,
+                toProductName = readOnlyProductOne.name
+        )
+
+        val result = mockMvc.perform(get("/api/reassignment/${readOnlySpace.uuid}/$today")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualReassignments: List<Reassignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Reassignment::class.java)
+        )
+
+        assertThat(actualReassignments.size).isOne()
+        assertThat(actualReassignments).contains(reassignment)
+    }
+
+    @Test
+    fun `GET should return FORBIDDEN when requested date is not today for read only space`() {
+        mockMvc.perform(get("/api/reassignment/${readOnlySpace.uuid}/$mar1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isForbidden)
+                .andReturn()
+
     }
 }
