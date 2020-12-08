@@ -18,7 +18,7 @@
 import {render, RenderResult, wait} from '@testing-library/react';
 import AuthorizedRoute from '../Auth/AuthorizedRoute';
 import * as React from 'react';
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {RunConfig} from '../index';
