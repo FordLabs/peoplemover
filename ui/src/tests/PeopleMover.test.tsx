@@ -24,6 +24,7 @@ import {createBrowserHistory, History} from 'history';
 import selectEvent from 'react-select-event';
 import SpaceClient from '../Space/SpaceClient';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {PreloadedState, Store} from 'redux';
 
 jest.mock('axios');
 
@@ -32,35 +33,37 @@ describe('PeopleMover', () => {
     let history: History;
     const addProductButtonText = 'Add Product';
 
+    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
+        let history = createBrowserHistory();
+        history.push('/uuid');
+
+        return renderWithRedux(
+            <Router history={history}>
+                <PeopleMover/>
+            </Router>,
+            store,
+            initialState
+        );
+    }
+
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-
-        history = createBrowserHistory();
-        history.push('/uuid');
-
-        await wait( () => {
-            app = renderWithRedux(
-                <Router history={history}>
-                    <PeopleMover/>
-                </Router>
-            );
-        });
     });
+
     describe('Read Only Mode', function() {
         beforeEach(async () => {
             await wait(() => {
-                let initialState = {
+                const initialState = {
                     isReadOnly: true,
                     products: TestUtils.products,
                     currentSpace: TestUtils.space,
                 } as GlobalStateProps;
-                app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+                app = applicationSetup(undefined, initialState);
             });
         });
 
         it('should not show unassigned drawer', function() {
-            // expect(app.queryAllByTestId('unassignedDrawer')).toHaveLength(1);
             expect(app.queryByTestId('unassignedDrawer')).toBeNull();
             expect(app.queryByTestId('archivedProductsDrawer')).toBeNull();
             expect(app.queryByTestId('reassignmentDrawer')).toBeNull();

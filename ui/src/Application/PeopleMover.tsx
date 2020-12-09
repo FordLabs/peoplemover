@@ -115,6 +115,7 @@ function PeopleMover({
         }
     }, [
         currentSpace,
+        setPeople,
         fetchProducts,
         fetchProductTags,
         fetchLocations,

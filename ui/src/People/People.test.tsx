@@ -55,6 +55,7 @@ describe('People actions', () => {
         const initialState: PreloadedState<GlobalStateProps> = {
             people: TestUtils.people,
             viewingDate: new Date(2020, 5, 5),
+            currentSpace: TestUtils.space,
         } as GlobalStateProps;
 
         beforeEach(() => {
@@ -91,13 +92,6 @@ describe('People actions', () => {
         });
 
         it('While editing, queries the Assignment Client on load for products this person is assigned to', async () => {
-            const initialState: PreloadedState<GlobalStateProps> = {
-                people: TestUtils.people,
-                viewingDate: new Date(2020, 5, 5),
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
-
             const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
             fireEvent.click(editPersonButton);
 
@@ -110,7 +104,11 @@ describe('People actions', () => {
             fireEvent.click(saveButton);
 
             await wait(() => {
-                expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toBeCalledWith(TestUtils.space.uuid, TestUtils.person1.id, new Date(2020, 5, 5));
+                expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toBeCalledWith(
+                    TestUtils.space.uuid,
+                    TestUtils.person1.id,
+                    new Date(2020, 5, 5)
+                );
             });
         });
 
