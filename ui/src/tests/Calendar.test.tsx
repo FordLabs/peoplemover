@@ -42,14 +42,12 @@ describe('Calendar', () => {
 
     it('should display current date on initial load', async () => {
         const app = renderWithRedux(<Calendar/>, undefined, initialState);
-        const dateViewElement = await app.findByTestId('calendarToggle');
-        expect(dateViewElement.innerHTML).toContain('Viewing:');
-        expect(dateViewElement.innerHTML).toContain('May 14, 2020');
+        await app.findByText('Viewing: May 14, 2020');
     });
 
     it('should have down caret when closed and up arrow when open', async () => {
         const app = renderWithRedux(<Calendar/>, undefined, initialState);
-        const datePickerOpener = await app.findByTestId('calendarToggle');
+        const datePickerOpener = await app.findByText('Viewing: May 14, 2020');
 
         await app.findByTestId('calendar_down-arrow');
 

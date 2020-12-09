@@ -22,7 +22,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
 import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
-import {createStore, PreloadedState} from 'redux';
+import {createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
@@ -33,9 +33,22 @@ import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {Router} from 'react-router-dom';
-import {createBrowserHistory, History} from 'history';
+import {createBrowserHistory} from 'history';
 
 declare let window: MatomoWindow;
+
+function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
+    let history = createBrowserHistory();
+    history.push('/uuid');
+
+    return renderWithRedux(
+        <Router history={history}>
+            <PeopleMover/>
+        </Router>,
+        undefined,
+        initialState
+    );
+}
 
 describe('People actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
@@ -50,7 +63,6 @@ describe('People actions', () => {
 
     describe('Person Form', () => {
         let app: RenderResult;
-        let history: History;
 
         const initialState: PreloadedState<GlobalStateProps> = {
             people: TestUtils.people,
@@ -62,18 +74,7 @@ describe('People actions', () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            history = createBrowserHistory();
-            history.push('/uuid');
-
-            await wait(() => {
-                app = renderWithRedux(
-                    <Router history={history}>
-                        <PeopleMover/>
-                    </Router>,
-                    undefined,
-                    initialState
-                );
-            });
+            app = applicationSetup(undefined, initialState);
         });
 
         it('opens PersonForm component in editing mode when hamburger icon is clicked', async () => {
@@ -106,11 +107,8 @@ describe('People actions', () => {
             fireEvent.click(saveButton);
 
             await wait(() => {
-                expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toBeCalledWith(
-                    TestUtils.space.uuid,
-                    TestUtils.person1.id,
-                    new Date(2020, 5, 5)
-                );
+                expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
+                    .toBeCalledWith(TestUtils.person1.id, new Date(2020, 5, 5));
             });
         });
 
@@ -168,22 +166,16 @@ describe('People actions', () => {
 
             expect(await app.findByText('Please enter a person name.')).toBeInTheDocument();
         });
+
     });
 
     describe('Roles', () => {
         let app: RenderResult;
-        let history: History;
 
         beforeEach(async () => {
             await act(async () => {
-                history = createBrowserHistory();
-                history.push('/uuid');
 
-                app = renderWithRedux(
-                    <Router history={history}>
-                        <PeopleMover/>
-                    </Router>
-                );
+                app = applicationSetup();
 
                 const createPersonButton = await app.findByText(addPersonButtonText);
                 fireEvent.click(createPersonButton);
@@ -390,7 +382,7 @@ describe('People actions', () => {
         });
     });
 
-    describe('editing people/assignments', () => {
+    describe('Editing people/assignments', () => {
         let app: RenderResult;
 
         let assignmentToCreate: CreateAssignmentsRequest = {
@@ -431,7 +423,7 @@ describe('People actions', () => {
             await app.findByText('Save');
         });
 
-        describe('Toggle placeholder from edit menu', () => {
+        describe('toggle placeholder from edit menu', () => {
             const originalImpl = ThemeApplier.setBorderColorOnElement;
 
             const markAsPlaceHolder = async (): Promise<void> => {
@@ -502,20 +494,12 @@ describe('People actions', () => {
 
 describe('Deleting a Person', () => {
     let app: RenderResult;
-    let history: History;
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        history = createBrowserHistory();
-        history.push('/uuid');
-
-        app = renderWithRedux(
-            <Router history={history}>
-                <PeopleMover/>
-            </Router>
-        );
+        app = applicationSetup();
 
         await TestUtils.waitForHomePageToLoad(app);
     });

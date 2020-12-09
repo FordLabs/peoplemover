@@ -34,11 +34,7 @@
   box-sizing: border-box;
   overflow-wrap: break-word;
 
-  &.readOnlyAssignmentCard {
-    cursor: initial;
-  }
-
-  &:not(.readOnlyAssignmentCard):hover {
+  &:hover {
     box-shadow: 0 0 0 2px $prime-1;
 
     .personRoleColor {

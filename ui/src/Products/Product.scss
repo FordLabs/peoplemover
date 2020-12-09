@@ -88,17 +88,23 @@
   display: flex;
   align-items: center;
 
+  .addPersonIconContainer {
+    cursor: pointer;
+    font-size: 18px;
+  }
+
   .editIcon {
+    cursor: pointer;
     font-weight: bold;
     color: $font-color;
     margin-left: 2px;
     font-size: 20px;
   }
+}
 
-  .addPersonIcon {
-    font-size: 18px;
-    padding-left: 6px;
-  }
+.material-icons.addPersonIcon {
+  font-size: 18px;
+  padding-left: 6px;
 }
 
 button.clickableIcon {

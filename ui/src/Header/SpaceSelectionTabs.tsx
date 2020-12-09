@@ -23,65 +23,44 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
-import {GlobalStateProps} from '../Redux/Reducers';
 
-interface Props {
-    isReadOnly: boolean;
+interface SpaceSelectionTabsProps {
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element {
-    const readOnlyClass = isReadOnly ? 'readOnly' : '';
+function SpaceSelectionTabs({
+    setCurrentModal,
+}: SpaceSelectionTabsProps): JSX.Element {
     return (
         <div className="spaceSelectionContainer">
-            <div className="leftContent">
-                <Calendar/>
-                {isReadOnly && (
-                    <span className="viewState">
-                        <i className="material-icons">visibility</i>
-                        View only
-                    </span>
-                )}
-            </div>
-            <div className="rightContent">
-                <button
-                    disabled={isReadOnly}
-                    className={`selectionTabButton tab ${readOnlyClass}`}
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
-                    data-testid="myTagsButton">
-                    <i className="material-icons myTagsIcon" data-testid="myTagsIcon">local_offer</i>
-                    My Tags
-                </button>
-                <button
-                    disabled={isReadOnly}
-                    className={`selectionTabButton tab ${readOnlyClass}`}
-                    data-testid="myRolesButton"
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
-                    <i className="material-icons myRolesIcon" data-testid="myRolesIcon">assignment_ind</i>
-                    My Roles
-                </button>
-                <button
-                    type="button"
-                    disabled={isReadOnly}
-                    className={`addPersonButton ${readOnlyClass}`}
-                    data-testid="addPersonButton"
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
-                    <i className="material-icons">add</i>
-                    Add Person
-                </button>
-            </div>
+            <Calendar/>
+            <div className="spaceFiller"/>
+            <button className="selectionTabButton tab"
+                onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
+                data-testid="myTagsButton">
+                <i className="material-icons myTagsIcon" data-testid="myTagsIcon">local_offer</i>
+                My Tags
+            </button>
+            <button className="selectionTabButton tab"
+                data-testid="myRolesButton"
+                onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
+                <i className="material-icons myRolesIcon" data-testid="myRolesIcon">assignment_ind</i>
+                My Roles
+            </button>
+            <button type="button" className="addPersonButton"
+                data-testid="addPersonButton"
+                onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
+                <i className="material-icons">add</i>
+                Add Person
+            </button>
         </div>
     );
 }
 
 /* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    isReadOnly: state.isReadOnly,
-});
-
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SpaceSelectionTabs);
+export default connect(null, mapDispatchToProps)(SpaceSelectionTabs);
 /* eslint-enable */

@@ -23,13 +23,8 @@ import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {RunConfig} from '../index';
 import {renderWithRedux} from './TestUtils';
-import {createStore, Store} from 'redux';
-import rootReducer from '../Redux/Reducers';
-import {setIsReadOnlyAction} from '../Redux/Actions';
 
 describe('Authorized Route', () => {
-    let store: Store;
-
     it('should redirect to login when security is enabled and you are not authenticated', async () => {
         Axios.post = jest.fn().mockRejectedValue({response: {status: 401}});
         let {history} = await renderComponent(true);
@@ -40,21 +35,12 @@ describe('Authorized Route', () => {
         Axios.post = jest.fn().mockResolvedValue({});
         let {result} = await renderComponent(true);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
-        expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(false));
-    });
-
-    it('should show the child element when security is enabled and you are authenticated but not authorized (read only)', async () => {
-        Axios.post = jest.fn().mockRejectedValue({response: {status: 403}});
-        let {result} = await renderComponent(true);
-        expect(result.getByText('I am so secure!')).toBeInTheDocument();
-        expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(true));
     });
 
     it('should show the child element when security is disabled', async () => {
         Axios.post = jest.fn().mockRejectedValue({});
         let {result} = await renderComponent(false);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
-        expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(false));
         // @ts-ignore
         expect(Axios.post.mock.calls.length).toBe(0);
     });
@@ -64,9 +50,6 @@ describe('Authorized Route', () => {
         window.runConfig = {auth_enabled: securityEnabled} as RunConfig;
         const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
 
-        store = createStore(rootReducer, {});
-        store.dispatch = jest.fn();
-
         // @ts-ignore
         let result: RenderResult = null;
         await wait(() => {
@@ -75,8 +58,7 @@ describe('Authorized Route', () => {
                     <AuthorizedRoute>
                         <TestComponent/>
                     </AuthorizedRoute>
-                </Router>,
-                store
+                </Router>
             );
         });
         return {result, history};
