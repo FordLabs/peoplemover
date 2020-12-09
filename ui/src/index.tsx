@@ -32,7 +32,7 @@ import LandingPage from './LandingPage/LandingPage';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute';
 import OAuthRedirect from './ReusableComponents/OAuthRedirect';
-import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
+import {AuthenticatedRoute, RedirectToADFS} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
