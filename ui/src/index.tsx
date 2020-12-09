@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+//
+
 import './Application/Styleguide/Colors.scss';
 
 import * as React from 'react';
@@ -102,11 +104,10 @@ Axios.interceptors.response.use(
 
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
+    /* eslint-disable */
     // @ts-ignore
-    // eslint-disable-next-line no-undef
-    var isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean {
-        return p.toString() === '[object SafariRemoteNotification]';
-    })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+    var isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean { return p.toString() === '[object SafariRemoteNotification]'; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+    /* eslint-enable */
 
     // Internet Explorer 6-11
     // @ts-ignore
@@ -118,6 +119,12 @@ function isUnsupportedBrowser(): boolean {
     return isSafari || isIE || isEdge;
 }
 
+interface CacheBusterProps {
+    loading: boolean;
+    isLatestVersion: boolean;
+    refreshCacheAndReload: Function;
+}
+
 if (isUnsupportedBrowser()) {
     ReactDOM.render(<UnsupportedBrowserPage/>, document.getElementById('root'));
 } else {
@@ -127,51 +134,51 @@ if (isUnsupportedBrowser()) {
 
         window.runConfig = Object.freeze(response.data);
 
-
         ReactDOM.render(<CacheBuster>
-            {({loading, isLatestVersion, refreshCacheAndReload}) => {
-                if (loading) return null;
-                if (!loading && !isLatestVersion) {
+            {
+                ({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {
+                    if (loading) return null;
+                    if (!loading && !isLatestVersion) {
                     // You can decide how and when you want to force reload
-                    refreshCacheAndReload();
-                }
+                        refreshCacheAndReload();
+                    }
 
-                return (
-                    <Provider store={store}>
-                        <Router>
-                            <Switch>
+                    return (
+                        <Provider store={store}>
+                            <Router>
+                                <Switch>
 
-                                <Route exact path="/">
-                                    <LandingPage/>
-                                </Route>
+                                    <Route exact path="/">
+                                        <LandingPage/>
+                                    </Route>
 
-                                <Route exact path="/adfs/catch">
-                                    <OAuthRedirect redirectUrl="/user/dashboard"/>
-                                </Route>
+                                    <Route exact path="/adfs/catch">
+                                        <OAuthRedirect redirectUrl="/user/dashboard"/>
+                                    </Route>
 
-                                <AuthenticatedRoute exact path="/user/login">
-                                    <RedirectWrapper redirectUrl="/user/dashboard"/>
-                                </AuthenticatedRoute>
+                                    <AuthenticatedRoute exact path="/user/login">
+                                        <RedirectWrapper redirectUrl="/user/dashboard"/>
+                                    </AuthenticatedRoute>
 
-                                <AuthenticatedRoute exact path="/user/dashboard">
-                                    <SpaceDashboard/>
-                                </AuthenticatedRoute>
+                                    <AuthenticatedRoute exact path="/user/dashboard">
+                                        <SpaceDashboard/>
+                                    </AuthenticatedRoute>
 
-                                <AuthorizedRoute exact path="/:teamName">
-                                    <PeopleMover/>
-                                </AuthorizedRoute>
+                                    <AuthorizedRoute exact path="/:teamName">
+                                        <PeopleMover/>
+                                    </AuthorizedRoute>
 
-                                <Route path="/error/404">
-                                    <Error404Page/>
-                                </Route>
+                                    <Route path="/error/404">
+                                        <Error404Page/>
+                                    </Route>
 
-                                <Route>
-                                    <Redirect to="/error/404"/>
-                                </Route>
-                            </Switch>
-                        </Router>
-                    </Provider>);
-            }}
+                                    <Route>
+                                        <Redirect to="/error/404"/>
+                                    </Route>
+                                </Switch>
+                            </Router>
+                        </Provider>);
+                }}
         </CacheBuster>,
         document.getElementById('root')
         );
