@@ -58,20 +58,22 @@ describe('People actions', () => {
             currentSpace: TestUtils.space,
         } as GlobalStateProps;
 
-        beforeEach(() => {
+        beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
             history = createBrowserHistory();
             history.push('/uuid');
 
-            app = renderWithRedux(
-                <Router history={history}>
-                    <PeopleMover/>
-                </Router>,
-                undefined,
-                initialState
-            );
+            await wait(() => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>,
+                    undefined,
+                    initialState
+                );
+            });
         });
 
         it('opens PersonForm component in editing mode when hamburger icon is clicked', async () => {

@@ -18,7 +18,7 @@
 import {RenderResult, wait} from '@testing-library/react';
 import AuthorizedRoute from '../Auth/AuthorizedRoute';
 import * as React from 'react';
-import Axios, {AxiosError, AxiosResponse} from 'axios';
+import Axios from 'axios';
 import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {RunConfig} from '../index';
@@ -55,6 +55,7 @@ describe('Authorized Route', () => {
         let {result} = await renderComponent(false);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
         expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(false));
+        // @ts-ignore
         expect(Axios.post.mock.calls.length).toBe(0);
     });
 
