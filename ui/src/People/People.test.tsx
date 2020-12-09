@@ -74,7 +74,9 @@ describe('People actions', () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            app = applicationSetup(undefined, initialState);
+            await wait(() => {
+                app = applicationSetup(undefined, initialState);
+            });
         });
 
         it('opens PersonForm component in editing mode when hamburger icon is clicked', async () => {
@@ -499,7 +501,9 @@ describe('Deleting a Person', () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        app = applicationSetup();
+        await wait(() => {
+            app = applicationSetup();
+        });
 
         await TestUtils.waitForHomePageToLoad(app);
     });
