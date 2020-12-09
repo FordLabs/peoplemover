@@ -21,7 +21,9 @@ import {findByText, fireEvent} from '@testing-library/dom';
 import React from 'react';
 import {LocalStorageFilters} from '../ReusableComponents/ProductFilter';
 import selectEvent from 'react-select-event';
-import {wait} from '@testing-library/react';
+import {RenderResult, wait} from '@testing-library/react';
+import {createBrowserHistory} from 'history';
+import {Router} from 'react-router-dom';
 
 describe('Filter products', () => {
     class MockLocalStorage {
@@ -49,9 +51,21 @@ describe('Filter products', () => {
         (localStorage as unknown) = new MockLocalStorage();
     });
 
+    function applicationSetup(): RenderResult  {
+        let history = createBrowserHistory();
+        history.push('/uuid');
+
+        return renderWithRedux(
+            <Router history={history}>
+                <PeopleMover/>
+            </Router>
+        );
+    }
+
     it('should show the local storage filter options when app starts', async () => {
         localStorage.setItem('filters', JSON.stringify(filters));
-        const app = renderWithRedux(<PeopleMover/>);
+        const app = applicationSetup();
+
         const filterContainer = await app.findByTestId('filters');
         await findByText(filterContainer, TestUtils.annarbor.name);
         await findByText(filterContainer, TestUtils.productTag1.name);
@@ -62,7 +76,7 @@ describe('Filter products', () => {
         filters.locationTagsFilters.push(TestUtils.detroit.name);
         localStorage.setItem('filters', JSON.stringify(filters));
 
-        const app = renderWithRedux(<PeopleMover/>);
+        const app = applicationSetup();
 
         const myTagsButton = await app.findByText('My Tags');
         fireEvent.click(myTagsButton);
@@ -96,7 +110,7 @@ describe('Filter products', () => {
             roleTagsFilters: [],
         };
         localStorage.setItem('filters', JSON.stringify(longFilters));
-        const app = renderWithRedux(<PeopleMover/>);
+        const app = applicationSetup();
 
         await app.findByText('and 1 more...');
 

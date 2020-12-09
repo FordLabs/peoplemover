@@ -16,7 +16,7 @@
  */
 import * as React from 'react';
 import Select from './Select';
-import {render, RenderResult, fireEvent} from '@testing-library/react';
+import {render, RenderResult, fireEvent, wait} from '@testing-library/react';
 
 jest.useFakeTimers();
 
@@ -56,13 +56,18 @@ describe('Select', () => {
     });
 
     describe('onClick', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             const selectDropdownButton = component.getByText('Zero');
-            fireEvent.click(selectDropdownButton);
-            jest.advanceTimersByTime(setTimeoutTime);
+            await wait(() => {
+                fireEvent.click(selectDropdownButton);
+                jest.advanceTimersByTime(setTimeoutTime);
+            });
+
             const selectDropdownOption = component.getByText('Two');
-            fireEvent.click(selectDropdownOption);
-            jest.advanceTimersByTime(setTimeoutTime);
+            await wait(() => {
+                fireEvent.click(selectDropdownOption);
+                jest.advanceTimersByTime(setTimeoutTime);
+            });
         });
 
         it('should display a newly selected option on click', () => {
@@ -79,27 +84,37 @@ describe('Select', () => {
 
 
     describe('onKeyDown', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             const selectDropdownButton = component.getByText('Zero');
-            fireEvent.keyDown(selectDropdownButton, {keyCode: enterKey});
-            jest.advanceTimersByTime(setTimeoutTime);
+            await wait(() => {
+                fireEvent.keyDown(selectDropdownButton, {keyCode: enterKey});
+                jest.advanceTimersByTime(setTimeoutTime);
+            });
 
             const selectedOptionZero = component.getByTestId('selectOption__0');
             expect(selectedOptionZero.className).toContain('focused');
-            fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
+            await wait(() => {
+                fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
+            });
 
-            fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
+            await wait(() => {
+                fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
+            });
 
             const selectedOptionTwo = component.getByTestId('selectOption__2');
             expect(selectedOptionTwo.className).toContain('focused');
 
-            fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: upKey});
+            await wait(() => {
+                fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: upKey});
+            });
 
             const selectedOptionOne = component.getByTestId('selectOption__1');
             expect(selectedOptionOne.className).toContain('focused');
 
-            fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: enterKey});
-            jest.advanceTimersByTime(setTimeoutTime);
+            await wait(() => {
+                fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: enterKey});
+                jest.advanceTimersByTime(setTimeoutTime);
+            });
         });
 
         it('should display a newly selected option on keydown', () => {
@@ -115,10 +130,12 @@ describe('Select', () => {
     });
 
     describe('Aria Labels', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             const selectDropdownButton = component.getByText('Zero');
-            fireEvent.click(selectDropdownButton);
-            jest.advanceTimersByTime(setTimeoutTime);
+            await wait(() => {
+                fireEvent.click(selectDropdownButton);
+                jest.advanceTimersByTime(setTimeoutTime);
+            });
         });
 
         it('should have aria labels on the dropdown toggle button', () => {

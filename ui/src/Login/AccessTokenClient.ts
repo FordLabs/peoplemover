@@ -20,27 +20,33 @@ import {getToken} from '../Auth/TokenProvider';
 
 export class AccessTokenClient {
     static async validateAccessToken(accessToken: string): Promise<AxiosResponse> {
-        return Axios.post(`/api/access_token/validate`, {
+        const url = '/api/access_token/validate';
+        const data = {
             accessToken: accessToken,
-        },
-        {
+        };
+        const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
-        });
+        };
+
+        return Axios.post(url, data, config);
     }
 
     static async userCanAccessSpace(accessToken: string, uuid: string): Promise<AxiosResponse> {
-        return Axios.post(`/api/access_token/authenticate`, {
+        const url = '/api/access_token/authenticate';
+        const data = {
             accessToken: accessToken,
             uuid: uuid,
-        },
-        {
+        };
+        const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
-        });
+        };
+
+        return Axios.post(url, data, config);
     }
 }

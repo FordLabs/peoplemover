@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @ts-nocheck
+
 import './Application/Styleguide/Colors.scss';
 
 import * as React from 'react';
@@ -39,6 +39,7 @@ import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserP
 import FocusRing from './FocusRing';
 import MatomoEvents from './Matomo/MatomoEvents';
 import CacheBuster from './CacheBuster';
+import {removeToken} from './Auth/TokenProvider';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -92,7 +93,8 @@ Axios.interceptors.response.use(
         MatomoEvents.pushEvent(statusText, config.method, config.url, status);
 
         if (status === UNAUTHORIZED) {
-            window.location.href = '/user/login';
+            removeToken();
+            RedirectToADFS();
         }
         return Promise.reject(error);
     }
@@ -143,12 +145,12 @@ if (isUnsupportedBrowser()) {
                                     <LandingPage/>
                                 </Route>
 
-                                <Route exact path={'/adfs/catch'}>
-                                    <OAuthRedirect redirectUrl={'/user/dashboard'}/>
+                                <Route exact path="/adfs/catch">
+                                    <OAuthRedirect redirectUrl="/user/dashboard"/>
                                 </Route>
 
-                                <AuthenticatedRoute exact path={'/user/login'}>
-                                    <RedirectWrapper redirectUrl={'/user/dashboard'}/>
+                                <AuthenticatedRoute exact path="/user/login">
+                                    <RedirectWrapper redirectUrl="/user/dashboard"/>
                                 </AuthenticatedRoute>
 
                                 <AuthenticatedRoute exact path="/user/dashboard">
@@ -164,7 +166,7 @@ if (isUnsupportedBrowser()) {
                                 </Route>
 
                                 <Route>
-                                    <Redirect to={`/error/404`}/>
+                                    <Redirect to="/error/404"/>
                                 </Route>
                             </Switch>
                         </Router>
