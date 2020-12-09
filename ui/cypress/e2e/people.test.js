@@ -75,7 +75,7 @@ describe('People', () => {
             });
     });
     
-    it.only('Add a new unassigned person', () => {
+    it('Add a new unassigned person', () => {
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
         cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getUpdatedProduct');
         cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
