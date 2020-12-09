@@ -29,6 +29,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('Account Dropdown',  () => {
     let app: RenderResult;
+
     let history: MemoryHistory;
 
     beforeEach(async () => {
@@ -41,84 +42,58 @@ describe('Account Dropdown',  () => {
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
         history = createMemoryHistory({ initialEntries: ['/teamName'] });
-    });
-
-    describe('Edit Access', function() {
-
-        beforeEach(async () => {
-            await act( async () => {
-                await wait(async () => {
-                    app = renderWithRedux(
-                        <Router history={history}>
-                            <PeopleMover/>
-                        </Router>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
-                });
-                const userIconButton = await app.findByTestId('userIcon');
-                fireEvent.click(userIconButton);
+        await act( async () => {
+            await wait(async () => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
             });
-        });
-
-        it('should open Share Access modal on click of text in dropdown',  async () => {
-            await act( async () => {
-                fireEvent.click(await app.findByTestId('shareAccess'));
-            });
-            expect(app.getByText('Share Access'));
-        });
-
-        it('should close Edit Contributors modal on click of Cancel button', async () => {
-            await act( async () => {
-                fireEvent.click(await app.findByTestId('shareAccess'));
-                const cancelButton = await app.findByText('Cancel');
-                fireEvent.click(cancelButton);
-            });
-            expect(app.queryByText('Edit Contributors')).toBe(null);
-        });
-
-        it('should submit invited contributors, current space name, and access token on click of Invite button', async () => {
-            await act( async () => {
-                fireEvent.click(await app.findByTestId('shareAccess'));
-
-                const usersToInvite = app.getByTestId('emailTextArea');
-                fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});
-
-                const saveButton = await app.findByText('Invite');
-                fireEvent.click(saveButton);
-            });
-            expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(TestUtils.space, ['some1@email.com', 'some2@email.com', 'some3@email.com']);
-        });
-
-        it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {
-            const cookies = new Cookies();
-            await act( async () => {
-
-                cookies.set('accessToken', 'FAKE_TOKEN');
-
-                expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
-
-                fireEvent.click(await app.findByText('Sign Out'));
-            });
-            expect(cookies.get('accessToken')).toBeUndefined();
-            expect(history.location.pathname).toEqual('/');
+            const userIconButton = await app.findByTestId('userIcon');
+            fireEvent.click(userIconButton);
         });
     });
 
-    describe('Read Only', function() {
-        it('should not display Download Report and Share Access when it is in Read Only mode', async () => {
-            await act( async () => {
-                await wait(async () => {
-                    app = renderWithRedux(
-                        <Router history={history}>
-                            <PeopleMover/>
-                        </Router>, undefined, {currentSpace: TestUtils.space, isReadOnly: true} as GlobalStateProps);
-                });
-                const userIconButton = await app.findByTestId('userIcon');
-                fireEvent.click(userIconButton);
-            });
-
-            await act( async () => {
-                expect(await app.queryByTestId('shareAccess')).toBeNull();
-                expect(await app.queryByTestId('download-report')).toBeNull();
-            });
+    it('should open Share Access modal on click of text in dropdown',  async () => {
+        await act( async () => {
+            fireEvent.click(await app.findByTestId('shareAccess'));
         });
+        expect(app.getByText('Share Access'));
+    });
+
+    it('should close Edit Contributors modal on click of Cancel button', async () => {
+        await act( async () => {
+            fireEvent.click(await app.findByTestId('shareAccess'));
+            const cancelButton = await app.findByText('Cancel');
+            fireEvent.click(cancelButton);
+        });
+        expect(app.queryByText('Edit Contributors')).toBe(null);
+    });
+
+    it('should submit invited contributors, current space name, and access token on click of Invite button', async () => {
+        await act( async () => {
+            fireEvent.click(await app.findByTestId('shareAccess'));
+
+            const usersToInvite = app.getByTestId('emailTextArea');
+            fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});
+
+            const saveButton = await app.findByText('Invite');
+            fireEvent.click(saveButton);
+        });
+        expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(TestUtils.space, ['some1@email.com', 'some2@email.com', 'some3@email.com']);
+    });
+
+    it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {
+        const cookies = new Cookies();
+        await act( async () => {
+
+            cookies.set('accessToken', 'FAKE_TOKEN');
+
+            expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
+
+            fireEvent.click(await app.findByText('Sign Out'));
+        });
+        expect(cookies.get('accessToken')).toBeUndefined();
+        expect(history.location.pathname).toEqual('/');
     });
 });

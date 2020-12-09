@@ -65,8 +65,7 @@ class LocalDataGenerator(
         )
         productService.createDefaultProducts(createdSpace);
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = createdSpace.id))
-
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "AQ-866ed9fa-06ca-41e7-b256-30770b98195f", spaceId = createdSpace.id))
         var colors = colorService.getColors()
         if (colors.isEmpty() && addColors) {
             colorService.addColors(listOf(

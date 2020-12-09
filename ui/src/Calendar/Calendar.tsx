@@ -32,14 +32,13 @@ import './Calendar.scss';
 interface CalendarProps {
     viewingDate: Date;
     currentSpace: Space;
-    isReadOnly: boolean;
+
     setViewingDate(date: Date): Date;
 }
 
 function Calendar({
     viewingDate,
     currentSpace,
-    isReadOnly,
     setViewingDate,
 }: CalendarProps
 ): JSX.Element {
@@ -89,7 +88,6 @@ function Calendar({
                 renderCustomHeader={CalendarHeader}
                 customInput={
                     <CalendarInputLabel
-                        isReadOnly={isReadOnly}
                         isOpen={isCalendarOpen}
                         setIsOpen={toggleCalendar}
                     />
@@ -103,7 +101,6 @@ function Calendar({
 const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: state.viewingDate,
     currentSpace: state.currentSpace,
-    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

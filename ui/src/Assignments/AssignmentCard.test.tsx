@@ -22,13 +22,11 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
-import {GlobalStateProps} from '../Redux/Reducers';
 
 jest.useFakeTimers();
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
-    let initialState: GlobalStateProps;
 
     beforeEach(() => {
         assignmentToRender =  {
@@ -45,25 +43,17 @@ describe('Assignment Card', () => {
             productId: 0,
             spaceId: 0,
         };
-
-        initialState = {
-            currentSpace: TestUtils.space,
-        } as GlobalStateProps;
     });
 
     it('should render the assigned persons name', () => {
         const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
-            isUnassignedProduct={false}/>,
-        undefined,
-        initialState,);
+            isUnassignedProduct={false}/>);
         expect(underTest.getByText('Billiam Handy')).toBeInTheDocument();
     });
 
     it('should render the assigned persons role if they have one', () => {
         const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
-            isUnassignedProduct={false}/>,
-        undefined,
-        initialState,);
+            isUnassignedProduct={false}/>);
         expect(underTest.getByText('Software Engineer')).toBeInTheDocument();
     });
 
@@ -74,61 +64,17 @@ describe('Assignment Card', () => {
         };
         const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
             assignment={placeholderAssignment}
-            isUnassignedProduct={false}/>,
-        undefined,
-        initialState,);
+            isUnassignedProduct={false}/>);
 
         fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
         expect(getByText('Unmark as Placeholder')).toBeInTheDocument();
     });
 
-    describe('Read-Only Functionality', function() {
-        let initialState: GlobalStateProps;
-
-        beforeEach(function() {
-            initialState = {
-                isReadOnly: true,
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-        });
-
-        it('should not display edit Menu if in read only mode', function() {
-
-            const underTest = renderWithRedux(
-                <AssignmentCard assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState);
-
-            underTest.getByTestId('editPersonIconContainer__billiam_handy').click();
-            expect(underTest.queryByTestId('editMenu')).toBeNull();
-        });
-
-        it('should not allow drag and drop if in read only mode', function() {
-            const startDraggingAssignment = jest.fn();
-
-            const underTest = renderWithRedux(
-                <AssignmentCard assignment={assignmentToRender}
-                    isUnassignedProduct={false}
-                    startDraggingAssignment={startDraggingAssignment}/>,
-                undefined,
-                initialState);
-
-            fireEvent.mouseDown(underTest.getByTestId('assignmentCard__billiam_handy'));
-            expect(startDraggingAssignment).not.toBeCalled();
-        });
-    });
-
     describe('Role color', () => {
         const originalImpl = ThemeApplier.setBackgroundColorOnElement;
 
-        let initialState: GlobalStateProps;
-
         beforeEach(() => {
             ThemeApplier.setBackgroundColorOnElement = jest.fn().mockImplementation();
-            initialState = {
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
         });
 
         afterEach(() => {
@@ -137,10 +83,7 @@ describe('Assignment Card', () => {
 
         it('should render software engineer color correctly', () => {
             const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
-                isUnassignedProduct={false}/>,
-            undefined,
-            initialState,
-            );
+                isUnassignedProduct={false}/>);
             const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
             const person1RoleColor: Color = (person1Role.color as Color);
@@ -162,9 +105,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={otherBilliam}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={false}/>
             );
             const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
@@ -177,9 +118,7 @@ describe('Assignment Card', () => {
             const {getByText, getByTestId, queryByText} = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
-            />,
-            undefined,
-            initialState);
+            />);
 
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
             expect(getByText('Edit Person')).toBeInTheDocument();
@@ -196,9 +135,7 @@ describe('Assignment Card', () => {
             const {queryByText, getByText, getByTestId} = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
-            />,
-            undefined,
-            initialState,);
+            />);
 
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
 
@@ -209,21 +146,11 @@ describe('Assignment Card', () => {
     });
 
     describe('Edit Menu', () => {
-        let initialState: GlobalStateProps;
-
-        beforeEach(() => {
-            initialState = {
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-        });
-
         it('should begin life with the EditMenu closed', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={false}/>
             );
             expect(underTest.queryByText('Edit Person')).not.toBeInTheDocument();
             expect(underTest.queryByText('Edit Assignment')).not.toBeInTheDocument();
@@ -233,26 +160,15 @@ describe('Assignment Card', () => {
             const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
-            />,
-            undefined,
-            initialState);
+            />);
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
             expect(getByText('Edit Person')).toBeInTheDocument();
             expect(getByText('Mark as Placeholder')).toBeInTheDocument();
             expect(getByText('Cancel Assignment')).toBeInTheDocument();
         });
-
     });
 
     describe('New Person Badge', () => {
-        let initialState: GlobalStateProps;
-
-        beforeEach(() => {
-            initialState = {
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-        });
-
         it('should show the new badge if the assignment says the person is new', () => {
             const assignmentThatIsNew: Assignment = {
                 id: 199,
@@ -270,9 +186,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentThatIsNew}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={false}/>
             );
             expect(underTest.getByText('NEW')).toBeInTheDocument();
         });
@@ -281,30 +195,18 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={false}/>
             );
             expect(underTest.queryByText('NEW')).not.toBeInTheDocument();
         });
     });
 
     describe('Hoverable Notes', () => {
-        let initialState: GlobalStateProps;
-
-        beforeEach(() => {
-            initialState = {
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-        });
-
         it('should display hover notes icon if person has valid notes', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={false}/>
             );
             expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
         });
@@ -315,9 +217,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={false}/>
             );
             expect(underTest.queryByTestId('notesIcon')).toBeNull();
         });
@@ -326,9 +226,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={false}/>
             );
 
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
@@ -346,9 +244,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={false}/>
             );
 
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
@@ -373,9 +269,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={true}/>,
-                undefined,
-                initialState,
+                    isUnassignedProduct={true}/>
             );
 
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();

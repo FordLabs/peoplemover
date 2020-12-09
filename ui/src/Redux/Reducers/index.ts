@@ -35,7 +35,6 @@ import {Product} from '../../Products/Product';
 import {ProductTag} from '../../ProductTag/ProductTag';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import userSpacesReducer from './userSpacesReducer';
-import isReadOnlyReducer from './isReadOnlyReducer';
 
 export type SortByType = 'location' | 'product-tag' | 'name'
 
@@ -52,7 +51,6 @@ export default combineReducers({
     productTags: productTagsReducer,
     locations: locationsReducer,
     userSpaces: userSpacesReducer,
-    isReadOnly: isReadOnlyReducer,
 });
 
 export interface GlobalStateProps {
@@ -68,5 +66,4 @@ export interface GlobalStateProps {
     productTags: Array<ProductTag>;
     locations: Array<LocationTag>;
     userSpaces: Array<Space>;
-    isReadOnly: boolean;
 }

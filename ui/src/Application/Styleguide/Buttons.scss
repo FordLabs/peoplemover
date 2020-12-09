@@ -15,23 +15,15 @@
  * limitations under the License.
  */
 
-@import './Colors';
-
 button {
   border: none;
   cursor: pointer;
   font-size: 16px;
   letter-spacing: 0.5px;
   border-radius: 6px;
+}
 
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
-  &.readOnly:disabled {
-    cursor: not-allowed;
-    opacity: 1;
-    background-color: $gray-4;
-  }
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
