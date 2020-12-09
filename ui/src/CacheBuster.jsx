@@ -4,7 +4,7 @@ import React from 'react';
 const appVersion = packageJson.version;
 
 const semverGreaterThan = (versionA, versionB) => {
-    return versionA != versionB;
+    return versionA !== versionB;
 };
 
 export default class CacheBuster extends React.Component {
