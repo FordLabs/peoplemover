@@ -16,6 +16,7 @@
  */
 
 import React, {RefObject, useEffect, useState} from 'react';
+import './Product.scss';
 import {connect} from 'react-redux';
 import {
     AvailableModals,
@@ -36,14 +37,11 @@ import moment from 'moment';
 import {Space} from '../Space/Space';
 import {createDataTestId} from '../tests/TestUtils';
 
-import './Product.scss';
-
 interface ProductCardProps {
     container: string;
     product: Product;
     currentSpace: Space;
     viewingDate: Date;
-    isReadOnly: boolean;
 
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
@@ -56,13 +54,12 @@ function ProductCard({
     product,
     currentSpace,
     viewingDate,
-    isReadOnly,
     registerProductRef,
     unregisterProductRef,
     setCurrentModal,
     fetchProducts,
 }: ProductCardProps): JSX.Element {
-    const readOnlyClass = isReadOnly ? 'readOnly' : '';
+
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
@@ -168,23 +165,21 @@ function ProductCard({
                                 <h2 className="productName" data-testid="productName">
                                     {product.name}
                                 </h2>
-                                <div className={`productControlsContainer ${readOnlyClass}`}>
-                                    <button
-                                        data-testid={createDataTestId('addPersonToProductIcon', product.name)}
-                                        className="addPersonIcon material-icons greyIcon clickableIcon"
-                                        disabled={isReadOnly}
-                                        onClick={setCurrentModalToCreateAssignment}
-                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
-                                        person_add
-                                    </button>
-                                    <button
-                                        disabled={isReadOnly}
-                                        className="editIcon material-icons greyIcon clickableIcon"
+                                <div className="productControlsContainer">
+                                    <div className="addPersonIconContainer">
+                                        <div data-testid={createDataTestId('addPersonToProductIcon', product.name)}
+                                            className="addPersonIcon material-icons greyIcon clickableIcon"
+                                            onClick={setCurrentModalToCreateAssignment}
+                                            onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
+                                            person_add
+                                        </div>
+                                    </div>
+                                    <div className="editIcon material-icons greyIcon clickableIcon"
                                         data-testid={createDataTestId('editProductIcon', product.name)}
                                         onClick={toggleEditMenu}
                                         onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
                                         more_vert
-                                    </button>
+                                    </div>
                                 </div>
                             </div>
                             <TagList />
@@ -194,7 +189,7 @@ function ProductCard({
                                     onClosed={toggleEditMenu}/>
                             }
                         </div>
-                        {!isReadOnly && product.assignments.length === 0 && (
+                        {product.assignments.length === 0 && (
                             <div className="emptyProductText">
                                 <div className="emptyProductTextHint">
                                     <p>Add a person by clicking</p>
@@ -215,7 +210,6 @@ function ProductCard({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
-    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

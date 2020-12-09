@@ -46,9 +46,9 @@ class AssignmentClient {
         });
     }
 
-    static async getAssignmentsUsingPersonIdAndDate(spaceUuid: string, personId: number, date: Date): Promise<AxiosResponse> {
+    static async getAssignmentsUsingPersonIdAndDate(personId: number, date: Date): Promise<AxiosResponse> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
-        const url = `/api/spaces/${spaceUuid}/person/${personId}/assignments/date/${dateAsString}`;
+        const url = `/api/person/${personId}/assignments/date/${dateAsString}`;
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${getToken()}`,

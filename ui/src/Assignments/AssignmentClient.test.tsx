@@ -55,12 +55,12 @@ describe('Assignment client', () => {
     });
 
     it('should get all assignments for given personId and date', async () => {
-        const testUuid = 'spaceUuid';
         const personId = 10;
         const date = new Date(2019, 1, 10);
 
-        const expectedUrl = `/api/spaces/${testUuid}/person/${personId}/assignments/date/2019-02-10`;
-        await AssignmentClient.getAssignmentsUsingPersonIdAndDate(testUuid, personId, date);
+        const expectedUrl = `/api/person/${personId}/assignments/date/2019-02-10`;
+
+        await AssignmentClient.getAssignmentsUsingPersonIdAndDate(personId, date);
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });

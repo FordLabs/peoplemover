@@ -20,9 +20,11 @@ import React, {useEffect, useState} from 'react';
 import './Styleguide/Main.scss';
 import './PeopleMover.scss';
 
+import ProductGraveyard from '../Products/ProductGraveyard';
 import ProductList from '../Products/ProductList';
 import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/ModalContainer';
+import UnassignedDrawerContainer from '../Redux/Containers/UnassignedDrawerContainer';
 import {connect} from 'react-redux';
 import {
     fetchLocationsAction,
@@ -44,15 +46,12 @@ import {Product} from '../Products/Product';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import {ProductTag} from '../ProductTag/ProductTag';
 import {LocationTag} from '../Locations/LocationTag.interface';
-import UnassignedDrawer from '../Assignments/UnassignedDrawer';
-import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
     currentSpace: Space;
     viewingDate: Date;
     products: Array<Product>;
-    isReadOnly: boolean;
 
     fetchProducts(): Array<Product>;
     fetchProductTags(): Array<ProductTag>;
@@ -66,7 +65,6 @@ function PeopleMover({
     currentSpace,
     viewingDate,
     products,
-    isReadOnly,
     fetchProducts,
     fetchProductTags,
     fetchLocations,
@@ -124,16 +122,13 @@ function PeopleMover({
                     <SpaceSelectionTabs/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
-                        {
-                            !isReadOnly &&
-                            <div className="accordionContainer">
-                                <div className="accordionHeaderContainer">
-                                    <UnassignedDrawer/>
-                                    <ArchivedProductsDrawer/>
-                                    <ReassignedDrawer/>
-                                </div>
+                        <div className="accordionContainer">
+                            <div className="accordionHeaderContainer">
+                                <UnassignedDrawerContainer/>
+                                <ProductGraveyard/>
+                                <ReassignedDrawer/>
                             </div>
-                        }
+                        </div>
                     </div>
                     <CurrentModal/>
                 </div>
@@ -148,7 +143,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     products: state.products,
-    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

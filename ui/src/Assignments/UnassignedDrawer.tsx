@@ -21,10 +21,6 @@ import './UnassignedDrawer.scss';
 import {Product} from '../Products/Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import ProductCard from '../Products/ProductCard';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Dispatch} from 'redux';
-import {setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
 
 interface UnassignedDrawerProps {
     isUnassignedDrawerOpen: boolean;
@@ -51,23 +47,4 @@ function UnassignedDrawer({
     );
 }
 
-const getUnassignedProduct = (products: Array<Product>): Product => {
-    if (products == null) {
-        return {} as Product;
-    }
-    const unassignedProducts = products.filter(product => product.name === 'unassigned');
-    return unassignedProducts.length === 1 ? unassignedProducts[0] : {} as Product;
-};
-
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    isUnassignedDrawerOpen: state.isUnassignedDrawerOpen,
-    product: getUnassignedProduct(state.products ? state.products : []),
-});
-
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
-    setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UnassignedDrawer);
-/* eslint-enable */
+export default UnassignedDrawer;
