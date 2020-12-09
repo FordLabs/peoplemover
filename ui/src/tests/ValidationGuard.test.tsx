@@ -15,31 +15,33 @@
  * limitations under the License.
  */
 
-import {render, RenderResult, wait} from '@testing-library/react';
+import {RenderResult, wait} from '@testing-library/react';
 import AuthorizedRoute from '../Auth/AuthorizedRoute';
 import * as React from 'react';
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {RunConfig} from '../index';
+import {renderWithRedux} from './TestUtils';
 
-describe('The Validation Guard', () => {
-    it('should redirect to login when security is enabled and you are not authorized', async () => {
-        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+describe('Authorized Route', () => {
+    it('should redirect to login when security is enabled and you are not authenticated', async () => {
+        Axios.post = jest.fn().mockRejectedValue({response: {status: 401}});
         let {history} = await renderComponent(true);
         expect(history.location.pathname).toEqual('/user/login');
     });
 
-    it('should show the child element when security is enabled and you are authorized', async () => {
-        Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
+    it('should show the child element when security is enabled and you are authenticated and authorized', async () => {
+        Axios.post = jest.fn().mockResolvedValue({});
         let {result} = await renderComponent(true);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
     });
 
     it('should show the child element when security is disabled', async () => {
-        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+        Axios.post = jest.fn().mockRejectedValue({});
         let {result} = await renderComponent(false);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
+        // @ts-ignore
         expect(Axios.post.mock.calls.length).toBe(0);
     });
 
@@ -51,7 +53,7 @@ describe('The Validation Guard', () => {
         // @ts-ignore
         let result: RenderResult = null;
         await wait(() => {
-            result = render(
+            result = renderWithRedux(
                 <Router history={history}>
                     <AuthorizedRoute>
                         <TestComponent/>

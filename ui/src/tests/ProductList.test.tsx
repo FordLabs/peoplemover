@@ -25,9 +25,12 @@ import ProductList from '../Products/ProductList';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
 import {Product} from '../Products/Product';
+import {createBrowserHistory} from 'history';
+import {Router} from 'react-router-dom';
 
 describe('Product List tests', () => {
     let app: RenderResult;
+    let initialState: GlobalStateProps;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -38,11 +41,25 @@ describe('Product List tests', () => {
                 data: TestUtils.products,
             } as AxiosResponse
         ));
+
+        initialState = {
+            currentSpace: TestUtils.space,
+        } as GlobalStateProps;
     });
 
     it('should only have one edit menu open at a time', async () => {
+        let history = createBrowserHistory();
+        history.push('/uuid');
+
         await act(async () => {
-            app = await renderWithRedux(<PeopleMover/>);
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>,
+                undefined,
+                initialState
+            );
+
             const editPerson1Button = await app.findByTestId('editPersonIconContainer__person_1');
             const editPerson3Button = await app.findByTestId('editPersonIconContainer__hank');
 
@@ -78,6 +95,7 @@ describe('Product List tests', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
                 productSortBy: 'name',
+                currentSpace: TestUtils.space,
             } as GlobalStateProps;
 
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
@@ -112,6 +130,7 @@ describe('Product List tests', () => {
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
                 productSortBy: 'name',
+                currentSpace: TestUtils.space,
             } as GlobalStateProps;
 
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
@@ -149,6 +168,7 @@ describe('Product List tests', () => {
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
                 productSortBy: 'name',
+                currentSpace: TestUtils.space,
             } as GlobalStateProps;
     
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
