@@ -15,33 +15,23 @@
  * limitations under the License.
  */
 
-//
-
 import './Application/Styleguide/Colors.scss';
 
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import axe from 'react-axe';
-import PeopleMover from './Application/PeopleMover';
 import {Provider} from 'react-redux';
 import {applyMiddleware, compose, createStore, StoreEnhancer} from 'redux';
 import rootReducer from './Redux/Reducers';
 import thunk from 'redux-thunk';
-import {Route, Switch} from 'react-router';
-import {BrowserRouter as Router, Redirect} from 'react-router-dom';
-import Error404Page from './Application/Error404Page';
-import LandingPage from './LandingPage/LandingPage';
-import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
-import AuthorizedRoute from './Auth/AuthorizedRoute';
-import OAuthRedirect from './ReusableComponents/OAuthRedirect';
-import {AuthenticatedRoute, RedirectToADFS} from './Auth/AuthenticatedRoute';
-import RedirectWrapper from './ReusableComponents/RedirectWrapper';
+import {RedirectToADFS} from './Auth/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
 import FocusRing from './FocusRing';
 import MatomoEvents from './Matomo/MatomoEvents';
 import CacheBuster from './CacheBuster';
 import {removeToken} from './Auth/TokenProvider';
+import Routes from './Routes';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -126,61 +116,33 @@ interface CacheBusterProps {
 }
 
 if (isUnsupportedBrowser()) {
-    ReactDOM.render(<UnsupportedBrowserPage/>, document.getElementById('root'));
-} else {
-    Axios.get(`/api/config`,
-        {headers: {'Content-Type': 'application/json'}}
-    ).then((response) => {
-
-        window.runConfig = Object.freeze(response.data);
-
-        ReactDOM.render(<CacheBuster>
-            {
-                ({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {
-                    if (loading) return null;
-                    if (!loading && !isLatestVersion) {
-                    // You can decide how and when you want to force reload
-                        refreshCacheAndReload();
-                    }
-
-                    return (
-                        <Provider store={store}>
-                            <Router>
-                                <Switch>
-
-                                    <Route exact path="/">
-                                        <LandingPage/>
-                                    </Route>
-
-                                    <Route exact path="/adfs/catch">
-                                        <OAuthRedirect redirectUrl="/user/dashboard"/>
-                                    </Route>
-
-                                    <AuthenticatedRoute exact path="/user/login">
-                                        <RedirectWrapper redirectUrl="/user/dashboard"/>
-                                    </AuthenticatedRoute>
-
-                                    <AuthenticatedRoute exact path="/user/dashboard">
-                                        <SpaceDashboard/>
-                                    </AuthenticatedRoute>
-
-                                    <AuthorizedRoute exact path="/:teamName">
-                                        <PeopleMover/>
-                                    </AuthorizedRoute>
-
-                                    <Route path="/error/404">
-                                        <Error404Page/>
-                                    </Route>
-
-                                    <Route>
-                                        <Redirect to="/error/404"/>
-                                    </Route>
-                                </Switch>
-                            </Router>
-                        </Provider>);
-                }}
-        </CacheBuster>,
+    ReactDOM.render(
+        <UnsupportedBrowserPage/>,
         document.getElementById('root')
-        );
-    });
+    );
+} else {
+    const url = '/api/config';
+    const config = {headers: {'Content-Type': 'application/json'}};
+    Axios.get(url, config)
+        .then((response) => {
+            window.runConfig = Object.freeze(response.data);
+
+            ReactDOM.render(
+                <CacheBuster>
+                    {({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {
+                        if (loading) return null;
+                        if (!loading && !isLatestVersion) {
+                            refreshCacheAndReload();
+                        }
+
+                        return (
+                            <Provider store={store}>
+                                <Routes />
+                            </Provider>
+                        );
+                    }}
+                </CacheBuster>,
+                document.getElementById('root')
+            );
+        });
 }
