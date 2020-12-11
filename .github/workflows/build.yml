@@ -12,31 +12,31 @@ jobs:
   build-api:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Java JDK
-      uses: actions/setup-java@v1.4.3
-      with:
-        java-version: '11.x'
-    - name: Test
-      run: ./gradlew clean test
-      working-directory: ./api
-    - name: Build PR
-      run: ./gradlew assemble
-      env:
-        HEAD_BRANCH: ${{ github.head_ref }}
-      working-directory: ./api
-      if: github.event_name == 'pull_request'
-    - name: Build
-      run: ./gradlew assemble
-      env:
-        HEAD_BRANCH: stage
-      working-directory: ./api
-      if: github.event_name == 'push'
-    - name: Release artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: peoplemover-api.jar
-        path: api/build/libs/PeopleMover-0.0.1-SNAPSHOT.jar
+      - uses: actions/checkout@v2
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: '11.x'
+      - name: Test
+        run: ./gradlew clean test
+        working-directory: ./api
+      - name: Build PR
+        run: ./gradlew assemble
+        env:
+          HEAD_BRANCH: ${{ github.head_ref }}
+        working-directory: ./api
+        if: github.event_name == 'pull_request'
+      - name: Build
+        run: ./gradlew assemble
+        env:
+          HEAD_BRANCH: stage
+        working-directory: ./api
+        if: github.event_name == 'push'
+      - name: Release artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: peoplemover-api.jar
+          path: api/build/libs/PeopleMover-0.0.1-SNAPSHOT.jar
   build-ui:
     runs-on: ubuntu-latest
     steps:
@@ -45,6 +45,13 @@ jobs:
         uses: actions/setup-node@v1.4.4
         with:
           node-version: 13.x
+      - name: Increment version
+        run: npm version patch
+        working-directory: ./ui
+        if: github.event_name == 'push'
+      - name: Copy version to meta.json
+        run: npm run generate-build-version
+        working-directory: ./ui
       - name: NPM Install
         run: npm install
         working-directory: ./ui
