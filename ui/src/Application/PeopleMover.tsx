@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import './Styleguide/Main.scss';
 import './PeopleMover.scss';
@@ -46,6 +46,9 @@ import {ProductTag} from '../ProductTag/ProductTag';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
+import {AxiosError} from 'axios';
+
+const BAD_REQUEST = 400;
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
@@ -79,37 +82,50 @@ function PeopleMover({
         return Boolean(products && products.length > 0 && currentSpace);
     }
 
-    /* eslint-disable */
-    useEffect(() => {
-        async function RenderPage(): Promise<void> {
-            if (currentModal.modal === null) {
-                try {
-                    const uuid = window.location.pathname.replace('/', '');
-                    await SpaceClient.getSpaceFromUuid(uuid)
-                        .then(response => {
-                            setCurrentSpace(response.data);
-                            document.title = `${response.data.name} | PeopleMover`;
-                        });
-                    await fetchProducts();
-                    await fetchProductTags();
-                    await fetchLocations();
-                    const peopleInSpace = (await PeopleClient.getAllPeopleInSpace(uuid)).data;
+    const handleErrors = useCallback((error: AxiosError): Error | null => {
+        if (error?.response?.status !== BAD_REQUEST) return error;
+        setRedirect(<Redirect to="/error/404"/>);
+        return null;
+    }, []);
 
-                    setPeople(peopleInSpace);
-                } catch (err) {
-                    setRedirect(<Redirect to="/error/404"/>);
-                }
-            }
+    useEffect(() => {
+        const uuid = window.location.pathname.replace('/', '');
+        if (currentModal.modal === null && uuid) {
+            SpaceClient.getSpaceFromUuid(uuid)
+                .then((response) => {
+                    const space = response.data;
+                    setCurrentSpace(space);
+                    document.title = `${space.name} | PeopleMover`;
+                })
+                .catch(handleErrors);
         }
+    }, [currentModal, setCurrentSpace, handleErrors]);
 
-        RenderPage().then();
-    }, [currentModal]);
-    /* eslint-enable */
+    useEffect(() => {
+        if (currentSpace && currentSpace.uuid) {
+            fetchProducts();
+            fetchProductTags();
+            fetchLocations();
+            PeopleClient.getAllPeopleInSpace(currentSpace.uuid)
+                .then((response) => {
+                    const peopleInSpace = response.data;
+                    setPeople(peopleInSpace);
+                })
+                .catch(handleErrors);
+        }
+    }, [
+        currentSpace,
+        setPeople,
+        fetchProducts,
+        fetchProductTags,
+        fetchLocations,
+        handleErrors,
+    ]);
 
     /* eslint-disable */
     useEffect(() => {
-        if (hasProducts()) fetchProducts();
-    }, [viewingDate]);
+        if (currentSpace && hasProducts()) fetchProducts();
+    }, [viewingDate, currentSpace]);
     /* eslint-enable */
 
     if (redirect) {
@@ -124,8 +140,7 @@ function PeopleMover({
                     <SpaceSelectionTabs/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
-                        {
-                            !isReadOnly &&
+                        {!isReadOnly && (
                             <div className="accordionContainer">
                                 <div className="accordionHeaderContainer">
                                     <UnassignedDrawer/>
@@ -133,7 +148,7 @@ function PeopleMover({
                                     <ReassignedDrawer/>
                                 </div>
                             </div>
-                        }
+                        )}
                     </div>
                     <CurrentModal/>
                 </div>

@@ -31,9 +31,9 @@ import {connect} from 'react-redux';
 import {Redirect} from 'react-router';
 import Header from '../Header/Header';
 import SpaceDashboardTile from './SpaceDashboardTile';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 import './SpaceDashboard.scss';
-import {GlobalStateProps} from '../Redux/Reducers';
 
 interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;
@@ -62,19 +62,18 @@ function SpaceDashboard({
         setRedirectPage(<Redirect to={`/${space.uuid}`}/>);
     }
 
-    /* eslint-disable */
     useEffect(() => {
         async function populateUserSpaces(): Promise<void> {
             await fetchUserSpaces();
         }
+
         window.history.pushState([], 'User Dashboard', '/user/dashboard');
         setCurrentSpace(createEmptySpace());
 
         populateUserSpaces().then(() => {
             setIsLoading(false);
         });
-    }, [setCurrentModal, setCurrentSpace]);
-    /* eslint-enable */
+    }, [fetchUserSpaces, setCurrentSpace]);
 
     function WelcomeMessage(): JSX.Element {
         return (

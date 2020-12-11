@@ -20,14 +20,31 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
-import {createMemoryHistory} from 'history';
-import ProductClient from '../Products/ProductClient';
+import {createBrowserHistory, History} from 'history';
 import selectEvent from 'react-select-event';
+import SpaceClient from '../Space/SpaceClient';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {PreloadedState, Store} from 'redux';
+
+jest.mock('axios');
 
 describe('PeopleMover', () => {
     let app: RenderResult;
+    let history: History;
     const addProductButtonText = 'Add Product';
+
+    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
+        let history = createBrowserHistory();
+        history.push('/uuid');
+
+        return renderWithRedux(
+            <Router history={history}>
+                <PeopleMover/>
+            </Router>,
+            store,
+            initialState
+        );
+    }
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -42,7 +59,7 @@ describe('PeopleMover', () => {
                     products: TestUtils.products,
                     currentSpace: TestUtils.space,
                 } as GlobalStateProps;
-                app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+                app = applicationSetup(undefined, initialState);
             });
         });
 
@@ -57,7 +74,7 @@ describe('PeopleMover', () => {
     describe('Header and Footer Content', () => {
         beforeEach(async () => {
             await wait(() => {
-                app = renderWithRedux(<PeopleMover/>);
+                app = applicationSetup();
             });
         });
 
@@ -93,7 +110,7 @@ describe('PeopleMover', () => {
     describe('Products', () => {
         beforeEach(async () => {
             await wait(() => {
-                app = renderWithRedux(<PeopleMover/>);
+                app = applicationSetup();
             });
         });
 
@@ -171,16 +188,17 @@ describe('PeopleMover', () => {
     });
 
     describe('Routing', () => {
-        beforeEach(async () => {
-            await wait(() => {
-                app = renderWithRedux(<PeopleMover/>);
-            });
+        const BAD_REQUEST = 400;
+        const expectedSpaceUuid = 'somebadName';
+
+        beforeEach(() => {
+            jest.clearAllMocks();
+            history = createBrowserHistory();
+            history.push('/' + expectedSpaceUuid);
         });
 
-        it('should show 404 page when bad space name is provided',  async () => {
-            ProductClient.getProductsForDate = jest.fn(() => Promise.reject());
-
-            const history = createMemoryHistory({ initialEntries: ['/somebadName'] });
+        it('should route to 404 page when bad space name is provided',  async () => {
+            SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: BAD_REQUEST}});
 
             renderWithRedux(
                 <Router history={history}>
@@ -188,6 +206,7 @@ describe('PeopleMover', () => {
                 </Router>
             );
 
+            expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(expectedSpaceUuid);
             await wait(() => {
                 expect(history.location.pathname).toEqual('/error/404');
             });

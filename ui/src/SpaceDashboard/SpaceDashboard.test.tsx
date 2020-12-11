@@ -48,21 +48,26 @@ describe('SpaceDashboard', () => {
         afterEach(() => {
             global.Date = tempDate;
         });
-        it('should reset current date on load', () => {
+
+        it('should reset current date on load', async () => {
             let store = createStore(rootReducer, {});
             store.dispatch = jest.fn();
+            await wait(() => {
+                renderWithRedux(<SpaceDashboard/>, store);
+            });
 
-            renderWithRedux(<SpaceDashboard/>, store);
-
-            expect(store.dispatch).toHaveBeenCalledWith(setViewingDateAction(new Date('Date is overwritten so anything returns the same date'))
+            expect(store.dispatch).toHaveBeenCalledWith(
+                setViewingDateAction(new Date('Date is overwritten so anything returns the same date'))
             );
         });
     });
 
-    it('should reset currentSpace on load', () => {
+    it('should reset currentSpace on load', async () => {
         let store = createStore(rootReducer, {});
         store.dispatch = jest.fn();
-        renderWithRedux(<SpaceDashboard/>, store);
+        await wait(() => {
+            renderWithRedux(<SpaceDashboard/>, store);
+        });
 
         expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(createEmptySpace()));
     });
@@ -81,7 +86,9 @@ describe('SpaceDashboard', () => {
         let history: MemoryHistory;
 
         beforeEach(async () => {
-            ({component, history} = await createTestComponent());
+            await wait(async () => {
+                ({component, history} = await createTestComponent());
+            });
         });
 
         it('should redirect to space when a space in the dashboard is clicked', async () => {

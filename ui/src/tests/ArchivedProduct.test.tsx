@@ -19,25 +19,35 @@ import React from 'react';
 import ArchivedProduct from '../Products/ArchivedProduct';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
-import {fireEvent} from '@testing-library/react';
+import {fireEvent, RenderResult} from '@testing-library/react';
+import {createBrowserHistory, History} from 'history';
+import {Router} from 'react-router-dom';
 
 describe('Archive Products', () => {
     describe('integration tests', () => {
+        let app: RenderResult;
+        let history: History;
+
         beforeEach(() => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
+
+            history = createBrowserHistory();
+            history.push('/uuid');
+
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
         });
 
         it('has the archived products drawer closed by default', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
             await TestUtils.waitForHomePageToLoad(app);
-    
             expect(app.queryByText('I am archived')).not.toBeInTheDocument();
         });
     
         it('shows the archived product drawer when the handle is clicked', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
             const archivedDrawerCaret = drawerCarets[1];
@@ -46,8 +56,6 @@ describe('Archive Products', () => {
         });
     
         it('hides the archived product drawer when the handle is clicked again', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
             const archivedDrawerCaret = drawerCarets[1];
@@ -59,8 +67,6 @@ describe('Archive Products', () => {
         });
     
         it('should open the edit product modal if you click an archived product', async () => {
-            const app = renderWithRedux(<PeopleMover/>);
-
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
             const archivedDrawerCaret = drawerCarets[1];
@@ -68,6 +74,7 @@ describe('Archive Products', () => {
             fireEvent.click(app.getByTestId('archivedProduct_4'));
 
             await app.findByText('Edit Product');
+            // @ts-ignore
             expect(app.getByLabelText('Name').value).toEqual('I am archived');
         });
     });

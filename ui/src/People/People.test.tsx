@@ -22,19 +22,33 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
 import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
-import {createStore, PreloadedState} from 'redux';
+import {createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import {Product} from '../Products/Product';
 import {Option} from '../CommonTypes/Option';
 import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import ProductClient from '../Products/ProductClient';
 import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {Router} from 'react-router-dom';
+import {createBrowserHistory} from 'history';
 
 declare let window: MatomoWindow;
+
+function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
+    let history = createBrowserHistory();
+    history.push('/uuid');
+
+    return renderWithRedux(
+        <Router history={history}>
+            <PeopleMover/>
+        </Router>,
+        undefined,
+        initialState
+    );
+}
 
 describe('People actions', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
@@ -47,113 +61,118 @@ describe('People actions', () => {
         TestUtils.mockClientCalls();
     });
 
-    it('opens PersonForm component in editing mode when hambaga icon is clicked', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
+    describe('Person Form', () => {
+        let app: RenderResult;
 
-        const editPersonIcon = await app.findByTestId('editPersonIconContainer__person_1');
-        fireEvent.click(editPersonIcon);
-
-        const editPersonButton = await app.findByText('Edit Person');
-        fireEvent.mouseDown(editPersonButton);
-
-        await app.findByText('Save');
-    });
-
-    it('opens PersonForm component when Add Person button is clicked', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        await app.findByText(addPersonModalTitle);
-    });
-
-
-    it('While editing, queries the Assignment Client on load for products this person is assigned to', async () => {
         const initialState: PreloadedState<GlobalStateProps> = {
             people: TestUtils.people,
             viewingDate: new Date(2020, 5, 5),
             currentSpace: TestUtils.space,
         } as GlobalStateProps;
-        const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 
-        const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
-        fireEvent.click(editPersonButton);
+        beforeEach(async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
 
-        await app.findByText('Edit Person');
-
-        fireEvent.mouseDown(app.getByText('Edit Person'));
-        fireEvent.mouseUp(app.getByText('Edit Person'));
-
-        const saveButton = await app.findByText('Save');
-        fireEvent.click(saveButton);
-
-        await wait(() => {
-            expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toBeCalledWith(TestUtils.space.uuid, TestUtils.person1.id, new Date(2020, 5, 5));
-        });
-    });
-
-    it('should show placeholder text for the person name', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        await app.findByPlaceholderText('e.g. Jane Smith');
-    });
-
-    it('should not submit assignment when nothing changed', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        fireEvent.click(app.getByText(submitFormButtonText));
-
-        await wait(() => {
-            expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
-        });
-    });
-
-    it('creates the person specified by the PersonForm', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: 'New Bobby'}});
-        fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
-
-        fireEvent.click(app.getByLabelText('Mark as New'));
-
-        fireEvent.click(app.getByText(submitFormButtonText));
-
-        await wait(() => {
-            expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-            const expectedPerson: Person = {
-                ...emptyPerson(),
-                name: 'New Bobby',
-                newPerson: true,
-            };
-            const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-            expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
-        });
-    });
-
-    it('should not create person with empty value and display proper error message', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: ''}});
-        fireEvent.click(app.getByText(submitFormButtonText));
-
-        await wait(() => {
-            expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0);
+            await wait(() => {
+                app = applicationSetup(undefined, initialState);
+            });
         });
 
-        expect(await app.findByText('Please enter a person name.')).toBeInTheDocument();
+        it('opens PersonForm component in editing mode when hamburger icon is clicked', async () => {
+            const editPersonIcon = await app.findByTestId('editPersonIconContainer__person_1');
+            fireEvent.click(editPersonIcon);
+
+            const editPersonButton = await app.findByText('Edit Person');
+            fireEvent.mouseDown(editPersonButton);
+
+            await app.findByText('Save');
+        });
+
+        it('opens PersonForm component when Add Person button is clicked', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            await app.findByText(addPersonModalTitle);
+        });
+
+        it('While editing, queries the Assignment Client on load for products this person is assigned to', async () => {
+            const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
+            fireEvent.click(editPersonButton);
+
+            await app.findByText('Edit Person');
+
+            fireEvent.mouseDown(app.getByText('Edit Person'));
+            fireEvent.mouseUp(app.getByText('Edit Person'));
+
+            const saveButton = await app.findByText('Save');
+            fireEvent.click(saveButton);
+
+            await wait(() => {
+                expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
+                    .toBeCalledWith(
+                        TestUtils.space.uuid,
+                        TestUtils.person1.id,
+                        new Date(2020, 5, 5)
+                    );
+            });
+        });
+
+        it('should show placeholder text for the person name', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            await app.findByPlaceholderText('e.g. Jane Smith');
+        });
+
+        it('should not submit assignment when nothing changed', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            fireEvent.click(app.getByText(submitFormButtonText));
+
+            await wait(() => {
+                expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
+            });
+        });
+
+        it('creates the person specified by the PersonForm', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'New Bobby'}});
+            fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
+
+            fireEvent.click(app.getByLabelText('Mark as New'));
+
+            fireEvent.click(app.getByText(submitFormButtonText));
+
+            await wait(() => {
+                expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
+                const expectedPerson: Person = {
+                    ...emptyPerson(),
+                    name: 'New Bobby',
+                    newPerson: true,
+                };
+                const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
+            });
+        });
+
+        it('should not create person with empty value and display proper error message', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            fireEvent.change(app.getByLabelText('Name'), {target: {value: ''}});
+            fireEvent.click(app.getByText(submitFormButtonText));
+
+            await wait(() => {
+                expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0);
+            });
+
+            expect(await app.findByText('Please enter a person name.')).toBeInTheDocument();
+        });
+
     });
 
     describe('Roles', () => {
@@ -161,7 +180,7 @@ describe('People actions', () => {
 
         beforeEach(async () => {
             await act(async () => {
-                app = renderWithRedux(<PeopleMover/>);
+                app = applicationSetup();
 
                 const createPersonButton = await app.findByText(addPersonButtonText);
                 fireEvent.click(createPersonButton);
@@ -341,52 +360,6 @@ describe('People actions', () => {
         });
     });
 
-    it('displays new assignment when submitted, opening Unassigned drawer if needed', async () => {
-        const app = renderWithRedux(<PeopleMover/>);
-        const drawerCarets = await app.findAllByTestId('drawerCaret');
-        const unassignedDrawerCaret = drawerCarets[0];
-        fireEvent.click(unassignedDrawerCaret);
-
-        expect(app.queryByText('John')).not.toBeInTheDocument();
-        const createPersonButton = await app.findByText(addPersonButtonText);
-        fireEvent.click(createPersonButton);
-
-        await app.findByText(addPersonModalTitle);
-        fireEvent.change(app.getByLabelText('Name'), {target: {value: 'John'}});
-        fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
-
-        const unassignedProduct: Product = {
-            spaceId: 0,
-            productTags: [],
-            archived: false,
-            id: 999,
-            name: 'unassigned',
-            startDate: '',
-            endDate: '',
-            assignments: [
-                {
-                    id: 2,
-                    person: {
-                        name: 'John',
-                        spaceRole: {name: 'Software Engineer', spaceId: 0, id: 2},
-                        newPerson: false,
-                        id: 2,
-                        spaceId: 0,
-                    },
-                    productId: 999,
-                    spaceId: 0,
-                    placeholder: false,
-                },
-            ],
-        };
-        (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve({data: [unassignedProduct]}));
-
-        fireEvent.click(app.getByText(submitFormButtonText));
-
-        await app.findByText('John');
-        expect(app.queryByText('Submit')).toBeNull();
-    });
-
     it('should open the unassigned drawer from the Edit Person form when a person is edited into Unassigned product', async () => {
         const state = {people: TestUtils.people, currentSpace: TestUtils.space};
         const store = createStore(rootReducer, state);
@@ -414,7 +387,7 @@ describe('People actions', () => {
         });
     });
 
-    describe('editing people/assignments', () => {
+    describe('Editing people/assignments', () => {
         let app: RenderResult;
 
         let assignmentToCreate: CreateAssignmentsRequest = {
@@ -530,7 +503,11 @@ describe('Deleting a Person', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-        app = renderWithRedux(<PeopleMover/>);
+
+        await wait(() => {
+            app = applicationSetup();
+        });
+
         await TestUtils.waitForHomePageToLoad(app);
     });
 
@@ -557,22 +534,6 @@ describe('Deleting a Person', () => {
 
             expect(app.queryByText(/Are you sure?/i)).toBeNull();
             await app.findByText(/Edit Person/i);
-        });
-
-        it('sends delete request after the YES button is clicked', async () => {
-            const updatedProducts: Array<Product> = [{
-                ...TestUtils.productWithAssignments,
-                assignments: [],
-            }];
-            (ProductClient.getProductsForDate as Function) = jest.fn(() => Promise.resolve({data: updatedProducts}));
-
-            fireEvent.click(app.getByTestId('confirmDeleteButton'));
-
-            expect(PeopleClient.removePerson).toBeCalledTimes(1);
-
-            await wait(() => {
-                expect(app.queryByText('Person 1')).not.toBeInTheDocument();
-            });
         });
 
         it('does not show the confirmation modal after the delete button is clicked', async () => {
