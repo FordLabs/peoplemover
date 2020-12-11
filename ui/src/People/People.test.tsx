@@ -110,7 +110,11 @@ describe('People actions', () => {
 
             await wait(() => {
                 expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
-                    .toBeCalledWith(TestUtils.person1.id, new Date(2020, 5, 5));
+                    .toBeCalledWith(
+                        TestUtils.space.uuid,
+                        TestUtils.person1.id,
+                        new Date(2020, 5, 5)
+                    );
             });
         });
 
@@ -176,7 +180,6 @@ describe('People actions', () => {
 
         beforeEach(async () => {
             await act(async () => {
-
                 app = applicationSetup();
 
                 const createPersonButton = await app.findByText(addPersonButtonText);

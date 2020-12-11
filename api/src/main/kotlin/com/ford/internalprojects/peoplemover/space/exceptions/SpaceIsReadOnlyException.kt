@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -15,23 +15,12 @@
  * limitations under the License.
  */
 
-@import './Colors';
+package com.ford.internalprojects.peoplemover.space.exceptions
 
-button {
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  letter-spacing: 0.5px;
-  border-radius: 6px;
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+import java.lang.RuntimeException
 
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
 
-  &.readOnly:disabled {
-    cursor: not-allowed;
-    opacity: 1;
-    background-color: $gray-4;
-  }
-}
+@ResponseStatus(value = HttpStatus.FORBIDDEN)
+class SpaceIsReadOnlyException : RuntimeException()

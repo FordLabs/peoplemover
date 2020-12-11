@@ -17,66 +17,78 @@
 
 package com.ford.internalprojects.peoplemover.product
 
+import com.ford.internalprojects.peoplemover.space.SpaceService
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.validation.Valid
 
 @RequestMapping("/api/spaces/{spaceUuid}/products")
 @RestController
 class ProductController(
     private val productService: ProductService,
+    private val spaceService: SpaceService,
     private val logger: BasicLogger
 ) {
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getProducts(
         @PathVariable spaceUuid: String,
         @RequestParam(name = "requestedDate", required = false) requestedDate: String?
-    ): ResponseEntity<Set<Product>> {
+    ): Set<Product> {
         val products: Set<Product>;
+        val isRequestDateNotToday = requestedDate != LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+
+        if (!spaceService.userHasEditAccessToSpace(spaceUuid) && isRequestDateNotToday) {
+            throw SpaceIsReadOnlyException()
+        }
 
         if (requestedDate != null) {
             val date = LocalDate.parse(requestedDate)
             products = productService.findAllBySpaceUuidAndDate(spaceUuid, date)
             logger.logInfoMessage("All product retrieved by date ${requestedDate}.")
-            return ResponseEntity.ok(products)
+            return products
         }
 
         logger.logInfoMessage("All product retrieved for space.")
         products = productService.findAllBySpaceUuid(spaceUuid)
 
-        return ResponseEntity.ok(products)
+        return products
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PostMapping
     fun createProduct(
         @PathVariable spaceUuid: String,
         @Valid @RequestBody productAddRequest: ProductAddRequest
-    ): ResponseEntity<Product> {
+    ): Product {
         val createdProduct = productService.create(productAddRequest, spaceUuid)
         logger.logInfoMessage("Product [${createdProduct.name}] created.")
-        return ResponseEntity.ok(createdProduct)
+        return createdProduct
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PutMapping("/{productId}")
     fun updateProduct(
         @PathVariable spaceUuid: String,
         @PathVariable productId: Int,
         @Valid @RequestBody productEditRequest: ProductEditRequest
-    ): ResponseEntity<Product> {
+    ): Product {
         val updatedProduct: Product = productService.update(productEditRequest, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] updated.")
-        return ResponseEntity.ok(updatedProduct)
+        return updatedProduct
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @DeleteMapping("/{productId}")
     fun deleteProduct(
         @PathVariable spaceUuid: String,
         @PathVariable productId: Int
-    ): ResponseEntity<Unit> {
+    ) {
         productService.delete(productId, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] deleted.")
-        return ResponseEntity.ok().build()
     }
 }

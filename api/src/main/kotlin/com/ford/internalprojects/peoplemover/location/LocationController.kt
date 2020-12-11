@@ -19,6 +19,7 @@ package com.ford.internalprojects.peoplemover.location
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/spaces/{spaceUuid}/locations")
@@ -27,6 +28,7 @@ class LocationController(
     private val locationService: LocationService,
     private val logger: BasicLogger
 ) {
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getLocationsForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceLocation>> {
         val locationsForSpace: Set<SpaceLocation> = locationService.getLocationsForSpace(spaceUuid)
@@ -34,6 +36,7 @@ class LocationController(
         return ResponseEntity.ok(locationsForSpace)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PostMapping
     fun addLocationForSpace(
         @PathVariable spaceUuid: String,
@@ -43,6 +46,7 @@ class LocationController(
         return ResponseEntity.ok(addedLocation)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @PutMapping
     fun editLocationForSpace(
         @PathVariable spaceUuid: String,
@@ -54,6 +58,7 @@ class LocationController(
         return ResponseEntity.ok(editedLocation)
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
     @DeleteMapping(path = ["/{locationId}"])
     fun deleteLocationForSpace(
         @PathVariable spaceUuid: String,
