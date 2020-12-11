@@ -1,6 +1,6 @@
 {
   "name": "peoplemover",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "browserslist": [
     ">0.2%",
@@ -10,6 +10,8 @@
   ],
   "proxy": "http://localhost:8080",
   "scripts": {
+    "generate-build-version": "node generate-build-version",
+    "prebuild": "npm run generate-build-version",
     "start": "react-scripts start",
     "start:backend": "cd ../api && SPRING_PROFILES_ACTIVE=e2e-test ./gradlew bRu",
     "test:unit": "react-scripts test",
