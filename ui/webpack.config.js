@@ -20,3 +20,4 @@ module.exports = {
     // newline - add source-map support
     devtool: "source-map"
 }
+

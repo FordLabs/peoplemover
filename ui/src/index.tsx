@@ -82,11 +82,11 @@ Axios.interceptors.response.use(
     error => {
         const {status, statusText, config} = error.response;
 
-        MatomoEvents.pushEvent(statusText, config.method, config.url, status);
-
         if (status === UNAUTHORIZED) {
             removeToken();
             RedirectToADFS();
+        } else {
+            MatomoEvents.pushEvent(statusText, config.method, config.url, status);
         }
         return Promise.reject(error);
     }
