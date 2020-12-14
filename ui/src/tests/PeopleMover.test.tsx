@@ -49,47 +49,71 @@ describe('PeopleMover', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+    });
 
-        await wait(() => {
-            app = applicationSetup();
+    describe('Read Only Mode', function() {
+        beforeEach(async () => {
+            await wait(() => {
+                let initialState = {
+                    isReadOnly: true,
+                    products: TestUtils.products,
+                    currentSpace: TestUtils.space,
+                } as GlobalStateProps;
+                app = applicationSetup(undefined, initialState);
+            });
+        });
+
+        it('should not show unassigned drawer', function() {
+            // expect(app.queryAllByTestId('unassignedDrawer')).toHaveLength(1);
+            expect(app.queryByTestId('unassignedDrawer')).toBeNull();
+            expect(app.queryByTestId('archivedProductsDrawer')).toBeNull();
+            expect(app.queryByTestId('reassignmentDrawer')).toBeNull();
         });
     });
 
-    it('Should contains My Tags on initial load of People Mover', async () => {
-        await app.findByText('My Tags');
-        await app.findByTestId('myTagsIcon');
-    });
+    describe('Header and Footer Content', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup();
+            });
+        });
 
-    it('should display My Roles button on startup', async () => {
-        await app.findByText('My Roles');
-        await app.findByTestId('myRolesIcon');
-    });
+        it('Should contains My Tags on initial load of People Mover', async () => {
+            await app.findByText('My Tags');
+            await app.findByTestId('myTagsIcon');
+        });
 
-    it('should display Sort By dropdown on startup', async () => {
-        await app.findByText('Sort By:');
-        await app.findByText('Alphabetical');
-    });
+        it('should display My Roles button on startup', async () => {
+            await app.findByText('My Roles');
+            await app.findByTestId('myRolesIcon');
+        });
 
-    it('should display Filter option on startup', async () => {
-        await app.findByText('Filter:');
-    });
+        it('should display Sort By dropdown on startup', async () => {
+            await app.findByText('Sort By:');
+            await app.findByText('Alphabetical');
+        });
 
-    it('should display products', async () => {
-        await app.findAllByText(TestUtils.productWithAssignments.name);
-        await app.findAllByText(TestUtils.productWithoutAssignments.name);
-        await app.findAllByText(TestUtils.productForHank.name);
-    });
+        it('should display Filter option on startup', async () => {
+            await app.findByText('Filter:');
+        });
 
-    it('should show the Flabs branding on load', async () => {
-        await app.findByText('Powered by');
-        await app.findByText('FordLabs');
-    });
+        it('should show the Flabs branding on load', async () => {
+            await app.findByText('Powered by');
+            await app.findByText('FordLabs');
+        });
 
-    it('should update the page title with the space name', () => {
-        expect(document.title).toEqual('testSpace | PeopleMover');
+        it('should update the page title with the space name', () => {
+            expect(document.title).toEqual('testSpace | PeopleMover');
+        });
     });
 
     describe('Products', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup();
+            });
+        });
+
         it('should display products', async () => {
             await app.findAllByText(TestUtils.productWithAssignments.name);
             await app.findAllByText(TestUtils.productWithoutAssignments.name);

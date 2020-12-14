@@ -18,13 +18,14 @@
 import React, {forwardRef, Ref} from 'react';
 
 interface CustomInputProps {
+    isReadOnly: boolean;
     value?: string;
     isOpen: boolean;
     setIsOpen: (isCalendarOpen: boolean) => void;
 }
 
 function CalendarCustomInput(
-    {isOpen, setIsOpen, value}: CustomInputProps,
+    {isReadOnly, isOpen, setIsOpen, value}: CustomInputProps,
     forwardedRef: Ref<HTMLDivElement>
 ): JSX.Element {
     const viewingDate: Date = !value ? new Date() : new Date(value);
@@ -35,23 +36,31 @@ function CalendarCustomInput(
     };
 
     function calendarClicked(): void {
-        setIsOpen(!isOpen);
+        if (!isReadOnly) {
+            setIsOpen(!isOpen);
+        }
     }
 
     function handleKeyDownForCalendarClicked(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') calendarClicked();
+        if (!isReadOnly && event.key === 'Enter') calendarClicked();
     }
 
     return (
-        <div className="calendarCustomInput"
+        <div className={`calendarCustomInput ${isReadOnly ? 'readOnly' : ''}`}
             onClick={calendarClicked}
             onKeyDown={(e): void => handleKeyDownForCalendarClicked(e)}
             data-testid="calendarToggle">
-            Viewing: {viewingDate.toLocaleString('en-us', dateFormatOptions)}
-            {
-                isOpen
-                    ? <i className="material-icons greyIcon" data-testid="calendar_up-arrow">arrow_drop_up</i>
-                    : <i className="material-icons greyIcon" data-testid="calendar_down-arrow">arrow_drop_down</i>
+            Viewing:
+            <span className="calendarViewingDate">
+                {viewingDate.toLocaleString('en-us', dateFormatOptions)}
+            </ span>
+            {   !isReadOnly &&
+                (
+                    isOpen
+                        ? <i className="material-icons greyIcon" data-testid="calendar_up-arrow">arrow_drop_up</i>
+                        : <i className="material-icons greyIcon" data-testid="calendar_down-arrow">arrow_drop_down</i>
+                )
+
             }
         </div>
     );
