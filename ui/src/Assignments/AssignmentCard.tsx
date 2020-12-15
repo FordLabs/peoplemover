@@ -47,6 +47,7 @@ interface AssignmentCardProps {
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
 
     setCurrentModal(modalState: CurrentModalState): void;
+
     fetchProducts(): void;
 }
 
@@ -124,7 +125,12 @@ function AssignmentCard({
             } else {
                 MatomoEvents.pushEvent(currentSpace.name, 'unmarkAsPlaceholder', assignment.person.name);
             }
-            if (fetchProducts) { fetchProducts(); }
+            if (fetchProducts) {
+                fetchProducts();
+            }
+        }).catch((error) => {
+            MatomoEvents.pushEvent(currentSpace.name, 'placeholderError', assignment.person.name, error.code);
+            return Promise.reject(error);
         });
     }
 
@@ -148,7 +154,12 @@ function AssignmentCard({
 
         AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace, false).then(() => {
             MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignment', assignment.person.name);
-            if (fetchProducts) { fetchProducts(); }
+            if (fetchProducts) {
+                fetchProducts();
+            }
+        }).catch((error) => {
+            MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignmentError', assignment.person.name, error.code);
+            return Promise.reject(error);
         });
     }
 
@@ -213,21 +224,23 @@ function AssignmentCard({
             <PersonAndRoleInfo
                 isReadOnly={isReadOnly}
                 assignment={assignment}
-                isUnassignedProduct={isUnassignedProduct} />
+                isUnassignedProduct={isUnassignedProduct}/>
             <div ref={assignmentEditRef}
                 className="personRoleColor"
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
-                onKeyDown={(e): void => {handleKeyDownForToggleEditMenu(e);}}>
+                onKeyDown={(e): void => {
+                    handleKeyDownForToggleEditMenu(e);
+                }}>
                 {
                     !isReadOnly && <i className="material-icons personEditIcon greyIcon">more_vert</i>
                 }
             </div>
             {editMenuIsOpened &&
-                <EditMenu
-                    menuOptionList={getMenuOptionList()}
-                    onClosed={onEditMenuClosed}
-                />
+            <EditMenu
+                menuOptionList={getMenuOptionList()}
+                onClosed={onEditMenuClosed}
+            />
             }
         </div>
     );

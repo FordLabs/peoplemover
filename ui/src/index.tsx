@@ -86,7 +86,8 @@ Axios.interceptors.response.use(
             removeToken();
             RedirectToADFS();
         } else {
-            MatomoEvents.pushEvent(statusText, config.method, config.url, status);
+            let conventionizedErrorName = `${statusText} - ${status}`;
+            MatomoEvents.pushEvent(conventionizedErrorName, config.method, config.url, status);
         }
         return Promise.reject(error);
     }

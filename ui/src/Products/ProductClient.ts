@@ -82,6 +82,9 @@ class ProductClient {
         return Axios.delete(url, config).then(result => {
             MatomoEvents.pushEvent(space.name, 'deleteProduct', product.name);
             return result;
+        }).catch((error) => {
+            MatomoEvents.pushEvent(space.name, 'deleteProductError', product.name, error.code);
+            return Promise.reject(error);
         });
     }
 

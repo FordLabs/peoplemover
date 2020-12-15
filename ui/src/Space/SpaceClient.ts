@@ -93,6 +93,9 @@ class SpaceClient {
         return Axios.put(url, data, config).then((result) => {
             MatomoEvents.pushEvent(space.name, 'inviteUser', emails.join(', '));
             return result;
+        }).catch((error) => {
+            MatomoEvents.pushEvent(space.name, 'inviteUserError', emails.join(', '), error.code);
+            return Promise.reject(error);
         });
     }
 }
