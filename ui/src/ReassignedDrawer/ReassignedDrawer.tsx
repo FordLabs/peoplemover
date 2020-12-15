@@ -58,8 +58,8 @@ function ReassignedDrawer({
     ));
 
     const containee: JSX.Element = (
-        <div 
-            className="reassignmentContainer" 
+        <div
+            className="reassignmentContainer"
             data-testid="reassignmentContainer">
             {listOfHTMLReassignments}
         </div>
@@ -112,7 +112,7 @@ function ReassignedDrawer({
                 fetchProducts();
                 MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`);
             }).catch(err => {
-                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`, err.code);
+                MatomoEvents.pushEvent(currentSpace.name, 'revertError', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`, err.code);
                 return Promise.reject(err);
             });
     }
