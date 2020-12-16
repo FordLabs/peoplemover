@@ -1,19 +1,45 @@
 /// <reference types="Cypress" />
 import person from '../fixtures/person';
-const date = Cypress.moment().format('yyyy-MM-DD');
+const todaysDate = Cypress.moment().format('yyyy-MM-DD');
 
 describe('People', () => {
+    let notTodaysDate;
+    let highlightedLastDayOfMonth;
+    let calendarDateClass;
+
     beforeEach(() => {
         cy.visitBoard();
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
+
+        const endOfMonth = Cypress.moment().endOf('month');
+        notTodaysDate = endOfMonth.day('Monday').format('yyyy-MM-DD');
+
+        if (todaysDate === notTodaysDate) {
+            notTodaysDate = endOfMonth.day('Tuesday').format('yyyy-MM-DD');
+        }
+
+        calendarDateClass = `.react-datepicker__day--0${Cypress.moment(notTodaysDate).format('DD')}`;
+        highlightedLastDayOfMonth = `${calendarDateClass}.react-datepicker__day--highlighted`;
     });
 
     it('Add a new assigned person', () => {
+        cy.get('[data-testid=calendarToggle]').as('calendarToggle');
+
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
-        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getUpdatedProduct');
+        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${notTodaysDate}`).as('getUpdatedProduct');
         cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
-        
+
+        cy.get('@calendarToggle').click();
+        cy.get(calendarDateClass).click();
+        cy.get(highlightedLastDayOfMonth).should('not.exist');
+
+        cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
+
+        cy.get('@reassignmentDrawer')
+            .should('contain', 'Reassigned')
+            .find('[data-testid=countBadge]').should('not.exist');
+
         const assignedPerson = {...person};
 
         cy.contains(assignedPerson.name).should('not.exist');
@@ -26,7 +52,6 @@ describe('People', () => {
 
         submitPersonForm('Add');
 
-        let assignmentId;
         cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
             .should((xhrs) => {
                 const postNewPersonXhr = xhrs[0];
@@ -41,12 +66,6 @@ describe('People', () => {
                 expect(personData.newPerson).to.equal(assignedPerson.isNew);
                 expect(personData.notes).to.equal(assignedPerson.notes);
                 expect(personData.spaceRole.name).to.equal(assignedPerson.role);
-
-                const productData = getUpdatedProductXhr.response.body || [];
-                assignmentId = productData
-                    .find(product => product.name === assignedPerson.assignTo).assignments
-                    .find(assignment => assignment.person.id === personData.id).id;
-
             }).then(() => {
                 cy.get(`[data-testid=assignmentCard__person_name]`)
                     .should('contain', assignedPerson.name)
@@ -59,25 +78,16 @@ describe('People', () => {
                         }
                     });
 
-                cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
+                ensureNewAssignmentIsPresentInAssignmentDrawer(assignedPerson);
 
-                cy.get('@reassignmentDrawer')
-                    .should('contain', 'Reassigned')
-                    .find('[data-testid=countBadge]').should('have.text', '2');
-
-                cy.get('@reassignmentDrawer')
-                    .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
-                    .should('have.length', 2)
-                    .eq(0)
-                    .should('contain', assignedPerson.name)
-                    .should('contain', assignedPerson.role)
-                    .should('contain', `Assigned to ${assignedPerson.assignTo}`);
+                cy.get('@calendarToggle').click();
+                cy.get(highlightedLastDayOfMonth).should('have.text', Cypress.moment(notTodaysDate).format('D'));
             });
     });
     
     it('Add a new unassigned person', () => {
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
-        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getUpdatedProduct');
+        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${todaysDate}`).as('getUpdatedProduct');
         cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
         const unassignedPerson = {
@@ -123,21 +133,11 @@ describe('People', () => {
                         }
                     });
 
-                cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
-
-                cy.get('@reassignmentDrawer')
+                cy.get('[data-testid=reassignmentDrawer]')
                     .should('contain', 'Reassigned')
                     .find('[data-testid=countBadge]').should('have.text', '1');
 
-                cy.get('[data-testid=unassignedDrawer]').as('unassignedDrawer');
-                cy.get('@unassignedDrawer')
-                    .should('contain', 'Unassigned')
-                    .find('[data-testid=countBadge]').should('have.text', '2');
-
-                cy.get('@unassignedDrawer')
-                    .find('[data-testid=unassignedPeopleContainer] [data-testid=assignmentCard__person_name]')
-                    .should('contain', unassignedPerson.name)
-                    .should('contain', unassignedPerson.role)
+                ensureUnassignedPersonIsPresentInUnassignedDrawer(unassignedPerson);
             });
     });
 
@@ -187,7 +187,7 @@ describe('People', () => {
 
     context('Drag and Drop', () => {
         beforeEach(() => {
-            cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + date).as('getProducts');
+            cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + todaysDate).as('getProducts');
         });
 
         it('Drag and drop person from one product to another product', () => {
@@ -309,4 +309,26 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
 const submitPersonForm = (expectedSubmitButtonText) => {
     cy.get('[data-testid=personFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
     cy.get('@personForm').should('not.be.visible');
+};
+
+const ensureNewAssignmentIsPresentInAssignmentDrawer = (assignedPerson) => {
+    cy.get('@reassignmentDrawer')
+        .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
+        .should('have.length', 1)
+        .eq(0)
+        .should('contain', assignedPerson.name)
+        .should('contain', assignedPerson.role)
+        .should('contain', `Assigned to ${assignedPerson.assignTo}`);
+};
+
+const ensureUnassignedPersonIsPresentInUnassignedDrawer = (unassignedPerson) => {
+    cy.get('[data-testid=unassignedDrawer]').as('unassignedDrawer');
+    cy.get('@unassignedDrawer')
+        .should('contain', 'Unassigned')
+        .find('[data-testid=countBadge]').should('have.text', '2');
+
+    cy.get('@unassignedDrawer')
+        .find('[data-testid=unassignedPeopleContainer] [data-testid=assignmentCard__person_name]')
+        .should('contain', unassignedPerson.name)
+        .should('contain', unassignedPerson.role);
 };
