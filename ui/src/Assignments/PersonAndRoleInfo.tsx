@@ -29,13 +29,13 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
     const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
-    const showHoverBox = !isReadOnly && hoverBoxIsOpened && !isUnassignedProduct;
+    const showHoverBox = !isReadOnly && hoverBoxIsOpened;
 
     const HoverBox = ({notes}: {
         notes: string;
     }): JSX.Element  => {
         return (
-            <div className="hoverBoxContainer"
+            <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}
                 data-testid="hoverBoxContainer">
                 <p className="hoverBoxNotes">
                     {notes}

@@ -63,6 +63,12 @@
   font-size: 12px;
   font-weight: normal;
 
+  &.unassignedHoverBoxContainer {
+    top: 15px;
+    left: -75px;
+    width: 150px;
+  }
+
   .hoverBoxNotes {
     margin: 16px 20px;
     line-height: 18px;
