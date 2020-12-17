@@ -62,16 +62,15 @@ function ProductFormProductTagsField({
     }
 
     function optionToProductTag(options: Array<Option>): Array<ProductTag> {
-        if (options) {
-            return options.map(option => {
-                return {
-                    id: Number.parseInt(option.value, 10),
-                    name: option.label,
-                    spaceId,
-                };
-            });
-        }
-        return [];
+        if (!options) return [];
+
+        return options.map(option => {
+            return {
+                id: Number.parseInt(option.value, 10),
+                name: option.label,
+                spaceId,
+            };
+        });
     }
 
     function handleCreateProductTag(inputValue: string): void {
@@ -92,11 +91,8 @@ function ProductFormProductTagsField({
     }
 
     function updateSelectedProductTags(productTags: Array<ProductTag>): void {
-        if (productTags.length > 0) {
-            setSelectedProductTags([...productTags]);
-        } else {
-            setSelectedProductTags([]);
-        }
+        const selectedTags = (productTags.length > 0) ? [...productTags] : [];
+        setSelectedProductTags(selectedTags);
     }
 
     const getOptions = (): Array<Option> => {
@@ -107,6 +103,10 @@ function ProductFormProductTagsField({
         return availableProductTags.length > selectedProductTags.length || Boolean(typedInProductTag.length);
     };
 
+    const onChange = (option: unknown): void => updateSelectedProductTags(optionToProductTag(option as Option[]));
+
+    const onInputChange = (e: string): void => setTypedInProductTag(e);
+
     return (
         <div className="formItem">
             <label className="formItemLabel" htmlFor="productTags">Product Tags</label>
@@ -114,16 +114,23 @@ function ProductFormProductTagsField({
                 isMulti={true}
                 name="productTags"
                 inputId="productTags"
-                onInputChange={(e: string): void => setTypedInProductTag(e)}
-                onChange={(option): void => updateSelectedProductTags(optionToProductTag(option as Option[]))}
+                onInputChange={onInputChange}
+                onChange={onChange}
                 isLoading={isLoading}
                 isDisabled={isLoading}
                 onCreateOption={handleCreateProductTag}
                 options={getOptions()}
                 styles={customStyles}
-                value={selectedProductTags.map(productTag => createTagOption(productTag.name, productTag.id))}
-                components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
-                formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInProductTag}"`)}
+                value={selectedProductTags.map(
+                    productTag => createTagOption(productTag.name, productTag.id)
+                )}
+                components={{
+                    DropdownIndicator: CustomIndicator,
+                    Option: CustomOption,
+                }}
+                formatCreateLabel={(): JSX.Element =>
+                    CreateNewText(`Create "${typedInProductTag}"`)
+                }
                 placeholder="Add product tags"
                 hideSelectedOptions={true}
                 isClearable={false}
