@@ -356,7 +356,7 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
         <div className="customControlContainer">
             <div data-testid="custom-control-role-badge"
                 ref={colorBadgeRef}
-                className={`optionRoleBadge`}/>
+                className="optionRoleBadge"/>
             <components.Control {...props}>{props.children}</components.Control>
         </div>
     );
@@ -381,9 +381,9 @@ export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Elem
 
     return (
         <components.Option {...allTheProps}>
-            <div className={'optionRoleBadge'}
+            <div className="optionRoleBadge"
                 ref={colorBadgeRef}
-                data-testid={`RoleColorBadge`}>
+                data-testid="roleColorBadge">
             </div>
             <div className="roleOptionLabel">{label}</div>
         </components.Option>

@@ -172,7 +172,7 @@ describe('AssignmentForm', () => {
                 const labelElement = await app.findByLabelText('Name');
                 fireEvent.change(labelElement, {target: {value: 'Person 1'}});
 
-                const person1ColorBadge = await app.findByTestId('RoleColorBadge');
+                const person1ColorBadge = await app.findByTestId('roleColorBadge');
                 const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
                 const person1RoleColor: Color = (person1Role.color as Color);
 

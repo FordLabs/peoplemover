@@ -99,6 +99,14 @@ function ProductFormProductTagsField({
         }
     }
 
+    const getOptions = (): Array<Option> => {
+        return availableProductTags.map((productTag: ProductTag) => createTagOption(productTag.name, productTag.id));
+    };
+
+    const menuIsOpen = (): boolean => {
+        return availableProductTags.length > selectedProductTags.length || Boolean(typedInProductTag.length);
+    };
+
     return (
         <div className="formItem">
             <label className="formItemLabel" htmlFor="productTags">Product Tags</label>
@@ -111,7 +119,7 @@ function ProductFormProductTagsField({
                 isLoading={isLoading}
                 isDisabled={isLoading}
                 onCreateOption={handleCreateProductTag}
-                options={availableProductTags.map((productTag: ProductTag) => createTagOption(productTag.name, productTag.id))}
+                options={getOptions()}
                 styles={customStyles}
                 value={selectedProductTags.map(productTag => createTagOption(productTag.name, productTag.id))}
                 components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
@@ -119,6 +127,7 @@ function ProductFormProductTagsField({
                 placeholder="Add product tags"
                 hideSelectedOptions={true}
                 isClearable={false}
+                menuIsOpen={menuIsOpen()}
             />
         </div>
     );
