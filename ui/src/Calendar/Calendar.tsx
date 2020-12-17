@@ -50,12 +50,14 @@ function Calendar({
     const calendarRef = createRef<ReactDatePicker>();
 
     useEffect(() => {
-        AssignmentClient.getAssignmentEffectiveDates(uuid)
-            .then(response => {
-                const dates: Array<Date> = (response.data as string[]).map(date => moment(date).toDate());
-                setDaysHighlighted(dates);
-            });
-    }, [uuid]);
+        if (isCalendarOpen) {
+            AssignmentClient.getAssignmentEffectiveDates(uuid)
+                .then(response => {
+                    const dates: Array<Date> = (response.data as string[]).map(date => moment(date).toDate());
+                    setDaysHighlighted(dates);
+                });
+        }
+    }, [uuid, isCalendarOpen]);
 
     function toggleCalendar(isOpen: boolean): void {
         setIsCalendarOpen(isOpen);
