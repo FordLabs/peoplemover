@@ -20,5 +20,6 @@ package com.ford.internalprojects.peoplemover.report
 data class PeopleReportRow (
     val productName: String,
     val personName: String,
-    val personRole: String
+    val personRole: String,
+    val personNote: String
 )
