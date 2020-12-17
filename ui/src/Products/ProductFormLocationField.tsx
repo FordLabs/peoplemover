@@ -99,26 +99,34 @@ function ProductFormLocationField({
         setCurrentProduct(updatedProduct);
     }
 
+    const menuIsOpen = (): boolean => {
+        return availableLocations.length > 1 || Boolean(typedInLocation.length);
+    };
+
+    const onChange = (option: unknown): void  => updateSpaceLocations(option as Option);
+
+    const onInputChange = (e: string): void => setTypedInLocation(e);
+
     return (
         <div className="formItem">
             <label className="formItemLabel" htmlFor="location">Location</label>
             <Creatable
                 name="location"
                 inputId="location"
-                onInputChange={(e: string): void => setTypedInLocation(e)}
-                onChange={(option): void  => updateSpaceLocations(option as Option)}
-                isLoading={isLoading}
-                isDisabled={isLoading}
-                onCreateOption={handleCreateLocationTag}
+                placeholder="Add a location tag"
+                value={locationOptionValue()}
                 options={locationOptions()}
                 styles={customStyles}
                 components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
-                formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInLocation}"`)}
-                placeholder="Add a location tag"
+                formatCreateLabel={(): JSX.Element => CreateNewText(typedInLocation)}
+                onInputChange={onInputChange}
+                onChange={onChange}
+                onCreateOption={handleCreateLocationTag}
+                menuIsOpen={menuIsOpen()}
                 hideSelectedOptions={true}
                 isClearable={true}
-                noOptionsMessage={(): string => `+ Create "${typedInLocation}"` }
-                value={locationOptionValue()}
+                isLoading={isLoading}
+                isDisabled={isLoading}
             />
         </div>
     );

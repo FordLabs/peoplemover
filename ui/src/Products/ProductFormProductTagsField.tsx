@@ -111,30 +111,30 @@ function ProductFormProductTagsField({
         <div className="formItem">
             <label className="formItemLabel" htmlFor="productTags">Product Tags</label>
             <Creatable
-                isMulti={true}
                 name="productTags"
                 inputId="productTags"
-                onInputChange={onInputChange}
-                onChange={onChange}
-                isLoading={isLoading}
-                isDisabled={isLoading}
-                onCreateOption={handleCreateProductTag}
-                options={getOptions()}
-                styles={customStyles}
+                placeholder="Add product tags"
                 value={selectedProductTags.map(
                     productTag => createTagOption(productTag.name, productTag.id)
                 )}
+                options={getOptions()}
+                styles={customStyles}
                 components={{
                     DropdownIndicator: CustomIndicator,
                     Option: CustomOption,
                 }}
                 formatCreateLabel={(): JSX.Element =>
-                    CreateNewText(`Create "${typedInProductTag}"`)
+                    CreateNewText(typedInProductTag)
                 }
-                placeholder="Add product tags"
+                onInputChange={onInputChange}
+                onChange={onChange}
+                onCreateOption={handleCreateProductTag}
+                menuIsOpen={menuIsOpen()}
+                isDisabled={isLoading}
+                isLoading={isLoading}
+                isMulti={true}
                 hideSelectedOptions={true}
                 isClearable={false}
-                menuIsOpen={menuIsOpen()}
             />
         </div>
     );

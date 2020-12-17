@@ -392,6 +392,6 @@ export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Elem
 
 export const CreateNewText = (text: string): JSX.Element => (
     <span>
-        + {text}
+        {`Press Enter to add "${text}"`}
     </span>
 );
