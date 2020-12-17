@@ -45,22 +45,22 @@ jobs:
   increment-version:
     runs-on: ubuntu-latest
     steps:
-      -uses: action/checkout@v2
-        - name: Increment version
-          run: npm version patch
-          working-directory: ./ui
-          if: github.event_name == 'push'
-        - name: Copy version to meta.json
-          run: npm run generate-build-version
-          working-directory: ./ui
-        - name: Commit meta.json
-          run: git commit --all --amend --no-edit
-          working-directory: ./ui
-          if: github.event_name == 'push'
-        - name: Push version increment
-          run: git push
-          working-directory: ./ui
-          if: github.event_name == 'push'
+      - uses: action/checkout@v2
+      - name: Increment version
+        run: npm version patch
+        working-directory: ./ui
+        if: github.event_name == 'push'
+      - name: Copy version to meta.json
+        run: npm run generate-build-version
+        working-directory: ./ui
+      - name: Commit meta.json
+        run: git commit --all --amend --no-edit
+        working-directory: ./ui
+        if: github.event_name == 'push'
+      - name: Push version increment
+        run: git push
+        working-directory: ./ui
+        if: github.event_name == 'push'
   build-api:
     runs-on: ubuntu-latest
     steps:
