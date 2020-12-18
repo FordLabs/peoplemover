@@ -66,7 +66,7 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                 onMouseLeave={(): void => onNoteHover(false)}>
                 {person.name}
                 {!!person.notes && !!person.notes.trim() &&
-                    <i className="material-icons notesIcon" data-testid="notesIcon">
+                    <i className={`material-icons notesIcon ${isUnassignedProduct ? 'unassignedNotesIcon' : ''}`} data-testid="notesIcon">
                         note
                         {showHoverBox && <HoverBox notes={person.notes}/>}
                     </i>

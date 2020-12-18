@@ -29,6 +29,10 @@
     margin-left: 4px;
     font-size: 16px;
     vertical-align: text-bottom;
+
+    &.unassignedNotesIcon {
+      position: unset;
+    }
   }
 
   .personName {
@@ -64,9 +68,11 @@
   font-weight: normal;
 
   &.unassignedHoverBoxContainer {
-    top: 15px;
-    left: -75px;
-    width: 150px;
+    top: 20px;
+    margin: auto;
+    max-width: 98%;
+    left: 0;
+
   }
 
   .hoverBoxNotes {
