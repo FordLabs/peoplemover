@@ -99,8 +99,10 @@ function ProductFormProductTagsField({
         return availableProductTags.map((productTag: ProductTag) => createTagOption(productTag.name, productTag.id));
     };
 
-    const menuIsOpen = (): boolean => {
-        return availableProductTags.length > selectedProductTags.length || Boolean(typedInProductTag.length);
+    const menuIsOpen = () => {
+        if (availableProductTags.length === selectedProductTags.length && typedInProductTag.length === 0) {
+            return false;
+        }
     };
 
     const onChange = (option: unknown): void => updateSelectedProductTags(optionToProductTag(option as Option[]));

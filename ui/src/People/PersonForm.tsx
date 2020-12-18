@@ -316,7 +316,7 @@ function PersonForm({
                         styles={reactSelectStyles}
                         value={person.spaceRole && person.spaceRole.name !== '' ? createOption(person.spaceRole.name) : null}
                         components={{Option: CustomOption, DropdownIndicator: CustomIndicator, Control: CustomControl}}
-                        formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInRole}"`)}
+                        formatCreateLabel={(): JSX.Element => CreateNewText(typedInRole)}
                         placeholder="Add a role"
                         hideSelectedOptions={true}
                         {...{getColorFromLabel}}
