@@ -21,7 +21,7 @@ export default class CacheBuster extends React.Component {
                         for (let name of names) caches.delete(name);
                     });
                 }
-                window.location.reload();
+                // window.location.reload();
             },
         };
     }
