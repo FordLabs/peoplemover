@@ -47,9 +47,10 @@ function ReassignedDrawer({
 
     /* eslint-disable */
     useEffect(() => {
-        const reassignments = AssignmentClient.getReassignments(currentSpace.uuid!, viewingDate).then( reassignmentResponse =>
-            setReassignments(reassignmentResponse.data)
-        );
+        AssignmentClient.getReassignments(currentSpace.uuid!, viewingDate)
+            .then( reassignmentResponse =>
+                setReassignments(reassignmentResponse.data)
+            );
     }, [products]);
     /* eslint-enable */
 
