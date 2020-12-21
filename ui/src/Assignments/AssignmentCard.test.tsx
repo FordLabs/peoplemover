@@ -369,7 +369,7 @@ describe('Assignment Card', () => {
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
         });
 
-        it('should not show hover box when assignment card is unassigned', () => {
+        it('should show hover box when assignment card is unassigned', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
@@ -386,7 +386,7 @@ describe('Assignment Card', () => {
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            expect(underTest.queryByTestId('hoverBoxContainer')).not.toBeNull();
         });
     });
 });
