@@ -99,8 +99,13 @@ function ProductFormLocationField({
         setCurrentProduct(updatedProduct);
     }
 
-    const menuIsOpen = (): boolean => {
-        return availableLocations.length > 1 || Boolean(typedInLocation.length);
+    const menuIsOpen = (): boolean | undefined => {
+        const notTyping = typedInLocation.length === 0;
+        const typingFirstNewLocation = (notTyping && (availableLocations.length === 0));
+        const selectedOnlyLocation = notTyping && (availableLocations.length === 1) && (availableLocations[0].name === currentProduct?.spaceLocation?.name);
+        const hideMenu = typingFirstNewLocation || selectedOnlyLocation;
+        if (hideMenu) return false;
+        return undefined;
     };
 
     const onChange = (option: unknown): void  => updateSpaceLocations(option as Option);
