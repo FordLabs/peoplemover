@@ -118,6 +118,7 @@ function ProductFormLocationField({
             <Creatable
                 name="location"
                 inputId="location"
+                classNamePrefix="location"
                 placeholder="Add a location tag"
                 value={locationOptionValue()}
                 options={locationOptions()}
