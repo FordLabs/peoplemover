@@ -47,9 +47,26 @@ class ReportClient {
     }
 
     static convertToCSV(jsonData: Report[]): string {
-        const fields = ['productName', 'personName', 'personRole'];
+        const fields = [
+            {
+                label: 'Product Name',
+                value: 'productName',
+            },
+            {
+                label: 'Person Name',
+                value: 'personName',
+            },
+            {
+                label: 'Person Role',
+                value: 'personRole',
+            },
+            {
+                label: 'Person Note',
+                value: 'personNote',
+            },
+        ];
 
-        const json2csvParser = new Parser({fields});
+        const json2csvParser = new Parser({ fields });
         return json2csvParser.parse(jsonData);
     }
 }

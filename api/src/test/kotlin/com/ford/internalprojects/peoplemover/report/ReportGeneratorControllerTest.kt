@@ -100,7 +100,7 @@ class ReportGeneratorControllerTest {
         productB = productRepository.save(Product(name = "Product b", spaceId = space1.id!!))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space1.id!!))
         spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceId = space1.id!!))
-        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space1.id!!))
+        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space1.id!!, notes = "Notes"))
         person2 = personRepository.save(Person(name = "Person 2", spaceId = space1.id!!))
         person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceId = space1.id!!))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceId = space1.id!!))
@@ -136,7 +136,7 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name)
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, personNote = "Notes")
 
         assertThat(actualPeopleReport.size).isOne()
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)
@@ -157,9 +157,9 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name)
-        val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, spaceRole2.name)
-        val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "")
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, "Notes")
+        val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, spaceRole2.name, "")
+        val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "", "")
 
         assertThat(actualPeopleReport.size).isEqualTo(3)
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)

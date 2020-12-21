@@ -24,7 +24,6 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import com.google.common.collect.Lists
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import kotlin.streams.toList
@@ -47,7 +46,8 @@ class ReportGeneratorService(
             peopleReport.add(PeopleReportRow(
                 productName = products.find { it.id == assignment.productId }!!.name,
                 personName = assignment.person.name,
-                personRole = assignment.person.spaceRole?.name ?: ""
+                personRole = assignment.person.spaceRole?.name ?: "",
+                personNote = assignment.person.notes ?: ""
             ))
         }
         return peopleReport.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.personName })
