@@ -8,7 +8,7 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('visitBoard', ({ locationData }) => {
+Cypress.Commands.add('visitBoard', ({ locationData } = {}) => {
     cy.server();
     const date = Cypress.moment().format('yyyy-MM-DD');
     cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');

@@ -347,7 +347,8 @@ describe('Products', () => {
             await app.findByLabelText('Name');
 
             await app.findByPlaceholderText('e.g. Product 1');
-            await app.findByText('Add a location tag');
+            await app.findByText('Add product tags');
+            await app.findByText('Add location tag');
         });
 
         it('opens ProductForm component when button clicked', async () => {
