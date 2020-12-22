@@ -22,7 +22,7 @@ describe('Form Dropdown Fields', () => {
         cy.server();
         cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
 
-        cy.visitBoard({ locationData: [] });
+        cy.visitBoard({locationData: []});
         cy.get('[data-testid=newProductButton]').click();
 
         cy.getModal()
@@ -31,7 +31,8 @@ describe('Form Dropdown Fields', () => {
     });
 
     it('Add Location Workflow', () => {
-        const newLocation1 = 'added location';
+        const newLocation1 = 'Chilton';
+        const newLocation2 = 'Stars Hollow';
 
         cy.get('@productForm')
             .find('[id=location]')
@@ -47,7 +48,7 @@ describe('Form Dropdown Fields', () => {
         cy.get('@productForm')
             .find('.location__option')
             .should('have.length', 1)
-            .should('contain', 'Press Enter to add "added location"');
+            .should('contain', `Press Enter to add "${newLocation1}"`);
 
         cy.get('@productLocationInput')
             .type('{enter}');
@@ -64,9 +65,36 @@ describe('Form Dropdown Fields', () => {
         menuIsClosed();
 
         cy.get('@productLocationInput')
-            .type(newLocation1);
+            .type(newLocation1.slice(0, newLocation1.length - 1));
+
+        cy.get('@productForm')
+            .find('.location__option')
+            .should('have.length', 1)
+            .should('contain', 'Press Enter to add "Chilto"');
+
+
+        cy.get('@productLocationInput')
+            .type('n');
 
         menuIsClosed();
+
+        cy.get('.location__clear-indicator').click();
+
+        focusOnDropdownInput();
+
+        cy.get('@productForm')
+            .find('.location__option')
+            .should('have.length', 1)
+            .should('contain', newLocation1);
+
+        cy.get('@productLocationInput')
+            .clear()
+            .type(newLocation2);
+
+        cy.get('@productForm')
+            .find('.location__option')
+            .should('have.length', 1)
+            .should('contain', `Press Enter to add "${newLocation2}"`);
     });
 });
 
