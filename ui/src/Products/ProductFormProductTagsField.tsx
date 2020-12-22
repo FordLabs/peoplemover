@@ -99,10 +99,12 @@ function ProductFormProductTagsField({
         return availableProductTags.map((productTag: ProductTag) => createTagOption(productTag.name, productTag.id));
     };
 
-    const menuIsOpen = () => {
-        if (availableProductTags.length === selectedProductTags.length && typedInProductTag.length === 0) {
-            return false;
-        }
+    const menuIsOpen = (): boolean | undefined => {
+        const notTyping = typedInProductTag.length === 0;
+        const allOptionsSelected = availableProductTags.length === selectedProductTags.length;
+        const hideMenu = allOptionsSelected && notTyping;
+        if (hideMenu) return false;
+        return undefined;
     };
 
     const onChange = (option: unknown): void => updateSelectedProductTags(optionToProductTag(option as Option[]));
