@@ -103,7 +103,8 @@ function ProductFormLocationField({
         const notTyping = typedInLocation.length === 0;
         const typingFirstNewLocation = (notTyping && (availableLocations.length === 0));
         const selectedOnlyLocation = notTyping && (availableLocations.length === 1) && (availableLocations[0].name === currentProduct?.spaceLocation?.name);
-        const hideMenu = typingFirstNewLocation || selectedOnlyLocation;
+        const noChangesInSelection = (typedInLocation === currentProduct?.spaceLocation?.name);
+        const hideMenu = noChangesInSelection || typingFirstNewLocation || selectedOnlyLocation;
         if (hideMenu) return false;
         return undefined;
     };
