@@ -102,9 +102,9 @@ function ProductFormLocationField({
     const menuIsOpen = (): boolean | undefined => {
         const notTyping = typedInLocation.length === 0;
         const typingFirstNewLocation = (notTyping && (availableLocations.length === 0));
-        const selectedOnlyLocation = notTyping && (availableLocations.length === 1) && (availableLocations[0].name === currentProduct?.spaceLocation?.name);
+        const selectedOnlyAvailableLocation = notTyping && (availableLocations.length === 1) && (availableLocations[0].name === currentProduct?.spaceLocation?.name);
         const noChangesInSelection = (typedInLocation === currentProduct?.spaceLocation?.name);
-        const hideMenu = noChangesInSelection || typingFirstNewLocation || selectedOnlyLocation;
+        const hideMenu = noChangesInSelection || typingFirstNewLocation || selectedOnlyAvailableLocation;
         if (hideMenu) return false;
         return undefined;
     };

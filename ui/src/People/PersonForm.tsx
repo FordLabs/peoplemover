@@ -268,6 +268,16 @@ function PersonForm({
         if (event.key === 'Enter') displayRemovePersonModal();
     }
 
+    const menuIsOpen = (): boolean | undefined => {
+        const notTyping = typedInRole.length === 0;
+        const typingFirstNewLocation = (notTyping && (roles.length === 0));
+        const selectedOnlyAvailableRole = notTyping && (roles.length === 1) && (roles[0].name === person?.spaceRole?.name);
+        const noChangesInSelection = (typedInRole === person?.spaceRole?.name);
+        const hideMenu = noChangesInSelection || typingFirstNewLocation || selectedOnlyAvailableRole;
+        if (hideMenu) return false;
+        return undefined;
+    };
+
     return (
         <div className="formContainer">
             <form className="form"
@@ -319,6 +329,7 @@ function PersonForm({
                         formatCreateLabel={(): JSX.Element => CreateNewText(typedInRole)}
                         placeholder="Add a role"
                         hideSelectedOptions={true}
+                        menuIsOpen={menuIsOpen()}
                         {...{getColorFromLabel}}
                     />
                 </div>
