@@ -15,13 +15,10 @@
  * limitations under the License.
  */
 
-import Creatable from 'react-select/creatable';
 import {Option} from '../CommonTypes/Option';
 import {ProductTag} from '../ProductTag/ProductTag';
-import {CreateNewText, CustomIndicator, CustomOption} from '../ReusableComponents/ReactSelectStyles';
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
-import {customStyles} from './ProductForm';
 import {Product} from './Product';
 import {Tag} from '../Tags/Tag.interface';
 import {Space} from '../Space/Space';
@@ -31,6 +28,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {TagRequest} from '../Tags/TagRequest.interface';
+import ReactSelect from '../ModalFormComponents/ReactSelect';
 
 interface Props {
     spaceId: number;
@@ -62,7 +60,6 @@ function ProductFormProductTagsField({
 }: Props): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const uuid = currentSpace.uuid!;
-    const [typedInProductTag, setTypedInProductTag] = useState<string>('');
     const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
 
     useOnLoad(() => {
@@ -116,48 +113,22 @@ function ProductFormProductTagsField({
         return availableProductTags.map((productTag: ProductTag) => createTagOption(productTag.name, productTag.id));
     };
 
-    const menuIsOpen = (): boolean | undefined => {
-        const notTyping = typedInProductTag.length === 0;
-        const allOptionsSelected = availableProductTags.length === selectedProductTags.length;
-        const hideMenu = allOptionsSelected && notTyping;
-        if (hideMenu) return false;
-        return undefined;
-    };
-
     const onChange = (option: unknown): void => updateSelectedProductTags(optionToProductTag(option as Option[]));
 
-    const onInputChange = (e: string): void => setTypedInProductTag(e);
-
     return (
-        <div className="formItem">
-            <label className="formItemLabel" htmlFor="productTags">Product Tags</label>
-            <Creatable
-                name="productTags"
-                inputId="productTags"
-                placeholder="Add product tags"
-                value={selectedProductTags.map(
-                    productTag => createTagOption(productTag.name, productTag.id)
-                )}
-                options={getOptions()}
-                styles={customStyles}
-                components={{
-                    DropdownIndicator: CustomIndicator,
-                    Option: CustomOption,
-                }}
-                formatCreateLabel={(): JSX.Element =>
-                    CreateNewText(typedInProductTag)
-                }
-                onInputChange={onInputChange}
-                onChange={onChange}
-                onCreateOption={handleCreateProductTag}
-                menuIsOpen={menuIsOpen()}
-                isDisabled={isLoading}
-                isLoading={isLoading}
-                isMulti={true}
-                hideSelectedOptions={true}
-                isClearable={false}
-            />
-        </div>
+        <ReactSelect
+            isMulti
+            title="Product Tags"
+            placeholder="product tags"
+            id="productTags"
+            values={selectedProductTags.map(
+                productTag => createTagOption(productTag.name, productTag.id)
+            )}
+            options={getOptions()}
+            onChange={onChange}
+            onSave={handleCreateProductTag}
+            isLoading={isLoading}
+        />
     );
 }
 

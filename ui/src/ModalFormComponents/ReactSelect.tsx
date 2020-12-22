@@ -30,9 +30,10 @@ interface Props {
     title: TitleType;
     placeholder: PlaceholderType;
     id: IdType;
-    value: Option | undefined;
+    value?: Option | undefined;
+    values?: Option[] | undefined;
     options: Option[];
-    onChange: (option: Option) => void;
+    onChange: (option: any) => void;
     onSave: (inputValue: string) => void;
     isMulti?: boolean;
     isLoading: boolean;
@@ -43,6 +44,7 @@ function ReactSelect({
     placeholder,
     id,
     value,
+    values,
     options,
     onChange,
     onSave,
@@ -53,7 +55,7 @@ function ReactSelect({
 
     const onInputChange = (e: string): void => setTypedInValue(e);
 
-    const menuIsOpen = (): boolean | undefined => {
+    const menuIsOpenSingleSelect = (): boolean | undefined => {
         const notTyping = typedInValue.length === 0;
         const typingFirstNewLocation = (notTyping && (options.length === 0));
         const selectedOnlyAvailableLocation = notTyping && (options.length === 1) && (options[0].label === (value && value.label));
@@ -61,6 +63,20 @@ function ReactSelect({
         const hideMenu = noChangesInSelection || typingFirstNewLocation || selectedOnlyAvailableLocation;
         if (hideMenu) return false;
         return undefined;
+    };
+
+    const menuIsOpenMultiSelect = (): boolean | undefined => {
+        const notTyping = typedInValue.length === 0;
+        const allOptionsSelected = options.length === values?.length;
+        const noChangesInSelection = !!values?.find(value => value.label === typedInValue);
+        const hideMenu = noChangesInSelection || (allOptionsSelected && notTyping);
+        if (hideMenu) return false;
+        return undefined;
+    };
+
+    const menuIsOpen = (): boolean | undefined => {
+        if (isMulti) return menuIsOpenMultiSelect();
+        return menuIsOpenSingleSelect();
     };
 
     return (
@@ -71,7 +87,7 @@ function ReactSelect({
                 inputId={id}
                 classNamePrefix={id}
                 placeholder={`Add ${placeholder}`}
-                value={value}
+                value={value || values}
                 options={options}
                 styles={customStyles}
                 components={{
@@ -80,7 +96,9 @@ function ReactSelect({
                 }}
                 formatCreateLabel={(): JSX.Element => CreateNewText(typedInValue)}
                 onInputChange={onInputChange}
-                onChange={(option: unknown): void => onChange(option as Option)}
+                onChange={(option: unknown): void => {
+                    isMulti ? onChange(option as Option[]) : onChange(option as Option);
+                }}
                 onCreateOption={onSave}
                 menuIsOpen={menuIsOpen()}
                 isDisabled={isLoading}
