@@ -16,7 +16,7 @@
  */
 
 import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
-import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useEffect} from 'react';
+import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useCallback, useEffect} from 'react';
 import {ThemeApplier} from './ThemeApplier';
 import {Option} from '../CommonTypes/Option';
 import {useOnLoad} from './UseOnLoad';
@@ -336,9 +336,9 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
     let label = '';
 
     if (props.hasValue) {
-        const value = props.getValue() as Array<Option>;
-        if (value && value.length > 0) {
-            label = value[0].label;
+        const values = props.getValue() as Array<Option>;
+        if (values && values.length > 0) {
+            label = values[0].label;
         }
     } else if (props.children) {
         const valueContainer = (props.children as Array<JSX.Element>)[0];
@@ -346,11 +346,18 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
         label = inputContainer.props.value;
     }
 
+    const getColorFromLabel = useCallback((label: string, getValue: Function): string | undefined => {
+        const values = getValue() as Array<Option>;
+        const value = values.find(value => value.label === label);
+        return value?.color;
+    }, []);
+
     useEffect(() => {
-        if (props.selectProps.getColorFromLabel && colorBadgeRef.current) {
-            colorBadgeRef.current.style.backgroundColor = props.selectProps.getColorFromLabel(label);
+        const color = getColorFromLabel(label, props.getValue);
+        if (color && colorBadgeRef.current) {
+            colorBadgeRef.current.style.backgroundColor = color;
         }
-    }, [label, props.selectProps]);
+    }, [label, props.getValue, getColorFromLabel]);
 
     return (
         <div className="customControlContainer">

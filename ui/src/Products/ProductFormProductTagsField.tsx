@@ -28,7 +28,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {TagRequest} from '../Tags/TagRequest.interface';
-import ReactSelect from '../ModalFormComponents/ReactSelect';
+import ReactSelect, {MetadataReactSelectProps} from '../ModalFormComponents/ReactSelect';
 
 interface Props {
     spaceId: number;
@@ -60,6 +60,7 @@ function ProductFormProductTagsField({
 }: Props): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const uuid = currentSpace.uuid!;
+    const { PRODUCT_TAGS } = MetadataReactSelectProps;
     const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
 
     useOnLoad(() => {
@@ -118,9 +119,7 @@ function ProductFormProductTagsField({
     return (
         <ReactSelect
             isMulti
-            title="Product Tags"
-            placeholder="product tags"
-            id="productTags"
+            metadata={PRODUCT_TAGS}
             values={selectedProductTags.map(
                 productTag => createTagOption(productTag.name, productTag.id)
             )}

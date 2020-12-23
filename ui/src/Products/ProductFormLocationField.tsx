@@ -27,7 +27,7 @@ import {Product} from './Product';
 import {Space} from '../Space/Space';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {TagRequest} from '../Tags/TagRequest.interface';
-import ReactSelect from '../ModalFormComponents/ReactSelect';
+import ReactSelect, {MetadataReactSelectProps} from '../ModalFormComponents/ReactSelect';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
@@ -52,6 +52,7 @@ function ProductFormLocationField({
 }: Props): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const uuid = currentSpace.uuid!;
+    const { LOCATION_TAGS } = MetadataReactSelectProps;
     const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
 
     useEffect(() => {
@@ -116,9 +117,7 @@ function ProductFormLocationField({
 
     return (
         <ReactSelect
-            title="Location"
-            id="location"
-            placeholder="location tag"
+            metadata={LOCATION_TAGS}
             value={locationOptionValue()}
             options={locationOptions()}
             onChange={updateSpaceLocations}

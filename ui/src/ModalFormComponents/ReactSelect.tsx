@@ -15,43 +15,115 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {CSSProperties, useState} from 'react';
 import {JSX} from '@babel/types';
 import Creatable from 'react-select/creatable';
-import {customStyles} from '../Products/ProductForm';
-import {CreateNewText, CustomIndicator, CustomOption} from '../ReusableComponents/ReactSelectStyles';
+import {
+    CreateNewText,
+    CustomControl,
+    CustomIndicator,
+    CustomOption,
+    reactSelectStyles,
+} from '../ReusableComponents/ReactSelectStyles';
 import {Option} from '../CommonTypes/Option';
+import {StylesConfig} from 'react-select';
 
-type TitleType = 'Product Tags' | 'Location'
-type PlaceholderType = 'product tags' | 'location tag'
-type IdType = 'productTags' | 'location';
+const ReactSelectDropdownStyles: StylesConfig = {
+    ...reactSelectStyles,
+    valueContainer: (provided: CSSProperties) => ({
+        ...provided,
+        padding: '0px 3px',
+    }),
+    multiValue: (provided: CSSProperties) => ({
+        ...provided,
+        alignItems: 'center',
+        backgroundColor: '#F2E7F3',
+        fontFamily: 'Helvetica, sans-serif',
+        borderRadius: '6px',
+        height: '22px',
+        marginRight: '3px',
+    }),
+    noOptionsMessage: (base) => {
+        return {
+            ...base,
+            backgroundColor: 'transparent',
+            fontFamily: 'Helvetica, sans-serif',
+            fontSize: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0px 17px 0 11px',
+            height: '30px',
+            margin: '3px 0px',
+            '&:hover': {
+                cursor: 'pointer',
+                backgroundColor: '#F2F2F2',
+            },
+            color: '#999694',
+            textAlign: 'left',
+        };
+    },
+};
+
+export const MetadataReactSelectProps = {
+    PRODUCT_TAGS: {
+        title: 'Product Tags',
+        id: 'productTags',
+        placeholder: 'product tags',
+    },
+    LOCATION_TAGS: {
+        title: 'Location',
+        id: 'location',
+        placeholder: 'a location tag',
+    },
+    ROLE_TAGS: {
+        title: 'Role',
+        id: 'role',
+        placeholder: 'a role',
+    },
+};
+
+interface Metadata {
+    title: string;
+    id: string;
+    placeholder: string;
+}
 
 interface Props {
-    title: TitleType;
-    placeholder: PlaceholderType;
-    id: IdType;
+    metadata: Metadata;
     value?: Option | undefined;
     values?: Option[] | undefined;
     options: Option[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange: (option: any) => void;
     onSave: (inputValue: string) => void;
     isMulti?: boolean;
+    useColorBadge?: boolean;
     isLoading: boolean;
 }
 
 function ReactSelect({
-    title,
-    placeholder,
-    id,
+    metadata: {
+        title,
+        placeholder,
+        id,
+    },
     value,
     values,
     options,
     onChange,
     onSave,
     isMulti = false,
+    useColorBadge = false,
     isLoading,
 }: Props): JSX.Element {
     const [typedInValue, setTypedInValue] = useState<string>('');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const components: any = {
+        DropdownIndicator: CustomIndicator,
+        Option: CustomOption,
+    };
+    if (useColorBadge) components.Control = CustomControl;
 
     const onInputChange = (e: string): void => setTypedInValue(e);
 
@@ -89,11 +161,8 @@ function ReactSelect({
                 placeholder={`Add ${placeholder}`}
                 value={value || values}
                 options={options}
-                styles={customStyles}
-                components={{
-                    DropdownIndicator: CustomIndicator,
-                    Option: CustomOption,
-                }}
+                styles={useColorBadge ? reactSelectStyles : ReactSelectDropdownStyles}
+                components={components}
                 formatCreateLabel={(): JSX.Element => CreateNewText(typedInValue)}
                 onInputChange={onInputChange}
                 onChange={(option: unknown): void => {
