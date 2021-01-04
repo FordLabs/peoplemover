@@ -8,7 +8,7 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('visitBoard', ({ locationData } = {}) => {
+Cypress.Commands.add('visitBoard', ({ locationData, productTagsData } = {}) => {
     cy.server();
     const date = Cypress.moment().format('yyyy-MM-DD');
     cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');
@@ -20,7 +20,12 @@ Cypress.Commands.add('visitBoard', ({ locationData } = {}) => {
     if (locationData) locationRoute.response = locationData;
     cy.route(locationRoute).as('getLocations');
 
-    cy.route('GET', Cypress.env('API_PRODUCT_TAG_PATH')).as('getProductTags');
+    const productTagsRoute = {
+        method: 'GET',
+        url: Cypress.env('API_PRODUCT_TAG_PATH'),
+    };
+    if (productTagsData) productTagsRoute.response = productTagsData;
+    cy.route(productTagsRoute).as('getProductTags');
 
     cy.visit(`/${spaceUuid}`);
 

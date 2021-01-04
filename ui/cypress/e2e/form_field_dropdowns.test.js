@@ -21,8 +21,9 @@ describe('Form Dropdown Fields', () => {
     beforeEach(() => {
         cy.server();
         cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewProductTag');
 
-        cy.visitBoard({locationData: []});
+        cy.visitBoard({locationData: [], productTagsData: []});
         cy.get('[data-testid=newProductButton]').click();
 
         cy.getModal()
@@ -31,6 +32,16 @@ describe('Form Dropdown Fields', () => {
     });
 
     it('Add Location Workflow', () => {
+        const focusOnLocationDropdownInput = () => {
+            cy.get('@productLocationInput')
+                .click({force: true});
+        };
+        const locationDropdownMenuIsClosed = () => {
+            cy.get('@productForm')
+                .find('.location__option')
+                .should('not.exist');
+        };
+
         const newLocation1 = 'Chilton';
         const newLocation2 = 'Stars Hollow';
 
@@ -38,9 +49,9 @@ describe('Form Dropdown Fields', () => {
             .find('[id=location]')
             .as('productLocationInput');
 
-        focusOnDropdownInput();
+        focusOnLocationDropdownInput();
 
-        menuIsClosed();
+        locationDropdownMenuIsClosed();
 
         cy.get('@productLocationInput')
             .type(newLocation1);
@@ -55,14 +66,14 @@ describe('Form Dropdown Fields', () => {
 
         cy.wait('@postNewLocation');
 
-        menuIsClosed();
+        locationDropdownMenuIsClosed();
 
         cy.get('@productForm')
             .should('contain', newLocation1);
 
-        focusOnDropdownInput();
+        focusOnLocationDropdownInput();
 
-        menuIsClosed();
+        locationDropdownMenuIsClosed();
 
         cy.get('@productLocationInput')
             .type(newLocation1.slice(0, newLocation1.length - 1));
@@ -76,11 +87,11 @@ describe('Form Dropdown Fields', () => {
         cy.get('@productLocationInput')
             .type('n');
 
-        menuIsClosed();
+        locationDropdownMenuIsClosed();
 
         cy.get('.location__clear-indicator').click();
 
-        focusOnDropdownInput();
+        focusOnLocationDropdownInput();
 
         cy.get('@productForm')
             .find('.location__option')
@@ -96,15 +107,77 @@ describe('Form Dropdown Fields', () => {
             .should('have.length', 1)
             .should('contain', `Press Enter to add "${newLocation2}"`);
     });
+
+    it('Add Product Tags Workflow', () => {
+        const focusOnProductTagsDropdownInput = () => {
+            cy.get('@productTagsInput')
+                .click({force: true});
+        };
+        const productTagsDropdownMenuIsClosed = () => {
+            cy.get('@productForm')
+                .find('.productTags__option')
+                .should('not.exist');
+        };
+
+        const newProductTag1 = 'Chilton';
+        const newProductTag2 = 'Stars Hollow';
+
+        cy.get('@productForm')
+            .find('[id=productTags]')
+            .as('productTagsInput');
+
+        focusOnProductTagsDropdownInput();
+
+        productTagsDropdownMenuIsClosed();
+
+        cy.get('@productTagsInput')
+            .type(newProductTag1);
+
+        cy.get('@productForm')
+            .find('.productTags__option')
+            .should('have.length', 1)
+            .should('contain', `Press Enter to add "${newProductTag1}"`);
+
+        cy.get('@productTagsInput')
+            .type('{enter}');
+
+        cy.wait('@postNewProductTag');
+
+        productTagsDropdownMenuIsClosed();
+
+        cy.get('@productForm')
+            .should('contain', newProductTag1);
+
+        focusOnProductTagsDropdownInput();
+
+        productTagsDropdownMenuIsClosed();
+
+        focusOnProductTagsDropdownInput();
+
+        cy.get('@productForm')
+            .find('.productTags__option')
+            .should('have.length', 0);
+
+        cy.get('@productTagsInput')
+            .type(newProductTag2);
+
+        cy.get('@productForm')
+            .find('.productTags__option')
+            .should('have.length', 1)
+            .should('contain', `Press Enter to add "${newProductTag2}"`);
+
+        cy.get('@productTagsInput')
+            .type('{enter}');
+
+        cy.wait('@postNewProductTag');
+
+        cy.get('.productTags__multi-value__remove').eq(0).click();
+        cy.get('.productTags__multi-value__remove').eq(0).click();
+
+        focusOnProductTagsDropdownInput();
+
+        cy.get('@productForm')
+            .find('.productTags__option')
+            .should('have.length', 2);
+    });
 });
-
-const menuIsClosed = () => {
-    cy.get('@productForm')
-        .find('.location__option')
-        .should('not.exist');
-};
-
-const focusOnDropdownInput = () => {
-    cy.get('@productLocationInput')
-        .click({force: true});
-};
