@@ -39,8 +39,8 @@ import moment from 'moment';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
-import ReactSelect from '../ModalFormComponents/ReactSelect';
-import { MetadataReactSelectProps } from '../ModalFormComponents/ReactSelect';
+import SelectWithCreateOption from '../ModalFormComponents/SelectWithCreateOption';
+import { MetadataReactSelectProps } from '../ModalFormComponents/SelectWithCreateOption';
 
 import './PersonForm.scss';
 
@@ -286,7 +286,7 @@ function PersonForm({
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
                     </div>
                 </div>
-                <ReactSelect
+                <SelectWithCreateOption
                     metadata={ROLE_TAGS}
                     useColorBadge
                     value={person.spaceRole && person.spaceRole.name !== '' ? createOption(person.spaceRole) : undefined}

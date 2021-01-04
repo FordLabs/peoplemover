@@ -18,7 +18,7 @@
 import React, {CSSProperties} from 'react';
 import Select from 'react-select';
 import {CustomIndicator, reactSelectStyles} from './ReactSelectStyles';
-import {ReactSelectProps} from './ReactSelect';
+import {ReactSelectProps} from './SelectWithCreateOption';
 
 export const multiSelectStyles = {
     ...reactSelectStyles,

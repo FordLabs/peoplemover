@@ -28,7 +28,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {TagRequest} from '../Tags/TagRequest.interface';
-import ReactSelect, {MetadataReactSelectProps} from '../ModalFormComponents/ReactSelect';
+import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 
 interface Props {
     spaceId: number;
@@ -117,7 +117,7 @@ function ProductFormProductTagsField({
     const onChange = (option: unknown): void => updateSelectedProductTags(optionToProductTag(option as Option[]));
 
     return (
-        <ReactSelect
+        <SelectWithCreateOption
             isMulti
             metadata={PRODUCT_TAGS}
             values={selectedProductTags.map(

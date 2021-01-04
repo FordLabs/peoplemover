@@ -36,7 +36,7 @@ import {Assignment} from './Assignment';
 import moment from 'moment';
 import FormButton from '../ModalFormComponents/FormButton';
 import {Space} from '../Space/Space';
-import ReactSelect, { MetadataReactSelectProps } from '../ModalFormComponents/ReactSelect';
+import SelectWithCreateOption, { MetadataReactSelectProps } from '../ModalFormComponents/SelectWithCreateOption';
 
 interface AssignmentFormProps {
     products: Array<Product>;
@@ -199,7 +199,7 @@ function AssignmentForm({
             <form className="form"
                 data-testid="assignmentForm"
                 onSubmit={(event): Promise<void> => handleSubmit(event)}>
-                <ReactSelect
+                <SelectWithCreateOption
                     className="personSelectContainer"
                     metadata={ASSIGNMENT_NAME}
                     useColorBadge

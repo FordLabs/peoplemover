@@ -27,7 +27,7 @@ import {Product} from './Product';
 import {Space} from '../Space/Space';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {TagRequest} from '../Tags/TagRequest.interface';
-import ReactSelect, {MetadataReactSelectProps} from '../ModalFormComponents/ReactSelect';
+import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
@@ -116,7 +116,7 @@ function ProductFormLocationField({
     }
 
     return (
-        <ReactSelect
+        <SelectWithCreateOption
             metadata={LOCATION_TAGS}
             value={locationOptionValue()}
             options={locationOptions()}

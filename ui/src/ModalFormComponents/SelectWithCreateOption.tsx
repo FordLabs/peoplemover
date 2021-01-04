@@ -108,7 +108,7 @@ export interface ReactSelectProps {
     isLoading?: boolean;
 }
 
-function ReactSelect({
+function SelectWithCreateOption({
     className,
     metadata: {
         title,
@@ -187,4 +187,4 @@ function ReactSelect({
     );
 }
 
-export default ReactSelect;
+export default SelectWithCreateOption;
