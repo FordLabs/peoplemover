@@ -24,7 +24,7 @@ import {
     CustomIndicator,
     CustomOption,
     reactSelectStyles,
-} from '../ModalFormComponents/ReactSelectStyles';
+} from './ReactSelectStyles';
 import {Option} from '../CommonTypes/Option';
 import {StylesConfig} from 'react-select';
 

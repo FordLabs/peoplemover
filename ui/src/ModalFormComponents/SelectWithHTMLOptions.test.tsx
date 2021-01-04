@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import Select from './Select';
+import SelectWithHTMLOptions from './SelectWithHTMLOptions';
 import {render, RenderResult, fireEvent, wait} from '@testing-library/react';
 
 jest.useFakeTimers();
 
-describe('Select', () => {
+describe('SelectWithHTMLOptions', () => {
     const setTimeoutTime = 100;
     const [upKey, downKey, enterKey] = [38, 40, 13];
 
@@ -47,7 +47,7 @@ describe('Select', () => {
     beforeEach(() => {
         onChange = jest.fn();
         component = render(
-            <Select
+            <SelectWithHTMLOptions
                 ariaLabel="selectAriaLabel"
                 selectedOption={options[0]}
                 options={options}
