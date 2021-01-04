@@ -17,7 +17,7 @@
 
 import {render} from '@testing-library/react';
 import {mount} from 'enzyme';
-import MultiSelect from './MultiSelect';
+import SelectWithNoCreateOption from './SelectWithNoCreateOption';
 import React from 'react';
 import {Product} from '../Products/Product';
 import TestUtils from '../tests/TestUtils';
@@ -32,7 +32,7 @@ describe('the multi-select component', () => {
 
     it('should render its initial selections', () => {
         const underTest = render(
-            <MultiSelect
+            <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
                     id: 'product',
@@ -56,7 +56,7 @@ describe('the multi-select component', () => {
         };
 
         const wrapper = await mount(
-            <MultiSelect
+            <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
                     id: 'product',
@@ -75,7 +75,7 @@ describe('the multi-select component', () => {
 
     it('should render its placeholder text if nothing starts selected - Enzyme style', () => {
         const underTest = mount(
-            <MultiSelect
+            <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
                     id: 'product',
@@ -87,12 +87,12 @@ describe('the multi-select component', () => {
             />
         );
 
-        expect(underTest.find('div.MultiSelect__placeholder').length).toEqual(1);
+        expect(underTest.find('div.product__placeholder').length).toEqual(1);
     });
 
     it('should render its placeholder text if nothing starts selected', () => {
         const underTest = render(
-            <MultiSelect
+            <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
                     id: 'product',
@@ -109,7 +109,7 @@ describe('the multi-select component', () => {
 
     it('should use custom dropdown indicator', async () => {
         const wrapper = await mount(
-            <MultiSelect
+            <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
                     id: 'product',

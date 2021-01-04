@@ -26,7 +26,7 @@ import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {Product} from '../Products/Product';
-import MultiSelect, {MetadataMultiSelectProps} from '../ModalFormComponents/MultiSelect';
+import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
@@ -295,7 +295,7 @@ function PersonForm({
                     onSave={handleCreateRole}
                     isLoading={isLoading}
                 />
-                <MultiSelect
+                <SelectWithNoCreateOption
                     metadata={PERSON_ASSIGN_TO}
                     values={selectedProducts.map(x => {return {value:x.name, label:x.name};})}
                     options={getAssignToOptions()}

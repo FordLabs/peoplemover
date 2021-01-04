@@ -17,7 +17,7 @@
 
 import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import MultiSelect, {MetadataMultiSelectProps} from '../ModalFormComponents/MultiSelect';
+import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import {connect} from 'react-redux';
 import {
     AvailableModals,
@@ -217,7 +217,7 @@ function AssignmentForm({
                     />
                     <label className="formInputLabel" htmlFor="placeholder">Mark as Placeholder</label>
                 </div>
-                <MultiSelect
+                <SelectWithNoCreateOption
                     metadata={ASSIGNMENT_ASSIGN_TO}
                     values={selectedProducts.map(x => {return {value:x.name, label:x.name};})}
                     options={getAssignToOptions()}

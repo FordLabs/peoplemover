@@ -68,7 +68,7 @@ interface MultiSelectProps extends ReactSelectProps {
     isDisabled?: boolean;
 }
 
-function MultiSelect({
+function SelectWithNoCreateOption({
     metadata: {
         title,
         placeholder,
@@ -85,7 +85,7 @@ function MultiSelect({
             <Select
                 name={id}
                 id={id}
-                classNamePrefix="MultiSelect"
+                classNamePrefix={id}
                 placeholder={placeholder}
                 value={values}
                 options={options}
@@ -101,4 +101,4 @@ function MultiSelect({
     );
 }
 
-export default MultiSelect;
+export default SelectWithNoCreateOption;
