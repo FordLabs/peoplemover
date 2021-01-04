@@ -17,7 +17,7 @@
 
 import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import MultiSelect, {MetadataMultiSelectProps} from '../ReusableComponents/MultiSelect';
+import MultiSelect, {MetadataMultiSelectProps} from '../ModalFormComponents/MultiSelect';
 import {connect} from 'react-redux';
 import {
     AvailableModals,

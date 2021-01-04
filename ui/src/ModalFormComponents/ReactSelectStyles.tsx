@@ -17,7 +17,7 @@
 
 import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
 import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useCallback, useEffect} from 'react';
-import {ThemeApplier} from './ThemeApplier';
+import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Option} from '../CommonTypes/Option';
 
 import './ReactSelectStyles.scss';

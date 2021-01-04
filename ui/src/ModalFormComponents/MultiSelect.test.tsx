@@ -17,10 +17,10 @@
 
 import {render} from '@testing-library/react';
 import {mount} from 'enzyme';
-import MultiSelect from '../ReusableComponents/MultiSelect';
+import MultiSelect from './MultiSelect';
 import React from 'react';
 import {Product} from '../Products/Product';
-import TestUtils from './TestUtils';
+import TestUtils from '../tests/TestUtils';
 import {noop} from '@babel/types';
 
 describe('the multi-select component', () => {

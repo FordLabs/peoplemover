@@ -20,7 +20,7 @@ import Select from 'react-select';
 import {connect} from 'react-redux';
 import {AxiosResponse} from 'axios';
 import {Dispatch} from 'redux';
-import {CustomIndicator, filterByStyles, FilterControl, FilterOptions} from './ReactSelectStyles';
+import {CustomIndicator, filterByStyles, FilterControl, FilterOptions} from '../ModalFormComponents/ReactSelectStyles';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
 import RoleClient from '../Roles/RoleClient';

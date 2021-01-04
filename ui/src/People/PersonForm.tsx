@@ -26,7 +26,7 @@ import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {Product} from '../Products/Product';
-import MultiSelect, {MetadataMultiSelectProps} from '../ReusableComponents/MultiSelect';
+import MultiSelect, {MetadataMultiSelectProps} from '../ModalFormComponents/MultiSelect';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
