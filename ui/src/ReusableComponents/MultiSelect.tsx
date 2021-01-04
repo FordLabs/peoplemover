@@ -74,7 +74,7 @@ function MultiSelect({
         placeholder,
         id,
     },
-    values,
+    values = [],
     options,
     onChange,
     isDisabled = false,
@@ -92,7 +92,7 @@ function MultiSelect({
                 styles={multiSelectStyles}
                 components={{DropdownIndicator: CustomIndicator}}
                 onChange={onChange}
-                isDisabled={isDisabled}
+                isDisabled={isDisabled || options.length === 0}
                 isMulti={true}
                 hideSelectedOptions={true}
                 isClearable={false}
