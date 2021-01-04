@@ -31,14 +31,18 @@ describe('the multi-select component', () => {
     ];
 
     it('should render its initial selections', () => {
-        const underTest = render(<MultiSelect
-            name={'product'}
-            initiallySelected={intiallySelectedProducts}
-            selectables={TestUtils.products}
-            placeholder={'Select a product'}
-            changeSelections={noop}
-            disabled={false}
-        />);
+        const underTest = render(
+            <MultiSelect
+                metadata={{
+                    title: 'Title',
+                    id: 'product',
+                    placeholder: 'Select a product',
+                }}
+                values={intiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
+                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                onChange={noop}
+            />
+        );
         expect(underTest.getByText(intiallySelectedProducts[0].name)).toBeInTheDocument();
         expect(underTest.getByText(intiallySelectedProducts[1].name)).toBeInTheDocument();
         expect(underTest.queryByText(TestUtils.products[2].name)).not.toBeInTheDocument();
@@ -51,13 +55,18 @@ describe('the multi-select component', () => {
             testShouldPass = true;
         };
 
-        const wrapper = await mount(<MultiSelect
-            name={'product'}
-            initiallySelected={intiallySelectedProducts}
-            selectables={TestUtils.products}
-            placeholder={'Select a product'}
-            disabled={false}
-            changeSelections={makeTestPass}/>);
+        const wrapper = await mount(
+            <MultiSelect
+                metadata={{
+                    title: 'Title',
+                    id: 'product',
+                    placeholder: 'Select a product',
+                }}
+                values={intiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
+                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                onChange={makeTestPass}
+            />
+        );
 
         expect(wrapper.find('.MultiSelect__placeholder').length).toEqual(0);
         (wrapper.find('Select').instance() as React.ComponentProps<typeof Object>).selectOption({label: 'eee', value: 'eee'});
@@ -65,37 +74,52 @@ describe('the multi-select component', () => {
     });
 
     it('should render its placeholder text if nothing starts selected - Enzyme style', () => {
-        const underTest = mount(<MultiSelect
-            name={'product'}
-            initiallySelected={[]}
-            selectables={TestUtils.products}
-            placeholder={'Select a product'}
-            disabled={false}
-            changeSelections={noop}/>);
+        const underTest = mount(
+            <MultiSelect
+                metadata={{
+                    title: 'Title',
+                    id: 'product',
+                    placeholder: 'Select a product',
+                }}
+                values={[]}
+                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                onChange={noop}
+            />
+        );
 
         expect(underTest.find('div.MultiSelect__placeholder').length).toEqual(1);
     });
 
     it('should render its placeholder text if nothing starts selected', () => {
-        const underTest = render(<MultiSelect
-            name={'product'}
-            initiallySelected={[]}
-            selectables={TestUtils.products}
-            placeholder={'Select a product'}
-            disabled={false}
-            changeSelections={noop}/>);
+        const underTest = render(
+            <MultiSelect
+                metadata={{
+                    title: 'Title',
+                    id: 'product',
+                    placeholder: 'Select a product',
+                }}
+                values={[]}
+                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                onChange={noop}
+            />
+        );
 
         expect(underTest.getByText('Select a product')).toBeInTheDocument();
     });
 
     it('should use custom dropdown indicator', async () => {
-        const wrapper = await mount(<MultiSelect
-            name={'product'}
-            initiallySelected={intiallySelectedProducts}
-            disabled={false}
-            selectables={TestUtils.products}
-            placeholder={'Select a product'}
-            changeSelections={noop}/>);
+        const wrapper = await mount(
+            <MultiSelect
+                metadata={{
+                    title: 'Title',
+                    id: 'product',
+                    placeholder: 'Select a product',
+                }}
+                values={intiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
+                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                onChange={noop}
+            />
+        );
 
         expect(wrapper.find('DropdownIndicator').length).toEqual(1);
     });

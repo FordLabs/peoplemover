@@ -26,7 +26,7 @@ import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {Product} from '../Products/Product';
-import MultiSelect from '../ReusableComponents/MultiSelect';
+import MultiSelect, {MetadataMultiSelectProps} from '../ReusableComponents/MultiSelect';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
@@ -75,6 +75,7 @@ function PersonForm({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
     const { ROLE_TAGS } = MetadataReactSelectProps;
+    const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
@@ -241,9 +242,11 @@ function PersonForm({
         setConfirmDeleteModal(deleteConfirmationModal);
     };
 
-    const getSelectables = (): Array<Product> => {
-        const filteredProducts: Array<Product> = products.filter(product => !product.archived && product.name !== 'unassigned');
-        return alphabetize(filteredProducts) as Array<Product>;
+    const getAssignToOptions = (): Array<Option> => {
+        const filteredProducts: Array<Product> = products
+            .filter(product => !product.archived && product.name !== 'unassigned');
+        alphabetize(filteredProducts);
+        return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
     };
 
     function handleKeyDownForDisplayRemovePersonModal(event: React.KeyboardEvent): void {
@@ -292,17 +295,12 @@ function PersonForm({
                     onSave={handleCreateRole}
                     isLoading={isLoading}
                 />
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="product">Assign to</label>
-                    <MultiSelect
-                        name="product"
-                        initiallySelected={selectedProducts}
-                        selectables={getSelectables()}
-                        placeholder="unassigned"
-                        changeSelections={changeProductName}
-                        disabled={false}
-                    />
-                </div>
+                <MultiSelect
+                    metadata={PERSON_ASSIGN_TO}
+                    values={selectedProducts.map(x => {return {value:x.name, label:x.name};})}
+                    options={getAssignToOptions()}
+                    onChange={changeProductName}
+                />
                 <div className="formItem">
                     <FormNotesTextArea
                         notes={person.notes}

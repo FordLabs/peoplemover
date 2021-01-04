@@ -19,7 +19,6 @@ import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, P
 import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useCallback, useEffect} from 'react';
 import {ThemeApplier} from './ThemeApplier';
 import {Option} from '../CommonTypes/Option';
-import {useOnLoad} from './UseOnLoad';
 
 import './ReactSelectStyles.scss';
 
@@ -353,9 +352,9 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
     }, []);
 
     useEffect(() => {
-        const color = getColorFromLabel(label, props.getValue);
-        if (color && colorBadgeRef.current) {
-            colorBadgeRef.current.style.backgroundColor = color;
+        if (colorBadgeRef.current) {
+            const color = getColorFromLabel(label, props.getValue);
+            ThemeApplier.setBackgroundColorOnElement(colorBadgeRef.current, color);
         }
     }, [label, props.getValue, getColorFromLabel]);
 
@@ -371,20 +370,18 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
 
 export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Element => {
     const {
-        selectProps,
         ...propsForTheDiv
     } = allTheProps;
 
     const {label} = propsForTheDiv;
-    // @ts-ignore
-    const {value} = propsForTheDiv;
     const colorBadgeRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
-    useOnLoad(() => {
-        if (selectProps.getColorFromLabel && colorBadgeRef.current) {
-            ThemeApplier.setBackgroundColorOnElement(colorBadgeRef.current, selectProps.getColorFromLabel(value));
+    useEffect(() => {
+        if (colorBadgeRef.current) {
+            const color = allTheProps.data.color;
+            ThemeApplier.setBackgroundColorOnElement(colorBadgeRef.current, color);
         }
-    });
+    }, [allTheProps.data.color]);
 
     return (
         <components.Option {...allTheProps}>

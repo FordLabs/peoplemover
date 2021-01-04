@@ -69,40 +69,47 @@ export const MetadataReactSelectProps = {
     PRODUCT_TAGS: {
         title: 'Product Tags',
         id: 'productTags',
-        placeholder: 'product tags',
+        placeholder: 'Add product tags',
     },
     LOCATION_TAGS: {
         title: 'Location',
         id: 'location',
-        placeholder: 'a location tag',
+        placeholder: 'Add a location tag',
     },
     ROLE_TAGS: {
         title: 'Role',
         id: 'role',
-        placeholder: 'a role',
+        placeholder: 'Add a role',
+    },
+    ASSIGNMENT_NAME: {
+        title: 'Name',
+        id: 'person',
+        placeholder: 'Add a Person',
     },
 };
 
-interface Metadata {
+export interface Metadata {
     title: string;
     id: string;
     placeholder: string;
 }
 
-interface Props {
+export interface ReactSelectProps {
+    className?: string;
     metadata: Metadata;
     value?: Option | undefined;
     values?: Option[] | undefined;
     options: Option[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange: (option: any) => void;
-    onSave: (inputValue: string) => void;
+    onSave?: (inputValue: string) => void;
     isMulti?: boolean;
     useColorBadge?: boolean;
-    isLoading: boolean;
+    isLoading?: boolean;
 }
 
 function ReactSelect({
+    className,
     metadata: {
         title,
         placeholder,
@@ -116,7 +123,7 @@ function ReactSelect({
     isMulti = false,
     useColorBadge = false,
     isLoading,
-}: Props): JSX.Element {
+}: ReactSelectProps): JSX.Element {
     const [typedInValue, setTypedInValue] = useState<string>('');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const components: any = {
@@ -152,13 +159,13 @@ function ReactSelect({
     };
 
     return (
-        <div className="formItem">
+        <div className={`formItem ${className}`}>
             <label className="formItemLabel" htmlFor={id}>{title}</label>
             <Creatable
                 name={id}
                 inputId={id}
                 classNamePrefix={id}
-                placeholder={`Add ${placeholder}`}
+                placeholder={placeholder}
                 value={value || values}
                 options={options}
                 styles={useColorBadge ? reactSelectStyles : ReactSelectDropdownStyles}

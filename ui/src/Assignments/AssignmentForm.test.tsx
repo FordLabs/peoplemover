@@ -158,9 +158,11 @@ describe('AssignmentForm', () => {
 
         describe('should render the appropriate role color', () => {
             const originalImpl = ThemeApplier.setBackgroundColorOnElement;
+            let app: RenderResult;
 
             beforeEach(() => {
-                ThemeApplier.setBackgroundColorOnElement = jest.fn().mockImplementation();
+                ThemeApplier.setBackgroundColorOnElement = jest.fn();
+                ({ app } = renderComponent());
             });
 
             afterEach(() => {
@@ -168,7 +170,6 @@ describe('AssignmentForm', () => {
             });
 
             it('should have role color banner next to name', async () => {
-                const { app } = renderComponent();
                 const labelElement = await app.findByLabelText('Name');
                 fireEvent.change(labelElement, {target: {value: 'Person 1'}});
 
