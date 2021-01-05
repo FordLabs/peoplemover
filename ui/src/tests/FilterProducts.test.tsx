@@ -115,7 +115,7 @@ describe('Filter products', () => {
 
             await app.findByLabelText('Name');
             await act(async () => {
-                await createTag('Location', /Create "Ahmedabad"/, 'Ahmedabad');
+                await createTag('Location', 'Press Enter to add "Ahmedabad"', 'Ahmedabad');
                 const productForm = await app.findByTestId('productForm');
 
                 await wait(() => {
@@ -138,7 +138,7 @@ describe('Filter products', () => {
 
             await app.findByLabelText('Name');
             await act(async () => {
-                await createTag('Product Tags', /Create "Fin Tech"/, 'Fin Tech');
+                await createTag('Product Tags', 'Press Enter to add "Fin Tech"', 'Fin Tech');
                 expect(ProductTagClient.add).toBeCalledTimes(1);
 
                 const productForm = await app.findByTestId('productForm');
@@ -216,7 +216,7 @@ describe('Filter products', () => {
 
     });
 
-    async function createTag(label: string, createOptionText: RegExp, option: string): Promise<void> {
+    async function createTag(label: string, createOptionText: string, option: string): Promise<void> {
         const productTagsLabelElement = await app.findByLabelText(label);
         const containerToFindOptionsIn = {
             container: await app.findByTestId('productForm'),

@@ -1,10 +1,24 @@
-import Creatable from 'react-select/creatable';
+/*
+ * Copyright (c) 2020 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {Option} from '../CommonTypes/Option';
 import {ProductTag} from '../ProductTag/ProductTag';
-import {CreateNewText, CustomIndicator, CustomOption} from '../ReusableComponents/ReactSelectStyles';
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
-import {customStyles} from './ProductForm';
 import {Product} from './Product';
 import {Tag} from '../Tags/Tag.interface';
 import {Space} from '../Space/Space';
@@ -14,6 +28,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {TagRequest} from '../Tags/TagRequest.interface';
+import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 
 interface Props {
     spaceId: number;
@@ -45,7 +60,7 @@ function ProductFormProductTagsField({
 }: Props): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const uuid = currentSpace.uuid!;
-    const [typedInProductTag, setTypedInProductTag] = useState<string>('');
+    const { PRODUCT_TAGS } = MetadataReactSelectProps;
     const [availableProductTags, setAvailableProductTags] = useState<Array<ProductTag>>([]);
 
     useOnLoad(() => {
@@ -62,16 +77,15 @@ function ProductFormProductTagsField({
     }
 
     function optionToProductTag(options: Array<Option>): Array<ProductTag> {
-        if (options) {
-            return options.map(option => {
-                return {
-                    id: Number.parseInt(option.value, 10),
-                    name: option.label,
-                    spaceId,
-                };
-            });
-        }
-        return [];
+        if (!options) return [];
+
+        return options.map(option => {
+            return {
+                id: Number.parseInt(option.value, 10),
+                name: option.label,
+                spaceId,
+            };
+        });
     }
 
     function handleCreateProductTag(inputValue: string): void {
@@ -92,35 +106,28 @@ function ProductFormProductTagsField({
     }
 
     function updateSelectedProductTags(productTags: Array<ProductTag>): void {
-        if (productTags.length > 0) {
-            setSelectedProductTags([...productTags]);
-        } else {
-            setSelectedProductTags([]);
-        }
+        const selectedTags = (productTags.length > 0) ? [...productTags] : [];
+        setSelectedProductTags(selectedTags);
     }
 
+    const getOptions = (): Array<Option> => {
+        return availableProductTags.map((productTag: ProductTag) => createTagOption(productTag.name, productTag.id));
+    };
+
+    const onChange = (option: unknown): void => updateSelectedProductTags(optionToProductTag(option as Option[]));
+
     return (
-        <div className="formItem">
-            <label className="formItemLabel" htmlFor="productTags">Product Tags</label>
-            <Creatable
-                isMulti={true}
-                name="productTags"
-                inputId="productTags"
-                onInputChange={(e: string): void => setTypedInProductTag(e)}
-                onChange={(option): void => updateSelectedProductTags(optionToProductTag(option as Option[]))}
-                isLoading={isLoading}
-                isDisabled={isLoading}
-                onCreateOption={handleCreateProductTag}
-                options={availableProductTags.map((productTag: ProductTag) => createTagOption(productTag.name, productTag.id))}
-                styles={customStyles}
-                value={selectedProductTags.map(productTag => createTagOption(productTag.name, productTag.id))}
-                components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
-                formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInProductTag}"`)}
-                placeholder="Add product tags"
-                hideSelectedOptions={true}
-                isClearable={false}
-            />
-        </div>
+        <SelectWithCreateOption
+            isMulti
+            metadata={PRODUCT_TAGS}
+            values={selectedProductTags.map(
+                productTag => createTagOption(productTag.name, productTag.id)
+            )}
+            options={getOptions()}
+            onChange={onChange}
+            onSave={handleCreateProductTag}
+            isLoading={isLoading}
+        />
     );
 }
 

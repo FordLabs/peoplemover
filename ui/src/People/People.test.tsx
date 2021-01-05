@@ -215,7 +215,7 @@ describe('People actions', () => {
         it('allows user to create a new role when creating a person', async () => {
             const personForm = await app.findByTestId('personForm');
             const labelElement = await app.findByLabelText('Role');
-            const containerToFindOptionsIn = {container: personForm, createOptionText: '+ Create "Product Owner"'};
+            const containerToFindOptionsIn = {container: personForm, createOptionText: 'Press Enter to add "Product Owner"'};
 
             await wait(() => {
                 selectEvent.create(labelElement, 'Product Owner', containerToFindOptionsIn);

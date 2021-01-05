@@ -16,10 +16,9 @@
  */
 
 import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
-import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useEffect} from 'react';
-import {ThemeApplier} from './ThemeApplier';
+import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useCallback, useEffect} from 'react';
+import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Option} from '../CommonTypes/Option';
-import {useOnLoad} from './UseOnLoad';
 
 import './ReactSelectStyles.scss';
 
@@ -336,9 +335,9 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
     let label = '';
 
     if (props.hasValue) {
-        const value = props.getValue() as Array<Option>;
-        if (value && value.length > 0) {
-            label = value[0].label;
+        const values = props.getValue() as Array<Option>;
+        if (values && values.length > 0) {
+            label = values[0].label;
         }
     } else if (props.children) {
         const valueContainer = (props.children as Array<JSX.Element>)[0];
@@ -346,17 +345,24 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
         label = inputContainer.props.value;
     }
 
+    const getColorFromLabel = useCallback((label: string, getValue: Function): string | undefined => {
+        const values = getValue() as Array<Option>;
+        const value = values.find(value => value.label === label);
+        return value?.color;
+    }, []);
+
     useEffect(() => {
-        if (props.selectProps.getColorFromLabel && colorBadgeRef.current) {
-            colorBadgeRef.current.style.backgroundColor = props.selectProps.getColorFromLabel(label);
+        if (colorBadgeRef.current) {
+            const color = getColorFromLabel(label, props.getValue);
+            ThemeApplier.setBackgroundColorOnElement(colorBadgeRef.current, color);
         }
-    }, [label, props.selectProps]);
+    }, [label, props.getValue, getColorFromLabel]);
 
     return (
         <div className="customControlContainer">
             <div data-testid="custom-control-role-badge"
                 ref={colorBadgeRef}
-                className={`optionRoleBadge`}/>
+                className="optionRoleBadge"/>
             <components.Control {...props}>{props.children}</components.Control>
         </div>
     );
@@ -364,26 +370,24 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
 
 export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Element => {
     const {
-        selectProps,
         ...propsForTheDiv
     } = allTheProps;
 
     const {label} = propsForTheDiv;
-    // @ts-ignore
-    const {value} = propsForTheDiv;
     const colorBadgeRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
-    useOnLoad(() => {
-        if (selectProps.getColorFromLabel && colorBadgeRef.current) {
-            ThemeApplier.setBackgroundColorOnElement(colorBadgeRef.current, selectProps.getColorFromLabel(value));
+    useEffect(() => {
+        if (colorBadgeRef.current) {
+            const color = allTheProps.data.color;
+            ThemeApplier.setBackgroundColorOnElement(colorBadgeRef.current, color);
         }
-    });
+    }, [allTheProps.data.color]);
 
     return (
         <components.Option {...allTheProps}>
-            <div className={'optionRoleBadge'}
+            <div className="optionRoleBadge"
                 ref={colorBadgeRef}
-                data-testid={`RoleColorBadge`}>
+                data-testid="roleColorBadge">
             </div>
             <div className="roleOptionLabel">{label}</div>
         </components.Option>
@@ -392,6 +396,6 @@ export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Elem
 
 export const CreateNewText = (text: string): JSX.Element => (
     <span>
-        + {text}
+        {`Press Enter to add "${text}"`}
     </span>
 );
