@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2020 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {JSX} from '@babel/types';
 import {connect} from 'react-redux';
 import {Option} from '../CommonTypes/Option';
@@ -5,14 +22,12 @@ import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import {Tag} from '../Tags/Tag.interface';
-import Creatable from 'react-select/creatable';
-import {CreateNewText, CustomIndicator, CustomOption} from '../ReusableComponents/ReactSelectStyles';
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {Space} from '../Space/Space';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {customStyles} from './ProductForm';
 import {TagRequest} from '../Tags/TagRequest.interface';
+import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
@@ -37,8 +52,8 @@ function ProductFormLocationField({
 }: Props): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const uuid = currentSpace.uuid!;
+    const { LOCATION_TAGS } = MetadataReactSelectProps;
     const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
-    const [typedInLocation, setTypedInLocation] = useState<string>('');
 
     useEffect(() => {
         LocationClient.get(uuid)
@@ -63,14 +78,15 @@ function ProductFormLocationField({
     }
 
     function locationOptionValue(): Option | undefined {
-        if (currentProduct.spaceLocation && currentProduct.spaceLocation.name !== '') {
-            return createLocationOption(currentProduct.spaceLocation);
+        const { spaceLocation } = currentProduct;
+        if (spaceLocation && spaceLocation.name !== '') {
+            return createLocationOption(spaceLocation);
         }
         return undefined;
     }
 
     function locationOptions(): Option[] {
-        return availableLocations.map(location => createLocationOption(location));
+        return availableLocations.map(createLocationOption);
     }
 
     function handleCreateLocationTag(inputValue: string): void {
@@ -100,27 +116,14 @@ function ProductFormLocationField({
     }
 
     return (
-        <div className="formItem">
-            <label className="formItemLabel" htmlFor="location">Location</label>
-            <Creatable
-                name="location"
-                inputId="location"
-                onInputChange={(e: string): void => setTypedInLocation(e)}
-                onChange={(option): void  => updateSpaceLocations(option as Option)}
-                isLoading={isLoading}
-                isDisabled={isLoading}
-                onCreateOption={handleCreateLocationTag}
-                options={locationOptions()}
-                styles={customStyles}
-                components={{DropdownIndicator: CustomIndicator, Option: CustomOption}}
-                formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInLocation}"`)}
-                placeholder="Add a location tag"
-                hideSelectedOptions={true}
-                isClearable={true}
-                noOptionsMessage={(): string => `+ Create "${typedInLocation}"` }
-                value={locationOptionValue()}
-            />
-        </div>
+        <SelectWithCreateOption
+            metadata={LOCATION_TAGS}
+            value={locationOptionValue()}
+            options={locationOptions()}
+            onChange={updateSpaceLocations}
+            onSave={handleCreateLocationTag}
+            isLoading={isLoading}
+        />
     );
 }
 

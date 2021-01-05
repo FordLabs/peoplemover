@@ -16,7 +16,7 @@
  */
 
 import Select from 'react-select';
-import {CustomIndicator, sortByStyle, SortByOption} from './ReactSelectStyles';
+import {CustomIndicator, sortByStyle, SortByOption} from '../ModalFormComponents/ReactSelectStyles';
 import React, {useEffect, useState} from 'react';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';

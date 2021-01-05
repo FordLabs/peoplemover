@@ -1,6 +1,6 @@
 import {Color} from './RoleTag.interface';
 import {JSX} from '@babel/types';
-import Select, {OptionType} from '../ModalFormComponents/Select';
+import SelectWithHTMLOptions, {OptionType} from '../ModalFormComponents/SelectWithHTMLOptions';
 import React from 'react';
 import ColorCircle from '../ModalFormComponents/ColorCircle';
 
@@ -42,7 +42,7 @@ const ColorDropdown = ({ selectedColorId, colors, handleColorChange }: Props, ):
         });
     };
 
-    return (<Select
+    return (<SelectWithHTMLOptions
         ariaLabel="Color"
         selectedOption={selectedColorOption(selectedColorId)}
         options={colorOptions()}

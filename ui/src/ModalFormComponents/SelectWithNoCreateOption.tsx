@@ -16,9 +16,9 @@
  */
 
 import React, {CSSProperties} from 'react';
-import Select, {ValueType} from 'react-select';
+import Select from 'react-select';
 import {CustomIndicator, reactSelectStyles} from './ReactSelectStyles';
-import {Product} from '../Products/Product';
+import {ReactSelectProps} from './SelectWithCreateOption';
 
 export const multiSelectStyles = {
     ...reactSelectStyles,
@@ -51,44 +51,54 @@ export const multiSelectStyles = {
     }),
 };
 
-interface MultiSelectProps
-{
-    name: string;
-    initiallySelected: Array<Product> | Product;
-    changeSelections(events: ValueType<{}>): void;
-    selectables: Array<Product>;
-    disabled: boolean;
-    placeholder: string;
+export const MetadataMultiSelectProps = {
+    ASSIGNMENT_ASSIGN_TO: {
+        title: 'Assign to',
+        id: 'product',
+        placeholder: 'Select a Product',
+    },
+    PERSON_ASSIGN_TO: {
+        title: 'Assign to',
+        id: 'product',
+        placeholder: 'unassigned',
+    },
+};
+
+interface MultiSelectProps extends ReactSelectProps {
+    isDisabled?: boolean;
 }
 
-function MultiSelect({
-    name,
-    initiallySelected,
-    changeSelections,
-    selectables,
-    disabled,
-    placeholder,
+function SelectWithNoCreateOption({
+    metadata: {
+        title,
+        placeholder,
+        id,
+    },
+    values = [],
+    options,
+    onChange,
+    isDisabled = false,
 }: MultiSelectProps): JSX.Element {
-    return (<Select
-        classNamePrefix={'MultiSelect'}
-        name={name}
-        id={name}
-        value={Array.isArray(initiallySelected) ? initiallySelected.map(x => {return {value:x.name, label:x.name};}) : {
-            value: initiallySelected.name,
-            label: initiallySelected.name,
-        }}
-        onChange={changeSelections}
-        options={selectables.map(selectable => {
-            return {value: selectable.name, label: selectable.name};
-        })}
-        isMulti={true}
-        isDisabled={disabled}
-        hideSelectedOptions={true}
-        isClearable={false}
-        styles={multiSelectStyles}
-        components={{DropdownIndicator: CustomIndicator}}
-        placeholder={placeholder}
-    />);
+    return (
+        <div className="formItem">
+            <label className="formItemLabel" htmlFor={id}>{title}</label>
+            <Select
+                name={id}
+                id={id}
+                classNamePrefix={id}
+                placeholder={placeholder}
+                value={values}
+                options={options}
+                styles={multiSelectStyles}
+                components={{DropdownIndicator: CustomIndicator}}
+                onChange={onChange}
+                isDisabled={isDisabled || options.length === 0}
+                isMulti={true}
+                hideSelectedOptions={true}
+                isClearable={false}
+            />
+        </div>
+    );
 }
 
-export default MultiSelect;
+export default SelectWithNoCreateOption;
