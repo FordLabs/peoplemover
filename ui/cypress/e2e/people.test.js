@@ -309,13 +309,13 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
 
     if (isNew && assignTo) {
         cy.get('@personForm')
-            .find('.MultiSelect__value-container input')
+            .find('.product__value-container input')
             .focus()
             .type(assignTo + '{enter}');
     }
 
     if (notes) {
-        cy.get('[data-testid=formNotesToField]').clear().type(notes).should('have.value', notes);
+        cy.get('[data-testid=formNotesToField]').focus().type(notes).should('have.value', notes);
     }
 };
 

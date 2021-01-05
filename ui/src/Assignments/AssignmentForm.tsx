@@ -17,7 +17,7 @@
 
 import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import MultiSelect from '../ReusableComponents/MultiSelect';
+import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import {connect} from 'react-redux';
 import {
     AvailableModals,
@@ -27,13 +27,6 @@ import {
 import {Person} from '../People/Person';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Product} from '../Products/Product';
-import Creatable from 'react-select/creatable';
-import {
-    CreateNewText,
-    CustomIndicator,
-    CustomOption,
-    reactSelectStyles,
-} from '../ReusableComponents/ReactSelectStyles';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import './AssignmentForm.scss';
 import {Option} from '../CommonTypes/Option';
@@ -43,6 +36,7 @@ import {Assignment} from './Assignment';
 import moment from 'moment';
 import FormButton from '../ModalFormComponents/FormButton';
 import {Space} from '../Space/Space';
+import SelectWithCreateOption, { MetadataReactSelectProps } from '../ModalFormComponents/SelectWithCreateOption';
 
 interface AssignmentFormProps {
     products: Array<Product>;
@@ -64,8 +58,9 @@ function AssignmentForm({
     closeModal,
     setCurrentModal,
 }: AssignmentFormProps): JSX.Element {
+    const { ASSIGNMENT_NAME } = MetadataReactSelectProps;
+    const { ASSIGNMENT_ASSIGN_TO } = MetadataMultiSelectProps;
     const defaultPerson: Person = {id: -1, name: ''} as Person;
-    const [typedInName, setTypedInName] = useState<string>(defaultPerson.name);
     const [selectedPerson, setSelectedPerson] = useState<Person>(defaultPerson);
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>(getSelectedProduct());
     const [placeholder, setPlaceholder] = useState<boolean>(false);
@@ -164,10 +159,11 @@ function AssignmentForm({
         setSelectedProducts(updatedProducts);
     }
 
-    function createOption(name: string, id: number): Option {
+    function createOption(person: Person): Option {
         return ({
-            label: name,
-            value: id.toString() + '_' + name,
+            label: person.name,
+            value: person.id.toString() + '_' + person.name,
+            color: person.spaceRole?.color?.color,
         });
     }
 
@@ -178,8 +174,6 @@ function AssignmentForm({
             const foundPerson: Person | undefined = people.find(person => person.id === parseInt(personId, 10));
             if (foundPerson) {
                 setSelectedPerson(foundPerson);
-            } else {
-                openCreatePersonModal(personId);
             }
         }
     }
@@ -192,16 +186,12 @@ function AssignmentForm({
         setCurrentModal({modal: AvailableModals.CREATE_PERSON, item});
     }
 
-    function getColorFromLabel(personId: string): string {
-        const matchingPerson = people.find(person => person.id === parseInt(personId, 10));
-        if (matchingPerson && matchingPerson.spaceRole && matchingPerson.spaceRole.color) {
-            return matchingPerson.spaceRole.color.color;
-        }
-        return '';
-    }
-
-    function getSelectables(): Array<Product> {
-        return products.filter(product => !product.archived && product.name !== 'unassigned');
+    function getAssignToOptions(): Array<Option> {
+        return products
+            .filter(product => !product.archived && product.name !== 'unassigned')
+            .map(selectable => {
+                return {value: selectable.name, label: selectable.name};
+            });
     }
 
     return (
@@ -209,24 +199,15 @@ function AssignmentForm({
             <form className="form"
                 data-testid="assignmentForm"
                 onSubmit={(event): Promise<void> => handleSubmit(event)}>
-                <div className="person-select-container">
-                    <label className="formItemLabel" htmlFor="person">Name</label>
-                    <Creatable
-                        isClearable
-                        name="person"
-                        inputId="person"
-                        onInputChange={(e: string): void => setTypedInName(e)}
-                        onChange={(e): void => findPerson(e ? (e as Option).value : null)}
-                        options={people.map(person => createOption(person.name, person.id))}
-                        styles={reactSelectStyles}
-                        value={selectedPerson.name ? createOption(selectedPerson.name, selectedPerson.id) : null}
-                        components={{Option: CustomOption, DropdownIndicator: CustomIndicator}}
-                        formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInName}"`)}
-                        placeholder="Add a person"
-                        hideSelectedOptions={true}
-                        {...{getColorFromLabel}}
-                    />
-                </div>
+                <SelectWithCreateOption
+                    className="personSelectContainer"
+                    metadata={ASSIGNMENT_NAME}
+                    useColorBadge
+                    value={selectedPerson.name ? createOption(selectedPerson) : undefined}
+                    options={people.map(person => createOption(person))}
+                    onChange={(e): void => findPerson(e ? (e as Option).value : null)}
+                    onSave={openCreatePersonModal}
+                />
                 <div className="formItem inlineLabelContainer">
                     <input className="formInput checkbox"
                         id="placeholder"
@@ -236,16 +217,12 @@ function AssignmentForm({
                     />
                     <label className="formInputLabel" htmlFor="placeholder">Mark as Placeholder</label>
                 </div>
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="product">Assign to</label>
-                    <MultiSelect
-                        name="product"
-                        initiallySelected={selectedProducts}
-                        selectables={getSelectables()}
-                        placeholder="Select a product"
-                        changeSelections={changeProductAssignments}
-                        disabled={false}/>
-                </div>
+                <SelectWithNoCreateOption
+                    metadata={ASSIGNMENT_ASSIGN_TO}
+                    values={selectedProducts.map(x => {return {value:x.name, label:x.name};})}
+                    options={getAssignToOptions()}
+                    onChange={changeProductAssignments}
+                />
                 <div className="yesNoButtons">
                     <FormButton
                         buttonStyle="secondary"

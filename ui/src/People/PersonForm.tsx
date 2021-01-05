@@ -19,27 +19,14 @@ import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
-import Creatable from 'react-select/creatable';
 import {connect} from 'react-redux';
-import {
-    addPersonAction,
-    closeModalAction,
-    editPersonAction,
-    setIsUnassignedDrawerOpenAction,
-} from '../Redux/Actions';
+import {addPersonAction, closeModalAction, editPersonAction, setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {Product} from '../Products/Product';
-import {
-    CreateNewText,
-    CustomControl,
-    CustomIndicator,
-    CustomOption,
-    reactSelectStyles,
-} from '../ReusableComponents/ReactSelectStyles';
-import MultiSelect from '../ReusableComponents/MultiSelect';
+import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
@@ -52,6 +39,8 @@ import moment from 'moment';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
+import SelectWithCreateOption from '../ModalFormComponents/SelectWithCreateOption';
+import { MetadataReactSelectProps } from '../ModalFormComponents/SelectWithCreateOption';
 
 import './PersonForm.scss';
 
@@ -85,13 +74,14 @@ function PersonForm({
 }: PersonFormProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
+    const { ROLE_TAGS } = MetadataReactSelectProps;
+    const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
     const [roles, setRoles] = useState<Array<RoleTag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [typedInRole, setTypedInRole] = useState<string>('');
 
     const alphabetize = (roles: Array<RoleTag | Product>): Array<RoleTag | Product> => {
         return roles.sort((a, b) => {
@@ -221,10 +211,11 @@ function PersonForm({
         updatePersonField('spaceRole', roleMatch);
     };
 
-    const createOption = (label: string): Option => {
+    const createOption = (role: RoleTag): Option => {
         return ({
-            label,
-            value: label,
+            label: role.name,
+            value: role.name,
+            color: role.color?.color,
         });
     };
 
@@ -251,17 +242,11 @@ function PersonForm({
         setConfirmDeleteModal(deleteConfirmationModal);
     };
 
-    const getColorFromLabel = (label: string): string => {
-        const matchingRole = roles.find(role => role.name === label);
-        if (matchingRole && matchingRole.color) {
-            return matchingRole.color.color;
-        }
-        return '';
-    };
-
-    const getSelectables = (): Array<Product> => {
-        const filteredProducts: Array<Product> = products.filter(product => !product.archived && product.name !== 'unassigned');
-        return alphabetize(filteredProducts) as Array<Product>;
+    const getAssignToOptions = (): Array<Option> => {
+        const filteredProducts: Array<Product> = products
+            .filter(product => !product.archived && product.name !== 'unassigned');
+        alphabetize(filteredProducts);
+        return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
     };
 
     function handleKeyDownForDisplayRemovePersonModal(event: React.KeyboardEvent): void {
@@ -301,38 +286,21 @@ function PersonForm({
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
                     </div>
                 </div>
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="role">Role</label>
-                    <Creatable
-                        isClearable
-                        name="role"
-                        inputId="role"
-                        onInputChange={(e: string): void => setTypedInRole(e)}
-                        onChange={(e): void => updateSpaceRole(e ? (e as Option).value : '')}
-                        isLoading={isLoading}
-                        isDisabled={isLoading}
-                        onCreateOption={handleCreateRole}
-                        options={roles.map(role => createOption(role.name))}
-                        styles={reactSelectStyles}
-                        value={person.spaceRole && person.spaceRole.name !== '' ? createOption(person.spaceRole.name) : null}
-                        components={{Option: CustomOption, DropdownIndicator: CustomIndicator, Control: CustomControl}}
-                        formatCreateLabel={(): JSX.Element => CreateNewText(`Create "${typedInRole}"`)}
-                        placeholder="Add a role"
-                        hideSelectedOptions={true}
-                        {...{getColorFromLabel}}
-                    />
-                </div>
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="product">Assign to</label>
-                    <MultiSelect
-                        name="product"
-                        initiallySelected={selectedProducts}
-                        selectables={getSelectables()}
-                        placeholder="unassigned"
-                        changeSelections={changeProductName}
-                        disabled={false}
-                    />
-                </div>
+                <SelectWithCreateOption
+                    metadata={ROLE_TAGS}
+                    useColorBadge
+                    value={person.spaceRole && person.spaceRole.name !== '' ? createOption(person.spaceRole) : undefined}
+                    options={roles.map(role => createOption(role))}
+                    onChange={(e): void => updateSpaceRole(e ? (e as Option).value : '')}
+                    onSave={handleCreateRole}
+                    isLoading={isLoading}
+                />
+                <SelectWithNoCreateOption
+                    metadata={PERSON_ASSIGN_TO}
+                    values={selectedProducts.map(x => {return {value:x.name, label:x.name};})}
+                    options={getAssignToOptions()}
+                    onChange={changeProductName}
+                />
                 <div className="formItem">
                     <FormNotesTextArea
                         notes={person.notes}

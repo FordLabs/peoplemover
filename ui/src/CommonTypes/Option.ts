@@ -18,6 +18,7 @@
 export interface Option {
     label: string;
     value: string;
+    color?: string;
 }
 
 export interface FilterOption extends Option {
