@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, CSSProperties, FormEvent, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
 import {closeModalAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {JSX} from '@babel/types';
-import {StylesConfig} from 'react-select';
 import moment from 'moment';
 import ProductClient from './ProductClient';
 import {emptyProduct, Product} from './Product';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import {reactSelectStyles} from '../ReusableComponents/ReactSelectStyles';
 import {ProductTag} from '../ProductTag/ProductTag';
 import {FilterOption} from '../CommonTypes/Option';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
@@ -37,47 +35,10 @@ import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import {Space} from '../Space/Space';
-import 'react-datepicker/dist/react-datepicker.css';
 import FormButton from '../ModalFormComponents/FormButton';
 
+import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
-
-export const customStyles: StylesConfig = {
-    ...reactSelectStyles,
-    valueContainer: (provided: CSSProperties) => ({
-        ...provided,
-        padding: '0px 3px',
-    }),
-    multiValue: (provided: CSSProperties) => ({
-        ...provided,
-        alignItems: 'center',
-        backgroundColor: '#F2E7F3',
-        fontFamily: 'Helvetica, sans-serif',
-        borderRadius: '6px',
-        height: '22px',
-        marginRight: '3px',
-    }),
-    noOptionsMessage: (base) => {
-        return {
-            ...base,
-            backgroundColor: 'transparent',
-            fontFamily: 'Helvetica, sans-serif',
-            fontSize: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0px 17px 0 11px',
-            height: '30px',
-            margin: '3px 0px',
-            '&:hover': {
-                cursor: 'pointer',
-                backgroundColor: '#F2F2F2',
-            },
-            color: '#999694',
-            textAlign: 'left',
-        };
-    },
-};
 
 interface ProductFormProps {
     editing: boolean;

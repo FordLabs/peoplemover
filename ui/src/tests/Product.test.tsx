@@ -282,7 +282,7 @@ describe('Products', () => {
                 const locationLabelElement = await app.findByLabelText('Location');
                 const containerToFindOptionsIn = {
                     container: await app.findByTestId('productForm'),
-                    createOptionText: /Create "Ahmedabad"/,
+                    createOptionText: 'Press Enter to add "Ahmedabad"',
                 };
                 await selectEvent.create(locationLabelElement, 'Ahmedabad', containerToFindOptionsIn);
                 const productForm = await app.findByTestId('productForm');
@@ -316,7 +316,7 @@ describe('Products', () => {
                 const tagsLabelElement = await app.findByLabelText('Product Tags');
                 const containerToCreateFinTech = {
                     container: await app.findByTestId('productForm'),
-                    createOptionText: /Create "Fin Tech"/,
+                    createOptionText: 'Press Enter to add "Fin Tech"',
                 };
                 await selectEvent.create(tagsLabelElement, 'Fin Tech', containerToCreateFinTech);
                 expect(ProductTagClient.add).toBeCalledTimes(1);
@@ -327,7 +327,7 @@ describe('Products', () => {
 
                 const containerToCreateSomeTag = {
                     container: await app.findByTestId('productForm'),
-                    createOptionText: /Create "Some tag"/,
+                    createOptionText: 'Press Enter to add "Some tag"',
                 };
 
                 await selectEvent.create(tagsLabelElement, 'Some tag', containerToCreateSomeTag);
@@ -347,6 +347,7 @@ describe('Products', () => {
             await app.findByLabelText('Name');
 
             await app.findByPlaceholderText('e.g. Product 1');
+            await app.findByText('Add product tags');
             await app.findByText('Add a location tag');
         });
 

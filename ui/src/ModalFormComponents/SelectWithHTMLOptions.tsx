@@ -18,7 +18,7 @@
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
 import {debounce} from '../Utils';
 
-import './Select.scss';
+import './SelectWithHTMLOptions.scss';
 
 const DEFAULT_CURRENT_INDEX = 0;
 
@@ -35,7 +35,7 @@ interface Props {
     onChange: (selectedOption: OptionType) => void;
 }
 
-const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.Element => {
+const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.Element => {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [currentOption, setCurrentOption] = useState<OptionType>(selectedOption);
     const dropdownToggleElement = useRef<HTMLButtonElement>(null);
@@ -180,5 +180,5 @@ const Select = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.El
     );
 };
 
-export default Select;
+export default SelectWithHTMLOptions;
 
