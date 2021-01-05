@@ -34,6 +34,7 @@ import SpaceDashboardTile from './SpaceDashboardTile';
 import {GlobalStateProps} from '../Redux/Reducers';
 
 import './SpaceDashboard.scss';
+import Branding from '../ReusableComponents/Branding';
 
 interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;
@@ -122,6 +123,7 @@ function SpaceDashboard({
             <Header hideSpaceButtons={true}/>
             <CurrentModal/>
             {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
+            <Branding brand="FordLabs" message="Powered by"/>
         </div>
     );
 }
