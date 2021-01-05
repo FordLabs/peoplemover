@@ -45,10 +45,13 @@ data class Space (
     @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
     val locations: List<SpaceLocation> = ArrayList(),
 
+    @Column(name="view_only")
+    var viewOnly: Boolean = false,
+
     var lastModifiedDate: Timestamp? = null,
 
     var createdBy: String? = null
 ) {
     constructor(name: String):
-        this(null, UUID.randomUUID().toString(), name, HashSet(), ArrayList(), null, null)
+        this(null, UUID.randomUUID().toString(), name, HashSet(), ArrayList(), false, null, null)
 }
