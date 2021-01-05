@@ -12,12 +12,7 @@ describe('People', () => {
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
 
-        const endOfMonth = Cypress.moment().endOf('month');
-        notTodaysDate = endOfMonth.day('Monday').format('yyyy-MM-DD');
-
-        if (todaysDate === notTodaysDate) {
-            notTodaysDate = endOfMonth.day('Tuesday').format('yyyy-MM-DD');
-        }
+        notTodaysDate = findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth();
 
         calendarDateClass = `.react-datepicker__day--0${Cypress.moment(notTodaysDate).format('DD')}`;
         highlightedLastDayOfMonth = `${calendarDateClass}.react-datepicker__day--highlighted`;
@@ -270,6 +265,24 @@ describe('People', () => {
         });
     });
 });
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth() {
+    let closestWorkdayToMiddleOfMonthThatIsntToday;
+    const firstDayOfMonth = Cypress.moment().startOf('month');
+    const twoWeeksIntoMonth = firstDayOfMonth.add(2, 'weeks');
+    const closestWorkdayToMiddleOfMonth = twoWeeksIntoMonth.isoWeekday() <= 5 ? twoWeeksIntoMonth : twoWeeksIntoMonth.add(8 - twoWeeksIntoMonth.isoWeekday(), 'days');
+    if (todaysDate === closestWorkdayToMiddleOfMonth) {
+        if (closestWorkdayToMiddleOfMonth.isoWeek() === 5) {
+            closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.subtract(1, 'days').format('yyyy-MM-DD');
+        } else {
+            closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.add(1, 'days').format('yyyy-MM-DD');
+        }
+    } else {
+        closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.format('yyyy-MM-DD');
+    }
+    return closestWorkdayToMiddleOfMonthThatIsntToday;
+}
 
 const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
     cy.get('[data-testid=personForm]').as('personForm');
