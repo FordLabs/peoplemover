@@ -50,6 +50,8 @@ export const reactSelectStyles = {
         ...provided,
         backgroundColor: props.isFocused ? '#F2F2F2' : 'transparent',
         color: props.data.__isNew__ ? '#5463B0' : '#403D3D',
+        border: props.isFocused ? '2px solid #4C8EF5' : 'none',
+        borderRadius: '2px',
         fontFamily: 'Helvetica, sans-serif',
         fontSize: '12px',
         lineHeight: '13.8px',
