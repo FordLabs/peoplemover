@@ -133,7 +133,7 @@ describe('AssignmentForm', () => {
             const { app } = renderComponent();
             const labelElement = await app.findByLabelText('Name');
             fireEvent.change(labelElement, {target: {value: 'Barbara Jordan'}});
-            await app.findByText('Press Enter to add "Barbara Jordan"');
+            await app.findByText( TestUtils.expectedCreateOptionText('Barbara Jordan'));
         });
 
         it('populates the person name field of the Create Person modal on open', async () => {
@@ -145,7 +145,8 @@ describe('AssignmentForm', () => {
             const labelElement = await app.findByLabelText('Name');
             await selectEvent.openMenu(labelElement);
             await prefillReactSelectField(app, 'Name', 'XYZ ABC 123');
-            fireEvent.click(getByText(await app.findByTestId('assignmentForm'), 'Press Enter to add "XYZ ABC 123"'));
+            const createOptionText = TestUtils.expectedCreateOptionText('XYZ ABC 123');
+            fireEvent.click(getByText(await app.findByTestId('assignmentForm'),  createOptionText));
 
             expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
                 modal: AvailableModals.CREATE_PERSON,
