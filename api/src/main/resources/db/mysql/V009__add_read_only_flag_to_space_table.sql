@@ -1,2 +1,2 @@
 ALTER TABLE space
-ADD view_only bit DEFAULT false
+ADD current_date_view_is_public bit DEFAULT false

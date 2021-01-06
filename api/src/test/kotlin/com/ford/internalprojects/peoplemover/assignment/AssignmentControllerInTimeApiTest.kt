@@ -93,7 +93,7 @@ class AssignmentControllerInTimeApiTest {
     @Before
     fun setup() {
         editableSpace = spaceRepository.save(Space(name = "tik"))
-        readOnlySpace = spaceRepository.save(Space(name = "tok"))
+        readOnlySpace = spaceRepository.save(Space(name = "tok", currentDateViewIsPublic = true))
         productOne = productRepository.save(Product(name = "Justice League", spaceId = editableSpace.id!!))
         productTwo = productRepository.save(Product(name = "Avengers", spaceId = editableSpace.id!!))
         productThree = productRepository.save(Product(name = "Misfits", spaceId = editableSpace.id!!))
@@ -188,8 +188,8 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return FORBIDDEN when a read only use trying access assignments from date that is not today`() {
-        mockMvc.perform(get("/api/spaces/999999/person/${personInReadOnlySpace.id}/assignments/date/${apr1}")
+    fun `GET should return FORBIDDEN when a read only user tries to access assignments from a date that is not today`() {
+        mockMvc.perform(get("/api/spaces/${readOnlySpace.uuid}/person/${personInReadOnlySpace.id}/assignments/date/${apr1}")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
                 .andReturn()

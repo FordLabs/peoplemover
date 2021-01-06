@@ -160,6 +160,8 @@ class PersonControllerApiTest {
     @Test
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = emptySpace.id!!, userId = "USER_ID"))
+
         val result = mockMvc
                 .perform(get("/api/spaces/${emptySpace.uuid}/people")
                         .header("Authorization", "Bearer GOOD_TOKEN"))
@@ -194,6 +196,16 @@ class PersonControllerApiTest {
         )
         assertThat(actualPeople).containsExactly(expectedPerson)
         assertThat(actualPeople).doesNotContain(unexpectedPerson)
+    }
+
+    @Test
+    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+        val testSpace = spaceRepository.save(Space(name = "cant touch this", currentDateViewIsPublic = false))
+
+        mockMvc.perform(get("/api/spaces/" + testSpace.uuid + "/people")
+                        .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .andExpect(status().isForbidden)
+                .andReturn()
     }
 
     @Test

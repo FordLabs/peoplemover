@@ -131,6 +131,16 @@ class RoleControllerApiTest {
     }
 
     @Test
+    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+        val testSpace: Space = spaceRepository.save(Space(name = "blahblah", currentDateViewIsPublic = false))
+
+        mockMvc.perform(
+            get("/api/spaces/" + testSpace.uuid + "/roles")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        ).andExpect(status().isForbidden)
+    }
+
+    @Test
     fun `POST should return 409 when trying to add duplicate space role name to same space`() {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Firefighter", spaceId = space.id!!))
         val newRole = RoleAddRequest(name = spaceRole.name)
@@ -345,6 +355,5 @@ class RoleControllerApiTest {
         mockMvc.perform(delete("/api/spaces/spaceUuid/roles/111")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
-
     }
 }

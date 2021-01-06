@@ -103,6 +103,17 @@ class LocationControllerApiTest {
         assertThat(actualSpaceLocations).isEqualTo(expectedLocations)
     }
 
+
+    @Test
+    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+        val testSpace: Space = spaceRepository.save(Space(name = "blahblah", currentDateViewIsPublic = false))
+
+        mockMvc.perform(
+            get("/api/spaces/" + testSpace.uuid + "/locations")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        ).andExpect(status().isForbidden)
+    }
+
     @Test
     fun `GET should return 400 when given bad space`() {
         val badLocationsUrl = "/api/spaces/tok1/locations"

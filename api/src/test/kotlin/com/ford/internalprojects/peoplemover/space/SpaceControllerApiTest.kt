@@ -23,15 +23,12 @@ import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -175,6 +172,7 @@ class SpaceControllerApiTest {
     @Test
     fun `GET should return correct space for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = space1.id))
 
         val result = mockMvc.perform(get(baseSpaceUrl + "/" + space1.uuid)
                 .header("Authorization", "Bearer GOOD_TOKEN"))
@@ -187,6 +185,26 @@ class SpaceControllerApiTest {
         )
 
         assertThat(actualSpace).isEqualTo(space1)
+    }
+
+    @Test
+    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne", currentDateViewIsPublic = false))
+
+        mockMvc.perform(get(baseSpaceUrl + "/" + space1.uuid)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .andExpect(status().isForbidden)
+                .andReturn()
+    }
+
+    @Test
+    fun `GET should return 200 read-only when valid token that isn't an editor requests a space while read-only flag is on`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne", currentDateViewIsPublic = true))
+
+        mockMvc.perform(get(baseSpaceUrl + "/" + space1.uuid)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
     }
 
     @Test
@@ -295,9 +313,11 @@ class SpaceControllerApiTest {
 
     @Test
     fun `PUT should return 403 when trying to edit space without write authorization`() {
+        val space = spaceRepository.save(Space(name = "space_that_nobody_has_write_access_to"))
+
         val requestBodyObject = SpaceRequest("not empty")
 
-        mockMvc.perform(put("/api/spaces/${UUID.randomUUID()}")
+        mockMvc.perform(put("/api/spaces/${space.uuid}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
