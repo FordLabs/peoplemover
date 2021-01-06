@@ -20,6 +20,12 @@
 
 $spaceTileWidth: 400px;
 
+.spaceDashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .userSpaceItemContainer {
   display: grid;
   grid-auto-rows: 128px;
@@ -63,8 +69,7 @@ $spaceTileWidth: 400px;
   color: $gray-1;
   max-width: 480px;
   text-align: center;
-  margin: 0 auto;
-  height: 100vh;
+  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;

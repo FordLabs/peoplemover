@@ -22,6 +22,7 @@ import FormButton from '../ModalFormComponents/FormButton';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 
 import './LandingPage.scss';
+import Branding from '../ReusableComponents/Branding';
 
 function LandingPage(): JSX.Element {
     const LoginButton = (): JSX.Element => (
@@ -40,16 +41,19 @@ function LandingPage(): JSX.Element {
                     <div className="landingPageInfoHeading">It’s about the people. Your people.</div>
                     <div className="landingPageInfoSubHeading">And helping them be extraordinary.</div>
                     <div className="landingPageInfoText">
-                        Most allocation applications focus solely on projects and schedules, and seem 
-                        to forget that a product is only as successful as its team. PeopleMover focuses on the people, 
-                        helping you create and fluidly maintain balanced teams well suited for the product at hand – 
+                        Most allocation applications focus solely on projects and schedules, and seem
+                        to forget that a product is only as successful as its team. PeopleMover focuses on the people,
+                        helping you create and fluidly maintain balanced teams well suited for the product at hand –
                         because we understand that a great team sets the stage for incredible results.
                     </div>
                     <LoginButton />
                 </div>
-                <img className="landingPageImage"
-                    src={LandingPageImage}
-                    alt=""/>
+                <div className="landingPageImageContainer">
+                    <img className="landingPageImage"
+                        src={LandingPageImage}
+                        alt=""/>
+                    <Branding brand="FordLabs" message="Powered by"/>
+                </div>
             </div>
             <img className="landingPageBackground" src={LandingPageBackground} alt=""/>
         </>
