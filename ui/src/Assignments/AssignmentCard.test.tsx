@@ -295,6 +295,7 @@ describe('Assignment Card', () => {
         beforeEach(() => {
             initialState = {
                 currentSpace: TestUtils.space,
+                isDragging: false,
             } as GlobalStateProps;
         });
 
@@ -334,7 +335,7 @@ describe('Assignment Card', () => {
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByTestId('personName'));
+                fireEvent.mouseEnter(underTest.getByTestId('notesIcon'));
                 jest.advanceTimersByTime(500);
             });
 
@@ -354,7 +355,7 @@ describe('Assignment Card', () => {
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByTestId('personName'));
+                fireEvent.mouseEnter(underTest.getByTestId('notesIcon'));
                 jest.advanceTimersByTime(500);
             });
 
@@ -362,7 +363,7 @@ describe('Assignment Card', () => {
             expect(underTest.getByText('This is a note')).toBeVisible();
 
             act(() => {
-                fireEvent.mouseLeave(underTest.getByTestId('personName'));
+                fireEvent.mouseLeave(underTest.getByTestId('notesIcon'));
                 jest.advanceTimersByTime(500);
             });
 
@@ -382,11 +383,31 @@ describe('Assignment Card', () => {
             expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByTestId('personName'));
+                fireEvent.mouseEnter(underTest.getByTestId('notesIcon'));
                 jest.advanceTimersByTime(500);
             });
 
             expect(underTest.queryByTestId('hoverBoxContainer')).not.toBeNull();
+        });
+
+        it('should hide hover box for assignment when an assignment is being dragged', () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={true}/>,
+                undefined,
+                {...initialState, isDragging: true},
+            );
+
+            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
+
+            act(() => {
+                fireEvent.mouseEnter(underTest.getByTestId('notesIcon'));
+                jest.advanceTimersByTime(500);
+            });
+
+            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
         });
     });
 });
