@@ -447,6 +447,10 @@ class TestUtils {
             options: [],
         },
     ]
+
+    static expectedCreateOptionText(expectedCreationString: string): string {
+        return `Create "${expectedCreationString}"`;
+    }
 }
 
 export default TestUtils;
