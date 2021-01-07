@@ -17,7 +17,10 @@
 
 /// <reference types="Cypress" />
 
+import TestUtils from '../../src/tests/TestUtils';
+
 describe('Form Dropdown Fields', () => {
+
     beforeEach(() => {
         cy.server();
         cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
@@ -59,7 +62,7 @@ describe('Form Dropdown Fields', () => {
         cy.get('@productForm')
             .find('.location__option')
             .should('have.length', 1)
-            .should('contain', `Press Enter to add "${newLocation1}"`);
+            .should('contain', TestUtils.expectedCreateOptionText(newLocation1));
 
         cy.get('@productLocationInput')
             .type('{enter}');
@@ -81,7 +84,7 @@ describe('Form Dropdown Fields', () => {
         cy.get('@productForm')
             .find('.location__option')
             .should('have.length', 1)
-            .should('contain', 'Press Enter to add "Chilto"');
+            .should('contain', TestUtils.expectedCreateOptionText('Chilto'));
 
 
         cy.get('@productLocationInput')
@@ -105,7 +108,7 @@ describe('Form Dropdown Fields', () => {
         cy.get('@productForm')
             .find('.location__option')
             .should('have.length', 1)
-            .should('contain', `Press Enter to add "${newLocation2}"`);
+            .should('contain', TestUtils.expectedCreateOptionText(newLocation2));
     });
 
     it('Add Product Tags Workflow', () => {
@@ -136,7 +139,7 @@ describe('Form Dropdown Fields', () => {
         cy.get('@productForm')
             .find('.productTags__option')
             .should('have.length', 1)
-            .should('contain', `Press Enter to add "${newProductTag1}"`);
+            .should('contain', TestUtils.expectedCreateOptionText(newProductTag1));
 
         cy.get('@productTagsInput')
             .type('{enter}');
@@ -164,7 +167,7 @@ describe('Form Dropdown Fields', () => {
         cy.get('@productForm')
             .find('.productTags__option')
             .should('have.length', 1)
-            .should('contain', `Press Enter to add "${newProductTag2}"`);
+            .should('contain', TestUtils.expectedCreateOptionText(newProductTag2));
 
         cy.get('@productTagsInput')
             .type('{enter}');

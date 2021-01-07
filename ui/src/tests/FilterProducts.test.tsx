@@ -115,7 +115,8 @@ describe('Filter products', () => {
 
             await app.findByLabelText('Name');
             await act(async () => {
-                await createTag('Location', 'Press Enter to add "Ahmedabad"', 'Ahmedabad');
+                const createOptionText = TestUtils.expectedCreateOptionText('Ahmedabad');
+                await createTag('Location', createOptionText, 'Ahmedabad');
                 const productForm = await app.findByTestId('productForm');
 
                 await wait(() => {
@@ -138,7 +139,8 @@ describe('Filter products', () => {
 
             await app.findByLabelText('Name');
             await act(async () => {
-                await createTag('Product Tags', 'Press Enter to add "Fin Tech"', 'Fin Tech');
+                const expectedCreateOptionText = TestUtils.expectedCreateOptionText('Fin Tech');
+                await createTag('Product Tags', expectedCreateOptionText, 'Fin Tech');
                 expect(ProductTagClient.add).toBeCalledTimes(1);
 
                 const productForm = await app.findByTestId('productForm');

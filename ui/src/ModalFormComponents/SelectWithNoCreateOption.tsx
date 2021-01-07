@@ -16,7 +16,7 @@
  */
 
 import React, {CSSProperties} from 'react';
-import Select from 'react-select';
+import Select, {Props} from 'react-select';
 import {CustomIndicator, reactSelectStyles} from './ReactSelectStyles';
 import {ReactSelectProps} from './SelectWithCreateOption';
 
@@ -27,9 +27,11 @@ export const multiSelectStyles = {
         overflow:'unset',
         padding: '0 8px 0 6px',
     }),
-    option: (provided: CSSProperties): CSSProperties => ({
+    option: (provided: CSSProperties, props: Props): CSSProperties => ({
         ...provided,
-        backgroundColor: 'transparent',
+        backgroundColor: props.isFocused ? '#F2F2F2' : 'transparent',
+        border: props.isFocused ? '2px solid #4C8EF5' : 'none',
+        borderRadius: '2px',
         fontFamily: 'Helvetica, sans-serif',
         fontSize: '12px',
         display: 'flex',
@@ -41,7 +43,6 @@ export const multiSelectStyles = {
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
-            backgroundColor: '#F2F2F2',
         },
     }),
     placeholder: (provided: CSSProperties): CSSProperties => ({
