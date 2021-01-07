@@ -17,7 +17,7 @@
 
 @import './Styleguide/Colors.scss';
 
-.Error404PageContainer {
+.ErrorPageContainer {
   text-align: center;
   color: $gray-1;
   min-height: 100vh;
@@ -26,20 +26,20 @@
 }
 
 .oopsText {
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 4rem;
+  font-weight: 700;
   color: inherit;
   margin-bottom: 3.25rem;
 }
 
 .heading {
-  font-size: 1.75rem;
-  font-weight: 300;
+  font-size: 2rem;
+  font-weight: 400;
   line-height: 34px;
   margin-bottom: 0;
 }
 
-.animatedImage {
+.errorGraphic {
   margin-bottom: 4.625rem;
   width: 416px;
   height: 316px;
