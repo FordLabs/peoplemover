@@ -90,6 +90,16 @@ class AssignmentControllerInTimeApiTest {
     val apr2 = "2019-04-02"
     val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
+    private fun getBaseAssignmentForPersonInSpaceOnDateUrl(spaceUuid: String, personId: Int, date: String) =
+        "/api/spaces/${spaceUuid}/person/${personId}/assignments/date/${date}"
+
+    private fun getBaseAssignmentDatesUrl(spaceUuid: String) =
+        "/api/assignment/dates/${spaceUuid}"
+
+    val baseCreateAssignmentUrl = "/api/assignment/create"
+
+    val baseDeleteAssignmentUrl = "/api/assignment/delete"
+
     @Before
     fun setup() {
         editableSpace = spaceRepository.save(Space(name = "tik"))
@@ -148,7 +158,7 @@ class AssignmentControllerInTimeApiTest {
                 effectiveDate = LocalDate.parse(apr2)
         ))
 
-        val result = mockMvc.perform(get("/api/spaces/${editableSpace.uuid}/person/${person.id}/assignments/date/${apr1}")
+        val result = mockMvc.perform(get(getBaseAssignmentForPersonInSpaceOnDateUrl(editableSpace.uuid, person.id!!, apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -173,7 +183,7 @@ class AssignmentControllerInTimeApiTest {
                 effectiveDate = LocalDate.parse(today)
         ))
 
-        val result = mockMvc.perform(get("/api/spaces/${readOnlySpace.uuid}/person/${personInReadOnlySpace.id}/assignments/date/${today}")
+        val result = mockMvc.perform(get(getBaseAssignmentForPersonInSpaceOnDateUrl(readOnlySpace.uuid, personInReadOnlySpace.id!!, today))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -189,7 +199,7 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `GET should return FORBIDDEN when a read only user tries to access assignments from a date that is not today`() {
-        mockMvc.perform(get("/api/spaces/${readOnlySpace.uuid}/person/${personInReadOnlySpace.id}/assignments/date/${apr1}")
+        mockMvc.perform(get(getBaseAssignmentForPersonInSpaceOnDateUrl(readOnlySpace.uuid, personInReadOnlySpace.id!!, apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
                 .andReturn()
@@ -211,7 +221,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = editableSpace.id!!
         ))
 
-        val response = mockMvc.perform(get("/api/assignment/dates/${editableSpace.uuid}")
+        val response = mockMvc.perform(get(getBaseAssignmentDatesUrl(editableSpace.uuid))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn().response
@@ -227,10 +237,8 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `GET dates with changes should return FORBIDDEN when a user does not have edit access`() {
-        val spaceWithoutAccess = 10
-
-        mockMvc.perform(get("/api/assignment/dates/$spaceWithoutAccess")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+        mockMvc.perform(get(getBaseAssignmentDatesUrl(editableSpace.uuid))
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
     }
 
@@ -259,7 +267,7 @@ class AssignmentControllerInTimeApiTest {
                 )
         )
 
-        val result = mockMvc.perform(post("/api/assignment/create")
+        val result = mockMvc.perform(post(baseCreateAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newAssignments)))
@@ -282,7 +290,7 @@ class AssignmentControllerInTimeApiTest {
 
         val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.now(), Person("", -9999), HashSet())
 
-        mockMvc.perform(post("/api/assignment/create")
+        mockMvc.perform(post(baseCreateAssignmentUrl)
                 .header("Authorization", "Bearer VALID_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createAssignmentsRequest)))
@@ -307,7 +315,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = editableSpace.id!!
         )
 
-        val result = mockMvc.perform(post("/api/assignment/create")
+        val result = mockMvc.perform(post(baseCreateAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(assignmentRequest)))
@@ -341,7 +349,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = editableSpace.id!!
         )
 
-        val result = mockMvc.perform(post("/api/assignment/create")
+        val result = mockMvc.perform(post(baseCreateAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(unassignedAssignmentRequest)))
@@ -380,7 +388,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = editableSpace.id!!
         )
 
-        val result = mockMvc.perform(post("/api/assignment/create")
+        val result = mockMvc.perform(post(baseCreateAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyAssignmentRequest)))
@@ -409,7 +417,7 @@ class AssignmentControllerInTimeApiTest {
                         placeholder = false))
         )
 
-        mockMvc.perform(post("/api/assignment/create")
+        mockMvc.perform(post(baseCreateAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bogusAssignmentRequest)))
@@ -426,7 +434,7 @@ class AssignmentControllerInTimeApiTest {
                 products = Sets.newSet(ProductPlaceholderPair(productId = 99999999, placeholder = false))
         )
 
-        mockMvc.perform(post("/api/assignment/create")
+        mockMvc.perform(post(baseCreateAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bogusAssignmentRequest)))
@@ -445,7 +453,7 @@ class AssignmentControllerInTimeApiTest {
         ))
         assertThat(assignmentRepository.count()).isOne()
 
-        mockMvc.perform(delete("/api/assignment/delete")
+        mockMvc.perform(delete(baseDeleteAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(assignmentToDelete)))
@@ -464,7 +472,7 @@ class AssignmentControllerInTimeApiTest {
         )
         assertThat(assignmentRepository.count()).isZero()
 
-        mockMvc.perform(delete("/api/assignment/delete")
+        mockMvc.perform(delete(baseDeleteAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(assignmentNotInDb)))
@@ -481,7 +489,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = -9999
         )
 
-        mockMvc.perform(delete("/api/assignment/delete")
+        mockMvc.perform(delete(baseDeleteAssignmentUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(assignmentToDelete)))
@@ -505,7 +513,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = editableSpace.id!!
         ))
 
-        mockMvc.perform(delete("/api/assignment/delete/$apr1")
+        mockMvc.perform(delete("$baseDeleteAssignmentUrl/$apr1")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(person)))
@@ -532,7 +540,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceId = editableSpace.id!!
         )
 
-        mockMvc.perform(delete("/api/assignment/delete/$mar1")
+        mockMvc.perform(delete("$baseDeleteAssignmentUrl/$mar1")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(person)))
@@ -545,11 +553,10 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `DELETE for date should return 403 when trying to delete without write authorization`() {
-        mockMvc.perform(delete("/api/assignment/delete/$mar1")
+        mockMvc.perform(delete("$baseDeleteAssignmentUrl/$mar1")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(person.copy(spaceId = -999))))
                 .andExpect(status().isForbidden)
-
     }
 }

@@ -68,11 +68,13 @@ class LocationControllerApiTest {
 
     var baseLocationsUrl: String = ""
 
+    private fun getBaseLocationsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/locations"
+
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
 
-        baseLocationsUrl = "/api/spaces/" + space.uuid + "/locations"
+        baseLocationsUrl = getBaseLocationsUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
     }
 
@@ -106,17 +108,15 @@ class LocationControllerApiTest {
 
     @Test
     fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
-        val testSpace: Space = spaceRepository.save(Space(name = "blahblah", currentDateViewIsPublic = false))
-
         mockMvc.perform(
-            get("/api/spaces/" + testSpace.uuid + "/locations")
+            get(getBaseLocationsUrl(space.uuid))
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
         ).andExpect(status().isForbidden)
     }
 
     @Test
     fun `GET should return 400 when given bad space`() {
-        val badLocationsUrl = "/api/spaces/tok1/locations"
+        val badLocationsUrl = getBaseLocationsUrl("tok1")
         mockMvc.perform(get(badLocationsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
@@ -173,8 +173,8 @@ class LocationControllerApiTest {
     fun `POST should return 403 when trying to add location without write authorization`() {
         val requestBodyObject = LocationAddRequest("it's lockdown there is no where BUT home")
 
-        mockMvc.perform(post("/api/spaces/-9999/locations")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(post(baseLocationsUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -205,10 +205,10 @@ class LocationControllerApiTest {
 
     @Test
     fun `PUT should return 403 when trying to edit location without write authorization`() {
-        val requestBodyObject = LocationEditRequest(1, "lockdown means I can't leave home")
+        val requestBodyObject = LocationEditRequest(1, "me and you, and you and me, so HAAPPPY TOGEEEETHERRRRRRR")
 
-        mockMvc.perform(put("/api/spaces/-9999/locations")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(put(baseLocationsUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -238,9 +238,10 @@ class LocationControllerApiTest {
 
     @Test
     fun `DELETE should return 403 when trying to delete location without write authorization`() {
+        val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Deutschland"))
 
-        mockMvc.perform(delete("/api/spaces/-9999/locations/1")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+        mockMvc.perform(delete("$baseLocationsUrl/${spaceLocation.id!!}")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
     }
 

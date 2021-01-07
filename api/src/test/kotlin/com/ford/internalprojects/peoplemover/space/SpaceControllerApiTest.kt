@@ -153,7 +153,6 @@ class SpaceControllerApiTest {
 
         val accessToken = "TOKEN"
 
-
         val result = mockMvc.perform(get("$baseSpaceUrl/user")
                 .header("Authorization", "Bearer $accessToken"))
                 .andExpect(status().isOk)
@@ -228,7 +227,7 @@ class SpaceControllerApiTest {
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
         val editedSpace = SpaceRequest(name = "edited")
 
-        mockMvc.perform(put(baseSpaceUrl + "/" + space.uuid)
+        mockMvc.perform(put("$baseSpaceUrl/${space.uuid}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
@@ -246,7 +245,7 @@ class SpaceControllerApiTest {
 
         val editedSpace = SpaceRequest(name = "12345678901234567890123456789012345678901")
 
-        mockMvc.perform(put(baseSpaceUrl + "/" + space.uuid)
+        mockMvc.perform(put("$baseSpaceUrl/${space.uuid}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
@@ -262,7 +261,7 @@ class SpaceControllerApiTest {
 
         val request = AuthInviteUsersToSpaceRequest(emails = emails)
 
-        val result = mockMvc.perform(put("/api/spaces/${space.uuid}:invite")
+        val result = mockMvc.perform(put("$baseSpaceUrl/${space.uuid}:invite")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
@@ -288,7 +287,7 @@ class SpaceControllerApiTest {
 
         val space = spaceRepository.save(Space(name = "spaceName"))
 
-        mockMvc.perform(put("/api/spaces/${space.uuid}:invite")
+        mockMvc.perform(put("$baseSpaceUrl/${space.uuid}:invite")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json")
@@ -297,14 +296,13 @@ class SpaceControllerApiTest {
         )
     }
 
-
     @Test
     fun `PUT should return 403 when trying to add users to space without write authorization`() {
         val space = spaceRepository.save(Space(name = "spaceName"))
 
         val requestBodyObject = AuthInviteUsersToSpaceRequest(emails = listOf("email_1@email.com", "email_2@otheremail.com"))
 
-        mockMvc.perform(put("/api/spaces/${space.uuid}:invite")
+        mockMvc.perform(put("$baseSpaceUrl/${space.uuid}:invite")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
@@ -317,7 +315,7 @@ class SpaceControllerApiTest {
 
         val requestBodyObject = SpaceRequest("not empty")
 
-        mockMvc.perform(put("/api/spaces/${space.uuid}")
+        mockMvc.perform(put("$baseSpaceUrl/${space.uuid}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
