@@ -20,6 +20,7 @@ import './Error404Page.scss';
 import Header from '../Header/Header';
 import AnimatedImageSrc from './Assets/404.gif';
 import Branding from '../ReusableComponents/Branding';
+import FormButton from '../ModalFormComponents/FormButton';
 
 function Error404Page(): JSX.Element {
     return (
@@ -29,9 +30,13 @@ function Error404Page(): JSX.Element {
                 <h1 className="oopsText">Oops!</h1>
                 <img src={AnimatedImageSrc} alt="" className="animatedImage"/>
                 <div>
-                    <div className="heading">It seems all your people have moved to another planet.</div>
-                    <div className="sub-heading">You’ve hit a 404 error. We can’t seem to find the page you’re looking for, please double check your link.</div>
+                    <div className="heading">We can&apos;t seem to find the page you&apos;re looking for. Please double check your link.</div>
                 </div>
+                <a href="/user/dashboard">
+                    <FormButton className="backToDashboardButton">
+                        Back to Dashboard
+                    </FormButton>
+                </a>
             </div>
 
             <footer className="errorPageFooter">

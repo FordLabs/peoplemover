@@ -26,32 +26,34 @@
 }
 
 .oopsText {
-  font-size: 4rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: inherit;
+  margin-bottom: 3.25rem;
 }
 
 .heading {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 16px;
+  font-size: 1.75rem;
+  font-weight: 300;
   line-height: 34px;
-}
-
-.sub-heading {
-  font-style: italic;
-  font-size: 1rem;
-  line-height: 24px;
-  padding: 0 52px;
+  margin-bottom: 0;
 }
 
 .animatedImage {
-  margin-bottom: 32px;
+  margin-bottom: 4.625rem;
   width: 416px;
   height: 316px;
 }
 
 .ErrorImageAndTextContainer {
   margin: auto;
-  max-width: 492px;
+  max-width: 546px;
+}
+
+.backToDashboardButton {
+  width: 17rem;
+  height: 3.75rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
 }
