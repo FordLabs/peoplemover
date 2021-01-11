@@ -107,11 +107,21 @@ class LocationControllerApiTest {
 
 
     @Test
-    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+    fun `GET should return 403 when valid token does not have editor access and the space's read-only flag is off`() {
         mockMvc.perform(
             get(getBaseLocationsUrl(space.uuid))
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
         ).andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `GET should return 200 when valid token does not have editor access and the space's read-only flag is on`() {
+        val readOnlySpace = spaceRepository.save(Space(name = "readme", currentDateViewIsPublic = true))
+
+        mockMvc.perform(
+            get(getBaseLocationsUrl(readOnlySpace.uuid))
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        ).andExpect(status().isOk)
     }
 
     @Test

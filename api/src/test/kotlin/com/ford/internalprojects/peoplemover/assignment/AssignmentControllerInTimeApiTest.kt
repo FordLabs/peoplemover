@@ -184,7 +184,7 @@ class AssignmentControllerInTimeApiTest {
         ))
 
         val result = mockMvc.perform(get(getBaseAssignmentForPersonInSpaceOnDateUrl(readOnlySpace.uuid, personInReadOnlySpace.id!!, today))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
         val actualAssignments: List<Assignment> = objectMapper.readValue(

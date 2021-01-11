@@ -197,7 +197,7 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `GET should return 200 read-only when valid token that isn't an editor requests a space while read-only flag is on`() {
+    fun `GET should return 200 when valid token that isn't an editor requests a space while read-only flag is on`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne", currentDateViewIsPublic = true))
 
         mockMvc.perform(get(baseSpaceUrl + "/" + space1.uuid)

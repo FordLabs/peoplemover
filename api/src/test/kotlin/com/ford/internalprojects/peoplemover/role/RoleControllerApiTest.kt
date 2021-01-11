@@ -141,6 +141,19 @@ class RoleControllerApiTest {
     }
 
     @Test
+    fun `GET should return 200 when valid token that isn't an editor requests a space while read-only flag is on`() {
+        val anonymousUserReadOnlySpace: Space = spaceRepository.save(Space(name = "SpaceOne", currentDateViewIsPublic = true))
+        val role1: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Fireman", spaceId = anonymousUserReadOnlySpace.id!!))
+
+        mockMvc.perform(get(getBaseRolesUrl(anonymousUserReadOnlySpace.uuid))
+            .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(role1)))
+            .andExpect(status().isOk)
+            .andReturn()
+    }
+
+    @Test
     fun `POST should return 409 when trying to add duplicate space role name to same space`() {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Firefighter", spaceId = space.id!!))
         val newRole = RoleAddRequest(name = spaceRole.name)
