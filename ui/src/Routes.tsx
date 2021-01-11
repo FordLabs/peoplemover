@@ -25,10 +25,13 @@ import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute';
 import PeopleMover from './Application/PeopleMover';
-import Error404Page from './Application/Error404Page';
+import ErrorPageTemplate from './Application/ErrorPageTemplate';
+import AnimatedImageSrc from './Application/Assets/404.gif';
+import errorImageSrc from './Application/Assets/403.png';
 
 const dashboardUrl = '/user/dashboard';
 const notFoundUrl = '/error/404';
+const forbiddenUrl = '/error/403';
 
 function Routes(): JSX.Element {
     return (
@@ -55,7 +58,11 @@ function Routes(): JSX.Element {
                 </AuthorizedRoute>
 
                 <Route path={notFoundUrl}>
-                    <Error404Page/>
+                    <ErrorPageTemplate errorGraphic={AnimatedImageSrc} errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."/>
+                </Route>
+
+                <Route path={forbiddenUrl}>
+                    <ErrorPageTemplate errorGraphic={errorImageSrc} errorText="You don&apos;t have access to this page. Please request access."/>
                 </Route>
 
                 <Route>
