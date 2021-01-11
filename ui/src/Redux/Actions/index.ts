@@ -47,7 +47,8 @@ export enum AvailableActions {
     SET_LOCATIONS,
     SET_PRODUCT_SORT_BY,
     SET_USER_SPACES,
-    SET_IS_READ_ONLY
+    SET_IS_READ_ONLY,
+    SET_IS_DRAGGING
 }
 
 export enum AvailableModals {
@@ -150,6 +151,11 @@ export const setUserSpacesAction = (userSpaces: Array<Space>) => ({
 export const setIsReadOnlyAction = (isReadOnly: boolean) => ({
     type: AvailableActions.SET_IS_READ_ONLY,
     isReadOnly,
+});
+
+export const setIsDragging = (isDragging: boolean) => ({
+    type: AvailableActions.SET_IS_DRAGGING,
+    isDragging,
 });
 
 export const fetchUserSpacesAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>

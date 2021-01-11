@@ -18,14 +18,17 @@
 import React, {ReactElement, useState} from 'react';
 import {Assignment} from './Assignment';
 import './PersonAndRoleInfo.scss';
+import {GlobalStateProps} from '../Redux/Reducers';
+import {connect} from 'react-redux';
 
 interface Props {
     assignment: Assignment;
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
+    isDragging: boolean;
 }
 
-const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct }: Props): ReactElement => {
+const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging }: Props): ReactElement => {
     const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
@@ -61,14 +64,12 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer">
             <div className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
-                data-testid="personName"
-                onMouseEnter={(): void => onNoteHover(true)}
-                onMouseLeave={(): void => onNoteHover(false)}>
+                data-testid="personName">
                 {person.name}
                 {!!person.notes && !!person.notes.trim() &&
-                    <i className={`material-icons notesIcon ${isUnassignedProduct ? 'unassignedNotesIcon' : ''}`} data-testid="notesIcon">
+                    <i className={`material-icons notesIcon ${isUnassignedProduct ? 'unassignedNotesIcon' : ''}`} data-testid="notesIcon" onMouseEnter={(): void => onNoteHover(true)} onMouseLeave={(): void => onNoteHover(false)}>
                         note
-                        {showHoverBox && <HoverBox notes={person.notes}/>}
+                        {!isDragging && showHoverBox && <HoverBox notes={person.notes}/>}
                     </i>
                 }
             </div>
@@ -81,4 +82,10 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
     );
 };
 
-export default PersonAndRoleInfo;
+/* eslint-disable */
+const mapStateToProps = (state: GlobalStateProps) => ({
+    isDragging: state.isDragging,
+});
+
+export default connect(mapStateToProps)(PersonAndRoleInfo);
+/* eslint-enable */
