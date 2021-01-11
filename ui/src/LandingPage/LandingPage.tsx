@@ -18,18 +18,15 @@
 import React from 'react';
 import LandingPageImage from './LandingPageImage.svg';
 import LandingPageBackground from './LandingPageBackground.svg';
-import FormButton from '../ModalFormComponents/FormButton';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
+import Branding from '../ReusableComponents/Branding';
 
 import './LandingPage.scss';
-import Branding from '../ReusableComponents/Branding';
 
 function LandingPage(): JSX.Element {
     const LoginButton = (): JSX.Element => (
-        <a href="/user/login">
-            <FormButton className="getStartedButton">
-                Get Started
-            </FormButton>
+        <a href="/user/login" className="primaryButton getStartedButton">
+            Get Started
         </a>
     );
 
@@ -37,7 +34,7 @@ function LandingPage(): JSX.Element {
         <>
             <div className="landingPageContainer">
                 <div className="landingPageInfoContainer">
-                    <PeopleMoverLogo />
+                    <PeopleMoverLogo/>
                     <div className="landingPageInfoHeading">It’s about the people. Your people.</div>
                     <div className="landingPageInfoSubHeading">And helping them be extraordinary.</div>
                     <div className="landingPageInfoText">
@@ -46,17 +43,18 @@ function LandingPage(): JSX.Element {
                         helping you create and fluidly maintain balanced teams well suited for the product at hand –
                         because we understand that a great team sets the stage for incredible results.
                     </div>
-                    <LoginButton />
+                    <LoginButton/>
                 </div>
                 <div className="landingPageImageContainer">
                     <img className="landingPageImage"
                         src={LandingPageImage}
-                        alt=""/>
+                        alt="Preview of People Mover Space after logging in"/>
                     <Branding brand="FordLabs" message="Powered by"/>
                 </div>
             </div>
-            <img className="landingPageBackground" src={LandingPageBackground} alt=""/>
+            <img className="landingPageBackground" src={LandingPageBackground} alt="" role="presentation"/>
         </>
     );
 }
+
 export default LandingPage;

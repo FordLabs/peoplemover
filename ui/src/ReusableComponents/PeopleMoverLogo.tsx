@@ -30,7 +30,7 @@ function PeopleMoverLogo({ href }: Props): JSX.Element {
         <CustomElement
             href={href}
             className="peopleMoverLogoContainer">
-            <img src={PersonIcon} alt=""/>
+            <img src={PersonIcon} alt="People Mover Logo"/>
             <h1 className="peopleMoverTitle">PEOPLEMOVER</h1>
         </CustomElement>
     );

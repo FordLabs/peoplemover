@@ -32,7 +32,7 @@ function Branding({
         <p className={'branding-message'}>{message}</p>
         <img className={'branding-image'}
             src={require('../Application/Assets/fordlabs_logo.svg')}
-            alt={message}
+            alt={'Ford labs logo'}
             width="20"
             height="20"/>
         <p className={'branding-message'}>{brand}</p>

@@ -94,4 +94,9 @@
 .getStartedButton {
   height: 34px;
   width: 135px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  text-decoration: none;
 }
