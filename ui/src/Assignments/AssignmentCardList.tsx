@@ -18,7 +18,7 @@
 import React, {RefObject, useEffect, useState} from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
-import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, fetchProductsAction, setCurrentModalAction, setIsDragging} from '../Redux/Actions';
 import {
     AssignmentCardRefAndAssignmentPair,
     getProductUserDroppedAssignmentOn,
@@ -46,6 +46,7 @@ interface AssignmentCardListProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     fetchProducts(): void;
     setCurrentModal(modalState: CurrentModalState): void;
+    setIsDragging(isDragging: boolean): void;
 }
 
 function AssignmentCardList({
@@ -57,6 +58,7 @@ function AssignmentCardList({
     allGroupedTagFilterOptions,
     fetchProducts,
     setCurrentModal,
+    setIsDragging,
 }: AssignmentCardListProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
@@ -118,6 +120,7 @@ function AssignmentCardList({
         window.removeEventListener('mouseup', stopDraggingAssignment);
 
         setAntiHighlightCoverDisplay('none');
+        setIsDragging(false);
 
         onDrop().then();
     }
@@ -201,6 +204,8 @@ function AssignmentCardList({
             ref.style.zIndex = '11';
             ref.style.top = `${top}px`;
             ref.style.left = `${left}px`;
+
+            setIsDragging(true);
         } else {
             console.log('Issue with dragging assignment.');
         }
@@ -253,6 +258,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     fetchProducts: () => dispatch(fetchProductsAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
+    setIsDragging: (isDragging: boolean) => dispatch(setIsDragging(isDragging)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCardList);
