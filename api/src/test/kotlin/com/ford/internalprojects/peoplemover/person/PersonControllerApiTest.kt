@@ -43,7 +43,6 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.*
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -210,7 +209,7 @@ class PersonControllerApiTest {
 
     @Test
     fun `GET should return 200 read-only when valid token that isn't an editor requests a space while read-only flag is on`() {
-        val space1: Space = spaceRepository.save(Space(name = "SpaceOne", currentDateViewIsPublic = true))
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne", todayViewIsPublic = true))
 
         mockMvc.perform(get(getBasePeopleUrl(space1.uuid))
             .header("Authorization", "Bearer ANONYMOUS_TOKEN"))

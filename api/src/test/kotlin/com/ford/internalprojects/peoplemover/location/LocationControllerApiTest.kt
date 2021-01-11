@@ -116,7 +116,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `GET should return 200 when valid token does not have editor access and the space's read-only flag is on`() {
-        val readOnlySpace = spaceRepository.save(Space(name = "readme", currentDateViewIsPublic = true))
+        val readOnlySpace = spaceRepository.save(Space(name = "readme", todayViewIsPublic = true))
 
         mockMvc.perform(
             get(getBaseLocationsUrl(readOnlySpace.uuid))

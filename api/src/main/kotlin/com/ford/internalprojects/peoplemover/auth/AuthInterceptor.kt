@@ -4,12 +4,10 @@ import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.security.access.PermissionEvaluator
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import java.io.Serializable
-
 
 @Component
 class CustomPermissionEvaluator(
@@ -37,7 +35,7 @@ class CustomPermissionEvaluator(
 
     private fun handleReadPermissions(currentSpace: Space?, auth: Authentication): Boolean {
         if (currentSpace == null) throw SpaceNotExistsException()
-        return if (currentSpace.currentDateViewIsPublic) true
+        return if (currentSpace.todayViewIsPublic) true
         else userSpaceMappingRepository.findByUserIdAndSpaceId(auth.name, currentSpace.id!!).isPresent
     }
 

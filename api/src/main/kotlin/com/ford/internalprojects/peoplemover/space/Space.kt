@@ -45,8 +45,8 @@ data class Space (
     @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
     val locations: List<SpaceLocation> = ArrayList(),
 
-    @Column(name="current_date_view_is_public")
-    var currentDateViewIsPublic: Boolean = false,
+    @Column(name="today_view_is_public")
+    var todayViewIsPublic: Boolean = false,
 
     var lastModifiedDate: Timestamp? = null,
 

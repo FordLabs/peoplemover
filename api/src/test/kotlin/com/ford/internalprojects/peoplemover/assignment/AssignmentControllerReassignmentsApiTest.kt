@@ -93,7 +93,7 @@ class AssignmentControllerReassignmentsApiTest {
     @Before
     fun setup() {
         editableSpace = spaceRepository.save(Space(name = "tik"))
-        readOnlySpace = spaceRepository.save(Space(name = "tok", currentDateViewIsPublic = true))
+        readOnlySpace = spaceRepository.save(Space(name = "tok", todayViewIsPublic = true))
         productOne = productRepository.save(Product(name = "Justice League", spaceId = editableSpace.id!!))
         productTwo = productRepository.save(Product(name = "Avengers", spaceId = editableSpace.id!!))
         productThree = productRepository.save(Product(name = "Misfits", spaceId = editableSpace.id!!))
