@@ -189,6 +189,7 @@ describe('PeopleMover', () => {
 
     describe('Routing', () => {
         const BAD_REQUEST = 400;
+        const FORBIDDEN = 403;
         const expectedSpaceUuid = 'somebadName';
 
         beforeEach(() => {
@@ -211,5 +212,20 @@ describe('PeopleMover', () => {
                 expect(history.location.pathname).toEqual('/error/404');
             });
         });
+
+        it('should route to 403 page when user does not have access to a space', async () => {
+            SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: FORBIDDEN}});
+
+            renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
+
+            expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(expectedSpaceUuid);
+            await wait(() => {
+                expect(history.location.pathname).toEqual('/error/403');
+            });
+        })
     });
 });
