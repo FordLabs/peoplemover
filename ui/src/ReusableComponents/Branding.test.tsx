@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import React from 'react';
+import {renderWithRedux} from '../tests/TestUtils';
+import Branding from './Branding';
+import {RunConfig} from '../index';
 
-@import '../Application/Styleguide/Colors.scss';
+describe('Branding', () => {
+    const expectedUrl = 'http://url.com';
 
-.brandingImage {
-  vertical-align: middle;
-  margin: 0 3px;
-}
-
-.brandingMessage {
-  display: inline;
-  font-size: 12px;
-  color: $gray-2;
-  margin: 0;
-}
-
-.brandingContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: auto;
-  padding: 16px 0;
-}
+    beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {ford_labs_url: expectedUrl} as RunConfig;
+    });
+    
+    it('should get url from config', () => {
+        const comp = renderWithRedux(<Branding />);
+        const actualUrl = comp.getByText('FordLabs');
+        expect(actualUrl).toHaveAttribute('href', expectedUrl);
+    });
+});

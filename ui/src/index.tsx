@@ -68,6 +68,7 @@ declare global {
 
 export interface RunConfig {
     auth_enabled: boolean;
+    ford_labs_url: string;
     invite_users_to_space_enabled: boolean;
     adfs_url_template: string;
     adfs_client_id: string;

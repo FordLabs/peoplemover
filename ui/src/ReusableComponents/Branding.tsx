@@ -17,19 +17,26 @@
 
 import React from 'react';
 import './Branding.scss';
+import FordLabsLogo from '../Application/Assets/fordlabs_logo.svg';
 
 function Branding(): JSX.Element {
+    const fordLabsUrl = window?.runConfig?.ford_labs_url || '';
     return (
-        <div className="branding-container"
+        <div className="brandingContainer"
             aria-label="Powered by Ford Labs">
-            <p className="branding-message">Powered by</p>
-            <img className="branding-image"
-                src={require('../Application/Assets/fordlabs_logo.svg')}
+            <span className="brandingMessage">Powered by</span>
+            <img className="brandingImage"
+                src={FordLabsLogo}
                 alt=""
                 aria-hidden
                 width="20"
                 height="20"/>
-            <p className="branding-message">FordLabs</p>
+            <a target="_blank"
+                rel="noopener noreferrer"
+                href={fordLabsUrl}
+                className="brandingMessage">
+                FordLabs
+            </a>
         </div>
     );
 }
