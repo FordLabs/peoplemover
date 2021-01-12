@@ -32,6 +32,7 @@ function Branding(): JSX.Element {
                 width="20"
                 height="20"/>
             <a target="_blank"
+                rel="noopener noreferrer"
                 href={fordLabsUrl}
                 className="brandingMessage">
                 FordLabs
