@@ -80,22 +80,21 @@ class SpaceService(
     fun editSpace(uuid: String, editSpaceRequest: EditSpaceRequest) {
         val spaceToEdit = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
 
-        if (editSpaceRequest.name == null
-            && editSpaceRequest.todayViewIsPublic == null) {
+        if (editSpaceRequest.todayViewIsPublic == null &&
+            editSpaceRequest.name == null) {
             return
         }
 
-        if (editSpaceRequest.name != null) {
-            if (editSpaceRequest.name.length > 40) {
+        editSpaceRequest.name?.let {
+            if (it.length > 40) {
                 throw SpaceNameTooLongException()
             }
-            spaceToEdit.name = editSpaceRequest.name
+            spaceToEdit.name = it
         }
 
-        if (editSpaceRequest.todayViewIsPublic != null) {
-            spaceToEdit.todayViewIsPublic = editSpaceRequest.todayViewIsPublic
+        editSpaceRequest.todayViewIsPublic?.let {
+            spaceToEdit.todayViewIsPublic = it
         }
-
 
         spaceToEdit.lastModifiedDate = Timestamp(Date().time)
         spaceRepository.save(spaceToEdit)
