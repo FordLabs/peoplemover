@@ -19,7 +19,7 @@ package com.ford.internalprojects.peoplemover.auth
 
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -42,11 +42,16 @@ class AuthController(
         val validateTokenResponse = authService.validateToken(request.accessToken)
 
         val spaceToSearch = spaceRepository.findByUuid(request.uuid)
-        val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.sub, spaceToSearch!!.id!!)
-        return if (mapping.isPresent) {
-            ResponseEntity.ok().build()
+
+        return if (spaceToSearch !== null) {
+            val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.sub, spaceToSearch.id!!)
+            return if (mapping.isPresent) {
+                ResponseEntity.ok().build()
+            } else {
+                ResponseEntity.status(FORBIDDEN).build()
+            }
         } else {
-            ResponseEntity.status(FORBIDDEN).build()
+            ResponseEntity.status(NOT_FOUND).build()
         }
     }
 

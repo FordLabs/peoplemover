@@ -25,6 +25,7 @@ import {setIsReadOnlyAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 
 const HTTP_UNAUTHORIZED = 401;
+const HTTP_NOT_FOUND = 404;
 const HTTP_FORBIDDEN = 403;
 
 interface AuthorizedRouteProps extends RouteProps {
@@ -58,9 +59,13 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
                             setRenderedElement(<Route {...rest}>{children}</Route>);
                             break;
                         }
+                        case HTTP_NOT_FOUND: {
+                            setRenderedElement(<Redirect to="/error/404"/>);
+                            break;
+                        }
                         case HTTP_UNAUTHORIZED:
                         default: {
-                            setRenderedElement(<Redirect to={'/user/login'}/>);
+                            setRenderedElement(<Redirect to="/user/login"/>);
                         }
                     }
                 });

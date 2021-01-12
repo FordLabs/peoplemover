@@ -96,7 +96,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `POST should return 200 ok if space uuid is found in database for user from ADFS`() {
+    fun `POST validateAndAuthenticateAccessToken should return 200 ok if space uuid is found in database for user from ADFS`() {
         val accessToken = "fake_access_token"
         `when`(jwtDecoder.decode(accessToken)).thenReturn(getJwt(accessToken))
 
@@ -117,7 +117,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `POST should return 403 if space not mapped to user`() {
+    fun `POST validateAndAuthenticateAccessToken should return 403 if space not mapped to user`() {
         val accessToken = "fake_access_token"
         `when`(jwtDecoder.decode(accessToken)).thenReturn(getJwt(accessToken))
 
@@ -132,6 +132,22 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
                 .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `POST validateAndAuthenticateAccessToken should return 404 if space does not exist`() {
+        val accessToken = "fake_access_token"
+        `when`(jwtDecoder.decode(accessToken)).thenReturn(getJwt(accessToken))
+
+        val request = AuthCheckScopesRequest(
+                accessToken = accessToken,
+                uuid = "SpaceUUID")
+
+        mockMvc.perform(post("/api/access_token/authenticate")
+                .header("Authorization", "Bearer fake_access_token")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json"))
+                .andExpect(status().isNotFound)
     }
 
     private fun getJwt(accessToken: String): Jwt {

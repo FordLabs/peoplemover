@@ -50,6 +50,14 @@ describe('Authorized Route', () => {
         expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(true));
     });
 
+    it('should show 404 page when security is enabled and space uuid does not exist', async () => {
+        Axios.post = jest.fn(() => Promise.reject({response: {status: 404}} as AxiosError));
+        let {history} = await renderComponent(true);
+        expect(history.location.pathname).toEqual('/error/404');
+        expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(true));
+    });
+
+
     it('should show the child element when security is disabled', async () => {
         Axios.post = jest.fn().mockRejectedValue({});
         let {result} = await renderComponent(false);
