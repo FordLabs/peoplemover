@@ -84,10 +84,10 @@ function PeopleMover({
     }
 
     const handleErrors = useCallback((error: AxiosError): Error | null => {
-        if (error?.response?.status == BAD_REQUEST) {
+        if (error?.response?.status === BAD_REQUEST) {
             setRedirect(<Redirect to="/error/404"/>);
             return null;
-        } else if ( error?.response?.status == FORBIDDEN) {
+        } else if ( error?.response?.status === FORBIDDEN) {
             setRedirect(<Redirect to="/error/403"/>);
             return null;
         } else {
