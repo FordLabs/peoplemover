@@ -29,7 +29,6 @@ function PeopleMoverLogo({ href }: Props): JSX.Element {
     return (
         <CustomElement
             href={href}
-            tabIndex={0}
             aria-label="People Mover Logo"
             className="peopleMoverLogoContainer">
             <img src={PersonIcon} alt="" aria-hidden />
