@@ -40,7 +40,7 @@ function Error404Page(): JSX.Element {
             </div>
 
             <footer className="errorPageFooter">
-                <Branding brand="FordLabs" message="Powered by"/>
+                <Branding />
             </footer>
 
         </div>

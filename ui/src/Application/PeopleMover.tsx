@@ -152,7 +152,7 @@ function PeopleMover({
                     </div>
                     <CurrentModal/>
                 </div>
-                <Branding brand="FordLabs" message="Powered by"/>
+                <Branding />
             </div>
     );
 }

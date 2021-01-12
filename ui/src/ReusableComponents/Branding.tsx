@@ -18,25 +18,20 @@
 import React from 'react';
 import './Branding.scss';
 
-interface BrandingProps{
-    message: string;
-    brand: string;
-}
-
-function Branding({
-    message,
-    brand,
-}: BrandingProps): JSX.Element {
-
-    return (<div className={'branding-container'}>
-        <p className={'branding-message'}>{message}</p>
-        <img className={'branding-image'}
-            src={require('../Application/Assets/fordlabs_logo.svg')}
-            alt={'Ford labs logo'}
-            width="20"
-            height="20"/>
-        <p className={'branding-message'}>{brand}</p>
-    </div>);
+function Branding(): JSX.Element {
+    return (
+        <div className="branding-container"
+            aria-label="Powered by Ford Labs">
+            <p className="branding-message">Powered by</p>
+            <img className="branding-image"
+                src={require('../Application/Assets/fordlabs_logo.svg')}
+                alt=""
+                aria-hidden
+                width="20"
+                height="20"/>
+            <p className="branding-message">FordLabs</p>
+        </div>
+    );
 }
 
 export default Branding;

@@ -71,6 +71,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-top: 56px;
+  margin-bottom: 0;
 }
 
 .landingPageInfoSubHeading {
@@ -80,6 +81,7 @@
   color: $purple-title;
   margin-bottom: 8px;
   margin-top: 18px;
+  letter-spacing: 0;
 }
 
 .landingPageInfoText {
@@ -89,6 +91,7 @@
   line-height: 24px;
   color: $gray-1;
   margin-bottom: 36px;
+  margin-top: 0;
 }
 
 .getStartedButton {
