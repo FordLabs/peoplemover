@@ -44,7 +44,7 @@ function ErrorPageTemplate({errorGraphic, errorText}: Props): JSX.Element {
             </div>
 
             <footer className="errorPageFooter">
-                <Branding brand="FordLabs" message="Powered by"/>
+                <Branding />
             </footer>
 
         </div>

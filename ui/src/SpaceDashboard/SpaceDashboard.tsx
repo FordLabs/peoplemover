@@ -123,7 +123,7 @@ function SpaceDashboard({
             <Header hideSpaceButtons={true}/>
             <CurrentModal/>
             {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
-            <Branding brand="FordLabs" message="Powered by"/>
+            <Branding />
         </div>
     );
 }
