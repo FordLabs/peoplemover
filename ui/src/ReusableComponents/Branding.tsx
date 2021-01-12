@@ -20,7 +20,7 @@ import './Branding.scss';
 import FordLabsLogo from '../Application/Assets/fordlabs_logo.svg';
 
 function Branding(): JSX.Element {
-    const fordLabsUrl = window.runConfig.ford_labs_url || '';
+    const fordLabsUrl = window?.runConfig?.ford_labs_url || '';
     return (
         <div className="brandingContainer"
             aria-label="Powered by Ford Labs">
