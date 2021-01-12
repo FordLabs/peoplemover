@@ -226,6 +226,6 @@ describe('PeopleMover', () => {
             await wait(() => {
                 expect(history.location.pathname).toEqual('/error/403');
             });
-        })
+        });
     });
 });
