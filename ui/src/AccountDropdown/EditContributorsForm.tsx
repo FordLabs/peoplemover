@@ -37,7 +37,6 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
 
-
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
 
@@ -50,11 +49,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
 
     const parseEmails = (event: ChangeEvent<HTMLTextAreaElement>): void => {
         const emails: string[] = event.target.value.split(',').map((email: string) => email.trim());
-        if (validateEmail(emails[0])) {
-            setEnableInviteButton(true);
-        } else {
-            setEnableInviteButton(false);
-        }
+        setEnableInviteButton(validateEmail(emails[0]));
         setInvitedUserEmails(emails);
     };
 
@@ -66,7 +61,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
 
     return (
         <form className="editContributorsContainer form"
-            onSubmit={(event): Promise<void> => inviteUsers(event)}>
+            onSubmit={inviteUsers}>
             <div className="inviteContributorsLabel">Invite others to collaborate</div>
             <textarea
                 placeholder="email1@ford.com, email2@ford.com"
