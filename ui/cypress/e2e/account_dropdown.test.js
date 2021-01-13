@@ -44,7 +44,8 @@ describe('Account Dropdown', () => {
             cy.get('[data-testid=editContributorsToggleReadOnlySwitch]').as('toggleReadOnlySwitch');
             cy.get('@toggleReadOnlySwitch')
                 .should('not.be.checked')
-                .check()
+                .siblings('.react-switch-bg').click();
+            cy.get('@toggleReadOnlySwitch')
                 .should('be.checked');
         });
     });

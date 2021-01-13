@@ -26,7 +26,7 @@ import FormButton from '../ModalFormComponents/FormButton';
 import './EditContributorsForm.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
-import Sweetch from 'react-switch';
+import ReactSwitch from 'react-switch';
 
 interface Props {
     currentSpace: Space;
@@ -39,7 +39,17 @@ interface Props {
 function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props): JSX.Element {
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
+    const [enableReadOnly, setEnableReadOnly] = useState<boolean>(false);
+    const linkToSpace: string = window.location.href;
+    const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
+    const copyLink = async (event: React.MouseEvent): Promise<void> => {
+        event.preventDefault();
+        await navigator.clipboard.writeText(linkToSpace);
+        setCopiedLink(true);
+
+        setTimeout(() => {setCopiedLink(false);}, 3000);
+    };
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
@@ -68,18 +78,44 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
     };
 
     const toggleReadOnlyEnabled = (checked: any) => {
-        console.log('Read only checked? ' + checked);
+        setEnableReadOnly(checked);
     };
 
     return (
         <form className="editContributorsContainer form"
             onSubmit={(event): Promise<void> => inviteUsers(event)}>
-            <div className="inviteContributorsLabel">Invite others to collaborate</div>
-            <textarea
-                placeholder="email1@ford.com, email2@ford.com"
-                onChange={parseEmails}
-                data-testid="emailTextArea"/>
-            <Sweetch data-testid="editContributorsToggleReadOnlySwitch" onChange={toggleReadOnlyEnabled} checked={false} checkedIcon={false} uncheckedIcon={false} width={27} height={13}/>
+            <label className="inviteViewersLabel">
+                <span>People with this link can view only</span>
+                <div className="inviteContributorsConfirmationShareLinkContainer">
+                    <div className="inviteContributorsConfirmationLink" data-testid="inviteContributorsConfirmationLink">
+                        {linkToSpace}
+                    </div>
+                    <button className="inviteContributorsConfirmationCopyButton"
+                            data-testid="inviteContributorsConfirmationCopyButton"
+                            onClick={copyLink}>
+                        {copiedLink ? 'Copied!' : 'Copy link'}
+                    </button>
+                </div>
+            </label>
+            <label className={"enableReadOnlyLabel"}>
+                <span>View only access is {enableReadOnly ? 'enabled' : 'disabled'}</span>
+                    <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
+                                 onChange={toggleReadOnlyEnabled}
+                                 checked={enableReadOnly}
+                                 checkedIcon={false}
+                                 uncheckedIcon={false}
+                                 width={27} height={13}
+                    />
+            </label>
+            <h2 className="editTitle">Invite others to edit</h2>
+            <label className="inviteContributorsLabel">
+                <span>People with this permission can edit</span>
+                <textarea
+                    placeholder="email1@ford.com, email2@ford.com"
+                    onChange={parseEmails}
+                    data-testid="emailTextArea"/>
+            </label>
+
             <div className="editContributorsButtonContainer">
                 <FormButton
                     buttonStyle="secondary"
