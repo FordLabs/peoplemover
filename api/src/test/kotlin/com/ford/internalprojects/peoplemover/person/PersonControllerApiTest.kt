@@ -110,7 +110,8 @@ class PersonControllerApiTest {
                 spaceRole = spaceRole,
                 notes = "Some Notes",
                 newPerson = true,
-                spaceId = space.id!!
+                spaceId = space.id!!,
+                spaceUuid = space.uuid
         )
         assertThat(personRepository.count()).isZero()
         val result = mockMvc.perform(post(basePeopleUrl)
@@ -135,7 +136,7 @@ class PersonControllerApiTest {
 
     @Test
     fun `POST should return 403 when trying to add person to a space without write authorization`() {
-        val requestBodyObject = Person("name", -9999)
+        val requestBodyObject = Person(name = "name", spaceUuid = "-9999", spaceId = -9999)
 
         mockMvc.perform(post("/api/spaces/${UUID.randomUUID()}/people")
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -148,7 +149,7 @@ class PersonControllerApiTest {
 
     @Test
     fun `PUT should return 403 when trying to edit a person in a space without write authorization`() {
-        val requestBodyObject = Person("name", -9999)
+        val requestBodyObject = Person(name = "name", spaceUuid = "-9999", spaceId = -9999)
 
         mockMvc.perform(put("/api/spaces/${UUID.randomUUID()}/people/55555")
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -177,11 +178,13 @@ class PersonControllerApiTest {
         val otherSpace: Space = spaceRepository.save(Space(name = "other"))
         val expectedPerson: Person = personRepository.save(Person(
                 name = "HEY I SHOULD SHOW UP IN THE RESULTS",
-                spaceId = space.id!!
+                spaceId = space.id!!,
+                spaceUuid = space.uuid
         ))
         val unexpectedPerson: Person = personRepository.save(Person(
                 name = "HEY I SHOULD NOT SHOW UP",
-                spaceId = otherSpace.id!!
+                spaceId = otherSpace.id!!,
+                spaceUuid = otherSpace.uuid
         ))
         val result = mockMvc
                 .perform(get(basePeopleUrl)
@@ -208,11 +211,12 @@ class PersonControllerApiTest {
     fun `PUT should update a person`() {
         val softwareEngineer: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
         val engineer = spaceRolesRepository.save(SpaceRole(name = "Engineer", spaceId = space.id!!))
-        val person: Person = personRepository.save(Person(name = "John", spaceId = space.id!!, spaceRole = softwareEngineer))
+        val person: Person = personRepository.save(Person(name = "John", spaceId = space.id!!, spaceUuid = space.uuid, spaceRole = softwareEngineer))
         val updatePersonRequest = Person(
                 id = person.id,
                 name = "New John",
                 spaceId = space.id!!,
+                spaceUuid = space.uuid,
                 spaceRole = engineer
         )
         val result = mockMvc.perform(put(basePeopleUrl + "/${person.id}")
@@ -251,8 +255,8 @@ class PersonControllerApiTest {
 
     @Test
     fun `DELETE should remove person and associated assignments`() {
-        val personToDelete: Person = personRepository.save(Person(name = "John", spaceId = space.id!!))
-        val personToRemain: Person = personRepository.save(Person(name = "Jack", spaceId = space.id!!))
+        val personToDelete: Person = personRepository.save(Person(name = "John", spaceId = space.id!!, spaceUuid = space.uuid))
+        val personToRemain: Person = personRepository.save(Person(name = "Jack", spaceId = space.id!!, spaceUuid = space.uuid))
         assertThat(personRepository.count()).isEqualTo(2)
 
         val product: Product = productRepository.save(Product(name = "product", spaceId = space.id!!))
@@ -274,9 +278,9 @@ class PersonControllerApiTest {
 
     @Test
     fun `GET total should return total number of persons`() {
-        personRepository.save(Person(name = "John", spaceId = space.id!!))
-        personRepository.save(Person(name = "Jack", spaceId = space.id!!))
-        personRepository.save(Person(name = "Jill", spaceId = space.id!!))
+        personRepository.save(Person(name = "John", spaceId = space.id!!, spaceUuid = space.uuid))
+        personRepository.save(Person(name = "Jack", spaceId = space.id!!, spaceUuid = space.uuid))
+        personRepository.save(Person(name = "Jill", spaceId = space.id!!, spaceUuid = space.uuid))
 
         val request = mockMvc.perform(get("${basePeopleUrl}/total")
                 .header("Authorization", "Bearer GOOD_TOKEN"))

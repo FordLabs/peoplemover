@@ -44,6 +44,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -100,9 +101,9 @@ class ReportGeneratorControllerTest {
         productB = productRepository.save(Product(name = "Product b", spaceId = space1.id!!))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space1.id!!))
         spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceId = space1.id!!))
-        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space1.id!!, notes = "Notes"))
-        person2 = personRepository.save(Person(name = "Person 2", spaceId = space1.id!!))
-        person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceId = space1.id!!))
+        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space1.id!!, notes = "Notes", spaceUuid = space1.uuid))
+        person2 = personRepository.save(Person(name = "Person 2", spaceId = space1.id!!, spaceUuid = space1.uuid))
+        person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceId = space1.id!!, spaceUuid = space1.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceId = space1.id!!))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceId = space1.id!!))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceId = space2.id!!))

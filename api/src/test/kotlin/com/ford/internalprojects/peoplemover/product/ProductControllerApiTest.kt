@@ -44,6 +44,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -182,7 +183,7 @@ class ProductControllerApiTest {
     @Test
     fun `PUT should update a product`() {
         val product: Product = productRepository.save(Product(name = "test", spaceId = space.id!!))
-        val person: Person = personRepository.save(Person(name = "bob", spaceId = space.id!!))
+        val person: Person = personRepository.save(Person(name = "bob", spaceId = space.id!!, spaceUuid = space.uuid))
         assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!))
         val productEditRequest = ProductEditRequest(
                 name = "product two",
@@ -262,7 +263,7 @@ class ProductControllerApiTest {
     fun `DELETE should delete associated assignments`() {
         val product: Product = productRepository.save(Product(name = "test", spaceId = space.id!!))
         val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", spaceId = space.id!!))
-        val person = personRepository.save(Person(name = "person", spaceId = space.id!!))
+        val person = personRepository.save(Person(name = "person", spaceId = space.id!!, spaceUuid = space.uuid))
         assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!))
 
         mockMvc.perform(delete(baseProductsUrl + product.id)

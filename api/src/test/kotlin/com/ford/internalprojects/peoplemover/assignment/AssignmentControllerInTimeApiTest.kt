@@ -99,8 +99,8 @@ class AssignmentControllerInTimeApiTest {
         productThree = productRepository.save(Product(name = "Misfits", spaceId = editableSpace.id!!))
         productFour = productRepository.save(Product(name = "Just a product", spaceId = readOnlySpace.id!!))
         unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = editableSpace.id!!))
-        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = editableSpace.id!!))
-        personInReadOnlySpace = personRepository.save(Person(name = "Arnold Britten", newPerson = true, spaceId = readOnlySpace.id!!))
+        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
+        personInReadOnlySpace = personRepository.save(Person(name = "Arnold Britten", newPerson = true, spaceId = readOnlySpace.id!!, spaceUuid = editableSpace.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = editableSpace.id!!, userId = "USER_ID"))
     }
 
@@ -134,7 +134,7 @@ class AssignmentControllerInTimeApiTest {
                 effectiveDate = LocalDate.parse(apr2)
         ))
 
-        val personTwo: Person = personRepository.save(Person(name = "person two", spaceId = editableSpace.id!!))
+        val personTwo: Person = personRepository.save(Person(name = "person two", spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
         val currentAssignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
@@ -280,7 +280,7 @@ class AssignmentControllerInTimeApiTest {
     @Test
     fun `POST should return 403 if user does not write access`() {
 
-        val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.now(), Person("", -9999), HashSet())
+        val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.now(), Person(name ="", spaceUuid = "-9999", spaceId = -9999), HashSet())
 
         mockMvc.perform(post("/api/assignment/create")
                 .header("Authorization", "Bearer VALID_TOKEN")
@@ -399,7 +399,7 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `POST should return 400 when creating assignments given an invalid person`() {
-        val bogusPerson = Person(id = 99999999, name = "fake person", spaceId = editableSpace.id!!)
+        val bogusPerson = Person(id = 99999999, name = "fake person", spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid)
 
         val bogusAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),

@@ -43,6 +43,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -93,7 +94,7 @@ class ProductControllerInTimeApiTest {
     fun setUp() {
         spaceWithEditAccess = spaceRepository.save(Space(name = "tik", uuid = "kari-on-vacation-uuid"))
         spaceWithReadOnlyAccess = spaceRepository.save(Space(name = "tok", uuid = "read-only-space-uuid"))
-        person = personRepository.save(Person(name = "Benjamin Button", newPerson = true, spaceId = spaceWithEditAccess.id!!))
+        person = personRepository.save(Person(name = "Benjamin Button", newPerson = true, spaceId = spaceWithEditAccess.id!!, spaceUuid = spaceWithEditAccess.uuid))
         product1 = productRepository.save(Product(
                 name = "product one",
                 startDate = LocalDate.parse(apr1),

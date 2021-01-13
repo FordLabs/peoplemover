@@ -42,6 +42,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -101,9 +102,9 @@ class AssignmentControllerReassignmentsApiTest {
         unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = editableSpace.id!!))
         readOnlyProductOne = productRepository.save(Product(name = "Readable Product", spaceId = readOnlySpace.id!!))
         readOnlyProductTwo = productRepository.save(Product(name = "Another Readable Product", spaceId = readOnlySpace.id!!))
-        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = editableSpace.id!!))
-        personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceId = editableSpace.id!!))
-        personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceId = readOnlySpace.id!!))
+        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
+        personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceId = editableSpace.id!!,  spaceUuid = editableSpace.uuid))
+        personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceId = readOnlySpace.id!!, spaceUuid = editableSpace.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = editableSpace.id!!, userId = "USER_ID"))
     }
 

@@ -90,6 +90,7 @@ class LocalDataGenerator(
         val jane: Person = personService.createPerson(
             Person(
                 name = "Jane Smith",
+                spaceUuid = createdSpace.uuid,
                 spaceId = createdSpace.id!!,
                 spaceRole = role1
             ),
@@ -98,7 +99,8 @@ class LocalDataGenerator(
         val bob: Person = personService.createPerson(
             Person(
                 name = "Bob Barker",
-                spaceId = createdSpace.id,
+                spaceUuid = createdSpace.uuid,
+                spaceId = createdSpace.id!!,
                 spaceRole = role2
             ),
             createdSpace.uuid
@@ -106,7 +108,8 @@ class LocalDataGenerator(
         val adam: Person = personService.createPerson(
             Person(
                 name = "Adam Sandler",
-                spaceId = createdSpace.id,
+                spaceUuid = createdSpace.uuid,
+                spaceId = createdSpace.id!!,
                 spaceRole = role3
             ),
             createdSpace.uuid
@@ -128,7 +131,7 @@ class LocalDataGenerator(
         productRepository.save(Product(
             name = "My Product",
             productTags = productTags,
-            spaceId = createdSpace.id,
+            spaceId = createdSpace.id!!,
             startDate = LocalDate.parse("2019-01-01")
         ))
         productRepository.save(Product(
