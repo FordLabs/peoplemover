@@ -30,12 +30,29 @@
   margin: 0 100px;
 }
 
-.landingPageImage {
+.landingPageImageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-top: 6rem;
   width: 760px;
-  height: 540px;
   margin: auto;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+  .brandingContainer {
+    padding-top: 3rem;
+
+    .brandingMessage {
+      color: white;
+    }
+  }
+
+  .landingPageImage {
+    width: 760px;
+    height: 540px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
 }
+
 
 .landingPageBackground {
   position: absolute;
@@ -54,6 +71,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-top: 56px;
+  margin-bottom: 0;
 }
 
 .landingPageInfoSubHeading {
@@ -63,6 +81,7 @@
   color: $purple-title;
   margin-bottom: 8px;
   margin-top: 18px;
+  letter-spacing: 0;
 }
 
 .landingPageInfoText {
@@ -72,9 +91,20 @@
   line-height: 24px;
   color: $gray-1;
   margin-bottom: 36px;
+  margin-top: 0;
 }
 
 .getStartedButton {
   height: 34px;
   width: 135px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  text-decoration: none;
+  border: 2px solid white;
+
+  &:focus {
+    border: 2px solid white;
+  }
 }

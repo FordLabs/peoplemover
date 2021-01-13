@@ -35,7 +35,7 @@ function UnsupportedBrowserPage(): JSX.Element {
                 <img className="unsupported-browser-img" src={Chrome} alt="Chrome Logo"/> or Firefox
                 <img className="unsupported-browser-img" src={FireFox} alt="FireFox Logo"/>
             </div>
-            <Branding brand="FordLabs" message="Powered by"/>
+            <Branding />
         </div>
     );
 }

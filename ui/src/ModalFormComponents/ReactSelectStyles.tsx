@@ -48,8 +48,10 @@ export const reactSelectStyles = {
     }),
     option: (provided: CSSProperties, props: Props): CSSProperties => ({
         ...provided,
-        backgroundColor: 'transparent',
+        backgroundColor: props.isFocused ? '#F2F2F2' : 'transparent',
         color: props.data.__isNew__ ? '#5463B0' : '#403D3D',
+        border: props.isFocused ? '2px solid #4C8EF5' : 'none',
+        borderRadius: '2px',
         fontFamily: 'Helvetica, sans-serif',
         fontSize: '12px',
         lineHeight: '13.8px',
@@ -63,7 +65,6 @@ export const reactSelectStyles = {
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
-            backgroundColor: '#F2F2F2',
         },
     }),
     input: (provided: CSSProperties): CSSProperties => ({
@@ -396,6 +397,6 @@ export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Elem
 
 export const CreateNewText = (text: string): JSX.Element => (
     <span>
-        {`Press Enter to add "${text}"`}
+        {`Create "${text}"`}
     </span>
 );

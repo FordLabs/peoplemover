@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -15,24 +15,45 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+@import './Styleguide/Colors.scss';
 
-.brandingImage {
-  vertical-align: middle;
-  margin: 0 3px;
-}
-
-.brandingMessage {
-  display: inline;
-  font-size: 12px;
-  color: $gray-2;
-  margin: 0;
-}
-
-.brandingContainer {
+.ErrorPageContainer {
+  text-align: center;
+  color: $gray-1;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: auto;
-  padding: 16px 0;
+  flex-direction: column;
+}
+
+.oopsText {
+  font-size: 4rem;
+  font-weight: 700;
+  color: inherit;
+  margin-bottom: 3.25rem;
+}
+
+.heading {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 32px;
+  margin-bottom: 0;
+}
+
+.errorGraphic {
+  margin-bottom: 4.625rem;
+  width: 416px;
+  height: 316px;
+}
+
+.ErrorImageAndTextContainer {
+  margin: auto;
+  max-width: 584px;
+}
+
+.backToDashboardButton {
+  width: 14rem;
+  height: 3.50rem;
+  font-weight: 200;
+  font-size: 1.25rem;
+  margin-top: 2.5rem;
 }

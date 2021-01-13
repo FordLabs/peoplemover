@@ -18,41 +18,43 @@
 import React from 'react';
 import LandingPageImage from './LandingPageImage.svg';
 import LandingPageBackground from './LandingPageBackground.svg';
-import FormButton from '../ModalFormComponents/FormButton';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
+import Branding from '../ReusableComponents/Branding';
 
 import './LandingPage.scss';
 
 function LandingPage(): JSX.Element {
     const LoginButton = (): JSX.Element => (
-        <a href="/user/login">
-            <FormButton className="getStartedButton">
-                Get Started
-            </FormButton>
+        <a href="/user/login" className="primaryButton getStartedButton">
+            Get Started
         </a>
     );
 
     return (
         <>
-            <div className="landingPageContainer">
+            <main className="landingPageContainer">
                 <div className="landingPageInfoContainer">
-                    <PeopleMoverLogo />
-                    <div className="landingPageInfoHeading">It’s about the people. Your people.</div>
-                    <div className="landingPageInfoSubHeading">And helping them be extraordinary.</div>
-                    <div className="landingPageInfoText">
-                        Most allocation applications focus solely on projects and schedules, and seem 
-                        to forget that a product is only as successful as its team. PeopleMover focuses on the people, 
-                        helping you create and fluidly maintain balanced teams well suited for the product at hand – 
+                    <PeopleMoverLogo/>
+                    <h1 className="landingPageInfoHeading">It’s about the people. Your people.</h1>
+                    <h2 className="landingPageInfoSubHeading">And helping them be extraordinary.</h2>
+                    <p className="landingPageInfoText">
+                        Most allocation applications focus solely on projects and schedules, and seem
+                        to forget that a product is only as successful as its team. PeopleMover focuses on the people,
+                        helping you create and fluidly maintain balanced teams well suited for the product at hand –
                         because we understand that a great team sets the stage for incredible results.
-                    </div>
-                    <LoginButton />
+                    </p>
+                    <LoginButton/>
                 </div>
-                <img className="landingPageImage"
-                    src={LandingPageImage}
-                    alt=""/>
-            </div>
-            <img className="landingPageBackground" src={LandingPageBackground} alt=""/>
+                <div className="landingPageImageContainer">
+                    <img className="landingPageImage"
+                        src={LandingPageImage}
+                        alt="Preview of People Mover Space after logging in"/>
+                    <Branding />
+                </div>
+            </main>
+            <img className="landingPageBackground" src={LandingPageBackground} alt="" role="presentation"/>
         </>
     );
 }
+
 export default LandingPage;

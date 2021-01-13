@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -14,44 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import React from 'react';
+import {renderWithRedux} from '../tests/TestUtils';
+import Branding from './Branding';
+import {RunConfig} from '../index';
 
-@import './Styleguide/Colors.scss';
+describe('Branding', () => {
+    const expectedUrl = 'http://url.com';
 
-.Error404PageContainer {
-  text-align: center;
-  color: $gray-1;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.oopsText {
-  font-size: 4rem;
-  font-weight: bold;
-  color: inherit;
-}
-
-.heading {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 16px;
-  line-height: 34px;
-}
-
-.sub-heading {
-  font-style: italic;
-  font-size: 1rem;
-  line-height: 24px;
-  padding: 0 52px;
-}
-
-.animatedImage {
-  margin-bottom: 32px;
-  width: 416px;
-  height: 316px;
-}
-
-.ErrorImageAndTextContainer {
-  margin: auto;
-  max-width: 492px;
-}
+    beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {ford_labs_url: expectedUrl} as RunConfig;
+    });
+    
+    it('should get url from config', () => {
+        const comp = renderWithRedux(<Branding />);
+        const actualUrl = comp.getByText('FordLabs');
+        expect(actualUrl).toHaveAttribute('href', expectedUrl);
+    });
+});

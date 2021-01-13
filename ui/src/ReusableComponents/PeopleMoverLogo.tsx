@@ -29,9 +29,11 @@ function PeopleMoverLogo({ href }: Props): JSX.Element {
     return (
         <CustomElement
             href={href}
+            role="img"
+            aria-label="People Mover Logo"
             className="peopleMoverLogoContainer">
-            <img src={PersonIcon} alt=""/>
-            <h1 className="peopleMoverTitle">PEOPLEMOVER</h1>
+            <img src={PersonIcon} alt="" aria-hidden />
+            <span className="peopleMoverTitle" aria-hidden>PEOPLEMOVER</span>
         </CustomElement>
     );
 }

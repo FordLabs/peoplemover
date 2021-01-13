@@ -49,6 +49,7 @@ import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
 
 const BAD_REQUEST = 400;
+const FORBIDDEN = 403;
 
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
@@ -83,9 +84,15 @@ function PeopleMover({
     }
 
     const handleErrors = useCallback((error: AxiosError): Error | null => {
-        if (error?.response?.status !== BAD_REQUEST) return error;
-        setRedirect(<Redirect to="/error/404"/>);
-        return null;
+        if (error?.response?.status === BAD_REQUEST) {
+            setRedirect(<Redirect to="/error/404"/>);
+            return null;
+        } else if ( error?.response?.status === FORBIDDEN) {
+            setRedirect(<Redirect to="/error/403"/>);
+            return null;
+        } else {
+            return error;
+        }
     }, []);
 
     useEffect(() => {
@@ -152,7 +159,7 @@ function PeopleMover({
                     </div>
                     <CurrentModal/>
                 </div>
-                <Branding brand="FordLabs" message="Powered by"/>
+                <Branding />
             </div>
     );
 }

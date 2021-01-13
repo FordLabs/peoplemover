@@ -16,29 +16,38 @@
  */
 
 import React from 'react';
-import './Error404Page.scss';
+import './ErrorPageTemplate.scss';
 import Header from '../Header/Header';
-import AnimatedImageSrc from './Assets/404.gif';
 import Branding from '../ReusableComponents/Branding';
+import FormButton from '../ModalFormComponents/FormButton';
 
-function Error404Page(): JSX.Element {
+interface Props {
+    errorGraphic: string;
+    errorText: string;
+}
+
+function ErrorPageTemplate({errorGraphic, errorText}: Props): JSX.Element {
     return (
-        <div className="Error404PageContainer">
+        <div className="ErrorPageContainer">
             <Header hideAllButtons={true}/>
             <div className="ErrorImageAndTextContainer">
                 <h1 className="oopsText">Oops!</h1>
-                <img src={AnimatedImageSrc} alt="" className="animatedImage"/>
+                <img src={errorGraphic} alt="" className="errorGraphic"/>
                 <div>
-                    <div className="heading">It seems all your people have moved to another planet.</div>
-                    <div className="sub-heading">You’ve hit a 404 error. We can’t seem to find the page you’re looking for, please double check your link.</div>
+                    <div className="heading">{ errorText }</div>
                 </div>
+                <a href="/user/dashboard">
+                    <FormButton className="backToDashboardButton">
+                        Back to Dashboard
+                    </FormButton>
+                </a>
             </div>
 
             <footer className="errorPageFooter">
-                <Branding brand="FordLabs" message="Powered by"/>
+                <Branding />
             </footer>
 
         </div>
     );
 }
-export default Error404Page;
+export default ErrorPageTemplate;
