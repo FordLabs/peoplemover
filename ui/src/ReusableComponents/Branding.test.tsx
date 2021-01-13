@@ -14,28 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react';
-import PersonIcon from '../Application/Assets/logo.svg';
+import {renderWithRedux} from '../tests/TestUtils';
+import Branding from './Branding';
+import {RunConfig} from '../index';
 
-import './PeopleMoverLogo.scss';
+describe('Branding', () => {
+    const expectedUrl = 'http://url.com';
 
-interface Props {
-    href?: string;
-}
-
-function PeopleMoverLogo({ href }: Props): JSX.Element {
-    const CustomElement = href ? 'a' : `div`;
-    return (
-        <CustomElement
-            href={href}
-            role="img"
-            aria-label="People Mover Logo"
-            className="peopleMoverLogoContainer">
-            <img src={PersonIcon} alt="" aria-hidden />
-            <span className="peopleMoverTitle" aria-hidden>PEOPLEMOVER</span>
-        </CustomElement>
-    );
-}
-
-export default PeopleMoverLogo;
+    beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {ford_labs_url: expectedUrl} as RunConfig;
+    });
+    
+    it('should get url from config', () => {
+        const comp = renderWithRedux(<Branding />);
+        const actualUrl = comp.getByText('FordLabs');
+        expect(actualUrl).toHaveAttribute('href', expectedUrl);
+    });
+});

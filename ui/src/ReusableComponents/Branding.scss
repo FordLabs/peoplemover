@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
@@ -17,23 +17,22 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.branding-image {
+.brandingImage {
   vertical-align: middle;
   margin: 0 3px;
 }
 
-.branding-message {
+.brandingMessage {
   display: inline;
   font-size: 12px;
-  color: $gray-4;
+  color: $gray-2;
   margin: 0;
 }
 
-.branding-container {
+.brandingContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-
   margin-top: auto;
   padding: 16px 0;
 }
