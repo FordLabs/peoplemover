@@ -26,10 +26,13 @@ import FormButton from '../ModalFormComponents/FormButton';
 import './EditContributorsForm.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
+import Sweetch from 'react-switch';
 
 interface Props {
     currentSpace: Space;
+
     closeModal(): void;
+
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
@@ -64,6 +67,10 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
         return re.test(String(email).toLowerCase());
     };
 
+    const toggleReadOnlyEnabled = (checked: any) => {
+        console.log('Read only checked? ' + checked);
+    };
+
     return (
         <form className="editContributorsContainer form"
             onSubmit={(event): Promise<void> => inviteUsers(event)}>
@@ -72,6 +79,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
                 placeholder="email1@ford.com, email2@ford.com"
                 onChange={parseEmails}
                 data-testid="emailTextArea"/>
+            <Sweetch data-testid="editContributorsToggleReadOnlySwitch" onChange={toggleReadOnlyEnabled} checked={false} checkedIcon={false} uncheckedIcon={false} width={27} height={13}/>
             <div className="editContributorsButtonContainer">
                 <FormButton
                     buttonStyle="secondary"
@@ -90,6 +98,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
         </form>
     );
 }
+
 /* eslint-disable */
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
