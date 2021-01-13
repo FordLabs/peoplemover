@@ -4,7 +4,8 @@ create table space
     uuid varchar(36) not null,
     name varchar(255) not null unique,
     last_modified_date datetime,
-    created_by varchar(40)
+    created_by varchar(40),
+    today_view_is_public bit default false
 );
 
 create table color
