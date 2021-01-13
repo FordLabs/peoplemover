@@ -17,7 +17,6 @@
 
 import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import PeopleMover from '../Application/PeopleMover';
 import React from 'react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
@@ -118,16 +117,19 @@ describe('Account Dropdown',  () => {
                 await wait(async () => {
                     app = renderWithRedux(
                         <Router history={history}>
-                            <PeopleMover/>
-                        </Router>, undefined, {currentSpace: TestUtils.space, isReadOnly: true} as GlobalStateProps);
+                            <AccountDropdown />
+                        </Router>,
+                        undefined,
+                        {currentSpace: TestUtils.space, isReadOnly: true} as GlobalStateProps
+                    );
                 });
-                const userIconButton = await app.findByTestId('userIcon');
+                const userIconButton = await app.findByTestId('accountDropdownToggle');
                 fireEvent.click(userIconButton);
             });
 
             await act( async () => {
                 expect(await app.queryByTestId('shareAccess')).toBeNull();
-                expect(await app.queryByTestId('download-report')).toBeNull();
+                expect(await app.queryByTestId('downloadReport')).toBeNull();
             });
         });
     });

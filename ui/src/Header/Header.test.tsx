@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {act, RenderResult} from '@testing-library/react';
+import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {PreloadedState} from 'redux';
@@ -25,17 +25,36 @@ import {RunConfig} from '../index';
 
 describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
-    let comp: RenderResult;
+    let app: RenderResult;
 
     beforeEach( async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-        comp = await renderWithRedux(<Header/>, undefined, initialState);
+    });
+
+    it('should hide space buttons', async () => {
+        app = renderWithRedux(
+            <Header hideSpaceButtons={true}/>, undefined, initialState
+        );
+        expect(app.queryByTestId('filters')).toBeFalsy();
+        expect(app.queryByTestId('sortBy')).toBeFalsy();
+
+        const userIconButton = await app.findByTestId('accountDropdownToggle');
+        await wait(() => {
+            fireEvent.click(userIconButton);
+        });
+        expect(await app.queryByTestId('shareAccess')).toBeNull();
+        expect(await app.queryByTestId('downloadReport')).toBeNull();
     });
 
     describe('Account Dropdown', () => {
+        let app: RenderResult;
+        beforeEach(async () => {
+            app = await renderWithRedux(<Header/>, undefined, initialState);
+        });
+
         it('should show username', async () => {
-            expect(comp.queryByText('USER_ID')).not.toBeNull();
+            expect(app.queryByText('USER_ID')).not.toBeNull();
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
@@ -43,9 +62,9 @@ describe('Header', () => {
             window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
 
             act(() => {
-                comp.getByTestId('accountDropdownToggle').click();
+                app.getByTestId('accountDropdownToggle').click();
             });
-            expect(comp.queryByTestId('shareAccess')).toBeNull();
+            expect(app.queryByTestId('shareAccess')).toBeNull();
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
@@ -53,9 +72,9 @@ describe('Header', () => {
             window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
             act(() => {
-                comp.getByTestId('accountDropdownToggle').click();
+                app.getByTestId('accountDropdownToggle').click();
             });
-            expect(comp.queryByTestId('shareAccess')).not.toBeNull();
+            expect(app.queryByTestId('shareAccess')).not.toBeNull();
         });
     });
 });
