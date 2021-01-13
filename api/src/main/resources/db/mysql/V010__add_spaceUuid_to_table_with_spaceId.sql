@@ -5,7 +5,7 @@ UPDATE person
 INNER JOIN space
 ON person.space_id = space.id
 set person.space_uuid = space.uuid
-WHERE person.space_id = space.id
+WHERE person.space_id = space.id;
 
 
-ALTER TABLE person ADD CONSTRAINT FK_Person__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid);
+ALTER TABLE person ADD CONSTRAINT FK_Person__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;
