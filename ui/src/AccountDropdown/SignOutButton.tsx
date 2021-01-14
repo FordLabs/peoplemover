@@ -28,9 +28,6 @@ function SignOutButton({ setRedirect }: Props): JSX.Element {
         removeToken();
         setRedirect(<Redirect to="/"/>);
     };
-    const onKeyDown = (event: React.KeyboardEvent): void => {
-        if (event.key === 'Enter') clearAccessTokenCookie();
-    };
 
     return (
         <button
@@ -38,7 +35,7 @@ function SignOutButton({ setRedirect }: Props): JSX.Element {
             role="menuitem"
             data-testid="sign-out"
             onClick={clearAccessTokenCookie}
-            onKeyDown={onKeyDown}>
+        >
             Sign Out
         </button>
     );

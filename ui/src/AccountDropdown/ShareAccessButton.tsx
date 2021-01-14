@@ -28,9 +28,6 @@ interface Props {
 function ShareAccessButton({ setCurrentModal }: Props): JSX.Element {
     const openEditContributorsModal = (): void => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
     const showButton = window.runConfig.invite_users_to_space_enabled;
-    const onkeydown = (event: React.KeyboardEvent): void => {
-        if (event.key === 'Enter') openEditContributorsModal();
-    };
 
     return showButton ? (
         <button
@@ -38,7 +35,7 @@ function ShareAccessButton({ setCurrentModal }: Props): JSX.Element {
             role="menuitem"
             data-testid="shareAccess"
             onClick={openEditContributorsModal}
-            onKeyDown={onkeydown}>
+        >
             Share Access
         </button>
     ) : <></>;

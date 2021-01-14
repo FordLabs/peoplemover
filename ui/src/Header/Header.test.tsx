@@ -23,6 +23,9 @@ import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {RunConfig} from '../index';
 
+jest.useFakeTimers();
+const debounceTimeToWait = 100;
+
 describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
     let app: RenderResult;
@@ -63,6 +66,7 @@ describe('Header', () => {
 
             act(() => {
                 app.getByTestId('accountDropdownToggle').click();
+                jest.advanceTimersByTime(debounceTimeToWait);
             });
             expect(app.queryByTestId('shareAccess')).toBeNull();
         });
@@ -73,6 +77,7 @@ describe('Header', () => {
 
             act(() => {
                 app.getByTestId('accountDropdownToggle').click();
+                jest.advanceTimersByTime(debounceTimeToWait);
             });
             expect(app.queryByTestId('shareAccess')).not.toBeNull();
         });
