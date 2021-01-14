@@ -17,16 +17,12 @@
 
 package com.ford.internalprojects.peoplemover.producttag
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
+import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository_new
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ProductTagRepository : PeopleMoverRepository<ProductTag, Int> {
-    fun findAllByNameIgnoreCaseAndSpaceId(name: String, spaceId: Int): ProductTag?
-
-    fun findAllByNameAndSpaceId(name: String, spaceId: Int): ProductTag?
-
-    //Sorting can not be done with ignore case in JPA
-    fun findAllBySpaceId(spaceId: Int, name: Sort): List<ProductTag>
+interface ProductTagRepository : PeopleMoverRepository_new<ProductTag, Int> {
+    fun findAllByNameIgnoreCaseAndSpaceUuid(name: String, spaceUuid: String): ProductTag?
+    fun findAllBySpaceUuid(spaceUuid: String, name: Sort): List<ProductTag>
 }

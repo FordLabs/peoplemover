@@ -31,3 +31,14 @@ WHERE space_locations.space_id = space.id;
 
 
 ALTER TABLE space_locations ADD CONSTRAINT FK_Locations__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;
+
+ALTER TABLE product_tag ADD COLUMN space_uuid varchar(36) NOT NULL;
+
+UPDATE product_tag
+INNER JOIN space
+ON product_tag.space_id = space.id
+set product_tag.space_uuid = space.uuid
+WHERE product_tag.space_id = space.id;
+
+
+ALTER TABLE product_tag ADD CONSTRAINT FK_Product_Tag__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;

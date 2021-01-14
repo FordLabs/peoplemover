@@ -34,27 +34,24 @@ class ProductTagService(
 ) {
     fun createProductTagForSpace(addRequest: ProductTagAddRequest, spaceUuid: String): ProductTag {
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        productTagRepository.findAllByNameIgnoreCaseAndSpaceId(addRequest.name, space.id!!)
+        productTagRepository.findAllByNameIgnoreCaseAndSpaceUuid(addRequest.name, spaceUuid)
                 ?.let { throw ProductTagAlreadyExistsForSpaceException() }
-        return productTagRepository.saveAndUpdateSpaceLastModified(ProductTag(spaceId = space.id, name = addRequest.name))
+        return productTagRepository.saveAndUpdateSpaceLastModified_new(ProductTag(spaceId = space.id!!, name = addRequest.name, spaceUuid = spaceUuid))
     }
 
-    fun getAllProductTags(spaceUuid: String): List<ProductTag> {
-        val space: Space = spaceRepository.findByUuid(spaceUuid)
-                ?: throw SpaceNotExistsException(spaceUuid)
-
-        return productTagRepository.findAllBySpaceId(
-                space.id!!,
+    fun getAllProductTags(spaceUuid: String): List<ProductTag> =
+         productTagRepository.findAllBySpaceUuid(
+                spaceUuid,
                 Sort.by(Sort.Order.asc("name").ignoreCase())
         )
-    }
+
 
     @Transactional
     fun deleteProductTag(productTagId: Int) {
         val tagToDelete: ProductTag = productTagRepository.findByIdOrNull(productTagId)
                 ?: throw ProductTagNotExistsForSpaceException()
 
-        productTagRepository.deleteAndUpdateSpaceLastModified(tagToDelete)
+        productTagRepository.deleteAndUpdateSpaceLastModified_new(tagToDelete)
     }
 
     fun editProductTag(
@@ -66,7 +63,7 @@ class ProductTagService(
         val tagFound = productTagRepository.findByIdOrNull(tagEditRequest.id)
                 ?: throw ProductTagNotExistsForSpaceException()
         tagFound.name = tagEditRequest.name
-        return productTagRepository.saveAndUpdateSpaceLastModified(tagFound)
+        return productTagRepository.saveAndUpdateSpaceLastModified_new(tagFound)
     }
 
 }
