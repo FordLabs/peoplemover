@@ -97,8 +97,8 @@ class ReportGeneratorControllerTest {
     fun setup() {
         space1 = spaceRepository.save(Space(name = "Undersea Pineapple"))
         space2 = spaceRepository.save(Space(name = "Krusty Krabb"))
-        productA = productRepository.save(Product(name = "product a", spaceId = space1.id!!))
-        productB = productRepository.save(Product(name = "Product b", spaceId = space1.id!!))
+        productA = productRepository.save(Product(name = "product a", spaceId = space1.id!!, spaceUuid = space1.uuid))
+        productB = productRepository.save(Product(name = "Product b", spaceId = space1.id!!, spaceUuid = space1.uuid))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space1.id!!))
         spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceId = space1.id!!))
         person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, spaceId = space1.id!!, notes = "Notes", spaceUuid = space1.uuid))

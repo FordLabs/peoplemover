@@ -17,18 +17,18 @@
 
 package com.ford.internalprojects.peoplemover.product
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
+import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository_new
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-interface ProductRepository : PeopleMoverRepository<Product, Int> {
+interface ProductRepository : PeopleMoverRepository_new<Product, Int> {
     fun findByName(name: String): Product?
-    fun findAllBySpaceId(spaceId: Int): List<Product>
-    fun findProductByNameAndSpaceId(name: String, spaceId: Int): Product?
+    fun findAllBySpaceUuid(spaceUuid: String): List<Product>
+    fun findProductByNameAndSpaceUuid(name: String, spaceUuid: String): Product?
 
-    @Query("SELECT p FROM Product p WHERE p.spaceId = ?1 " +
+    @Query("SELECT p FROM Product p WHERE p.spaceUuid = ?1 " +
             "AND (p.startDate = NULL OR p.startDate <= ?2)")
-    fun findAllBySpaceIdAndDate(spaceId: Int, date: LocalDate): Set<Product>
+    fun findAllBySpaceUuidAndDate(spaceUuid: String, date: LocalDate): Set<Product>
 }

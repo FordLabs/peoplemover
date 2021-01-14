@@ -100,19 +100,22 @@ class ProductControllerInTimeApiTest {
                 name = "product one",
                 startDate = LocalDate.parse(apr1),
                 endDate = LocalDate.parse(jun1),
-                spaceId = spaceWithEditAccess.id!!
+                spaceId = spaceWithEditAccess.id!!,
+                spaceUuid = spaceWithEditAccess.uuid
         ))
         product2 = productRepository.save(Product(
                 name = "product two",
                 startDate = LocalDate.parse(may1),
                 endDate = LocalDate.parse(jun1),
-                spaceId = spaceWithEditAccess.id!!
+                spaceId = spaceWithEditAccess.id!!,
+                spaceUuid = spaceWithEditAccess.uuid
         ))
         product3 = productRepository.save(Product(
                 name = "product three, no write access",
                 startDate = LocalDate.parse(may1),
                 endDate = LocalDate.parse(today),
-                spaceId = spaceWithReadOnlyAccess.id!!
+                spaceId = spaceWithReadOnlyAccess.id!!,
+                spaceUuid = spaceWithReadOnlyAccess.uuid
         ))
         baseProductsUrl = getBaseProductsUrl(spaceWithEditAccess.uuid)
 
@@ -273,7 +276,8 @@ class ProductControllerInTimeApiTest {
         val nullStartProduct: Product = productRepository.save(Product(
                 name = "product with null start date",
                 endDate = LocalDate.of(2020, 10, 1),
-                spaceId = spaceWithEditAccess.id!!
+                spaceId = spaceWithEditAccess.id!!,
+                spaceUuid = spaceWithEditAccess.uuid
         ))
 
         val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$sep1")

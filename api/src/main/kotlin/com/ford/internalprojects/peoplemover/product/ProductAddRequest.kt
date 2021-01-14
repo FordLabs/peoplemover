@@ -47,7 +47,7 @@ data class ProductAddRequest(
         companion object {
                 @JvmStatic
                 @JsonIgnore
-                fun toProduct(productAddRequest: ProductAddRequest, spaceId: Int): Product {
+                fun toProduct(productAddRequest: ProductAddRequest, spaceId: Int, spaceUuid: String): Product {
                         return Product(
                                 name = productAddRequest.name,
                                 productTags = productAddRequest.productTags,
@@ -57,7 +57,8 @@ data class ProductAddRequest(
                                 spaceLocation = productAddRequest.spaceLocation,
                                 archived = productAddRequest.archived,
                                 notes = productAddRequest.notes,
-                                spaceId = spaceId
+                                spaceId = spaceId,
+                                spaceUuid = spaceUuid
                         )
                 }
         }

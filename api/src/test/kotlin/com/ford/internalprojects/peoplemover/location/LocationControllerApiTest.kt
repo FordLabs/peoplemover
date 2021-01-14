@@ -262,7 +262,8 @@ class LocationControllerApiTest {
                 Product(
                         name = "Product1",
                         spaceLocation = location,
-                        spaceId = space.id!!
+                        spaceId = space.id!!,
+                        spaceUuid = space.uuid
                 )
         )
         assertThat(spaceLocationRepository.count()).isOne()

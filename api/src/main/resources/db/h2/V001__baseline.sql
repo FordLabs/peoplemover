@@ -35,8 +35,10 @@ create table product
     start_date        date,
     space_location_id int,
     space_id          int,
+    space_uuid        varchar (36),
 
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
+    FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (space_location_id) REFERENCES space_locations (id) ON DELETE SET NULL,
     constraint UQ_Product unique (space_id, name)
 );
@@ -64,7 +66,7 @@ create table person
     space_uuid    varchar (36),
 
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
-    FOREIGN KEY (space_uuid) REFERENCES space (uuid) ,
+    FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (space_role_id) REFERENCES space_roles (id) ON DELETE SET NULL
 );
 

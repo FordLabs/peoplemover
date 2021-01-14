@@ -36,24 +36,17 @@ class ProductService(
         private val assignmentService: AssignmentService,
         private val spaceRepository: SpaceRepository
 ) {
-    fun findAll(): List<Product> {
-        return productRepository.findAll().map { it!! }
-    }
+    fun findAll(): List<Product> =
+            productRepository.findAll().map { it!! }
 
-    fun findAllBySpaceId(spaceId: Int): List<Product> {
-        return productRepository.findAllBySpaceId(spaceId);
-    }
-
-    fun findAllBySpaceUuid(spaceUuid: String): Set<Product> {
-        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        return productRepository.findAllBySpaceId(space.id!!).toSet()
-    }
+    fun findAllBySpaceUuid(spaceUuid: String): Set<Product> =
+            productRepository.findAllBySpaceUuid(spaceUuid).toSet()
 
     fun findAllBySpaceUuidAndDate(spaceUuid: String, date: LocalDate): Set<Product> {
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceUuid, date)
-        return productRepository.findAllBySpaceIdAndDate(space.id!!, date).map {product ->
-            product.copy(assignments = assignmentsForDate.filter {assignment ->
+        return productRepository.findAllBySpaceUuidAndDate(space.uuid, date).map { product ->
+            product.copy(assignments = assignmentsForDate.filter { assignment ->
                 assignment.productId == product.id!!
             }.toSet())
         }.toSet()
@@ -61,38 +54,38 @@ class ProductService(
 
     @Throws(ProductAlreadyExistsException::class)
     fun create(productAddRequest: ProductAddRequest, spaceUuid: String): Product {
-        val space : Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        productRepository.findProductByNameAndSpaceId(productAddRequest.name, space.id!!)?.let {
+        val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
+        productRepository.findProductByNameAndSpaceUuid(productAddRequest.name, space.uuid)?.let {
             throw ProductAlreadyExistsException()
         }
-        return create(toProduct(productAddRequest, space.id))
+        return create(toProduct(productAddRequest, space.id!!, space.uuid))
     }
 
-    fun create(product: Product): Product {
-        return productRepository.saveAndUpdateSpaceLastModified(product)
-    }
+    fun create(product: Product): Product =
+            productRepository.saveAndUpdateSpaceLastModified_new(product)
+
 
     fun update(productEditRequest: ProductEditRequest, spaceUuid: String): Product {
         productRepository.findByIdOrNull(productEditRequest.id) ?: throw ProductNotExistsException()
-        val space : Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        productRepository.findProductByNameAndSpaceId(productEditRequest.name, space.id!!)?.let { foundProduct ->
+        val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
+        productRepository.findProductByNameAndSpaceUuid(productEditRequest.name, space.uuid)?.let { foundProduct ->
             if (foundProduct.id != productEditRequest.id) {
                 throw ProductAlreadyExistsException()
             }
             if (foundProduct.startDate!! < productEditRequest.startDate!!) {
-                foundProduct.assignments.forEach{
+                foundProduct.assignments.forEach {
                     assignmentService.changeProductStartDateForOneAssignment(it, productEditRequest.startDate)
                 }
             }
         }
 
-        val product: Product = ProductEditRequest.toProduct(productEditRequest, space.id)
-        return productRepository.saveAndUpdateSpaceLastModified(product)
+        val product: Product = ProductEditRequest.toProduct(productEditRequest, space.id!!, space.uuid)
+        return productRepository.saveAndUpdateSpaceLastModified_new(product)
     }
 
     @Transactional
     fun delete(productId: Int, spaceUuid: String) {
-        val space : Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
+        val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         val productToDelete = productRepository.findByIdOrNull(productId) ?: throw ProductNotExistsException()
 
         if (space.id == null || (space.id.compareTo(productToDelete.spaceId) != 0)) {
@@ -102,12 +95,12 @@ class ProductService(
         if (productToDelete.assignments.isNotEmpty()) {
             unassignPeopleFromProduct(productToDelete)
         }
-        productRepository.deleteAndUpdateSpaceLastModified(productToDelete)
+        productRepository.deleteAndUpdateSpaceLastModified_new(productToDelete)
     }
 
     private fun unassignPeopleFromProduct(productToDelete: Product) {
         val unassignedProduct: Product = productRepository
-                .findProductByNameAndSpaceId("unassigned", productToDelete.spaceId)
+                .findProductByNameAndSpaceUuid("unassigned", productToDelete.spaceUuid)
                 ?: throw ProductNotExistsException()
 
         productToDelete.assignments.forEach {
@@ -119,7 +112,8 @@ class ProductService(
     fun createDefaultProducts(space: Space) {
         val unassignedProduct = Product(
                 name = "unassigned",
-                spaceId = space.id!!
+                spaceId = space.id!!,
+                spaceUuid = space.uuid
         )
         create(unassignedProduct)
     }
