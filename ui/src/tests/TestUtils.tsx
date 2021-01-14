@@ -258,6 +258,7 @@ class TestUtils {
     ];
 
     static person1: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         spaceId: 1,
         id: 100,
         name: 'Person 1',
@@ -267,6 +268,7 @@ class TestUtils {
     };
 
     static hank: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         spaceId: 1,
         id: 200,
         name: 'Hank',
@@ -276,6 +278,7 @@ class TestUtils {
     };
 
     static unassignedPerson: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         spaceId: 1,
         id: 101,
         name: 'Unassigned Person 7',
