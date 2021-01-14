@@ -65,65 +65,49 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
         return dropdownFlag;
     }
 
-    function handleKeyDownForOpenSpace(event: React.KeyboardEvent): void {
-        event.stopPropagation();
-        if (event.key === 'Enter') {
-            openSpace(space);
-        }
-    }
-
-    function handleKeyDownForShowsDropdown(event: React.KeyboardEvent): boolean {
-        event.stopPropagation();
-        if (event.key === 'Enter') {
-            return showsDropdown();
-        }
-        return dropdownFlag;
-    }
-
-    function handleKeyDownForOpenEditModal(event: React.KeyboardEvent): void {
-        event.stopPropagation();
-        if (event.key === 'Enter') {
-            openEditModal();
-        }
-    }
-
     function openEditModal(): void {
         return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
     }
 
+    const ActionsDropdown = (): JSX.Element => {
+        return (
+            <div className="ellipsisDropdownContainer">
+                <button
+                    data-testid="editSpace"
+                    className="dropdownOptions"
+                    onClick={openEditModal}>
+                    <i className="material-icons">edit</i>
+                    Edit
+                </button>
+            </div>
+        );
+    };
+
+    const ActionsEllipsis = (): JSX.Element => {
+        return (
+            <div className="ellipsisButtonContainer">
+                <button
+                    data-testid="ellipsisButton"
+                    className="ellipsisButton"
+                    aria-label={`Open Menu for Space ${space.name}`}
+                    onClick={handleDropdownClick}>
+                    <i className="material-icons">more_vert</i>
+                    {dropdownFlag && <ActionsDropdown />}
+                </button>
+            </div>
+        );
+    };
+
     return (
-        <div className="spaceTile"
+        <button className="spaceTile"
             data-testid="spaceDashboardTile"
-            onClick={(): void => openSpace(space)}
-            onKeyDown={(e): void => handleKeyDownForOpenSpace(e)}>
+            onClick={(): void => openSpace(space)}>
             <div className="spaceMetadata">
                 <div className="spaceName">{space.name}</div>
                 <div className="lastModifiedText">Last modified {timestamp}</div>
             </div>
-
-            <div className="ellipsisButtonContainer">
-                <button data-testid="ellipsisButton"
-                    className="ellipsisButton"
-                    aria-label={`Open Menu for Space ${space.name}`}
-                    onClick={(e): boolean => handleDropdownClick(e)}
-                    onKeyDown={(e): boolean => handleKeyDownForShowsDropdown(e)}>
-                    <i className="material-icons">more_vert</i>
-                    {dropdownFlag && (
-                        <div className="ellipsisDropdownContainer">
-                            <div data-testid="editSpace"
-                                className="dropdownOptions"
-                                onClick={openEditModal}
-                                onKeyDown={(e): void => handleKeyDownForOpenEditModal(e)}>
-                                <i className="material-icons">
-                                    edit
-                                </i>
-                                Edit
-                            </div>
-                        </div>
-                    )}
-                </button>
-            </div>
-        </div>
+            <ActionsEllipsis />
+        </button>
     );
 }
 

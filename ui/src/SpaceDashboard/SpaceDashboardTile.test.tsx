@@ -46,31 +46,12 @@ describe('SpaceDashboardTile tests', () => {
         expect(onClick).toBeCalled();
     });
 
-    it('should open space on enter key down', async () => {
-        const spaceTile = await component.findByTestId('spaceDashboardTile');
-        fireEvent.keyDown(spaceTile, { key: 'Enter'});
-        expect(onClick).toBeCalled();
-    });
-
     it('should open edit space modal on click', async () => {
         await act(async () => {
             const editSpaceEllipsis = await component.findByTestId('ellipsisButton');
             fireEvent.click(editSpaceEllipsis);
             const editSpaceTile = await component.findByTestId('editSpace');
             fireEvent.click(editSpaceTile);
-        });
-        expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
-            modal: AvailableModals.EDIT_SPACE,
-            item: TestUtils.space,
-        }));
-    });
-
-    it('should open edit space modal on enter keydown', async () => {
-        await act(async () => {
-            const editSpaceEllipsis = await component.findByTestId('ellipsisButton');
-            fireEvent.keyDown(editSpaceEllipsis, { key: 'Enter'});
-            const editSpaceTile = await component.findByTestId('editSpace');
-            fireEvent.keyDown(editSpaceTile, { key: 'Enter'});
         });
         expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
             modal: AvailableModals.EDIT_SPACE,
