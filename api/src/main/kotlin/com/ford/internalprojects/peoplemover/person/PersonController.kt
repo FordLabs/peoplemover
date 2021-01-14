@@ -38,10 +38,8 @@ class PersonController(
     @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
     @GetMapping
     fun getAllPeopleInSpace(@PathVariable spaceUuid: String): List<Person> {
-        val space: Space = spaceRepository.findByUuid(spaceUuid)
-                ?: throw SpaceNotExistsException(spaceUuid)
         logger.logInfoMessage("All people retrieved for space: [$spaceUuid].")
-        return personService.getPeopleInSpace(space)
+        return personService.getPeopleInSpace(spaceUuid)
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")

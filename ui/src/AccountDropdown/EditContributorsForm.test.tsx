@@ -20,7 +20,7 @@
 import {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import {fireEvent, RenderResult, wait} from '@testing-library/react';
-import EditContributorsForm from "./EditContributorsForm";
+import EditContributorsForm from './EditContributorsForm';
 
 Object.assign(navigator, {
     clipboard: {
@@ -31,7 +31,7 @@ Object.assign(navigator, {
 describe('Edit Contributors view only section', function() {
     const expectedUrl = 'https://some-url';
     let originalWindow: Window;
-    let component:RenderResult;
+    let component: RenderResult;
 
     beforeEach(() => {
         originalWindow = window;

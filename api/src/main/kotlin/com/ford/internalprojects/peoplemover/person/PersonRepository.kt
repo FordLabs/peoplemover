@@ -17,11 +17,11 @@
 
 package com.ford.internalprojects.peoplemover.person
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
 import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository_new
 import org.springframework.stereotype.Repository
 
 @Repository
 interface PersonRepository : PeopleMoverRepository_new<Person, Int> {
     fun findAllBySpaceId(id: Int): List<Person>
+    fun findAllBySpaceUuid(uuid: String): List<Person>
 }

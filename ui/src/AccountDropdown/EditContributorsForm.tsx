@@ -77,7 +77,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
         return re.test(String(email).toLowerCase());
     };
 
-    const toggleReadOnlyEnabled = (checked: any) => {
+    const toggleReadOnlyEnabled = (checked: any)=> {
         setEnableReadOnly(checked);
     };
 
@@ -91,21 +91,21 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
                         {linkToSpace}
                     </div>
                     <button className="inviteContributorsConfirmationCopyButton"
-                            data-testid="inviteContributorsConfirmationCopyButton"
-                            onClick={copyLink}>
+                        data-testid="inviteContributorsConfirmationCopyButton"
+                        onClick={copyLink}>
                         {copiedLink ? 'Copied!' : 'Copy link'}
                     </button>
                 </div>
             </label>
-            <label className={"enableReadOnlyLabel"}>
+            <label className={'enableReadOnlyLabel'}>
                 <span>View only access is {enableReadOnly ? 'enabled' : 'disabled'}</span>
-                    <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
-                                 onChange={toggleReadOnlyEnabled}
-                                 checked={enableReadOnly}
-                                 checkedIcon={false}
-                                 uncheckedIcon={false}
-                                 width={27} height={13}
-                    />
+                <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
+                    onChange={toggleReadOnlyEnabled}
+                    checked={enableReadOnly}
+                    checkedIcon={false}
+                    uncheckedIcon={false}
+                    width={27} height={13}
+                />
             </label>
             <h2 className="editTitle">Invite others to edit</h2>
             <label className="inviteContributorsLabel">

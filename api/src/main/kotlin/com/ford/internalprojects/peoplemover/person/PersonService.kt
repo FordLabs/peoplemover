@@ -49,7 +49,7 @@ class PersonService(
         return personRepository.saveAndUpdateSpaceLastModified_new(person)
     }
 
-    fun getPeopleInSpace(space: Space): List<Person> = personRepository.findAllBySpaceId(space.id!!)
+    fun getPeopleInSpace(spaceUuid: String): List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
 
     fun removePerson(personId: Int) {
         val personToRemove = personRepository.findByIdOrNull(personId) ?: throw PersonNotExistsException()
