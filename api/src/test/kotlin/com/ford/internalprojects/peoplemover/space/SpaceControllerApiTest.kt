@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.sql.Timestamp
 import java.time.Instant
-import java.time.LocalDateTime
 import java.util.*
 
 @AutoConfigureMockMvc
@@ -252,17 +251,23 @@ class SpaceControllerApiTest {
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
         val editedSpace = EditSpaceRequest(name = "edited")
 
-        mockMvc.perform(
-            put("$baseSpaceUrl/${space.uuid}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(editedSpace))
+        val result = mockMvc.perform(
+                put("$baseSpaceUrl/${space.uuid}")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editedSpace))
         )
-            .andExpect(status().isOk)
-            .andReturn()
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val returnedSpace: Space = objectMapper.readValue(
+                result.response.contentAsString,
+                Space::class.java
+        )
 
         val actualSpace = spaceRepository.findByUuid(space.uuid)
         assertThat(actualSpace!!.name).isEqualTo("edited")
+        assertThat(returnedSpace).isEqualTo(actualSpace)
     }
 
     @Test
@@ -311,27 +316,33 @@ class SpaceControllerApiTest {
     fun `Edit Space Request should not save if no fields populated`() {
         val expectedTimeStamp = Timestamp.from(Instant.EPOCH)
         val space = spaceRepository.save(
-            Space(
-                name = "oldname",
-                todayViewIsPublic = false,
-                lastModifiedDate = expectedTimeStamp
-            )
+                Space(
+                        name = "oldName",
+                        todayViewIsPublic = false,
+                        lastModifiedDate = expectedTimeStamp
+                )
         )
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
 
         val spaceRequest = EditSpaceRequest()
 
-        mockMvc.perform(
-            put("$baseSpaceUrl/${space.uuid}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(spaceRequest))
+        val result = mockMvc.perform(
+                put("$baseSpaceUrl/${space.uuid}")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(spaceRequest))
         )
-            .andExpect(status().isOk)
-            .andReturn()
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val returnedSpace: Space = objectMapper.readValue(
+                result.response.contentAsString,
+                Space::class.java
+        )
 
         val actualSpace = spaceRepository.findByUuid(space.uuid)
         assertThat(actualSpace!!.lastModifiedDate).isEqualTo(expectedTimeStamp)
+        assertThat(returnedSpace).isEqualTo(actualSpace)
     }
 
     @Test

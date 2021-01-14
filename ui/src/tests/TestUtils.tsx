@@ -427,6 +427,7 @@ class TestUtils {
         roles: TestUtils.roles,
         locations: TestUtils.locations,
         lastModifiedDate: TestUtils.originDateString,
+        todayViewIsPublic: true,
     }
 
     static allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [

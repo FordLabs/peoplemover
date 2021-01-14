@@ -28,6 +28,7 @@ describe('current space reducer', () => {
         roles: [],
         locations: [],
         lastModifiedDate: '2019-01-01',
+        todayViewIsPublic: false,
     };
 
     it('should set current space given space', function() {

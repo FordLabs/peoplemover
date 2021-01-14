@@ -36,10 +36,10 @@ class SpaceController(
         private val spaceRepository: SpaceRepository
 ) {
     @GetMapping("")
-    fun allSpaces(): ResponseEntity<List<Space>> {
+    fun allSpaces(): List<Space> {
         val spaces: List<Space> = spaceService.findAll()
         logger.logInfoMessage("All space retrieved.")
-        return ResponseEntity.ok(spaces)
+        return spaces
     }
 
     @GetMapping("/total")
@@ -57,7 +57,7 @@ class SpaceController(
 
     @PreAuthorize("hasPermission(#uuid, 'uuid', 'write')")
     @PutMapping("/{uuid}")
-    fun editSpace(@PathVariable uuid: String, @RequestBody editSpaceRequest: EditSpaceRequest) {
+    fun editSpace(@PathVariable uuid: String, @RequestBody editSpaceRequest: EditSpaceRequest):Space {
         return spaceService.editSpace(uuid, editSpaceRequest)
     }
 
@@ -83,13 +83,13 @@ class SpaceController(
     ): ResponseEntity<ArrayList<String>> {
         val space = spaceRepository.findByUuid(uuid)!!
 
-        val failures = arrayListOf<String>();
+        val failures = arrayListOf<String>()
         request.emails.forEach { email ->
             val userId = email.substringBefore('@').toUpperCase().trim()
             try {
                 userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
             } catch (e: DataIntegrityViolationException) {
-                logger.logInfoMessage("$userId already has access to this space.");
+                logger.logInfoMessage("$userId already has access to this space.")
             } catch (e: Exception) {
                 failures.add(email)
                 logger.logException(e)

@@ -17,54 +17,99 @@
  *
  */
 
-import {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import {fireEvent, RenderResult, wait} from '@testing-library/react';
-import EditContributorsForm from "./EditContributorsForm";
+import EditContributorsForm from './EditContributorsForm';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
+import {AxiosResponse} from 'axios';
+import SpaceClient from '../Space/SpaceClient';
+import {createStore} from 'redux';
+import {setCurrentSpaceAction} from '../Redux/Actions';
+
 
 Object.assign(navigator, {
     clipboard: {
-        writeText: (): void => {return;},
+        writeText: (): void => {
+            return;
+        },
     },
 });
 
 describe('Edit Contributors view only section', function() {
     const expectedUrl = 'https://some-url';
     let originalWindow: Window;
-    let component:RenderResult;
+    let component: RenderResult;
+    const testSpace = TestUtils.space;
+    let store = createStore(rootReducer,  {currentSpace: TestUtils.space});
 
     beforeEach(() => {
+        jest.clearAllMocks();
         originalWindow = window;
         delete window.location;
         (window as Window) = Object.create(window);
         window.location = {href: expectedUrl} as Location;
-        component = renderWithRedux(<EditContributorsForm/>);
+
+        store.dispatch = jest.fn();
+
+        component = renderWithRedux(
+            <EditContributorsForm/>,
+            store,
+            {currentSpace: TestUtils.space} as GlobalStateProps
+        );
     });
 
     afterEach(() => {
         (window as Window) = originalWindow;
     });
-
-    it('should show correct space URL', function() {
-        expect(component.queryByText(expectedUrl)).not.toBeNull();
-    });
-
-    it('should copy the url to clipboard', async () => {
-        jest.spyOn(navigator.clipboard, 'writeText');
-
-        await wait(() => {
-            fireEvent.click(component.getByText('Copy link'));
+    describe('View Only Section', function() {
+        it('should show correct space URL', function() {
+            expect(component.queryByText(expectedUrl)).not.toBeNull();
         });
 
-        expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl);
-    });
+        it('should copy the url to clipboard', async () => {
+            jest.spyOn(navigator.clipboard, 'writeText');
 
-    it('should should change text on copy', async () => {
-        await wait(() => {
-            fireEvent.click(component.getByText('Copy link'));
+            await wait(() => {
+                fireEvent.click(component.getByText('Copy link'));
+            });
+
+            expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl);
         });
 
-        expect(component.queryByText('Copy link')).toBeNull();
-        expect(component.queryByText('Copied!')).not.toBeNull();
+        it('should should change text on copy', async () => {
+            await wait(() => {
+                fireEvent.click(component.getByText('Copy link'));
+            });
+
+            expect(component.queryByText('Copy link')).toBeNull();
+            expect(component.queryByText('Copied!')).not.toBeNull();
+        });
+
+        it('should populate Enable View Only toggle with information from current space', function() {
+            const enableViewOnlyCheckbox = component.getByTestId('editContributorsToggleReadOnlySwitch');
+            expect(enableViewOnlyCheckbox).toBeChecked();
+        });
+
+        it('should update the current space when the toggle is clicked', async function() {
+            const expectedUpdatedSpaceData = {...testSpace, todayViewIsPublic: false};
+
+            SpaceClient.editSpace = jest.fn(() => Promise.resolve({
+                data: expectedUpdatedSpaceData,
+            } as AxiosResponse));
+
+            const enableViewOnlyCheckbox = component.getByTestId('editContributorsToggleReadOnlySwitch');
+            expect(enableViewOnlyCheckbox).toBeChecked();
+            await fireEvent.click(enableViewOnlyCheckbox);
+
+            expect(SpaceClient.editSpace).toHaveBeenCalledWith(
+                testSpace.uuid,
+                expectedUpdatedSpaceData,
+                testSpace.name
+            );
+
+
+            expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(expectedUpdatedSpaceData));
+        });
     });
 });

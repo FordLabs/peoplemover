@@ -19,7 +19,7 @@ import React, {ChangeEvent, FormEvent, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {AvailableModals, closeModalAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, closeModalAction, setCurrentModalAction, setCurrentSpaceAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import FormButton from '../ModalFormComponents/FormButton';
 
@@ -34,12 +34,13 @@ interface Props {
     closeModal(): void;
 
     setCurrentModal(modalState: CurrentModalState): void;
+    setCurrentSpace(space: Space): void;
 }
 
-function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props): JSX.Element {
+function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCurrentSpace}: Props): JSX.Element {
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
-    const [enableReadOnly, setEnableReadOnly] = useState<boolean>(false);
+    const [enableReadOnly, setEnableReadOnly] = useState<boolean>(currentSpace.todayViewIsPublic);
     const linkToSpace: string = window.location.href;
     const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
@@ -77,35 +78,41 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
         return re.test(String(email).toLowerCase());
     };
 
-    const toggleReadOnlyEnabled = (checked: any) => {
+    const toggleReadOnlyEnabled = async (checked: boolean): Promise<void> => {
         setEnableReadOnly(checked);
+        await SpaceClient.editSpace(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            currentSpace.uuid!,
+            {...currentSpace, todayViewIsPublic:checked},
+            currentSpace.name
+        ).then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
     };
 
     return (
         <form className="editContributorsContainer form"
             onSubmit={(event): Promise<void> => inviteUsers(event)}>
-            <label className="inviteViewersLabel">
+            <div className="inviteViewersLabel">
                 <span>People with this link can view only</span>
                 <div className="inviteContributorsConfirmationShareLinkContainer">
                     <div className="inviteContributorsConfirmationLink" data-testid="inviteContributorsConfirmationLink">
                         {linkToSpace}
                     </div>
                     <button className="inviteContributorsConfirmationCopyButton"
-                            data-testid="inviteContributorsConfirmationCopyButton"
-                            onClick={copyLink}>
+                        data-testid="inviteContributorsConfirmationCopyButton"
+                        onClick={copyLink}>
                         {copiedLink ? 'Copied!' : 'Copy link'}
                     </button>
                 </div>
-            </label>
-            <label className={"enableReadOnlyLabel"}>
+            </div>
+            <label className={'enableReadOnlyLabel'}>
                 <span>View only access is {enableReadOnly ? 'enabled' : 'disabled'}</span>
-                    <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
-                                 onChange={toggleReadOnlyEnabled}
-                                 checked={enableReadOnly}
-                                 checkedIcon={false}
-                                 uncheckedIcon={false}
-                                 width={27} height={13}
-                    />
+                <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
+                    onChange={toggleReadOnlyEnabled}
+                    checked={enableReadOnly}
+                    checkedIcon={false}
+                    uncheckedIcon={false}
+                    width={27} height={13}
+                />
             </label>
             <h2 className="editTitle">Invite others to edit</h2>
             <label className="inviteContributorsLabel">
@@ -139,6 +146,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
+    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
 });
 
 const mapStateToProps = (state: GlobalStateProps) => ({
