@@ -17,7 +17,8 @@
 
 package com.ford.internalprojects.peoplemover.space
 
-import com.ford.internalprojects.peoplemover.auth.*
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
@@ -78,12 +79,12 @@ class SpaceService(
         spaceRepository.deleteByUuid(uuid)
     }
 
-    fun editSpace(uuid: String, editSpaceRequest: EditSpaceRequest) {
+    fun editSpace(uuid: String, editSpaceRequest: EditSpaceRequest): Space {
         val spaceToEdit = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
 
         if (editSpaceRequest.todayViewIsPublic == null &&
-            editSpaceRequest.name == null) {
-            return
+                editSpaceRequest.name == null) {
+            return spaceToEdit
         }
 
         editSpaceRequest.name?.let {
@@ -98,7 +99,7 @@ class SpaceService(
         }
 
         spaceToEdit.lastModifiedDate = Timestamp(Date().time)
-        spaceRepository.save(spaceToEdit)
+        return spaceRepository.save(spaceToEdit)
     }
 
     fun userHasEditAccessToSpace(spaceUuid: String): Boolean {
