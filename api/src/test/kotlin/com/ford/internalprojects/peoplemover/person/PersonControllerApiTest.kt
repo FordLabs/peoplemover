@@ -104,7 +104,7 @@ class PersonControllerApiTest {
 
     @Test
     fun `POST should add a new person to the repository`() {
-        val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
+        val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!, spaceUuid = space.uuid))
 
         val personToCreate = Person(
                 name = "John",
@@ -230,8 +230,8 @@ class PersonControllerApiTest {
 
     @Test
     fun `PUT should update a person`() {
-        val softwareEngineer: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!))
-        val engineer = spaceRolesRepository.save(SpaceRole(name = "Engineer", spaceId = space.id!!))
+        val softwareEngineer: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!, spaceUuid = space.uuid))
+        val engineer = spaceRolesRepository.save(SpaceRole(name = "Engineer", spaceId = space.id!!, spaceUuid = space.uuid))
         val person: Person = personRepository.save(Person(name = "John", spaceId = space.id!!, spaceUuid = space.uuid, spaceRole = softwareEngineer))
         val updatePersonRequest = Person(
                 id = person.id,

@@ -42,3 +42,14 @@ WHERE product_tag.space_id = space.id;
 
 
 ALTER TABLE product_tag ADD CONSTRAINT FK_Product_Tag__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;
+
+ALTER TABLE space_roles ADD COLUMN space_uuid varchar(36) NOT NULL;
+
+UPDATE space_roles
+INNER JOIN space
+ON space_roles.space_id = space.id
+set space_roles.space_uuid = space.uuid
+WHERE space_roles.space_id = space.id;
+
+
+ALTER TABLE space_roles ADD CONSTRAINT FK_Roles__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;

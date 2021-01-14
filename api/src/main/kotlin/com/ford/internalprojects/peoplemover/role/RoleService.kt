@@ -42,13 +42,13 @@ class RoleService(
     ): SpaceRole {
         val space: Space = getSpaceFromSpaceUuid(spaceUuid)
 
-        spaceRolesRepository.findBySpaceIdAndNameAllIgnoreCase(
-                space.id!!,
+        spaceRolesRepository.findBySpaceUuidAndNameAllIgnoreCase(
+                spaceUuid,
                 role
         )?.let { throw RoleAlreadyExistsException(role) }
         val colorToAssign: Color? = getColorToAssign(spaceUuid, colorId)
-        val spaceRole = SpaceRole(name = role, spaceId = space.id, color = colorToAssign)
-        return spaceRolesRepository.saveAndUpdateSpaceLastModified(spaceRole)
+        val spaceRole = SpaceRole(name = role, spaceId = space.id!!, color = colorToAssign, spaceUuid = spaceUuid)
+        return spaceRolesRepository.saveAndUpdateSpaceLastModified_new(spaceRole)
     }
 
     fun getRolesForSpace(spaceUuid: String): Set<SpaceRole> {
@@ -61,7 +61,7 @@ class RoleService(
         val roleFound: SpaceRole = spaceRolesRepository.findByIdOrNull(roleId) ?:
                 throw RoleNotExistsException(roleId.toString())
 
-        spaceRolesRepository.deleteAndUpdateSpaceLastModified(roleFound)
+        spaceRolesRepository.deleteAndUpdateSpaceLastModified_new(roleFound)
     }
 
     fun editRole(spaceUuid: String, roleEditRequest: RoleEditRequest): SpaceRole {
@@ -77,7 +77,7 @@ class RoleService(
                     throw ColorDoesNotExistException()
             roleToUpdate.color = colorFound
         }
-        return spaceRolesRepository.saveAndUpdateSpaceLastModified(roleToUpdate)
+        return spaceRolesRepository.saveAndUpdateSpaceLastModified_new(roleToUpdate)
     }
 
     private fun getColorToAssign(spaceUuid: String, colorId: Int?): Color? {
@@ -100,8 +100,8 @@ class RoleService(
     }
 
     private fun throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest: RoleEditRequest, space: Space) {
-        spaceRolesRepository.findBySpaceIdAndNameAllIgnoreCase(
-                space.id!!,
+        spaceRolesRepository.findBySpaceUuidAndNameAllIgnoreCase(
+                space.uuid,
                 roleEditRequest.name
         )?.let { spaceRole ->
             val updatedRoleNameAlreadyUsedInOtherSpaceRole = spaceRole.id != roleEditRequest.id

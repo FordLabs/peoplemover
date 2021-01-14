@@ -50,9 +50,11 @@ create table space_roles
     id       int not null identity primary key,
     roles    varchar(255),
     space_id int,
+    space_uuid    varchar (36),
     color_id int,
 
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
+    FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (color_id) REFERENCES color (id) on delete set null,
     constraint UQ_Role unique (space_id, roles)
 );
