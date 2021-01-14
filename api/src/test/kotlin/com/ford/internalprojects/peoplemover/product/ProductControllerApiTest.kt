@@ -188,7 +188,7 @@ class ProductControllerApiTest {
     fun `PUT should update a product`() {
         val product: Product = productRepository.save(Product(name = "test", spaceId = space.id!!, spaceUuid = space.uuid))
         val person: Person = personRepository.save(Person(name = "bob", spaceId = space.id!!, spaceUuid = space.uuid))
-        assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!))
+        assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!, spaceUuid = space.uuid))
         val productEditRequest = ProductEditRequest(
                 name = "product two",
                 id = product.id!!
@@ -268,7 +268,7 @@ class ProductControllerApiTest {
         val product: Product = productRepository.save(Product(name = "test", spaceId = space.id!!, spaceUuid = space.uuid))
         val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", spaceId = space.id!!, spaceUuid = space.uuid))
         val person = personRepository.save(Person(name = "person", spaceId = space.id!!, spaceUuid = space.uuid))
-        assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!))
+        assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceId = space.id!!, spaceUuid = space.uuid))
 
         mockMvc.perform(delete(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN"))

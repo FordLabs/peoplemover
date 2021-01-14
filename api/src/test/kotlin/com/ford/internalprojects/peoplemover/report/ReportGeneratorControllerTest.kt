@@ -107,9 +107,9 @@ class ReportGeneratorControllerTest {
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceId = space1.id!!, spaceUuid = space1.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceId = space1.id!!, spaceUuid = space1.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceId = space2.id!!, spaceUuid = space2.uuid))
-        assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar1)))
-        assignmentRepository.save(Assignment(person = person2, productId = productB.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar2)))
-        assignmentRepository.save(Assignment(person = person3, productId = productA.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar2)))
+        assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar1), spaceUuid = space1.uuid))
+        assignmentRepository.save(Assignment(person = person2, productId = productB.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
+        assignmentRepository.save(Assignment(person = person3, productId = productA.id!!, spaceId = space1.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
     }
 
     @After

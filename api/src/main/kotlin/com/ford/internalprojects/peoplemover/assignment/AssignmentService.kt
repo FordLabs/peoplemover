@@ -72,8 +72,7 @@ class AssignmentService(
     }
 
     fun getReassignmentsByExactDate(spaceUuid: String, requestedDate: LocalDate): List<Reassignment>? {
-        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        val assignmentsWithExactDate = assignmentRepository.findAllBySpaceIdAndEffectiveDate(spaceId = space.id!!, requestedDate = requestedDate).sortedWith(compareByDescending { it.id })
+        val assignmentsWithExactDate = assignmentRepository.findAllBySpaceUuidAndEffectiveDate(spaceUuid = spaceUuid, requestedDate = requestedDate).sortedWith(compareByDescending { it.id })
         val assignmentsWithPreviousDate = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedDate)
 
         return createReassignments(assignmentsWithExactDate, assignmentsWithPreviousDate)
@@ -111,7 +110,7 @@ class AssignmentService(
 
     @Transactional
     fun deleteOneAssignment(assignmentToDelete: Assignment) {
-        assignmentRepository.deleteAndUpdateSpaceLastModified(assignmentToDelete)
+        assignmentRepository.deleteAndUpdateSpaceLastModified_new(assignmentToDelete)
     }
 
     fun deleteAssignmentsForDate(requestedDate: LocalDate, person: Person) {
@@ -181,13 +180,14 @@ class AssignmentService(
 
     private fun createUnassignmentForDate(requestedDate: LocalDate, person: Person): Assignment {
         val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", person.spaceUuid)
-        return assignmentRepository.saveAndUpdateSpaceLastModified(
+        return assignmentRepository.saveAndUpdateSpaceLastModified_new(
                 Assignment(
                         person = person,
                         placeholder = false,
                         productId = unassignedProduct!!.id!!,
                         spaceId = person.spaceId,
-                        effectiveDate = requestedDate
+                        effectiveDate = requestedDate,
+                        spaceUuid = person.spaceUuid
                 )
         )
     }
@@ -202,13 +202,14 @@ class AssignmentService(
             productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
 
             if(product.productId != unassignedProduct!!.id) {
-                val assignment = assignmentRepository.saveAndUpdateSpaceLastModified(
+                val assignment = assignmentRepository.saveAndUpdateSpaceLastModified_new(
                         Assignment(
                                 person = assignmentRequest.person,
                                 placeholder = product.placeholder,
                                 productId = product.productId,
                                 spaceId = space.id!!,
-                                effectiveDate = assignmentRequest.requestedDate
+                                effectiveDate = assignmentRequest.requestedDate,
+                                spaceUuid = space.uuid
                         )
                 )
                 createdAssignments.add(assignment)
@@ -254,6 +255,6 @@ class AssignmentService(
         assignmentRepository.findByIdOrNull(assignmentToUpdate.id!!) ?: throw AssignmentNotExistsException()
         productRepository.findByIdOrNull(assignmentToUpdate.productId) ?: throw ProductNotExistsException()
 
-        assignmentRepository.saveAndUpdateSpaceLastModified(assignmentToUpdate)
+        assignmentRepository.saveAndUpdateSpaceLastModified_new(assignmentToUpdate)
     }
 }

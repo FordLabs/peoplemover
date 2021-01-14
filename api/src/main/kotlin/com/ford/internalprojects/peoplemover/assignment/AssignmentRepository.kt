@@ -17,16 +17,16 @@
 
 package com.ford.internalprojects.peoplemover.assignment
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
+import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository_new
 import com.ford.internalprojects.peoplemover.person.Person
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-interface AssignmentRepository : PeopleMoverRepository<Assignment, Int> {
+interface AssignmentRepository : PeopleMoverRepository_new<Assignment, Int> {
     fun getByPersonId(personId: Int): List<Assignment>
     fun findAllByPersonAndEffectiveDate(person: Person, requestedDate: LocalDate): List<Assignment>
-    fun findAllBySpaceIdAndEffectiveDate(spaceId: Int, requestedDate: LocalDate): List<Assignment>
+    fun findAllBySpaceUuidAndEffectiveDate(spaceUuid: String, requestedDate: LocalDate): List<Assignment>
 
     fun findAllByEffectiveDateIsNullAndPersonId(personId: Int): List<Assignment>
     fun findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId: Int, effectiveDate: LocalDate): List<Assignment>

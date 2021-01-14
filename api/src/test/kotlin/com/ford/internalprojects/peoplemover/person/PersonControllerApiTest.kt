@@ -282,8 +282,8 @@ class PersonControllerApiTest {
         assertThat(personRepository.count()).isEqualTo(2)
 
         val product: Product = productRepository.save(Product(name = "product", spaceId = space.id!!, spaceUuid = space.uuid))
-        val assignmentToDelete: Assignment = assignmentRepository.save(Assignment(person = personToDelete, productId = product.id!!, spaceId = space.id!!))
-        val assignmentToRemain: Assignment = assignmentRepository.save(Assignment(person = personToRemain, productId = product.id!!, spaceId = space.id!!))
+        val assignmentToDelete: Assignment = assignmentRepository.save(Assignment(person = personToDelete, productId = product.id!!, spaceId = space.id!!, spaceUuid = space.uuid))
+        val assignmentToRemain: Assignment = assignmentRepository.save(Assignment(person = personToRemain, productId = product.id!!, spaceId = space.id!!, spaceUuid = space.uuid))
         assertThat(assignmentRepository.count()).isEqualTo(2)
 
         mockMvc.perform(delete("$basePeopleUrl/${personToDelete.id}")

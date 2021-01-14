@@ -82,9 +82,11 @@ create table assignment
     product_id          int,
     person_id           int,
     space_id            int,
+    space_uuid          varchar (36),
 
     FOREIGN KEY (product_id) REFERENCES product (id) on delete cascade,
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
+    FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (person_id) REFERENCES person (id) on delete cascade,
     constraint UQ_Assignment unique (product_id, person_id, effective_date)
 );

@@ -64,3 +64,14 @@ WHERE user_space_mapping.space_id = space.id;
 
 
 ALTER TABLE user_space_mapping ADD CONSTRAINT FK_User_Mapping__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;
+
+ALTER TABLE assignment ADD COLUMN space_uuid varchar(36) NOT NULL;
+
+UPDATE assignment
+INNER JOIN space
+ON assignment.space_id = space.id
+set assignment.space_uuid = space.uuid
+WHERE assignment.space_id = space.id;
+
+
+ALTER TABLE assignment ADD CONSTRAINT FK_Assignment__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;
