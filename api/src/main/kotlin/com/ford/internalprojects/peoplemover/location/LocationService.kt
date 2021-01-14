@@ -33,19 +33,17 @@ class LocationService(
 ) {
     fun addLocationToSpace(spaceUuid: String, locationAddRequest: LocationAddRequest): SpaceLocation {
         val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        spaceLocationRepository.findBySpaceIdAndNameIgnoreCase(
-                space.id!!,
+        spaceLocationRepository.findBySpaceUuidAndNameIgnoreCase(
+                spaceUuid,
                 locationAddRequest.name
         )?.let { throw LocationAlreadyExistsException(locationAddRequest.name) }
 
-        val spaceLocationToSave = SpaceLocation(spaceId = space.id, name = locationAddRequest.name)
-        return spaceLocationRepository.saveAndUpdateSpaceLastModified(spaceLocationToSave)
+        val spaceLocationToSave = SpaceLocation(spaceId = space.id!!, name = locationAddRequest.name, spaceUuid = spaceUuid)
+        return spaceLocationRepository.saveAndUpdateSpaceLastModified_new(spaceLocationToSave)
     }
 
-    fun getLocationsForSpace(spaceUuid: String): Set<SpaceLocation> {
-        val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
-        return spaceLocationRepository.findAllBySpaceId(space.id!!)
-    }
+    fun getLocationsForSpace(spaceUuid: String): Set<SpaceLocation> =
+        spaceLocationRepository.findAllBySpaceUuid(spaceUuid)
 
     fun editLocation(spaceUuid: String, locationEditRequest: LocationEditRequest): SpaceLocation {
         val space: Space = spaceRepository.findByUuid(spaceUuid)
@@ -54,15 +52,16 @@ class LocationService(
         val spaceLocationToEdit = SpaceLocation(
                 id = locationEditRequest.id,
                 spaceId = space.id!!,
-                name = locationEditRequest.name
+                name = locationEditRequest.name,
+                spaceUuid = spaceUuid
         )
-        return spaceLocationRepository.saveAndUpdateSpaceLastModified(spaceLocationToEdit)
+        return spaceLocationRepository.saveAndUpdateSpaceLastModified_new(spaceLocationToEdit)
     }
 
     @Transactional
     fun deleteLocation(locationId: Int) {
         val tagToDelete: SpaceLocation = spaceLocationRepository.findByIdOrNull(locationId) ?: throw LocationNotExistsException()
-        spaceLocationRepository.deleteAndUpdateSpaceLastModified(tagToDelete)
+        spaceLocationRepository.deleteAndUpdateSpaceLastModified_new(tagToDelete)
     }
 
 }

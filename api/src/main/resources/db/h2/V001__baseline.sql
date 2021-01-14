@@ -18,9 +18,11 @@ create table space_locations
 (
     id       int identity primary key,
     space_id int not null,
+    space_uuid        varchar (36),
     name     varchar(255),
 
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
+    FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     constraint UQ_Location unique (space_id, name)
 );
 
