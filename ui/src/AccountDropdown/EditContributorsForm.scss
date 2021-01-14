@@ -18,18 +18,16 @@
 @import "../Application/Styleguide/Colors.scss";
 
 .editContributorsContainer {
-  width: 216px;
+  width: 415px;
   margin: 0 auto;
 
-  .inviteContributorsLabel {
+  label {
     text-align: left;
     font-style: normal;
     font-weight: bold;
     font-size: 14px;
     line-height: 16px;
     color: $gray-1;
-
-    width: 100%;
   }
 
   textarea {
@@ -64,6 +62,53 @@
         margin-right: 16px;
       }
     }
+  }
+  .inviteViewersLabel{
+    display: flex;
+    flex-direction: column;
+  }
+  .enableReadOnlyLabel{
+    display:inline-block;
+    margin-bottom: 24px;
+    span{
+      padding-right: 18px;
+    }
+  }
+  .inviteContributorsConfirmationShareLinkContainer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    margin-top: 10px;
+
+    .inviteContributorsConfirmationLink {
+      white-space: nowrap;
+      overflow-x: auto;
+      background: #F2F2F2;
+      border-radius: 6px;
+      padding: 10px;
+      max-width: 305px;
+      font-weight: 400;
+      font-style: normal;
+      font-family: inherit;
+    }
+
+    .inviteContributorsConfirmationCopyButton {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 14px;
+      color: $purple-title;
+      margin-left: 16px;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+      width: 4rem;
+    }
+  }
+  .editTitle{
+    color: $purple-title;
   }
 }
 
