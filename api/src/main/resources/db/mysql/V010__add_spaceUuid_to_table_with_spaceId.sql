@@ -53,3 +53,14 @@ WHERE space_roles.space_id = space.id;
 
 
 ALTER TABLE space_roles ADD CONSTRAINT FK_Roles__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;
+
+ALTER TABLE user_space_mapping ADD COLUMN space_uuid varchar(36) NOT NULL;
+
+UPDATE user_space_mapping
+INNER JOIN space
+ON user_space_mapping.space_id = space.id
+set user_space_mapping.space_uuid = space.uuid
+WHERE user_space_mapping.space_id = space.id;
+
+
+ALTER TABLE user_space_mapping ADD CONSTRAINT FK_User_Mapping__Space__uuid FOREIGN KEY (space_uuid) REFERENCES space (uuid) ON DELETE CASCADE;

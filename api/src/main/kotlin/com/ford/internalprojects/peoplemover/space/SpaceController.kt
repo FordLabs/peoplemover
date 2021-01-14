@@ -87,7 +87,7 @@ class SpaceController(
         request.emails.forEach { email ->
             val userId = email.substringBefore('@').toUpperCase().trim()
             try {
-                userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id))
+                userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceId = space.id, spaceUuid = uuid))
             } catch (e: DataIntegrityViolationException) {
                 logger.logInfoMessage("$userId already has access to this space.");
             } catch (e: Exception) {

@@ -44,7 +44,7 @@ class AuthController(
         val spaceToSearch = spaceRepository.findByUuid(request.uuid)
 
         return if (spaceToSearch !== null) {
-            val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(validateTokenResponse.sub, spaceToSearch.id!!)
+            val mapping = userSpaceMappingRepository.findByUserIdAndSpaceUuid(validateTokenResponse.sub, request.uuid)
             return if (mapping.isPresent) {
                 ResponseEntity.ok().build()
             } else {

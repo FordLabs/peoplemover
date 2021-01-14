@@ -55,7 +55,8 @@ class SpaceService(
             userSpaceMappingRepository.save(
                 UserSpaceMapping(
                     userId = userId,
-                    spaceId = createdSpace.id
+                    spaceId = createdSpace.id,
+                    spaceUuid = createdSpace.uuid
                 )
             )
             return SpaceResponse(createdSpace)

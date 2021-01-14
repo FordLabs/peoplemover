@@ -15,8 +15,7 @@ class CustomPermissionEvaluator(
         private val spaceRepository: SpaceRepository
 ) : PermissionEvaluator {
     override fun hasPermission(auth: Authentication, targetDomainObject: Any, permission: Any): Boolean {
-        val mapping = userSpaceMappingRepository.findByUserIdAndSpaceId(auth.name, Integer.parseInt(targetDomainObject.toString()))
-        return mapping.isPresent
+        return hasPermission(auth, targetDomainObject.toString(), "uuid", permission)
     }
 
     override fun hasPermission(auth: Authentication, targetId: Serializable, targetType: String, permission: Any): Boolean {
@@ -36,12 +35,12 @@ class CustomPermissionEvaluator(
     private fun handleReadPermissions(currentSpace: Space?, auth: Authentication): Boolean {
         if (currentSpace == null) throw SpaceNotExistsException()
         return if (currentSpace.todayViewIsPublic) true
-        else userSpaceMappingRepository.findByUserIdAndSpaceId(auth.name, currentSpace.id!!).isPresent
+        else userSpaceMappingRepository.findByUserIdAndSpaceUuid(auth.name, currentSpace.uuid).isPresent
     }
 
     private fun handleWritePermissions(currentSpace: Space?, auth: Authentication): Boolean {
         return if (currentSpace == null) false
-        else userSpaceMappingRepository.findByUserIdAndSpaceId(auth.name, currentSpace.id!!).isPresent
+        else userSpaceMappingRepository.findByUserIdAndSpaceUuid(auth.name, currentSpace.uuid).isPresent
     }
 
     private fun getCurrentSpaceByIdOrUuid(targetType: String, targetIdString: String): Space? {

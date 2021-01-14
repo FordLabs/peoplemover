@@ -75,7 +75,7 @@ class LocationControllerApiTest {
         space = spaceRepository.save(Space(name = "tok"))
 
         baseLocationsUrl = getBaseLocationsUrl(space.uuid)
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID", spaceUuid = space.uuid))
     }
 
     @After
