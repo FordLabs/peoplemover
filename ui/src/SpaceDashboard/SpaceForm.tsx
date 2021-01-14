@@ -70,12 +70,14 @@ function SpaceForm({
             <label className="createSpaceLabel" htmlFor="spaceNameField">Space Name</label>
             <input className="createSpaceInputField"
                 id="spaceNameField"
+                aria-describedby="createSpaceFieldText"
                 type="text"
                 data-testid="createSpaceInputField"
                 maxLength={maxLength}
                 value={formSpace.name}
-                onChange={onSpaceNameFieldChanged}/>
-            <span className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
+                onChange={onSpaceNameFieldChanged}
+            />
+            <span id="createSpaceFieldText" className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
                 data-testid="createSpaceFieldText">
                 {spaceNameLength} ({maxLength} characters max)
             </span>
