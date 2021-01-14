@@ -56,15 +56,21 @@
   font-size: 12px;
 
   .accountDropdownOption {
+    list-style-type: none;
     text-align: left;
     padding: 4px 6px;
-    color:$gray-1;
-  }
+    color: $gray-1;
+    background-color: transparent;
+    font-size: inherit;
+    font-family: inherit;
+    width: 100%;
 
-  .accountDropdownOption:hover {
-    background-color: $gray-6;
-    color: $purple;
-    border-radius: 2px;
-    cursor: pointer;
+    &:hover,
+    &:focus {
+      background-color: $gray-6;
+      color: $purple;
+      border-radius: 2px;
+      cursor: pointer;
+    }
   }
 }

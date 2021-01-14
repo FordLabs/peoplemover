@@ -36,12 +36,14 @@ function DownloadReportButton({ currentSpace, viewingDate }: Props): JSX.Element
     };
 
     return (
-        <div data-testid="downloadReport"
+        <button
             className="accountDropdownOption"
+            role="menuitem"
+            data-testid="downloadReport"
             onClick={handleDownloadReport}
             onKeyDown={onKeyDown}>
             Download Report
-        </div>
+        </button>
     );
 }
 

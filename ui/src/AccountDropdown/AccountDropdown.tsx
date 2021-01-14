@@ -15,57 +15,125 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import {connect} from 'react-redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
 import ShareAccessButton from './ShareAccessButton';
 import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
+import debounce from '../Utils/debounce';
+import { useClickOutside } from 'react-click-outside-hook';
 
 import './AccountDropdown.scss';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
 
-interface AccountDropdownProps {
+const DEFAULT_CURRENT_INDEX = 0;
+const DROPDOWN_OPTIONS_LENGTH = 3;
+
+interface Props {
     hideSpaceButtons?: boolean;
     isReadOnly: boolean;
 }
 
-function AccountDropdown({ hideSpaceButtons, isReadOnly }: AccountDropdownProps): JSX.Element {
+function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
+    const [ref, hasClickedOutside] = useClickOutside();
     const [userName, setUserName] = useState<string>('');
-    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [redirect, setRedirect] = useState<JSX.Element>();
+    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
+    const dropdownElement = useRef<HTMLDivElement>(null);
+    const [currentIndex, setCurrentIndex] = useState<number>(
+        DEFAULT_CURRENT_INDEX
+    );
+    const [upKey, downKey, enterKey] = [38, 40, 13];
 
     useEffect(() => {
         setUserName(getUserNameFromAccessToken());
     }, []);
 
-    if ( redirect ) {
-        return redirect;
-    }
+    useEffect(() => {
+        const focusOnDropdown = (): void => {
+            if (dropdownToggle && !!dropdownElement.current) {
+                dropdownElement.current.focus();
+            }
+        };
 
-    const showDropdown = (): boolean => {
-        if (dropdownToggle) {
-            hideDropdown();
-        } else {
-            setDropdownToggle(!dropdownToggle);
-            document.addEventListener('click', hideDropdown, false);
+        focusOnDropdown();
+    }, [dropdownToggle, currentIndex]);
+
+    if (redirect) return redirect;
+
+    const handleKeyDownList = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        switch (event.keyCode) {
+            case upKey:
+                if (currentIndex !== undefined && currentIndex > 0) {
+                    // setSelectedItem(currentIndex - 1);
+                    console.log('upKey', currentIndex - 1);
+                    setCurrentIndex(currentIndex - 1);
+                }
+                break;
+            case downKey:
+                if (currentIndex !== undefined && currentIndex < DROPDOWN_OPTIONS_LENGTH - 1) {
+                    // setSelectedItem(currentIndex + 1);
+                    setCurrentIndex(currentIndex + 1);
+                    console.log('downKey', currentIndex + 1);
+                }
+                break;
+            case enterKey:
+                // if (dropdownToggleElement.current) {
+                //     dropdownToggleElement.current.focus();
+                // }
+                // updateSelectedOption(options[currentIndex], currentIndex);
+                console.log('ENTER');
+                break;
         }
-        return dropdownToggle;
     };
 
-    const hideDropdown = (): boolean => {
-        setDropdownToggle(false);
-        document.removeEventListener('click', hideDropdown);
-        return dropdownToggle;
+    const toggleDropdown = (): void => {
+        setDropdownVisible(!dropdownToggle);
+    };
+
+    const hideDropdown = (): void => {
+        console.log('On Blur')
+        setDropdownVisible(false);
+    };
+
+    const showDropdown = (): void => {
+        setDropdownVisible(true);
+    };
+
+    const setDropdownVisible = (visible: boolean): void => {
+        debounce(() => {
+            setDropdownToggle(visible);
+        }, 100)();
+    };
+
+    const AccountDropdown = (): JSX.Element => {
+        return (
+            <div role="menu" className="accountDropdown" onBlur={hideDropdown} ref={dropdownElement}>
+                {!hideSpaceButtons && !isReadOnly && (
+                    <>
+                        <ShareAccessButton/>
+                        <DownloadReportButton/>
+                    </>
+                )}
+                <SignOutButton setRedirect={setRedirect}/>
+            </div>
+        );
     };
 
     return (
         <>
             <button
-                aria-label="Account Menu"
+                aria-label="Settings and More"
+                aria-haspopup={true}
+                aria-expanded={false}
                 data-testid="accountDropdownToggle"
                 className="accountDropdownToggle"
-                onClick={showDropdown}>
+                onClick={toggleDropdown}
+            >
                 <i className="material-icons" data-testid="userIcon">
                     person
                 </i>
@@ -74,19 +142,11 @@ function AccountDropdown({ hideSpaceButtons, isReadOnly }: AccountDropdownProps)
                         Welcome, <span className="userName">{userName}</span>
                     </div>
                 )}
-                <i className="material-icons">
-                    arrow_drop_down
+                <i className="material-icons selectDropdownArrow">
+                    {dropdownToggle ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </i>
             </button>
-            {dropdownToggle && (
-                <div className="accountDropdown">
-                    { !hideSpaceButtons && !isReadOnly && (<>
-                        <ShareAccessButton />
-                        <DownloadReportButton />
-                    </>)}
-                    <SignOutButton setRedirect={setRedirect} />
-                </div>
-            )}
+            {dropdownToggle && <AccountDropdown/>}
         </>
     );
 }

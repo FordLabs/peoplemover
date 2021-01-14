@@ -33,12 +33,14 @@ function SignOutButton({ setRedirect }: Props): JSX.Element {
     };
 
     return (
-        <div data-testid="sign-out"
+        <button
             className="accountDropdownOption"
+            role="menuitem"
+            data-testid="sign-out"
             onClick={clearAccessTokenCookie}
             onKeyDown={onKeyDown}>
             Sign Out
-        </div>
+        </button>
     );
 }
 
