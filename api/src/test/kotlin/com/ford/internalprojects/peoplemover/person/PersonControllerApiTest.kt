@@ -125,7 +125,7 @@ class PersonControllerApiTest {
         val actualPerson: Person = objectMapper.readValue(result.response.contentAsString, Person::class.java)
 
         assertThat(personRepository.count()).isOne()
-        val personInDb: Person = personRepository.findAllBySpaceId(space.id!!).first()
+        val personInDb: Person = personRepository.findAllBySpaceUuid(space.uuid).first()
 
         assertThat(actualPerson.name).isEqualTo(personToCreate.name)
         assertThat(actualPerson.spaceRole).isEqualTo(personToCreate.spaceRole)

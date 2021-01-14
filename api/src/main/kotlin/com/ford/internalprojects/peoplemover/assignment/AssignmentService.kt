@@ -48,9 +48,7 @@ class AssignmentService(
     }
 
     fun getAssignmentsByDate(spaceUuid: String, requestedDate: LocalDate): List<Assignment> {
-        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-
-        val people: List<Person> = personRepository.findAllBySpaceId(space.id!!)
+        val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
         val allAssignments: MutableList<Assignment> = mutableListOf()
         people.forEach { person ->
             val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
@@ -61,9 +59,7 @@ class AssignmentService(
     }
 
     fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
-        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-
-        val people: List<Person> = personRepository.findAllBySpaceId(space.id!!)
+        val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
         val allAssignments: MutableList<Assignment> = mutableListOf()
         people.forEach { person ->
             val assignmentsForPerson: List<Assignment> = assignmentRepository.getByPersonId(person.id!!)
