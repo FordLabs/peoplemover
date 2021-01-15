@@ -78,6 +78,7 @@ describe('Product List tests', () => {
                 id: 99,
                 name: 'AA',
                 spaceId: 1,
+                spaceUuid: 'a',
                 startDate: '2011-01-01',
                 endDate: undefined,
                 spaceLocation: TestUtils.annarbor,
@@ -161,7 +162,7 @@ describe('Product List tests', () => {
                     options: [],
                 },
             ];
-    
+
             const initialState = {
                 products: TestUtils.products,
                 productTags: TestUtils.productTags,
@@ -170,7 +171,7 @@ describe('Product List tests', () => {
                 productSortBy: 'name',
                 currentSpace: TestUtils.space,
             } as GlobalStateProps;
-    
+
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
             await component.findByText(TestUtils.productWithoutAssignments.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);

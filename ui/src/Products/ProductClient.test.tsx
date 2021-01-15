@@ -109,6 +109,7 @@ describe('Product Client', function() {
             name: expectedName,
             productTags: [],
             spaceId: 0,
+            spaceUuid: 'a',
         };
 
         beforeEach(() => {

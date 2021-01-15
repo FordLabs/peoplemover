@@ -71,7 +71,7 @@ class AssignmentController(
         return ResponseEntity.ok(reassignmentsByExactDate ?: emptyList())
     }
 
-    @PreAuthorize("hasPermission(#createAssignmentRequest.person.spaceId, 'id', 'modify')")
+    @PreAuthorize("hasPermission(#createAssignmentRequest.person.spaceUuid, 'uuid', 'modify')")
     @PostMapping(path = ["/api/assignment/create"])
     fun createAssignmentsForDate(@RequestBody createAssignmentRequest: CreateAssignmentsRequest): ResponseEntity<Set<Assignment>> {
         val assignmentsCreated: Set<Assignment> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest)
@@ -82,7 +82,7 @@ class AssignmentController(
     }
 
 
-    @PreAuthorize("hasPermission(#assigmentToDelete.spaceId, 'id', 'modify')")
+    @PreAuthorize("hasPermission(#assigmentToDelete.spaceUuid, 'uuid', 'modify')")
     @DeleteMapping(path = ["/api/assignment/delete"])
     fun deleteAssignment(@RequestBody assigmentToDelete: Assignment): ResponseEntity<Unit> {
         assignmentService.deleteOneAssignment(assigmentToDelete)
@@ -93,7 +93,7 @@ class AssignmentController(
         return ResponseEntity.ok().build()
     }
 
-    @PreAuthorize("hasPermission(#person.spaceId, 'id', 'modify')")
+    @PreAuthorize("hasPermission(#person.spaceUuid, 'uuid', 'modify')")
     @DeleteMapping(path = ["/api/assignment/delete/{requestedDate}"])
     fun deleteAssignmentForDate(@PathVariable requestedDate: String, @RequestBody person: Person): ResponseEntity<Unit> {
         assignmentService.revertAssignmentsForDate(LocalDate.parse(requestedDate), person)
