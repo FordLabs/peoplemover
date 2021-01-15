@@ -41,7 +41,7 @@ data class Assignment(
         val effectiveDate: LocalDate? = LocalDate.now(),
 
         @Column(name = "space_id")
-        val spaceId: Int,
+        override val spaceId: Int,
 
         @Column(name = "space_uuid")
         override val spaceUuid: String

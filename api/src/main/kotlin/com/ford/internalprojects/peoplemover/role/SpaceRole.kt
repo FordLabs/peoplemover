@@ -32,7 +32,7 @@ data class SpaceRole (
     var name: String,
 
     @Column(name = "space_id")
-    val spaceId: Int,
+    override val spaceId: Int,
 
     @Column(name = "space_uuid")
     override val spaceUuid: String,

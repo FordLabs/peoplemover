@@ -41,7 +41,7 @@ data class Person(
         var newPerson: Boolean = false,
 
         @Column(name = "space_id")
-        val spaceId: Int,
+        override val spaceId: Int,
 
         @Column(name = "space_uuid")
         override val spaceUuid: String

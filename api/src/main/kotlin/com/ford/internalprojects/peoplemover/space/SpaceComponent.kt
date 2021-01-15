@@ -19,5 +19,6 @@ package com.ford.internalprojects.peoplemover.space
 
 
 interface SpaceComponent {
-    val spaceUuid: String
+    val spaceId: Int
+    val spaceUuid: String?
 }

@@ -36,18 +36,32 @@ class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Serializable>(
 
     @Transactional
     override fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S {
-        updateSpaceLastModified(entity.spaceUuid)
+        if (entity.spaceUuid != null && entity.spaceUuid!!.isNotBlank()) {
+            updateSpaceLastModified(entity.spaceUuid!!)
+        } else {
+            updateSpaceLastModifiedById(entity.spaceId)
+        }
         return save(entity)
     }
 
     @Transactional
     override fun <S : T> deleteAndUpdateSpaceLastModified(entity: S) {
-        updateSpaceLastModified(entity.spaceUuid)
+        if (entity.spaceUuid != null && entity.spaceUuid!!.isNotBlank()) {
+            updateSpaceLastModified(entity.spaceUuid!!)
+        } else {
+            updateSpaceLastModifiedById(entity.spaceId)
+        }
         delete(entity)
     }
 
     private fun updateSpaceLastModified(spaceUuid: String) {
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
+        space.lastModifiedDate = Timestamp(Date().time)
+        spaceRepository.save(space)
+    }
+
+    private fun updateSpaceLastModifiedById(spaceId: Int) {
+        val space = spaceRepository.findById(spaceId).orElseThrow { SpaceNotExistsException() }
         space.lastModifiedDate = Timestamp(Date().time)
         spaceRepository.save(space)
     }

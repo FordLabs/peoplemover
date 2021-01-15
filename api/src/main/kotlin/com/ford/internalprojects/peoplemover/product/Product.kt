@@ -55,7 +55,7 @@ data class Product (
     var notes: String = "",
 
     @Column(name = "space_id")
-    var spaceId: Int,
+    override var spaceId: Int,
 
     @Column(name = "space_uuid")
     override val spaceUuid: String
