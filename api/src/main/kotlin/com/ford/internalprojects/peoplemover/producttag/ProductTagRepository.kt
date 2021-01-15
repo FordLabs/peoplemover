@@ -17,12 +17,12 @@
 
 package com.ford.internalprojects.peoplemover.producttag
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository_new
+import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ProductTagRepository : PeopleMoverRepository_new<ProductTag, Int> {
+interface ProductTagRepository : PeopleMoverRepository<ProductTag, Int> {
     fun findAllByNameIgnoreCaseAndSpaceUuid(name: String, spaceUuid: String): ProductTag?
     fun findAllBySpaceUuid(spaceUuid: String, name: Sort): List<ProductTag>
 }

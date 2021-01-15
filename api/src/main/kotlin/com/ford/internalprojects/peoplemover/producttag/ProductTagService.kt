@@ -19,7 +19,6 @@ package com.ford.internalprojects.peoplemover.producttag
 
 import com.ford.internalprojects.peoplemover.producttag.exceptions.ProductTagAlreadyExistsForSpaceException
 import com.ford.internalprojects.peoplemover.producttag.exceptions.ProductTagNotExistsForSpaceException
-import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.domain.Sort
@@ -36,7 +35,7 @@ class ProductTagService(
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         productTagRepository.findAllByNameIgnoreCaseAndSpaceUuid(addRequest.name, spaceUuid)
                 ?.let { throw ProductTagAlreadyExistsForSpaceException() }
-        return productTagRepository.saveAndUpdateSpaceLastModified_new(ProductTag(spaceId = space.id!!, name = addRequest.name, spaceUuid = spaceUuid))
+        return productTagRepository.saveAndUpdateSpaceLastModified(ProductTag(spaceId = space.id!!, name = addRequest.name, spaceUuid = spaceUuid))
     }
 
     fun getAllProductTags(spaceUuid: String): List<ProductTag> =
@@ -51,7 +50,7 @@ class ProductTagService(
         val tagToDelete: ProductTag = productTagRepository.findByIdOrNull(productTagId)
                 ?: throw ProductTagNotExistsForSpaceException()
 
-        productTagRepository.deleteAndUpdateSpaceLastModified_new(tagToDelete)
+        productTagRepository.deleteAndUpdateSpaceLastModified(tagToDelete)
     }
 
     fun editProductTag(
@@ -63,7 +62,7 @@ class ProductTagService(
         val tagFound = productTagRepository.findByIdOrNull(tagEditRequest.id)
                 ?: throw ProductTagNotExistsForSpaceException()
         tagFound.name = tagEditRequest.name
-        return productTagRepository.saveAndUpdateSpaceLastModified_new(tagFound)
+        return productTagRepository.saveAndUpdateSpaceLastModified(tagFound)
     }
 
 }

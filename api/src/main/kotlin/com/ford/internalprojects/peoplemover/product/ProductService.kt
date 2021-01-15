@@ -62,7 +62,7 @@ class ProductService(
     }
 
     fun create(product: Product): Product =
-            productRepository.saveAndUpdateSpaceLastModified_new(product)
+            productRepository.saveAndUpdateSpaceLastModified(product)
 
 
     fun update(productEditRequest: ProductEditRequest, spaceUuid: String): Product {
@@ -80,7 +80,7 @@ class ProductService(
         }
 
         val product: Product = ProductEditRequest.toProduct(productEditRequest, space.id!!, space.uuid)
-        return productRepository.saveAndUpdateSpaceLastModified_new(product)
+        return productRepository.saveAndUpdateSpaceLastModified(product)
     }
 
     @Transactional
@@ -95,7 +95,7 @@ class ProductService(
         if (productToDelete.assignments.isNotEmpty()) {
             unassignPeopleFromProduct(productToDelete)
         }
-        productRepository.deleteAndUpdateSpaceLastModified_new(productToDelete)
+        productRepository.deleteAndUpdateSpaceLastModified(productToDelete)
     }
 
     private fun unassignPeopleFromProduct(productToDelete: Product) {

@@ -39,7 +39,7 @@ class LocationService(
         )?.let { throw LocationAlreadyExistsException(locationAddRequest.name) }
 
         val spaceLocationToSave = SpaceLocation(spaceId = space.id!!, name = locationAddRequest.name, spaceUuid = spaceUuid)
-        return spaceLocationRepository.saveAndUpdateSpaceLastModified_new(spaceLocationToSave)
+        return spaceLocationRepository.saveAndUpdateSpaceLastModified(spaceLocationToSave)
     }
 
     fun getLocationsForSpace(spaceUuid: String): Set<SpaceLocation> =
@@ -55,13 +55,13 @@ class LocationService(
                 name = locationEditRequest.name,
                 spaceUuid = spaceUuid
         )
-        return spaceLocationRepository.saveAndUpdateSpaceLastModified_new(spaceLocationToEdit)
+        return spaceLocationRepository.saveAndUpdateSpaceLastModified(spaceLocationToEdit)
     }
 
     @Transactional
     fun deleteLocation(locationId: Int) {
         val tagToDelete: SpaceLocation = spaceLocationRepository.findByIdOrNull(locationId) ?: throw LocationNotExistsException()
-        spaceLocationRepository.deleteAndUpdateSpaceLastModified_new(tagToDelete)
+        spaceLocationRepository.deleteAndUpdateSpaceLastModified(tagToDelete)
     }
 
 }

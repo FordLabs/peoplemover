@@ -17,13 +17,13 @@
 
 package com.ford.internalprojects.peoplemover.product
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository_new
+import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-interface ProductRepository : PeopleMoverRepository_new<Product, Int> {
+interface ProductRepository : PeopleMoverRepository<Product, Int> {
     fun findByName(name: String): Product?
     fun findAllBySpaceUuid(spaceUuid: String): List<Product>
     fun findProductByNameAndSpaceUuid(name: String, spaceUuid: String): Product?

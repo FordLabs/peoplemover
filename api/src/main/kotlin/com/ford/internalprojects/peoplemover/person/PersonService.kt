@@ -18,12 +18,10 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
-import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class PersonService(
@@ -42,18 +40,18 @@ class PersonService(
                 spaceId = space.id!!,
                 spaceUuid = space.uuid
         )
-        return personRepository.saveAndUpdateSpaceLastModified_new(personToCreate)
+        return personRepository.saveAndUpdateSpaceLastModified(personToCreate)
     }
 
     fun updatePerson(person: Person): Person {
-        return personRepository.saveAndUpdateSpaceLastModified_new(person)
+        return personRepository.saveAndUpdateSpaceLastModified(person)
     }
 
     fun getPeopleInSpace(spaceUuid: String): List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
 
     fun removePerson(personId: Int) {
         val personToRemove = personRepository.findByIdOrNull(personId) ?: throw PersonNotExistsException()
-        personRepository.deleteAndUpdateSpaceLastModified_new(personToRemove)
+        personRepository.deleteAndUpdateSpaceLastModified(personToRemove)
     }
 
     fun countOfPeople(): Long {

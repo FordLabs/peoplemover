@@ -17,7 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.producttag
 
-import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
+import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import javax.persistence.*
 
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["space_id", "name", "space_uuid"])])
@@ -28,10 +28,10 @@ data class ProductTag (
     val id: Int? = null,
 
     @Column(name = "space_id")
-    override val spaceId: Int,
+    val spaceId: Int,
 
     @Column(name = "space_uuid")
     override val spaceUuid: String,
 
     var name: String
-): SpaceComponent_new
+): SpaceComponent

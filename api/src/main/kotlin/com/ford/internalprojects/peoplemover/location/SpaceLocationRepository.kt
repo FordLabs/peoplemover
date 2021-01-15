@@ -17,11 +17,11 @@
 
 package com.ford.internalprojects.peoplemover.location
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository_new
+import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface SpaceLocationRepository : PeopleMoverRepository_new<SpaceLocation, Int> {
+interface SpaceLocationRepository : PeopleMoverRepository<SpaceLocation, Int> {
     fun findAllBySpaceUuid(spaceUuid: String): Set<SpaceLocation>
     fun findBySpaceUuidAndNameIgnoreCase(spaceUuid: String, name: String): SpaceLocation?
 }

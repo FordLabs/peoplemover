@@ -27,53 +27,26 @@ import java.sql.Timestamp
 import java.util.*
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
-import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
-import java.io.InvalidClassException
 
-class PeopleMoverRepositoryImpl<T: SpaceComponent, ID : Serializable>(
+class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Serializable>(
         entityInformation: JpaEntityInformation<T, *>,
         entityManager: EntityManager,
         private val spaceRepository: SpaceRepository
-) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), PeopleMoverRepository<T, ID>, PeopleMoverRepository_new<T, ID> {
+) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), PeopleMoverRepository<T, ID> {
 
     @Transactional
     override fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S {
-        updateSpaceLastModified(entity.spaceId)
+        updateSpaceLastModified(entity.spaceUuid)
         return save(entity)
     }
 
     @Transactional
     override fun <S : T> deleteAndUpdateSpaceLastModified(entity: S) {
-        updateSpaceLastModified(entity.spaceId)
+        updateSpaceLastModified(entity.spaceUuid)
         delete(entity)
     }
 
-    private fun updateSpaceLastModified(spaceId: Int) {
-        val space = spaceRepository.findById(spaceId).orElseThrow { SpaceNotExistsException() }
-        space.lastModifiedDate = Timestamp(Date().time)
-        spaceRepository.save(space)
-    }
-
-    @Transactional
-    override fun <S : T> saveAndUpdateSpaceLastModified_new(entity: S): S {
-        if(entity is SpaceComponent_new) {
-            updateSpaceLastModified_new(entity.spaceUuid)
-            return save(entity)
-        }
-        throw InvalidClassException("Used old id SpaceComponent instead of with uuid")
-    }
-
-    @Transactional
-    override fun <S : T> deleteAndUpdateSpaceLastModified_new(entity: S) {
-        if(entity is SpaceComponent_new) {
-            updateSpaceLastModified_new(entity.spaceUuid)
-            delete(entity)
-        } else {
-            throw InvalidClassException("Used old id SpaceComponent instead of with uuid")
-        }
-    }
-
-    private fun updateSpaceLastModified_new(spaceUuid: String) {
+    private fun updateSpaceLastModified(spaceUuid: String) {
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         space.lastModifiedDate = Timestamp(Date().time)
         spaceRepository.save(space)

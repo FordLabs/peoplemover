@@ -110,7 +110,7 @@ class AssignmentService(
 
     @Transactional
     fun deleteOneAssignment(assignmentToDelete: Assignment) {
-        assignmentRepository.deleteAndUpdateSpaceLastModified_new(assignmentToDelete)
+        assignmentRepository.deleteAndUpdateSpaceLastModified(assignmentToDelete)
     }
 
     fun deleteAssignmentsForDate(requestedDate: LocalDate, person: Person) {
@@ -180,7 +180,7 @@ class AssignmentService(
 
     private fun createUnassignmentForDate(requestedDate: LocalDate, person: Person): Assignment {
         val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", person.spaceUuid)
-        return assignmentRepository.saveAndUpdateSpaceLastModified_new(
+        return assignmentRepository.saveAndUpdateSpaceLastModified(
                 Assignment(
                         person = person,
                         placeholder = false,
@@ -202,7 +202,7 @@ class AssignmentService(
             productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
 
             if(product.productId != unassignedProduct!!.id) {
-                val assignment = assignmentRepository.saveAndUpdateSpaceLastModified_new(
+                val assignment = assignmentRepository.saveAndUpdateSpaceLastModified(
                         Assignment(
                                 person = assignmentRequest.person,
                                 placeholder = product.placeholder,
@@ -255,6 +255,6 @@ class AssignmentService(
         assignmentRepository.findByIdOrNull(assignmentToUpdate.id!!) ?: throw AssignmentNotExistsException()
         productRepository.findByIdOrNull(assignmentToUpdate.productId) ?: throw ProductNotExistsException()
 
-        assignmentRepository.saveAndUpdateSpaceLastModified_new(assignmentToUpdate)
+        assignmentRepository.saveAndUpdateSpaceLastModified(assignmentToUpdate)
     }
 }

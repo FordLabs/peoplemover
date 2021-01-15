@@ -48,7 +48,7 @@ class RoleService(
         )?.let { throw RoleAlreadyExistsException(role) }
         val colorToAssign: Color? = getColorToAssign(spaceUuid, colorId)
         val spaceRole = SpaceRole(name = role, spaceId = space.id!!, color = colorToAssign, spaceUuid = spaceUuid)
-        return spaceRolesRepository.saveAndUpdateSpaceLastModified_new(spaceRole)
+        return spaceRolesRepository.saveAndUpdateSpaceLastModified(spaceRole)
     }
 
     fun getRolesForSpace(spaceUuid: String): Set<SpaceRole> {
@@ -61,7 +61,7 @@ class RoleService(
         val roleFound: SpaceRole = spaceRolesRepository.findByIdOrNull(roleId) ?:
                 throw RoleNotExistsException(roleId.toString())
 
-        spaceRolesRepository.deleteAndUpdateSpaceLastModified_new(roleFound)
+        spaceRolesRepository.deleteAndUpdateSpaceLastModified(roleFound)
     }
 
     fun editRole(spaceUuid: String, roleEditRequest: RoleEditRequest): SpaceRole {
@@ -77,7 +77,7 @@ class RoleService(
                     throw ColorDoesNotExistException()
             roleToUpdate.color = colorFound
         }
-        return spaceRolesRepository.saveAndUpdateSpaceLastModified_new(roleToUpdate)
+        return spaceRolesRepository.saveAndUpdateSpaceLastModified(roleToUpdate)
     }
 
     private fun getColorToAssign(spaceUuid: String, colorId: Int?): Color? {

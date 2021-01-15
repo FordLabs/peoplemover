@@ -17,10 +17,10 @@
 
 package com.ford.internalprojects.peoplemover.role
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository_new
+import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface SpaceRolesRepository : PeopleMoverRepository_new<SpaceRole, Int> {
+interface SpaceRolesRepository : PeopleMoverRepository<SpaceRole, Int> {
     fun findBySpaceUuidAndNameAllIgnoreCase(spaceUuid: String, roleName: String): SpaceRole?
 }

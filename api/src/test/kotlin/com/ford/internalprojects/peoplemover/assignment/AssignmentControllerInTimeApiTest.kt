@@ -576,7 +576,7 @@ class AssignmentControllerInTimeApiTest {
         mockMvc.perform(delete("$baseDeleteAssignmentUrl/$mar1")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(person.copy(spaceId = -999))))
+                .content(objectMapper.writeValueAsString(person.copy(spaceId = -999, spaceUuid = "-9999"))))
                 .andExpect(status().isForbidden)
     }
 }

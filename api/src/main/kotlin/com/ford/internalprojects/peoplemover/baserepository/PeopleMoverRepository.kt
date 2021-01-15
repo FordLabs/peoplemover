@@ -18,18 +18,12 @@
 package com.ford.internalprojects.peoplemover.baserepository
 
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
-import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.NoRepositoryBean
+
 
 @NoRepositoryBean
 interface PeopleMoverRepository<T: SpaceComponent, ID> : CrudRepository<T, ID> {
     fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S
     fun <S : T> deleteAndUpdateSpaceLastModified(entity: S)
-}
-
-@NoRepositoryBean
-interface PeopleMoverRepository_new<T: SpaceComponent, ID> : CrudRepository<T, ID> {
-    fun <S : T> saveAndUpdateSpaceLastModified_new(entity: S): S
-    fun <S : T> deleteAndUpdateSpaceLastModified_new(entity: S)
 }
