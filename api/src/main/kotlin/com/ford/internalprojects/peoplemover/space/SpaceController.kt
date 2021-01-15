@@ -49,13 +49,13 @@ class SpaceController(
         return ResponseEntity.ok(spaces.size)
     }
 
-    @PreAuthorize("hasPermission(#uuid, 'uuid', 'read')")
+    @PreAuthorize("hasPermission(#uuid, 'read')")
     @GetMapping("/{uuid}")
     fun getSpace(@PathVariable uuid: String): Space {
         return spaceService.getSpace(uuid)
     }
 
-    @PreAuthorize("hasPermission(#uuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#uuid, 'write')")
     @PutMapping("/{uuid}")
     fun editSpace(@PathVariable uuid: String, @RequestBody editSpaceRequest: EditSpaceRequest):Space {
         return spaceService.editSpace(uuid, editSpaceRequest)
@@ -75,7 +75,7 @@ class SpaceController(
     }
 
 
-    @PreAuthorize("hasPermission(#uuid, 'uuid', 'modify')")
+    @PreAuthorize("hasPermission(#uuid, 'modify')")
     @PutMapping("/{uuid}:invite")
     fun inviteUsersToSpace(
             @Valid @RequestBody request: AuthInviteUsersToSpaceRequest,

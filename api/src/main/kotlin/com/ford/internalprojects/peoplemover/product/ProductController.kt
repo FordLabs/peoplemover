@@ -33,7 +33,7 @@ class ProductController(
     private val spaceService: SpaceService,
     private val logger: BasicLogger
 ) {
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getProducts(
         @PathVariable spaceUuid: String,
@@ -59,7 +59,7 @@ class ProductController(
         return products
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping
     fun createProduct(
         @PathVariable spaceUuid: String,
@@ -70,7 +70,7 @@ class ProductController(
         return createdProduct
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PutMapping("/{productId}")
     fun updateProduct(
         @PathVariable spaceUuid: String,
@@ -82,7 +82,7 @@ class ProductController(
         return updatedProduct
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @DeleteMapping("/{productId}")
     fun deleteProduct(
         @PathVariable spaceUuid: String,

@@ -28,7 +28,7 @@ class RoleController(
     private val roleService: RoleService,
     private val logger: BasicLogger
 ) {
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getRolesForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceRole>> {
         val rolesForSpace = roleService.getRolesForSpace(spaceUuid)
@@ -36,7 +36,7 @@ class RoleController(
         return ResponseEntity.ok(rolesForSpace)
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping
     fun addRoleForSpace(
         @PathVariable spaceUuid: String,
@@ -51,7 +51,7 @@ class RoleController(
         return ResponseEntity.ok(spaceRole)
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @DeleteMapping("/{roleId}")
     fun deleteRole(
         @PathVariable spaceUuid: String,
@@ -62,7 +62,7 @@ class RoleController(
         return ResponseEntity.ok().build()
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PutMapping
     fun editRole(
         @PathVariable spaceUuid: String,
