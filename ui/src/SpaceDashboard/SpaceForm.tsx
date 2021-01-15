@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {FormEvent, useState} from 'react';
+import React, {FormEvent, useState, useEffect, createRef} from 'react';
 import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import SpaceClient from '../Space/SpaceClient';
@@ -37,6 +37,12 @@ function SpaceForm({
 }: SpaceFormProps): JSX.Element {
     const maxLength = 40;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
+    const spaceNameInputRef = createRef<HTMLInputElement>();
+
+    useEffect(() => {
+        console.log(spaceNameInputRef);
+        spaceNameInputRef.current?.focus();
+    });
 
     function initializeSpace(): Space {
         return space ? space : createEmptySpace();
@@ -76,6 +82,7 @@ function SpaceForm({
                 maxLength={maxLength}
                 value={formSpace.name}
                 onChange={onSpaceNameFieldChanged}
+                ref={spaceNameInputRef}
             />
             <span id="createSpaceFieldText" className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
                 data-testid="createSpaceFieldText">
