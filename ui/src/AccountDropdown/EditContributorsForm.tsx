@@ -99,12 +99,13 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
                     </div>
                     <button className="inviteContributorsConfirmationCopyButton"
                         data-testid="inviteContributorsConfirmationCopyButton"
+                        disabled={!enableReadOnly}
                         onClick={copyLink}>
                         {copiedLink ? 'Copied!' : 'Copy link'}
                     </button>
                 </div>
             </div>
-            <label className={'enableReadOnlyLabel'}>
+            <div className={'enableReadOnlyLabel'}>
                 <span>View only access is {enableReadOnly ? 'enabled' : 'disabled'}</span>
                 <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
                     onChange={toggleReadOnlyEnabled}
@@ -113,7 +114,12 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
                     uncheckedIcon={false}
                     width={27} height={13}
                 />
-            </label>
+                <i className="material-icons"
+                    data-md-tooltip="Enabling view only allows anyone to view this space for the current day only.
+                    Visitors cannot make changes to this space. Visitors have ability to sort & filter.">
+                    info
+                </i>
+            </div>
             <h2 className="editTitle">Invite others to edit</h2>
             <label className="inviteContributorsLabel">
                 <span>People with this permission can edit</span>

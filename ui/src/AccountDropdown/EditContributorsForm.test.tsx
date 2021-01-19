@@ -112,4 +112,25 @@ describe('Edit Contributors view only section', function() {
             expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(expectedUpdatedSpaceData));
         });
     });
+
+});
+
+describe('Edit Contributors with read only turned off', () => {
+    let component: RenderResult;
+    const testSpace = TestUtils.space;
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+        const testSpaceWithReadOnlyOff = {...testSpace, todayViewIsPublic: false};
+        component = renderWithRedux(
+            <EditContributorsForm/>,
+            undefined,
+            {currentSpace: testSpaceWithReadOnlyOff} as GlobalStateProps
+        );
+    });
+
+    it('should have copy link button disabled when ready only view is turned off', async function() {
+        const inviteContributorsConfirmationCopyButton = component.getByTestId('inviteContributorsConfirmationCopyButton');
+        expect(inviteContributorsConfirmationCopyButton).toBeDisabled();
+    });
 });
