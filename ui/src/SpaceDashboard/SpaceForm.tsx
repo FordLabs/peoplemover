@@ -40,7 +40,6 @@ function SpaceForm({
     const spaceNameInputRef = createRef<HTMLInputElement>();
 
     useEffect(() => {
-        console.log(spaceNameInputRef);
         spaceNameInputRef.current?.focus();
     });
 

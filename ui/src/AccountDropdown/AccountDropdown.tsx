@@ -91,7 +91,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
             <button
                 aria-label="Settings and More"
                 aria-haspopup={true}
-                aria-expanded={false}
+                aria-expanded={dropdownToggle}
                 data-testid="accountDropdownToggle"
                 className="accountDropdownToggle"
                 onClick={toggleDropdown}

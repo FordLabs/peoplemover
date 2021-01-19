@@ -19,7 +19,7 @@ import {Space} from '../Space/Space';
 import * as React from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -33,6 +33,10 @@ interface SpaceDashboardTileProps {
 }
 
 function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
+    const spaceHtmlElementId = space.name.replace(' ', '-');
+    const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
+    const dropdownElement = useRef<HTMLDivElement>(null);
+
     const [dropdownFlag, setDropdownFlag] = useState<boolean>(false);
 
     let timestamp: string;
@@ -44,25 +48,15 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
         timestamp = lastModifiedMoment.format('dddd, MMMM D, YYYY [at] h:mm a');
     }
 
-    function showsDropdown(): boolean {
-        if (dropdownFlag) {
-            hidesDropdown();
-        } else {
-            setDropdownFlag(!dropdownFlag);
-            document.addEventListener('click', hidesDropdown, false);
+    const toggleDropdownVisibility = (visible: boolean): void => {
+        setDropdownFlag(visible);
+        if (visible) {
+            dropdownElement.current?.focus();
         }
-        return dropdownFlag;
-    }
+    };
 
-    function handleDropdownClick(event: React.MouseEvent<HTMLButtonElement>): boolean {
-        event.stopPropagation();
-        return showsDropdown();
-    }
-
-    function hidesDropdown(): boolean {
-        setDropdownFlag(false);
-        document.removeEventListener('click', hidesDropdown);
-        return dropdownFlag;
+    function handleDropdownClick(): void {
+        toggleDropdownVisibility(!dropdownFlag);
     }
 
     function openEditModal(): void {
@@ -71,11 +65,18 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
 
     const ActionsDropdown = (): JSX.Element => {
         return (
-            <div className="ellipsisDropdownContainer">
+            <div
+                role="menu"
+                className="ellipsisDropdownContainer"
+                aria-labelledby={spaceEllipsisButtonId}
+                ref={dropdownElement}
+                tabIndex={0}
+            >
                 <button
                     data-testid="editSpace"
                     className="dropdownOptions"
-                    onClick={openEditModal}>
+                    onClick={openEditModal}
+                    role="menuitem">
                     <i className="material-icons">edit</i>
                     Edit
                 </button>
@@ -87,27 +88,33 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
         return (
             <div className="ellipsisButtonContainer">
                 <button
+                    id={spaceEllipsisButtonId}
+                    aria-haspopup={true}
+                    aria-expanded={false}
                     data-testid="ellipsisButton"
                     className="ellipsisButton"
                     aria-label={`Open Menu for Space ${space.name}`}
                     onClick={handleDropdownClick}>
-                    <i className="material-icons">more_vert</i>
-                    {dropdownFlag && <ActionsDropdown />}
+                    <i className="material-icons" aria-hidden>more_vert</i>
                 </button>
+                {dropdownFlag && <ActionsDropdown/>}
             </div>
         );
     };
 
     return (
-        <button className="spaceTile"
-            data-testid="spaceDashboardTile"
-            onClick={(): void => openSpace(space)}>
-            <div className="spaceMetadata">
-                <div className="spaceName">{space.name}</div>
-                <div className="lastModifiedText">Last modified {timestamp}</div>
-            </div>
-            <ActionsEllipsis />
-        </button>
+        <div className="spaceTileContainer">
+            <button className="spaceTile"
+                data-testid="spaceDashboardTile"
+                onClick={(): void => openSpace(space)}
+            >
+                <div className="spaceMetadata">
+                    <div className="spaceName">{space.name}</div>
+                    <div className="lastModifiedText">Last modified {timestamp}</div>
+                </div>
+            </button>
+            <ActionsEllipsis/>
+        </div>
     );
 }
 
