@@ -22,7 +22,6 @@ import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
 import ShareAccessButton from './ShareAccessButton';
 import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
-import debounce from '../Utils/debounce';
 
 import './AccountDropdown.scss';
 
@@ -41,28 +40,21 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
         setUserName(getUserNameFromAccessToken());
     }, []);
 
+    useEffect(() => {
+        if (dropdownToggle) {
+            dropdownElement.current?.focus();
+        }
+    }, [dropdownToggle]);
+
     if (redirect) return redirect;
 
     const toggleDropdown = (): void => {
-        setDropdownVisible(!dropdownToggle);
-    };
-
-    const hideDropdown = (): void => {
-        setDropdownVisible(false);
-    };
-
-    const setDropdownVisible = (visible: boolean): void => {
-        debounce(() => {
-            setDropdownToggle(visible);
-            if (visible) {
-                dropdownElement.current?.focus();
-            }
-        }, 100)();
+        setDropdownToggle(!dropdownToggle);
     };
 
     const handleBlur = (event: React.FocusEvent<HTMLDivElement>): void => {
         if (!event.currentTarget?.contains(event.relatedTarget as Node)) {
-            hideDropdown();
+            setDropdownToggle(false);
         }
     };
 

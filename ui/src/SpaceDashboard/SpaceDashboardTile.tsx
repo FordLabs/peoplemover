@@ -19,7 +19,7 @@ import {Space} from '../Space/Space';
 import * as React from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -37,7 +37,7 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
     const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
     const dropdownElement = useRef<HTMLDivElement>(null);
 
-    const [dropdownFlag, setDropdownFlag] = useState<boolean>(false);
+    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     let timestamp: string;
     const nowStamp = now();
@@ -48,15 +48,20 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
         timestamp = lastModifiedMoment.format('dddd, MMMM D, YYYY [at] h:mm a');
     }
 
-    const toggleDropdownVisibility = (visible: boolean): void => {
-        setDropdownFlag(visible);
-        if (visible) {
+    useEffect(() => {
+        if (dropdownToggle) {
             dropdownElement.current?.focus();
         }
-    };
+    }, [dropdownToggle]);
 
     function handleDropdownClick(): void {
-        toggleDropdownVisibility(!dropdownFlag);
+        setDropdownToggle(!dropdownToggle);
+    }
+
+    function handleOnBlur(event: React.FocusEvent<HTMLDivElement>): void {
+        if (!event.currentTarget?.contains(event.relatedTarget as Node)) {
+            setDropdownToggle(false);
+        }
     }
 
     function openEditModal(): void {
@@ -71,6 +76,7 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                 aria-labelledby={spaceEllipsisButtonId}
                 ref={dropdownElement}
                 tabIndex={0}
+                onBlur={handleOnBlur}
             >
                 <button
                     data-testid="editSpace"
@@ -94,10 +100,11 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                     data-testid="ellipsisButton"
                     className="ellipsisButton"
                     aria-label={`Open Menu for Space ${space.name}`}
-                    onClick={handleDropdownClick}>
+                    onClick={handleDropdownClick}
+                >
                     <i className="material-icons" aria-hidden>more_vert</i>
                 </button>
-                {dropdownFlag && <ActionsDropdown/>}
+                {dropdownToggle && <ActionsDropdown/>}
             </div>
         );
     };
