@@ -50,7 +50,8 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
 
     useEffect(() => {
         if (dropdownToggle) {
-            dropdownElement.current?.focus();
+            const firstDropdownOption: HTMLElement = dropdownElement.current?.children?.item(0) as HTMLElement;
+            firstDropdownOption?.focus();
         }
     }, [dropdownToggle]);
 

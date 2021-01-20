@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent} from '@testing-library/dom';
+import {fireEvent, wait} from '@testing-library/dom';
 import {RenderResult} from '@testing-library/react';
 import {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
@@ -57,5 +57,11 @@ describe('SpaceDashboardTile tests', () => {
             modal: AvailableModals.EDIT_SPACE,
             item: TestUtils.space,
         }));
+    });
+
+    it('should focus the first dropdown option when opened', async () => {
+        const spaceTileDropdownButton = await component.findByTestId('ellipsisButton');
+        spaceTileDropdownButton.click();
+        await wait(() => expect(component.getByTestId('editSpace')).toHaveFocus());
     });
 });
