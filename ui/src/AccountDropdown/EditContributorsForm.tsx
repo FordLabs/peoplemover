@@ -94,26 +94,33 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
             <div className="inviteViewersLabel">
                 <span>People with this link can view only</span>
                 <div className="inviteContributorsConfirmationShareLinkContainer">
-                    <div className="inviteContributorsConfirmationLink" data-testid="inviteContributorsConfirmationLink">
+                    <div className={`inviteContributorsConfirmationLink ${enableReadOnly ? '' : 'disabled'}`} data-testid="inviteContributorsConfirmationLink">
                         {linkToSpace}
                     </div>
                     <button className="inviteContributorsConfirmationCopyButton"
                         data-testid="inviteContributorsConfirmationCopyButton"
+                        disabled={!enableReadOnly}
                         onClick={copyLink}>
                         {copiedLink ? 'Copied!' : 'Copy link'}
                     </button>
                 </div>
             </div>
-            <label className={'enableReadOnlyLabel'}>
+            <div className={'enableReadOnlyLabel'}>
                 <span>View only access is {enableReadOnly ? 'enabled' : 'disabled'}</span>
                 <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
+                    className={enableReadOnly ? '' : 'disabled'}
                     onChange={toggleReadOnlyEnabled}
                     checked={enableReadOnly}
                     checkedIcon={false}
                     uncheckedIcon={false}
                     width={27} height={13}
                 />
-            </label>
+                <i className="material-icons"
+                    data-md-tooltip="Enabling view only allows anyone to view this space for the current day only.
+                    Visitors cannot make changes to this space. Visitors have ability to sort & filter.">
+                    info
+                </i>
+            </div>
             <h2 className="editTitle">Invite others to edit</h2>
             <label className="inviteContributorsLabel">
                 <span>People with this permission can edit</span>
