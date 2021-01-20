@@ -43,7 +43,6 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.*
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -82,11 +81,13 @@ class PersonControllerApiTest {
 
     var basePeopleUrl: String = ""
 
+    private fun getBasePeopleUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/people"
+
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "spaceWithThisName"))
 
-        basePeopleUrl = "/api/spaces/" + space.uuid + "/people"
+        basePeopleUrl = getBasePeopleUrl(space.uuid)
 
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
     }
@@ -135,23 +136,23 @@ class PersonControllerApiTest {
 
     @Test
     fun `POST should return 403 when trying to add person to a space without write authorization`() {
-        val requestBodyObject = Person("name", -9999)
+        val requestBodyObject = Person("name", space.id!!)
 
-        mockMvc.perform(post("/api/spaces/${UUID.randomUUID()}/people")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(post(basePeopleUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
-
     }
 
 
     @Test
     fun `PUT should return 403 when trying to edit a person in a space without write authorization`() {
-        val requestBodyObject = Person("name", -9999)
+        val person: Person = personRepository.save(Person("oldname", space.id!!))
+        val requestBodyObject = Person("newname", space.id!!)
 
-        mockMvc.perform(put("/api/spaces/${UUID.randomUUID()}/people/55555")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(put("$basePeopleUrl/${person.id!!}")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -160,8 +161,10 @@ class PersonControllerApiTest {
     @Test
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = emptySpace.id!!, userId = "USER_ID"))
+
         val result = mockMvc
-                .perform(get("/api/spaces/${emptySpace.uuid}/people")
+                .perform(get(getBasePeopleUrl(emptySpace.uuid))
                         .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -197,8 +200,26 @@ class PersonControllerApiTest {
     }
 
     @Test
+    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+        mockMvc.perform(get(basePeopleUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .andExpect(status().isForbidden)
+                .andReturn()
+    }
+
+    @Test
+    fun `GET should return 200 read-only when valid token that isn't an editor requests a space while read-only flag is on`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne", todayViewIsPublic = true))
+
+        mockMvc.perform(get(getBasePeopleUrl(space1.uuid))
+            .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+            .andExpect(status().isOk)
+            .andReturn()
+    }
+
+    @Test
     fun `GET should return 400 when requesting people from invalid space`() {
-        mockMvc.perform(get("/api/spaces/FiveNightsAtFreddys/people")
+        mockMvc.perform(get(getBasePeopleUrl("FiveNightsAtFreddys"))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
                 .andReturn()
@@ -243,10 +264,11 @@ class PersonControllerApiTest {
 
       @Test
       fun `DELETE should return 403 when trying to delete a person without write authorization`() {
-        mockMvc.perform(delete("/api/spaces/baduuid/people/999")
-              .header("Authorization", "Bearer GOOD_TOKEN"))
-              .andExpect(status().isForbidden)
+        val personToDelete: Person = personRepository.save(Person(name = "Donald", spaceId = space.id!!))
 
+        mockMvc.perform(delete( "$basePeopleUrl/${personToDelete.id!!}")
+              .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+              .andExpect(status().isForbidden)
       }
 
     @Test

@@ -89,10 +89,12 @@ class ProductControllerInTimeApiTest {
 
     var baseProductsUrl = ""
 
+    private fun getBaseProductsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/products"
+
     @Before
     fun setUp() {
         spaceWithEditAccess = spaceRepository.save(Space(name = "tik", uuid = "kari-on-vacation-uuid"))
-        spaceWithReadOnlyAccess = spaceRepository.save(Space(name = "tok", uuid = "read-only-space-uuid"))
+        spaceWithReadOnlyAccess = spaceRepository.save(Space(name = "tok", uuid = "read-only-space-uuid", todayViewIsPublic = true))
         person = personRepository.save(Person(name = "Benjamin Button", newPerson = true, spaceId = spaceWithEditAccess.id!!))
         product1 = productRepository.save(Product(
                 name = "product one",
@@ -112,14 +114,10 @@ class ProductControllerInTimeApiTest {
                 endDate = LocalDate.parse(today),
                 spaceId = spaceWithReadOnlyAccess.id!!
         ))
-        baseProductsUrl = makeBaseProductsUrl()
+        baseProductsUrl = getBaseProductsUrl(spaceWithEditAccess.uuid)
 
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = spaceWithEditAccess.id!!, userId = "USER_ID"))
 
-    }
-
-    fun makeBaseProductsUrl(spaceUuid: String = spaceWithEditAccess.uuid): String {
-        return "/api/spaces/$spaceUuid/products"
     }
 
     @After
@@ -150,16 +148,23 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `GET should return FORBIDDEN when accessing products without edit permission for a date that is not today`() {
-        val baseUrl = makeBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
+        val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
         mockMvc.perform(get("$baseUrl?requestedDate=$may1")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
+    }
 
+    @Test
+    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+        mockMvc.perform(get("$baseProductsUrl?requestedDate=$today")
+            .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+            .andExpect(status().isForbidden)
+            .andReturn()
     }
 
     @Test
     fun `GET should return products for read only space when requesting today's data`() {
-        val baseUrl = makeBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
+        val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
         val result = mockMvc.perform(get("$baseUrl?requestedDate=$today")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)

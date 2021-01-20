@@ -36,5 +36,17 @@ describe('Account Dropdown', () => {
             cy.get('[data-testid=inviteContributorDoneButton]').click();
             cy.get('[data-testid=modalPopupContainer]').should('not.be.visible');
         });
+
+        it('Toggle public ability to see today\'s view should update the space in the API', () => {
+
+            cy.get('[data-testid=accountDropdownToggle]').click();
+            cy.get('[data-testid=shareAccess]').click();
+            cy.get('[data-testid=editContributorsToggleReadOnlySwitch]').as('toggleReadOnlySwitch');
+            cy.get('@toggleReadOnlySwitch')
+                .should('not.be.checked')
+                .siblings('.react-switch-bg').click();
+            cy.get('@toggleReadOnlySwitch')
+                .should('be.checked');
+        });
     });
 });

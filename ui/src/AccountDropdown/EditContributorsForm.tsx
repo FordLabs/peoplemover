@@ -19,24 +19,38 @@ import React, {ChangeEvent, FormEvent, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {AvailableModals, closeModalAction, setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals, closeModalAction, setCurrentModalAction, setCurrentSpaceAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import FormButton from '../ModalFormComponents/FormButton';
 
 import './EditContributorsForm.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
+import ReactSwitch from 'react-switch';
 
 interface Props {
     currentSpace: Space;
+
     closeModal(): void;
+
     setCurrentModal(modalState: CurrentModalState): void;
+    setCurrentSpace(space: Space): void;
 }
 
-function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props): JSX.Element {
+function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCurrentSpace}: Props): JSX.Element {
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
+    const [enableReadOnly, setEnableReadOnly] = useState<boolean>(currentSpace.todayViewIsPublic);
+    const linkToSpace: string = window.location.href;
+    const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
+    const copyLink = async (event: React.MouseEvent): Promise<void> => {
+        event.preventDefault();
+        await navigator.clipboard.writeText(linkToSpace);
+        setCopiedLink(true);
+
+        setTimeout(() => {setCopiedLink(false);}, 3000);
+    };
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
@@ -64,14 +78,58 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
         return re.test(String(email).toLowerCase());
     };
 
+    const toggleReadOnlyEnabled = async (checked: boolean): Promise<void> => {
+        setEnableReadOnly(checked);
+        await SpaceClient.editSpace(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            currentSpace.uuid!,
+            {...currentSpace, todayViewIsPublic:checked},
+            currentSpace.name
+        ).then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
+    };
+
     return (
         <form className="editContributorsContainer form"
             onSubmit={(event): Promise<void> => inviteUsers(event)}>
-            <div className="inviteContributorsLabel">Invite others to collaborate</div>
-            <textarea
-                placeholder="email1@ford.com, email2@ford.com"
-                onChange={parseEmails}
-                data-testid="emailTextArea"/>
+            <div className="inviteViewersLabel">
+                <span>People with this link can view only</span>
+                <div className="inviteContributorsConfirmationShareLinkContainer">
+                    <div className={`inviteContributorsConfirmationLink ${enableReadOnly ? '' : 'disabled'}`} data-testid="inviteContributorsConfirmationLink">
+                        {linkToSpace}
+                    </div>
+                    <button className="inviteContributorsConfirmationCopyButton"
+                        data-testid="inviteContributorsConfirmationCopyButton"
+                        disabled={!enableReadOnly}
+                        onClick={copyLink}>
+                        {copiedLink ? 'Copied!' : 'Copy link'}
+                    </button>
+                </div>
+            </div>
+            <div className={'enableReadOnlyLabel'}>
+                <span>View only access is {enableReadOnly ? 'enabled' : 'disabled'}</span>
+                <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
+                    className={enableReadOnly ? '' : 'disabled'}
+                    onChange={toggleReadOnlyEnabled}
+                    checked={enableReadOnly}
+                    checkedIcon={false}
+                    uncheckedIcon={false}
+                    width={27} height={13}
+                />
+                <i className="material-icons"
+                    data-md-tooltip="Enabling view only allows anyone to view this space for the current day only.
+                    Visitors cannot make changes to this space. Visitors have ability to sort & filter.">
+                    info
+                </i>
+            </div>
+            <h2 className="editTitle">Invite others to edit</h2>
+            <label className="inviteContributorsLabel">
+                <span>People with this permission can edit</span>
+                <textarea
+                    placeholder="email1@ford.com, email2@ford.com"
+                    onChange={parseEmails}
+                    data-testid="emailTextArea"/>
+            </label>
+
             <div className="editContributorsButtonContainer">
                 <FormButton
                     buttonStyle="secondary"
@@ -90,10 +148,12 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal}: Props
         </form>
     );
 }
+
 /* eslint-disable */
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
+    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
 });
 
 const mapStateToProps = (state: GlobalStateProps) => ({

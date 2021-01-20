@@ -68,10 +68,12 @@ class ProductTagControllerTest {
 
     var baseProductTagsUrl: String = ""
 
+    private fun getBaseProductTagsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/product-tags"
+
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "anotherSpaceName"))
-        baseProductTagsUrl = "/api/spaces/" + space.uuid + "/product-tags"
+        baseProductTagsUrl = getBaseProductTagsUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
     }
 
@@ -114,12 +116,11 @@ class ProductTagControllerTest {
     fun `POST should return 403 when trying to create a product tag without write authorization`() {
         val requestBodyObject = ProductTagAddRequest("Not a blank")
 
-        mockMvc.perform(post("/api/spaces/${UUID.randomUUID()}/product-tags")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(post(getBaseProductTagsUrl(space.uuid))
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
-
     }
 
     @Test
@@ -155,10 +156,19 @@ class ProductTagControllerTest {
         assertThat(expectedProductTags[2]).isEqualTo(productTag3)
     }
 
+    @Test
+    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+        mockMvc.perform(get(baseProductTagsUrl)
+            .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+            .andExpect(status().isForbidden)
+            .andReturn()
+    }
+
+
     @Throws(Exception::class)
     @Test
     fun `GET should return 400 when space does not exist`() {
-        mockMvc.perform(get("/api/spaces/doesNotExist/product-tags")
+        mockMvc.perform(get(getBaseProductTagsUrl("doesNotExist"))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
@@ -196,8 +206,10 @@ class ProductTagControllerTest {
 
     @Test
     fun `DELETE should return 403 when trying to delete a product tag without write authorization`() {
-        mockMvc.perform(delete("/api/spaces/${UUID.randomUUID()}/product-tags/9999")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+        val productTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Spongebob"))
+
+        mockMvc.perform(delete("$baseProductTagsUrl/${productTag.id!!}")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
     }
 
@@ -230,13 +242,13 @@ class ProductTagControllerTest {
 
     @Test
     fun `PUT should return 403 when trying to edit a product tag without write authorization`() {
-        val requestBodyObject = ProductTagAddRequest("Not a blank")
+        val productTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Valerie Felicity Frizzle"))
+        val requestBodyObject = ProductTagEditRequest(productTag.id!!, "Liz")
 
-        mockMvc.perform(put("/api/spaces/${UUID.randomUUID()}/product-tags")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(put(baseProductTagsUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
-
     }
 }

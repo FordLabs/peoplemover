@@ -73,11 +73,13 @@ class RoleControllerApiTest {
 
     var baseRolesUrl: String = ""
 
+    fun getBaseRolesUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/roles"
+
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
 
-        baseRolesUrl = "/api/spaces/" + space.uuid + "/roles"
+        baseRolesUrl = getBaseRolesUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
     }
 
@@ -110,7 +112,7 @@ class RoleControllerApiTest {
 
     @Test
     fun `GET should return 400 when space does not exist`() {
-        mockMvc.perform(get("/api/spaces/doesNotExist/roles")
+        mockMvc.perform(get(getBaseRolesUrl("doesNotExist"))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
@@ -128,6 +130,27 @@ class RoleControllerApiTest {
                 objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, SpaceRole::class.java))
 
         assertThat(actualSpaceRoles).isEmpty()
+    }
+
+    @Test
+    fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
+        mockMvc.perform(
+            get(baseRolesUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        ).andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `GET should return 200 when valid token that isn't an editor requests a space while read-only flag is on`() {
+        val anonymousUserReadOnlySpace: Space = spaceRepository.save(Space(name = "SpaceOne", todayViewIsPublic = true))
+        val role1: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Fireman", spaceId = anonymousUserReadOnlySpace.id!!))
+
+        mockMvc.perform(get(getBaseRolesUrl(anonymousUserReadOnlySpace.uuid))
+            .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(role1)))
+            .andExpect(status().isOk)
+            .andReturn()
     }
 
     @Test
@@ -212,8 +235,8 @@ class RoleControllerApiTest {
     fun `POST should return 403 when trying to add a role without write authorization`() {
         val requestBodyObject = RoleAddRequest("Not a blank")
 
-        mockMvc.perform(post("/api/spaces/spaceUuid/roles")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(post(baseRolesUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -301,8 +324,8 @@ class RoleControllerApiTest {
     fun `PUT should return 403 when trying to edit a role without write authorization`() {
         val requestBodyObject = RoleEditRequest(99999, "Not a blank")
 
-        mockMvc.perform(put("/api/spaces/spaceUuid/roles")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(put(baseRolesUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -342,9 +365,8 @@ class RoleControllerApiTest {
 
     @Test
     fun `DELETE should return 403 when trying to delete a role without write authorization`() {
-        mockMvc.perform(delete("/api/spaces/spaceUuid/roles/111")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+        mockMvc.perform(delete("$baseRolesUrl/111")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
-
     }
 }

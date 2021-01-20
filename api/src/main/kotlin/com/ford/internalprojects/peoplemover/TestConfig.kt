@@ -22,7 +22,7 @@ class TestConfig {
 
 private class MockJwtDecoder : JwtDecoder {
     override fun decode(token: String?): Jwt {
-        if (token.equals("INVALID_TOKEN")) {
+        if ("INVALID_TOKEN" == token) {
             throw JwtValidationException("Bad", listOf(OAuth2Error("Bad")))
         }
 
@@ -30,7 +30,7 @@ private class MockJwtDecoder : JwtDecoder {
         val headers = HashMap<String, Any>()
         headers["typ"] = "JWT"
         val claims = HashMap<String, Any>()
-        claims["sub"] = "USER_ID"
+        claims["sub"] = if ("ANONYMOUS_TOKEN" == token) { "ANONYMOUS_ID" } else { "USER_ID" }
         val issuedAt = Instant.now()
         val expiresAt = Instant.now().plusSeconds(60)
         claims["expiresAt"] = expiresAt
