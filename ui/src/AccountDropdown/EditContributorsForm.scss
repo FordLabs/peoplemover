@@ -73,6 +73,7 @@
   .enableReadOnlyLabel{
     display:inline-block;
     margin-bottom: 24px;
+
     span{
       padding-right: 18px;
     }
@@ -142,6 +143,10 @@
       font-weight: 400;
       font-style: normal;
       font-family: inherit;
+
+      &.disabled {
+        color: $gray-4;
+      }
     }
 
     .inviteContributorsConfirmationCopyButton {
@@ -155,6 +160,11 @@
       background: none;
       padding: 0;
       width: 4rem;
+
+      &:disabled {
+        cursor: not-allowed;
+        color: $gray-4;
+      }
     }
   }
   .editTitle{
@@ -164,6 +174,12 @@
 
 .react-switch-bg {
   background: linear-gradient(90deg, #984AA1 0%, #4F5FAB 76.03%) !important;
+}
+
+.disabled {
+  .react-switch-bg {
+    background: #E1B7E5 !important;
+  }
 }
 
 

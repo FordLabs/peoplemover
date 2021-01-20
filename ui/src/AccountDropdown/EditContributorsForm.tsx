@@ -94,7 +94,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
             <div className="inviteViewersLabel">
                 <span>People with this link can view only</span>
                 <div className="inviteContributorsConfirmationShareLinkContainer">
-                    <div className="inviteContributorsConfirmationLink" data-testid="inviteContributorsConfirmationLink">
+                    <div className={`inviteContributorsConfirmationLink ${enableReadOnly ? '' : 'disabled'}`} data-testid="inviteContributorsConfirmationLink">
                         {linkToSpace}
                     </div>
                     <button className="inviteContributorsConfirmationCopyButton"
@@ -108,6 +108,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
             <div className={'enableReadOnlyLabel'}>
                 <span>View only access is {enableReadOnly ? 'enabled' : 'disabled'}</span>
                 <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
+                    className={enableReadOnly ? '' : 'disabled'}
                     onChange={toggleReadOnlyEnabled}
                     checked={enableReadOnly}
                     checkedIcon={false}
