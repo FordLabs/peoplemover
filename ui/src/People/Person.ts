@@ -24,6 +24,7 @@ export interface Person {
     notes?: string;
     newPerson: boolean;
     spaceId: number;
+    spaceUuid: string;
 }
 
 export function emptyPerson(): Person {
@@ -32,5 +33,6 @@ export function emptyPerson(): Person {
         name: '',
         newPerson: false,
         spaceId: -1,
+        spaceUuid: '',
     };
 }

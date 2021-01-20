@@ -71,7 +71,7 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return {...emptyProduct(currentSpace.id), startDate: viewingDate};
+            return {...emptyProduct(currentSpace.id, currentSpace.uuid), startDate: viewingDate};
         }
         return product;
     }

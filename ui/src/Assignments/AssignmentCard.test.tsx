@@ -36,6 +36,7 @@ describe('Assignment Card', () => {
             person: {
                 newPerson: false,
                 spaceId: 0,
+                spaceUuid: 'a',
                 id: 1,
                 name: 'Billiam Handy',
                 spaceRole: TestUtils.softwareEngineer,
@@ -44,6 +45,7 @@ describe('Assignment Card', () => {
             placeholder: false,
             productId: 0,
             spaceId: 0,
+            spaceUuid: 'a',
         };
 
         initialState = {
@@ -155,7 +157,7 @@ describe('Assignment Card', () => {
                 ...assignmentToRender,
                 person: {
                     ...assignmentToRender.person,
-                    spaceRole: {id: 1, spaceId: 0, name: 'Software Engineer'},
+                    spaceRole: {id: 1, spaceId: 0, spaceUuid: 'a', name: 'Software Engineer'},
                 },
             };
 
@@ -258,13 +260,15 @@ describe('Assignment Card', () => {
                 id: 199,
                 person: {
                     spaceId: 0,
+                    spaceUuid: 'a',
                     id: 1,
                     name: 'Mary Pettigrew',
-                    spaceRole: {id: 3, spaceId: 0, name: 'Product Designer', color: {color: '1', id: 2}},
+                    spaceRole: {id: 3, spaceId: 0, spaceUuid: 'a', name: 'Product Designer', color: {color: '1', id: 2}},
                     newPerson: true,
                 },
                 placeholder: false,
                 productId: 0,
+                spaceUuid: 'a',
                 spaceId: 1,
             };
             const underTest = renderWithRedux(

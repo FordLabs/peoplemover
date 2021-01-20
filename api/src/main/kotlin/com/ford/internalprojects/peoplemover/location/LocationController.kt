@@ -28,7 +28,7 @@ class LocationController(
     private val locationService: LocationService,
     private val logger: BasicLogger
 ) {
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getLocationsForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceLocation>> {
         val locationsForSpace: Set<SpaceLocation> = locationService.getLocationsForSpace(spaceUuid)
@@ -36,7 +36,7 @@ class LocationController(
         return ResponseEntity.ok(locationsForSpace)
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid,'write')")
     @PostMapping
     fun addLocationForSpace(
         @PathVariable spaceUuid: String,
@@ -46,7 +46,7 @@ class LocationController(
         return ResponseEntity.ok(addedLocation)
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PutMapping
     fun editLocationForSpace(
         @PathVariable spaceUuid: String,
@@ -58,7 +58,7 @@ class LocationController(
         return ResponseEntity.ok(editedLocation)
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @DeleteMapping(path = ["/{locationId}"])
     fun deleteLocationForSpace(
         @PathVariable spaceUuid: String,

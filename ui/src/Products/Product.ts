@@ -23,6 +23,7 @@ export interface Product {
     id: number;
     name: string;
     spaceId: number;
+    spaceUuid: string;
     startDate?: string;
     endDate?: string;
     dorf?: string;
@@ -33,11 +34,12 @@ export interface Product {
     assignments: Array<Assignment>;
 }
 
-export function emptyProduct(spaceId?: number): Product {
+export function emptyProduct(spaceId?: number, spaceUuid?: string): Product {
     return {
         id: -1,
         name: '',
         spaceId: spaceId ? spaceId : -1,
+        spaceUuid: spaceUuid ? spaceUuid : 'z',
         startDate: '',
         endDate: '',
         dorf: '',

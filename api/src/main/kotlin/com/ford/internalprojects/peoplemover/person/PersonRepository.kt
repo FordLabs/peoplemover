@@ -22,5 +22,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PersonRepository : PeopleMoverRepository<Person, Int> {
-    fun findAllBySpaceId(id: Int): List<Person>
+    fun findAllBySpaceUuid(uuid: String): List<Person>
 }

@@ -41,11 +41,8 @@ data class Assignment(
         val effectiveDate: LocalDate? = LocalDate.now(),
 
         @Column(name = "space_id")
-        override val spaceId: Int
-): SpaceComponent {
-        constructor(person: Person, placeholder: Boolean, productId: Int, spaceId: Int) :
-                this(null, person, placeholder, productId, LocalDate.now(), spaceId)
+        override val spaceId: Int,
 
-        constructor(id: Int?, person: Person, placeholder: Boolean, productId: Int, spaceId: Int) :
-                this(id, person, placeholder, productId, LocalDate.now(), spaceId)
-}
+        @Column(name = "space_uuid")
+        override val spaceUuid: String
+): SpaceComponent

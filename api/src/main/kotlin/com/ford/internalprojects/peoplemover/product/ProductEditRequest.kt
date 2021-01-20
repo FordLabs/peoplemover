@@ -49,7 +49,7 @@ data class ProductEditRequest(
         companion object {
                 @JvmStatic
                 @JsonIgnore
-                fun toProduct(productEditRequest: ProductEditRequest, spaceId: Int): Product {
+                fun toProduct(productEditRequest: ProductEditRequest, spaceId: Int, spaceUuid: String): Product {
                         return Product(
                                 id = productEditRequest.id,
                                 name = productEditRequest.name,
@@ -60,7 +60,8 @@ data class ProductEditRequest(
                                 spaceLocation = productEditRequest.spaceLocation,
                                 archived = productEditRequest.archived,
                                 notes = productEditRequest.notes,
-                                spaceId = spaceId
+                                spaceId = spaceId,
+                                spaceUuid = spaceUuid
                         )
                 }
         }

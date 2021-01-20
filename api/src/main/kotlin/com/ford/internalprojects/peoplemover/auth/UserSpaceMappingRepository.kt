@@ -7,5 +7,5 @@ import java.util.*
 @Repository
 interface UserSpaceMappingRepository : JpaRepository<UserSpaceMapping, Int> {
     fun findAllByUserId(userId: String): List<UserSpaceMapping>
-    fun findByUserIdAndSpaceId(userId: String, spaceId: Int): Optional<UserSpaceMapping>
+    fun findByUserIdAndSpaceUuid(userId: String, spaceUuid: String): Optional<UserSpaceMapping>
 }
