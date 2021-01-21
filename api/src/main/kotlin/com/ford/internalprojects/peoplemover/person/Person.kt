@@ -41,11 +41,11 @@ data class Person(
         var newPerson: Boolean = false,
 
         @Column(name = "space_id")
-        override val spaceId: Int
-): SpaceComponent {
-    constructor(name: String, spaceId: Int) :
-            this(null, name, null, "", false, spaceId)
+        override val spaceId: Int,
 
-    constructor(name: String, spaceId: Int, spaceRole: SpaceRole) :
-            this(null, name = name, spaceId = spaceId, spaceRole = spaceRole)
+        @Column(name = "space_uuid")
+        override val spaceUuid: String
+): SpaceComponent {
+    constructor(name: String, spaceId: Int, spaceUuid: String) :
+            this(null, name, null, "", false, spaceId,  spaceUuid)
 }

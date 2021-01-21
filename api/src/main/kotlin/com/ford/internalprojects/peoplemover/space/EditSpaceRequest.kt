@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.space
 
-data class SpaceRequest(
-      val name: String
+data class EditSpaceRequest(
+      val name: String? = null,
+      val todayViewIsPublic: Boolean? = null
 )

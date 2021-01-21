@@ -17,7 +17,8 @@
 
 package com.ford.internalprojects.peoplemover.space
 
-import com.ford.internalprojects.peoplemover.auth.*
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
@@ -28,17 +29,17 @@ import java.util.*
 
 @Service
 class SpaceService(
-        private val spaceRepository: SpaceRepository,
-        private val productService: ProductService,
-        private val userSpaceMappingRepository: UserSpaceMappingRepository
-        ) {
+    private val spaceRepository: SpaceRepository,
+    private val productService: ProductService,
+    private val userSpaceMappingRepository: UserSpaceMappingRepository
+) {
 
     fun createSpaceWithName(spaceName: String, createdBy: String): Space {
         if (spaceName.isEmpty()) {
             throw SpaceNotExistsException(spaceName)
         } else {
             val savedSpace = spaceRepository.save(
-                    Space(name = spaceName, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
+                Space(name = spaceName, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
             )
             productService.createDefaultProducts(savedSpace);
             return savedSpace
@@ -52,39 +53,53 @@ class SpaceService(
     fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
         val userId: String = SecurityContextHolder.getContext().authentication.name
         createSpaceWithName(spaceName, userId).let { createdSpace ->
-             userSpaceMappingRepository.save(
-                     UserSpaceMapping(
-                             userId = userId,
-                             spaceId = createdSpace.id
-                     )
-             )
-             return SpaceResponse(createdSpace)
-         }
+            userSpaceMappingRepository.save(
+                UserSpaceMapping(
+                    userId = userId,
+                    spaceId = createdSpace.id,
+                    spaceUuid = createdSpace.uuid
+                )
+            )
+            return SpaceResponse(createdSpace)
+        }
     }
 
     fun getSpacesForUser(accessToken: String): List<Space> {
-            val principal: String = SecurityContextHolder.getContext().authentication.name
-            val spaceIds: List<Int> = userSpaceMappingRepository.findAllByUserId(principal).map{ mapping -> mapping.spaceId!! }.toList()
-            return spaceRepository.findAllByIdIn(spaceIds)
+        val principal: String = SecurityContextHolder.getContext().authentication.name
+        val spaceIds: List<Int> =
+            userSpaceMappingRepository.findAllByUserId(principal).map { mapping -> mapping.spaceId!! }.toList()
+        return spaceRepository.findAllByIdIn(spaceIds)
     }
 
     fun getSpace(uuid: String): Space {
         return spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
     }
 
-    fun deleteSpace(uuid: String){
+    fun deleteSpace(uuid: String) {
         spaceRepository.deleteByUuid(uuid)
     }
 
-    fun editSpace(uuid: String, spaceRequest: SpaceRequest) {
-        if(spaceRequest.name.length > 40){
-           throw SpaceNameTooLongException()
-        }
-        var editedSpace = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
-        editedSpace.name = spaceRequest.name
-        editedSpace.lastModifiedDate = Timestamp(Date().time)
+    fun editSpace(uuid: String, editSpaceRequest: EditSpaceRequest): Space {
+        val spaceToEdit = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
 
-        spaceRepository.save(editedSpace)
+        if (editSpaceRequest.todayViewIsPublic == null &&
+                editSpaceRequest.name == null) {
+            return spaceToEdit
+        }
+
+        editSpaceRequest.name?.let {
+            if (it.length > 40) {
+                throw SpaceNameTooLongException()
+            }
+            spaceToEdit.name = it
+        }
+
+        editSpaceRequest.todayViewIsPublic?.let {
+            spaceToEdit.todayViewIsPublic = it
+        }
+
+        spaceToEdit.lastModifiedDate = Timestamp(Date().time)
+        return spaceRepository.save(spaceToEdit)
     }
 
     fun userHasEditAccessToSpace(spaceUuid: String): Boolean {

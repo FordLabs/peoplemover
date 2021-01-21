@@ -29,7 +29,7 @@ class ProductTagController (
         private val productTagService: ProductTagService,
         private val logger: BasicLogger
 ) {
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping
     fun createProductTag(
         @PathVariable spaceUuid: String,
@@ -41,13 +41,13 @@ class ProductTagController (
         return ResponseEntity.ok(createdProductTag)
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getAllProductTags(@PathVariable spaceUuid: String): ResponseEntity<List<ProductTag>> {
         return ResponseEntity.ok(productTagService.getAllProductTags(spaceUuid))
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @DeleteMapping(path = ["/{productTagId}"])
     fun deleteProductTag(
             @PathVariable spaceUuid: String,
@@ -57,7 +57,7 @@ class ProductTagController (
         return ResponseEntity.ok().build()
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PutMapping
     fun editProductTag(
             @PathVariable spaceUuid: String,

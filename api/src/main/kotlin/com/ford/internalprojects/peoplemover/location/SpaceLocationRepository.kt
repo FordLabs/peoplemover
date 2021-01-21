@@ -22,7 +22,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SpaceLocationRepository : PeopleMoverRepository<SpaceLocation, Int> {
-    fun findAllBySpaceId(spaceId: Int): Set<SpaceLocation>
-    fun findBySpaceIdAndNameIgnoreCase(spaceId: Int, name: String): SpaceLocation?
-    fun findBySpaceIdAndName(spaceId: Int, name: String): SpaceLocation?
+    fun findAllBySpaceUuid(spaceUuid: String): Set<SpaceLocation>
+    fun findBySpaceUuidAndNameIgnoreCase(spaceUuid: String, name: String): SpaceLocation?
 }

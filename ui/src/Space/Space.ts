@@ -25,6 +25,7 @@ export interface Space {
     roles: RoleTag[];
     locations:    LocationTag[];
     lastModifiedDate: string;
+    todayViewIsPublic: boolean;
 }
 
 export function createEmptySpace(): Space {
@@ -33,5 +34,6 @@ export function createEmptySpace(): Space {
         roles: [],
         locations: [],
         lastModifiedDate: '',
+        todayViewIsPublic: false,
     };
 }

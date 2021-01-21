@@ -67,6 +67,7 @@ function ProductFormLocationField({
             id: Number.parseInt(option.value.split('_')[0], 10),
             name: option.label,
             spaceId,
+            spaceUuid: currentSpace.uuid ? currentSpace.uuid : '',
         };
     }
 
