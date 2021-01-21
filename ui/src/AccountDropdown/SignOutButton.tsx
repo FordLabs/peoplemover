@@ -21,9 +21,10 @@ import React from 'react';
 
 interface Props {
     setRedirect: (redirectElement: JSX.Element) => void;
+    focusOnRender?: boolean;
 }
 
-function SignOutButton({ setRedirect }: Props): JSX.Element {
+function SignOutButton({ setRedirect, focusOnRender = false }: Props): JSX.Element {
     const clearAccessTokenCookie = (): void => {
         removeToken();
         setRedirect(<Redirect to="/"/>);
@@ -31,6 +32,7 @@ function SignOutButton({ setRedirect }: Props): JSX.Element {
 
     return (
         <button
+            autoFocus={focusOnRender}
             className="accountDropdownOption"
             role="menuitem"
             data-testid="sign-out"

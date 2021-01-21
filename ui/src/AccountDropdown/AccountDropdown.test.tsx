@@ -31,7 +31,7 @@ import ReportClient from '../Reports/ReportClient';
 
 jest.mock('axios');
 
-describe('Account Dropdown',  () => {
+describe('Account Dropdown', () => {
     let app: RenderResult;
     let history: MemoryHistory;
 
@@ -42,7 +42,7 @@ describe('Account Dropdown',  () => {
         // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
-        history = createMemoryHistory({ initialEntries: ['/teamName'] });
+        history = createMemoryHistory({initialEntries: ['/teamName']});
     });
 
     describe('Dropdown Options', () => {
@@ -61,7 +61,7 @@ describe('Account Dropdown',  () => {
             store.dispatch = jest.fn();
             app = renderWithRedux(
                 <Router history={history}>
-                    <AccountDropdown />
+                    <AccountDropdown/>
                 </Router>,
                 store,
             );
@@ -70,8 +70,8 @@ describe('Account Dropdown',  () => {
         });
 
         describe('Share Access', () => {
-            it('should trigger edit contributors modal on "Share Access" click',  async () => {
-                await act( async () => {
+            it('should trigger edit contributors modal on "Share Access" click', async () => {
+                await act(async () => {
                     fireEvent.click(await app.findByText('Share Access'));
                 });
                 expect(store.dispatch).toHaveBeenCalledWith({
@@ -83,8 +83,8 @@ describe('Account Dropdown',  () => {
         });
 
         describe('Download Report', () => {
-            it('should trigger a report download on "Download Report" click',  async () => {
-                await act( async () => {
+            it('should trigger a report download on "Download Report" click', async () => {
+                await act(async () => {
                     fireEvent.click(await app.findByText('Download Report'));
                 });
                 expect(ReportClient.getReportsWithNames).toHaveBeenCalledWith(
@@ -98,7 +98,7 @@ describe('Account Dropdown',  () => {
         describe('Sign Out', () => {
             it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {
                 const cookies = new Cookies();
-                await act( async () => {
+                await act(async () => {
                     cookies.set('accessToken', 'FAKE_TOKEN');
 
                     expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
@@ -109,28 +109,40 @@ describe('Account Dropdown',  () => {
                 expect(history.location.pathname).toEqual('/');
             });
         });
+
+        it('should focus the first dropdown option when opened', async () => {
+            await wait(() => expect(app.getByTestId('shareAccess')).toHaveFocus());
+        });
     });
 
     describe('Read Only', function() {
+        beforeEach(async () => {
+            await wait(async () => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <AccountDropdown/>
+                    </Router>,
+                    undefined,
+                    {currentSpace: TestUtils.space, isReadOnly: true} as GlobalStateProps
+                );
+            });
+        });
         it('should not display Download Report and Share Access when it is in Read Only mode', async () => {
-            await act( async () => {
-                await wait(async () => {
-                    app = renderWithRedux(
-                        <Router history={history}>
-                            <AccountDropdown />
-                        </Router>,
-                        undefined,
-                        {currentSpace: TestUtils.space, isReadOnly: true} as GlobalStateProps
-                    );
-                });
+            await act(async () => {
                 const userIconButton = await app.findByTestId('accountDropdownToggle');
                 fireEvent.click(userIconButton);
             });
 
-            await act( async () => {
+            await act(async () => {
                 expect(await app.queryByTestId('shareAccess')).toBeNull();
                 expect(await app.queryByTestId('downloadReport')).toBeNull();
             });
+        });
+
+        it('should focus the first dropdown option when opened', async () => {
+            const spaceTileDropdownButton = await app.findByTestId('accountDropdownToggle');
+            spaceTileDropdownButton.click();
+            await wait(() => expect(app.getByTestId('sign-out')).toHaveFocus());
         });
     });
 });

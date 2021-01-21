@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
@@ -34,17 +34,10 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
     const [userName, setUserName] = useState<string>('');
     const [redirect, setRedirect] = useState<JSX.Element>();
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
-    const dropdownElement = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setUserName(getUserNameFromAccessToken());
     }, []);
-
-    useEffect(() => {
-        if (dropdownToggle) {
-            dropdownElement.current?.focus();
-        }
-    }, [dropdownToggle]);
 
     if (redirect) return redirect;
 
@@ -58,22 +51,23 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
         }
     };
 
-    const AccountDropdown = (): JSX.Element => {
+    const AccountDropdownContent = (): JSX.Element => {
+
         return (
             <div
                 role="menu"
                 className="accountDropdown"
                 onBlur={handleBlur}
-                ref={dropdownElement}
-                tabIndex={0}
             >
-                {!hideSpaceButtons && !isReadOnly && (
+                {(!hideSpaceButtons && !isReadOnly) ? (
                     <>
-                        <ShareAccessButton/>
+                        <ShareAccessButton focusOnRender={true}/>
                         <DownloadReportButton/>
+                        <SignOutButton setRedirect={setRedirect}/>
                     </>
+                ) : (
+                    <SignOutButton setRedirect={setRedirect} focusOnRender={true}/>
                 )}
-                <SignOutButton setRedirect={setRedirect}/>
             </div>
         );
     };
@@ -100,7 +94,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
                     {dropdownToggle ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </i>
             </button>
-            {dropdownToggle && <AccountDropdown/>}
+            {dropdownToggle && <AccountDropdownContent/>}
         </>
     );
 }
