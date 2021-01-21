@@ -130,7 +130,7 @@ describe('Edit Contributors with read only turned off', () => {
     });
 
     it('should have copy link button disabled when ready only view is turned off', async function() {
-        const inviteContributorsConfirmationCopyButton = component.getByTestId('inviteContributorsConfirmationCopyButton');
-        expect(inviteContributorsConfirmationCopyButton).toBeDisabled();
+        const editContributorsCopyLinkButton = component.getByTestId('editContributorsCopyLinkButton');
+        expect(editContributorsCopyLinkButton).toBeDisabled();
     });
 });

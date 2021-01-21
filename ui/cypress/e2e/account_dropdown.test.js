@@ -27,9 +27,9 @@ describe('Account Dropdown', () => {
                     expect(xhrs.status).to.equal(200);
                 });
 
-            cy.get('[data-testid=inviteContributorsConfirmationLink]')
+            cy.get('[data-testid=linkToSpace]')
                 .should('contain', baseUrl + '/' + spaceUuid);
-            cy.get('[data-testid=inviteContributorsConfirmationCopyButton]')
+            cy.get('[data-testid=editContributorsCopyLinkButton]')
                 .should('contain', 'Copy link' )
                 .click()
                 .should('contain', 'Copied' );

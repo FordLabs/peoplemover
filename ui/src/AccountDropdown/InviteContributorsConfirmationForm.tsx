@@ -45,7 +45,7 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
                 Share this link with your collaborators.
             </div>
             <div className="inviteContributorsConfirmationShareLinkContainer">
-                <div className="inviteContributorsConfirmationLink" data-testid="inviteContributorsConfirmationLink">
+                <div className="linkToSpace" data-testid="linkToSpace">
                     {linkToSpace}
                 </div>
                 <button className="inviteContributorsConfirmationCopyButton"

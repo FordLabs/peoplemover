@@ -91,23 +91,13 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
     return (
         <form className="editContributorsContainer form"
             onSubmit={(event): Promise<void> => inviteUsers(event)}>
-            <div className="inviteViewersLabel">
-                <span>People with this link can view only</span>
-                <div className="inviteContributorsConfirmationShareLinkContainer">
-                    <div className={`inviteContributorsConfirmationLink ${enableReadOnly ? '' : 'disabled'}`} data-testid="inviteContributorsConfirmationLink">
-                        {linkToSpace}
-                    </div>
-                    <button className="inviteContributorsConfirmationCopyButton"
-                        data-testid="inviteContributorsConfirmationCopyButton"
-                        disabled={!enableReadOnly}
-                        onClick={copyLink}>
-                        {copiedLink ? 'Copied!' : 'Copy link'}
-                    </button>
-                </div>
-            </div>
-            <div className={'enableReadOnlyLabel'}>
-                <span>View only access is {enableReadOnly ? 'enabled' : 'disabled'}</span>
-                <ReactSwitch data-testid="editContributorsToggleReadOnlySwitch"
+            <div className="readOnlySwitchContainer">
+                <label htmlFor="toggleReadOnlySwitch" className="readOnlySwitchLabel">
+                    View only access is {enableReadOnly ? 'enabled' : 'disabled'}
+                </label>
+                <ReactSwitch
+                    data-testid="editContributorsToggleReadOnlySwitch"
+                    id="toggleReadOnlySwitch"
                     className={enableReadOnly ? '' : 'disabled'}
                     onChange={toggleReadOnlyEnabled}
                     checked={enableReadOnly}
@@ -115,11 +105,32 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
                     uncheckedIcon={false}
                     width={27} height={13}
                 />
-                <i className="material-icons"
+                <i className="material-icons tooltip"
                     data-md-tooltip="Enabling view only allows anyone to view this space for the current day only.
                     Visitors cannot make changes to this space. Visitors have ability to sort & filter.">
                     info
                 </i>
+            </div>
+            <div className={`spaceLinkContainer ${enableReadOnly ? '' : 'disabled'}`}>
+                <span id="copySpaceUrlLinkLabel">People with this link can view only</span>
+                <div className="copyLinkToShareContainer">
+                    <input
+                        className="linkToSpace"
+                        data-testid="linkToSpace"
+                        value={linkToSpace}
+                        type="text"
+                        aria-label={linkToSpace}
+                        readOnly
+                        data-autoselect=""
+                    />
+                    <button className="copyLinkButton"
+                        data-testid="editContributorsCopyLinkButton"
+                        disabled={!enableReadOnly}
+                        onClick={copyLink}
+                        aria-label="Copy link to clipboard">
+                        {copiedLink ? 'Copied!' : 'Copy link'}
+                    </button>
+                </div>
             </div>
             <h2 className="editTitle">Invite others to edit</h2>
             <label className="inviteContributorsLabel">
