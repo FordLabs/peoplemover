@@ -21,13 +21,13 @@ import {closeModalAction} from '../Redux/Actions';
 import FormButton from '../ModalFormComponents/FormButton';
 import {connect} from 'react-redux';
 
-import './InviteContributorsConfirmationModal.scss';
+import './GrantEditAccessConfirmationForm.scss';
 
 interface Props {
     closeModal(): void;
 }
 
-const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element => {
+const GrantEditAccessConfirmationForm = ({ closeModal }: Props): JSX.Element => {
     const linkToSpace: string = window.location.href;
     const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
@@ -69,5 +69,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
 });
 
-export default connect(null, mapDispatchToProps)(InviteContributorConfirmationForm);
+export default connect(null, mapDispatchToProps)(GrantEditAccessConfirmationForm);
 /* eslint-enable */

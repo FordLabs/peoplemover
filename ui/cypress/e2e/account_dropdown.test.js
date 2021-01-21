@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2020 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 describe('Account Dropdown', () => {
     beforeEach(() => {
         cy.visitBoard();
@@ -7,7 +24,7 @@ describe('Account Dropdown', () => {
         it('Add people to a space should fail is email address is not properly formatted', () => {
             cy.get('[data-testid=accountDropdownToggle]').click();
             cy.get('[data-testid=shareAccess]').click();
-            cy.get('[data-testid=emailTextArea]').focus().type('aaaaaa');
+            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().type('aaaaaa');
             cy.get('.primaryButton').should('be.disabled');
         });
 
@@ -19,8 +36,8 @@ describe('Account Dropdown', () => {
 
             cy.get('[data-testid=accountDropdownToggle]').click();
             cy.get('[data-testid=shareAccess]').click();
-            cy.get('[data-testid=emailTextArea]').focus().type('Elise@grif.com');
-            cy.get('[data-testid=shareAccessInviteButton]').should('not.be.disabled').click();
+            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().type('Elise@grif.com');
+            cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@putAddPersonToSpace')
                 .should((xhrs) => {
@@ -29,7 +46,7 @@ describe('Account Dropdown', () => {
 
             cy.get('[data-testid=linkToSpace]')
                 .should('contain', baseUrl + '/' + spaceUuid);
-            cy.get('[data-testid=editContributorsCopyLinkButton]')
+            cy.get('[data-testid=inviteContributorsConfirmationCopyButton]')
                 .should('contain', 'Copy link' )
                 .click()
                 .should('contain', 'Copied' );
@@ -38,10 +55,9 @@ describe('Account Dropdown', () => {
         });
 
         it('Toggle public ability to see today\'s view should update the space in the API', () => {
-
             cy.get('[data-testid=accountDropdownToggle]').click();
             cy.get('[data-testid=shareAccess]').click();
-            cy.get('[data-testid=editContributorsToggleReadOnlySwitch]').as('toggleReadOnlySwitch');
+            cy.get('[data-testid=viewOnlyAccessToggle]').as('toggleReadOnlySwitch');
             cy.get('@toggleReadOnlySwitch')
                 .should('not.be.checked')
                 .siblings('.react-switch-bg').click();

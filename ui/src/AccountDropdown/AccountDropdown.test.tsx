@@ -78,7 +78,7 @@ describe('Account Dropdown',  () => {
             await act( async () => {
                 fireEvent.click(await app.findByTestId('shareAccess'));
 
-                const usersToInvite = app.getByTestId('emailTextArea');
+                const usersToInvite = app.getByTestId('inviteEditorsFormEmailTextarea');
                 fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});
 
                 const saveButton = await app.findByText('Invite');

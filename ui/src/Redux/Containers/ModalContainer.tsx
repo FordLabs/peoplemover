@@ -20,6 +20,7 @@ import {AvailableModals, closeModalAction} from '../Actions';
 import Modal from '../../Modal/Modal';
 import {Dispatch} from 'redux';
 import React from 'react';
+import moment from 'moment';
 import ProductForm from '../../Products/ProductForm';
 import PersonForm from '../../People/PersonForm';
 import AssignmentForm from '../../Assignments/AssignmentForm';
@@ -28,12 +29,11 @@ import {GlobalStateProps} from '../Reducers';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
 import MyTagsForm from '../../Tags/MyTagsForm';
 import MyRolesForm from '../../Roles/MyRolesForm';
-import InviteContributorConfirmationForm from '../../AccountDropdown/InviteContributorsConfirmationForm';
-import EditContributorsForm from '../../AccountDropdown/EditContributorsForm';
 import {emptyProduct, Product} from '../../Products/Product';
 import {Space} from '../../Space/Space';
-import moment from 'moment';
 import SpaceForm from '../../SpaceDashboard/SpaceForm';
+import ShareAccessForm from '../../AccountDropdown/ShareAccessForm';
+import GrantEditAccessConfirmationForm from '../../AccountDropdown/GrantEditAccessConfirmationForm';
 
 const getCurrentModal = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space, viewingDate: Date): JSX.Element | null => {
     const {modal, item} = currentModal;
@@ -85,10 +85,10 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
             return <SpaceForm/>;
         case AvailableModals.EDIT_SPACE:
             return <SpaceForm space={item}/>;
-        case AvailableModals.EDIT_CONTRIBUTORS:
-            return <EditContributorsForm/>;
-        case AvailableModals.CONTRIBUTORS_CONFIRMATION:
-            return <InviteContributorConfirmationForm />;
+        case AvailableModals.SHARE_SPACE_ACCESS:
+            return <ShareAccessForm />;
+        case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
+            return <GrantEditAccessConfirmationForm />;
         default:
             return null;
     }
@@ -118,9 +118,9 @@ const getCurrentTitle = (currentModal: CurrentModalState): string => {
             return 'Create New Space';
         case AvailableModals.EDIT_SPACE:
             return 'Edit Space';
-        case AvailableModals.EDIT_CONTRIBUTORS:
+        case AvailableModals.SHARE_SPACE_ACCESS:
             return 'Share Access';
-        case AvailableModals.CONTRIBUTORS_CONFIRMATION:
+        case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
             return 'Your team member now has access!';
         default:
             return '';
