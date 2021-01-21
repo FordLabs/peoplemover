@@ -19,6 +19,7 @@ package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
+import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
 import java.time.LocalDate
 import javax.persistence.*
 
@@ -40,9 +41,6 @@ data class Assignment(
         @Column(name = "effective_date")
         val effectiveDate: LocalDate? = LocalDate.now(),
 
-        @Column(name = "space_id")
-        override val spaceId: Int,
-
         @Column(name = "space_uuid")
         override val spaceUuid: String
-): SpaceComponent
+): SpaceComponent_new

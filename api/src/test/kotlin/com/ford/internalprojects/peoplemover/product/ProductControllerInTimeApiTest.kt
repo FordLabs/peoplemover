@@ -223,21 +223,18 @@ class ProductControllerInTimeApiTest {
                 person = person,
                 productId = product1.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = spaceWithEditAccess.id!!,
                 spaceUuid = spaceWithEditAccess.uuid
         ))
         val currentAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = product1.id!!,
                 effectiveDate = LocalDate.parse(apr2),
-                spaceId = spaceWithEditAccess.id!!,
                 spaceUuid = spaceWithEditAccess.uuid
         ))
         val futureAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = product1.id!!,
                 effectiveDate = LocalDate.parse(may1),
-                spaceId = spaceWithEditAccess.id!!,
                 spaceUuid = spaceWithEditAccess.uuid
         ))
 
@@ -301,7 +298,7 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `PUT should update assignments when moving start date to future date`() {
-        assignmentRepository.save(Assignment(person = person, productId = product1.id!!, spaceId = spaceWithEditAccess.id!!, effectiveDate = LocalDate.parse(apr1), spaceUuid = spaceWithEditAccess.uuid))
+        assignmentRepository.save(Assignment(person = person, productId = product1.id!!, effectiveDate = LocalDate.parse(apr1), spaceUuid = spaceWithEditAccess.uuid))
 
         val newProductStartDate = LocalDate.parse(apr2)
 
@@ -318,7 +315,7 @@ class ProductControllerInTimeApiTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val expectedAssignment = Assignment(person = person, productId = product1.id!!, spaceId = spaceWithEditAccess.id!!, effectiveDate = newProductStartDate, spaceUuid = spaceWithEditAccess.uuid)
+        val expectedAssignment = Assignment(person = person, productId = product1.id!!, effectiveDate = newProductStartDate, spaceUuid = spaceWithEditAccess.uuid)
         val actualAssignment = assignmentRepository.findAll().first()
 
         assertThat(assignmentRepository.count()).isOne()
@@ -335,10 +332,10 @@ class ProductControllerInTimeApiTest {
     @Test
     fun `PUT should not alter other assignments when moving start date to future date`() {
         val untouchedAssignment = assignmentRepository.save(
-                Assignment(person = person, productId = product1.id!!, spaceId = spaceWithEditAccess.id!!, effectiveDate = LocalDate.parse(may1), spaceUuid = spaceWithEditAccess.uuid)
+                Assignment(person = person, productId = product1.id!!, effectiveDate = LocalDate.parse(may1), spaceUuid = spaceWithEditAccess.uuid)
         )
         assignmentRepository.save(
-                Assignment(person = person, productId = product2.id!!, spaceId = spaceWithEditAccess.id!!, effectiveDate = LocalDate.parse(may1), spaceUuid = spaceWithEditAccess.uuid)
+                Assignment(person = person, productId = product2.id!!, effectiveDate = LocalDate.parse(may1), spaceUuid = spaceWithEditAccess.uuid)
         )
 
         val newProductStartDate = LocalDate.parse(may2)
@@ -356,8 +353,8 @@ class ProductControllerInTimeApiTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val expectedSameAssignment = Assignment(person = person, productId = product1.id!!, spaceId = spaceWithEditAccess.id!!, effectiveDate = newProductStartDate, spaceUuid = spaceWithEditAccess.uuid)
-        val expectedNewAssignment = Assignment(person = person, productId = product2.id!!, spaceId = spaceWithEditAccess.id!!, effectiveDate = newProductStartDate, spaceUuid = spaceWithEditAccess.uuid)
+        val expectedSameAssignment = Assignment(person = person, productId = product1.id!!, effectiveDate = newProductStartDate, spaceUuid = spaceWithEditAccess.uuid)
+        val expectedNewAssignment = Assignment(person = person, productId = product2.id!!, effectiveDate = newProductStartDate, spaceUuid = spaceWithEditAccess.uuid)
         val actualAssignments = assignmentRepository.findAll().toList()
 
         assertThat(assignmentRepository.count()).isEqualTo(3)
@@ -368,8 +365,8 @@ class ProductControllerInTimeApiTest {
 
     @Test
     fun `PUT should delete old assignment when moving start date of product to future date while person is on a different`() {
-        assignmentRepository.save(Assignment(person = person, productId = product1.id!!, spaceId = spaceWithEditAccess.id!!, effectiveDate = LocalDate.parse(apr1), spaceUuid = spaceWithEditAccess.uuid))
-        val currentAssignment = assignmentRepository.save(Assignment(person = person, productId = product2.id!!, spaceId = spaceWithEditAccess.id!!, effectiveDate = LocalDate.parse(may1), spaceUuid = spaceWithEditAccess.uuid))
+        assignmentRepository.save(Assignment(person = person, productId = product1.id!!, effectiveDate = LocalDate.parse(apr1), spaceUuid = spaceWithEditAccess.uuid))
+        val currentAssignment = assignmentRepository.save(Assignment(person = person, productId = product2.id!!, effectiveDate = LocalDate.parse(may1), spaceUuid = spaceWithEditAccess.uuid))
 
         val newProductStartDate = LocalDate.parse(may2)
 

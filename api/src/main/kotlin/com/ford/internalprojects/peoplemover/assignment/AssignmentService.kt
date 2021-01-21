@@ -185,7 +185,6 @@ class AssignmentService(
                         person = person,
                         placeholder = false,
                         productId = unassignedProduct!!.id!!,
-                        spaceId = person.spaceId,
                         effectiveDate = requestedDate,
                         spaceUuid = person.spaceUuid
                 )
@@ -207,7 +206,6 @@ class AssignmentService(
                                 person = assignmentRequest.person,
                                 placeholder = product.placeholder,
                                 productId = product.productId,
-                                spaceId = space.id!!,
                                 effectiveDate = assignmentRequest.requestedDate,
                                 spaceUuid = space.uuid
                         )

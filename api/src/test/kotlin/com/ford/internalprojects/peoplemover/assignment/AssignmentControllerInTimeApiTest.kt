@@ -128,21 +128,18 @@ class AssignmentControllerInTimeApiTest {
         val oldAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
-                spaceId = editableSpace.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
         val currentAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
-                spaceId = editableSpace.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
         val futureAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
                 person = person,
                 productId = productOne.id!!,
-                spaceId = editableSpace.id!!,
                 effectiveDate = LocalDate.parse(apr2),
                 spaceUuid = editableSpace.uuid
         ))
@@ -151,14 +148,12 @@ class AssignmentControllerInTimeApiTest {
         val currentAssignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
-                spaceId = editableSpace.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
         val futureAssignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
-                spaceId = editableSpace.id!!,
                 effectiveDate = LocalDate.parse(apr2),
                 spaceUuid = editableSpace.uuid
         ))
@@ -184,7 +179,6 @@ class AssignmentControllerInTimeApiTest {
         val readOnlyAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = personInReadOnlySpace,
                 productId = productFour.id!!,
-                spaceId = readOnlySpace.id!!,
                 effectiveDate = LocalDate.parse(today),
                 spaceUuid = editableSpace.uuid
         ))
@@ -217,7 +211,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -225,7 +218,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -256,7 +248,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = null,
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -264,7 +255,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -322,7 +312,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         )
 
@@ -357,7 +346,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         )
 
@@ -384,7 +372,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -398,7 +385,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         )
 
@@ -463,7 +449,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
         assertThat(assignmentRepository.count()).isOne()
@@ -483,7 +468,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         )
         assertThat(assignmentRepository.count()).isZero()
@@ -502,7 +486,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = -9999,
                 spaceUuid = "-9999"
         )
 
@@ -520,7 +503,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -528,7 +510,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -549,7 +530,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -557,7 +537,6 @@ class AssignmentControllerInTimeApiTest {
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!,
                 spaceUuid = editableSpace.uuid)
 
         mockMvc.perform(delete("$baseDeleteAssignmentUrl/$mar1")
