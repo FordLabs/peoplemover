@@ -247,8 +247,8 @@ class RoleControllerApiTest {
     fun `PUT should update roles of associated people when editing space role name`() {
         val originalSpaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!, spaceUuid = space.uuid))
 
-        val person1: Person = personRepository.save(Person(name = "Jack", spaceRole = originalSpaceRole, spaceId = space.id!!, spaceUuid = space.uuid))
-        val person2: Person = personRepository.save(Person(name = "Jill", spaceRole = originalSpaceRole, spaceId = space.id!!, spaceUuid = space.uuid))
+        val person1: Person = personRepository.save(Person(name = "Jack", spaceRole = originalSpaceRole, spaceUuid = space.uuid))
+        val person2: Person = personRepository.save(Person(name = "Jill", spaceRole = originalSpaceRole, spaceUuid = space.uuid))
 
         val updatedRoleName = "Blobware Engineer"
         val roleEditRequest = RoleEditRequest(id = originalSpaceRole.id!!, name = updatedRoleName)
@@ -350,7 +350,6 @@ class RoleControllerApiTest {
         val person: Person = personRepository.save(Person(
                 name = "Jenny",
                 spaceRole = spaceRole,
-                spaceId = space.id!!,
                 spaceUuid = space.uuid
         ))
 

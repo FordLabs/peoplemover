@@ -65,11 +65,9 @@ create table person
     name          varchar(255),
     notes         varchar(255),
     new_person    bit default 0 not null,
-    space_id      int,
     space_role_id int,
     space_uuid    varchar (36),
 
-    FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (space_role_id) REFERENCES space_roles (id) ON DELETE SET NULL
 );

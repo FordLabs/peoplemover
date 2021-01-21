@@ -259,7 +259,6 @@ class TestUtils {
 
     static person1: Person = {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        spaceId: 1,
         id: 100,
         name: 'Person 1',
         spaceRole: TestUtils.softwareEngineer,
@@ -269,7 +268,6 @@ class TestUtils {
 
     static hank: Person = {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        spaceId: 1,
         id: 200,
         name: 'Hank',
         spaceRole: TestUtils.productManager,
@@ -279,7 +277,6 @@ class TestUtils {
 
     static unassignedPerson: Person = {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        spaceId: 1,
         id: 101,
         name: 'Unassigned Person 7',
         spaceRole: TestUtils.softwareEngineer,

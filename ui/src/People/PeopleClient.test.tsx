@@ -101,7 +101,6 @@ describe('People Client', function() {
         const expectedName = 'New Person';
         const person: Person = {
             spaceUuid: 'a',
-            spaceId: 1,
             id: -1,
             name: expectedName,
             spaceRole: TestUtils.softwareEngineer,

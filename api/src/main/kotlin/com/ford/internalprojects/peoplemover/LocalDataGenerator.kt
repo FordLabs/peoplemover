@@ -91,7 +91,6 @@ class LocalDataGenerator(
             Person(
                 name = "Jane Smith",
                 spaceUuid = createdSpace.uuid,
-                spaceId = createdSpace.id!!,
                 spaceRole = role1
             ),
             createdSpace.uuid
@@ -100,7 +99,6 @@ class LocalDataGenerator(
             Person(
                 name = "Bob Barker",
                 spaceUuid = createdSpace.uuid,
-                spaceId = createdSpace.id!!,
                 spaceRole = role2
             ),
             createdSpace.uuid
@@ -109,7 +107,6 @@ class LocalDataGenerator(
             Person(
                 name = "Adam Sandler",
                 spaceUuid = createdSpace.uuid,
-                spaceId = createdSpace.id!!,
                 spaceRole = role3
             ),
             createdSpace.uuid

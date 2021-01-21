@@ -95,7 +95,7 @@ class ProductControllerInTimeApiTest {
     fun setUp() {
         spaceWithEditAccess = spaceRepository.save(Space(name = "tik", uuid = "kari-on-vacation-uuid"))
         spaceWithReadOnlyAccess = spaceRepository.save(Space(name = "tok", uuid = "read-only-space-uuid", todayViewIsPublic = true))
-        person = personRepository.save(Person(name = "Benjamin Button", newPerson = true, spaceId = spaceWithEditAccess.id!!, spaceUuid = spaceWithEditAccess.uuid))
+        person = personRepository.save(Person(name = "Benjamin Button", newPerson = true, spaceUuid = spaceWithEditAccess.uuid))
         product1 = productRepository.save(Product(
                 name = "product one",
                 startDate = LocalDate.parse(apr1),

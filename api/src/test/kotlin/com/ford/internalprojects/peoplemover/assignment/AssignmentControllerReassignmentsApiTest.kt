@@ -102,9 +102,9 @@ class AssignmentControllerReassignmentsApiTest {
         unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
         readOnlyProductOne = productRepository.save(Product(name = "Readable Product", spaceId = readOnlySpace.id!!, spaceUuid = readOnlySpace.uuid))
         readOnlyProductTwo = productRepository.save(Product(name = "Another Readable Product", spaceId = readOnlySpace.id!!, spaceUuid = readOnlySpace.uuid))
-        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
-        personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceId = editableSpace.id!!,  spaceUuid = editableSpace.uuid))
-        personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceId = readOnlySpace.id!!, spaceUuid = editableSpace.uuid))
+        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceUuid = editableSpace.uuid))
+        personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceUuid = editableSpace.uuid))
+        personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceUuid = editableSpace.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(spaceId = editableSpace.id!!, userId = "USER_ID", spaceUuid = editableSpace.uuid))
     }
 

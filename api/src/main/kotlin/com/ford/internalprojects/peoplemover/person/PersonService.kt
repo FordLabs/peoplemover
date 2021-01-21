@@ -37,7 +37,6 @@ class PersonService(
                 spaceRole = personIncoming.spaceRole,
                 notes = personIncoming.notes,
                 newPerson = personIncoming.newPerson,
-                spaceId = space.id!!,
                 spaceUuid = space.uuid
         )
         return personRepository.saveAndUpdateSpaceLastModified(personToCreate)
