@@ -92,7 +92,6 @@ function Modal({
                         }}>
                         <input type="text" aria-hidden={true} className="hiddenInputField"/>
                         <div className="modalTitleAndCloseButtonContainer">
-                            <div className="modalTitleSpacer"/>
                             <div className="modalTitle">{title}</div>
                             <button className="material-icons closeButton"
                                 onClick={close}

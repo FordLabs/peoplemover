@@ -44,7 +44,6 @@ function ViewOnlyAccessFormSection({currentSpace, setCurrentSpace}: Props): JSX.
         setTimeout(() => {setCopiedLink(false);}, 3000);
     };
 
-
     const toggleReadOnlyEnabled = async (checked: boolean): Promise<void> => {
         setEnableReadOnly(checked);
         await SpaceClient.editSpace(

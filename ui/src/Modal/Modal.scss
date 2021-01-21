@@ -51,7 +51,6 @@
 
 .modalTitleAndCloseButtonContainer {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 0 0 32px 0;
     margin-left: 36px;
@@ -59,13 +58,11 @@
 }
 
 .modalTitle {
+    flex: 2;
     font-size: 20px;
     color: $purple-title;
     font-weight: bold;
-}
-
-.modalTitleSpacer {
-    width: 16px;
+    margin-left: 16px;
 }
 
 .closeButton {

@@ -23,11 +23,10 @@ import {fireEvent, RenderResult, wait} from '@testing-library/react';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
-import {createStore} from 'redux';
+import {createStore, Store} from 'redux';
 import {setCurrentSpaceAction} from '../Redux/Actions';
-import ShareAccessForm from "./ShareAccessForm";
-import {Space} from "../Space/Space";
-
+import ShareAccessForm from './ShareAccessForm';
+import {Space} from '../Space/Space';
 
 Object.assign(navigator, {
     clipboard: {
@@ -122,7 +121,7 @@ describe('Share Access Form Section', () => {
     });
 });
 
-const setupComponent = (currentSpace: Space) => {
+const setupComponent = (currentSpace: Space): { component: RenderResult; store: Store } => {
     let store = createStore(rootReducer,  {currentSpace});
     store.dispatch = jest.fn();
     const component = renderWithRedux(
@@ -132,4 +131,4 @@ const setupComponent = (currentSpace: Space) => {
     );
 
     return { component, store };
-}
+};
