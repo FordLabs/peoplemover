@@ -83,7 +83,6 @@ function ProductFormProductTagsField({
             return {
                 id: Number.parseInt(option.value, 10),
                 name: option.label,
-                spaceId,
                 spaceUuid: currentSpace.uuid ? currentSpace.uuid : '',
             };
         });

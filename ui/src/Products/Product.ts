@@ -22,7 +22,6 @@ import {LocationTag} from '../Locations/LocationTag.interface';
 export interface Product {
     id: number;
     name: string;
-    spaceId: number;
     spaceUuid: string;
     startDate?: string;
     endDate?: string;
@@ -38,7 +37,6 @@ export function emptyProduct(spaceId?: number, spaceUuid?: string): Product {
     return {
         id: -1,
         name: '',
-        spaceId: spaceId ? spaceId : -1,
         spaceUuid: spaceUuid ? spaceUuid : 'z',
         startDate: '',
         endDate: '',

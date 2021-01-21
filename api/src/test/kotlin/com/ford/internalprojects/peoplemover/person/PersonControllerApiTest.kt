@@ -280,7 +280,7 @@ class PersonControllerApiTest {
         val personToRemain: Person = personRepository.save(Person(name = "Jack", spaceUuid = space.uuid))
         assertThat(personRepository.count()).isEqualTo(2)
 
-        val product: Product = productRepository.save(Product(name = "product", spaceId = space.id!!, spaceUuid = space.uuid))
+        val product: Product = productRepository.save(Product(name = "product", spaceUuid = space.uuid))
         val assignmentToDelete: Assignment = assignmentRepository.save(Assignment(person = personToDelete, productId = product.id!!, spaceUuid = space.uuid))
         val assignmentToRemain: Assignment = assignmentRepository.save(Assignment(person = personToRemain, productId = product.id!!, spaceUuid = space.uuid))
         assertThat(assignmentRepository.count()).isEqualTo(2)

@@ -262,7 +262,6 @@ class LocationControllerApiTest {
                 Product(
                         name = "Product1",
                         spaceLocation = location,
-                        spaceId = space.id!!,
                         spaceUuid = space.uuid
                 )
         )

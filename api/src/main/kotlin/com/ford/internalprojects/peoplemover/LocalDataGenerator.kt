@@ -128,14 +128,12 @@ class LocalDataGenerator(
         productRepository.save(Product(
             name = "My Product",
             productTags = productTags,
-            spaceId = createdSpace.id!!,
             startDate = LocalDate.parse("2019-01-01"),
             spaceUuid =  createdSpace.uuid
         ))
         productRepository.save(Product(
             name = "Baguette Bakery",
             spaceLocation = location,
-            spaceId = createdSpace.id,
             startDate = LocalDate.parse("2019-01-01"),
             spaceUuid =  createdSpace.uuid
         ))

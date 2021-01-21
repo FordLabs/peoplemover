@@ -211,10 +211,10 @@ class TestUtils {
 
     static originDateString = '2019-01-01';
 
-    static annarbor = {id: 1, name: 'Ann Arbor', spaceUuid: 'uuid',  spaceId: 1};
-    static detroit = {id: 2, name: 'Detroit', spaceUuid: 'a',  spaceId: 1};
-    static dearborn = {id: 3, name: 'Dearborn', spaceUuid: 'a',  spaceId: 1};
-    static southfield = {id: 4, name: 'Southfield', spaceUuid: 'a',  spaceId: 1};
+    static annarbor = {id: 1, name: 'Ann Arbor', spaceUuid: 'uuid'};
+    static detroit = {id: 2, name: 'Detroit', spaceUuid: 'a'};
+    static dearborn = {id: 3, name: 'Dearborn', spaceUuid: 'a'};
+    static southfield = {id: 4, name: 'Southfield', spaceUuid: 'a'};
 
     static locations: LocationTag[] = [
         TestUtils.annarbor,
@@ -223,10 +223,10 @@ class TestUtils {
         TestUtils.southfield,
     ];
 
-    static productTag1: ProductTag = {id: 5, name: 'AV', spaceUuid: 'a',  spaceId: 1};
-    static productTag2: ProductTag = {id: 6, name: 'FordX', spaceUuid: 'uuid',  spaceId: 1};
-    static productTag3: ProductTag = {id: 7, name: 'EV', spaceUuid: 'a',  spaceId: 1};
-    static productTag4: ProductTag = {id: 8, name: 'Mache', spaceUuid: 'a',  spaceId: 1};
+    static productTag1: ProductTag = {id: 5, name: 'AV', spaceUuid: 'a'};
+    static productTag2: ProductTag = {id: 6, name: 'FordX', spaceUuid: 'uuid'};
+    static productTag3: ProductTag = {id: 7, name: 'EV', spaceUuid: 'a'};
+    static productTag4: ProductTag = {id: 8, name: 'Mache', spaceUuid: 'a'};
 
     static productTags: Array<ProductTag> = [
         TestUtils.productTag1,
@@ -325,7 +325,6 @@ class TestUtils {
     static unassignedProduct: Product = {
         id: 999,
         name: 'unassigned',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         assignments: [TestUtils.assignmentForUnassigned],
         startDate: '',
@@ -337,7 +336,6 @@ class TestUtils {
     static productWithAssignments: Product = {
         id: 1,
         name: 'Product 1',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',
@@ -351,7 +349,6 @@ class TestUtils {
     static productWithoutAssignments: Product = {
         id: 3,
         name: 'Product 3',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',
@@ -364,7 +361,6 @@ class TestUtils {
     static productForHank: Product = {
         id: 102,
         name: 'Hanky Product',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',
@@ -377,7 +373,6 @@ class TestUtils {
     static productWithoutLocation: Product = {
         id: 5,
         name: 'Awesome Product',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',
@@ -389,7 +384,6 @@ class TestUtils {
     static archivedProduct: Product = {
         id: 4,
         name: 'I am archived',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '',
         endDate: '2020-11-02',
@@ -416,7 +410,6 @@ class TestUtils {
         {
             id: 2,
             name: 'Product 2',
-            spaceId: 1,
             spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
             startDate: '',
             endDate: '',

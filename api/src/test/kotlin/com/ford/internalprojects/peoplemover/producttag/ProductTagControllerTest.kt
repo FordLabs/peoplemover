@@ -181,7 +181,6 @@ class ProductTagControllerTest {
         val product: Product = productRepository.save(Product(
                 name = "P1",
                 productTags = hashSetOf(productTag),
-                spaceId = space.id!!,
                 spaceUuid = space.uuid
         ))
 

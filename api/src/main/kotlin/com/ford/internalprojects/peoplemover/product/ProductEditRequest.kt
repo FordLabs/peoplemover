@@ -60,7 +60,6 @@ data class ProductEditRequest(
                                 spaceLocation = productEditRequest.spaceLocation,
                                 archived = productEditRequest.archived,
                                 notes = productEditRequest.notes,
-                                spaceId = spaceId,
                                 spaceUuid = spaceUuid
                         )
                 }

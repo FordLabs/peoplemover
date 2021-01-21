@@ -57,7 +57,6 @@ data class ProductAddRequest(
                                 spaceLocation = productAddRequest.spaceLocation,
                                 archived = productAddRequest.archived,
                                 notes = productAddRequest.notes,
-                                spaceId = spaceId,
                                 spaceUuid = spaceUuid
                         )
                 }

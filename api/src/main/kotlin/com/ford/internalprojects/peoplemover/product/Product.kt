@@ -21,6 +21,7 @@ import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.producttag.ProductTag
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
+import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
 import java.time.LocalDate
 import javax.persistence.*
 
@@ -54,18 +55,15 @@ data class Product (
 
     var notes: String = "",
 
-    @Column(name = "space_id")
-    override var spaceId: Int,
-
     @Column(name = "space_uuid")
     override val spaceUuid: String
 
-): SpaceComponent {
+): SpaceComponent_new {
 
-    constructor(id: Int?, name: String, spaceId: Int, spaceUuid: String):
-        this(id, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceId, spaceUuid)
+    constructor(id: Int?, name: String, spaceUuid: String):
+        this(id, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceUuid)
 
-    constructor(name: String, spaceId: Int, spaceUuid: String):
-            this(null, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceId, spaceUuid)
+    constructor(name: String, spaceUuid: String):
+            this(null, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceUuid)
 
 }
