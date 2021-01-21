@@ -34,6 +34,13 @@ $spaceTileWidth: 400px;
   grid-gap: 32px;
   margin-top: 50px;
   padding: 88px;
+
+  & > * {
+    position: relative;
+    justify-self: center;
+    width: 400px;
+    height: 128px;
+  }
 }
 
 .createNewSpaceButton {

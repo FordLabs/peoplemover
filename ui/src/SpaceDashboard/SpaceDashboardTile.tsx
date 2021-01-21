@@ -84,7 +84,7 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
 
     const ActionsEllipsis = (): JSX.Element => {
         return (
-            <div className="ellipsisButtonContainer">
+            <div className="ellipsisButtonContainer" onBlur={handleOnBlur}>
                 <button
                     id={spaceEllipsisButtonId}
                     aria-haspopup={true}
@@ -102,8 +102,7 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
     };
 
     return (
-        <div className="spaceTileContainer"
-            onBlur={handleOnBlur}>
+        <div>
             <button className="spaceTile"
                 data-testid="spaceDashboardTile"
                 onClick={(): void => openSpace(space)}
