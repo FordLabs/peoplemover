@@ -65,8 +65,7 @@
     font-family: inherit;
     width: 100%;
 
-    &:hover,
-    &:focus {
+    &:hover {
       background-color: $gray-6;
       color: $purple;
       border-radius: 2px;
