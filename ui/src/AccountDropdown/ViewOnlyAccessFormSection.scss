@@ -23,10 +23,17 @@
 
   .viewOnlyToggleContainer {
     display: inline-block;
-    margin-bottom: 24px;
 
-    .readOnlySwitchLabel {
+    .viewOnlySwitchLabel {
       padding-right: 18px;
+      text-align: left;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 18px;
+      color: $gray-1;
+      display: inline-block;
+      width: 226px;
     }
 
     .tooltip {
@@ -37,6 +44,7 @@
       color: $purple-title;
 
       &:before {
+        z-index: 1;
         width: 163px;
         white-space: pre-wrap;
         border: 2px solid $prime-1;
@@ -60,6 +68,7 @@
       }
 
       &:after {
+        z-index: 1;
         min-width: 13px;
         min-height: 13px;
         border-top: 2px solid $prime-1;
@@ -83,18 +92,9 @@
 
   .spaceLinkContainer {
     display: flex;
-    flex-direction: column;
-
-    span {
-      font-weight: 700;
-    }
-  }
-
-  .copyLinkToShareContainer {
-    width: 100%;
-    display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
     margin-bottom: 28px;
     margin-top: 10px;
 
@@ -107,16 +107,23 @@
     }
 
     .linkToSpace {
-      white-space: nowrap;
-      white-space: nowrap;
-      overflow-x: auto;
-      background: #F2F2F2;
-      border-radius: 6px;
-      padding: 10px;
-      max-width: 300px;
-      font-weight: 400;
-      font-style: normal;
       font-family: inherit;
+      font-weight: inherit;
+      white-space: nowrap;
+      font-style: normal;
+      font-size: 14px;
+      line-height: 16px;
+
+      overflow-x: auto;
+      background: $gray-6;
+      color: #403D3D;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 8px;
+      width: 100%;
+      height: 36px;
+      box-sizing: border-box;
+      resize: none;
     }
 
     .copyLinkButton {
@@ -125,11 +132,12 @@
       font-size: 12px;
       line-height: 14px;
       color: $purple-title;
-      margin-left: 16px;
       cursor: pointer;
       background: none;
       padding: 0;
-      width: 4rem;
+      width: 5rem;
+      white-space: nowrap;
+      margin-left: 15px;
 
       &:disabled {
         cursor: not-allowed;

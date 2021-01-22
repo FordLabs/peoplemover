@@ -32,7 +32,7 @@ interface Props {
 }
 
 function ViewOnlyAccessFormSection({currentSpace, setCurrentSpace}: Props): JSX.Element {
-    const [enableReadOnly, setEnableReadOnly] = useState<boolean>(currentSpace.todayViewIsPublic);
+    const [enableViewOnly, setEnableViewOnly] = useState<boolean>(currentSpace.todayViewIsPublic);
     const [copiedLink, setCopiedLink] = useState<boolean>(false);
     const linkToSpace: string = window.location.href;
 
@@ -45,7 +45,7 @@ function ViewOnlyAccessFormSection({currentSpace, setCurrentSpace}: Props): JSX.
     };
 
     const toggleReadOnlyEnabled = async (checked: boolean): Promise<void> => {
-        setEnableReadOnly(checked);
+        setEnableViewOnly(checked);
         await SpaceClient.editSpace(
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             currentSpace.uuid!,
@@ -57,15 +57,15 @@ function ViewOnlyAccessFormSection({currentSpace, setCurrentSpace}: Props): JSX.
     return (
         <div className="viewOnlyAccessForm form">
             <div className="viewOnlyToggleContainer">
-                <label htmlFor="viewOnlyAccessToggle" className="readOnlySwitchLabel">
-                    View only access is {enableReadOnly ? 'enabled' : 'disabled'}
+                <label htmlFor="viewOnlyAccessToggle" className="viewOnlySwitchLabel">
+                    View only access is {enableViewOnly ? 'enabled' : 'disabled'}
                 </label>
                 <ReactSwitch
                     data-testid="viewOnlyAccessToggle"
                     id="viewOnlyAccessToggle"
-                    className={enableReadOnly ? '' : 'disabled'}
+                    className={enableViewOnly ? '' : 'disabled'}
                     onChange={toggleReadOnlyEnabled}
-                    checked={enableReadOnly}
+                    checked={enableViewOnly}
                     checkedIcon={false}
                     uncheckedIcon={false}
                     width={27}
@@ -77,29 +77,25 @@ function ViewOnlyAccessFormSection({currentSpace, setCurrentSpace}: Props): JSX.
                     info
                 </i>
             </div>
-            <div className={`spaceLinkContainer ${enableReadOnly ? '' : 'disabled'}`}>
-                <span id="copySpaceUrlLinkLabel">
-                    People with this link can view only
-                </span>
-                <div className="copyLinkToShareContainer">
-                    <input
-                        className="linkToSpace"
-                        data-testid="linkToSpace"
-                        value={linkToSpace}
-                        type="text"
-                        aria-label={linkToSpace}
-                        readOnly
-                        data-autoselect=""
-                    />
-                    <button 
-                        className="copyLinkButton"
-                        data-testid="viewOnlyAccessFormCopyLinkButton"
-                        disabled={!enableReadOnly}
-                        onClick={copyLink}
-                        aria-label="Copy link to clipboard">
-                        {copiedLink ? 'Copied!' : 'Copy link'}
-                    </button>
-                </div>
+            <div className={`spaceLinkContainer ${enableViewOnly ? '' : 'disabled'}`}>
+                <input
+                    className="linkToSpace"
+                    data-testid="linkToSpace"
+                    value={linkToSpace}
+                    type="text"
+                    aria-label={linkToSpace}
+                    readOnly
+                    disabled={!enableViewOnly}
+                    data-autoselect=""
+                />
+                <button
+                    className="copyLinkButton"
+                    data-testid="viewOnlyAccessFormCopyLinkButton"
+                    disabled={!enableViewOnly}
+                    onClick={copyLink}
+                    aria-label="Copy link to clipboard">
+                    {copiedLink ? 'Copied!' : 'Copy link'}
+                </button>
             </div>
         </div>
     );

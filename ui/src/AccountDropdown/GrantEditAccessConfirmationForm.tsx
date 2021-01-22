@@ -40,16 +40,17 @@ const GrantEditAccessConfirmationForm = ({ closeModal }: Props): JSX.Element => 
     };
 
     return (
-        <form className="inviteContributorsConfirmationContainer">
-            <div className="inviteContributorsConfirmationLabel">
+        <form className="grantEditAccessConfirmationForm">
+            <div className="shareLinkLabel">
                 Share this link with your collaborators.
             </div>
-            <div className="inviteContributorsConfirmationShareLinkContainer">
-                <div className="linkToSpace" data-testid="linkToSpace">
+            <div className="copyLinkContainer">
+                <div className="linkToSpace"
+                    data-testid="grantEditAccessConfirmationFormLinkToSpace">
                     {linkToSpace}
                 </div>
-                <button className="inviteContributorsConfirmationCopyButton"
-                    data-testid="inviteContributorsConfirmationCopyButton"
+                <button className="copyButton"
+                    data-testid="grantEditAccessConfirmationFormCopyButton"
                     onClick={copyLink}>
                     {copiedLink ? 'Copied!' : 'Copy link'}
                 </button>
@@ -57,7 +58,7 @@ const GrantEditAccessConfirmationForm = ({ closeModal }: Props): JSX.Element => 
             <FormButton
                 buttonStyle="primary"
                 onClick={closeModal}
-                testId="inviteContributorDoneButton">
+                testId="grantEditAccessConfirmationFormDoneButton">
                 Done
             </FormButton>
         </form>

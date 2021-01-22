@@ -44,13 +44,13 @@ describe('Account Dropdown', () => {
                     expect(xhrs.status).to.equal(200);
                 });
 
-            cy.get('[data-testid=linkToSpace]')
+            cy.get('[data-testid=grantEditAccessConfirmationFormLinkToSpace]')
                 .should('contain', baseUrl + '/' + spaceUuid);
-            cy.get('[data-testid=inviteContributorsConfirmationCopyButton]')
+            cy.get('[data-testid=grantEditAccessConfirmationFormCopyButton]')
                 .should('contain', 'Copy link' )
                 .click()
                 .should('contain', 'Copied' );
-            cy.get('[data-testid=inviteContributorDoneButton]').click();
+            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
             cy.get('[data-testid=modalPopupContainer]').should('not.be.visible');
         });
 
