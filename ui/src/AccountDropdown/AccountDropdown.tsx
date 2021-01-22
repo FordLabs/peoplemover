@@ -24,6 +24,7 @@ import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
 
 import './AccountDropdown.scss';
+import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
 
 interface Props {
     hideSpaceButtons?: boolean;
@@ -45,19 +46,11 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
         setDropdownToggle(!dropdownToggle);
     };
 
-    const handleBlur = (event: React.FocusEvent<HTMLDivElement>): void => {
-        if (!event.currentTarget?.contains(event.relatedTarget as Node)) {
-            setDropdownToggle(false);
-        }
-    };
-
     const AccountDropdownContent = (): JSX.Element => {
-
         return (
-            <div
-                role="menu"
+            <AccessibleDropdownContainer
+                handleClose={(): void => {setDropdownToggle(false);}}
                 className="accountDropdown"
-                onBlur={handleBlur}
             >
                 {(!hideSpaceButtons && !isReadOnly) ? (
                     <>
@@ -68,7 +61,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
                 ) : (
                     <SignOutButton setRedirect={setRedirect} focusOnRender={true}/>
                 )}
-            </div>
+            </AccessibleDropdownContainer>
         );
     };
 

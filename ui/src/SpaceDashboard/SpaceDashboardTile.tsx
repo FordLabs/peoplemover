@@ -24,7 +24,7 @@ import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
-import Dropdown from '../Dropdown/Dropdown';
+import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
 
 interface SpaceDashboardTileProps {
     space: Space;
@@ -58,7 +58,11 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
 
     const ActionsDropdownContent = (): JSX.Element => {
         return (
-            <Dropdown handleClose={(): void => {setDropdownToggle(false);}} ariaLabelledBy={spaceEllipsisButtonId}>
+            <AccessibleDropdownContainer
+                handleClose={(): void => {setDropdownToggle(false);}}
+                className="ellipsisDropdownContainer"
+                ariaLabelledBy={spaceEllipsisButtonId}
+            >
                 <button
                     autoFocus
                     data-testid="editSpace"
@@ -69,7 +73,7 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                     <i className="material-icons">edit</i>
                 Edit
                 </button>
-            </Dropdown>
+            </AccessibleDropdownContainer>
         );
     };
 

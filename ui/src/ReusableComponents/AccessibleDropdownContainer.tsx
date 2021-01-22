@@ -2,11 +2,12 @@ import React, {createRef, ReactNode, useCallback, useEffect} from 'react';
 
 interface DropdownProps {
     handleClose: () => void;
-    ariaLabelledBy: string;
+    ariaLabelledBy?: string;
+    className?: string;
     children?: ReactNode;
 }
 
-export default function Dropdown({handleClose, ariaLabelledBy, children}: DropdownProps): JSX.Element {
+export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children}: DropdownProps): JSX.Element {
 
     const dropdownContainer = createRef<HTMLDivElement>();
 
@@ -17,7 +18,7 @@ export default function Dropdown({handleClose, ariaLabelledBy, children}: Dropdo
         if (e.key === 'Escape') {
             handleClose();
         }
-    }, [dropdownContainer]);
+    }, [dropdownContainer, handleClose]);
 
     useEffect(() => {
         document.addEventListener('mouseup', leaveFocusListener);
@@ -31,7 +32,7 @@ export default function Dropdown({handleClose, ariaLabelledBy, children}: Dropdo
         <div
             ref={dropdownContainer}
             role="menu"
-            className="ellipsisDropdownContainer"
+            className={className}
             aria-labelledby={ariaLabelledBy}
         >
             {children}
