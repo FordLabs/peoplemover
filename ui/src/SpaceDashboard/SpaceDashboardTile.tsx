@@ -19,11 +19,12 @@ import {Space} from '../Space/Space';
 import * as React from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
-import {createRef, useCallback, useEffect, useState} from 'react';
+import {useState} from 'react';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
+import Dropdown from '../Dropdown/Dropdown';
 
 interface SpaceDashboardTileProps {
     space: Space;
@@ -50,38 +51,14 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
     function handleDropdownClick(): void {
         setDropdownToggle(!dropdownToggle);
     }
+
     function openEditModal(): void {
         return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
     }
 
     const ActionsDropdownContent = (): JSX.Element => {
-        const dropdownContainer = createRef<HTMLDivElement>();
-
-        const leaveFocusListener = useCallback((e: {target: EventTarget | null; key?: string}) => {
-            if (!dropdownContainer.current?.contains(e.target as HTMLElement)) {
-                setDropdownToggle(false);
-            }
-            if (e.key === 'Escape') {
-                setDropdownToggle(false);
-            }
-        }, [dropdownContainer]);
-
-        useEffect(() => {
-            document.addEventListener('mouseup', leaveFocusListener);
-            document.addEventListener('keyup', leaveFocusListener);
-            return (): void => {
-                document.removeEventListener('mouseup', leaveFocusListener);
-                document.removeEventListener('keyup', leaveFocusListener);
-            };
-        }, [leaveFocusListener]);
-
         return (
-            <div
-                ref={dropdownContainer}
-                role="menu"
-                className="ellipsisDropdownContainer"
-                aria-labelledby={spaceEllipsisButtonId}
-            >
+            <Dropdown handleClose={(): void => {setDropdownToggle(false);}} ariaLabelledBy={spaceEllipsisButtonId}>
                 <button
                     autoFocus
                     data-testid="editSpace"
@@ -90,9 +67,9 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                     onClick={openEditModal}
                 >
                     <i className="material-icons">edit</i>
-                    Edit
+                Edit
                 </button>
-            </div>
+            </Dropdown>
         );
     };
 
