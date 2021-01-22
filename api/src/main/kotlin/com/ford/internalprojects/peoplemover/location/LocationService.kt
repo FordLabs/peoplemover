@@ -32,13 +32,12 @@ class LocationService(
         private val spaceLocationRepository: SpaceLocationRepository
 ) {
     fun addLocationToSpace(spaceUuid: String, locationAddRequest: LocationAddRequest): SpaceLocation {
-        val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         spaceLocationRepository.findBySpaceUuidAndNameIgnoreCase(
                 spaceUuid,
                 locationAddRequest.name
         )?.let { throw LocationAlreadyExistsException(locationAddRequest.name) }
 
-        val spaceLocationToSave = SpaceLocation(spaceId = space.id!!, name = locationAddRequest.name, spaceUuid = spaceUuid)
+        val spaceLocationToSave = SpaceLocation(name = locationAddRequest.name, spaceUuid = spaceUuid)
         return spaceLocationRepository.saveAndUpdateSpaceLastModified(spaceLocationToSave)
     }
 
@@ -46,12 +45,8 @@ class LocationService(
         spaceLocationRepository.findAllBySpaceUuid(spaceUuid)
 
     fun editLocation(spaceUuid: String, locationEditRequest: LocationEditRequest): SpaceLocation {
-        val space: Space = spaceRepository.findByUuid(spaceUuid)
-                ?: throw SpaceNotExistsException(spaceUuid)
-
         val spaceLocationToEdit = SpaceLocation(
                 id = locationEditRequest.id,
-                spaceId = space.id!!,
                 name = locationEditRequest.name,
                 spaceUuid = spaceUuid
         )

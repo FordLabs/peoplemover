@@ -42,9 +42,6 @@ data class Space (
     @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
     val roles: Set<SpaceRole> = HashSet(),
 
-    @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
-    val locations: List<SpaceLocation> = ArrayList(),
-
     @Column(name="today_view_is_public")
     var todayViewIsPublic: Boolean = false,
 
@@ -53,5 +50,5 @@ data class Space (
     var createdBy: String? = null
 ) {
     constructor(name: String):
-        this(null, UUID.randomUUID().toString(), name, HashSet(), ArrayList(), false, null, null)
+        this(null, UUID.randomUUID().toString(), name, HashSet(), false, null, null)
 }
