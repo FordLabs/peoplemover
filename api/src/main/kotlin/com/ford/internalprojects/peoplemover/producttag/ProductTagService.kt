@@ -35,7 +35,7 @@ class ProductTagService(
         val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         productTagRepository.findAllByNameIgnoreCaseAndSpaceUuid(addRequest.name, spaceUuid)
                 ?.let { throw ProductTagAlreadyExistsForSpaceException() }
-        return productTagRepository.saveAndUpdateSpaceLastModified(ProductTag(spaceId = space.id!!, name = addRequest.name, spaceUuid = spaceUuid))
+        return productTagRepository.saveAndUpdateSpaceLastModified(ProductTag(name = addRequest.name, spaceUuid = spaceUuid))
     }
 
     fun getAllProductTags(spaceUuid: String): List<ProductTag> =

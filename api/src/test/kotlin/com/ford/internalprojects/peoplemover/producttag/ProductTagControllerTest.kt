@@ -104,7 +104,7 @@ class ProductTagControllerTest {
 
     @Test
     fun `POST should return 409 when creating product tag with already existing name`() {
-        val actualTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech", spaceUuid = space.uuid))
+        val actualTag: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech", spaceUuid = space.uuid))
         mockMvc.perform(post(baseProductTagsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -125,7 +125,7 @@ class ProductTagControllerTest {
 
     @Test
     fun `PUT should return 200 when editing product tag with already existing name in different case`() {
-        val actualTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech", spaceUuid = space.uuid))
+        val actualTag: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech", spaceUuid = space.uuid))
         actualTag.name = actualTag.name.toLowerCase()
         mockMvc.perform(put(baseProductTagsUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
@@ -137,9 +137,9 @@ class ProductTagControllerTest {
     @Throws(Exception::class)
     @Test
     fun `GET should return all product tags for a space`() {
-        val productTag1: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech 1", spaceUuid = space.uuid))
-        val productTag2: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech 2", spaceUuid = space.uuid))
-        val productTag3: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Fin Tech 3", spaceUuid = space.uuid))
+        val productTag1: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech 1", spaceUuid = space.uuid))
+        val productTag2: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech 2", spaceUuid = space.uuid))
+        val productTag3: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech 3", spaceUuid = space.uuid))
 
         val result = mockMvc.perform(get(baseProductTagsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN"))
@@ -176,7 +176,7 @@ class ProductTagControllerTest {
     @Test
     fun `DELETE product tag and remove product tag from associated product`() {
         val productTag: ProductTag = productTagRepository.save(
-                ProductTag(spaceId = space.id!!, name = "Fin Tech", spaceUuid = space.uuid)
+                ProductTag(name = "Fin Tech", spaceUuid = space.uuid)
         )
         val product: Product = productRepository.save(Product(
                 name = "P1",
@@ -206,7 +206,7 @@ class ProductTagControllerTest {
 
     @Test
     fun `DELETE should return 403 when trying to delete a product tag without write authorization`() {
-        val productTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Spongebob", spaceUuid = space.uuid))
+        val productTag: ProductTag = productTagRepository.save(ProductTag(name = "Spongebob", spaceUuid = space.uuid))
 
         mockMvc.perform(delete("$baseProductTagsUrl/${productTag.id!!}")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
@@ -215,7 +215,7 @@ class ProductTagControllerTest {
 
     @Test
     fun `PUT should update product tag`() {
-        val productTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "FordX", spaceUuid = space.uuid))
+        val productTag: ProductTag = productTagRepository.save(ProductTag(name = "FordX", spaceUuid = space.uuid))
         val updatedTag = ProductTagEditRequest(id = productTag.id!!, name = "Fin Tech")
         val result = mockMvc.perform(put(baseProductTagsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -242,7 +242,7 @@ class ProductTagControllerTest {
 
     @Test
     fun `PUT should return 403 when trying to edit a product tag without write authorization`() {
-        val productTag: ProductTag = productTagRepository.save(ProductTag(spaceId = space.id!!, name = "Valerie Felicity Frizzle", spaceUuid = space.uuid))
+        val productTag: ProductTag = productTagRepository.save(ProductTag(name = "Valerie Felicity Frizzle", spaceUuid = space.uuid))
         val requestBodyObject = ProductTagEditRequest(productTag.id!!, "Liz")
 
         mockMvc.perform(put(baseProductTagsUrl)
