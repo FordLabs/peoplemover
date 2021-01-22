@@ -62,7 +62,7 @@ describe('Account Dropdown',  () => {
             await act( async () => {
                 fireEvent.click(await app.findByTestId('shareAccess'));
             });
-            expect(app.getByText('Share Access'));
+            expect(app.getByText('Invite others to view'));
         });
 
         it('should close Edit Contributors modal on click of Cancel button', async () => {
