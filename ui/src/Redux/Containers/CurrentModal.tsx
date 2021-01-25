@@ -32,9 +32,7 @@ import MyRolesForm from '../../Roles/MyRolesForm';
 import {emptyProduct, Product} from '../../Products/Product';
 import {Space} from '../../Space/Space';
 import SpaceForm from '../../SpaceDashboard/SpaceForm';
-import ShareAccessForm from '../../AccountDropdown/ShareAccessForm';
 import GrantEditAccessConfirmationForm from '../../AccountDropdown/GrantEditAccessConfirmationForm';
-import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
 import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSection';
 
 export interface ModalMetadataItem {
@@ -117,8 +115,9 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             return [{title: 'Edit Space', form: <SpaceForm space={item}/>}];
         case AvailableModals.SHARE_SPACE_ACCESS:
             return [
-                {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
-                {title: 'Invite others to edit', form: <InviteEditorsFormSection/>},
+                // Temporarily remove View Only to unblock production
+                // {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
+                {title: 'Share Access', form: <InviteEditorsFormSection/>},
             ];
         case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
             return [{

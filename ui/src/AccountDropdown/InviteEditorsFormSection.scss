@@ -39,10 +39,11 @@
     font-weight: inherit;
     font-size: 14px;
     line-height: 16px;
-    height: 36px;
+    min-height: 32px;
+    height: 64px;
     width: 100%;
     box-sizing: border-box;
-    resize: none;
+    resize: vertical;
     padding: 8px;
     margin: 12px 0 32px;
     background: $gray-6;
