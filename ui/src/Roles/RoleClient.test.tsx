@@ -24,7 +24,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 declare let window: MatomoWindow;
 
 describe('Role Client', function() {
-    const spaceUuid = 'uuid';
+    const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
     const cookies = new Cookies();
     const baseRolesUrl = `/api/spaces/${spaceUuid}/roles`;
     const expectedConfig = {

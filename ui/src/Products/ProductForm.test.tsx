@@ -64,7 +64,7 @@ describe('ProductForm', function() {
             TestUtils.space,
             {
                 id: -1,
-                spaceUuid: 'uuid',
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 name: 'Some Name',
                 startDate: '2020-05-14',
                 endDate: '',
