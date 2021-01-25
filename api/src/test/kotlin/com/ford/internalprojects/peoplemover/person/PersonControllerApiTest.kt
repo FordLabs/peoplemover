@@ -104,7 +104,12 @@ class PersonControllerApiTest {
 
     @Test
     fun `POST should add a new person to the repository`() {
-        val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!, spaceUuid = space.uuid))
+        val spaceRole: SpaceRole = spaceRolesRepository.save(
+                SpaceRole(
+                    name = "Software Engineer",
+                    spaceUuid = space.uuid
+                )
+        )
 
         val personToCreate = Person(
                 name = "John",
@@ -220,15 +225,25 @@ class PersonControllerApiTest {
     @Test
     fun `GET should return 400 when requesting people from invalid space`() {
         mockMvc.perform(get(getBasePeopleUrl("FiveNightsAtFreddys"))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
-                .andExpect(status().isBadRequest)
-                .andReturn()
+            .header("Authorization", "Bearer GOOD_TOKEN"))
+            .andExpect(status().isBadRequest)
+            .andReturn()
     }
 
     @Test
     fun `PUT should update a person`() {
-        val softwareEngineer: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceId = space.id!!, spaceUuid = space.uuid))
-        val engineer = spaceRolesRepository.save(SpaceRole(name = "Engineer", spaceId = space.id!!, spaceUuid = space.uuid))
+        val softwareEngineer: SpaceRole = spaceRolesRepository.save(
+            SpaceRole(
+                name = "Software Engineer",
+                spaceUuid = space.uuid
+            )
+        )
+        val engineer = spaceRolesRepository.save(
+            SpaceRole(
+                name = "Engineer",
+                spaceUuid = space.uuid
+            )
+        )
         val person: Person = personRepository.save(Person(
                 name = "John",
                 spaceUuid = space.uuid,

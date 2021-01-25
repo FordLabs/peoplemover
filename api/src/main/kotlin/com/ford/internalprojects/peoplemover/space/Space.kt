@@ -39,9 +39,6 @@ data class Space (
     @Column(unique = true, nullable = false)
     var name: String,
 
-    @OneToMany(mappedBy = "spaceId", orphanRemoval = true, cascade = [CascadeType.REMOVE, CascadeType.REFRESH], fetch = FetchType.EAGER)
-    val roles: Set<SpaceRole> = HashSet(),
-
     @Column(name="today_view_is_public")
     var todayViewIsPublic: Boolean = false,
 
@@ -50,5 +47,5 @@ data class Space (
     var createdBy: String? = null
 ) {
     constructor(name: String):
-        this(null, UUID.randomUUID().toString(), name, HashSet(), false, null, null)
+        this(null, UUID.randomUUID().toString(), name,false, null, null)
 }
