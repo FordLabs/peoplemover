@@ -105,7 +105,7 @@ class AssignmentControllerReassignmentsApiTest {
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceUuid = editableSpace.uuid))
         personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceUuid = editableSpace.uuid))
         personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceUuid = editableSpace.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = editableSpace.id!!, userId = "USER_ID", spaceUuid = editableSpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = editableSpace.uuid))
     }
 
     @After

@@ -80,7 +80,7 @@ class RoleControllerApiTest {
         space = spaceRepository.save(Space(name = "tok"))
 
         baseRolesUrl = getBaseRolesUrl(space.uuid)
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
     }
 
     @After

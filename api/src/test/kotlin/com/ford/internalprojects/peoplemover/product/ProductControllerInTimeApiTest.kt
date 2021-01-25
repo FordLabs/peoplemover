@@ -116,7 +116,7 @@ class ProductControllerInTimeApiTest {
         ))
         baseProductsUrl = getBaseProductsUrl(spaceWithEditAccess.uuid)
 
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = spaceWithEditAccess.id!!, userId = "USER_ID", spaceUuid = spaceWithEditAccess.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = spaceWithEditAccess.uuid))
 
     }
 

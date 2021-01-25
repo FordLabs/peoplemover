@@ -102,7 +102,7 @@ class AuthControllerTest {
 
         val savedSpace = spaceRepository.save(Space(name = "spaceThree", uuid = uuid))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id, spaceUuid = savedSpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = savedSpace.uuid))
 
         val request = AuthCheckScopesRequest(
                 accessToken = accessToken,

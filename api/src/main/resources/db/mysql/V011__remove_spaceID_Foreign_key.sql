@@ -21,3 +21,9 @@ ALTER TABLE space_roles DROP FOREIGN KEY FK_Space_Roles__Space;
 ALTER TABLE space_roles DROP INDEX UQ_Role;
 ALTER TABLE space_roles DROP COLUMN space_id;
 ALTER TABLE space_roles ADD CONSTRAINT UQ_Role UNIQUE (space_uuid, roles);
+
+
+ALTER TABLE user_space_mapping DROP FOREIGN KEY FK_User__Space;
+ALTER TABLE user_space_mapping DROP INDEX UQ_User_Space_Mapping;
+ALTER TABLE user_space_mapping DROP COLUMN space_id;
+ALTER TABLE user_space_mapping ADD CONSTRAINT UQ_User_Space_Mapping UNIQUE (space_uuid, user_id);

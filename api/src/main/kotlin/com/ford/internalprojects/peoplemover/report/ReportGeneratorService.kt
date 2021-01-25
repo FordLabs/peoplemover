@@ -68,8 +68,8 @@ class ReportGeneratorService(
 
     private fun mapUsersToSpace(userSpaceMappings: List<UserSpaceMapping>, space: Space): List<String?> {
         return userSpaceMappings.stream()
-                .filter { mapping -> mapping.spaceId == space.id }
-                .map { mapping2 -> mapping2.userId }.toList()
+                .filter { filterSpaceMapping -> filterSpaceMapping.spaceUuid == space.uuid }
+                .map { mapSpaceMapping -> mapSpaceMapping.userId }.toList()
     }
 
     fun createUsersReport(): List<String> {

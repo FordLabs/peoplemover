@@ -13,9 +13,6 @@ data class UserSpaceMapping(
         @Column(name = "user_id")
         val userId: String?,
 
-        @Column(name = "space_id")
-        val spaceId: Int?,
-
         @Column(name = "space_uuid")
         val spaceUuid: String
 

@@ -111,7 +111,7 @@ class AssignmentControllerInTimeApiTest {
         unassignedProduct = productRepository.save(Product(name = "unassigned", spaceUuid = editableSpace.uuid))
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceUuid = editableSpace.uuid))
         personInReadOnlySpace = personRepository.save(Person(name = "Arnold Britten", newPerson = true, spaceUuid = editableSpace.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = editableSpace.id!!, userId = "USER_ID", spaceUuid = editableSpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = editableSpace.uuid))
     }
 
     @After

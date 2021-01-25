@@ -89,7 +89,7 @@ class PersonControllerApiTest {
 
         basePeopleUrl = getBasePeopleUrl(space.uuid)
 
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
     }
 
     @After
@@ -166,7 +166,7 @@ class PersonControllerApiTest {
     @Test
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = emptySpace.id!!, userId = "USER_ID", spaceUuid = emptySpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = emptySpace.uuid))
 
         val result = mockMvc
                 .perform(get(getBasePeopleUrl(emptySpace.uuid))
