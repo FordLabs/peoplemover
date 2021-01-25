@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.location
 
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
-import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
 import javax.persistence.*
 
 @Entity
@@ -32,4 +31,4 @@ data class SpaceLocation (
     override val spaceUuid: String,
 
     val name: String
-): SpaceComponent_new
+): SpaceComponent

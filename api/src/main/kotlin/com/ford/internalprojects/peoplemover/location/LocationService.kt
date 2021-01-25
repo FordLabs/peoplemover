@@ -19,9 +19,7 @@ package com.ford.internalprojects.peoplemover.location
 
 import com.ford.internalprojects.peoplemover.location.exceptions.LocationAlreadyExistsException
 import com.ford.internalprojects.peoplemover.location.exceptions.LocationNotExistsException
-import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional

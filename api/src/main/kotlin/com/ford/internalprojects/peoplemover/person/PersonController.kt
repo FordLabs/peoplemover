@@ -18,11 +18,8 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
-import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 

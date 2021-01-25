@@ -20,7 +20,6 @@ package com.ford.internalprojects.peoplemover.person
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.ford.internalprojects.peoplemover.role.SpaceRole
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
-import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
 import javax.persistence.*
 
 @Entity
@@ -43,7 +42,7 @@ data class Person(
 
         @Column(name = "space_uuid")
         override val spaceUuid: String
-): SpaceComponent_new {
+): SpaceComponent {
     constructor(name: String, spaceUuid: String) :
             this(null, name, null, "", false, spaceUuid)
 }

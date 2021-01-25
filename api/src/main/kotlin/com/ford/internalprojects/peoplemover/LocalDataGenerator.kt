@@ -5,7 +5,6 @@ import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.color.ColorService
 import com.ford.internalprojects.peoplemover.location.LocationAddRequest
 import com.ford.internalprojects.peoplemover.location.LocationService

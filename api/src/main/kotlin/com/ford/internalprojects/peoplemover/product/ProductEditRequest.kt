@@ -22,7 +22,6 @@ import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.producttag.ProductTag
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 data class ProductEditRequest(

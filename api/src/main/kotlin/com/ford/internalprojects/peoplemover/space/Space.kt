@@ -19,12 +19,9 @@ package com.ford.internalprojects.peoplemover.space
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
-import com.ford.internalprojects.peoplemover.location.SpaceLocation
-import com.ford.internalprojects.peoplemover.role.SpaceRole
 import java.sql.Timestamp
 import java.util.*
 import javax.persistence.*
-import kotlin.collections.HashSet
 
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")

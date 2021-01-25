@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.baserepository
 
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
-import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
@@ -29,7 +28,7 @@ import java.util.*
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
 
-class PeopleMoverRepositoryImpl<T : SpaceComponent_new, ID : Serializable>(
+class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Serializable>(
         entityInformation: JpaEntityInformation<T, *>,
         entityManager: EntityManager,
         private val spaceRepository: SpaceRepository

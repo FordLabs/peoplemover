@@ -19,7 +19,6 @@ package com.ford.internalprojects.peoplemover.role
 
 import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
-import com.ford.internalprojects.peoplemover.space.SpaceComponent_new
 import javax.persistence.*
 
 @Entity
@@ -37,4 +36,4 @@ data class SpaceRole (
 
     @ManyToOne
     var color: Color? = null
-): SpaceComponent_new
+): SpaceComponent
