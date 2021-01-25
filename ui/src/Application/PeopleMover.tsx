@@ -22,7 +22,7 @@ import './PeopleMover.scss';
 
 import ProductList from '../Products/ProductList';
 import Branding from '../ReusableComponents/Branding';
-import CurrentModal from '../Redux/Containers/ModalContainer';
+import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
     fetchLocationsAction,

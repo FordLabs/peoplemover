@@ -32,10 +32,10 @@ describe('Modal', () => {
 
         comp = render(
             <Modal
-                title="Test Modal"
-                modalForm={<ModalForm setShouldShowConfirmCloseModal={(): void => {
-                    console.log('hey');
-                }}/>}
+                modalMetadata={[{
+                    title:'Test Modal',
+                    form:<ModalForm setShouldShowConfirmCloseModal={jest.fn()} />,
+                }]}
                 closeModal={mockedCloseFunction}
             />
         );

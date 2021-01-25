@@ -18,11 +18,11 @@
 
 @import "../Application/Styleguide/Colors.scss";
 
-.inviteContributorsConfirmationContainer {
+.grantEditAccessConfirmationForm {
   margin: 0 auto;
   color: $gray-1;
 
-  .inviteContributorsConfirmationLabel {
+  .shareLinkLabel {
     text-align: left;
     font-style: normal;
     font-weight: bold;
@@ -32,14 +32,14 @@
     padding-bottom: 12px;
   }
 
-  .inviteContributorsConfirmationShareLinkContainer {
+  .copyLinkContainer {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 28px;
 
-    .inviteContributorsConfirmationLink {
+    .linkToSpace {
       white-space: nowrap;
       overflow-x: auto;
       background: #F2F2F2;
@@ -48,7 +48,7 @@
       max-width: 343px;
     }
 
-    .inviteContributorsConfirmationCopyButton {
+    .copyButton {
       font-style: normal;
       font-weight: bold;
       font-size: 12px;
