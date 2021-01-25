@@ -84,7 +84,7 @@ class ProductControllerApiTest {
 
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "tok", uuid = "aaa-aaa-aaaa-aaaaa"))
+        space = spaceRepository.save(Space(name = "tok", uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
         baseProductsUrl = getBaseProductUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
     }

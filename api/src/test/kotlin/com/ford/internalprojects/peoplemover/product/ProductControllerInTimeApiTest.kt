@@ -90,11 +90,12 @@ class ProductControllerInTimeApiTest {
     var baseProductsUrl = ""
 
     private fun getBaseProductsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/products"
+    val readOnlySpaceUuid = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
 
     @Before
     fun setUp() {
-        spaceWithEditAccess = spaceRepository.save(Space(name = "tik", uuid = "kari-on-vacation-uuid"))
-        spaceWithReadOnlyAccess = spaceRepository.save(Space(name = "tok", uuid = "read-only-space-uuid", todayViewIsPublic = true))
+        spaceWithEditAccess = spaceRepository.save(Space(name = "tik", uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+        spaceWithReadOnlyAccess = spaceRepository.save(Space(name = "tok", uuid = readOnlySpaceUuid, todayViewIsPublic = true))
         person = personRepository.save(Person(name = "Benjamin Button", newPerson = true, spaceUuid = spaceWithEditAccess.uuid))
         product1 = productRepository.save(Product(
                 name = "product one",
