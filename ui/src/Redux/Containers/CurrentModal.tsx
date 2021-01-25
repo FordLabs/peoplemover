@@ -115,7 +115,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             return [{title: 'Edit Space', form: <SpaceForm space={item}/>}];
         case AvailableModals.SHARE_SPACE_ACCESS:
             return [
-                // Temporarily remove View Only to unblock production
+                // TODO: Bring back. This was temporarily removed View Only to unblock production
                 // {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
                 {title: 'Share Access', form: <InviteEditorsFormSection/>},
             ];

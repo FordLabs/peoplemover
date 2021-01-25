@@ -19,7 +19,7 @@ describe('Account Dropdown', () => {
     beforeEach(() => {
         cy.visitBoard();
     });
-    
+
     context('Share Access', () => {
         it('Add people to a space should fail is email address is not properly formatted', () => {
             cy.get('[data-testid=accountDropdownToggle]').click();
@@ -54,7 +54,8 @@ describe('Account Dropdown', () => {
             cy.get('[data-testid=modalPopupContainer]').should('not.be.visible');
         });
 
-        it('Toggle public ability to see today\'s view should update the space in the API', () => {
+        // @todo comment back in once view only toggle is visible in the app
+        xit('Toggle public ability to see today\'s view should update the space in the API', () => {
             cy.get('[data-testid=accountDropdownToggle]').click();
             cy.get('[data-testid=shareAccess]').click();
             cy.get('[data-testid=viewOnlyAccessToggle]').as('toggleReadOnlySwitch');
