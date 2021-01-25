@@ -17,13 +17,14 @@
 
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
-import {fireEvent, RenderResult, wait} from '@testing-library/react';
+import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
 import EditContributorsForm from './EditContributorsForm';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import {createStore} from 'redux';
-import {setCurrentSpaceAction} from '../Redux/Actions';
+import {AvailableActions, AvailableModals, setCurrentSpaceAction} from '../Redux/Actions';
+import configureStore from 'redux-mock-store';
 
 
 Object.assign(navigator, {
@@ -130,5 +131,68 @@ describe('Edit Contributors with read only turned off', () => {
     it('should have copy link button disabled when ready only view is turned off', async function() {
         const inviteContributorsConfirmationCopyButton = component.getByTestId('inviteContributorsConfirmationCopyButton');
         expect(inviteContributorsConfirmationCopyButton).toBeDisabled();
+    });
+});
+
+describe('Edit Access', () => {
+    let app: RenderResult;
+    const mockStore = configureStore([]);
+    const expectedCurrentSpace = TestUtils.space;
+    const expectedViewingDate = new Date(2020, 4, 14);
+    const store = mockStore({
+        currentSpace: expectedCurrentSpace,
+        viewingDate: expectedViewingDate,
+    });
+
+    beforeEach(async () => {
+        SpaceClient.inviteUsersToSpace = jest.fn().mockResolvedValue({});
+        store.dispatch = jest.fn();
+        await wait(async () => {
+            app = renderWithRedux(
+                <EditContributorsForm/>,
+                store
+            );
+        });
+    });
+
+    it('should close Edit Contributors modal on click of Cancel button', async () => {
+        await act(async () => {
+            const cancelButton = await app.findByText('Cancel');
+            fireEvent.click(cancelButton);
+        });
+        expect(store.dispatch).toHaveBeenCalledWith({
+            type: AvailableActions.CLOSE_MODAL,
+        });
+    });
+
+    it('should submit invited contributors, current space name, and access token on click of Invite button', async () => {
+        await act(async () => {
+            const usersToInvite = app.getByTestId('emailTextArea');
+            fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});
+
+            const saveButton = await app.findByText('Invite');
+            fireEvent.click(saveButton);
+        });
+        expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(TestUtils.space, ['some1@email.com', 'some2@email.com', 'some3@email.com']);
+        expect(store.dispatch).toHaveBeenCalledWith({
+            type: AvailableActions.SET_CURRENT_MODAL,
+            modal: AvailableModals.CONTRIBUTORS_CONFIRMATION,
+            item: undefined,
+        });
+    });
+
+    it('should reject invalid emails', async () => {
+        const usersToInvite = app.getByTestId('emailTextArea');
+        const saveButton = await app.findByText('Invite');
+
+        expect(saveButton).toBeDisabled();
+
+        fireEvent.change(usersToInvite, {target: {value: 'some1@email.com,some2@email.com,some3@email.com'}});
+
+        expect(saveButton).toBeEnabled();
+
+        fireEvent.change(usersToInvite, {target: {value: 'not-a-valid-email,some2@email.com,some3@email.com'}});
+
+        expect(saveButton).toBeDisabled();
     });
 });

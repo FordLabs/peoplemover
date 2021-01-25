@@ -24,6 +24,7 @@ import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
+import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
 
 interface SpaceDashboardTileProps {
     space: Space;
@@ -33,7 +34,10 @@ interface SpaceDashboardTileProps {
 }
 
 function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
-    const [dropdownFlag, setDropdownFlag] = useState<boolean>(false);
+    const spaceHtmlElementId = space.name.replace(' ', '-');
+    const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
+
+    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     let timestamp: string;
     const nowStamp = now();
@@ -44,85 +48,66 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
         timestamp = lastModifiedMoment.format('dddd, MMMM D, YYYY [at] h:mm a');
     }
 
-    function showsDropdown(): boolean {
-        if (dropdownFlag) {
-            hidesDropdown();
-        } else {
-            setDropdownFlag(!dropdownFlag);
-            document.addEventListener('click', hidesDropdown, false);
-        }
-        return dropdownFlag;
-    }
-
-    function handleDropdownClick(event: React.MouseEvent<HTMLButtonElement>): boolean {
-        event.stopPropagation();
-        return showsDropdown();
-    }
-
-    function hidesDropdown(): boolean {
-        setDropdownFlag(false);
-        document.removeEventListener('click', hidesDropdown);
-        return dropdownFlag;
-    }
-
-    function handleKeyDownForOpenSpace(event: React.KeyboardEvent): void {
-        event.stopPropagation();
-        if (event.key === 'Enter') {
-            openSpace(space);
-        }
-    }
-
-    function handleKeyDownForShowsDropdown(event: React.KeyboardEvent): boolean {
-        event.stopPropagation();
-        if (event.key === 'Enter') {
-            return showsDropdown();
-        }
-        return dropdownFlag;
-    }
-
-    function handleKeyDownForOpenEditModal(event: React.KeyboardEvent): void {
-        event.stopPropagation();
-        if (event.key === 'Enter') {
-            openEditModal();
-        }
+    function handleDropdownClick(): void {
+        setDropdownToggle(!dropdownToggle);
     }
 
     function openEditModal(): void {
         return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
     }
 
-    return (
-        <div className="spaceTile"
-            data-testid="spaceDashboardTile"
-            onClick={(): void => openSpace(space)}
-            onKeyDown={(e): void => handleKeyDownForOpenSpace(e)}>
-            <div className="spaceMetadata">
-                <div className="spaceName">{space.name}</div>
-                <div className="lastModifiedText">Last modified {timestamp}</div>
-            </div>
+    const ActionsDropdownContent = (): JSX.Element => {
+        return (
+            <AccessibleDropdownContainer
+                handleClose={(): void => {setDropdownToggle(false);}}
+                className="ellipsisDropdownContainer"
+                ariaLabelledBy={spaceEllipsisButtonId}
+            >
+                <button
+                    autoFocus
+                    data-testid="editSpace"
+                    className="dropdownOptions"
+                    role="menuitem"
+                    onClick={openEditModal}
+                >
+                    <i className="material-icons">edit</i>
+                Edit
+                </button>
+            </AccessibleDropdownContainer>
+        );
+    };
 
+    const ActionsEllipsis = (): JSX.Element => {
+        return (
             <div className="ellipsisButtonContainer">
-                <button data-testid="ellipsisButton"
+                <button
+                    id={spaceEllipsisButtonId}
+                    aria-haspopup={true}
+                    aria-expanded={false}
+                    data-testid="ellipsisButton"
                     className="ellipsisButton"
                     aria-label={`Open Menu for Space ${space.name}`}
-                    onClick={(e): boolean => handleDropdownClick(e)}
-                    onKeyDown={(e): boolean => handleKeyDownForShowsDropdown(e)}>
-                    <i className="material-icons">more_vert</i>
-                    {dropdownFlag && (
-                        <div className="ellipsisDropdownContainer">
-                            <div data-testid="editSpace"
-                                className="dropdownOptions"
-                                onClick={openEditModal}
-                                onKeyDown={(e): void => handleKeyDownForOpenEditModal(e)}>
-                                <i className="material-icons">
-                                    edit
-                                </i>
-                                Edit
-                            </div>
-                        </div>
-                    )}
+                    onClick={handleDropdownClick}
+                >
+                    <i className="material-icons" aria-hidden>more_vert</i>
                 </button>
+                {dropdownToggle && <ActionsDropdownContent/>}
             </div>
+        );
+    };
+
+    return (
+        <div>
+            <button className="spaceTile"
+                data-testid="spaceDashboardTile"
+                onClick={(): void => openSpace(space)}
+            >
+                <div className="spaceMetadata">
+                    <div className="spaceName">{space.name}</div>
+                    <div className="lastModifiedText">Last modified {timestamp}</div>
+                </div>
+            </button>
+            <ActionsEllipsis/>
         </div>
     );
 }

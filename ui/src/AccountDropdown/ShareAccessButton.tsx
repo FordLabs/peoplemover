@@ -23,22 +23,23 @@ import {connect} from 'react-redux';
 
 interface Props {
     setCurrentModal(modalState: CurrentModalState): void;
+    focusOnRender?: boolean;
 }
 
-function ShareAccessButton({ setCurrentModal }: Props): JSX.Element {
+function ShareAccessButton({ setCurrentModal, focusOnRender = false}: Props): JSX.Element {
     const openEditContributorsModal = (): void => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
     const showButton = window.runConfig.invite_users_to_space_enabled;
-    const onkeydown = (event: React.KeyboardEvent): void => {
-        if (event.key === 'Enter') openEditContributorsModal();
-    };
 
     return showButton ? (
-        <div className="accountDropdownOption"
+        <button
+            autoFocus={focusOnRender}
+            className="accountDropdownOption"
+            role="menuitem"
             data-testid="shareAccess"
             onClick={openEditContributorsModal}
-            onKeyDown={onkeydown}>
+        >
             Share Access
-        </div>
+        </button>
     ) : <></>;
 }
 

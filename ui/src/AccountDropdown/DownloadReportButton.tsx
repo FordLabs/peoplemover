@@ -31,17 +31,16 @@ function DownloadReportButton({ currentSpace, viewingDate }: Props): JSX.Element
         const { uuid, name } = currentSpace;
         if (uuid) await ReportClient.getReportsWithNames(name, uuid, viewingDate);
     };
-    const onKeyDown = (event: React.KeyboardEvent): void => {
-        if (event.key === 'Enter') handleDownloadReport().then();
-    };
 
     return (
-        <div data-testid="download-report"
+        <button
             className="accountDropdownOption"
+            role="menuitem"
+            data-testid="downloadReport"
             onClick={handleDownloadReport}
-            onKeyDown={onKeyDown}>
+        >
             Download Report
-        </div>
+        </button>
     );
 }
 

@@ -64,11 +64,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
 
     const parseEmails = (event: ChangeEvent<HTMLTextAreaElement>): void => {
         const emails: string[] = event.target.value.split(',').map((email: string) => email.trim());
-        if (validateEmail(emails[0])) {
-            setEnableInviteButton(true);
-        } else {
-            setEnableInviteButton(false);
-        }
+        setEnableInviteButton(validateEmail(emails[0]));
         setInvitedUserEmails(emails);
     };
 
@@ -90,7 +86,7 @@ function EditContributorsForm({currentSpace, closeModal, setCurrentModal, setCur
 
     return (
         <form className="editContributorsContainer form"
-            onSubmit={(event): Promise<void> => inviteUsers(event)}>
+            onSubmit={inviteUsers}>
             <div className="inviteViewersLabel">
                 <span>People with this link can view only</span>
                 <div className="inviteContributorsConfirmationShareLinkContainer">
