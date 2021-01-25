@@ -30,11 +30,13 @@
 }
 
 .modalDialogContainer {
-    min-height: calc(100% - 64px);
-    margin: 32px auto;
-    display: flex;
-    align-items: center;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 32px auto;
+    min-height: calc(100% - 64px);
     max-width: 500px;
     width: auto;
 }
@@ -47,6 +49,7 @@
     width: 494px;
     border-radius: 6px;
     padding: 32px 0;
+    margin: 0.5rem 0;
 }
 
 .modalTitleAndCloseButtonContainer {

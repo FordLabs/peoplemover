@@ -34,21 +34,32 @@ import {Space} from '../../Space/Space';
 import SpaceForm from '../../SpaceDashboard/SpaceForm';
 import ShareAccessForm from '../../AccountDropdown/ShareAccessForm';
 import GrantEditAccessConfirmationForm from '../../AccountDropdown/GrantEditAccessConfirmationForm';
+import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
+import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSection';
 
-const getCurrentModal = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space, viewingDate: Date): JSX.Element | null => {
+export interface ModalMetadataItem {
+    title: string;
+    form: JSX.Element;
+}
+
+const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space, viewingDate: Date): Array<ModalMetadataItem> | null => {
     const {modal, item} = currentModal;
 
     switch (modal) {
         case AvailableModals.CREATE_PRODUCT:
-            return <ProductForm editing={false} />;
+            return [{title:`Add New Product`, form: <ProductForm editing={false}/>}];
         case AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG: {
             const newProduct = {
                 ...emptyProduct(currentSpace.id),
                 startDate: moment(viewingDate).format('YYYY-MM-DD'),
                 productTags: [item],
             };
-            return <ProductForm editing={false}
-                product={newProduct}/>;
+            return [{
+                title: 'Add New Product',
+                form: <ProductForm
+                    editing={false}
+                    product={newProduct}/>,
+            }];
         }
         case AvailableModals.CREATE_PRODUCT_OF_LOCATION: {
             const newProduct = {
@@ -56,80 +67,71 @@ const getCurrentModal = (currentModal: CurrentModalState, products: Array<Produc
                 startDate: moment(viewingDate).format('YYYY-MM-DD'),
                 spaceLocation: {...item},
             };
-            return <ProductForm editing={false}
-                product={newProduct}/>;
+            return [{
+                title: 'Add New Product',
+                form: <ProductForm
+                    editing={false}
+                    product={newProduct}/>,
+            }];
         }
         case AvailableModals.EDIT_PRODUCT:
-            return <ProductForm editing={true}
-                product={item} />;
+            return [{
+                title: 'Edit Product',
+                form: <ProductForm
+                    editing
+                    product={item}/>,
+            }];
         case AvailableModals.CREATE_PERSON:
-            return <PersonForm isEditPersonForm={false}
-                products={products}
-                initiallySelectedProduct={item ? item.initiallySelectedProduct : undefined}
-                initialPersonName={item ? item.initialPersonName : ''}/>;
+            return [{
+                title:`Add New Person`,
+                form: <PersonForm
+                    isEditPersonForm={false}
+                    products={products}
+                    initiallySelectedProduct={item ? item.initiallySelectedProduct : undefined}
+                    initialPersonName={item ? item.initialPersonName : ''}/>,
+            }];
         case AvailableModals.EDIT_PERSON:
-            return <PersonForm isEditPersonForm={true}
-                assignment={item}
-                products={products}/>;
+            return [{
+                title: 'Edit Person',
+                form: <PersonForm
+                    isEditPersonForm
+                    assignment={item}
+                    products={products}/>,
+            }];
         case AvailableModals.CREATE_ASSIGNMENT:
-            return <AssignmentForm
-                products={products}
-                initiallySelectedProduct={item}/>;
+            return [{
+                title: 'Assign a Person',
+                form: <AssignmentForm
+                    products={products}
+                    initiallySelectedProduct={item}/>,
+            }];
         case AvailableModals.ASSIGNMENT_EXISTS_WARNING:
-            return <AssignmentExistsWarning/>;
+            return [{title: 'Uh-oh', form: <AssignmentExistsWarning/>}];
         case AvailableModals.MY_TAGS:
-            return <MyTagsForm/>;
+            return [{title: 'My Tags', form: <MyTagsForm/>}];
         case AvailableModals.MY_ROLES_MODAL:
-            return <MyRolesForm/>;
+            return [{title: 'My Roles', form: <MyRolesForm/>}];
         case AvailableModals.CREATE_SPACE:
-            return <SpaceForm/>;
+            return [{title: 'Create New Space', form: <SpaceForm/>}];
         case AvailableModals.EDIT_SPACE:
-            return <SpaceForm space={item}/>;
+            return [{title: 'Edit Space', form: <SpaceForm space={item}/>}];
         case AvailableModals.SHARE_SPACE_ACCESS:
-            return <ShareAccessForm />;
+            return [
+                {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
+                {title: 'Invite others to edit', form: <InviteEditorsFormSection/>},
+            ];
         case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
-            return <GrantEditAccessConfirmationForm />;
+            return [{
+                title: 'Your team member now has access!',
+                form: <GrantEditAccessConfirmationForm />,
+            }];
         default:
             return null;
     }
 };
 
-const getCurrentTitle = (currentModal: CurrentModalState): string => {
-    const {modal} = currentModal;
-
-    switch (modal) {
-        case AvailableModals.CREATE_PRODUCT:
-            return 'Add New Product';
-        case AvailableModals.EDIT_PRODUCT:
-            return 'Edit Product';
-        case AvailableModals.CREATE_PERSON:
-            return 'Add New Person';
-        case AvailableModals.EDIT_PERSON:
-            return 'Edit Person';
-        case AvailableModals.CREATE_ASSIGNMENT:
-            return 'Assign a Person';
-        case AvailableModals.ASSIGNMENT_EXISTS_WARNING:
-            return 'Uh-oh';
-        case AvailableModals.MY_TAGS:
-            return 'My Tags';
-        case AvailableModals.MY_ROLES_MODAL:
-            return 'My Roles';
-        case AvailableModals.CREATE_SPACE:
-            return 'Create New Space';
-        case AvailableModals.EDIT_SPACE:
-            return 'Edit Space';
-        case AvailableModals.SHARE_SPACE_ACCESS:
-            return 'Invite others to view';
-        case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
-            return 'Your team member now has access!';
-        default:
-            return '';
-    }
-};
-
 const mapStateToProps = (state: GlobalStateProps) => ({
-    modalForm: getCurrentModal(state.currentModal, state.products, state.currentSpace, state.viewingDate),
-    title: getCurrentTitle(state.currentModal),
+    modalMetadata: getCurrentModalMetadata(state.currentModal, state.products, state.currentSpace, state.viewingDate),
     viewingDate: state.viewingDate,
 });
 
@@ -138,3 +140,4 @@ const mapDispatchToProps = (dispatch:  Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Modal);
+

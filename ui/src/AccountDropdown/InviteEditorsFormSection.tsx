@@ -65,7 +65,6 @@ function InviteEditorsFormSection({currentSpace, closeModal, setCurrentModal}: P
 
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
-            <h2 className="editTitle">Invite others to edit</h2>
             <label htmlFor="emailTextarea" className="inviteEditorsLabel">
                 People with this permission can edit
             </label>
