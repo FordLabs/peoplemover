@@ -14,6 +14,9 @@ data class UserSpaceMapping(
         val userId: String?,
 
         @Column(name = "space_id")
-        val spaceId: Int?
+        val spaceId: Int?,
+
+        @Column(name = "space_uuid")
+        val spaceUuid: String
 
 ) : Auditable()

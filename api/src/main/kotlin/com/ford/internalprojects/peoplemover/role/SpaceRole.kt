@@ -22,7 +22,7 @@ import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import javax.persistence.*
 
 @Entity
-@Table(name = "space_roles", uniqueConstraints = [UniqueConstraint(columnNames = ["space_id", "roles"])])
+@Table(name = "space_roles", uniqueConstraints = [UniqueConstraint(columnNames = ["space_id", "roles", "space_uuid"])])
 data class SpaceRole (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -33,6 +33,9 @@ data class SpaceRole (
 
     @Column(name = "space_id")
     override val spaceId: Int,
+
+    @Column(name = "space_uuid")
+    override val spaceUuid: String,
 
     @ManyToOne
     var color: Color? = null

@@ -21,6 +21,7 @@ import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.NoRepositoryBean
 
+
 @NoRepositoryBean
 interface PeopleMoverRepository<T: SpaceComponent, ID> : CrudRepository<T, ID> {
     fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S

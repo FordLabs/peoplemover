@@ -42,6 +42,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -94,17 +95,17 @@ class AssignmentControllerReassignmentsApiTest {
     fun setup() {
         editableSpace = spaceRepository.save(Space(name = "tik"))
         readOnlySpace = spaceRepository.save(Space(name = "tok", todayViewIsPublic = true))
-        productOne = productRepository.save(Product(name = "Justice League", spaceId = editableSpace.id!!))
-        productTwo = productRepository.save(Product(name = "Avengers", spaceId = editableSpace.id!!))
-        productThree = productRepository.save(Product(name = "Misfits", spaceId = editableSpace.id!!))
-        productFour = productRepository.save(Product(name = "Fantastic 4", spaceId = editableSpace.id!!))
-        unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = editableSpace.id!!))
-        readOnlyProductOne = productRepository.save(Product(name = "Readable Product", spaceId = readOnlySpace.id!!))
-        readOnlyProductTwo = productRepository.save(Product(name = "Another Readable Product", spaceId = readOnlySpace.id!!))
-        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = editableSpace.id!!))
-        personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceId = editableSpace.id!!))
-        personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceId = readOnlySpace.id!!))
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = editableSpace.id!!, userId = "USER_ID"))
+        productOne = productRepository.save(Product(name = "Justice League", spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
+        productTwo = productRepository.save(Product(name = "Avengers", spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
+        productThree = productRepository.save(Product(name = "Misfits", spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
+        productFour = productRepository.save(Product(name = "Fantastic 4", spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
+        unassignedProduct = productRepository.save(Product(name = "unassigned", spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
+        readOnlyProductOne = productRepository.save(Product(name = "Readable Product", spaceId = readOnlySpace.id!!, spaceUuid = readOnlySpace.uuid))
+        readOnlyProductTwo = productRepository.save(Product(name = "Another Readable Product", spaceId = readOnlySpace.id!!, spaceUuid = readOnlySpace.uuid))
+        person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceId = editableSpace.id!!, spaceUuid = editableSpace.uuid))
+        personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceId = editableSpace.id!!,  spaceUuid = editableSpace.uuid))
+        personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceId = readOnlySpace.id!!, spaceUuid = editableSpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = editableSpace.id!!, userId = "USER_ID", spaceUuid = editableSpace.uuid))
     }
 
     @After
@@ -122,20 +123,23 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr2),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val reassignment = Reassignment(
@@ -164,26 +168,30 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val reassignment = Reassignment(
@@ -213,20 +221,23 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr2),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val reassignment = Reassignment(
@@ -256,7 +267,8 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val reassignment = Reassignment(
@@ -285,7 +297,8 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$mar1")
@@ -309,26 +322,30 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val reassignmentForPerson = Reassignment(
@@ -364,28 +381,32 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val reassignmentForPerson = Reassignment(
@@ -414,35 +435,40 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val reassignmentForPerson = Reassignment(
@@ -478,35 +504,40 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         val reassignmentForPerson = Reassignment(
@@ -542,28 +573,32 @@ class AssignmentControllerReassignmentsApiTest {
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = person,
                 productId = productFour.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = editableSpace.id!!
+                spaceId = editableSpace.id!!,
+                spaceUuid = editableSpace.uuid
         ))
 
 
@@ -594,20 +629,23 @@ class AssignmentControllerReassignmentsApiTest {
                 person = personInReadOnlySpace,
                 productId = readOnlyProductOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
-                spaceId = readOnlySpace.id!!
+                spaceId = readOnlySpace.id!!,
+                spaceUuid = readOnlySpace.uuid
         ))
 
         assignmentRepository.save(Assignment(
                 person = personInReadOnlySpace,
                 productId = readOnlyProductTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
-                spaceId = readOnlySpace.id!!
+                spaceId = readOnlySpace.id!!,
+                spaceUuid = readOnlySpace.uuid
         ))
         assignmentRepository.save(Assignment(
                 person = personInReadOnlySpace,
                 productId = readOnlyProductOne.id!!,
                 effectiveDate = LocalDate.parse(today),
-                spaceId = readOnlySpace.id!!
+                spaceId = readOnlySpace.id!!,
+                spaceUuid = readOnlySpace.uuid
         ))
 
         val reassignment = Reassignment(

@@ -35,16 +35,14 @@ class PersonController(
         private val assignmentService: AssignmentService
 ) {
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'read')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getAllPeopleInSpace(@PathVariable spaceUuid: String): List<Person> {
-        val space: Space = spaceRepository.findByUuid(spaceUuid)
-                ?: throw SpaceNotExistsException(spaceUuid)
         logger.logInfoMessage("All people retrieved for space: [$spaceUuid].")
-        return personService.getPeopleInSpace(space)
+        return personService.getPeopleInSpace(spaceUuid)
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping
     fun addPersonToSpace(
             @PathVariable spaceUuid: String,
@@ -55,7 +53,7 @@ class PersonController(
         return personCreated
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PutMapping("/{personId}")
     fun updatePerson(
             @PathVariable spaceUuid: String,
@@ -67,7 +65,7 @@ class PersonController(
         return updatedPerson
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'uuid', 'write')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @DeleteMapping("/{personId}")
     fun removePerson(
             @PathVariable spaceUuid: String,

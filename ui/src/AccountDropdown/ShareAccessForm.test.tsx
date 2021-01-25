@@ -24,9 +24,10 @@ import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import {createStore, Store} from 'redux';
-import {setCurrentSpaceAction} from '../Redux/Actions';
 import ShareAccessForm from './ShareAccessForm';
 import {Space} from '../Space/Space';
+import {setCurrentSpaceAction} from '../Redux/Actions';
+
 
 Object.assign(navigator, {
     clipboard: {
@@ -36,7 +37,7 @@ Object.assign(navigator, {
     },
 });
 
-describe('Share Access Form Section', () => {
+describe('Share Access Form', () => {
     let originalWindow: Window;
     const testSpace = TestUtils.space;
     const testSpaceWithViewOnlyOn = {...testSpace, todayViewIsPublic: true};

@@ -65,7 +65,7 @@ class LocalDataGenerator(
         )
         productService.createDefaultProducts(createdSpace);
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = createdSpace.id))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = createdSpace.id, spaceUuid = createdSpace.uuid))
 
         var colors = colorService.getColors()
         if (colors.isEmpty() && addColors) {
@@ -90,6 +90,7 @@ class LocalDataGenerator(
         val jane: Person = personService.createPerson(
             Person(
                 name = "Jane Smith",
+                spaceUuid = createdSpace.uuid,
                 spaceId = createdSpace.id!!,
                 spaceRole = role1
             ),
@@ -98,7 +99,8 @@ class LocalDataGenerator(
         val bob: Person = personService.createPerson(
             Person(
                 name = "Bob Barker",
-                spaceId = createdSpace.id,
+                spaceUuid = createdSpace.uuid,
+                spaceId = createdSpace.id!!,
                 spaceRole = role2
             ),
             createdSpace.uuid
@@ -106,7 +108,8 @@ class LocalDataGenerator(
         val adam: Person = personService.createPerson(
             Person(
                 name = "Adam Sandler",
-                spaceId = createdSpace.id,
+                spaceUuid = createdSpace.uuid,
+                spaceId = createdSpace.id!!,
                 spaceRole = role3
             ),
             createdSpace.uuid
@@ -128,17 +131,19 @@ class LocalDataGenerator(
         productRepository.save(Product(
             name = "My Product",
             productTags = productTags,
-            spaceId = createdSpace.id,
-            startDate = LocalDate.parse("2019-01-01")
+            spaceId = createdSpace.id!!,
+            startDate = LocalDate.parse("2019-01-01"),
+            spaceUuid =  createdSpace.uuid
         ))
         productRepository.save(Product(
             name = "Baguette Bakery",
             spaceLocation = location,
             spaceId = createdSpace.id,
-            startDate = LocalDate.parse("2019-01-01")
+            startDate = LocalDate.parse("2019-01-01"),
+            spaceUuid =  createdSpace.uuid
         ))
 
-        val savedProducts: List<Product> = productRepository.findAllBySpaceId(spaceId = createdSpace.id)
+        val savedProducts: List<Product> = productRepository.findAllBySpaceUuid(createdSpace.uuid)
 
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2019-01-01"),

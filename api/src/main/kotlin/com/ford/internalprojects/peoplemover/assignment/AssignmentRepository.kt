@@ -26,7 +26,7 @@ import java.time.LocalDate
 interface AssignmentRepository : PeopleMoverRepository<Assignment, Int> {
     fun getByPersonId(personId: Int): List<Assignment>
     fun findAllByPersonAndEffectiveDate(person: Person, requestedDate: LocalDate): List<Assignment>
-    fun findAllBySpaceIdAndEffectiveDate(spaceId: Int, requestedDate: LocalDate): List<Assignment>
+    fun findAllBySpaceUuidAndEffectiveDate(spaceUuid: String, requestedDate: LocalDate): List<Assignment>
 
     fun findAllByEffectiveDateIsNullAndPersonId(personId: Int): List<Assignment>
     fun findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId: Int, effectiveDate: LocalDate): List<Assignment>

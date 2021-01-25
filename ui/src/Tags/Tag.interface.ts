@@ -19,4 +19,5 @@ export interface Tag {
     id: number;
     name: string;
     spaceId: number;
+    spaceUuid: string;
 }

@@ -21,7 +21,7 @@ import React from 'react';
 import {renderWithRedux} from '../tests/TestUtils';
 import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
-import {wait, fireEvent, RenderResult} from '@testing-library/react';
+import {wait, fireEvent, RenderResult, act} from '@testing-library/react';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import moment from 'moment';
@@ -36,6 +36,9 @@ class MockDate extends Date {
         super('2020-05-14T11:01:58.135Z'); // add whatever date you'll expect to get
     }
 }
+
+jest.useFakeTimers();
+const debounceTimeToWait = 100;
 
 describe('SpaceDashboard', () => {
     describe('Resetting Space Date', () => {
@@ -76,7 +79,10 @@ describe('SpaceDashboard', () => {
         // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
         const {component} = await createTestComponent();
-        await fireEvent.click(component.getByTestId('accountDropdownToggle'));
+        act(() => {
+            fireEvent.click(component.getByTestId('accountDropdownToggle'));
+            jest.advanceTimersByTime(debounceTimeToWait);
+        });
         expect(component.queryByTestId('shareAccess')).toBeNull();
         expect(component.queryByTestId('sign-out')).not.toBeNull();
     });

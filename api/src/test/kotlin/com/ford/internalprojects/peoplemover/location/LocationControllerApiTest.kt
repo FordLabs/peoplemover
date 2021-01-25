@@ -75,7 +75,7 @@ class LocationControllerApiTest {
         space = spaceRepository.save(Space(name = "tok"))
 
         baseLocationsUrl = getBaseLocationsUrl(space.uuid)
-        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID"))
+        userSpaceMappingRepository.save(UserSpaceMapping(spaceId = space.id!!, userId = "USER_ID", spaceUuid = space.uuid))
     }
 
     @After
@@ -88,8 +88,8 @@ class LocationControllerApiTest {
     @Test
     fun `GET should get Locations`() {
         val expectedLocations: Set<SpaceLocation> = newHashSet(
-                spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Mars")),
-                spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Venus"))
+                spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Mars", spaceUuid = space.uuid)),
+                spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Venus", spaceUuid = space.uuid))
         )
 
         val result = mockMvc.perform(get(baseLocationsUrl)
@@ -147,7 +147,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `POST should return 409 conflict when trying to add a duplicate space location to a space`() {
-        spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
+        spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany", spaceUuid = space.uuid))
         val duplicateLocationAddRequest = LocationAddRequest(name = "Germany")
         mockMvc.perform(post(baseLocationsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -173,8 +173,8 @@ class LocationControllerApiTest {
         assertThat(actualSpaceLocation.name).isEqualTo(locationAddRequest.name)
         assertThat(actualSpaceLocation.spaceId).isEqualTo(space.id)
 
-        assertThat(spaceLocationRepository.findBySpaceIdAndNameIgnoreCase(
-                space.id!!,
+        assertThat(spaceLocationRepository.findBySpaceUuidAndNameIgnoreCase(
+                space.uuid,
                 locationAddRequest.name
         )).isNotNull()
     }
@@ -192,7 +192,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `PUT should update a location and return 200`() {
-        val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
+        val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany", spaceUuid = space.uuid))
         val locationEditRequest = LocationEditRequest(id = spaceLocation.id!!, name = "Dearborn")
         val result = mockMvc.perform(put(baseLocationsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -207,8 +207,8 @@ class LocationControllerApiTest {
         assertThat(actualSpaceLocation.id).isEqualTo(spaceLocation.id!!)
         assertThat(actualSpaceLocation.name).isEqualTo(locationEditRequest.name)
 
-        assertThat(spaceLocationRepository.findBySpaceIdAndNameIgnoreCase(
-                actualSpaceLocation.spaceId,
+        assertThat(spaceLocationRepository.findBySpaceUuidAndNameIgnoreCase(
+                actualSpaceLocation.spaceUuid,
                 actualSpaceLocation.name
         )).isNotNull
     }
@@ -226,8 +226,8 @@ class LocationControllerApiTest {
 
     @Test
     fun `PUT should return 200 when updating name to existing space location in space with different case`() {
-        val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
-        val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "France"))
+        val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany", spaceUuid = space.uuid))
+        val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "France", spaceUuid = space.uuid))
         val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name.toLowerCase())
         mockMvc.perform(put(baseLocationsUrl)
             .header("Authorization", "Bearer GOOD_TOKEN")
@@ -238,7 +238,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `DELETE should delete location from space`() {
-        val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
+        val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany", spaceUuid = space.uuid))
         mockMvc.perform(delete("$baseLocationsUrl/${spaceLocation.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
@@ -248,7 +248,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `DELETE should return 403 when trying to delete location without write authorization`() {
-        val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Deutschland"))
+        val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Deutschland", spaceUuid = space.uuid))
 
         mockMvc.perform(delete("$baseLocationsUrl/${spaceLocation.id!!}")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
@@ -257,12 +257,13 @@ class LocationControllerApiTest {
 
     @Test
     fun `DELETE should delete space location from product`() {
-        val location: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany"))
+        val location: SpaceLocation = spaceLocationRepository.save(SpaceLocation(spaceId = space.id!!, name = "Germany", spaceUuid = space.uuid))
         val originalProduct: Product = productRepository.save(
                 Product(
                         name = "Product1",
                         spaceLocation = location,
-                        spaceId = space.id!!
+                        spaceId = space.id!!,
+                        spaceUuid = space.uuid
                 )
         )
         assertThat(spaceLocationRepository.count()).isOne()
