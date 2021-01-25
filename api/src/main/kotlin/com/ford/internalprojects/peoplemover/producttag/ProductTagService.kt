@@ -45,8 +45,8 @@ class ProductTagService(
 
 
     @Transactional
-    fun deleteProductTag(productTagId: Int) {
-        val tagToDelete: ProductTag = productTagRepository.findByIdOrNull(productTagId)
+    fun deleteProductTag(productTagId: Int, spaceUuid: String) {
+        val tagToDelete: ProductTag = productTagRepository.findByIdAndSpaceUuid(productTagId, spaceUuid)
                 ?: throw ProductTagNotExistsForSpaceException()
 
         productTagRepository.deleteAndUpdateSpaceLastModified(tagToDelete)
@@ -56,9 +56,9 @@ class ProductTagService(
             spaceUuid: String,
             tagEditRequest: ProductTagEditRequest
     ): ProductTag {
-        spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
-
-        val tagFound = productTagRepository.findByIdOrNull(tagEditRequest.id)
+        productTagRepository.findAllByNameAndSpaceUuid(tagEditRequest.name, spaceUuid)
+                ?.let { throw ProductTagAlreadyExistsForSpaceException() }
+        val tagFound = productTagRepository.findByIdAndSpaceUuid(tagEditRequest.id, spaceUuid)
                 ?: throw ProductTagNotExistsForSpaceException()
         tagFound.name = tagEditRequest.name
         return productTagRepository.saveAndUpdateSpaceLastModified(tagFound)
