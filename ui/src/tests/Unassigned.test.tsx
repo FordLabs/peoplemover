@@ -87,7 +87,6 @@ describe('Unassigned Products', () => {
             const emptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
                 assignments: [],
-                spaceId: 2,
                 spaceUuid: 'b',
             };
 

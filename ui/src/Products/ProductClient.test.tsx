@@ -108,7 +108,6 @@ describe('Product Client', function() {
             id: 0,
             name: expectedName,
             productTags: [],
-            spaceId: 0,
             spaceUuid: 'a',
         };
 

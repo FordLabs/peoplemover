@@ -150,16 +150,16 @@ class TestUtils {
 
         RoleClient.get = jest.fn(() => Promise.resolve({
             data: [
-                {id: 1, name: 'Software Engineer', spaceId: 1, spaceUuid: 'a',  color: TestUtils.color1},
-                {id: 2, name: 'Product Manager', spaceId: 1, spaceUuid: 'a',  color: TestUtils.color2},
-                {id: 3, name: 'Product Designer', spaceId: 1, spaceUuid: 'a',  color: TestUtils.color3},
+                {id: 1, name: 'Software Engineer', spaceUuid: 'a',  color: TestUtils.color1},
+                {id: 2, name: 'Product Manager', spaceUuid: 'a',  color: TestUtils.color2},
+                {id: 3, name: 'Product Designer', spaceUuid: 'a',  color: TestUtils.color3},
             ],
         } as AxiosResponse));
         RoleClient.add = jest.fn(() => Promise.resolve({
-            data: {name: 'Product Owner', id: 1, spaceId: -1, spaceUuid: 'a',  color: {color: '1', id: 2}},
+            data: {name: 'Product Owner', id: 1, spaceUuid: 'a',  color: {color: '1', id: 2}},
         } as AxiosResponse));
         RoleClient.edit = jest.fn(() => Promise.resolve({
-            data: {name: 'Architecture', id: 1, spaceId: -1, spaceUuid: 'a',  color: TestUtils.color3},
+            data: {name: 'Architecture', id: 1, spaceUuid: 'a',  color: TestUtils.color3},
         } as AxiosResponse));
         RoleClient.delete = emptyAxiosResponse;
 
@@ -198,7 +198,7 @@ class TestUtils {
             data: {id: 9, name: 'Fin Tech'},
         } as AxiosResponse));
         ProductTagClient.edit = jest.fn(() => Promise.resolve({
-            data: {id: 6, name: 'Finance', spaceId: 2, spaceUuid: 'a'},
+            data: {id: 6, name: 'Finance', spaceUuid: 'a'},
         } as AxiosResponse));
         ProductTagClient.delete = emptyAxiosResponse;
     }
@@ -247,9 +247,9 @@ class TestUtils {
         TestUtils.whiteColor,
     ];
 
-    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceUuid: 'a',  spaceId: 1, color: TestUtils.color1};
-    static productManager = {name: 'Product Manager', id: 2, spaceUuid: 'a',  spaceId: 1, color: TestUtils.color2};
-    static productDesigner = {name: 'Product Designer', id: 3, spaceUuid: 'a',  spaceId: 1, color: TestUtils.color3};
+    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceUuid: 'a', color: TestUtils.color1};
+    static productManager = {name: 'Product Manager', id: 2, spaceUuid: 'a', color: TestUtils.color2};
+    static productDesigner = {name: 'Product Designer', id: 3, spaceUuid: 'a', color: TestUtils.color3};
 
     static roles: RoleTag[] = [
         TestUtils.softwareEngineer,
