@@ -33,7 +33,7 @@ export interface Product {
     assignments: Array<Assignment>;
 }
 
-export function emptyProduct(spaceId?: number, spaceUuid?: string): Product {
+export function emptyProduct(spaceUuid?: string): Product {
     return {
         id: -1,
         name: '',

@@ -31,7 +31,6 @@ import {TagRequest} from '../Tags/TagRequest.interface';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 
 interface Props {
-    spaceId: number;
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
     currentProductState: { currentProduct: Product };
     selectedProductTagsState: {
@@ -43,7 +42,6 @@ interface Props {
 }
 
 function ProductFormProductTagsField({
-    spaceId,
     loadingState: {
         isLoading,
         setIsLoading,

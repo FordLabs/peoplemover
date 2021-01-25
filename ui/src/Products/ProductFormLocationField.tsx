@@ -32,13 +32,11 @@ import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComp
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
     currentProductState: { currentProduct: Product; setCurrentProduct: (updatedProduct: Product) => void };
-    spaceId: number;
     addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Tag) => void;
     currentSpace: Space;
 }
 
 function ProductFormLocationField({
-    spaceId,
     loadingState: {
         isLoading,
         setIsLoading,
