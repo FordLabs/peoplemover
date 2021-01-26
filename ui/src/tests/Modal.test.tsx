@@ -57,7 +57,7 @@ describe('Modal', () => {
     });
 
     it('should not close the modal when the modal popup is clicked', () => {
-        fireEvent.click(comp.getByTestId('modalPopupContainer'));
+        fireEvent.click(comp.getByTestId('modalCard'));
         expect(mockedCloseFunction).not.toHaveBeenCalled();
     });
 });

@@ -21,6 +21,10 @@
   width: 415px;
   margin: 0 auto;
 
+  [hidden] {
+    display: none;
+  }
+
   .editTitle {
     color: $purple-title;
   }

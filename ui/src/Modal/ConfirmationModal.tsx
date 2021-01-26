@@ -81,9 +81,9 @@ function ConfirmationModal({
     );
 
     return (
-        <div className="modalContainer">
-            <div className="modalDialogContainer">
-                <div className="modalPopupContainer">
+        <div className="modalBackground">
+            <div className="modalContents">
+                <div className="modalCard">
                     <div className="modalTitleAndCloseButtonContainer">
                         <div className="modalTitleSpacer"/>
                         <div className="modalTitle">Are you sure?</div>

@@ -28,12 +28,14 @@ import {Space} from '../Space/Space';
 import './InviteEditorsFormSection.scss';
 
 interface Props {
+    collapsed?: boolean;
     currentSpace: Space;
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function InviteEditorsFormSection({currentSpace, closeModal, setCurrentModal}: Props): JSX.Element {
+function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurrentModal}: Props): JSX.Element {
+    const isExpanded = !collapsed;
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
 
@@ -64,28 +66,33 @@ function InviteEditorsFormSection({currentSpace, closeModal, setCurrentModal}: P
             <label htmlFor="emailTextarea" className="inviteEditorsLabel">
                 People with this permission can edit
             </label>
-            <textarea
-                id="emailTextarea"
-                className="emailTextarea"
-                placeholder="email1@ford.com, email2@ford.com"
-                onChange={parseEmails}
-                data-testid="inviteEditorsFormEmailTextarea"
-            />
-            <div className="buttonsContainer">
-                <FormButton
-                    buttonStyle="secondary"
-                    className="cancelButton"
-                    onClick={closeModal}>
-                    Cancel
-                </FormButton>
-                <FormButton
-                    type="submit"
-                    buttonStyle="primary"
-                    testId="inviteEditorsFormSubmitButton"
-                    disabled={!enableInviteButton}>
-                    Invite
-                </FormButton>
-            </div>
+            {isExpanded && (
+                <>
+                    <textarea
+                        id="emailTextarea"
+                        className="emailTextarea"
+                        placeholder="email1@ford.com, email2@ford.com"
+                        onChange={parseEmails}
+                        data-testid="inviteEditorsFormEmailTextarea"
+                        hidden={collapsed}
+                    />
+                    <div className="buttonsContainer" hidden={collapsed}>
+                        <FormButton
+                            buttonStyle="secondary"
+                            className="cancelButton"
+                            onClick={closeModal}>
+                            Cancel
+                        </FormButton>
+                        <FormButton
+                            type="submit"
+                            buttonStyle="primary"
+                            testId="inviteEditorsFormSubmitButton"
+                            disabled={!enableInviteButton}>
+                        Invite
+                        </FormButton>
+                    </div>
+                </>
+            )}
         </form>
     );
 }

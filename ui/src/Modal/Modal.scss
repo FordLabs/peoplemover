@@ -18,7 +18,7 @@
 @import '../Application/Styleguide/Colors.scss';
 @import './Form.scss';
 
-.modalContainer {
+.modalBackground {
     position: fixed;
     left: 0;
     top: 0;
@@ -29,7 +29,7 @@
     overflow-y: auto;
 }
 
-.modalDialogContainer {
+.modalContents {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -41,7 +41,7 @@
     width: auto;
 }
 
-.modalPopupContainer {
+.modalCard {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -50,6 +50,13 @@
     border-radius: 6px;
     padding: 32px 0;
     margin: 0.5rem 0;
+
+    overflow: hidden;
+    //transition: max-height 0.15s ease-out;
+
+    &[hidden] {
+        max-height: 65px;
+    }
 }
 
 .modalTitleAndCloseButtonContainer {
