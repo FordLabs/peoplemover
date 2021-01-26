@@ -46,17 +46,10 @@ function DrawerContainer({
         return false;
     }
 
-    function handleKeyDown(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            setIsDrawerOpen(!isDrawerOpen);
-        }
-    }
-
     return (
-        <div className={isDrawerOpen ? 'drawerContainer drawerBottomBorder' : 'drawerContainer'} data-testid={testId}>
-            <div className={isDrawerOpen ? 'drawerHeader' : 'drawerHeader drawerBottomBorder'}
+        <div className={ `drawerContainer ${isDrawerOpen ? 'drawerBottomBorder' : ''}`} data-testid={testId}>
+            <button className={`drawerHeader ${isDrawerOpen ? '' : 'drawerBottomBorder'}`}
                 onClick={(): void => setIsDrawerOpen(!isDrawerOpen)}
-                onKeyDown={(e): void => handleKeyDown(e)}
                 data-testid="drawerCaret">
 
                 {canRenderCountBadge() && <div className="countBadge" data-testid="countBadge">{numberForCountBadge}</div>}
@@ -69,7 +62,7 @@ function DrawerContainer({
                     data-testid={`calendar_${isDrawerOpen ? 'up-arrow' : 'down-arrow'}`}>
                     {isDrawerOpen ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </i>
-            </div>
+            </button>
             {isDrawerOpen && (
                 <React.Fragment>{containee}</React.Fragment>
             )}
