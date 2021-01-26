@@ -66,7 +66,7 @@ function AssignmentCard({
     const spaceUuid = currentSpace.uuid!;
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
-    const assignmentEditRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
+    const assignmentEditRef: RefObject<HTMLButtonElement> = React.useRef<HTMLButtonElement>(null);
 
     function onEditMenuClosed(): void {
         setEditMenuIsOpened(false);
@@ -197,12 +197,6 @@ function AssignmentCard({
         }
     }, [assignment]);
 
-    function handleKeyDownForToggleEditMenu(event: React.KeyboardEvent): void {
-        if (!isReadOnly && event.key === 'Enter') {
-            toggleEditMenu();
-        }
-    }
-
     const classNames = `personContainer 
         ${container === 'productDrawerContainer' ? 'borderedPeople' : ''}
         ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}
@@ -225,17 +219,15 @@ function AssignmentCard({
                 isReadOnly={isReadOnly}
                 assignment={assignment}
                 isUnassignedProduct={isUnassignedProduct}/>
-            <div ref={assignmentEditRef}
+            <button ref={assignmentEditRef}
                 className="personRoleColor"
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
-                onKeyDown={(e): void => {
-                    handleKeyDownForToggleEditMenu(e);
-                }}>
+            >
                 {
                     !isReadOnly && <i className="material-icons personEditIcon greyIcon">more_vert</i>
                 }
-            </div>
+            </button>
             {editMenuIsOpened &&
             <EditMenu
                 menuOptionList={getMenuOptionList()}
