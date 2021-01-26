@@ -133,12 +133,6 @@ function ProductCard({
         }
     }
 
-    function handleKeyDownForToggleEditMenu(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            toggleEditMenu();
-        }
-    }
-
     const TagList = (): JSX.Element => {
         const locationTag = product.spaceLocation?.name;
         const locationTagExists = !!locationTag;
@@ -182,7 +176,7 @@ function ProductCard({
                                         className="editIcon material-icons greyIcon clickableIcon"
                                         data-testid={createDataTestId('editProductIcon', product.name)}
                                         onClick={toggleEditMenu}
-                                        onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
+                                    >
                                         more_vert
                                     </button>
                                 </div>
