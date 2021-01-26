@@ -109,9 +109,14 @@ button.addPersonButton {
 
     padding: 10px 30px;
     border-radius: 6px;
+    border: 2px solid transparent;
 
     i {
         padding-right: 8px;
         font-weight: bold
+    }
+
+    &:focus {
+        border: 2px solid white;
     }
 }
