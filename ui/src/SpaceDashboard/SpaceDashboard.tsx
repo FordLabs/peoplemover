@@ -18,7 +18,7 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
-import CurrentModal from '../Redux/Containers/ModalContainer';
+import CurrentModal from '../Redux/Containers/CurrentModal';
 import {
     AvailableModals,
     fetchUserSpacesAction,
@@ -107,12 +107,14 @@ function SpaceDashboard({
 
     function NewSpaceButton(): JSX.Element {
         return (
-            <button className="createNewSpaceButton" onClick={onCreateNewSpaceButtonClicked}>
-                <i className="material-icons createNewSpaceIcon">
-                    add_circle_outline
-                </i>
-                Create New Space
-            </button>
+            <div>
+                <button className="createNewSpaceButton" onClick={onCreateNewSpaceButtonClicked}>
+                    <i className="material-icons createNewSpaceIcon" aria-hidden>
+                        add_circle_outline
+                    </i>
+                    Create New Space
+                </button>
+            </div>
         );
     }
 

@@ -16,56 +16,65 @@
  */
 
 import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
 import ShareAccessButton from './ShareAccessButton';
 import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
 
 import './AccountDropdown.scss';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
+import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
 
-interface AccountDropdownProps {
+interface Props {
     hideSpaceButtons?: boolean;
     isReadOnly: boolean;
 }
 
-function AccountDropdown({ hideSpaceButtons, isReadOnly }: AccountDropdownProps): JSX.Element {
+function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
     const [userName, setUserName] = useState<string>('');
-    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [redirect, setRedirect] = useState<JSX.Element>();
+    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     useEffect(() => {
         setUserName(getUserNameFromAccessToken());
     }, []);
 
-    if ( redirect ) {
-        return redirect;
-    }
+    if (redirect) return redirect;
 
-    const showDropdown = (): boolean => {
-        if (dropdownToggle) {
-            hideDropdown();
-        } else {
-            setDropdownToggle(!dropdownToggle);
-            document.addEventListener('click', hideDropdown, false);
-        }
-        return dropdownToggle;
+    const toggleDropdown = (): void => {
+        setDropdownToggle(!dropdownToggle);
     };
 
-    const hideDropdown = (): boolean => {
-        setDropdownToggle(false);
-        document.removeEventListener('click', hideDropdown);
-        return dropdownToggle;
+    const AccountDropdownContent = (): JSX.Element => {
+        return (
+            <AccessibleDropdownContainer
+                handleClose={(): void => {setDropdownToggle(false);}}
+                className="accountDropdown"
+            >
+                {(!hideSpaceButtons && !isReadOnly) ? (
+                    <>
+                        <ShareAccessButton focusOnRender={true}/>
+                        <DownloadReportButton/>
+                        <SignOutButton setRedirect={setRedirect}/>
+                    </>
+                ) : (
+                    <SignOutButton setRedirect={setRedirect} focusOnRender={true}/>
+                )}
+            </AccessibleDropdownContainer>
+        );
     };
 
     return (
         <>
             <button
-                aria-label="Account Menu"
+                aria-label="Settings and More"
+                aria-haspopup={true}
+                aria-expanded={dropdownToggle}
                 data-testid="accountDropdownToggle"
                 className="accountDropdownToggle"
-                onClick={showDropdown}>
+                onClick={toggleDropdown}
+            >
                 <i className="material-icons" data-testid="userIcon">
                     person
                 </i>
@@ -74,19 +83,11 @@ function AccountDropdown({ hideSpaceButtons, isReadOnly }: AccountDropdownProps)
                         Welcome, <span className="userName">{userName}</span>
                     </div>
                 )}
-                <i className="material-icons">
-                    arrow_drop_down
+                <i className="material-icons selectDropdownArrow">
+                    {dropdownToggle ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </i>
             </button>
-            {dropdownToggle && (
-                <div className="accountDropdown">
-                    { !hideSpaceButtons && !isReadOnly && (<>
-                        <ShareAccessButton />
-                        <DownloadReportButton />
-                    </>)}
-                    <SignOutButton setRedirect={setRedirect} />
-                </div>
-            )}
+            {dropdownToggle && <AccountDropdownContent/>}
         </>
     );
 }

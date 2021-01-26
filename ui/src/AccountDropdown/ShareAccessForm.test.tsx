@@ -20,11 +20,12 @@
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import {fireEvent, RenderResult, wait} from '@testing-library/react';
-import EditContributorsForm from './EditContributorsForm';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
-import {createStore} from 'redux';
+import {createStore, Store} from 'redux';
+import ShareAccessForm from './ShareAccessForm';
+import {Space} from '../Space/Space';
 import {setCurrentSpaceAction} from '../Redux/Actions';
 
 
@@ -36,38 +37,36 @@ Object.assign(navigator, {
     },
 });
 
-describe('Edit Contributors view only section', function() {
-    const expectedUrl = 'https://some-url';
+describe('Share Access Form', () => {
     let originalWindow: Window;
-    let component: RenderResult;
     const testSpace = TestUtils.space;
-    let store = createStore(rootReducer,  {currentSpace: TestUtils.space});
+    const testSpaceWithViewOnlyOn = {...testSpace, todayViewIsPublic: true};
+    const testSpaceWithViewOnlyOff = {...testSpace, todayViewIsPublic: false};
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        originalWindow = window;
-        delete window.location;
-        (window as Window) = Object.create(window);
-        window.location = {href: expectedUrl} as Location;
+    const expectedUrl = 'https://some-url';
 
-        store.dispatch = jest.fn();
+    describe('View Only Access Form Section', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            originalWindow = window;
+            delete window.location;
+            (window as Window) = Object.create(window);
+            window.location = {href: expectedUrl} as Location;
+        });
 
-        component = renderWithRedux(
-            <EditContributorsForm/>,
-            store,
-            {currentSpace: TestUtils.space} as GlobalStateProps
-        );
-    });
+        afterEach(() => {
+            (window as Window) = originalWindow;
+        });
 
-    afterEach(() => {
-        (window as Window) = originalWindow;
-    });
-    describe('View Only Section', function() {
-        it('should show correct space URL', function() {
-            expect(component.queryByText(expectedUrl)).not.toBeNull();
+        it('should show correct space URL', async () => {
+            const { component } = setupComponent(testSpaceWithViewOnlyOn);
+
+            const actualLinkToSpace = await component.findByTestId('linkToSpace');
+            expect(actualLinkToSpace.getAttribute('value')).toBe(expectedUrl);
         });
 
         it('should copy the url to clipboard', async () => {
+            const { component } = setupComponent(testSpaceWithViewOnlyOn);
             jest.spyOn(navigator.clipboard, 'writeText');
 
             await wait(() => {
@@ -78,6 +77,7 @@ describe('Edit Contributors view only section', function() {
         });
 
         it('should should change text on copy', async () => {
+            const { component } = setupComponent(testSpaceWithViewOnlyOn);
             await wait(() => {
                 fireEvent.click(component.getByText('Copy link'));
             });
@@ -87,18 +87,20 @@ describe('Edit Contributors view only section', function() {
         });
 
         it('should populate Enable View Only toggle with information from current space', function() {
-            const enableViewOnlyCheckbox = component.getByTestId('editContributorsToggleReadOnlySwitch');
+            const { component } = setupComponent(testSpaceWithViewOnlyOn);
+            const enableViewOnlyCheckbox = component.getByTestId('viewOnlyAccessToggle');
             expect(enableViewOnlyCheckbox).toBeChecked();
         });
 
         it('should update the current space when the toggle is clicked', async function() {
-            const expectedUpdatedSpaceData = {...testSpace, todayViewIsPublic: false};
+            const { component, store } = setupComponent(testSpaceWithViewOnlyOn);
 
+            const expectedUpdatedSpaceData = {...testSpace, todayViewIsPublic: false};
             SpaceClient.editSpace = jest.fn(() => Promise.resolve({
                 data: expectedUpdatedSpaceData,
             } as AxiosResponse));
 
-            const enableViewOnlyCheckbox = component.getByTestId('editContributorsToggleReadOnlySwitch');
+            const enableViewOnlyCheckbox = component.getByTestId('viewOnlyAccessToggle');
             expect(enableViewOnlyCheckbox).toBeChecked();
             await fireEvent.click(enableViewOnlyCheckbox);
 
@@ -108,29 +110,26 @@ describe('Edit Contributors view only section', function() {
                 testSpace.name
             );
 
-
             expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(expectedUpdatedSpaceData));
         });
-    });
 
-});
+        it('should have copy link button disabled when ready only view is turned off', async function() {
+            const { component } = setupComponent(testSpaceWithViewOnlyOff);
 
-describe('Edit Contributors with read only turned off', () => {
-    let component: RenderResult;
-    const testSpace = TestUtils.space;
-
-    beforeEach(() => {
-        jest.clearAllMocks();
-        const testSpaceWithReadOnlyOff = {...testSpace, todayViewIsPublic: false};
-        component = renderWithRedux(
-            <EditContributorsForm/>,
-            undefined,
-            {currentSpace: testSpaceWithReadOnlyOff} as GlobalStateProps
-        );
-    });
-
-    it('should have copy link button disabled when ready only view is turned off', async function() {
-        const inviteContributorsConfirmationCopyButton = component.getByTestId('inviteContributorsConfirmationCopyButton');
-        expect(inviteContributorsConfirmationCopyButton).toBeDisabled();
+            const viewOnlyAccessFormCopyLinkButton = component.getByTestId('viewOnlyAccessFormCopyLinkButton');
+            expect(viewOnlyAccessFormCopyLinkButton).toBeDisabled();
+        });
     });
 });
+
+const setupComponent = (currentSpace: Space): { component: RenderResult; store: Store } => {
+    let store = createStore(rootReducer,  {currentSpace});
+    store.dispatch = jest.fn();
+    const component = renderWithRedux(
+        <ShareAccessForm/>,
+        store,
+        {currentSpace: currentSpace} as GlobalStateProps
+    );
+
+    return { component, store };
+};
