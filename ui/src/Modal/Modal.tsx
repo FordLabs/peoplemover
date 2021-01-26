@@ -35,9 +35,7 @@ function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
         let bodyOverflowState = 'unset';
         if (modalMetadata !== null) bodyOverflowState = 'hidden';
         document.body.style.overflow = bodyOverflowState;
-    }, [modalMetadata]);
 
-    useEffect(() => {
         if (modalMetadata && modalMetadata.length === 1) {
             setExpandedSectionIndex(0);
         }
@@ -78,7 +76,6 @@ function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
 
         const hasMoreThanOneModalCard = modalMetadata && modalMetadata.length > 1;
         if (hasMoreThanOneModalCard) {
-            console.log('Modal Card Click')
             setExpandedSectionIndex(index);
         }
     };
@@ -120,6 +117,11 @@ function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
                                 <div className="modalTitle">
                                     {item.title}
                                 </div>
+                                {modalMetadata && modalMetadata.length > 1 && (
+                                    <i className="material-icons expandedCardArrow">
+                                        {isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
+                                    </i>
+                                )}
                                 <button className="material-icons closeButton"
                                     onClick={exitModal}
                                     data-testid="modalCloseButton">

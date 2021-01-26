@@ -65,6 +65,13 @@
     padding: 0 0 32px 0;
     margin-left: 36px;
     margin-right: 36px;
+
+    .expandedCardArrow {
+        background-color: $sec-5;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+    }
 }
 
 .modalTitle {
