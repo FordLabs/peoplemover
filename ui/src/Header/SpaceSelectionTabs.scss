@@ -21,19 +21,18 @@
     display: flex;
     justify-content: space-between;
     background-color: $gray-5;
-    max-height: 40px;
     z-index: 1;
     position: sticky;
     top: 68px;
 
     .tab {
         background-color: $gray-5;
-        min-height: 40px;
     }
 
     .leftContent,
     .rightContent {
         display: flex;
+        align-items: center;
     }
 
     .leftContent {
@@ -65,10 +64,11 @@ button.selectionTabButton {
     display: flex;
     align-items: center;
     color: $prime-1;
-    padding-right: 20px;
     font-weight: bold;
     font-size: 14px;
     line-height: 16px;
+    margin: 0 .25rem;
+    padding: .4rem;
 
     i {
         font-size: 18px;
