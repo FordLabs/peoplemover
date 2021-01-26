@@ -2,6 +2,19 @@
     We run an update on the table because it is possible that during the blue green deploy some objects could be created without a Uuid
     We should have only added the Uuid in a first migration and push it, then run another migration to update the tables (but we combined them...)
 */
+
+UPDATE product_tag
+INNER JOIN space
+ON product_tag.space_id = space.id
+set product_tag.space_uuid = space.uuid
+WHERE product_tag.space_id = space.id;
+
+ALTER TABLE product_tag DROP FOREIGN KEY FK_Product_Tag__Space;
+ALTER TABLE product_tag DROP INDEX UQ_Product_Tag;
+ALTER TABLE product_tag DROP COLUMN space_id;
+ALTER TABLE product_tag ADD CONSTRAINT UQ_Product_Tag UNIQUE (space_uuid, name);
+
+
 UPDATE assignment
 INNER JOIN space
 ON assignment.space_id = space.id
@@ -30,18 +43,6 @@ WHERE product.space_id = space.id;
 
 ALTER TABLE product DROP FOREIGN KEY FK_Product__Space;
 ALTER TABLE product DROP COLUMN space_id;
-
-
-UPDATE product_tag
-INNER JOIN space
-ON product_tag.space_id = space.id
-set product_tag.space_uuid = space.uuid
-WHERE product_tag.space_id = space.id;
-
-ALTER TABLE product_tag DROP FOREIGN KEY FK_Product_Tag__Space;
-ALTER TABLE product_tag DROP INDEX UQ_Product_Tag;
-ALTER TABLE product_tag DROP COLUMN space_id;
-ALTER TABLE product_tag ADD CONSTRAINT UQ_Product_Tag UNIQUE (space_uuid, name);
 
 
 UPDATE space_locations
