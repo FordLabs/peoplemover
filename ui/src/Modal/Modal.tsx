@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
 import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
 import FocusRing from '../FocusRing';
@@ -27,45 +27,45 @@ interface ModalProps {
     closeModal(): void;
 }
 
-function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
+function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | null {
     const [shouldShowConfirmCloseModal, setShouldShowConfirmCloseModal] = useState<boolean>(false);
     const [confirmCloseModal, setConfirmCloseModal] = useState<JSX.Element | null>(null);
     const [expandedSectionIndex, setExpandedSectionIndex] = useState<number>(0);
 
+    const getModalCardCount = useCallback((): number => modalMetadata?.length || 0, [modalMetadata]);
+    const modalCardContentsArePresent = getModalCardCount() > 0;
+    const isSingleModalCard = getModalCardCount() === 1;
+    const isMultiModalCard = getModalCardCount() > 1;
+
     useEffect(() => {
         let bodyOverflowState = 'unset';
-        if (modalMetadata !== null) bodyOverflowState = 'hidden';
+        if (modalCardContentsArePresent) bodyOverflowState = 'hidden';
         document.body.style.overflow = bodyOverflowState;
 
-        if (modalMetadata && modalMetadata.length === 1) {
-            setExpandedSectionIndex(0);
-        }
-    }, [modalMetadata]);
+        if (isSingleModalCard) setExpandedSectionIndex(0);
 
-    function showCloseModalWarning(): void {
+    }, [modalMetadata, modalCardContentsArePresent, isSingleModalCard]);
+
+    const showCloseModalWarning = (): void => {
+        const closeConfirmationModal = (): void => { setConfirmCloseModal(null); };
         const propsForCloseConfirmationModal: ConfirmationModalProps = {
             submit: () => {
                 closeModal();
-                setConfirmCloseModal(null);
+                closeConfirmationModal();
             },
-            close: () => {
-                setConfirmCloseModal(null);
-            },
+            close: closeConfirmationModal,
             confirmClose: true,
             warningMessage: 'You have unsaved changes. Closing the window will result in the changes being discarded.',
             submitButtonLabel: 'Close',
         };
         const confirmConfirmationModal: JSX.Element = ConfirmationModal(propsForCloseConfirmationModal);
         setConfirmCloseModal(confirmConfirmationModal);
-    }
+    };
 
-    function exitModal(): void {
-        if (shouldShowConfirmCloseModal) {
-            showCloseModalWarning();
-        } else {
-            closeModal();
-        }
-    }
+    const exitModal = (): void => {
+        if (shouldShowConfirmCloseModal) showCloseModalWarning();
+        else closeModal();
+    };
 
     const modalBackgroundOnKeyDown = (e: React.KeyboardEvent): void => {
         if (e.key === 'Escape') exitModal();
@@ -75,10 +75,7 @@ function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
         e.stopPropagation();
         FocusRing.turnOffWhenClicking();
 
-        const hasMoreThanOneModalCard = modalMetadata && modalMetadata.length > 1;
-        if (hasMoreThanOneModalCard) {
-            setExpandedSectionIndex(index);
-        }
+        if (isMultiModalCard) setExpandedSectionIndex(index);
     };
 
     const onModalCardKeydown = (e: React.KeyboardEvent): void => {
@@ -86,14 +83,14 @@ function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
         FocusRing.turnOnWhenTabbing(e);
     };
 
-    return modalMetadata && modalMetadata.length !== 0 ? (
+    return !modalCardContentsArePresent ? null : (
         <div
             className="modalBackground"
             data-testid="modalContainer"
             onClick={exitModal}
             onKeyDown={modalBackgroundOnKeyDown}>
             <div className="modalContents">
-                {modalMetadata.map((item: ModalMetadataItem, index) => {
+                {modalMetadata?.map((item: ModalMetadataItem, index) => {
                     const isExpanded = expandedSectionIndex === index;
                     const isCollapsed = !isExpanded;
                     const customModalForm = React.cloneElement(
@@ -116,7 +113,7 @@ function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
                             <input type="text" aria-hidden={true} className="hiddenInputField"/>
                             <ModalCardBanner
                                 item={item}
-                                showArrowIcon={modalMetadata && modalMetadata.length > 1}
+                                showArrowIcon={getModalCardCount() > 1}
                                 arrowIconDirection={isExpanded ? 'up' : 'down'}
                                 onCloseBtnClick={exitModal}
                             />
@@ -127,7 +124,7 @@ function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
                 })}
             </div>
         </div>
-    ) : null;
+    );
 }
 
 export default Modal;
