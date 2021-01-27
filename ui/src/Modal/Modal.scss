@@ -51,10 +51,8 @@
     padding: 32px 0;
     margin: 0.5rem 0;
 
-    overflow: hidden;
-    //transition: max-height 0.15s ease-out;
-
     &[hidden] {
+        overflow: hidden;
         max-height: 65px;
     }
 }

@@ -22,6 +22,7 @@ describe('Share Access Form', () => {
 
         cy.get('[data-testid=modalCard]').eq(0)
             .as('inviteToViewModalCard');
+
         cy.get('[data-testid=modalCard]').eq(1)
             .as('inviteToEditModalCard');
     });
@@ -56,18 +57,16 @@ describe('Share Access Form', () => {
             expandInviteToEditModalCard();
         });
 
-        it('Add people to a space should fail is email address is not properly formatted', () => {
-            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().type('aaaaaa');
-            cy.get('.primaryButton').should('be.disabled');
-        });
-
         it('Add people to a space should show link to space url', () => {
             cy.server();
             cy.route('PUT', Cypress.env('API_INVITE_PEOPLE_PATH')).as('putAddPersonToSpace');
             const spaceUuid = Cypress.env('SPACE_UUID');
             const baseUrl = Cypress.config().baseUrl;
 
-            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().type('Elise@grif.com');
+            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().clear().type('aaaaaa');
+            cy.get('.primaryButton').should('be.disabled');
+
+            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().clear().type('Elise@grif.com');
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@putAddPersonToSpace')

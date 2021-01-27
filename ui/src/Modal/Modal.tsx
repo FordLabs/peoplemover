@@ -20,6 +20,7 @@ import {JSX} from '@babel/types';
 import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
 import FocusRing from '../FocusRing';
 import {ModalMetadataItem} from '../Redux/Containers/CurrentModal';
+import ModalCardBanner from './ModalCardBanner';
 
 interface ModalProps {
     modalMetadata: Array<ModalMetadataItem> | null;
@@ -113,21 +114,12 @@ function Modal({ modalMetadata, closeModal }: ModalProps): JSX.Element | null {
                             hidden={isCollapsed}
                         >
                             <input type="text" aria-hidden={true} className="hiddenInputField"/>
-                            <div className="modalTitleAndCloseButtonContainer">
-                                <div className="modalTitle">
-                                    {item.title}
-                                </div>
-                                {modalMetadata && modalMetadata.length > 1 && (
-                                    <i className="material-icons expandedCardArrow">
-                                        {isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
-                                    </i>
-                                )}
-                                <button className="material-icons closeButton"
-                                    onClick={exitModal}
-                                    data-testid="modalCloseButton">
-                                    close
-                                </button>
-                            </div>
+                            <ModalCardBanner
+                                item={item}
+                                showArrowIcon={modalMetadata && modalMetadata.length > 1}
+                                arrowIconDirection={isExpanded ? 'up' : 'down'}
+                                onCloseBtnClick={exitModal}
+                            />
                             {customModalForm ? customModalForm : item.form}
                             {confirmCloseModal}
                         </div>
