@@ -34,7 +34,7 @@ import {Space} from '../../Space/Space';
 import SpaceForm from '../../SpaceDashboard/SpaceForm';
 import GrantEditAccessConfirmationForm from '../../AccountDropdown/GrantEditAccessConfirmationForm';
 import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSection';
-import ViewOnlyAccessFormSection from "../../AccountDropdown/ViewOnlyAccessFormSection";
+import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
 
 export interface ModalMetadataItem {
     title: string;
@@ -131,7 +131,6 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     modalMetadata: getCurrentModalMetadata(state.currentModal, state.products, state.currentSpace, state.viewingDate),
-    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

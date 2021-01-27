@@ -21,6 +21,7 @@ import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
 import FocusRing from '../FocusRing';
 import {ModalMetadataItem} from '../Redux/Containers/CurrentModal';
 import ModalCardBanner from './ModalCardBanner';
+import MultiModalCardBanner from "./MultiModalCardBanner";
 
 interface ModalProps {
     modalMetadata: Array<ModalMetadataItem> | null;
@@ -111,12 +112,17 @@ function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | 
                             hidden={isCollapsed}
                         >
                             <input type="text" aria-hidden={true} className="hiddenInputField"/>
-                            <ModalCardBanner
-                                item={item}
-                                showArrowIcon={getModalCardCount() > 1}
-                                arrowIconDirection={isExpanded ? 'up' : 'down'}
-                                onCloseBtnClick={exitModal}
-                            />
+                            {isSingleModalCard ?
+                                <ModalCardBanner
+                                    title={item.title}
+                                    onCloseBtnClick={exitModal}
+                                /> :
+                                <MultiModalCardBanner
+                                    title={item.title}
+                                    onCloseBtnClick={exitModal}
+                                    isExpanded={isExpanded}
+                                />
+                            }
                             {customModalForm ? customModalForm : item.form}
                             {confirmCloseModal}
                         </div>

@@ -17,15 +17,12 @@
 
 import React from 'react';
 import {render, RenderResult} from '@testing-library/react';
-import ModalCardBanner from './ModalCardBanner';
+import MultiModalCardBanner from './MultiModalCardBanner';
 
 describe('Modal Card Banner', () => {
     let component: RenderResult;
     let buttonClickCallback: () => void;
-    const mockItem = {
-        title: 'Modal Title',
-        form: <div>Modal Form</div>,
-    };
+    const testTitle = 'My NaMe Is PaTrIcK';
 
     beforeEach(() => {
         buttonClickCallback = jest.fn();
@@ -33,19 +30,20 @@ describe('Modal Card Banner', () => {
 
     it('should show modal title', () => {
         component = render(
-            <ModalCardBanner
-                item={mockItem}
+            <MultiModalCardBanner
+                title={testTitle}
                 onCloseBtnClick={buttonClickCallback}
             />
         );
-        expect(component.queryByText(mockItem.title)).toBeInTheDocument();
+        expect(component.queryByText(testTitle)).toBeInTheDocument();
     });
 
     it('should call button click callback method when close button is clicked', () => {
         component = render(
-            <ModalCardBanner
-                item={mockItem}
+            <MultiModalCardBanner
+                title={testTitle}
                 onCloseBtnClick={buttonClickCallback}
+                isExpanded
             />
         );
         component.getByTestId('modalCloseButton').click();
@@ -55,11 +53,10 @@ describe('Modal Card Banner', () => {
     describe('Arrow Icon', () => {
         it('should show "up" arrow icon', () => {
             component = render(
-                <ModalCardBanner
-                    item={mockItem}
-                    showArrowIcon={true}
-                    arrowIconDirection="up"
+                <MultiModalCardBanner
+                    title={testTitle}
                     onCloseBtnClick={buttonClickCallback}
+                    isExpanded
                 />
             );
             const actualArrowIcon = component.getByTestId('modalCardBannerArrowIcon');
@@ -68,26 +65,14 @@ describe('Modal Card Banner', () => {
 
         it('should show "down" arrow icon', () => {
             component = render(
-                <ModalCardBanner
-                    item={mockItem}
-                    showArrowIcon={true}
-                    arrowIconDirection="down"
+                <MultiModalCardBanner
+                    title={testTitle}
+                    isExpanded={false}
                     onCloseBtnClick={buttonClickCallback}
                 />
             );
             const actualArrowIcon = component.getByTestId('modalCardBannerArrowIcon');
             expect(actualArrowIcon.innerHTML).toEqual('keyboard_arrow_down');
-        });
-
-        it('should hide arrow icon', () => {
-            component = render(
-                <ModalCardBanner
-                    item={mockItem}
-                    onCloseBtnClick={buttonClickCallback}
-                />
-            );
-            const actualArrowIcon = component.queryByTestId('modalCardBannerArrowIcon');
-            expect(actualArrowIcon).toBeNull();
         });
     });
 });

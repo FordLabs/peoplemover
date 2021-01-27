@@ -21,19 +21,26 @@ import React from 'react';
 interface Props {
     title: string;
     onCloseBtnClick: () => void;
+    isExpanded?: boolean;
 }
 
-const ModalCardBanner = ({title, onCloseBtnClick}: Props): JSX.Element => {
+const ModalCardBanner = ({title, onCloseBtnClick, isExpanded = true}: Props): JSX.Element => {
     return (
         <div className="modalTitleAndCloseButtonContainer">
             <div className="modalTitle">
                 {title}
             </div>
-            <button className="material-icons closeButton"
-                onClick={onCloseBtnClick}
-                data-testid="modalCloseButton">
-                close
-            </button>
+            <i data-testid="modalCardBannerArrowIcon"
+                className="material-icons expandedCardArrow">
+                {isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
+            </i>
+            {isExpanded &&
+                <button className="material-icons closeButton"
+                    onClick={onCloseBtnClick}
+                    data-testid="modalCloseButton">
+                    close
+                </button>
+            }
         </div>
     );
 };
