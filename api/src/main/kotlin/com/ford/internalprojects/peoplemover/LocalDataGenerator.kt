@@ -5,7 +5,6 @@ import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.color.ColorService
 import com.ford.internalprojects.peoplemover.location.LocationAddRequest
 import com.ford.internalprojects.peoplemover.location.LocationService
@@ -65,7 +64,7 @@ class LocalDataGenerator(
         )
         productService.createDefaultProducts(createdSpace);
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = createdSpace.id, spaceUuid = createdSpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = createdSpace.uuid))
 
         var colors = colorService.getColors()
         if (colors.isEmpty() && addColors) {
@@ -91,7 +90,6 @@ class LocalDataGenerator(
             Person(
                 name = "Jane Smith",
                 spaceUuid = createdSpace.uuid,
-                spaceId = createdSpace.id!!,
                 spaceRole = role1
             ),
             createdSpace.uuid
@@ -100,7 +98,6 @@ class LocalDataGenerator(
             Person(
                 name = "Bob Barker",
                 spaceUuid = createdSpace.uuid,
-                spaceId = createdSpace.id!!,
                 spaceRole = role2
             ),
             createdSpace.uuid
@@ -109,7 +106,6 @@ class LocalDataGenerator(
             Person(
                 name = "Adam Sandler",
                 spaceUuid = createdSpace.uuid,
-                spaceId = createdSpace.id!!,
                 spaceRole = role3
             ),
             createdSpace.uuid
@@ -131,14 +127,12 @@ class LocalDataGenerator(
         productRepository.save(Product(
             name = "My Product",
             productTags = productTags,
-            spaceId = createdSpace.id!!,
             startDate = LocalDate.parse("2019-01-01"),
             spaceUuid =  createdSpace.uuid
         ))
         productRepository.save(Product(
             name = "Baguette Bakery",
             spaceLocation = location,
-            spaceId = createdSpace.id,
             startDate = LocalDate.parse("2019-01-01"),
             spaceUuid =  createdSpace.uuid
         ))

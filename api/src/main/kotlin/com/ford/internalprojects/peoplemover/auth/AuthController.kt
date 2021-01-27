@@ -18,11 +18,12 @@
 package com.ford.internalprojects.peoplemover.auth
 
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class AuthController(

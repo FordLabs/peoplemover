@@ -77,8 +77,7 @@ describe('Product List tests', () => {
             const productWithAnnArborLocation: Product = {
                 id: 99,
                 name: 'AA',
-                spaceId: 1,
-                spaceUuid: 'a',
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 startDate: '2011-01-01',
                 endDate: undefined,
                 spaceLocation: TestUtils.annarbor,

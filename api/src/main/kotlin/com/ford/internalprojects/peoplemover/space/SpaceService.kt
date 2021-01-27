@@ -56,7 +56,6 @@ class SpaceService(
             userSpaceMappingRepository.save(
                 UserSpaceMapping(
                     userId = userId,
-                    spaceId = createdSpace.id,
                     spaceUuid = createdSpace.uuid
                 )
             )
@@ -66,9 +65,9 @@ class SpaceService(
 
     fun getSpacesForUser(accessToken: String): List<Space> {
         val principal: String = SecurityContextHolder.getContext().authentication.name
-        val spaceIds: List<Int> =
-            userSpaceMappingRepository.findAllByUserId(principal).map { mapping -> mapping.spaceId!! }.toList()
-        return spaceRepository.findAllByIdIn(spaceIds)
+        val spaceUuids: List<String> =
+            userSpaceMappingRepository.findAllByUserId(principal).map { mapping -> mapping.spaceUuid }.toList()
+        return spaceRepository.findAllByUuidIn(spaceUuids)
     }
 
     fun getSpace(uuid: String): Space {

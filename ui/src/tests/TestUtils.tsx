@@ -150,16 +150,16 @@ class TestUtils {
 
         RoleClient.get = jest.fn(() => Promise.resolve({
             data: [
-                {id: 1, name: 'Software Engineer', spaceId: 1, spaceUuid: 'a',  color: TestUtils.color1},
-                {id: 2, name: 'Product Manager', spaceId: 1, spaceUuid: 'a',  color: TestUtils.color2},
-                {id: 3, name: 'Product Designer', spaceId: 1, spaceUuid: 'a',  color: TestUtils.color3},
+                {id: 1, name: 'Software Engineer', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color1},
+                {id: 2, name: 'Product Manager', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color2},
+                {id: 3, name: 'Product Designer', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color3},
             ],
         } as AxiosResponse));
         RoleClient.add = jest.fn(() => Promise.resolve({
-            data: {name: 'Product Owner', id: 1, spaceId: -1, spaceUuid: 'a',  color: {color: '1', id: 2}},
+            data: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: {color: '1', id: 2}},
         } as AxiosResponse));
         RoleClient.edit = jest.fn(() => Promise.resolve({
-            data: {name: 'Architecture', id: 1, spaceId: -1, spaceUuid: 'a',  color: TestUtils.color3},
+            data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color3},
         } as AxiosResponse));
         RoleClient.delete = emptyAxiosResponse;
 
@@ -198,7 +198,7 @@ class TestUtils {
             data: {id: 9, name: 'Fin Tech'},
         } as AxiosResponse));
         ProductTagClient.edit = jest.fn(() => Promise.resolve({
-            data: {id: 6, name: 'Finance', spaceId: 2, spaceUuid: 'a'},
+            data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
         } as AxiosResponse));
         ProductTagClient.delete = emptyAxiosResponse;
     }
@@ -211,10 +211,10 @@ class TestUtils {
 
     static originDateString = '2019-01-01';
 
-    static annarbor = {id: 1, name: 'Ann Arbor', spaceUuid: 'uuid',  spaceId: 1};
-    static detroit = {id: 2, name: 'Detroit', spaceUuid: 'a',  spaceId: 1};
-    static dearborn = {id: 3, name: 'Dearborn', spaceUuid: 'a',  spaceId: 1};
-    static southfield = {id: 4, name: 'Southfield', spaceUuid: 'a',  spaceId: 1};
+    static annarbor = {id: 1, name: 'Ann Arbor', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
+    static detroit = {id: 2, name: 'Detroit', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static dearborn = {id: 3, name: 'Dearborn', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static southfield = {id: 4, name: 'Southfield', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
 
     static locations: LocationTag[] = [
         TestUtils.annarbor,
@@ -223,10 +223,10 @@ class TestUtils {
         TestUtils.southfield,
     ];
 
-    static productTag1: ProductTag = {id: 5, name: 'AV', spaceUuid: 'a',  spaceId: 1};
-    static productTag2: ProductTag = {id: 6, name: 'FordX', spaceUuid: 'uuid',  spaceId: 1};
-    static productTag3: ProductTag = {id: 7, name: 'EV', spaceUuid: 'a',  spaceId: 1};
-    static productTag4: ProductTag = {id: 8, name: 'Mache', spaceUuid: 'a',  spaceId: 1};
+    static productTag1: ProductTag = {id: 5, name: 'AV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static productTag2: ProductTag = {id: 6, name: 'FordX', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
+    static productTag3: ProductTag = {id: 7, name: 'EV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static productTag4: ProductTag = {id: 8, name: 'Mache', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
 
     static productTags: Array<ProductTag> = [
         TestUtils.productTag1,
@@ -247,9 +247,9 @@ class TestUtils {
         TestUtils.whiteColor,
     ];
 
-    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceUuid: 'a',  spaceId: 1, color: TestUtils.color1};
-    static productManager = {name: 'Product Manager', id: 2, spaceUuid: 'a',  spaceId: 1, color: TestUtils.color2};
-    static productDesigner = {name: 'Product Designer', id: 3, spaceUuid: 'a',  spaceId: 1, color: TestUtils.color3};
+    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color1};
+    static productManager = {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color2};
+    static productDesigner = {name: 'Product Designer', id: 3, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color3};
 
     static roles: RoleTag[] = [
         TestUtils.softwareEngineer,
@@ -259,7 +259,6 @@ class TestUtils {
 
     static person1: Person = {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        spaceId: 1,
         id: 100,
         name: 'Person 1',
         spaceRole: TestUtils.softwareEngineer,
@@ -269,7 +268,6 @@ class TestUtils {
 
     static hank: Person = {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        spaceId: 1,
         id: 200,
         name: 'Hank',
         spaceRole: TestUtils.productManager,
@@ -279,7 +277,6 @@ class TestUtils {
 
     static unassignedPerson: Person = {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        spaceId: 1,
         id: 101,
         name: 'Unassigned Person 7',
         spaceRole: TestUtils.softwareEngineer,
@@ -297,7 +294,6 @@ class TestUtils {
         productId: 1,
         placeholder: false,
         person: TestUtils.person1,
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         effectiveDate: new Date(2020, 5, 1),
     };
@@ -307,7 +303,6 @@ class TestUtils {
         productId: 102,
         placeholder: true,
         person: TestUtils.hank,
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         effectiveDate: new Date(2020, 6, 1),
     };
@@ -317,7 +312,6 @@ class TestUtils {
         productId: 999,
         person: TestUtils.unassignedPerson,
         placeholder: false,
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         effectiveDate: new Date(2020, 4, 15),
     };
@@ -331,7 +325,6 @@ class TestUtils {
     static unassignedProduct: Product = {
         id: 999,
         name: 'unassigned',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         assignments: [TestUtils.assignmentForUnassigned],
         startDate: '',
@@ -343,7 +336,6 @@ class TestUtils {
     static productWithAssignments: Product = {
         id: 1,
         name: 'Product 1',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',
@@ -357,7 +349,6 @@ class TestUtils {
     static productWithoutAssignments: Product = {
         id: 3,
         name: 'Product 3',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',
@@ -370,7 +361,6 @@ class TestUtils {
     static productForHank: Product = {
         id: 102,
         name: 'Hanky Product',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',
@@ -383,7 +373,6 @@ class TestUtils {
     static productWithoutLocation: Product = {
         id: 5,
         name: 'Awesome Product',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',
@@ -395,7 +384,6 @@ class TestUtils {
     static archivedProduct: Product = {
         id: 4,
         name: 'I am archived',
-        spaceId: 1,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '',
         endDate: '2020-11-02',
@@ -422,7 +410,6 @@ class TestUtils {
         {
             id: 2,
             name: 'Product 2',
-            spaceId: 1,
             spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
             startDate: '',
             endDate: '',
@@ -435,7 +422,7 @@ class TestUtils {
 
     static space: Space = {
         id: 1,
-        uuid: 'uuid',
+        uuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         name: 'testSpace',
         roles: TestUtils.roles,
         locations: TestUtils.locations,
