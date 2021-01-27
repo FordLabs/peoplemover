@@ -135,7 +135,7 @@ describe('PeopleMover', () => {
 
         it('should group products by location',  async () => {
             await wait(() => {
-                selectEvent.select(app.getByLabelText('Sort By:'), ['Location']);
+                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Location']);
             });
 
             const productGroups = await app.findAllByTestId('productGroup');
@@ -164,7 +164,7 @@ describe('PeopleMover', () => {
 
         it('should group products by product tag',  async () => {
             await wait(() => {
-                selectEvent.select(app.getByLabelText('Sort By:'), ['Product Tag']);
+                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Product Tag']);
             });
 
             const productGroups = await app.findAllByTestId('productGroup');
