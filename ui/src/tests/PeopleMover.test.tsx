@@ -190,7 +190,7 @@ describe('PeopleMover', () => {
     describe('Routing', () => {
         const BAD_REQUEST = 400;
         const FORBIDDEN = 403;
-        const expectedSpaceUuid = 'somebadName';
+        const expectedSpaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-SomeBadNames';
 
         beforeEach(() => {
             jest.clearAllMocks();

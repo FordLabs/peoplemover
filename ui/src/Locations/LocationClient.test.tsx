@@ -21,7 +21,7 @@ import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 
 describe('Location Client', function() {
-    const spaceUuid = 'uuid';
+    const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
     const baseLocationsUrl = `/api/spaces/${spaceUuid}/locations`;
 
     const cookies = new Cookies();

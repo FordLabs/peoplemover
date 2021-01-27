@@ -32,13 +32,11 @@ import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComp
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
     currentProductState: { currentProduct: Product; setCurrentProduct: (updatedProduct: Product) => void };
-    spaceId: number;
     addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Tag) => void;
     currentSpace: Space;
 }
 
 function ProductFormLocationField({
-    spaceId,
     loadingState: {
         isLoading,
         setIsLoading,
@@ -66,7 +64,6 @@ function ProductFormLocationField({
         return {
             id: Number.parseInt(option.value.split('_')[0], 10),
             name: option.label,
-            spaceId,
             spaceUuid: currentSpace.uuid ? currentSpace.uuid : '',
         };
     }

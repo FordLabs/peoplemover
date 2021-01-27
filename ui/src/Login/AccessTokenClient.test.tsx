@@ -33,7 +33,7 @@ describe('Access Token Client', function() {
 
     it('should check user has access to space and return result', function(done) {
         const expectedUrl = '/api/access_token/authenticate';
-        const spaceUUID = 'spaceID';
+        const spaceUUID = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         AccessTokenClient.userCanAccessSpace(accessToken, spaceUUID)
             .then(() => {
                 expect(Axios.post).toHaveBeenCalledWith(expectedUrl,

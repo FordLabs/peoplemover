@@ -35,8 +35,7 @@ describe('Assignment Card', () => {
             id: 1,
             person: {
                 newPerson: false,
-                spaceId: 0,
-                spaceUuid: 'a',
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 id: 1,
                 name: 'Billiam Handy',
                 spaceRole: TestUtils.softwareEngineer,
@@ -44,8 +43,7 @@ describe('Assignment Card', () => {
             },
             placeholder: false,
             productId: 0,
-            spaceId: 0,
-            spaceUuid: 'a',
+            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         };
 
         initialState = {
@@ -157,7 +155,7 @@ describe('Assignment Card', () => {
                 ...assignmentToRender,
                 person: {
                     ...assignmentToRender.person,
-                    spaceRole: {id: 1, spaceId: 0, spaceUuid: 'a', name: 'Software Engineer'},
+                    spaceRole: {id: 1, spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Software Engineer'},
                 },
             };
 
@@ -259,17 +257,15 @@ describe('Assignment Card', () => {
             const assignmentThatIsNew: Assignment = {
                 id: 199,
                 person: {
-                    spaceId: 0,
-                    spaceUuid: 'a',
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                     id: 1,
                     name: 'Mary Pettigrew',
-                    spaceRole: {id: 3, spaceId: 0, spaceUuid: 'a', name: 'Product Designer', color: {color: '1', id: 2}},
+                    spaceRole: {id: 3, spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Product Designer', color: {color: '1', id: 2}},
                     newPerson: true,
                 },
                 placeholder: false,
                 productId: 0,
-                spaceUuid: 'a',
-                spaceId: 1,
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
             };
             const underTest = renderWithRedux(
                 <AssignmentCard

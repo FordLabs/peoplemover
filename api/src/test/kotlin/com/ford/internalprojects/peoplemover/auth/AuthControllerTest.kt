@@ -102,7 +102,7 @@ class AuthControllerTest {
 
         val savedSpace = spaceRepository.save(Space(name = "spaceThree", uuid = uuid))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceId = savedSpace.id, spaceUuid = savedSpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = savedSpace.uuid))
 
         val request = AuthCheckScopesRequest(
                 accessToken = accessToken,
@@ -121,11 +121,11 @@ class AuthControllerTest {
         val accessToken = "fake_access_token"
         `when`(jwtDecoder.decode(accessToken)).thenReturn(getJwt(accessToken))
 
-        spaceRepository.save(Space(name = "spaceThree", uuid = "SpaceUUID"))
+        spaceRepository.save(Space(name = "spaceThree", uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
 
         val request = AuthCheckScopesRequest(
                 accessToken = accessToken,
-                uuid = "SpaceUUID")
+                uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
 
         mockMvc.perform(post("/api/access_token/authenticate")
                 .header("Authorization", "Bearer fake_access_token")
@@ -141,7 +141,7 @@ class AuthControllerTest {
 
         val request = AuthCheckScopesRequest(
                 accessToken = accessToken,
-                uuid = "SpaceUUID")
+                uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
 
         mockMvc.perform(post("/api/access_token/authenticate")
                 .header("Authorization", "Bearer fake_access_token")

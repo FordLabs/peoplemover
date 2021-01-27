@@ -23,9 +23,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Repository
 interface SpaceRepository : CrudRepository<Space, Int> {
-    fun findByNameIgnoreCase(name: String): Space?
     fun findByUuid(uuid: String): Space?
-    fun findAllByIdIn(ids: List<Int>): List<Space>
+    fun findAllByUuidIn(ids: List<String>): List<Space>
 
     @Transactional
     fun deleteByUuid(uuid: String)
