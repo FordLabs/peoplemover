@@ -133,7 +133,7 @@ describe('Products', () => {
                         spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                         person: {
                             newPerson: false,
-                            spaceUuid: 'spaceUuid',
+                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                             id: 1,
                             name: 'Person 1',
                             spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},

@@ -143,7 +143,7 @@ class RoleControllerApiTest {
     @Test
     fun `GET should return 200 when valid token that isn't an editor requests a space while read-only flag is on`() {
         val anonymousUserReadOnlySpace: Space = spaceRepository.save(Space(name = "SpaceOne", todayViewIsPublic = true))
-        val role1: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Fireman", spaceUuid = space.uuid))
+        val role1: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Fireman", spaceUuid = anonymousUserReadOnlySpace.uuid))
 
         mockMvc.perform(get(getBaseRolesUrl(anonymousUserReadOnlySpace.uuid))
             .header("Authorization", "Bearer ANONYMOUS_TOKEN")
