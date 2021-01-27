@@ -17,7 +17,7 @@ create table color
 create table space_locations
 (
     id       int identity primary key,
-    space_uuid        varchar (36),
+    space_uuid        varchar (36) not null,
     name     varchar(255),
 
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
@@ -35,7 +35,7 @@ create table product
     start_date        date,
     space_location_id int,
     space_id          int,
-    space_uuid        varchar (36),
+    space_uuid        varchar (36) not null,
 
     FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
@@ -47,7 +47,7 @@ create table space_roles
 (
     id       int not null identity primary key,
     roles    varchar(255),
-    space_uuid    varchar (36),
+    space_uuid    varchar (36) not null,
     color_id int,
 
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
@@ -62,7 +62,7 @@ create table person
     notes         varchar(255),
     new_person    bit default 0 not null,
     space_role_id int,
-    space_uuid    varchar (36),
+    space_uuid    varchar (36) not null,
 
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (space_role_id) REFERENCES space_roles (id) ON DELETE SET NULL
@@ -75,7 +75,7 @@ create table assignment
     placeholder         bit not null,
     product_id          int,
     person_id           int,
-    space_uuid          varchar (36),
+    space_uuid          varchar (36) not null,
 
     FOREIGN KEY (product_id) REFERENCES product (id) on delete cascade,
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
@@ -87,7 +87,7 @@ create table product_tag
 (
     id           int not null identity primary key,
     name         varchar(255),
-    space_uuid        varchar (36),
+    space_uuid        varchar (36) not null,
 
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     constraint UQ_Product_Tag unique (space_uuid, name)
@@ -108,7 +108,7 @@ create table user_space_mapping
 (
     id          int not null identity primary key,
     user_id     varchar(255),
-    space_uuid        varchar (36),
+    space_uuid        varchar (36) not null,
     last_modified_date datetime,
     last_modified_by varchar(30),
     created_date datetime,
