@@ -1,0 +1,158 @@
+/*
+ * Copyright (c) 2020 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import "../Application/Styleguide/Colors.scss";
+
+.viewOnlyAccessForm {
+  width: 415px;
+  margin: 0 auto;
+
+  .viewOnlyToggleContainer {
+    display: inline-block;
+
+    .viewOnlySwitchLabel {
+      padding-right: 18px;
+      text-align: left;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 18px;
+      color: $gray-1;
+      display: inline-block;
+      width: 226px;
+    }
+
+    .tooltip {
+      position: relative;
+      font-size: 14px;
+      width: fit-content;
+      padding-left: 8px;
+      color: $purple-title;
+
+      &:before {
+        z-index: 1;
+        width: 163px;
+        white-space: pre-wrap;
+        border: 2px solid $prime-1;
+        border-radius: 5px;
+        content: attr(data-md-tooltip);
+        position: absolute;
+        top: -200%;
+        left: 2rem;
+        padding: 13px;
+        transform: translateX(-50%) scale(0);
+        transform-origin: top;
+        background: white;
+        color: $gray-1;
+        font-size: 12px;
+        font-family: Roboto, sans-serif;
+        font-weight: 400;
+      }
+
+      &:hover:before {
+        transform: translateX(0.5rem) scale(1);
+      }
+
+      &:after {
+        z-index: 1;
+        min-width: 13px;
+        min-height: 13px;
+        border-top: 2px solid $prime-1;
+        border-left: 2px solid $prime-1;
+        position: absolute;
+        content: "";
+        top: 15%;
+        left: 0.5rem;
+        transform: translateX(-50%) scale(0) rotate(-45deg);
+        transform-origin: top;
+        background: white;
+        visibility: hidden;
+      }
+
+      &:hover:after {
+        transform: translateX(1.25rem) scale(1) rotate(-45deg);
+        visibility: visible;
+      }
+    }
+  }
+
+  .spaceLinkContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 28px;
+    margin-top: 10px;
+
+    &.disabled {
+      color: $gray-4;
+
+      .linkToSpace {
+        opacity: 0.6;
+      }
+    }
+
+    .linkToSpace {
+      font-family: inherit;
+      font-weight: inherit;
+      white-space: nowrap;
+      font-style: normal;
+      font-size: 14px;
+      line-height: 16px;
+
+      overflow-x: auto;
+      background: $gray-6;
+      color: #403D3D;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 8px;
+      width: 100%;
+      height: 36px;
+      box-sizing: border-box;
+      resize: none;
+    }
+
+    .copyLinkButton {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 14px;
+      color: $purple-title;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+      width: 5rem;
+      white-space: nowrap;
+      margin-left: 15px;
+
+      &:disabled {
+        cursor: not-allowed;
+        color: $gray-4;
+      }
+    }
+  }
+}
+
+.react-switch-bg {
+  background: linear-gradient(90deg, #984AA1 0%, #4F5FAB 76.03%) !important;
+}
+
+.disabled {
+  .react-switch-bg {
+    background: #E1B7E5 !important;
+  }
+}

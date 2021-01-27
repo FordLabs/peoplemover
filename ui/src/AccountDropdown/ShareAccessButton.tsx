@@ -26,8 +26,8 @@ interface Props {
     focusOnRender?: boolean;
 }
 
-function ShareAccessButton({ setCurrentModal, focusOnRender = false}: Props): JSX.Element {
-    const openEditContributorsModal = (): void => setCurrentModal({modal: AvailableModals.EDIT_CONTRIBUTORS});
+function ShareAccessButton({ setCurrentModal, focusOnRender = false }: Props): JSX.Element {
+    const openEditContributorsModal = (): void => setCurrentModal({modal: AvailableModals.SHARE_SPACE_ACCESS});
     const showButton = window.runConfig.invite_users_to_space_enabled;
 
     return showButton ? (

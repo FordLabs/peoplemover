@@ -18,7 +18,7 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
-import CurrentModal from '../Redux/Containers/ModalContainer';
+import CurrentModal from '../Redux/Containers/CurrentModal';
 import {
     AvailableModals,
     fetchUserSpacesAction,
