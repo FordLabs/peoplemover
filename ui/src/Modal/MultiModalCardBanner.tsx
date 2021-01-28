@@ -17,6 +17,7 @@
 
 import {JSX} from '@babel/types';
 import React from 'react';
+import './MultiModalCardBanner.scss';
 
 interface Props {
     title: string;
@@ -24,16 +25,21 @@ interface Props {
     isExpanded?: boolean;
 }
 
-const ModalCardBanner = ({title, onCloseBtnClick, isExpanded = true}: Props): JSX.Element => {
+const MultiModalCardBanner = ({title, onCloseBtnClick, isExpanded = true}: Props): JSX.Element => {
     return (
-        <div className="modalTitleAndCloseButtonContainer">
-            <div className="modalTitle">
-                {title}
-            </div>
-            <i data-testid="modalCardBannerArrowIcon"
-                className="material-icons expandedCardArrow">
-                {isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
-            </i>
+        <div className="modalCardBanner multiModal">
+            <button
+                className="expandCollapseToggleButton"
+                data-testid="multiModalExpandCollapseButton"
+            >
+                <div className="modalTitle">
+                    {title}
+                </div>
+                <i data-testid="modalCardBannerArrowIcon"
+                    className="material-icons focusedModalArrow">
+                    {isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
+                </i>
+            </button>
             {isExpanded &&
                 <button className="material-icons closeButton"
                     onClick={onCloseBtnClick}
@@ -45,4 +51,4 @@ const ModalCardBanner = ({title, onCloseBtnClick, isExpanded = true}: Props): JS
     );
 };
 
-export default ModalCardBanner;
+export default MultiModalCardBanner;

@@ -15,27 +15,4 @@
  * limitations under the License.
  */
 
-import {JSX} from '@babel/types';
-import React from 'react';
-
-interface Props {
-    title: string;
-    onCloseBtnClick: () => void;
-}
-
-const ModalCardBanner = ({title, onCloseBtnClick}: Props): JSX.Element => {
-    return (
-        <div className="modalCardBanner">
-            <div className="modalTitle">
-                {title}
-            </div>
-            <button className="material-icons closeButton"
-                onClick={onCloseBtnClick}
-                data-testid="modalCloseButton">
-                close
-            </button>
-        </div>
-    );
-};
-
-export default ModalCardBanner;
+$form-width: 400px;

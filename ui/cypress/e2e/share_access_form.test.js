@@ -23,12 +23,20 @@ describe('Share Access Form', () => {
         cy.get('[data-testid=modalCard]').eq(0)
             .as('inviteToViewModalCard');
 
+        cy.get('@inviteToViewModalCard')
+            .find('[data-testid=multiModalExpandCollapseButton]')
+            .as('inviteToViewModalButton');
+
         cy.get('[data-testid=modalCard]').eq(1)
             .as('inviteToEditModalCard');
+
+        cy.get('@inviteToEditModalCard')
+            .find('[data-testid=multiModalExpandCollapseButton]')
+            .as('inviteToEditModalButton');
     });
 
     context('Double modal expansion functionality', () => {
-        it('One modal card is expanded at a time when more than one is present', () => {
+        it('One modal card is expanded at a time when more than one is present when the modals are clicked', () => {
             inviteToViewModalCardShouldBeExpanded();
 
             expandInviteToEditModalCard();
@@ -36,6 +44,18 @@ describe('Share Access Form', () => {
             inviteToEditModalCardShouldBeExpanded();
 
             expandInviteToViewModalCard();
+
+            inviteToViewModalCardShouldBeExpanded();
+        });
+
+        it('One modal card is expanded at a time when more than one is present when the expand modal buttons are pressed', () => {
+            inviteToViewModalCardShouldBeExpanded();
+
+            expandInviteToEditModalExpandCollapseButton();
+
+            inviteToEditModalCardShouldBeExpanded();
+
+            expandInviteToViewModalExpandCollapseButton();
 
             inviteToViewModalCardShouldBeExpanded();
         });
@@ -100,8 +120,16 @@ const expandInviteToViewModalCard = () => {
     cy.get('@inviteToViewModalCard').click();
 };
 
+const expandInviteToViewModalExpandCollapseButton = () => {
+    cy.get('@inviteToViewModalButton').type('{enter}');
+};
+
 const expandInviteToEditModalCard = () => {
     cy.get('@inviteToEditModalCard').click();
+};
+
+const expandInviteToEditModalExpandCollapseButton = () => {
+    cy.get('@inviteToEditModalButton').type('{enter}');
 };
 
 const inviteToViewModalCardShouldBeExpanded = () => {

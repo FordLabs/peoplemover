@@ -15,27 +15,31 @@
  * limitations under the License.
  */
 
-import {JSX} from '@babel/types';
-import React from 'react';
+@import '../Application/Styleguide/Variables';
+@import '../Application/Styleguide/Colors';
 
-interface Props {
-    title: string;
-    onCloseBtnClick: () => void;
+.modalCardBanner.multiModal{
+  margin: 0 auto;
+  width: $form-width;
+  justify-content: space-between;
+  padding-bottom: 18px;
+
+  .expandCollapseToggleButton {
+    background: none;
+    display: flex;
+    padding: 0;
+
+    .modalTitle {
+      margin-right: 1rem;
+      margin-left: 0;
+    }
+
+    .focusedModalArrow {
+      background-color: $sec-5;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      align-self: center;
+    }
+  }
 }
-
-const ModalCardBanner = ({title, onCloseBtnClick}: Props): JSX.Element => {
-    return (
-        <div className="modalCardBanner">
-            <div className="modalTitle">
-                {title}
-            </div>
-            <button className="material-icons closeButton"
-                onClick={onCloseBtnClick}
-                data-testid="modalCloseButton">
-                close
-            </button>
-        </div>
-    );
-};
-
-export default ModalCardBanner;

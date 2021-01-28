@@ -57,40 +57,29 @@
     }
 }
 
-.modalTitleAndCloseButtonContainer {
+.modalCardBanner {
     display: flex;
     align-items: center;
     padding: 0 0 32px 0;
     margin-left: 36px;
     margin-right: 36px;
 
-    .expandedCardArrow {
-        background-color: $sec-5;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
+    .modalTitle {
+        flex: 2;
+        font-size: 20px;
+        color: $purple-title;
+        font-weight: bold;
+        margin-left: 16px;
     }
-}
 
-.modalTitle {
-    flex: 2;
-    font-size: 20px;
-    color: $purple-title;
-    font-weight: bold;
-    margin-left: 16px;
-}
-
-.closeButton {
-    cursor: pointer;
-    border-radius: 50%;
-    color: $gray-1;
-}
-
-button.closeButton {
-    background: none;
-    color: black;
-    padding: 0;
-    letter-spacing: normal;
+    button.closeButton {
+        cursor: pointer;
+        border-radius: 50%;
+        background: none;
+        color: black;
+        padding: 0;
+        letter-spacing: normal;
+    }
 }
 
 .confirmationModalContent {

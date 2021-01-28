@@ -17,8 +17,6 @@
 
 import React from 'react';
 import FormButton from '../ModalFormComponents/FormButton';
-import '../Application/Styleguide/Main.scss';
-import './Modal.scss';
 
 export interface ConfirmationModalProps {
     submit(itemToDelete?: unknown): void | Promise<void>;

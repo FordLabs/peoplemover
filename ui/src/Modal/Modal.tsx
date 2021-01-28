@@ -21,7 +21,8 @@ import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
 import FocusRing from '../FocusRing';
 import {ModalMetadataItem} from '../Redux/Containers/CurrentModal';
 import ModalCardBanner from './ModalCardBanner';
-import MultiModalCardBanner from "./MultiModalCardBanner";
+import MultiModalCardBanner from './MultiModalCardBanner';
+import './Modal.scss';
 
 interface ModalProps {
     modalMetadata: Array<ModalMetadataItem> | null;

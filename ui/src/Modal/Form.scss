@@ -16,13 +16,14 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Variables.scss';
 
 .form {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     text-align: left;
-    max-width: 400px;
+    max-width: $form-width;
 }
 
 .formContainer {
