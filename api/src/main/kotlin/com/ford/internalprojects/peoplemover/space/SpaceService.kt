@@ -81,21 +81,11 @@ class SpaceService(
     fun editSpace(uuid: String, editSpaceRequest: EditSpaceRequest): Space {
         val spaceToEdit = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
 
-        if (editSpaceRequest.todayViewIsPublic == null &&
-                editSpaceRequest.name == null) {
+        if (editSpaceRequest.isInValid()) {
             return spaceToEdit
         }
 
-        editSpaceRequest.name?.let {
-            spaceToEdit.name = it
-        }
-
-        editSpaceRequest.todayViewIsPublic?.let {
-            spaceToEdit.todayViewIsPublic = it
-        }
-
-        spaceToEdit.lastModifiedDate = Timestamp(Date().time)
-        return spaceRepository.save(spaceToEdit)
+        return spaceRepository.save(spaceToEdit.update(editSpaceRequest))
     }
 
     fun userHasEditAccessToSpace(spaceUuid: String): Boolean {
