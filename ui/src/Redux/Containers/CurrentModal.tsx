@@ -49,7 +49,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             return [{title:`Add New Product`, form: <ProductForm editing={false}/>}];
         case AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG: {
             const newProduct = {
-                ...emptyProduct(currentSpace.id),
+                ...emptyProduct(currentSpace.uuid),
                 startDate: moment(viewingDate).format('YYYY-MM-DD'),
                 productTags: [item],
             };
@@ -62,7 +62,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
         }
         case AvailableModals.CREATE_PRODUCT_OF_LOCATION: {
             const newProduct = {
-                ...emptyProduct(currentSpace.id),
+                ...emptyProduct(currentSpace.uuid),
                 startDate: moment(viewingDate).format('YYYY-MM-DD'),
                 spaceLocation: {...item},
             };

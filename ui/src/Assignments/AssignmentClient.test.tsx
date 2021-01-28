@@ -55,7 +55,7 @@ describe('Assignment client', () => {
     });
 
     it('should get all assignments for given personId and date', async () => {
-        const testUuid = 'spaceUuid';
+        const testUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         const personId = 10;
         const date = new Date(2019, 1, 10);
 
@@ -138,7 +138,7 @@ describe('Assignment client', () => {
     });
 
     it('should get all effective dates given space', async () => {
-        const spaceUuid = 'UUUUUUUUUIDDDD';
+        const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         const expectedUrl = `/api/assignment/dates/${spaceUuid}`;
 
         await AssignmentClient.getAssignmentEffectiveDates(spaceUuid);
@@ -177,7 +177,7 @@ describe('Assignment client', () => {
     });
 
     it('should get reassignments given assignment', async () => {
-        const spaceUuid = 'spaceuuid';
+        const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         const requestedDate = new Date(2020, 5, 20);
 
         const expectedUrl = `/api/reassignment/${spaceUuid}/2020-06-20`;

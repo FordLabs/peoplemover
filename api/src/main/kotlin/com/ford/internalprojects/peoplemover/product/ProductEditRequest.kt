@@ -22,7 +22,6 @@ import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.producttag.ProductTag
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 data class ProductEditRequest(
@@ -49,7 +48,7 @@ data class ProductEditRequest(
         companion object {
                 @JvmStatic
                 @JsonIgnore
-                fun toProduct(productEditRequest: ProductEditRequest, spaceId: Int, spaceUuid: String): Product {
+                fun toProduct(productEditRequest: ProductEditRequest, spaceUuid: String): Product {
                         return Product(
                                 id = productEditRequest.id,
                                 name = productEditRequest.name,
@@ -60,7 +59,6 @@ data class ProductEditRequest(
                                 spaceLocation = productEditRequest.spaceLocation,
                                 archived = productEditRequest.archived,
                                 notes = productEditRequest.notes,
-                                spaceId = spaceId,
                                 spaceUuid = spaceUuid
                         )
                 }

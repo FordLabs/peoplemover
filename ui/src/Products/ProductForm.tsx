@@ -71,7 +71,7 @@ function ProductForm({
 
     function initializeProduct(): Product {
         if (product == null) {
-            return {...emptyProduct(currentSpace.id, currentSpace.uuid), startDate: viewingDate};
+            return {...emptyProduct(currentSpace.uuid), startDate: viewingDate};
         }
         return product;
     }
@@ -186,7 +186,7 @@ function ProductForm({
         }
     }
 
-    return currentSpace.id ? (
+    return currentSpace.uuid ? (
         <div className="formContainer">
             <form className="form"
                 data-testid="productForm"
@@ -208,13 +208,11 @@ function ProductForm({
                     }
                 </div>
                 <ProductFormLocationField
-                    spaceId={currentSpace.id}
                     currentProductState={{currentProduct, setCurrentProduct}}
                     loadingState={{isLoading, setIsLoading}}
                     addGroupedTagFilterOptions={addGroupedTagFilterOptions}
                 />
                 <ProductFormProductTagsField
-                    spaceId={currentSpace.id}
                     currentProductState={{currentProduct}}
                     loadingState={{isLoading, setIsLoading}}
                     selectedProductTagsState={{selectedProductTags, setSelectedProductTags}}
