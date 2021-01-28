@@ -17,6 +17,8 @@
 
 import {JSX} from '@babel/types';
 import React from 'react';
+import {CloseModalButton, ModalTitle} from './ModalCardBanner';
+
 import './MultiModalCardBanner.scss';
 
 interface Props {
@@ -26,27 +28,24 @@ interface Props {
 }
 
 const MultiModalCardBanner = ({title, onCloseBtnClick, isExpanded = true}: Props): JSX.Element => {
+    const HeaderWrapper = isExpanded ? 'div' : 'button';
+
     return (
         <div className="modalCardBanner multiModal">
-            <button
+            <HeaderWrapper
                 className="expandCollapseToggleButton"
                 data-testid="multiModalExpandCollapseButton"
+                aria-label={isExpanded ? title : 'Open ' + title + ' controls'}
             >
-                <div className="modalTitle">
-                    {title}
-                </div>
+                <ModalTitle title={title} />
                 <i data-testid="modalCardBannerArrowIcon"
-                    className="material-icons focusedModalArrow">
+                    className="material-icons focusedModalArrow"
+                    aria-hidden
+                >
                     {isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
                 </i>
-            </button>
-            {isExpanded &&
-                <button className="material-icons closeButton"
-                    onClick={onCloseBtnClick}
-                    data-testid="modalCloseButton">
-                    close
-                </button>
-            }
+            </HeaderWrapper>
+            {isExpanded && <CloseModalButton onClick={onCloseBtnClick} />}
         </div>
     );
 };

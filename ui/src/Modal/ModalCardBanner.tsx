@@ -18,6 +18,18 @@
 import {JSX} from '@babel/types';
 import React from 'react';
 
+export const ModalTitle = ({ title }: { title: string }): JSX.Element =>
+    <h1 className="modalTitle">{title}</h1>;
+
+export const CloseModalButton = ({ onClick }: { onClick: () => void }): JSX.Element => (
+    <button className="material-icons closeButton"
+        onClick={onClick}
+        aria-label="Close Modal"
+        data-testid="modalCloseButton">
+        close
+    </button>
+);
+
 interface Props {
     title: string;
     onCloseBtnClick: () => void;
@@ -26,14 +38,8 @@ interface Props {
 const ModalCardBanner = ({title, onCloseBtnClick}: Props): JSX.Element => {
     return (
         <div className="modalCardBanner">
-            <div className="modalTitle">
-                {title}
-            </div>
-            <button className="material-icons closeButton"
-                onClick={onCloseBtnClick}
-                data-testid="modalCloseButton">
-                close
-            </button>
+            <ModalTitle title={title} />
+            <CloseModalButton onClick={onCloseBtnClick} />
         </div>
     );
 };
