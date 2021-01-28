@@ -169,7 +169,7 @@ function ProductCard({
                                         disabled={isReadOnly}
                                         onClick={setCurrentModalToCreateAssignment}
                                         onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
-                                        person_add
+                                        <i className="material-icons" aria-label="Add Person">person_add</i>
                                     </button>
                                     <button
                                         disabled={isReadOnly}
@@ -177,7 +177,7 @@ function ProductCard({
                                         data-testid={createDataTestId('editProductIcon', product.name)}
                                         onClick={toggleEditMenu}
                                     >
-                                        more_vert
+                                        <i className="material-icons" aria-label="Product Menu">more_vert</i>
                                     </button>
                                 </div>
                             </div>
@@ -192,7 +192,7 @@ function ProductCard({
                             <div className="emptyProductText">
                                 <div className="emptyProductTextHint">
                                     <p>Add a person by clicking</p>
-                                    <i className="material-icons greyIcon addPersonIcon">person_add</i>
+                                    <i className="material-icons greyIcon addPersonIcon" aria-hidden>person_add</i>
                                 </div>
                                 <p>above, or drag them in.</p>
                             </div>

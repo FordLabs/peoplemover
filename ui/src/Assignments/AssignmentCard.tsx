@@ -225,7 +225,7 @@ function AssignmentCard({
                 onClick={toggleEditMenu}
             >
                 {
-                    !isReadOnly && <i className="material-icons personEditIcon greyIcon">more_vert</i>
+                    !isReadOnly && <i className="material-icons personEditIcon greyIcon" aria-label="Person Menu">more_vert</i>
                 }
             </button>
             {editMenuIsOpened &&

@@ -55,7 +55,7 @@ function DrawerContainer({
                 {canRenderCountBadge() && <div className="countBadge" data-testid="countBadge">{numberForCountBadge}</div>}
 
                 <div className="drawerContainerTitleAndIcon">
-                    <i className="material-icons">{drawerIcon}</i>
+                    <i className="material-icons" aria-hidden>{drawerIcon}</i>
                     <span className="accordionText">{containerTitle}</span>
                 </div>
                 <i className="material-icons greyIcon drawerArrow"
