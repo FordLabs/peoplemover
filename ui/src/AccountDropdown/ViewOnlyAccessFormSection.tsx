@@ -55,12 +55,13 @@ function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: P
             currentSpace.name
         ).then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
     };
-    
+
+    let viewAccessEnabledMessage = `View only access is ${enableViewOnly ? 'enabled' : 'disabled'}`;
     return (
         <div className="viewOnlyAccessForm form">
             <div className="viewOnlyToggleContainer">
-                <label htmlFor="viewOnlyAccessToggle" className="viewOnlySwitchLabel">
-                    View only access is {enableViewOnly ? 'enabled' : 'disabled'}
+                <label className="viewOnlySwitchLabel">
+                    {viewAccessEnabledMessage}
                 </label>
                 {isExpanded && (
                     <>
@@ -75,6 +76,7 @@ function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: P
                             width={27}
                             height={13}
                             hidden={collapsed}
+                            aria-label={viewAccessEnabledMessage}
                         />
                         <i hidden={collapsed}
                             data-testid="viewOnlyAccessTooltip"
