@@ -132,6 +132,7 @@
   align-items: center;
 
   .calendarCustomInput {
+    background-color: transparent;
     display: flex;
     align-items: flex-end;
     font-size: 14px;
@@ -140,6 +141,7 @@
     max-width: 227px;
     margin-left: 20px;
     cursor: pointer;
+    padding: .3rem;
 
     .calendarViewingDate {
       font-weight: bold;
