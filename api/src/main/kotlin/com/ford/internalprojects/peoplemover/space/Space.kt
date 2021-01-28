@@ -17,19 +17,13 @@
 
 package com.ford.internalprojects.peoplemover.space
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import java.sql.Timestamp
 import java.util.*
 import javax.persistence.*
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
 data class Space (
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    val id: Int? = null,
-
     @Column(unique = true, nullable = false)
     val uuid: String = UUID.randomUUID().toString(),
 
@@ -42,7 +36,4 @@ data class Space (
     var lastModifiedDate: Timestamp? = null,
 
     var createdBy: String? = null
-) {
-    constructor(name: String):
-        this(null, UUID.randomUUID().toString(), name,false, null, null)
-}
+)

@@ -1,7 +1,6 @@
 create table space
 (
-    id   int         not null identity primary key,
-    uuid varchar(36) not null,
+    uuid varchar(36) not null primary key,
     name varchar(255) not null unique,
     last_modified_date datetime,
     created_by varchar(40),
@@ -34,13 +33,11 @@ create table product
     notes             varchar(500),
     start_date        date,
     space_location_id int,
-    space_id          int,
     space_uuid        varchar (36) not null,
 
-    FOREIGN KEY (space_id) REFERENCES space (id) on delete cascade,
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (space_location_id) REFERENCES space_locations (id) ON DELETE SET NULL,
-    constraint UQ_Product unique (space_id, name)
+    constraint UQ_Product unique (space_uuid, name)
 );
 
 create table space_roles
