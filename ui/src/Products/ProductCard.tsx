@@ -133,12 +133,6 @@ function ProductCard({
         }
     }
 
-    function handleKeyDownForToggleEditMenu(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            toggleEditMenu();
-        }
-    }
-
     const TagList = (): JSX.Element => {
         const locationTag = product.spaceLocation?.name;
         const locationTagExists = !!locationTag;
@@ -175,15 +169,15 @@ function ProductCard({
                                         disabled={isReadOnly}
                                         onClick={setCurrentModalToCreateAssignment}
                                         onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
-                                        person_add
+                                        <i className="material-icons" aria-label="Assign Person">person_add</i>
                                     </button>
                                     <button
                                         disabled={isReadOnly}
                                         className="editIcon material-icons greyIcon clickableIcon"
                                         data-testid={createDataTestId('editProductIcon', product.name)}
                                         onClick={toggleEditMenu}
-                                        onKeyDown={(e): void => handleKeyDownForToggleEditMenu(e)}>
-                                        more_vert
+                                    >
+                                        <i className="material-icons" aria-label="Product Menu">more_vert</i>
                                     </button>
                                 </div>
                             </div>
@@ -198,7 +192,7 @@ function ProductCard({
                             <div className="emptyProductText">
                                 <div className="emptyProductTextHint">
                                     <p>Add a person by clicking</p>
-                                    <i className="material-icons greyIcon addPersonIcon">person_add</i>
+                                    <i className="material-icons greyIcon addPersonIcon" aria-hidden>person_add</i>
                                 </div>
                                 <p>above, or drag them in.</p>
                             </div>
