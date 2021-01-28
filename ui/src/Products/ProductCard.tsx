@@ -169,7 +169,7 @@ function ProductCard({
                                         disabled={isReadOnly}
                                         onClick={setCurrentModalToCreateAssignment}
                                         onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
-                                        <i className="material-icons" aria-label="Add Person">person_add</i>
+                                        <i className="material-icons" aria-label="Assign Person">person_add</i>
                                     </button>
                                     <button
                                         disabled={isReadOnly}
