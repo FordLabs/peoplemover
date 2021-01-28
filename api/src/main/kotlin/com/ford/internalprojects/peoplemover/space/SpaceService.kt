@@ -87,9 +87,6 @@ class SpaceService(
         }
 
         editSpaceRequest.name?.let {
-            if (it.length > 40) {
-                throw SpaceNameTooLongException()
-            }
             spaceToEdit.name = it
         }
 

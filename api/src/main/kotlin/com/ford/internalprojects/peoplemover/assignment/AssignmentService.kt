@@ -192,10 +192,8 @@ class AssignmentService(
     }
 
     private fun createAssignmentsForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
-        val space = spaceRepository.findByUuid(assignmentRequest.person.spaceUuid) ?: throw SpaceNotExistsException()
-
         val createdAssignments = hashSetOf<Assignment>()
-        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", assignmentRequest.person.spaceUuid)
 
         assignmentRequest.products.forEach { product ->
             productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
@@ -207,7 +205,7 @@ class AssignmentService(
                                 placeholder = product.placeholder,
                                 productId = product.productId,
                                 effectiveDate = assignmentRequest.requestedDate,
-                                spaceUuid = space.uuid
+                                spaceUuid = assignmentRequest.person.spaceUuid
                         )
                 )
                 createdAssignments.add(assignment)
