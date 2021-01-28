@@ -19,7 +19,7 @@ import React from 'react';
 import {render, RenderResult} from '@testing-library/react';
 import MultiModalCardBanner from './MultiModalCardBanner';
 
-describe('Modal Card Banner', () => {
+describe('Multi Modal Card Banner', () => {
     let component: RenderResult;
     let buttonClickCallback: () => void;
     const testTitle = 'My NaMe Is PaTrIcK';
@@ -43,7 +43,7 @@ describe('Modal Card Banner', () => {
             <MultiModalCardBanner
                 title={testTitle}
                 onCloseBtnClick={buttonClickCallback}
-                isExpanded
+                collapsed={false}
             />
         );
         component.getByTestId('modalCloseButton').click();
@@ -56,7 +56,7 @@ describe('Modal Card Banner', () => {
                 <MultiModalCardBanner
                     title={testTitle}
                     onCloseBtnClick={buttonClickCallback}
-                    isExpanded
+                    collapsed={false}
                 />
             );
             const actualArrowIcon = component.getByTestId('modalCardBannerArrowIcon');
@@ -67,7 +67,7 @@ describe('Modal Card Banner', () => {
             component = render(
                 <MultiModalCardBanner
                     title={testTitle}
-                    isExpanded={false}
+                    collapsed
                     onCloseBtnClick={buttonClickCallback}
                 />
             );

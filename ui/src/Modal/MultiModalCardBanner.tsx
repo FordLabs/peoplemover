@@ -24,28 +24,28 @@ import './MultiModalCardBanner.scss';
 interface Props {
     title: string;
     onCloseBtnClick: () => void;
-    isExpanded?: boolean;
+    collapsed?: boolean;
 }
 
-const MultiModalCardBanner = ({title, onCloseBtnClick, isExpanded = true}: Props): JSX.Element => {
-    const HeaderWrapper = isExpanded ? 'div' : 'button';
+const MultiModalCardBanner = ({title, onCloseBtnClick, collapsed = false}: Props): JSX.Element => {
+    const HeaderWrapper = collapsed ? 'button' : 'div';
 
     return (
         <div className="modalCardBanner multiModal">
             <HeaderWrapper
                 className="expandCollapseToggleButton"
                 data-testid="multiModalExpandCollapseButton"
-                aria-label={isExpanded ? title : 'Open ' + title + ' controls'}
+                aria-label={collapsed ? 'Open ' + title + ' controls' : title}
             >
                 <ModalTitle title={title} />
                 <i data-testid="modalCardBannerArrowIcon"
                     className="material-icons focusedModalArrow"
                     aria-hidden
                 >
-                    {isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
+                    {collapsed ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
                 </i>
             </HeaderWrapper>
-            {isExpanded && <CloseModalButton onClick={onCloseBtnClick} />}
+            {!collapsed && <CloseModalButton onClick={onCloseBtnClick} />}
         </div>
     );
 };
