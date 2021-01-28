@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-/// <reference types="Cypress" />
-
 describe('Account Dropdown', () => {
     beforeEach(() => {
         cy.visitBoard();
     });
-    
+
     context('Share Access', () => {
         it('Add people to a space should fail is email address is not properly formatted', () => {
             cy.get('[data-testid=accountDropdownToggle]').click();
             cy.get('[data-testid=shareAccess]').click();
-            cy.get('[data-testid=emailTextArea]').focus().type('aaaaaa');
+            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().type('aaaaaa');
             cy.get('.primaryButton').should('be.disabled');
         });
 
@@ -38,29 +36,29 @@ describe('Account Dropdown', () => {
 
             cy.get('[data-testid=accountDropdownToggle]').click();
             cy.get('[data-testid=shareAccess]').click();
-            cy.get('[data-testid=emailTextArea]').focus().type('Elise@grif.com');
-            cy.get('[data-testid=shareAccessInviteButton]').should('not.be.disabled').click();
+            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().type('Elise@grif.com');
+            cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@putAddPersonToSpace')
                 .should((xhrs) => {
                     expect(xhrs.status).to.equal(200);
                 });
 
-            cy.get('[data-testid=inviteContributorsConfirmationLink]')
+            cy.get('[data-testid=grantEditAccessConfirmationFormLinkToSpace]')
                 .should('contain', baseUrl + '/' + spaceUuid);
-            cy.get('[data-testid=inviteContributorsConfirmationCopyButton]')
+            cy.get('[data-testid=grantEditAccessConfirmationFormCopyButton]')
                 .should('contain', 'Copy link' )
                 .click()
                 .should('contain', 'Copied' );
-            cy.get('[data-testid=inviteContributorDoneButton]').click();
+            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
             cy.get('[data-testid=modalPopupContainer]').should('not.be.visible');
         });
 
-        it('Toggle public ability to see today\'s view should update the space in the API', () => {
-
+        // @todo comment back in once view only toggle is visible in the app
+        xit('Toggle public ability to see today\'s view should update the space in the API', () => {
             cy.get('[data-testid=accountDropdownToggle]').click();
             cy.get('[data-testid=shareAccess]').click();
-            cy.get('[data-testid=editContributorsToggleReadOnlySwitch]').as('toggleReadOnlySwitch');
+            cy.get('[data-testid=viewOnlyAccessToggle]').as('toggleReadOnlySwitch');
             cy.get('@toggleReadOnlySwitch')
                 .should('not.be.checked')
                 .siblings('.react-switch-bg').click();

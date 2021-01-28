@@ -2,11 +2,8 @@ package com.ford.internalprojects.peoplemover.auth
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.AuditorAware
-
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
-import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import java.util.*
 

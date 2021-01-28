@@ -21,7 +21,7 @@ import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 
 describe('Product Tags Client', function() {
-    const spaceUuid = 'uuid';
+    const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
     const baseProductTagsUrl = `/api/spaces/${spaceUuid}/product-tags`;
     const expectedConfig = {
         headers: {

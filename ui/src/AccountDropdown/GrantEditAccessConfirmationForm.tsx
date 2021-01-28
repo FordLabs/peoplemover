@@ -21,13 +21,13 @@ import {closeModalAction} from '../Redux/Actions';
 import FormButton from '../ModalFormComponents/FormButton';
 import {connect} from 'react-redux';
 
-import './InviteContributorsConfirmationModal.scss';
+import './GrantEditAccessConfirmationForm.scss';
 
 interface Props {
     closeModal(): void;
 }
 
-const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element => {
+const GrantEditAccessConfirmationForm = ({ closeModal }: Props): JSX.Element => {
     const linkToSpace: string = window.location.href;
     const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
@@ -40,16 +40,17 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
     };
 
     return (
-        <form className="inviteContributorsConfirmationContainer">
-            <div className="inviteContributorsConfirmationLabel">
+        <form className="grantEditAccessConfirmationForm">
+            <div className="shareLinkLabel">
                 Share this link with your collaborators.
             </div>
-            <div className="inviteContributorsConfirmationShareLinkContainer">
-                <div className="inviteContributorsConfirmationLink" data-testid="inviteContributorsConfirmationLink">
+            <div className="copyLinkContainer">
+                <div className="linkToSpace"
+                    data-testid="grantEditAccessConfirmationFormLinkToSpace">
                     {linkToSpace}
                 </div>
-                <button className="inviteContributorsConfirmationCopyButton"
-                    data-testid="inviteContributorsConfirmationCopyButton"
+                <button className="copyButton"
+                    data-testid="grantEditAccessConfirmationFormCopyButton"
                     onClick={copyLink}>
                     {copiedLink ? 'Copied!' : 'Copy link'}
                 </button>
@@ -57,7 +58,7 @@ const InviteContributorConfirmationForm = ({ closeModal }: Props): JSX.Element =
             <FormButton
                 buttonStyle="primary"
                 onClick={closeModal}
-                testId="inviteContributorDoneButton">
+                testId="grantEditAccessConfirmationFormDoneButton">
                 Done
             </FormButton>
         </form>
@@ -69,5 +70,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     closeModal: () => dispatch(closeModalAction()),
 });
 
-export default connect(null, mapDispatchToProps)(InviteContributorConfirmationForm);
+export default connect(null, mapDispatchToProps)(GrantEditAccessConfirmationForm);
 /* eslint-enable */

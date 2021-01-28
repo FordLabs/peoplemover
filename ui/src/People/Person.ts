@@ -23,7 +23,6 @@ export interface Person {
     spaceRole?: RoleTag;
     notes?: string;
     newPerson: boolean;
-    spaceId: number;
     spaceUuid: string;
 }
 
@@ -32,7 +31,6 @@ export function emptyPerson(): Person {
         id: -1,
         name: '',
         newPerson: false,
-        spaceId: -1,
         spaceUuid: '',
     };
 }

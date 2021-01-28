@@ -19,17 +19,15 @@ import React, {useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
 import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
 import FocusRing from '../FocusRing';
+import {ModalMetadataItem} from '../Redux/Containers/CurrentModal';
 
 interface ModalProps {
-    modalForm: JSX.Element | null;
-    title: string;
-
+    modalMetadata: Array<ModalMetadataItem> | null;
     closeModal(): void;
 }
 
 function Modal({
-    modalForm,
-    title,
+    modalMetadata,
     closeModal,
 }: ModalProps): JSX.Element | null {
     const [shouldShowConfirmCloseModal, setShouldShowConfirmCloseModal] = useState<boolean>(false);
@@ -37,11 +35,9 @@ function Modal({
 
     useEffect(() => {
         let bodyOverflowState = 'unset';
-        if (modalForm !== null) bodyOverflowState = 'hidden';
+        if (modalMetadata !== null) bodyOverflowState = 'hidden';
         document.body.style.overflow = bodyOverflowState;
-    }, [modalForm]);
-
-    let customModalForm = null;
+    }, [modalMetadata]);
 
     function showCloseModalWarning(): void {
         const propsForCloseConfirmationModal: ConfirmationModalProps = {
@@ -68,47 +64,54 @@ function Modal({
         }
     }
 
-    if (modalForm !== null) {
-        customModalForm = React.cloneElement(
-            modalForm,
-            {setShouldShowConfirmCloseModal: setShouldShowConfirmCloseModal}
-        );
-        return (
-            <div className="modalContainer" data-testid="modalContainer"
-                onClick={close}
-                onKeyDown={(e): void => {
-                    if (e.key === 'Escape') close();
-                }}>
-                <div className="modalDialogContainer">
-                    <div className="modalPopupContainer"
-                        data-testid="modalPopupContainer"
-                        onClick={(e): void => {
-                            e.stopPropagation();
-                            FocusRing.turnOffWhenClicking();
-                        }}
-                        onKeyDown={(e): void => {
-                            e.stopPropagation();
-                            FocusRing.turnOnWhenTabbing(e);
-                        }}>
-                        <input type="text" aria-hidden={true} className="hiddenInputField"/>
-                        <div className="modalTitleAndCloseButtonContainer">
-                            <div className="modalTitleSpacer"/>
-                            <div className="modalTitle">{title}</div>
-                            <button className="material-icons closeButton"
-                                onClick={close}
-                                data-testid="modalCloseButton">
-                                close
-                            </button>
+    const modalContainerOnKeyDown = (e: React.KeyboardEvent): void => {
+        if (e.key === 'Escape') close();
+    };
+
+    const removeFocusWhenClicking = ( e: React.MouseEvent): void => {
+        e.stopPropagation();
+        FocusRing.turnOffWhenClicking();
+    };
+
+    const turnOnFocusWhenTabbing = (e: React.KeyboardEvent): void => {
+        e.stopPropagation();
+        FocusRing.turnOnWhenTabbing(e);
+    };
+
+    return modalMetadata && modalMetadata.length !== 0 ? (
+        <div className="modalContainer" data-testid="modalContainer"
+            onClick={close}
+            onKeyDown={modalContainerOnKeyDown}>
+            <div className="modalDialogContainer">
+                {modalMetadata.map((item: ModalMetadataItem) => {
+                    const customModalForm = React.cloneElement(
+                        item.form,
+                        {setShouldShowConfirmCloseModal: setShouldShowConfirmCloseModal}
+                    );
+                    return (
+                        <div
+                            key={item.title}
+                            className="modalPopupContainer"
+                            data-testid="modalPopupContainer"
+                            onClick={removeFocusWhenClicking}
+                            onKeyDown={turnOnFocusWhenTabbing}>
+                            <input type="text" aria-hidden={true} className="hiddenInputField"/>
+                            <div className="modalTitleAndCloseButtonContainer">
+                                <div className="modalTitle">{item.title}</div>
+                                <button className="material-icons closeButton"
+                                    onClick={close}
+                                    data-testid="modalCloseButton">
+                                    close
+                                </button>
+                            </div>
+                            {customModalForm ? customModalForm : item.form}
+                            {confirmCloseModal}
                         </div>
-                        {customModalForm ? customModalForm : modalForm}
-                        {confirmCloseModal}
-                    </div>
-                </div>
+                    );
+                })}
             </div>
-        );
-    } else {
-        return null;
-    }
+        </div>
+    ) : null;
 }
 
 export default Modal;

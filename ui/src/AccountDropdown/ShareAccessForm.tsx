@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,17 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.space.exceptions
+import React from 'react';
+import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
+import InviteEditorsFormSection from './InviteEditorsFormSection';
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
+function ShareAccessForm(): JSX.Element {
+    return (
+        <>
+            <ViewOnlyAccessFormSection />
+            <InviteEditorsFormSection />
+        </>
+    );
+}
 
-
-@ResponseStatus(value = HttpStatus.FORBIDDEN)
-class SpaceIsReadOnlyException : RuntimeException()
+export default ShareAccessForm;

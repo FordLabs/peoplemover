@@ -76,7 +76,7 @@ describe('Account Dropdown', () => {
                 });
                 expect(store.dispatch).toHaveBeenCalledWith({
                     type: AvailableActions.SET_CURRENT_MODAL,
-                    modal: AvailableModals.EDIT_CONTRIBUTORS,
+                    modal: AvailableModals.SHARE_SPACE_ACCESS,
                     item: undefined,
                 });
             });

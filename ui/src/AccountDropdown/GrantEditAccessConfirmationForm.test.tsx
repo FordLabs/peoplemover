@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import InviteContributorsConfirmationForm from './InviteContributorsConfirmationForm';
+import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
 import {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import {fireEvent, wait} from '@testing-library/react';
@@ -26,7 +26,7 @@ Object.assign(navigator, {
     },
 });
 
-describe('Invite Contributors Confirmation Form', function() {
+describe('Grant Edit Access Confirmation Form', function() {
     const expectedUrl = 'https://some-url';
     let originalWindow: Window;
 
@@ -42,13 +42,13 @@ describe('Invite Contributors Confirmation Form', function() {
     });
 
     it('should show correct space URL', function() {
-        const component = renderWithRedux(<InviteContributorsConfirmationForm/>);
+        const component = renderWithRedux(<GrantEditAccessConfirmationForm/>);
         expect(component.queryByText(expectedUrl)).not.toBeNull();
     });
 
     it('should copy the url to clipboard', async () => {
         jest.spyOn(navigator.clipboard, 'writeText');
-        const component = renderWithRedux(<InviteContributorsConfirmationForm/>);
+        const component = renderWithRedux(<GrantEditAccessConfirmationForm/>);
 
         await wait(() => {
             fireEvent.click(component.getByText('Copy link'));
@@ -58,7 +58,7 @@ describe('Invite Contributors Confirmation Form', function() {
     });
 
     it('should should change text on copy', async () => {
-        const component = renderWithRedux(<InviteContributorsConfirmationForm/>);
+        const component = renderWithRedux(<GrantEditAccessConfirmationForm/>);
 
         await wait(() => {
             fireEvent.click(component.getByText('Copy link'));

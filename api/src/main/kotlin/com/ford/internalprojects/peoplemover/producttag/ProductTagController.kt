@@ -53,7 +53,7 @@ class ProductTagController (
             @PathVariable spaceUuid: String,
             @PathVariable productTagId: Int
     ): ResponseEntity<Unit> {
-        productTagService.deleteProductTag(productTagId)
+        productTagService.deleteProductTag(productTagId, spaceUuid)
         return ResponseEntity.ok().build()
     }
 

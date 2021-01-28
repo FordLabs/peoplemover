@@ -47,13 +47,12 @@ class RoleService(
                 role
         )?.let { throw RoleAlreadyExistsException(role) }
         val colorToAssign: Color? = getColorToAssign(spaceUuid, colorId)
-        val spaceRole = SpaceRole(name = role, spaceId = space.id!!, color = colorToAssign, spaceUuid = spaceUuid)
+        val spaceRole = SpaceRole(name = role, color = colorToAssign, spaceUuid = spaceUuid)
         return spaceRolesRepository.saveAndUpdateSpaceLastModified(spaceRole)
     }
 
     fun getRolesForSpace(spaceUuid: String): Set<SpaceRole> {
-        val space: Space = getSpaceFromSpaceUuid(spaceUuid)
-        return space.roles
+        return spaceRolesRepository.findAllBySpaceUuid(spaceUuid)
     }
 
     @Transactional

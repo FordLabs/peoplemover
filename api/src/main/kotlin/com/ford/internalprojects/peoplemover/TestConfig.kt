@@ -8,7 +8,6 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtValidationException
 import java.time.Instant
-import java.util.HashMap
 
 @Configuration
 @Profile("test", "e2e-test")

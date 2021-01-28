@@ -58,7 +58,7 @@ class ProductService(
         productRepository.findProductByNameAndSpaceUuid(productAddRequest.name, space.uuid)?.let {
             throw ProductAlreadyExistsException()
         }
-        return create(toProduct(productAddRequest, space.id!!, space.uuid))
+        return create(toProduct(productAddRequest, space.uuid))
     }
 
     fun create(product: Product): Product =
@@ -79,16 +79,15 @@ class ProductService(
             }
         }
 
-        val product: Product = ProductEditRequest.toProduct(productEditRequest, space.id!!, space.uuid)
+        val product: Product = ProductEditRequest.toProduct(productEditRequest, space.uuid)
         return productRepository.saveAndUpdateSpaceLastModified(product)
     }
 
     @Transactional
     fun delete(productId: Int, spaceUuid: String) {
-        val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         val productToDelete = productRepository.findByIdOrNull(productId) ?: throw ProductNotExistsException()
 
-        if (space.id == null || (space.id.compareTo(productToDelete.spaceId) != 0)) {
+        if (spaceUuid.compareTo(productToDelete.spaceUuid) != 0) {
             throw InvalidProductSpaceMappingException()
         }
 
@@ -112,7 +111,6 @@ class ProductService(
     fun createDefaultProducts(space: Space) {
         val unassignedProduct = Product(
                 name = "unassigned",
-                spaceId = space.id!!,
                 spaceUuid = space.uuid
         )
         create(unassignedProduct)

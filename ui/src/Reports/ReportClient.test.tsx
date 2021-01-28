@@ -32,12 +32,12 @@ describe('Report Client', function() {
 
     it('should get get people report with names', async () => {
         const spaceName = 'bob';
-        const spaceUuid = 'spaceUuid';
+        const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         const today = new Date(2020, 8, 21);
         const expectedFilename = `bob_2020-09-21.csv`;
         const expectedJson = '"Product Name","Person Name","Person Role","Person Note"\n"product","person","role","note"';
 
-        const expectedUrl = `${baseReportsUrl}/people?spaceUuid=spaceUuid&requestedDate=2020-09-21`;
+        const expectedUrl = `${baseReportsUrl}/people?spaceUuid=${spaceUuid}&requestedDate=2020-09-21`;
         await ReportClient.getReportsWithNames(spaceName, spaceUuid, today);
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
         expect(fileDownload).toHaveBeenCalledWith(expectedJson, expectedFilename);
