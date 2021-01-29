@@ -75,4 +75,32 @@ describe('Multi Modal Card Banner', () => {
             expect(actualArrowIcon.innerHTML).toEqual('keyboard_arrow_down');
         });
     });
+
+    describe('Header Wrapper', () => {
+        it('should be a div when expanded', () => {
+            component = render(
+                <MultiModalCardBanner
+                    title={testTitle}
+                    collapsed={false}
+                    onCloseBtnClick={buttonClickCallback}
+                />
+            );
+
+            const headerWrapper = component.getByTestId('multiModalExpandCollapseButton');
+            expect(headerWrapper.nodeName).toBe('DIV');
+        });
+
+        it('should be a button when collapsed which automagically inherits its parent component\'s onClick', () => {
+            component = render(
+                <MultiModalCardBanner
+                    title={testTitle}
+                    collapsed
+                    onCloseBtnClick={buttonClickCallback}
+                />
+            );
+
+            const headerWrapper = component.getByTestId('multiModalExpandCollapseButton');
+            expect(headerWrapper.nodeName).toBe('BUTTON');
+        });
+    });
 });
