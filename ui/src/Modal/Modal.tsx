@@ -121,7 +121,7 @@ function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | 
                                 <MultiModalCardBanner
                                     title={item.title}
                                     onCloseBtnClick={exitModal}
-                                    isExpanded={isExpanded}
+                                    collapsed={isCollapsed}
                                 />
                             }
                             {customModalForm ? customModalForm : item.form}
