@@ -72,7 +72,6 @@
     justify-content: center;
     align-items: center;
     min-width: 20px;
-    border-radius: inherit;
 
     &:focus {
       border: 2px solid $white;
@@ -118,6 +117,7 @@ div.Placeholder {
   justify-content: center;
   align-items: center;
   min-width: 20px;
+  border-radius: 0;
 }
 
 .borderedPeople {
