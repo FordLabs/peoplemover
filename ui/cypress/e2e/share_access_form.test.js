@@ -46,7 +46,7 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=viewOnlyAccessToggle]').as('toggleReadOnlySwitch');
             cy.get('@toggleReadOnlySwitch')
                 .should('not.be.checked')
-                .siblings('.react-switch-bg').click();
+                .siblings('.react-switch-handle').click();
             cy.get('@toggleReadOnlySwitch')
                 .should('be.checked');
         });
