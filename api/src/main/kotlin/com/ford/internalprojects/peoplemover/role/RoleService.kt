@@ -40,8 +40,6 @@ class RoleService(
             role: String,
             colorId: Int?
     ): SpaceRole {
-        val space: Space = getSpaceFromSpaceUuid(spaceUuid)
-
         spaceRolesRepository.findBySpaceUuidAndNameAllIgnoreCase(
                 spaceUuid,
                 role
@@ -64,9 +62,7 @@ class RoleService(
     }
 
     fun editRole(spaceUuid: String, roleEditRequest: RoleEditRequest): SpaceRole {
-        val space: Space = getSpaceFromSpaceUuid(spaceUuid)
-
-        throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest, space)
+        throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest, spaceUuid)
         val roleToUpdate = spaceRolesRepository.findByIdOrNull(roleEditRequest.id) ?:
                 throw RoleNotExistsException(roleEditRequest.id.toString())
         roleToUpdate.name = roleEditRequest.name
@@ -98,9 +94,9 @@ class RoleService(
         return null
     }
 
-    private fun throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest: RoleEditRequest, space: Space) {
+    private fun throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest: RoleEditRequest, spaceUuid: String) {
         spaceRolesRepository.findBySpaceUuidAndNameAllIgnoreCase(
-                space.uuid,
+                spaceUuid,
                 roleEditRequest.name
         )?.let { spaceRole ->
             val updatedRoleNameAlreadyUsedInOtherSpaceRole = spaceRole.id != roleEditRequest.id
@@ -108,9 +104,5 @@ class RoleService(
                 throw RoleAlreadyExistsException(roleEditRequest.name)
             }
         }
-    }
-
-    private fun getSpaceFromSpaceUuid(spaceUuid: String): Space {
-        return spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
     }
 }

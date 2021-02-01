@@ -25,20 +25,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class PersonService(
-        private val personRepository: PersonRepository,
-        private val spaceRepository: SpaceRepository
+        private val personRepository: PersonRepository
 ) {
 
     fun createPerson(personIncoming: Person, spaceUuid: String): Person {
-        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
-
-        val personToCreate = Person(
-                name = personIncoming.name,
-                spaceRole = personIncoming.spaceRole,
-                notes = personIncoming.notes,
-                newPerson = personIncoming.newPerson,
-                spaceUuid = space.uuid
-        )
+        val personToCreate = personIncoming.copy(spaceUuid = spaceUuid)
         return personRepository.saveAndUpdateSpaceLastModified(personToCreate)
     }
 
@@ -48,8 +39,8 @@ class PersonService(
 
     fun getPeopleInSpace(spaceUuid: String): List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
 
-    fun removePerson(personId: Int) {
-        val personToRemove = personRepository.findByIdOrNull(personId) ?: throw PersonNotExistsException()
+    fun removePerson(personId: Int, spaceUuid: String) {
+        val personToRemove = personRepository.findByIdAndSpaceUuid(personId, spaceUuid) ?: throw PersonNotExistsException()
         personRepository.deleteAndUpdateSpaceLastModified(personToRemove)
     }
 
