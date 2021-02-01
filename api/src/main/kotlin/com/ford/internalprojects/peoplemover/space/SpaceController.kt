@@ -57,7 +57,7 @@ class SpaceController(
 
     @PreAuthorize("hasPermission(#uuid, 'write')")
     @PutMapping("/{uuid}")
-    fun editSpace(@PathVariable uuid: String, @RequestBody editSpaceRequest: EditSpaceRequest):Space {
+    fun editSpace(@PathVariable uuid: String, @RequestBody @Valid editSpaceRequest: EditSpaceRequest):Space {
         return spaceService.editSpace(uuid, editSpaceRequest)
     }
 
@@ -81,8 +81,6 @@ class SpaceController(
             @Valid @RequestBody request: AuthInviteUsersToSpaceRequest,
             @PathVariable uuid: String
     ): ResponseEntity<ArrayList<String>> {
-        val space = spaceRepository.findByUuid(uuid)!!
-
         val failures = arrayListOf<String>()
         request.emails.forEach { email ->
             val userId = email.substringBefore('@').toUpperCase().trim()

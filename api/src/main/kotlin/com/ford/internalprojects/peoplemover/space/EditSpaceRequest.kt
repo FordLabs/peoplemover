@@ -17,7 +17,13 @@
 
 package com.ford.internalprojects.peoplemover.space
 
+import javax.validation.constraints.Size
+
 data class EditSpaceRequest(
-      val name: String? = null,
-      val todayViewIsPublic: Boolean? = null
+    @field:Size(max = 40)
+    val name: String? = null,
+
+    val todayViewIsPublic: Boolean? = null
 )
+
+fun EditSpaceRequest.isInValid() : Boolean = this.name == null && this.todayViewIsPublic == null

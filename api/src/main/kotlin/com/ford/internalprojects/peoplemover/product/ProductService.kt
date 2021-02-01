@@ -43,9 +43,8 @@ class ProductService(
             productRepository.findAllBySpaceUuid(spaceUuid).toSet()
 
     fun findAllBySpaceUuidAndDate(spaceUuid: String, date: LocalDate): Set<Product> {
-        val space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
         val assignmentsForDate = assignmentService.getAssignmentsByDate(spaceUuid, date)
-        return productRepository.findAllBySpaceUuidAndDate(space.uuid, date).map { product ->
+        return productRepository.findAllBySpaceUuidAndDate(spaceUuid, date).map { product ->
             product.copy(assignments = assignmentsForDate.filter { assignment ->
                 assignment.productId == product.id!!
             }.toSet())
@@ -54,11 +53,10 @@ class ProductService(
 
     @Throws(ProductAlreadyExistsException::class)
     fun create(productAddRequest: ProductAddRequest, spaceUuid: String): Product {
-        val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        productRepository.findProductByNameAndSpaceUuid(productAddRequest.name, space.uuid)?.let {
+        productRepository.findProductByNameAndSpaceUuid(productAddRequest.name, spaceUuid)?.let {
             throw ProductAlreadyExistsException()
         }
-        return create(toProduct(productAddRequest, space.uuid))
+        return create(toProduct(productAddRequest, spaceUuid))
     }
 
     fun create(product: Product): Product =
@@ -67,8 +65,7 @@ class ProductService(
 
     fun update(productEditRequest: ProductEditRequest, spaceUuid: String): Product {
         productRepository.findByIdOrNull(productEditRequest.id) ?: throw ProductNotExistsException()
-        val space: Space = spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException()
-        productRepository.findProductByNameAndSpaceUuid(productEditRequest.name, space.uuid)?.let { foundProduct ->
+        productRepository.findProductByNameAndSpaceUuid(productEditRequest.name, spaceUuid)?.let { foundProduct ->
             if (foundProduct.id != productEditRequest.id) {
                 throw ProductAlreadyExistsException()
             }
@@ -79,7 +76,7 @@ class ProductService(
             }
         }
 
-        val product: Product = ProductEditRequest.toProduct(productEditRequest, space.uuid)
+        val product: Product = ProductEditRequest.toProduct(productEditRequest, spaceUuid)
         return productRepository.saveAndUpdateSpaceLastModified(product)
     }
 

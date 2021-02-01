@@ -25,7 +25,6 @@ import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -35,16 +34,11 @@ import javax.transaction.Transactional
 class AssignmentService(
         private val assignmentRepository: AssignmentRepository,
         private val personRepository: PersonRepository,
-        private val productRepository: ProductRepository,
-        private val spaceRepository: SpaceRepository
+        private val productRepository: ProductRepository
 ) {
     fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<Assignment> {
         val allAssignmentsBeforeOrOnDate = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
         return getAllAssignmentsForPersonOnDate(personId, allAssignmentsBeforeOrOnDate)
-    }
-
-    fun getAssignmentsForTheGivenPersonId(personId: Int): List<Assignment> {
-        return assignmentRepository.getByPersonId(personId)
     }
 
     fun getAssignmentsByDate(spaceUuid: String, requestedDate: LocalDate): List<Assignment> {
@@ -62,7 +56,7 @@ class AssignmentService(
         val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
         val allAssignments: MutableList<Assignment> = mutableListOf()
         people.forEach { person ->
-            val assignmentsForPerson: List<Assignment> = assignmentRepository.getByPersonId(person.id!!)
+            val assignmentsForPerson: List<Assignment> = assignmentRepository.getByPersonIdAndSpaceUuid(person.id!!, spaceUuid)
             allAssignments.addAll(assignmentsForPerson)
         }
 
@@ -114,7 +108,7 @@ class AssignmentService(
     }
 
     fun deleteAssignmentsForDate(requestedDate: LocalDate, person: Person) {
-        personRepository.findByIdOrNull(person.id!!) ?: throw PersonNotExistsException()
+        personRepository.findByIdAndSpaceUuid(person.id!!, person.spaceUuid) ?: throw PersonNotExistsException()
 
         val assignments: List<Assignment> = assignmentRepository.findAllByPersonAndEffectiveDate(
                 person,
@@ -192,10 +186,8 @@ class AssignmentService(
     }
 
     private fun createAssignmentsForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
-        val space = spaceRepository.findByUuid(assignmentRequest.person.spaceUuid) ?: throw SpaceNotExistsException()
-
         val createdAssignments = hashSetOf<Assignment>()
-        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", assignmentRequest.person.spaceUuid)
 
         assignmentRequest.products.forEach { product ->
             productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
@@ -207,7 +199,7 @@ class AssignmentService(
                                 placeholder = product.placeholder,
                                 productId = product.productId,
                                 effectiveDate = assignmentRequest.requestedDate,
-                                spaceUuid = space.uuid
+                                spaceUuid = assignmentRequest.person.spaceUuid
                         )
                 )
                 createdAssignments.add(assignment)
@@ -243,8 +235,8 @@ class AssignmentService(
         return peopleFromAssignments
     }
 
-    fun deleteAllAssignments(personId: Int) {
-        val assignments: List<Assignment> = getAssignmentsForTheGivenPersonId(personId)
+    fun deleteAllAssignments(personId: Int, spaceUuid: String) {
+        val assignments: List<Assignment> = assignmentRepository.getByPersonIdAndSpaceUuid(personId, spaceUuid)
         assignments.forEach { deleteOneAssignment(it) }
     }
 
