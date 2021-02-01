@@ -50,11 +50,10 @@ function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: P
 
     const toggleReadOnlyEnabled = async (checked: boolean): Promise<void> => {
         setEnableViewOnly(checked);
-        await SpaceClient.editSpace(
+        await SpaceClient.editSpaceReadOnlyFlag(
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             currentSpace.uuid!,
-            {...currentSpace, todayViewIsPublic:checked},
-            currentSpace.name
+            {...currentSpace, todayViewIsPublic:checked}
         ).then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
     };
 

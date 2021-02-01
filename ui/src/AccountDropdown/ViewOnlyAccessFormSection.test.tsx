@@ -96,7 +96,7 @@ describe('View Only Access Form Section', () => {
         const { component, store } = setupComponent(testSpaceWithViewOnlyOn);
 
         const expectedUpdatedSpaceData = {...testSpace, todayViewIsPublic: false};
-        SpaceClient.editSpace = jest.fn(() => Promise.resolve({
+        SpaceClient.editSpaceReadOnlyFlag = jest.fn(() => Promise.resolve({
             data: expectedUpdatedSpaceData,
         } as AxiosResponse));
 
@@ -104,10 +104,9 @@ describe('View Only Access Form Section', () => {
         expect(enableViewOnlyCheckbox).toBeChecked();
         await fireEvent.click(enableViewOnlyCheckbox);
 
-        expect(SpaceClient.editSpace).toHaveBeenCalledWith(
+        expect(SpaceClient.editSpaceReadOnlyFlag).toHaveBeenCalledWith(
             testSpace.uuid,
-            expectedUpdatedSpaceData,
-            testSpace.name
+            expectedUpdatedSpaceData
         );
 
         expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(expectedUpdatedSpaceData));
