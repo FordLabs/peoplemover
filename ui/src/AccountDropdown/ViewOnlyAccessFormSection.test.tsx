@@ -25,6 +25,9 @@ import {createStore, Store} from 'redux';
 import {Space} from '../Space/Space';
 import {setCurrentSpaceAction} from '../Redux/Actions';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+
+declare let window: MatomoWindow;
 
 Object.assign(navigator, {
     clipboard: {
@@ -47,6 +50,7 @@ describe('View Only Access Form Section', () => {
         delete window.location;
         (window as Window) = Object.create(window);
         window.location = {href: expectedUrl} as Location;
+        window._paq = [];
     });
 
     afterEach(() => {
@@ -69,6 +73,7 @@ describe('View Only Access Form Section', () => {
         });
 
         expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl);
+        expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'readOnlyLinkCopied', '']);
     });
 
     it('should should change text on copy', async () => {

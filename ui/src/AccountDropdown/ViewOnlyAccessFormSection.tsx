@@ -25,6 +25,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 
 import './ViewOnlyAccessFormSection.scss';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface Props {
     collapsed?: boolean;
@@ -42,6 +43,7 @@ function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: P
         event.preventDefault();
         await navigator.clipboard.writeText(linkToSpace);
         setCopiedLink(true);
+        MatomoEvents.pushEvent(currentSpace.name, 'readOnlyLinkCopied', '');
 
         setTimeout(() => {setCopiedLink(false);}, 3000);
     };
