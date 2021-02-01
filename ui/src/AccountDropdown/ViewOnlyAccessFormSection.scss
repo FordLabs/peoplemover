@@ -26,7 +26,8 @@
   }
 
   .viewOnlyToggleContainer {
-    display: inline-block;
+    display: flex;
+    align-content: center;
 
     .viewOnlySwitchLabel {
       padding-right: 18px;
@@ -41,8 +42,9 @@
     }
 
     .tooltip {
+      align-self: center;
       position: relative;
-      font-size: 14px;
+      font-size: 16px;
       width: fit-content;
       padding-left: 8px;
       color: $purple-title;

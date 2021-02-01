@@ -74,13 +74,13 @@ function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: P
                             checkedIcon={false}
                             uncheckedIcon={false}
                             width={27}
-                            height={13}
+                            height={16}
                             hidden={collapsed}
                             aria-label={viewAccessEnabledMessage}
                         />
                         <i hidden={collapsed}
                             data-testid="viewOnlyAccessTooltip"
-                            className="material-icons tooltip"
+                            className="material-icons tooltip sharon-wants-this-one-pixel-larger"
                             data-md-tooltip="Enabling view only allows anyone to view this space for the current day only.
                             Visitors cannot make changes to this space. Visitors have ability to sort & filter.">
                             info
