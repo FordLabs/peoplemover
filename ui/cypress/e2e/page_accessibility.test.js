@@ -20,7 +20,17 @@
 describe('Page Level Accessibility', () => {
     it('Landing Page', () => {
         cy.visit('/');
+        cy.get('[data-testid=landingPage]');
         cy.injectAxe();
+        cy.checkA11y();
+    });
+
+    it('Error page', () => {
+        cy.visit(`/error/404`);
+        cy.injectAxe();
+
+        cy.get('[data-testid=errorPageTemplate]');
+
         cy.checkA11y();
     });
 });
