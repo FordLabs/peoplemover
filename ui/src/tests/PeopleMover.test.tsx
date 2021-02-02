@@ -120,9 +120,22 @@ describe('PeopleMover', () => {
             await app.findByText('Powered by');
             await app.findByText('FordLabs');
         });
+    });
+
+    describe('Page Title', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup();
+            });
+        });
 
         it('should update the page title with the space name', () => {
             expect(document.title).toEqual('testSpace | PeopleMover');
+        });
+
+        it('should set the page title back to the default when the component is unmounted', () => {
+            app.unmount();
+            expect(document.title).toEqual('PeopleMover');
         });
     });
 

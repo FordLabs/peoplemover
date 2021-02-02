@@ -97,10 +97,16 @@ function PeopleMover({
     }, []);
 
     useEffect(() => {
+        if (currentSpace) {
+            document.title = `${currentSpace.name} | PeopleMover`;
+        }
         if (isReadOnly) {
             MatomoEvents.pushEvent(currentSpace.name, 'viewOnlyVisit', '');
         }
-    }, [currentSpace, isReadOnly]);
+        return (): void => {
+            document.title = 'PeopleMover';
+        };
+    }, [currentSpace]);
 
     useEffect(() => {
         const uuid = window.location.pathname.replace('/', '');
@@ -109,7 +115,6 @@ function PeopleMover({
                 .then((response) => {
                     const space = response.data;
                     setCurrentSpace(space);
-                    document.title = `${space.name} | PeopleMover`;
                 })
                 .catch(handleErrors);
         }
