@@ -49,7 +49,7 @@ function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element
                     className={`selectionTabButton tab ${readOnlyClass}`}
                     onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
                     data-testid="myTagsButton">
-                    <i className="material-icons myTagsIcon" data-testid="myTagsIcon">local_offer</i>
+                    <i className="material-icons myTagsIcon" aria-hidden data-testid="myTagsIcon">local_offer</i>
                     My Tags
                 </button>
                 <button
@@ -57,7 +57,7 @@ function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element
                     className={`selectionTabButton tab ${readOnlyClass}`}
                     data-testid="myRolesButton"
                     onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
-                    <i className="material-icons myRolesIcon" data-testid="myRolesIcon">assignment_ind</i>
+                    <i className="material-icons myRolesIcon" aria-hidden data-testid="myRolesIcon">assignment_ind</i>
                     My Roles
                 </button>
                 <button
@@ -66,7 +66,7 @@ function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element
                     className={`addPersonButton ${readOnlyClass}`}
                     data-testid="addPersonButton"
                     onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
-                    <i className="material-icons">add</i>
+                    <i className="material-icons" aria-hidden>add</i>
                     Add Person
                 </button>
             </div>

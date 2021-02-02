@@ -41,15 +41,12 @@ function CalendarCustomInput(
         }
     }
 
-    function handleKeyDownForCalendarClicked(event: React.KeyboardEvent): void {
-        if (!isReadOnly && event.key === 'Enter') calendarClicked();
-    }
-
     return (
-        <div className={`calendarCustomInput ${isReadOnly ? 'readOnly' : ''}`}
+        <button className={`calendarCustomInput ${isReadOnly ? 'readOnly' : ''}`}
             onClick={calendarClicked}
-            onKeyDown={(e): void => handleKeyDownForCalendarClicked(e)}
-            data-testid="calendarToggle">
+            disabled={isReadOnly}
+            data-testid="calendarToggle"
+        >
             Viewing:
             <span className="calendarViewingDate">
                 {viewingDate.toLocaleString('en-us', dateFormatOptions)}
@@ -62,7 +59,7 @@ function CalendarCustomInput(
                 )
 
             }
-        </div>
+        </button>
     );
 }
 

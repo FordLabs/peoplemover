@@ -75,7 +75,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
                 className="accountDropdownToggle"
                 onClick={toggleDropdown}
             >
-                <i className="material-icons" data-testid="userIcon">
+                <i className="material-icons" data-testid="userIcon" aria-hidden>
                     person
                 </i>
                 {userName && (

@@ -22,9 +22,9 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-interface SpaceRepository : CrudRepository<Space, Int> {
+interface SpaceRepository : CrudRepository<Space, String> {
     fun findByUuid(uuid: String): Space?
-    fun findAllByUuidIn(ids: List<String>): List<Space>
+    fun findAllByUuidIn(uuids: List<String>): List<Space>
 
     @Transactional
     fun deleteByUuid(uuid: String)

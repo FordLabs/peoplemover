@@ -36,8 +36,6 @@ class ReportGeneratorService(
     private val userSpaceMappingRepository: UserSpaceMappingRepository
 ) {
     fun createPeopleReport(spaceUuid: String, requestedDate: LocalDate): List<PeopleReportRow> {
-        spaceRepository.findByUuid(spaceUuid) ?: throw SpaceNotExistsException(spaceUuid)
-
         val assignments = assignmentService.getAssignmentsByDate(spaceUuid, requestedDate)
         val products = productService.findAllBySpaceUuidAndDate(spaceUuid, requestedDate)
 

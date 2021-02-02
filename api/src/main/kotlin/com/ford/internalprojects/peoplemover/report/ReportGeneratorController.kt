@@ -31,6 +31,7 @@ import java.time.LocalDate
 class ReportGeneratorController(private val reportGeneratorService: ReportGeneratorService) {
 
     @GetMapping("/people")
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     fun getPeopleReport(
         @RequestParam(name = "spaceUuid", required = true) spaceUuid: String,
         @RequestParam(name = "requestedDate", required = true) requestedDate: String

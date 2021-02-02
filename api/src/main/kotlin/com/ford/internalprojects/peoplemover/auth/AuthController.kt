@@ -42,18 +42,15 @@ class AuthController(
     fun validateAndAuthenticateAccessToken(@RequestBody request: AuthCheckScopesRequest): ResponseEntity<Void> {
         val validateTokenResponse = authService.validateToken(request.accessToken)
 
-        val spaceToSearch = spaceRepository.findByUuid(request.uuid)
+        spaceRepository.findByUuid(request.uuid) ?: return ResponseEntity.status(NOT_FOUND).build()
 
-        return if (spaceToSearch !== null) {
-            val mapping = userSpaceMappingRepository.findByUserIdAndSpaceUuid(validateTokenResponse.sub, request.uuid)
-            return if (mapping.isPresent) {
-                ResponseEntity.ok().build()
-            } else {
-                ResponseEntity.status(FORBIDDEN).build()
-            }
+        val mapping = userSpaceMappingRepository.findByUserIdAndSpaceUuid(validateTokenResponse.sub, request.uuid)
+        return if (mapping.isPresent) {
+            ResponseEntity.ok().build()
         } else {
-            ResponseEntity.status(NOT_FOUND).build()
+            ResponseEntity.status(FORBIDDEN).build()
         }
+
     }
 
 }

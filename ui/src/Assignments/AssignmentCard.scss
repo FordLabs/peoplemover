@@ -72,18 +72,29 @@
     justify-content: center;
     align-items: center;
     min-width: 20px;
-    border-top-right-radius: inherit;
-    border-bottom-right-radius: inherit;
+
+    &:focus {
+      border: 2px solid $white;
+
+      .personEditIcon {
+        margin-left: 0;
+        visibility: visible;
+      }
+    }
   }
 }
 
-.personContainer:hover .personEditIcon {
-  margin-left: 0;
-  visibility: visible;
-}
+.personContainer {
+  &:hover {
+    .personEditIcon {
+      margin-left: 0;
+      visibility: visible;
+    }
 
-.personContainer:hover .personNameAndRoleContainer {
-  border-color: $white;
+    .personNameAndRoleContainer {
+      border-color: $white;
+    }
+  }
 }
 
 div.DefaultColor {
@@ -106,6 +117,7 @@ div.Placeholder {
   justify-content: center;
   align-items: center;
   min-width: 20px;
+  border-radius: 0;
 }
 
 .borderedPeople {

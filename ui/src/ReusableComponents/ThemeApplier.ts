@@ -16,11 +16,11 @@
  */
 
 export class ThemeApplier {
-    static setBackgroundColorOnElement(element: HTMLDivElement, color: string | undefined): void {
+    static setBackgroundColorOnElement(element: HTMLElement, color: string | undefined): void {
         element.style.backgroundColor = color ? color : 'transparent';
     }
 
-    static setBorderColorOnElement(element: HTMLDivElement, color: string | undefined): void {
+    static setBorderColorOnElement(element: HTMLElement, color: string | undefined): void {
         element.style.borderColor = color ? color : 'transparent';
     }
 }

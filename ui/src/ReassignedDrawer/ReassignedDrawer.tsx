@@ -99,7 +99,7 @@ function ReassignedDrawer({
                     <div className="additionalInfo">{oneWayReassignment}</div>
                 }
                 <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}>
-                    <i className="material-icons">undo</i>
+                    <i className="material-icons" aria-hidden>undo</i>
                     Revert
                 </button>
             </div>

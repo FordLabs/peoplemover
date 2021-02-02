@@ -166,12 +166,13 @@ function ProductFilter({
 
     return (
         <div className="filterDropdownContainer" data-testid="filters">
-            <label htmlFor="filterBy-dropdown" className="dropdown-label">Filter:</label>
+            <label id="filterBy-dropdown-label" htmlFor="filterBy-dropdown" className="dropdown-label">Filter:</label>
             <Select
                 styles={filterByStyles}
                 name="filter"
                 className="dropdown filterBy-dropdown"
                 inputId="filterBy-dropdown"
+                aria-labelledby="filterBy-dropdown-label"
                 classNamePrefix="product-filter"
                 options={allGroupedTagFilterOptions}
                 value={checkBoxFilterValues}

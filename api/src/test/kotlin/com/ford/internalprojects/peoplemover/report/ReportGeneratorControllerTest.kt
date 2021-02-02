@@ -103,6 +103,7 @@ class ReportGeneratorControllerTest {
         person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, notes = "Notes", spaceUuid = space1.uuid))
         person2 = personRepository.save(Person(name = "Person 2", spaceUuid = space1.uuid))
         person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceUuid = space1.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceUuid = space1.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceUuid = space2.uuid))
@@ -167,13 +168,12 @@ class ReportGeneratorControllerTest {
         assertThat(actualPeopleReport[2]).isEqualTo(expectedPeopleReport3)
     }
 
-    @Throws(Exception::class)
     @Test
-    fun `GET should return 400 with invalid space name`() {
-        val request = get("$basePeopleReportsUrl?spaceUuid=fakeSpace&requestedDate=${mar1}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+    fun `GET should return 403 when generating a report for space without write access`() {
+        val request = get("$basePeopleReportsUrl?spaceUuid=${space1.uuid}&requestedDate=${mar1}")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
 
-        mockMvc.perform(request).andExpect(status().isBadRequest)
+        mockMvc.perform(request).andExpect(status().isForbidden)
     }
 
     @Test
@@ -186,7 +186,7 @@ class ReportGeneratorControllerTest {
         val constructCollectionType = objectMapper.typeFactory.constructCollectionType(MutableList::class.java, SpaceReportItem::class.java)
         val actualSpaceReport = objectMapper.readValue<List<SpaceReportItem>>(result.response.contentAsString, constructCollectionType)
 
-        val expectedUsers1 = listOf("SSQUAREP", "PSTAR")
+        val expectedUsers1 = listOf("USER_ID", "SSQUAREP", "PSTAR")
         val expectedUsers2 = listOf("PSTAR")
         val expectedSpace1 = SpaceReportItem(space1.name, space1.createdBy, expectedUsers1)
         val expectedSpace2 = SpaceReportItem(space2.name, space2.createdBy, expectedUsers2)
@@ -206,12 +206,7 @@ class ReportGeneratorControllerTest {
         val constructCollectionType = objectMapper.typeFactory.constructCollectionType(MutableList::class.java, String::class.java)
         val actualUserReport = objectMapper.readValue<List<String>>(result.response.contentAsString, constructCollectionType)
 
-
-        val expectedUsers = listOf("SSQUAREP", "PSTAR")
-
-
-        assertThat(actualUserReport.size).isEqualTo(2)
-        assertThat(actualUserReport).containsAll(expectedUsers)
+        assertThat(actualUserReport).containsExactlyInAnyOrder("USER_ID","SSQUAREP", "PSTAR")
 
     }
 

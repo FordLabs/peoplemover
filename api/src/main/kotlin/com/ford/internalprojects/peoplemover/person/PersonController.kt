@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/spaces/{spaceUuid}/people")
 @RestController
 class PersonController(
-        private val spaceRepository: SpaceRepository,
         private val logger: BasicLogger,
         private val personService: PersonService,
         private val assignmentService: AssignmentService
@@ -69,8 +68,8 @@ class PersonController(
             @PathVariable personId: Int
     ) {
         // I DONT THINK THIS NEEDS TO BE HERE
-        assignmentService.deleteAllAssignments(personId)
-        personService.removePerson(personId)
+        assignmentService.deleteAllAssignments(personId, spaceUuid)
+        personService.removePerson(personId, spaceUuid)
         logger.logInfoMessage("Person with id [$personId] deleted.")
     }
 

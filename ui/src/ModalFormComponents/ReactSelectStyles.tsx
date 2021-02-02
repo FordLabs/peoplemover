@@ -138,14 +138,14 @@ export const reactSelectStyles = {
 
 export const sortByStyle = {
     ...reactSelectStyles,
-    control: (provided: CSSProperties): CSSProperties => ({
+    control: (provided: CSSProperties, props: Props): CSSProperties => ({
         ...provided,
         border: '1px solid transparent',
         backgroundColor: 'transparent',
-        boxShadow: 'none !important',
+        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
         // @ts-ignore
-        '&:focus, &:hover': {
-            boxShadow: 'none !important',
+        '&:hover': {
+            boxShadow:  'none !important',
             borderColor: '#EDEBEB',
             cursor: 'pointer',
         },
@@ -187,13 +187,14 @@ export const sortByStyle = {
 
 export const filterByStyles = {
     ...reactSelectStyles,
-    control: (provided: CSSProperties): CSSProperties => ({
+    control: (provided: CSSProperties, props: Props): CSSProperties => ({
         ...provided,
         border: '1px solid transparent',
         backgroundColor: 'transparent',
-        boxShadow: 'none !important',
+        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
+
         // @ts-ignore
-        '&:focus, &:hover': {
+        '&:hover': {
             boxShadow: 'none !important',
             borderColor: '#EDEBEB',
             cursor: 'pointer',
@@ -267,6 +268,10 @@ export const filterByStyles = {
         ...provided,
         padding: '0px',
     }),
+};
+
+const isUserTabbingAndFocusedOnElement = ({isFocused}: Props): boolean => {
+    return isFocused && document.body.classList.contains('user-is-tabbing');
 };
 
 export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Element => (

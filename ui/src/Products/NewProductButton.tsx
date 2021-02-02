@@ -42,8 +42,8 @@ function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CRE
             className={`newProduct ${readOnlyClass}`}
             onClick={openModal}
             data-testid="newProductButton">
-            <i className="material-icons greyIcon addProductIcon">add</i>
-            <h2 className="newProductText">Add Product</h2>
+            <i className="material-icons greyIcon addProductIcon" aria-hidden>add</i>
+            Add Product
         </button>
     );
 }
