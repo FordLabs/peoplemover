@@ -8,7 +8,7 @@ describe('Roles', () => {
     const defaultColor = 'rgb(255, 255, 255)';
 
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
     });
 
     it('Add a new role', () => {

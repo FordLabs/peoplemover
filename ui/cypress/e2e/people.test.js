@@ -8,7 +8,7 @@ describe('People', () => {
     let calendarDateClass;
 
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
 

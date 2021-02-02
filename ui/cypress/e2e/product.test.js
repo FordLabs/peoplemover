@@ -3,7 +3,7 @@ import product from '../fixtures/product';
 
 describe('Product', () => {
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
         cy.server();
     });
 

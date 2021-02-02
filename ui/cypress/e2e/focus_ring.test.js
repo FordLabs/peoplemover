@@ -3,7 +3,7 @@ const date = Cypress.moment().format('yyyy-MM-DD');
 
 describe('People', () => {
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
     });
 
     it('Keyboard usage adds focus ring to buttons and anchors', () => {

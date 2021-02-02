@@ -26,7 +26,7 @@ describe('Form Dropdown Fields', () => {
         cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
         cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewProductTag');
 
-        cy.visitBoard({locationData: [], productTagsData: []});
+        cy.visitSpace({locationData: [], productTagsData: []});
         cy.get('[data-testid=newProductButton]').click();
 
         cy.getModal()

@@ -5,7 +5,7 @@ describe('Tags',  () => {
     const productTag = 'Flippin Sweet ' + Date.now();
 
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
     });
 
     context('Add new', () => {

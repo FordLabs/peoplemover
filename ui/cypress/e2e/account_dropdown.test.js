@@ -17,7 +17,7 @@
 
 describe('Account Dropdown', () => {
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
     });
 
     context('Share Access', () => {
