@@ -47,6 +47,7 @@ import {LocationTag} from '../Locations/LocationTag.interface';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -94,6 +95,12 @@ function PeopleMover({
             return error;
         }
     }, []);
+
+    useEffect(() => {
+        if (isReadOnly) {
+            MatomoEvents.pushEvent(currentSpace.name, 'viewOnlyVisit', '');
+        }
+    }, [currentSpace, isReadOnly]);
 
     useEffect(() => {
         const uuid = window.location.pathname.replace('/', '');
