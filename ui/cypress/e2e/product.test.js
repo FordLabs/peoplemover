@@ -193,5 +193,5 @@ const dateSelector = (moment) => {
 
 const submitProductForm = (expectedSubmitButtonText) => {
     cy.get('[data-testid=productFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
-    cy.get('@productForm').should('not.be.visible');
+    cy.get('@productForm').should('not.exist');
 };

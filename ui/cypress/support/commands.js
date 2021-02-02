@@ -50,7 +50,7 @@ Cypress.Commands.add('getModal', () => {
 
 Cypress.Commands.add('closeModal', () => {
     cy.get('[data-testid=modalCloseButton]').click();
-    cy.getModal().should('not.be.visible');
+    cy.getModal().should('not.exist');
 });
 
 Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTextToSelect) => {

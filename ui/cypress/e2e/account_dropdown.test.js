@@ -51,7 +51,7 @@ describe('Account Dropdown', () => {
                 .click()
                 .should('contain', 'Copied' );
             cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
-            cy.get('[data-testid=modalPopupContainer]').should('not.be.visible');
+            cy.get('[data-testid=modalPopupContainer]').should('not.exist');
         });
 
         // @todo comment back in once view only toggle is visible in the app

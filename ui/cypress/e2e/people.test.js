@@ -321,7 +321,7 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
 
 const submitPersonForm = (expectedSubmitButtonText) => {
     cy.get('[data-testid=personFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
-    cy.get('@personForm').should('not.be.visible');
+    cy.get('@personForm').should('not.exist');
 };
 
 const ensureNewAssignmentIsPresentInAssignmentDrawer = (assignedPerson) => {
