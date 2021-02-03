@@ -45,7 +45,7 @@ function Header({
         <header className="peopleMoverHeader">
             <div className="headerLeftContainer">
                 <PeopleMoverLogo href={logoHref} />
-                {spaceName && <h2 className="spaceName">{spaceName}</h2>}
+                {spaceName && <h1 className="spaceName">{spaceName}</h1>}
             </div>
             {!hideAllButtons &&
                 <div className="headerRightContainer">

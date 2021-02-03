@@ -28,9 +28,20 @@ describe('Page Level Accessibility', () => {
     it('Error page', () => {
         cy.visit(`/error/404`);
         cy.injectAxe();
-
         cy.get('[data-testid=errorPageTemplate]');
+        cy.checkA11y();
+    });
 
+    it('Space Page', () => {
+        cy.visitSpace();
+        cy.injectAxe();
+        cy.checkA11y();
+    });
+
+    // @todo figure out how to be able to visit this page in Cypress
+    xit('Dashboard Page', () => {
+        cy.visit('/user/dashboard');
+        cy.injectAxe();
         cy.checkA11y();
     });
 });
