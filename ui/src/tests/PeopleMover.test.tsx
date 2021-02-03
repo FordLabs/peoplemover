@@ -58,6 +58,16 @@ describe('PeopleMover', () => {
         window._paq = [];
     });
 
+    function getEventCount(eventString: string): number {
+        let returnValue = 0;
+        window._paq.forEach((event) => {
+            if (event.includes(eventString)) {
+                returnValue++;
+            }
+        });
+        return returnValue;
+    }
+
     describe('Read Only Mode', function() {
         beforeEach(async () => {
             await wait(() => {
@@ -83,10 +93,20 @@ describe('PeopleMover', () => {
 
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'viewOnlyVisit', '']);
             expect(window._paq).not.toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
+            expect(getEventCount('viewOnlyVisit')).toEqual(1);
 
             store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: nextSpace });
 
             expect(window._paq).toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
+            expect(getEventCount('viewOnlyVisit')).toEqual(2);
+        });
+
+        it('should not trigger a matomo read-only visit event if no space has been defined', () => {
+            expect(getEventCount('viewOnlyVisit')).toEqual(1);
+
+            store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: null });
+
+            expect(getEventCount('viewOnlyVisit')).toEqual(1);
         });
     });
 

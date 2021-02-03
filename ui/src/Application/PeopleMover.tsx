@@ -88,7 +88,7 @@ function PeopleMover({
         if (error?.response?.status === BAD_REQUEST) {
             setRedirect(<Redirect to="/error/404"/>);
             return null;
-        } else if ( error?.response?.status === FORBIDDEN) {
+        } else if (error?.response?.status === FORBIDDEN) {
             setRedirect(<Redirect to="/error/403"/>);
             return null;
         } else {
@@ -99,9 +99,9 @@ function PeopleMover({
     useEffect(() => {
         if (currentSpace) {
             document.title = `${currentSpace.name} | PeopleMover`;
-        }
-        if (isReadOnly) {
-            MatomoEvents.pushEvent(currentSpace.name, 'viewOnlyVisit', '');
+            if (isReadOnly) {
+                MatomoEvents.pushEvent(currentSpace.name, 'viewOnlyVisit', '');
+            }
         }
         return (): void => {
             document.title = 'PeopleMover';
@@ -171,7 +171,7 @@ function PeopleMover({
                     </div>
                     <CurrentModal/>
                 </div>
-                <Branding />
+                <Branding/>
             </div>
     );
 }

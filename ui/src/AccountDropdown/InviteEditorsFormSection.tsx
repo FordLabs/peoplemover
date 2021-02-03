@@ -71,7 +71,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                     <textarea
                         id="emailTextarea"
                         className="emailTextarea"
-                        placeholder="email1@ford.com, email2@ford.com"
+                        placeholder="cdsid@ford.com, cdsid@ford.com"
                         onChange={parseEmails}
                         data-testid="inviteEditorsFormEmailTextarea"
                         hidden={collapsed}
