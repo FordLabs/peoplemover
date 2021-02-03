@@ -16,7 +16,7 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {CreateAssignmentsRequest} from './CreateAssignmentRequest';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {Person} from '../People/Person';
 import {getToken} from '../Auth/TokenProvider';
@@ -25,21 +25,26 @@ import {Space} from '../Space/Space';
 
 class AssignmentClient {
 
-    static async createAssignmentForDate(assignment: CreateAssignmentsRequest, space: Space, sendEvent = true): Promise<AxiosResponse> {
-        const url = `/api/assignment/create`;
+    static async createAssignmentForDate(requestedDate: string, products: Array<ProductPlaceholderPair>, space: Space, person: Person, sendEvent = true): Promise<AxiosResponse> {
+        const url = `/api/spaces/${space.uuid}/person/${person.id}/assignment/create`;
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${getToken()}`,
         };
 
-        return Axios.post(url, assignment, {headers}).then(result => {
+        const assignmentRequest = {
+            requestedDate,
+            products,
+        } as CreateAssignmentsRequest;
+
+        return Axios.post(url, assignmentRequest, {headers}).then(result => {
             if (sendEvent) {
-                MatomoEvents.pushEvent(space.name, 'assignPerson', assignment.person.name);
+                MatomoEvents.pushEvent(space.name, 'assignPerson', person.name);
             }
             return result;
         }).catch(err => {
             if (sendEvent) {
-                MatomoEvents.pushEvent(space.name, 'assignPersonError', assignment.person.name, err.code);
+                MatomoEvents.pushEvent(space.name, 'assignPersonError', person.name, err.code);
             }
             return Promise.reject(err);
         });
@@ -57,7 +62,7 @@ class AssignmentClient {
     }
 
     static async getAssignmentEffectiveDates(spaceUuid: string): Promise<AxiosResponse> {
-        const url = `/api/assignment/dates/${spaceUuid}`;
+        const url = `/api/spaces/${spaceUuid}/assignment/dates`;
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${getToken()}`,
@@ -79,7 +84,7 @@ class AssignmentClient {
 
     static async getReassignments(spaceUuid: string, requestedDate: Date): Promise<AxiosResponse> {
         const formattedDate = moment(requestedDate).format('YYYY-MM-DD');
-        const url = `/api/reassignment/` + spaceUuid + '/' + formattedDate;
+        const url = `/api/spaces/${spaceUuid}/reassignment/${formattedDate}`;
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${getToken()}`,

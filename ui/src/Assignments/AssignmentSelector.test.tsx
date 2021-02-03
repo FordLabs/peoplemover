@@ -63,10 +63,9 @@ describe('the assignment form', () => {
             const spy = jest.spyOn(AssignmentClient, 'createAssignmentForDate');
             expect(spy).toBeCalledTimes(1);
             
-            expect(spy).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: TestUtils.hank,
-                products: [
+            expect(spy).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [
                     {
                         productId: TestUtils.productWithoutAssignments.id,
                         placeholder: false,
@@ -80,7 +79,9 @@ describe('the assignment form', () => {
                         placeholder: TestUtils.assignmentForHank.placeholder,
                     },
                 ],
-            }, TestUtils.space);
+                TestUtils.space,
+                TestUtils.hank
+            );
             
         });
     });

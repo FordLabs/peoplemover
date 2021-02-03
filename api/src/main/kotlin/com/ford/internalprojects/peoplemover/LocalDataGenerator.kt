@@ -138,25 +138,22 @@ class LocalDataGenerator(
 
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2019-01-01"),
-            person = jane,
             products = Sets.newHashSet(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = false
             ))
-        ))
+        ), createdSpace.uuid, jane.id!!)
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.now(),
-            person = bob,
             products = Sets.newHashSet(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = true
             ))
-        ))
+        ), createdSpace.uuid, bob.id!!)
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2020-06-01"),
-            person = adam,
             products = Sets.newHashSet()
-        ))
+        ), createdSpace.uuid, adam.id!!)
     }
 
 }

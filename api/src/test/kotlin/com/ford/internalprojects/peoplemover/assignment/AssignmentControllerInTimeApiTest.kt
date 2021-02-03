@@ -91,10 +91,12 @@ class AssignmentControllerInTimeApiTest {
     val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
     private fun getBaseAssignmentForPersonInSpaceOnDateUrl(spaceUuid: String, personId: Int, date: String) =
-        "/api/spaces/${spaceUuid}/person/${personId}/assignments/date/${date}"
+        "/api/spaces/$spaceUuid/person/$personId/assignments/date/$date"
 
     private fun getBaseAssignmentDatesUrl(spaceUuid: String) =
-        "/api/assignment/dates/${spaceUuid}"
+        "/api/spaces/$spaceUuid/assignment/dates"
+
+    private fun getBaseCreateAssignmentUrl(spaceUuid: String, personId: Int) = "/api/spaces/$spaceUuid/person/$personId/assignment/create"
 
     val baseCreateAssignmentUrl = "/api/assignment/create"
 
@@ -110,7 +112,7 @@ class AssignmentControllerInTimeApiTest {
         productFour = productRepository.save(Product(name = "Just a product", spaceUuid = readOnlySpace.uuid))
         unassignedProduct = productRepository.save(Product(name = "unassigned", spaceUuid = editableSpace.uuid))
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceUuid = editableSpace.uuid))
-        personInReadOnlySpace = personRepository.save(Person(name = "Arnold Britten", newPerson = true, spaceUuid = editableSpace.uuid))
+        personInReadOnlySpace = personRepository.save(Person(name = "Arnold Britten", newPerson = true, spaceUuid = readOnlySpace.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = editableSpace.uuid))
     }
 
@@ -260,14 +262,13 @@ class AssignmentControllerInTimeApiTest {
 
         val newAssignments = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
-                person = person,
                 products = Sets.newSet(
                         ProductPlaceholderPair(productId = productTwo.id!!, placeholder = false),
                         ProductPlaceholderPair(productId = productThree.id!!, placeholder = true)
                 )
         )
 
-        val result = mockMvc.perform(post(baseCreateAssignmentUrl)
+        val result = mockMvc.perform(post(getBaseCreateAssignmentUrl(editableSpace.uuid, person.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newAssignments)))
@@ -287,10 +288,10 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `POST should return 403 if user does not write access`() {
+        val person = Person(id= -1, name ="", spaceUuid = readOnlySpace.uuid);
+        val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.now(), HashSet())
 
-        val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.now(), Person(name ="", spaceUuid = "-9999"), HashSet())
-
-        mockMvc.perform(post(baseCreateAssignmentUrl)
+        mockMvc.perform(post(getBaseCreateAssignmentUrl(readOnlySpace.uuid, person.id!!))
                 .header("Authorization", "Bearer VALID_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createAssignmentsRequest)))
@@ -301,7 +302,6 @@ class AssignmentControllerInTimeApiTest {
     fun `POST should not assign person to unassigned when given set of products`() {
         val assignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
-                person = person,
                 products = Sets.newSet(
                         ProductPlaceholderPair(productId = unassignedProduct.id!!, placeholder = false),
                         ProductPlaceholderPair(productId = productOne.id!!, placeholder = false)
@@ -315,7 +315,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceUuid = editableSpace.uuid
         )
 
-        val result = mockMvc.perform(post(baseCreateAssignmentUrl)
+        val result = mockMvc.perform(post(getBaseCreateAssignmentUrl(editableSpace.uuid, person.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(assignmentRequest)))
@@ -336,7 +336,6 @@ class AssignmentControllerInTimeApiTest {
     fun `POST should assign person to unassigned when given only unassigned product`() {
         val unassignedAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
-                person = person,
                 products = Sets.newSet(
                         ProductPlaceholderPair(productId = unassignedProduct.id!!, placeholder = false)
                 )
@@ -349,7 +348,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceUuid = editableSpace.uuid
         )
 
-        val result = mockMvc.perform(post(baseCreateAssignmentUrl)
+        val result = mockMvc.perform(post(getBaseCreateAssignmentUrl(editableSpace.uuid, person.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(unassignedAssignmentRequest)))
@@ -377,7 +376,6 @@ class AssignmentControllerInTimeApiTest {
 
         val emptyAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
-                person = person,
                 products = Sets.newSet()
         )
 
@@ -388,7 +386,7 @@ class AssignmentControllerInTimeApiTest {
                 spaceUuid = editableSpace.uuid
         )
 
-        val result = mockMvc.perform(post(baseCreateAssignmentUrl)
+        val result = mockMvc.perform(post(getBaseCreateAssignmentUrl(editableSpace.uuid, person.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyAssignmentRequest)))
@@ -407,17 +405,15 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `POST should return 400 when creating assignments given an invalid person`() {
-        val bogusPerson = Person(id = 99999999, name = "fake person", spaceUuid = editableSpace.uuid)
 
         val bogusAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
-                person = bogusPerson,
                 products = Sets.newSet(ProductPlaceholderPair(
                         productId = productOne.id!!,
                         placeholder = false))
         )
 
-        mockMvc.perform(post(baseCreateAssignmentUrl)
+        mockMvc.perform(post(getBaseCreateAssignmentUrl(editableSpace.uuid, personInReadOnlySpace.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bogusAssignmentRequest)))
@@ -430,11 +426,10 @@ class AssignmentControllerInTimeApiTest {
     fun `POST should return 400 when creating assignments given an invalid product`() {
         val bogusAssignmentRequest = CreateAssignmentsRequest(
                 requestedDate = LocalDate.parse(apr1),
-                person = person,
                 products = Sets.newSet(ProductPlaceholderPair(productId = 99999999, placeholder = false))
         )
 
-        mockMvc.perform(post(baseCreateAssignmentUrl)
+        mockMvc.perform(post(getBaseCreateAssignmentUrl(editableSpace.uuid, person.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bogusAssignmentRequest)))

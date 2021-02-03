@@ -31,7 +31,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Assignment} from './Assignment';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import AssignmentClient from './AssignmentClient';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
+import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import { getSelectedFilterLabels } from '../Redux/Reducers/allGroupedTagOptionsReducer';
@@ -155,14 +155,13 @@ function AssignmentCardList({
                             placeholder: oldAssignment.placeholder,
                         });
 
-                    const createAssignmentsRequest: CreateAssignmentsRequest = {
-                        requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                        person: oldAssignment.person,
-                        products: productPlaceholderPairs,
-                    };
-
                     try {
-                        await AssignmentClient.createAssignmentForDate(createAssignmentsRequest, currentSpace);
+                        await AssignmentClient.createAssignmentForDate(
+                            moment(viewingDate).format('YYYY-MM-DD'),
+                            productPlaceholderPairs,
+                            currentSpace,
+                            oldAssignment.person
+                        );
                         fetchProducts();
                         assignmentUpdated = true;
                     } catch (error) {
