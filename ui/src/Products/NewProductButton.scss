@@ -47,9 +47,9 @@ button.newProduct {
 
   &.readOnly:disabled {
     background-color: $gray-5;
+    color: $gray-4;
 
-    .addProductIcon.material-icons,
-    .newProductText {
+    .addProductIcon.material-icons {
       color: $gray-4;
     }
   }
