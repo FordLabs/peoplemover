@@ -51,7 +51,7 @@ function SpaceForm({
         event.preventDefault();
 
         if (!!space && formSpace.uuid) {
-            SpaceClient.editSpace(formSpace.uuid, formSpace, space.name)
+            SpaceClient.editSpaceName(formSpace.uuid, formSpace, space.name)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         } else {

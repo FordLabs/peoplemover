@@ -44,6 +44,7 @@ describe('Space Client', function() {
         Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse));
         Axios.get = jest.fn(x => Promise.resolve({} as AxiosResponse));
         originalWindow = window;
+        window._paq = [];
     });
 
     afterEach(function() {
@@ -77,12 +78,28 @@ describe('Space Client', function() {
         });
     });
 
-    it('should edit space given space uuid and content', function(done) {
+    it('should edit space name given space uuid and content', function(done) {
         const expectedUrl = baseSpaceUrl + '/uuidbob';
         const expectedBody = createEmptySpace();
+        expectedBody.name = 'NewName';
 
-        SpaceClient.editSpace('uuidbob', createEmptySpace(), '').then(() => {
+        const oldSpaceName = 'OldName';
+
+        SpaceClient.editSpaceName('uuidbob', expectedBody, oldSpaceName).then(() => {
             expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
+            expect(window._paq).toContainEqual(['trackEvent', oldSpaceName, 'editSpaceName', expectedBody.name]);
+            done();
+        });
+    });
+
+    it('should edit space read-only flag given space uuid and content', function(done) {
+        const expectedUrl = baseSpaceUrl + '/uuidbob';
+        const expectedBody = createEmptySpace();
+        expectedBody.todayViewIsPublic = true;
+
+        SpaceClient.editSpaceReadOnlyFlag('uuidbob', expectedBody).then(() => {
+            expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
+            expect(window._paq).toContainEqual(['trackEvent', expectedBody.name, 'editSpaceReadOnlyFlag', `${expectedBody.todayViewIsPublic}`]);
             done();
         });
     });

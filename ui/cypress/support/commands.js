@@ -45,7 +45,7 @@ Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}) => {
 });
 
 Cypress.Commands.add('getModal', () => {
-    return cy.get('[data-testid=modalPopupContainer]');
+    return cy.get('[data-testid=modalCard]');
 });
 
 Cypress.Commands.add('closeModal', () => {

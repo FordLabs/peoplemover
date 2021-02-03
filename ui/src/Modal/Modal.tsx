@@ -15,95 +15,115 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
 import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
 import FocusRing from '../FocusRing';
 import {ModalMetadataItem} from '../Redux/Containers/CurrentModal';
+import ModalCardBanner from './ModalCardBanner';
+import MultiModalCardBanner from './MultiModalCardBanner';
+import './Modal.scss';
 
 interface ModalProps {
     modalMetadata: Array<ModalMetadataItem> | null;
     closeModal(): void;
 }
 
-function Modal({
-    modalMetadata,
-    closeModal,
-}: ModalProps): JSX.Element | null {
+function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | null {
     const [shouldShowConfirmCloseModal, setShouldShowConfirmCloseModal] = useState<boolean>(false);
     const [confirmCloseModal, setConfirmCloseModal] = useState<JSX.Element | null>(null);
+    const [expandedSectionIndex, setExpandedSectionIndex] = useState<number>(0);
+
+    const getModalCardCount = useCallback((): number => modalMetadata?.length || 0, [modalMetadata]);
+    const modalCardContentsArePresent = getModalCardCount() > 0;
+    const isSingleModalCard = getModalCardCount() === 1;
+    const isMultiModalCard = getModalCardCount() > 1;
 
     useEffect(() => {
         let bodyOverflowState = 'unset';
-        if (modalMetadata !== null) bodyOverflowState = 'hidden';
+        if (modalCardContentsArePresent) bodyOverflowState = 'hidden';
         document.body.style.overflow = bodyOverflowState;
-    }, [modalMetadata]);
 
-    function showCloseModalWarning(): void {
+        if (isSingleModalCard) setExpandedSectionIndex(0);
+
+    }, [modalMetadata, modalCardContentsArePresent, isSingleModalCard]);
+
+    const showCloseModalWarning = (): void => {
+        const closeConfirmationModal = (): void => { setConfirmCloseModal(null); };
         const propsForCloseConfirmationModal: ConfirmationModalProps = {
             submit: () => {
                 closeModal();
-                setConfirmCloseModal(null);
+                closeConfirmationModal();
             },
-            close: () => {
-                setConfirmCloseModal(null);
-            },
+            close: closeConfirmationModal,
             confirmClose: true,
             warningMessage: 'You have unsaved changes. Closing the window will result in the changes being discarded.',
             submitButtonLabel: 'Close',
         };
         const confirmConfirmationModal: JSX.Element = ConfirmationModal(propsForCloseConfirmationModal);
         setConfirmCloseModal(confirmConfirmationModal);
-    }
-
-    function close(): void {
-        if (shouldShowConfirmCloseModal) {
-            showCloseModalWarning();
-        } else {
-            closeModal();
-        }
-    }
-
-    const modalContainerOnKeyDown = (e: React.KeyboardEvent): void => {
-        if (e.key === 'Escape') close();
     };
 
-    const removeFocusWhenClicking = ( e: React.MouseEvent): void => {
+    const exitModal = (): void => {
+        if (shouldShowConfirmCloseModal) showCloseModalWarning();
+        else closeModal();
+    };
+
+    const modalBackgroundOnKeyDown = (e: React.KeyboardEvent): void => {
+        if (e.key === 'Escape') exitModal();
+    };
+
+    const onModalCardClick = (e: React.MouseEvent, index: number): void => {
         e.stopPropagation();
         FocusRing.turnOffWhenClicking();
+
+        if (isMultiModalCard) setExpandedSectionIndex(index);
     };
 
-    const turnOnFocusWhenTabbing = (e: React.KeyboardEvent): void => {
+    const onModalCardKeydown = (e: React.KeyboardEvent): void => {
         e.stopPropagation();
         FocusRing.turnOnWhenTabbing(e);
     };
 
-    return modalMetadata && modalMetadata.length !== 0 ? (
-        <div className="modalContainer" data-testid="modalContainer"
-            onClick={close}
-            onKeyDown={modalContainerOnKeyDown}>
-            <div className="modalDialogContainer">
-                {modalMetadata.map((item: ModalMetadataItem) => {
+    return !modalCardContentsArePresent ? null : (
+        <div
+            className="modalBackground"
+            data-testid="modalContainer"
+            onClick={exitModal}
+            onKeyDown={modalBackgroundOnKeyDown}>
+            <div className="modalContents">
+                {modalMetadata?.map((item: ModalMetadataItem, index) => {
+                    const isExpanded = expandedSectionIndex === index;
+                    const isCollapsed = !isExpanded;
                     const customModalForm = React.cloneElement(
                         item.form,
-                        {setShouldShowConfirmCloseModal: setShouldShowConfirmCloseModal}
+                        {
+                            collapsed: isCollapsed,
+                            setShouldShowConfirmCloseModal: setShouldShowConfirmCloseModal,
+                        }
                     );
                     return (
                         <div
                             key={item.title}
-                            className="modalPopupContainer"
-                            data-testid="modalPopupContainer"
-                            onClick={removeFocusWhenClicking}
-                            onKeyDown={turnOnFocusWhenTabbing}>
+                            className="modalCard"
+                            data-testid="modalCard"
+                            onClick={(e: React.MouseEvent): void => onModalCardClick(e, index)}
+                            onKeyDown={onModalCardKeydown}
+                            aria-expanded={isExpanded}
+                            hidden={isCollapsed}
+                        >
                             <input type="text" aria-hidden={true} className="hiddenInputField"/>
-                            <div className="modalTitleAndCloseButtonContainer">
-                                <div className="modalTitle">{item.title}</div>
-                                <button className="material-icons closeButton"
-                                    onClick={close}
-                                    data-testid="modalCloseButton">
-                                    close
-                                </button>
-                            </div>
+                            {isSingleModalCard ?
+                                <ModalCardBanner
+                                    title={item.title}
+                                    onCloseBtnClick={exitModal}
+                                /> :
+                                <MultiModalCardBanner
+                                    title={item.title}
+                                    onCloseBtnClick={exitModal}
+                                    collapsed={isCollapsed}
+                                />
+                            }
                             {customModalForm ? customModalForm : item.form}
                             {confirmCloseModal}
                         </div>
@@ -111,7 +131,7 @@ function Modal({
                 })}
             </div>
         </div>
-    ) : null;
+    );
 }
 
 export default Modal;
