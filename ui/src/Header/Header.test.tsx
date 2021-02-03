@@ -17,22 +17,32 @@
 
 import React from 'react';
 import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {RunConfig} from '../index';
 
-jest.useFakeTimers();
 const debounceTimeToWait = 100;
+expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
+    const expectedUrl = 'https://some-url';
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
     let app: RenderResult;
 
     beforeEach( async () => {
+        window.location = {href: expectedUrl} as Location;
+
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+    });
+
+    it('should have no axe violations', async () => {
+        const app = await renderWithRedux(<Header/>, undefined, initialState);
+        const results = await axe(app.container);
+        expect(results).toHaveNoViolations();
     });
 
     it('should hide space buttons', async () => {
@@ -53,6 +63,7 @@ describe('Header', () => {
     describe('Account Dropdown', () => {
         let app: RenderResult;
         beforeEach(async () => {
+            jest.useFakeTimers();
             app = await renderWithRedux(<Header/>, undefined, initialState);
         });
 
