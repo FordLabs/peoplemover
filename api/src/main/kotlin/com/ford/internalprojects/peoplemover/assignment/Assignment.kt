@@ -26,7 +26,7 @@ import javax.persistence.*
 data class Assignment(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int? = null,
+        override val id: Int? = null,
 
         @OneToOne
         @JoinColumn(name = "person_id")

@@ -17,27 +17,39 @@
 
 package com.ford.internalprojects.peoplemover.baserepository
 
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
+import org.springframework.data.repository.findByIdOrNull
 import java.io.Serializable
+import java.lang.RuntimeException
 import java.sql.Timestamp
 import java.util.*
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
 
-class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Serializable>(
+class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Int>(
         entityInformation: JpaEntityInformation<T, *>,
         entityManager: EntityManager,
         private val spaceRepository: SpaceRepository
-) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), PeopleMoverRepository<T, ID> {
+) : SimpleJpaRepository<T, Int>(entityInformation, entityManager), PeopleMoverRepository<T, Int> {
 
     @Transactional
     override fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S {
         updateSpaceLastModified(entity.spaceUuid)
         return save(entity)
+    }
+
+    @Transactional
+    override fun <S : T> updateEntityAndUpdateSpaceLastModified(entity: S): S {
+        val entityToUpdate =  findByIdOrNull(entity.id!!)
+        if(entityToUpdate == null || entityToUpdate.spaceUuid != entity.spaceUuid) {
+            throw EntityNotExistsException()
+        }
+        return saveAndUpdateSpaceLastModified(entity)
     }
 
     @Transactional

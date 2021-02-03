@@ -15,16 +15,28 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.baserepository
+package com.ford.internalprojects.peoplemover.person
 
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
-import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.NoRepositoryBean
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.ford.internalprojects.peoplemover.role.SpaceRole
 
+data class PersonRequest(
 
-@NoRepositoryBean
-interface PeopleMoverRepository<T: SpaceComponent, Int> : CrudRepository<T, Int> {
-    fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S
-    fun <S : T> updateEntityAndUpdateSpaceLastModified(entity: S): S
-    fun <S : T> deleteAndUpdateSpaceLastModified(entity: S)
-}
+        val name: String,
+
+        val spaceRole: SpaceRole? = null,
+
+        val notes: String? = "",
+
+        @JsonProperty
+        var newPerson: Boolean = false
+)
+
+fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
+        id = id,
+        name = this.name,
+        spaceRole = this.spaceRole,
+        notes = this.notes,
+        newPerson = this.newPerson,
+        spaceUuid = spaceUuid
+)

@@ -26,7 +26,7 @@ import javax.persistence.*
 data class Person(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int? = null,
+        override val id: Int? = null,
 
         val name: String,
 

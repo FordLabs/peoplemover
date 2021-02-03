@@ -91,24 +91,21 @@ class LocalDataGenerator(
                 name = "Jane Smith",
                 spaceUuid = createdSpace.uuid,
                 spaceRole = role1
-            ),
-            createdSpace.uuid
+            )
         )
         val bob: Person = personService.createPerson(
             Person(
                 name = "Bob Barker",
                 spaceUuid = createdSpace.uuid,
                 spaceRole = role2
-            ),
-            createdSpace.uuid
+            )
         )
         val adam: Person = personService.createPerson(
             Person(
                 name = "Adam Sandler",
                 spaceUuid = createdSpace.uuid,
                 spaceRole = role3
-            ),
-            createdSpace.uuid
+            )
         )
 
         val productTagAddRequest = ProductTagAddRequest(

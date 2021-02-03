@@ -42,9 +42,9 @@ class PersonController(
     @PostMapping
     fun addPersonToSpace(
             @PathVariable spaceUuid: String,
-            @RequestBody personIncoming: Person
+            @RequestBody personIncoming: PersonRequest
     ): Person {
-        val personCreated = personService.createPerson(personIncoming, spaceUuid)
+        val personCreated = personService.createPerson(personIncoming.toPerson(spaceUuid))
         logger.logInfoMessage("Person with id [${personCreated.id}] created for space: [$spaceUuid].")
         return personCreated
     }
@@ -54,9 +54,10 @@ class PersonController(
     fun updatePerson(
             @PathVariable spaceUuid: String,
             @PathVariable personId: Int,
-            @RequestBody personIncoming: Person
+            @RequestBody personIncoming: PersonRequest
     ): Person {
-        val updatedPerson = personService.updatePerson(personIncoming)
+
+        val updatedPerson = personService.updatePerson(personIncoming.toPerson(spaceUuid, personId))
         logger.logInfoMessage("Person with id [${updatedPerson.id}] updated.")
         return updatedPerson
     }
