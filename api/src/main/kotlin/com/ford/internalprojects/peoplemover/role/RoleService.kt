@@ -22,9 +22,7 @@ import com.ford.internalprojects.peoplemover.color.ColorRepository
 import com.ford.internalprojects.peoplemover.color.exceptions.ColorDoesNotExistException
 import com.ford.internalprojects.peoplemover.role.exceptions.RoleAlreadyExistsException
 import com.ford.internalprojects.peoplemover.role.exceptions.RoleNotExistsException
-import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -58,7 +56,7 @@ class RoleService(
         val roleFound: SpaceRole = spaceRolesRepository.findByIdOrNull(roleId) ?:
                 throw RoleNotExistsException(roleId.toString())
 
-        spaceRolesRepository.deleteAndUpdateSpaceLastModified(roleFound)
+        spaceRolesRepository.deleteEntityAndUpdateSpaceLastModified(roleFound)
     }
 
     fun editRole(spaceUuid: String, roleEditRequest: RoleEditRequest): SpaceRole {

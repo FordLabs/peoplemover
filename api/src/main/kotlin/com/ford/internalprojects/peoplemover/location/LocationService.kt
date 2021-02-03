@@ -54,7 +54,7 @@ class LocationService(
     @Transactional
     fun deleteLocation(locationId: Int) {
         val tagToDelete: SpaceLocation = spaceLocationRepository.findByIdOrNull(locationId) ?: throw LocationNotExistsException()
-        spaceLocationRepository.deleteAndUpdateSpaceLastModified(tagToDelete)
+        spaceLocationRepository.deleteEntityAndUpdateSpaceLastModified(tagToDelete)
     }
 
 }

@@ -81,18 +81,6 @@ class AssignmentController(
         return ResponseEntity.ok(assignmentsCreated)
     }
 
-
-    @PreAuthorize("hasPermission(#assigmentToDelete.spaceUuid, 'modify')")
-    @DeleteMapping(path = ["/api/assignment/delete"])
-    fun deleteAssignment(@RequestBody assigmentToDelete: Assignment): ResponseEntity<Unit> {
-        assignmentService.deleteOneAssignment(assigmentToDelete)
-        logger.logInfoMessage("assignment deleted " +
-                "for person with id: [${assigmentToDelete.person.id}] " +
-                "for product with id: [${assigmentToDelete.productId}] " +
-                "with effective date: [${assigmentToDelete.effectiveDate}]")
-        return ResponseEntity.ok().build()
-    }
-
     @PreAuthorize("hasPermission(#person.spaceUuid, 'modify')")
     @DeleteMapping(path = ["/api/assignment/delete/{requestedDate}"])
     fun deleteAssignmentForDate(@PathVariable requestedDate: String, @RequestBody person: Person): ResponseEntity<Unit> {

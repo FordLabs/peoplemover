@@ -15,17 +15,10 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.baserepository
+package com.ford.internalprojects.peoplemover.baserepository.exceptions
 
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
-import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.NoRepositoryBean
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
-
-@NoRepositoryBean
-interface PeopleMoverRepository<T: SpaceComponent, Int> : CrudRepository<T, Int> {
-    fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S
-    fun <S : T> createEntityAndUpdateSpaceLastModified(entity: S): S
-    fun <S : T> updateEntityAndUpdateSpaceLastModified(entity: S): S
-    fun <S : T> deleteEntityAndUpdateSpaceLastModified(entity: S)
-}
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class EntityAlreadyExistsException : RuntimeException("Entity already exists.")

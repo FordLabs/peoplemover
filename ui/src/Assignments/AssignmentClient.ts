@@ -18,7 +18,6 @@
 import Axios, {AxiosResponse} from 'axios';
 import {CreateAssignmentsRequest} from './CreateAssignmentRequest';
 import moment from 'moment';
-import {Assignment} from './Assignment';
 import {Person} from '../People/Person';
 import {getToken} from '../Auth/TokenProvider';
 import MatomoEvents from '../Matomo/MatomoEvents';
@@ -65,16 +64,6 @@ class AssignmentClient {
         };
 
         return Axios.get(url, {headers} );
-    }
-
-    static async deleteAssignment(assignmentToDelete: Assignment): Promise<AxiosResponse> {
-        const url = `/api/assignment/delete`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        };
-
-        return Axios.delete(url, {headers, data: {'assignmentToDelete': assignmentToDelete}});
     }
 
     static async deleteAssignmentForDate(date: Date, person: Person): Promise<AxiosResponse> {

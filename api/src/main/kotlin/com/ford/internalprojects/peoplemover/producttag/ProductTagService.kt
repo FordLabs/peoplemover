@@ -20,9 +20,7 @@ package com.ford.internalprojects.peoplemover.producttag
 import com.ford.internalprojects.peoplemover.producttag.exceptions.ProductTagAlreadyExistsForSpaceException
 import com.ford.internalprojects.peoplemover.producttag.exceptions.ProductTagNotExistsForSpaceException
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.domain.Sort
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
@@ -49,7 +47,7 @@ class ProductTagService(
         val tagToDelete: ProductTag = productTagRepository.findByIdAndSpaceUuid(productTagId, spaceUuid)
                 ?: throw ProductTagNotExistsForSpaceException()
 
-        productTagRepository.deleteAndUpdateSpaceLastModified(tagToDelete)
+        productTagRepository.deleteEntityAndUpdateSpaceLastModified(tagToDelete)
     }
 
     fun editProductTag(

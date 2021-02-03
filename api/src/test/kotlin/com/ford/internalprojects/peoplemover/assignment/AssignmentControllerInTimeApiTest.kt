@@ -444,60 +444,6 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `DELETE should return 200 when deleting a valid assignment`() {
-        val assignmentToDelete = assignmentRepository.save(Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceUuid = editableSpace.uuid
-        ))
-        assertThat(assignmentRepository.count()).isOne()
-
-        mockMvc.perform(delete(baseDeleteAssignmentUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(assignmentToDelete)))
-                .andExpect(status().isOk)
-
-        assertThat(assignmentRepository.count()).isZero()
-    }
-
-    @Test
-    fun `DELETE should return 200 when trying to delete an assignment that does not exist`() {
-        val assignmentNotInDb = Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceUuid = editableSpace.uuid
-        )
-        assertThat(assignmentRepository.count()).isZero()
-
-        mockMvc.perform(delete(baseDeleteAssignmentUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(assignmentNotInDb)))
-                .andExpect(status().isOk)
-    }
-
-
-    @Test
-    fun `DELETE should return 403 when trying to delete without write authorization`() {
-        val assignmentToDelete = Assignment(
-                person = person,
-                productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(apr1),
-                spaceUuid = "-9999"
-        )
-
-        mockMvc.perform(delete(baseDeleteAssignmentUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(assignmentToDelete)))
-                .andExpect(status().isForbidden)
-
-    }
-
-    @Test
     fun `DELETE should remove assignment(s) given person and date`() {
         val originalAssignmentForPerson: Assignment = assignmentRepository.save(Assignment(
                 person = person,

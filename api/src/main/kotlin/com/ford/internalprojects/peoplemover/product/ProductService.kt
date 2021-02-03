@@ -24,7 +24,6 @@ import com.ford.internalprojects.peoplemover.product.exceptions.ProductAlreadyEx
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -91,7 +90,7 @@ class ProductService(
         if (productToDelete.assignments.isNotEmpty()) {
             unassignPeopleFromProduct(productToDelete)
         }
-        productRepository.deleteAndUpdateSpaceLastModified(productToDelete)
+        productRepository.deleteEntityAndUpdateSpaceLastModified(productToDelete)
     }
 
     private fun unassignPeopleFromProduct(productToDelete: Product) {

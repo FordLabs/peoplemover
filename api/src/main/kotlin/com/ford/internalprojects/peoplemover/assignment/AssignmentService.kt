@@ -24,7 +24,6 @@ import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsEx
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -104,7 +103,7 @@ class AssignmentService(
 
     @Transactional
     fun deleteOneAssignment(assignmentToDelete: Assignment) {
-        assignmentRepository.deleteAndUpdateSpaceLastModified(assignmentToDelete)
+        assignmentRepository.deleteEntityAndUpdateSpaceLastModified(assignmentToDelete)
     }
 
     fun deleteAssignmentsForDate(requestedDate: LocalDate, person: Person) {

@@ -19,7 +19,6 @@ import Axios from 'axios';
 import AssignmentClient from './AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import TestUtils from '../tests/TestUtils';
-import {Assignment} from './Assignment';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
@@ -144,22 +143,6 @@ describe('Assignment client', () => {
         await AssignmentClient.getAssignmentEffectiveDates(spaceUuid);
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
-    });
-
-    it('should delete assignment given assignment', async () => {
-        const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
-        const expectedUrl = '/api/assignment/delete';
-        const expectedConfig = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer 123456',
-            },
-            data: {'assignmentToDelete': expectedAssignmentToDelete},
-        };
-
-        await AssignmentClient.deleteAssignment(expectedAssignmentToDelete);
-
-        expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
     it('should delete assignment given person for a specific date', async () => {

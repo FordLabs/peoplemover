@@ -25,9 +25,7 @@ class PersonService(
         private val personRepository: PersonRepository
 ) {
 
-    fun createPerson(personIncoming: Person): Person {
-        return personRepository.saveAndUpdateSpaceLastModified(personIncoming)
-    }
+    fun createPerson(personIncoming: Person): Person = personRepository.createEntityAndUpdateSpaceLastModified(personIncoming)
 
     fun updatePerson(person: Person): Person = personRepository.updateEntityAndUpdateSpaceLastModified(person)
 
@@ -35,7 +33,7 @@ class PersonService(
 
     fun removePerson(personId: Int, spaceUuid: String) {
         val personToRemove = personRepository.findByIdAndSpaceUuid(personId, spaceUuid) ?: throw PersonNotExistsException()
-        personRepository.deleteAndUpdateSpaceLastModified(personToRemove)
+        personRepository.deleteEntityAndUpdateSpaceLastModified(personToRemove)
     }
 
     fun countOfPeople(): Long {
