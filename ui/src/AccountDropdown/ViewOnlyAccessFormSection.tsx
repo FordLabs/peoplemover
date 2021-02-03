@@ -25,13 +25,16 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 
 import './ViewOnlyAccessFormSection.scss';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface Props {
+    collapsed?: boolean;
     currentSpace: Space;
     setCurrentSpace(space: Space): void;
 }
 
-function ViewOnlyAccessFormSection({currentSpace, setCurrentSpace}: Props): JSX.Element {
+function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: Props): JSX.Element {
+    const isExpanded = !collapsed;
     const [enableViewOnly, setEnableViewOnly] = useState<boolean>(currentSpace.todayViewIsPublic);
     const [copiedLink, setCopiedLink] = useState<boolean>(false);
     const linkToSpace: string = window.location.href;
@@ -40,63 +43,74 @@ function ViewOnlyAccessFormSection({currentSpace, setCurrentSpace}: Props): JSX.
         event.preventDefault();
         await navigator.clipboard.writeText(linkToSpace);
         setCopiedLink(true);
+        MatomoEvents.pushEvent(currentSpace.name, 'readOnlyLinkCopied', '');
 
         setTimeout(() => {setCopiedLink(false);}, 3000);
     };
 
     const toggleReadOnlyEnabled = async (checked: boolean): Promise<void> => {
         setEnableViewOnly(checked);
-        await SpaceClient.editSpace(
+        await SpaceClient.editSpaceReadOnlyFlag(
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             currentSpace.uuid!,
-            {...currentSpace, todayViewIsPublic:checked},
-            currentSpace.name
+            {...currentSpace, todayViewIsPublic:checked}
         ).then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
     };
-    
+
+    let viewAccessEnabledMessage = `View only access is ${enableViewOnly ? 'enabled' : 'disabled'}`;
     return (
         <div className="viewOnlyAccessForm form">
             <div className="viewOnlyToggleContainer">
-                <label htmlFor="viewOnlyAccessToggle" className="viewOnlySwitchLabel">
-                    View only access is {enableViewOnly ? 'enabled' : 'disabled'}
+                <label className="viewOnlySwitchLabel">
+                    {viewAccessEnabledMessage}
                 </label>
-                <ReactSwitch
-                    data-testid="viewOnlyAccessToggle"
-                    id="viewOnlyAccessToggle"
-                    className={enableViewOnly ? '' : 'disabled'}
-                    onChange={toggleReadOnlyEnabled}
-                    checked={enableViewOnly}
-                    checkedIcon={false}
-                    uncheckedIcon={false}
-                    width={27}
-                    height={13}
-                />
-                <i className="material-icons tooltip"
-                    data-md-tooltip="Enabling view only allows anyone to view this space for the current day only.
-                    Visitors cannot make changes to this space. Visitors have ability to sort & filter.">
-                    info
-                </i>
+                {isExpanded && (
+                    <>
+                        <ReactSwitch
+                            data-testid="viewOnlyAccessToggle"
+                            id="viewOnlyAccessToggle"
+                            className={enableViewOnly ? '' : 'disabled'}
+                            onChange={toggleReadOnlyEnabled}
+                            checked={enableViewOnly}
+                            checkedIcon={false}
+                            uncheckedIcon={false}
+                            width={27}
+                            height={16}
+                            hidden={collapsed}
+                            aria-label={viewAccessEnabledMessage}
+                        />
+                        <i hidden={collapsed}
+                            data-testid="viewOnlyAccessTooltip"
+                            className="material-icons tooltip sharon-wants-this-one-pixel-larger"
+                            data-md-tooltip="Enabling view only allows anyone to view this space for the current day only.
+                            Visitors cannot make changes to this space. Visitors have ability to sort & filter.">
+                            info
+                        </i>
+                    </>
+                )}
             </div>
-            <div className={`spaceLinkContainer ${enableViewOnly ? '' : 'disabled'}`}>
-                <input
-                    className="linkToSpace"
-                    data-testid="linkToSpace"
-                    value={linkToSpace}
-                    type="text"
-                    aria-label={linkToSpace}
-                    readOnly
-                    disabled={!enableViewOnly}
-                    data-autoselect=""
-                />
-                <button
-                    className="copyLinkButton"
-                    data-testid="viewOnlyAccessFormCopyLinkButton"
-                    disabled={!enableViewOnly}
-                    onClick={copyLink}
-                    aria-label="Copy link to clipboard">
-                    {copiedLink ? 'Copied!' : 'Copy link'}
-                </button>
-            </div>
+            {isExpanded && (
+                <div className={`spaceLinkContainer ${enableViewOnly ? '' : 'disabled'}`} hidden={collapsed}>
+                    <input
+                        className="linkToSpace"
+                        data-testid="linkToSpace"
+                        value={linkToSpace}
+                        type="text"
+                        aria-label={linkToSpace}
+                        readOnly
+                        disabled={!enableViewOnly}
+                        data-autoselect=""
+                    />
+                    <button
+                        className="copyLinkButton"
+                        data-testid="viewOnlyAccessFormCopyLinkButton"
+                        disabled={!enableViewOnly}
+                        onClick={copyLink}
+                        aria-label="Copy link to clipboard">
+                        {copiedLink ? 'Copied!' : 'Copy link'}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

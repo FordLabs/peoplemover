@@ -23,8 +23,13 @@ import {Router} from 'react-router-dom';
 import {createBrowserHistory, History} from 'history';
 import selectEvent from 'react-select-event';
 import SpaceClient from '../Space/SpaceClient';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {PreloadedState, Store} from 'redux';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
+import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {createEmptySpace} from '../Space/Space';
+import {AvailableActions} from '../Redux/Actions';
+import thunk from 'redux-thunk';
+declare let window: MatomoWindow;
 
 jest.mock('axios');
 
@@ -32,6 +37,7 @@ describe('PeopleMover', () => {
     let app: RenderResult;
     let history: History;
     const addProductButtonText = 'Add Product';
+    let store: Store;
 
     function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
         let history = createBrowserHistory();
@@ -49,6 +55,7 @@ describe('PeopleMover', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+        window._paq = [];
     });
 
     describe('Read Only Mode', function() {
@@ -59,7 +66,8 @@ describe('PeopleMover', () => {
                     products: TestUtils.products,
                     currentSpace: TestUtils.space,
                 } as GlobalStateProps;
-                app = applicationSetup(undefined, initialState);
+                store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+                app = applicationSetup(store, initialState);
             });
         });
 
@@ -68,6 +76,17 @@ describe('PeopleMover', () => {
             expect(app.queryByTestId('unassignedDrawer')).toBeNull();
             expect(app.queryByTestId('archivedProductsDrawer')).toBeNull();
             expect(app.queryByTestId('reassignmentDrawer')).toBeNull();
+        });
+
+        it('should trigger a matomo read-only visit event each time the current space changes', () => {
+            const nextSpace = {...createEmptySpace(), name: 'newSpace'};
+
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'viewOnlyVisit', '']);
+            expect(window._paq).not.toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
+
+            store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: nextSpace });
+
+            expect(window._paq).toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
         });
     });
 
@@ -101,9 +120,22 @@ describe('PeopleMover', () => {
             await app.findByText('Powered by');
             await app.findByText('FordLabs');
         });
+    });
+
+    describe('Page Title', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup();
+            });
+        });
 
         it('should update the page title with the space name', () => {
             expect(document.title).toEqual('testSpace | PeopleMover');
+        });
+
+        it('should set the page title back to the default when the component is unmounted', () => {
+            app.unmount();
+            expect(document.title).toEqual('PeopleMover');
         });
     });
 
