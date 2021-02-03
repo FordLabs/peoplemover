@@ -42,7 +42,7 @@ describe('Share Access Form', () => {
     });
 
     context('"Invite others to view" Section', () => {
-        it('Toggle public ability to see today\'s view should update the space in the API', () => {
+        it('should toggle the space\'s view-only switch and update the space accordingly', () => {
             cy.get('[data-testid=viewOnlyAccessToggle]').as('toggleReadOnlySwitch');
             cy.get('@toggleReadOnlySwitch')
                 .should('not.be.checked')

@@ -78,7 +78,7 @@ describe('PeopleMover', () => {
             expect(app.queryByTestId('reassignmentDrawer')).toBeNull();
         });
 
-        it('should trigger a matomo read-only visit event each time the current space changes',() => {
+        it('should trigger a matomo read-only visit event each time the current space changes', () => {
             const nextSpace = {...createEmptySpace(), name: 'newSpace'};
 
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'viewOnlyVisit', '']);

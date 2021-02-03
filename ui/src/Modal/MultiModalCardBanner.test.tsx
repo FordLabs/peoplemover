@@ -51,7 +51,7 @@ describe('Multi Modal Card Banner', () => {
     });
 
     describe('Arrow Icon', () => {
-        it('should show "up" arrow icon', () => {
+        it('should show "up" arrow icon when expanded', () => {
             component = render(
                 <MultiModalCardBanner
                     title={testTitle}
@@ -63,7 +63,7 @@ describe('Multi Modal Card Banner', () => {
             expect(actualArrowIcon.innerHTML).toEqual('keyboard_arrow_up');
         });
 
-        it('should show "down" arrow icon', () => {
+        it('should show "down" arrow icon when collapsed', () => {
             component = render(
                 <MultiModalCardBanner
                     title={testTitle}
