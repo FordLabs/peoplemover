@@ -97,10 +97,8 @@ class AssignmentControllerInTimeApiTest {
         "/api/spaces/$spaceUuid/assignment/dates"
 
     private fun getBaseCreateAssignmentUrl(spaceUuid: String, personId: Int) = "/api/spaces/$spaceUuid/person/$personId/assignment/create"
+    private fun getBaseDeleteAssignmentUrl(spaceUuid: String, personId: Int, requestedDate: String) = "/api/spaces/$spaceUuid/person/$personId/assignment/delete/$requestedDate"
 
-    val baseCreateAssignmentUrl = "/api/assignment/create"
-
-    val baseDeleteAssignmentUrl = "/api/assignment/delete"
 
     @Before
     fun setup() {
@@ -454,10 +452,8 @@ class AssignmentControllerInTimeApiTest {
                 spaceUuid = editableSpace.uuid
         ))
 
-        mockMvc.perform(delete("$baseDeleteAssignmentUrl/$apr1")
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(person)))
+        mockMvc.perform(delete(getBaseDeleteAssignmentUrl(editableSpace.uuid, person.id!!, apr1))
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
 
         assertThat(assignmentRepository.count()).isOne()
@@ -480,10 +476,8 @@ class AssignmentControllerInTimeApiTest {
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid)
 
-        mockMvc.perform(delete("$baseDeleteAssignmentUrl/$mar1")
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(person)))
+        mockMvc.perform(delete(getBaseDeleteAssignmentUrl(editableSpace.uuid, person.id!!, mar1))
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
 
         assertThat(assignmentRepository.count()).isOne()
@@ -493,10 +487,15 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `DELETE for date should return 403 when trying to delete without write authorization`() {
-        mockMvc.perform(delete("$baseDeleteAssignmentUrl/$mar1")
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(person.copy(spaceUuid = "-9999"))))
+        mockMvc.perform(delete(getBaseDeleteAssignmentUrl(readOnlySpace.uuid, person.id!!, mar1))
+                .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `DELETE  return 400 when trying to delete assignments for a person that does not belong to the space you are accessing`() {
+        mockMvc.perform(delete(getBaseDeleteAssignmentUrl(editableSpace.uuid, personInReadOnlySpace.id!!, mar1))
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isBadRequest)
     }
 }

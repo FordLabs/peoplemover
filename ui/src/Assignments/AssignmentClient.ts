@@ -73,7 +73,7 @@ class AssignmentClient {
 
     static async deleteAssignmentForDate(date: Date, person: Person): Promise<AxiosResponse> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
-        const url = `/api/assignment/delete/${dateAsString}`;
+        const url = `/api/spaces/${person.spaceUuid}/person/${person.id}/assignment/delete/${dateAsString}`;
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${getToken()}`,

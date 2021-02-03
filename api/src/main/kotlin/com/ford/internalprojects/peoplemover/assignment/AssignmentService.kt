@@ -94,7 +94,8 @@ class AssignmentService(
         }
     }
 
-    fun revertAssignmentsForDate(requestedDate: LocalDate, person: Person) {
+    fun revertAssignmentsForDate(requestedDate: LocalDate, spaceUuid: String, personId: Int) {
+        val person = personRepository.findByIdAndSpaceUuid(personId, spaceUuid) ?: throw PersonNotExistsException()
         deleteAssignmentsForDate(requestedDate, person)
         val existingAssignments = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
         if (existingAssignments.isNullOrEmpty()) {

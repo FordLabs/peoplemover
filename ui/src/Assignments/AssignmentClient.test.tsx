@@ -149,7 +149,7 @@ describe('Assignment client', () => {
     });
 
     it('should delete assignment given person for a specific date', async () => {
-        const expectedUrl = '/api/assignment/delete/' + TestUtils.originDateString;
+        const expectedUrl = `/api/spaces/${TestUtils.person1.spaceUuid}/person/${TestUtils.person1.id}/assignment/delete/${TestUtils.originDateString}`;
         const expectedConfig = {
             headers: {
                 'Content-Type': 'application/json',

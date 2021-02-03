@@ -85,12 +85,16 @@ class AssignmentController(
         return ResponseEntity.ok(assignmentsCreated)
     }
 
-    @PreAuthorize("hasPermission(#person.spaceUuid, 'modify')")
-    @DeleteMapping(path = ["/api/assignment/delete/{requestedDate}"])
-    fun deleteAssignmentForDate(@PathVariable requestedDate: String, @RequestBody person: Person): ResponseEntity<Unit> {
-        assignmentService.revertAssignmentsForDate(LocalDate.parse(requestedDate), person)
+    @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
+    @DeleteMapping(path = ["/api/spaces/{spaceUuid}/person/{personId}/assignment/delete/{requestedDate}"])
+    fun deleteAssignmentForDate(
+        @PathVariable spaceUuid: String,
+        @PathVariable personId: Int,
+        @PathVariable requestedDate: String
+    ): ResponseEntity<Unit> {
+        assignmentService.revertAssignmentsForDate(LocalDate.parse(requestedDate), spaceUuid, personId)
         logger.logInfoMessage("assignment deleted " +
-                "for person with id: [${person.id}] " +
+                "for person with id: [${personId}] " +
                 "with effective date: [${requestedDate}]")
         return ResponseEntity.ok().build()
     }
