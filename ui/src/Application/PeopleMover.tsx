@@ -106,7 +106,7 @@ function PeopleMover({
         return (): void => {
             document.title = 'PeopleMover';
         };
-    }, [currentSpace]);
+    }, [currentSpace, isReadOnly]);
 
     useEffect(() => {
         const uuid = window.location.pathname.replace('/', '');
