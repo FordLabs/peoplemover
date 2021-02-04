@@ -17,5 +17,11 @@
 
 package com.ford.internalprojects.peoplemover.location
 
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.Size
 
-data class LocationAddRequest (val name: String)
+data class LocationAddRequest (
+    @field:NotEmpty(message = "Name is required.")
+    @field:Size(max = 255, message = "Name must be less than 255 characters.")
+    val name: String
+)

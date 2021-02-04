@@ -65,6 +65,7 @@ class LocationControllerApiTest {
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
     private lateinit var space: Space
+    private lateinit var spaceWithoutAccess: Space
 
     var baseLocationsUrl: String = ""
 
@@ -73,9 +74,11 @@ class LocationControllerApiTest {
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
+        spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
 
         baseLocationsUrl = getBaseLocationsUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+
     }
 
     @After
@@ -157,6 +160,16 @@ class LocationControllerApiTest {
     }
 
     @Test
+    fun `POST should return 400 bad request when trying to add a space location with an empty name`() {
+        val locationWithEmptyName = LocationAddRequest(name = "")
+        mockMvc.perform(post(baseLocationsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(locationWithEmptyName)))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `POST should add new space location to db and return it`() {
         val locationAddRequest = LocationAddRequest(name = "Germany")
         val result = mockMvc.perform(post(baseLocationsUrl)
@@ -225,6 +238,27 @@ class LocationControllerApiTest {
     }
 
     @Test
+    fun `PUT should return 400 when trying to edit location that is not in the space you have access to`() {
+        val spaceLocationWithoutAccess = spaceLocationRepository.save(
+            SpaceLocation(
+                spaceUuid = spaceWithoutAccess.uuid,
+                name = "Ann Arbor"
+            )
+        )
+
+        val requestBodyObject = LocationEditRequest(
+            spaceLocationWithoutAccess.id!!,
+            "me and you, and you and me, so HAAPPPY TOGEEEETHERRRRRRR"
+        )
+
+        mockMvc.perform(put(baseLocationsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `PUT should return 200 when updating name to existing space location in space with different case`() {
         val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "France", spaceUuid = space.uuid))
@@ -253,6 +287,20 @@ class LocationControllerApiTest {
         mockMvc.perform(delete("$baseLocationsUrl/${spaceLocation.id!!}")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `DELETE should return 400 when trying to delete location that is not in the space you have access to`() {
+        val spaceLocationWithoutAccess: SpaceLocation = spaceLocationRepository.save(
+            SpaceLocation(
+                name = "Deutschland",
+                spaceUuid = spaceWithoutAccess.uuid
+            )
+        )
+
+        mockMvc.perform(delete("$baseLocationsUrl/${spaceLocationWithoutAccess.id!!}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isBadRequest)
     }
 
     @Test
