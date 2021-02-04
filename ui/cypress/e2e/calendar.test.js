@@ -21,7 +21,7 @@ import '../support/commands';
 
 describe('Calendar', () => {
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
 
         cy.get('[data-testid=calendarToggle]').as('calendarToggle');
     });

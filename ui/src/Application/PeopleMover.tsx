@@ -154,8 +154,8 @@ function PeopleMover({
         !hasProducts()
             ? <></>
             : <div className="App">
-                <div>
-                    <Header/>
+                <Header/>
+                <main>
                     <SpaceSelectionTabs/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
@@ -170,8 +170,10 @@ function PeopleMover({
                         )}
                     </div>
                     <CurrentModal/>
-                </div>
-                <Branding/>
+                </main>
+                <footer>
+                    <Branding />
+                </footer>
             </div>
     );
 }

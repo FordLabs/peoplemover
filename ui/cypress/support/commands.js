@@ -25,7 +25,7 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('visitBoard', ({ locationData, productTagsData } = {}) => {
+Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}) => {
     cy.server();
     const date = Cypress.moment().format('yyyy-MM-DD');
     cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');
@@ -67,7 +67,7 @@ Cypress.Commands.add('getModal', () => {
 
 Cypress.Commands.add('closeModal', () => {
     cy.get('[data-testid=modalCloseButton]').click();
-    cy.getModal().should('not.be.visible');
+    cy.getModal().should('not.exist');
 });
 
 Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTextToSelect) => {

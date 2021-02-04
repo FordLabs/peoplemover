@@ -39,12 +39,13 @@ function Header({
 }: HeaderProps): JSX.Element {
     const dashboardPathname = '/user/dashboard';
     const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
+    const spaceName = currentSpace?.name;
 
     return (
         <header className="peopleMoverHeader">
             <div className="headerLeftContainer">
                 <PeopleMoverLogo href={logoHref} />
-                {currentSpace && <h2 className="spaceName">{currentSpace.name}</h2>}
+                {spaceName && <h1 className="spaceName">{spaceName}</h1>}
             </div>
             {!hideAllButtons &&
                 <div className="headerRightContainer">

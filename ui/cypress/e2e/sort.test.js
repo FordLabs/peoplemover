@@ -19,7 +19,7 @@
 
 describe('Sort', () => {
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
         cy.server();
     });
 

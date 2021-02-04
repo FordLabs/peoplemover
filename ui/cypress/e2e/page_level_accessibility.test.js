@@ -17,13 +17,31 @@
 
 /// <reference types="Cypress" />
 
-describe('People', () => {
-    beforeEach(() => {
-        cy.visitSpace();
+describe('Page Level Accessibility', () => {
+    it('Landing Page', () => {
+        cy.visit('/');
+        cy.get('[data-testid=landingPage]');
+        cy.injectAxe();
+        cy.checkA11y();
     });
 
-    it('Keyboard usage adds focus ring to buttons and anchors', () => {
-        cy.get('body').trigger('keydown', {key: 'Tab'});
-        cy.get('body.user-is-tabbing');
+    it('Error page', () => {
+        cy.visit(`/error/404`);
+        cy.injectAxe();
+        cy.get('[data-testid=errorPageTemplate]');
+        cy.checkA11y();
+    });
+
+    it('Space Page', () => {
+        cy.visitSpace();
+        cy.injectAxe();
+        cy.checkA11y();
+    });
+
+    // @todo figure out how to be able to visit this page in Cypress
+    xit('Dashboard Page', () => {
+        cy.visit('/user/dashboard');
+        cy.injectAxe();
+        cy.checkA11y();
     });
 });

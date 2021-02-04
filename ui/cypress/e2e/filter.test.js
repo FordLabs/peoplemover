@@ -19,7 +19,7 @@
 
 describe('Filter', () => {
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
         cy.server();
     });
 

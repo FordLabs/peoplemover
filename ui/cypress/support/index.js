@@ -30,6 +30,7 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+import 'cypress-axe';
 import './commands';
 const spaceUuid = Cypress.env('SPACE_UUID');
 

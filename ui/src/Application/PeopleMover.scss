@@ -99,6 +99,10 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
+  footer {
+    margin-top: auto;
+  }
 }
 
 // Remove default outline when user is tabbing

@@ -66,7 +66,7 @@ function ProductSortBy({
                 id="sortby-dropdown"
                 className="dropdown sortby-dropdown"
                 classNamePrefix="product-sort-by"
-                inputId="sortby-dropdown"
+                inputId="sortby-dropdown-input"
                 aria-labelledby="sortby-dropdown-label"
                 options={sortByOptions}
                 value={originalSortOption}

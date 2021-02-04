@@ -17,7 +17,7 @@
 
 describe('Share Access Form', () => {
     beforeEach(() => {
-        cy.visitBoard();
+        cy.visitSpace();
         openShareAccessForm();
 
         cy.get('[data-testid=modalCard]').eq(0)
@@ -85,7 +85,7 @@ describe('Share Access Form', () => {
                 .click()
                 .should('contain', 'Copied' );
             cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
-            cy.get('[data-testid=modalPopupContainer]').should('not.be.visible');
+            cy.get('[data-testid=modalPopupContainer]').should('not.exist');
         });
     });
 });
