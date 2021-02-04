@@ -79,7 +79,7 @@ describe('Product Tags Client', function() {
         };
         ProductTag.edit(expectedProductEditRequest, TestUtils.space)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductEditRequest, expectedConfig);
+                expect(Axios.put).toHaveBeenCalledWith(`${baseProductTagsUrl}/${TestUtils.productTag1.id}`, expectedProductEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Product Tag');
                 done();
             });

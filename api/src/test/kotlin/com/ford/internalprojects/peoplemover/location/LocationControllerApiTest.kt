@@ -271,6 +271,19 @@ class LocationControllerApiTest {
     }
 
     @Test
+    fun `PUT should return 409 when updating name to existing space location to be the same as another space location`() {
+        val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
+        val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "France", spaceUuid = space.uuid))
+
+        val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name)
+        mockMvc.perform(put(baseLocationsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(locationEditRequest)))
+                .andExpect(status().isConflict)
+    }
+
+    @Test
     fun `DELETE should delete location from space`() {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
         mockMvc.perform(delete("$baseLocationsUrl/${spaceLocation.id}")

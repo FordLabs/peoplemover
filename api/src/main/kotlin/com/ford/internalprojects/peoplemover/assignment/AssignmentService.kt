@@ -18,16 +18,15 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.assignment.exceptions.AssignmentNotExistsException
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import javax.transaction.Transactional
 
 @Service
 class AssignmentService(
@@ -190,7 +189,7 @@ class AssignmentService(
         val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", spaceUuid)
 
         assignmentRequest.products.forEach { product ->
-            productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
+            productRepository.findByIdOrNull(product.productId) ?: throw EntityNotExistsException()
 
             if(product.productId != unassignedProduct!!.id) {
                 val assignment = assignmentRepository.saveAndUpdateSpaceLastModified(
@@ -235,16 +234,7 @@ class AssignmentService(
         return peopleFromAssignments
     }
 
-    fun deleteAllAssignments(personId: Int, spaceUuid: String) {
-        val assignments: List<Assignment> = assignmentRepository.getByPersonIdAndSpaceUuid(personId, spaceUuid)
-        assignments.forEach { deleteOneAssignment(it) }
-    }
-
-    @Throws(AssignmentNotExistsException::class, ProductNotExistsException::class)
     fun updateAssignment(assignmentToUpdate: Assignment) {
-        assignmentRepository.findByIdOrNull(assignmentToUpdate.id!!) ?: throw AssignmentNotExistsException()
-        productRepository.findByIdOrNull(assignmentToUpdate.productId) ?: throw ProductNotExistsException()
-
-        assignmentRepository.saveAndUpdateSpaceLastModified(assignmentToUpdate)
+        assignmentRepository.updateEntityAndUpdateSpaceLastModified(assignmentToUpdate)
     }
 }

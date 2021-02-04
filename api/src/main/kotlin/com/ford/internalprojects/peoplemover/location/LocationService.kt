@@ -17,13 +17,9 @@
 
 package com.ford.internalprojects.peoplemover.location
 
-import com.ford.internalprojects.peoplemover.location.exceptions.LocationAlreadyExistsException
-import com.ford.internalprojects.peoplemover.location.exceptions.LocationNotExistsException
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityAlreadyExistsException
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
 
 @Service
 class LocationService(
@@ -35,7 +31,7 @@ class LocationService(
         return try {
             spaceLocationRepository.createEntityAndUpdateSpaceLastModified(spaceLocationToSave)
         } catch (e: DataIntegrityViolationException ) {
-            throw LocationAlreadyExistsException(locationAddRequest.name)
+            throw EntityAlreadyExistsException()
         }
     }
 
@@ -43,7 +39,11 @@ class LocationService(
         spaceLocationRepository.findAllBySpaceUuid(spaceUuid)
 
     fun editLocation(spaceUuid: String, locationEditRequest: LocationEditRequest): SpaceLocation {
-        return spaceLocationRepository.updateEntityAndUpdateSpaceLastModified(locationEditRequest.toSpaceLocation(spaceUuid))
+        return try {
+            spaceLocationRepository.updateEntityAndUpdateSpaceLastModified(locationEditRequest.toSpaceLocation(spaceUuid))
+        } catch (e: DataIntegrityViolationException) {
+            throw EntityAlreadyExistsException()
+        }
     }
 
     fun deleteLocation(locationId: Int, spaceUuid: String) {

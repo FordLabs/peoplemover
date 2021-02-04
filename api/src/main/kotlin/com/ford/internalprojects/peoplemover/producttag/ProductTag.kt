@@ -30,5 +30,5 @@ data class ProductTag (
     @Column(name = "space_uuid")
     override val spaceUuid: String,
 
-    var name: String
+    val name: String
 ): SpaceComponent

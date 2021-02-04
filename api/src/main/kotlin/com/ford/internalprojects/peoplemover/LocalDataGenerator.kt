@@ -15,7 +15,7 @@ import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.producttag.ProductTag
-import com.ford.internalprojects.peoplemover.producttag.ProductTagAddRequest
+import com.ford.internalprojects.peoplemover.producttag.ProductTagRequest
 import com.ford.internalprojects.peoplemover.producttag.ProductTagService
 import com.ford.internalprojects.peoplemover.role.RoleService
 import com.ford.internalprojects.peoplemover.role.SpaceRole
@@ -108,7 +108,7 @@ class LocalDataGenerator(
             )
         )
 
-        val productTagAddRequest = ProductTagAddRequest(
+        val productTagAddRequest = ProductTagRequest(
             name = "productTag1"
         )
 

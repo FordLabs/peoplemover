@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -69,14 +68,8 @@ class PersonController(
             @PathVariable spaceUuid: String,
             @PathVariable personId: Int
     ) {
-        // I DONT THINK THIS NEEDS TO BE HERE
-        assignmentService.deleteAllAssignments(personId, spaceUuid)
         personService.removePerson(personId, spaceUuid)
         logger.logInfoMessage("Person with id [$personId] deleted.")
     }
-
-    @GetMapping("/total")
-    fun totalPersons(): Long =
-            personService.countOfPeople()
 
 }

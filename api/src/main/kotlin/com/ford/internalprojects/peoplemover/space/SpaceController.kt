@@ -42,13 +42,6 @@ class SpaceController(
         return spaces
     }
 
-    @GetMapping("/total")
-    fun totalSpaces(): ResponseEntity<Int> {
-        val spaces: List<Space> = spaceService.findAll()
-        logger.logInfoMessage("All space retrieved.")
-        return ResponseEntity.ok(spaces.size)
-    }
-
     @PreAuthorize("hasPermission(#uuid, 'read')")
     @GetMapping("/{uuid}")
     fun getSpace(@PathVariable uuid: String): Space {

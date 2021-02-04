@@ -18,15 +18,11 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
-import com.ford.internalprojects.peoplemover.product.exceptions.InvalidProductSpaceMappingException
-import com.ford.internalprojects.peoplemover.product.exceptions.ProductAlreadyExistsException
-import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityAlreadyExistsException
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
 import com.ford.internalprojects.peoplemover.space.Space
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import javax.transaction.Transactional
 
 @Service
 class ProductService(
@@ -48,22 +44,19 @@ class ProductService(
         }.toSet()
     }
 
-    @Throws(ProductAlreadyExistsException::class)
+    @Throws(EntityAlreadyExistsException::class)
     fun create(productAddRequest: ProductAddRequest, spaceUuid: String): Product {
         productRepository.findProductByNameAndSpaceUuid(productAddRequest.name, spaceUuid)?.let {
-            throw ProductAlreadyExistsException()
+            throw EntityAlreadyExistsException()
         }
-        return create(productAddRequest.toProduct(spaceUuid))
+        return productRepository.createEntityAndUpdateSpaceLastModified(productAddRequest.toProduct(spaceUuid))
     }
-
-    fun create(product: Product): Product =
-            productRepository.saveAndUpdateSpaceLastModified(product)
 
 
     fun update(productEditRequest: ProductEditRequest, productId: Int, spaceUuid: String): Product {
         productRepository.findProductByNameAndSpaceUuid(productEditRequest.name, spaceUuid)?.let { foundProduct ->
             if (foundProduct.id != productId) {
-                throw ProductAlreadyExistsException()
+                throw EntityAlreadyExistsException()
             }
             if (foundProduct.startDate!! < productEditRequest.startDate!!) {
                 foundProduct.assignments.forEach {
@@ -77,7 +70,8 @@ class ProductService(
     }
 
     fun delete(productId: Int, spaceUuid: String) {
-        val productToDelete = productRepository.findByIdAndSpaceUuid(productId, spaceUuid) ?: throw ProductNotExistsException()
+        val productToDelete = productRepository.findByIdAndSpaceUuid(productId, spaceUuid)
+                ?: throw EntityNotExistsException()
 
         if (productToDelete.assignments.isNotEmpty()) {
             unassignPeopleFromProduct(productToDelete)
@@ -88,7 +82,7 @@ class ProductService(
     private fun unassignPeopleFromProduct(productToDelete: Product) {
         val unassignedProduct: Product = productRepository
                 .findProductByNameAndSpaceUuid("unassigned", productToDelete.spaceUuid)
-                ?: throw ProductNotExistsException()
+                ?: throw EntityNotExistsException()
 
         productToDelete.assignments.forEach {
             it.productId = unassignedProduct.id!!
@@ -101,6 +95,6 @@ class ProductService(
                 name = "unassigned",
                 spaceUuid = space.uuid
         )
-        create(unassignedProduct)
+        productRepository.createEntityAndUpdateSpaceLastModified(unassignedProduct)
     }
 }

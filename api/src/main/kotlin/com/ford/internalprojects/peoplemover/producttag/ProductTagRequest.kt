@@ -17,4 +17,11 @@
 
 package com.ford.internalprojects.peoplemover.producttag
 
-data class ProductTagAddRequest (val name: String)
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
+
+data class ProductTagRequest (
+    @field:NotBlank(message = "Did you forget to provide a name for the product tag?")
+    @field:Size(max = 255, message = "Name cannot be longer than 255 characters")
+    val name: String
+)
