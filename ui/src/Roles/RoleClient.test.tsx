@@ -88,7 +88,7 @@ describe('Role Client', function() {
         RoleClient.edit(expectedRoleEditRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(
-                    baseRolesUrl, expectedRoleEditRequest, expectedConfig
+                    `${baseRolesUrl}/${TestUtils.softwareEngineer.id}`, expectedRoleEditRequest, expectedConfig
                 );
                 expect(response.data).toBe('Updated Role');
                 done();

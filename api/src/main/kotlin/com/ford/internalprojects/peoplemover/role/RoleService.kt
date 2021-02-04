@@ -44,33 +44,34 @@ class RoleService(
         )?.let { throw RoleAlreadyExistsException(role) }
         val colorToAssign: Color? = getColorToAssign(spaceUuid, colorId)
         val spaceRole = SpaceRole(name = role, color = colorToAssign, spaceUuid = spaceUuid)
-        return spaceRolesRepository.saveAndUpdateSpaceLastModified(spaceRole)
+        return spaceRolesRepository.createEntityAndUpdateSpaceLastModified(spaceRole)
     }
 
     fun getRolesForSpace(spaceUuid: String): Set<SpaceRole> {
         return spaceRolesRepository.findAllBySpaceUuid(spaceUuid)
     }
 
-    @Transactional
-    fun deleteRole(roleId: Int) {
-        val roleFound: SpaceRole = spaceRolesRepository.findByIdOrNull(roleId) ?:
-                throw RoleNotExistsException(roleId.toString())
-
-        spaceRolesRepository.deleteEntityAndUpdateSpaceLastModified(roleFound.id!!, roleFound.spaceUuid)
+    fun deleteRole(roleId: Int, spaceUuid: String) {
+        spaceRolesRepository.deleteEntityAndUpdateSpaceLastModified(roleId, spaceUuid)
     }
 
-    fun editRole(spaceUuid: String, roleEditRequest: RoleEditRequest): SpaceRole {
-        throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest, spaceUuid)
-        val roleToUpdate = spaceRolesRepository.findByIdOrNull(roleEditRequest.id) ?:
-                throw RoleNotExistsException(roleEditRequest.id.toString())
-        roleToUpdate.name = roleEditRequest.name
+    fun editRole(spaceUuid: String, roleId:Int, roleEditRequest: RoleRequest): SpaceRole {
+        throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest, roleId, spaceUuid)
 
-        roleEditRequest.colorId?.let {
-            val colorFound = colorRepository.findByIdOrNull(it) ?:
-                    throw ColorDoesNotExistException()
-            roleToUpdate.color = colorFound
+        val colorFound = if (roleEditRequest.colorId != null) {
+            colorRepository.findByIdOrNull(roleEditRequest.colorId) ?: throw ColorDoesNotExistException()
+        } else {
+            null
         }
-        return spaceRolesRepository.saveAndUpdateSpaceLastModified(roleToUpdate)
+
+        return spaceRolesRepository.updateEntityAndUpdateSpaceLastModified(
+                SpaceRole(
+                    id = roleId,
+                    spaceUuid = spaceUuid,
+                    name = roleEditRequest.name,
+                        color = colorFound
+                )
+        )
     }
 
     private fun getColorToAssign(spaceUuid: String, colorId: Int?): Color? {
@@ -92,12 +93,12 @@ class RoleService(
         return null
     }
 
-    private fun throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest: RoleEditRequest, spaceUuid: String) {
+    private fun throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest: RoleRequest, roleId: Int, spaceUuid: String) {
         spaceRolesRepository.findBySpaceUuidAndNameAllIgnoreCase(
                 spaceUuid,
                 roleEditRequest.name
         )?.let { spaceRole ->
-            val updatedRoleNameAlreadyUsedInOtherSpaceRole = spaceRole.id != roleEditRequest.id
+            val updatedRoleNameAlreadyUsedInOtherSpaceRole = spaceRole.id != roleId
             if (updatedRoleNameAlreadyUsedInOtherSpaceRole) {
                 throw RoleAlreadyExistsException(roleEditRequest.name)
             }

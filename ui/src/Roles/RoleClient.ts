@@ -61,7 +61,7 @@ class RoleClient implements TagClient {
 
     async edit(role: RoleEditRequest, space: Space): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseRolesUrl(space.uuid!!);
+        const url = `${this.getBaseRolesUrl(space.uuid!!)}/${role.id}`;
         let config = {
             headers: {
                 'Content-Type': 'application/json',
