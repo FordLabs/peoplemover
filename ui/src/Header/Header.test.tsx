@@ -28,13 +28,10 @@ const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
-    const expectedUrl = 'https://some-url';
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
     let app: RenderResult;
 
     beforeEach( async () => {
-        window.location = {href: expectedUrl} as Location;
-
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
