@@ -23,6 +23,7 @@ import {ModalMetadataItem} from '../Redux/Containers/CurrentModal';
 import ModalCardBanner from './ModalCardBanner';
 import MultiModalCardBanner from './MultiModalCardBanner';
 import './Modal.scss';
+import FocusTrap from 'focus-trap-react';
 
 interface ModalProps {
     modalMetadata: Array<ModalMetadataItem> | null;
@@ -86,51 +87,53 @@ function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | 
     };
 
     return !modalCardContentsArePresent ? null : (
-        <div
-            className="modalBackground"
-            data-testid="modalContainer"
-            onClick={exitModal}
-            onKeyDown={modalBackgroundOnKeyDown}>
-            <div className="modalContents">
-                {modalMetadata?.map((item: ModalMetadataItem, index) => {
-                    const isExpanded = expandedSectionIndex === index;
-                    const isCollapsed = !isExpanded;
-                    const customModalForm = React.cloneElement(
-                        item.form,
-                        {
-                            collapsed: isCollapsed,
-                            setShouldShowConfirmCloseModal: setShouldShowConfirmCloseModal,
-                        }
-                    );
-                    return (
-                        <div
-                            key={item.title}
-                            className="modalCard"
-                            data-testid="modalCard"
-                            onClick={(e: React.MouseEvent): void => onModalCardClick(e, index)}
-                            onKeyDown={onModalCardKeydown}
-                            aria-expanded={isExpanded}
-                            hidden={isCollapsed}
-                        >
-                            <input type="text" aria-hidden={true} className="hiddenInputField"/>
-                            {isSingleModalCard ?
-                                <ModalCardBanner
-                                    title={item.title}
-                                    onCloseBtnClick={exitModal}
-                                /> :
-                                <MultiModalCardBanner
-                                    title={item.title}
-                                    onCloseBtnClick={exitModal}
-                                    collapsed={isCollapsed}
-                                />
+        <FocusTrap>
+            <div
+                className="modalBackground"
+                data-testid="modalContainer"
+                onClick={exitModal}
+                onKeyDown={modalBackgroundOnKeyDown}>
+                <div className="modalContents">
+                    {modalMetadata?.map((item: ModalMetadataItem, index) => {
+                        const isExpanded = expandedSectionIndex === index;
+                        const isCollapsed = !isExpanded;
+                        const customModalForm = React.cloneElement(
+                            item.form,
+                            {
+                                collapsed: isCollapsed,
+                                setShouldShowConfirmCloseModal: setShouldShowConfirmCloseModal,
                             }
-                            {customModalForm ? customModalForm : item.form}
-                            {confirmCloseModal}
-                        </div>
-                    );
-                })}
+                        );
+                        return (
+                            <div
+                                key={item.title}
+                                className="modalCard"
+                                data-testid="modalCard"
+                                onClick={(e: React.MouseEvent): void => onModalCardClick(e, index)}
+                                onKeyDown={onModalCardKeydown}
+                                aria-expanded={isExpanded}
+                                hidden={isCollapsed}
+                            >
+                                <input type="text" aria-hidden={true} className="hiddenInputField"/>
+                                {isSingleModalCard ?
+                                    <ModalCardBanner
+                                        title={item.title}
+                                        onCloseBtnClick={exitModal}
+                                    /> :
+                                    <MultiModalCardBanner
+                                        title={item.title}
+                                        onCloseBtnClick={exitModal}
+                                        collapsed={isCollapsed}
+                                    />
+                                }
+                                {customModalForm ? customModalForm : item.form}
+                                {confirmCloseModal}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
-        </div>
+        </FocusTrap>
     );
 }
 
