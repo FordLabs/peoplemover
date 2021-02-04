@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,7 +71,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                     <textarea
                         id="emailTextarea"
                         className="emailTextarea"
-                        placeholder="email1@ford.com, email2@ford.com"
+                        placeholder="cdsid@ford.com, cdsid@ford.com"
                         onChange={parseEmails}
                         data-testid="inviteEditorsFormEmailTextarea"
                         hidden={collapsed}
