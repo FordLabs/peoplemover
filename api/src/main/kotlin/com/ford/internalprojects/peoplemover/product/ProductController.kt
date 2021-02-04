@@ -77,7 +77,7 @@ class ProductController(
         @PathVariable productId: Int,
         @Valid @RequestBody productEditRequest: ProductEditRequest
     ): Product {
-        val updatedProduct: Product = productService.update(productEditRequest, spaceUuid)
+        val updatedProduct: Product = productService.update(productEditRequest, productId, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] updated.")
         return updatedProduct
     }

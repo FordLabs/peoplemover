@@ -17,7 +17,6 @@
 
 package com.ford.internalprojects.peoplemover.product
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.producttag.ProductTag
 import java.time.LocalDate
@@ -26,6 +25,7 @@ import javax.validation.constraints.Size
 
 data class ProductAddRequest(
         @field:NotBlank(message = "Invalid Product in Request. Did you forget to provide a name for the product?")
+        @field:Size(max = 255, message = "Name cannot be longer than 255 characters")
         var name: String,
 
         val productTags: Set<ProductTag> = HashSet(),
@@ -34,30 +34,27 @@ data class ProductAddRequest(
 
         val endDate: LocalDate? = null,
 
+        @field:Size(max = 255, message = "dorf cannot be longer than 255 characters")
         val dorf: String = "",
 
         val spaceLocation: SpaceLocation? = null,
 
         val archived: Boolean = false,
 
-        @field:Size(max = 500)
+        @field:Size(max = 500, message = "notes cannot be longer than 500 characters")
         var notes: String = ""
-) {
-        companion object {
-                @JvmStatic
-                @JsonIgnore
-                fun toProduct(productAddRequest: ProductAddRequest, spaceUuid: String): Product {
-                        return Product(
-                                name = productAddRequest.name,
-                                productTags = productAddRequest.productTags,
-                                startDate = productAddRequest.startDate,
-                                endDate = productAddRequest.endDate,
-                                dorf = productAddRequest.dorf,
-                                spaceLocation = productAddRequest.spaceLocation,
-                                archived = productAddRequest.archived,
-                                notes = productAddRequest.notes,
-                                spaceUuid = spaceUuid
-                        )
-                }
-        }
-}
+)
+
+fun ProductAddRequest.toProduct(spaceUuid: String): Product =
+         Product(
+                name = name,
+                productTags = productTags,
+                startDate = startDate,
+                endDate = endDate,
+                dorf = dorf,
+                spaceLocation = spaceLocation,
+                archived = archived,
+                notes = notes,
+                spaceUuid = spaceUuid
+        )
+

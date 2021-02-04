@@ -17,17 +17,14 @@
 
 package com.ford.internalprojects.peoplemover.location
 
-import javax.validation.constraints.Min
-import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Size
+import javax.validation.constraints.*
 
 data class LocationEditRequest (
     @field:NotNull(message = "Id is required.")
     @field:Min(1, message = "Id must be positive.")
     val id: Int,
 
-    @field:NotEmpty(message = "Name is required.")
+    @field:NotBlank(message = "Name is required.")
     @field:Size(max = 255, message = "Name must be less than 255 characters.")
     val name: String
 )

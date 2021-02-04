@@ -74,6 +74,7 @@ class ProductControllerApiTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
     private lateinit var space: Space
+    private lateinit var spaceWithoutAccess: Space
 
     var baseProductsUrl: String = ""
 
@@ -82,7 +83,8 @@ class ProductControllerApiTest {
 
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "tok", uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+        space = spaceRepository.save(Space(name = "tok"))
+        spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
         baseProductsUrl = getBaseProductUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
     }
@@ -160,10 +162,9 @@ class ProductControllerApiTest {
 
 
     @Test
-    fun `PUT should return 406 when trying to update product with too many characters in notes field`() {
+    fun `PUT should return 400 when trying to update product with too many characters in notes field`() {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         val productEditRequest = ProductEditRequest(
-                id = product.id!!,
                 name = product.name,
                 notes = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678" +
                         "9012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345" +
@@ -188,8 +189,7 @@ class ProductControllerApiTest {
         val person: Person = personRepository.save(Person(name = "bob", spaceUuid = space.uuid))
         assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceUuid = space.uuid))
         val productEditRequest = ProductEditRequest(
-                name = "product two",
-                id = product.id!!
+                name = "product two"
         )
 
         val result = mockMvc.perform(put(getSingleProductUrl(product.id!!))
@@ -240,13 +240,25 @@ class ProductControllerApiTest {
     @Test
     fun `PUT should return 403 when trying to edit a product without write authorization`() {
         val product: Product = productRepository.save(Product("name", spaceUuid = space.uuid))
-        val requestBodyObject = ProductEditRequest(product.id!!, "newName",HashSet())
+        val requestBodyObject = ProductEditRequest( "newName",HashSet())
 
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `PUT should return 400 when trying to edit a product in a space that you don not have access to`() {
+        val product: Product = productRepository.save(Product("name", spaceUuid = spaceWithoutAccess.uuid))
+        val requestBodyObject = ProductEditRequest( "newName",HashSet())
+
+        mockMvc.perform(put(getSingleProductUrl(product.id!!))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -282,6 +294,14 @@ class ProductControllerApiTest {
     @Test
     fun `DELETE should return 400 when trying to delete non existing product`() {
         mockMvc.perform(delete(getSingleProductUrl(700))
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `DELETE should return 400 when trying to delete a product in a space you don not have access to`() {
+        val product: Product = productRepository.save(Product(name = "test", spaceUuid = spaceWithoutAccess.uuid))
+        mockMvc.perform(delete(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }

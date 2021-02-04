@@ -301,7 +301,6 @@ class ProductControllerInTimeApiTest {
 
         val productEditRequest = ProductEditRequest(
                 name = product1.name,
-                id = product1.id!!,
                 startDate = newProductStartDate
         )
 
@@ -339,7 +338,6 @@ class ProductControllerInTimeApiTest {
 
         val productEditRequest = ProductEditRequest(
                 name = product2.name,
-                id = product2.id!!,
                 startDate = newProductStartDate
         )
 
@@ -369,7 +367,6 @@ class ProductControllerInTimeApiTest {
 
         val productEditRequest = ProductEditRequest(
                 name = product1.name,
-                id = product1.id!!,
                 startDate = newProductStartDate
         )
 

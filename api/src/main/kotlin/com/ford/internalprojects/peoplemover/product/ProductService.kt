@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
-import com.ford.internalprojects.peoplemover.product.ProductAddRequest.Companion.toProduct
 import com.ford.internalprojects.peoplemover.product.exceptions.InvalidProductSpaceMappingException
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductAlreadyExistsException
 import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
@@ -32,8 +31,7 @@ import javax.transaction.Transactional
 @Service
 class ProductService(
         private val productRepository: ProductRepository,
-        private val assignmentService: AssignmentService,
-        private val spaceRepository: SpaceRepository
+        private val assignmentService: AssignmentService
 ) {
     fun findAll(): List<Product> =
             productRepository.findAll().map { it!! }
@@ -55,17 +53,16 @@ class ProductService(
         productRepository.findProductByNameAndSpaceUuid(productAddRequest.name, spaceUuid)?.let {
             throw ProductAlreadyExistsException()
         }
-        return create(toProduct(productAddRequest, spaceUuid))
+        return create(productAddRequest.toProduct(spaceUuid))
     }
 
     fun create(product: Product): Product =
             productRepository.saveAndUpdateSpaceLastModified(product)
 
 
-    fun update(productEditRequest: ProductEditRequest, spaceUuid: String): Product {
-        productRepository.findByIdOrNull(productEditRequest.id) ?: throw ProductNotExistsException()
+    fun update(productEditRequest: ProductEditRequest, productId: Int, spaceUuid: String): Product {
         productRepository.findProductByNameAndSpaceUuid(productEditRequest.name, spaceUuid)?.let { foundProduct ->
-            if (foundProduct.id != productEditRequest.id) {
+            if (foundProduct.id != productId) {
                 throw ProductAlreadyExistsException()
             }
             if (foundProduct.startDate!! < productEditRequest.startDate!!) {
@@ -75,17 +72,12 @@ class ProductService(
             }
         }
 
-        val product: Product = ProductEditRequest.toProduct(productEditRequest, spaceUuid)
-        return productRepository.saveAndUpdateSpaceLastModified(product)
+        val product: Product = productEditRequest.toProduct(productId, spaceUuid)
+        return productRepository.updateEntityAndUpdateSpaceLastModified(product)
     }
 
-    @Transactional
     fun delete(productId: Int, spaceUuid: String) {
-        val productToDelete = productRepository.findByIdOrNull(productId) ?: throw ProductNotExistsException()
-
-        if (spaceUuid.compareTo(productToDelete.spaceUuid) != 0) {
-            throw InvalidProductSpaceMappingException()
-        }
+        val productToDelete = productRepository.findByIdAndSpaceUuid(productId, spaceUuid) ?: throw ProductNotExistsException()
 
         if (productToDelete.assignments.isNotEmpty()) {
             unassignPeopleFromProduct(productToDelete)
