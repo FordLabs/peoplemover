@@ -90,7 +90,7 @@ class ProductService(
         if (productToDelete.assignments.isNotEmpty()) {
             unassignPeopleFromProduct(productToDelete)
         }
-        productRepository.deleteEntityAndUpdateSpaceLastModified(productToDelete)
+        productRepository.deleteEntityAndUpdateSpaceLastModified(productId, spaceUuid)
     }
 
     private fun unassignPeopleFromProduct(productToDelete: Product) {

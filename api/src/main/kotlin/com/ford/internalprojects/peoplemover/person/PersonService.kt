@@ -32,8 +32,7 @@ class PersonService(
     fun getPeopleInSpace(spaceUuid: String): List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
 
     fun removePerson(personId: Int, spaceUuid: String) {
-        val personToRemove = personRepository.findByIdAndSpaceUuid(personId, spaceUuid) ?: throw PersonNotExistsException()
-        personRepository.deleteEntityAndUpdateSpaceLastModified(personToRemove)
+        personRepository.deleteEntityAndUpdateSpaceLastModified(personId, spaceUuid)
     }
 
     fun countOfPeople(): Long {

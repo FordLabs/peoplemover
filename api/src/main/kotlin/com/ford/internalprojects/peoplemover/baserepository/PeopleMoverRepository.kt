@@ -27,5 +27,5 @@ interface PeopleMoverRepository<T: SpaceComponent, Int> : CrudRepository<T, Int>
     fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S
     fun <S : T> createEntityAndUpdateSpaceLastModified(entity: S): S
     fun <S : T> updateEntityAndUpdateSpaceLastModified(entity: S): S
-    fun <S : T> deleteEntityAndUpdateSpaceLastModified(entity: S)
+    fun deleteEntityAndUpdateSpaceLastModified(id: Int, spaceUuid: String)
 }

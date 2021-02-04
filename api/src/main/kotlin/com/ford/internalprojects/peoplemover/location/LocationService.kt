@@ -47,7 +47,7 @@ class LocationService(
     }
 
     fun deleteLocation(locationId: Int, spaceUuid: String) {
-        spaceLocationRepository.deleteEntityAndUpdateSpaceLastModified(SpaceLocation(id = locationId, spaceUuid = spaceUuid, name = ""))
+        spaceLocationRepository.deleteEntityAndUpdateSpaceLastModified(locationId, spaceUuid)
     }
 
 }

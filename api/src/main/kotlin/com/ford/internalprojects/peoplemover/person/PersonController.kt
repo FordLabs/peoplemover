@@ -22,6 +22,7 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RequestMapping("/api/spaces/{spaceUuid}/people")
 @RestController
@@ -42,7 +43,7 @@ class PersonController(
     @PostMapping
     fun addPersonToSpace(
             @PathVariable spaceUuid: String,
-            @RequestBody personIncoming: PersonRequest
+            @Valid @RequestBody personIncoming: PersonRequest
     ): Person {
         val personCreated = personService.createPerson(personIncoming.toPerson(spaceUuid))
         logger.logInfoMessage("Person with id [${personCreated.id}] created for space: [$spaceUuid].")

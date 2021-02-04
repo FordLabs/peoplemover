@@ -56,7 +56,7 @@ class RoleService(
         val roleFound: SpaceRole = spaceRolesRepository.findByIdOrNull(roleId) ?:
                 throw RoleNotExistsException(roleId.toString())
 
-        spaceRolesRepository.deleteEntityAndUpdateSpaceLastModified(roleFound)
+        spaceRolesRepository.deleteEntityAndUpdateSpaceLastModified(roleFound.id!!, roleFound.spaceUuid)
     }
 
     fun editRole(spaceUuid: String, roleEditRequest: RoleEditRequest): SpaceRole {

@@ -63,13 +63,13 @@ class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Int>(
     }
 
     @Transactional
-    override fun <S : T> deleteEntityAndUpdateSpaceLastModified(entity: S) {
-        val entityToDelete =  findByIdOrNull(entity.id!!)
-        if(entityToDelete == null || entityToDelete.spaceUuid != entity.spaceUuid) {
+    override fun deleteEntityAndUpdateSpaceLastModified(id: Int, spaceUuid: String) {
+        val entityToDelete =  findByIdOrNull(id)
+        if(entityToDelete == null || entityToDelete.spaceUuid != spaceUuid) {
             throw EntityNotExistsException()
         }
-        updateSpaceLastModified(entity.spaceUuid)
-        delete(entity)
+        updateSpaceLastModified(spaceUuid)
+        delete(entityToDelete)
     }
 
     private fun updateSpaceLastModified(spaceUuid: String) {

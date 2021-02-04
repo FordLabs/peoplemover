@@ -103,9 +103,8 @@ class AssignmentService(
         }
     }
 
-    @Transactional
     fun deleteOneAssignment(assignmentToDelete: Assignment) {
-        assignmentRepository.deleteEntityAndUpdateSpaceLastModified(assignmentToDelete)
+        assignmentRepository.deleteEntityAndUpdateSpaceLastModified(assignmentToDelete.id!!, assignmentToDelete.spaceUuid)
     }
 
     fun deleteAssignmentsForDate(requestedDate: LocalDate, person: Person) {

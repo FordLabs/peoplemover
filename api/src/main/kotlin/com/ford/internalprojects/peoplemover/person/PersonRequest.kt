@@ -19,13 +19,19 @@ package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.ford.internalprojects.peoplemover.role.SpaceRole
+import javax.validation.constraints.Max
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.Size
 
 data class PersonRequest(
 
+        @field:NotEmpty(message = "Name cannot be empty.")
+        @field:Size(max = 255, message = "Name cannot exceed 255 characters.")
         val name: String,
 
         val spaceRole: SpaceRole? = null,
 
+        @field:Size(max = 255, message = "Notes cannot exceed 255 characters.")
         val notes: String? = "",
 
         @JsonProperty

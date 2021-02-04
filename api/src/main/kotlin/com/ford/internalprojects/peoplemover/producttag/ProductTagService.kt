@@ -44,10 +44,7 @@ class ProductTagService(
 
     @Transactional
     fun deleteProductTag(productTagId: Int, spaceUuid: String) {
-        val tagToDelete: ProductTag = productTagRepository.findByIdAndSpaceUuid(productTagId, spaceUuid)
-                ?: throw ProductTagNotExistsForSpaceException()
-
-        productTagRepository.deleteEntityAndUpdateSpaceLastModified(tagToDelete)
+        productTagRepository.deleteEntityAndUpdateSpaceLastModified(productTagId, spaceUuid)
     }
 
     fun editProductTag(
