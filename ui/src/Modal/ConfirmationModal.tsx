@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@
 
 import React from 'react';
 import FormButton from '../ModalFormComponents/FormButton';
-import '../Application/Styleguide/Main.scss';
-import './Modal.scss';
 
 export interface ConfirmationModalProps {
     submit(itemToDelete?: unknown): void | Promise<void>;
@@ -81,9 +79,9 @@ function ConfirmationModal({
     );
 
     return (
-        <div className="modalContainer">
-            <div className="modalDialogContainer">
-                <div className="modalPopupContainer">
+        <div className="modalBackground">
+            <div className="modalContents">
+                <div className="modalCard">
                     <div className="modalTitleAndCloseButtonContainer">
                         <div className="modalTitleSpacer"/>
                         <div className="modalTitle">Are you sure?</div>

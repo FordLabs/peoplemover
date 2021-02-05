@@ -15,17 +15,4 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
-import InviteEditorsFormSection from './InviteEditorsFormSection';
-
-function ShareAccessForm(): JSX.Element {
-    return (
-        <>
-            <ViewOnlyAccessFormSection />
-            <InviteEditorsFormSection />
-        </>
-    );
-}
-
-export default ShareAccessForm;
+$form-width: 400px;

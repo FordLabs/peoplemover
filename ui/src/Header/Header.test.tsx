@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,14 +17,15 @@
 
 import React from 'react';
 import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {RunConfig} from '../index';
 
-jest.useFakeTimers();
 const debounceTimeToWait = 100;
+expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
@@ -33,6 +34,12 @@ describe('Header', () => {
     beforeEach( async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+    });
+
+    it('should have no axe violations', async () => {
+        const app = await renderWithRedux(<Header/>, undefined, initialState);
+        const results = await axe(app.container);
+        expect(results).toHaveNoViolations();
     });
 
     it('should hide space buttons', async () => {
@@ -53,6 +60,7 @@ describe('Header', () => {
     describe('Account Dropdown', () => {
         let app: RenderResult;
         beforeEach(async () => {
+            jest.useFakeTimers();
             app = await renderWithRedux(<Header/>, undefined, initialState);
         });
 

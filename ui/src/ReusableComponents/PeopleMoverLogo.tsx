@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,17 +25,31 @@ interface Props {
 }
 
 function PeopleMoverLogo({ href }: Props): JSX.Element {
-    const CustomElement = href ? 'a' : `div`;
-    return (
-        <CustomElement
-            href={href}
-            role="img"
-            aria-label="People Mover Logo"
-            className="peopleMoverLogoContainer">
+    const isLink = Boolean(href);
+
+    const Logo = (): JSX.Element => (
+        <>
             <img src={PersonIcon} alt="" aria-hidden />
-            <span className="peopleMoverTitle" aria-hidden>PEOPLEMOVER</span>
-        </CustomElement>
+            <span className="peopleMoverTitle">PEOPLEMOVER</span>
+        </>
     );
+
+    return isLink
+        ? (
+            <a
+                href={href}
+                aria-label="People Mover Dashboard"
+                data-testid="peopleMoverLogoLink"
+                className="peopleMoverLogo">
+                <Logo />
+            </a>
+        ) : (
+            <div
+                data-testid="peopleMoverStaticLogo"
+                className="peopleMoverLogo">
+                <Logo />
+            </div>
+        );
 }
 
 export default PeopleMoverLogo;

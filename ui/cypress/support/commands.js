@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2021 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // ***********************************************
 // For more comprehensive examples of custom
 // commands please read more here:
@@ -8,7 +25,7 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('visitBoard', ({ locationData, productTagsData } = {}) => {
+Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}) => {
     cy.server();
     const date = Cypress.moment().format('yyyy-MM-DD');
     cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');
@@ -45,12 +62,12 @@ Cypress.Commands.add('visitBoard', ({ locationData, productTagsData } = {}) => {
 });
 
 Cypress.Commands.add('getModal', () => {
-    return cy.get('[data-testid=modalPopupContainer]');
+    return cy.get('[data-testid=modalCard]');
 });
 
 Cypress.Commands.add('closeModal', () => {
     cy.get('[data-testid=modalCloseButton]').click();
-    cy.getModal().should('not.be.visible');
+    cy.getModal().should('not.exist');
 });
 
 Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTextToSelect) => {

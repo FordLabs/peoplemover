@@ -1,5 +1,5 @@
-/*!
- * Copyright (c) 2020 Ford Motor Company
+/*
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 @import '../Application/Styleguide/Colors.scss';
 @import './Form.scss';
 
-.modalContainer {
+.modalBackground {
     position: fixed;
     left: 0;
     top: 0;
@@ -29,7 +29,7 @@
     overflow-y: auto;
 }
 
-.modalDialogContainer {
+.modalContents {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -41,7 +41,7 @@
     width: auto;
 }
 
-.modalPopupContainer {
+.modalCard {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -50,35 +50,36 @@
     border-radius: 6px;
     padding: 32px 0;
     margin: 0.5rem 0;
+
+    &[hidden] {
+        overflow: hidden;
+        max-height: 65px;
+    }
 }
 
-.modalTitleAndCloseButtonContainer {
+.modalCardBanner {
     display: flex;
     align-items: center;
     padding: 0 0 32px 0;
     margin-left: 36px;
     margin-right: 36px;
-}
 
-.modalTitle {
-    flex: 2;
-    font-size: 20px;
-    color: $purple-title;
-    font-weight: bold;
-    margin-left: 16px;
-}
+    .modalTitle {
+        flex: 2;
+        font-size: 20px;
+        color: $purple-title;
+        font-weight: bold;
+        margin: 0 0 0 16px;
+    }
 
-.closeButton {
-    cursor: pointer;
-    border-radius: 50%;
-    color: $gray-1;
-}
-
-button.closeButton {
-    background: none;
-    color: black;
-    padding: 0;
-    letter-spacing: normal;
+    button.closeButton {
+        cursor: pointer;
+        border-radius: 50%;
+        background: none;
+        color: black;
+        padding: 0;
+        letter-spacing: normal;
+    }
 }
 
 .confirmationModalContent {

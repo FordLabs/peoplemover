@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,7 +57,7 @@ describe('Modal', () => {
     });
 
     it('should not close the modal when the modal popup is clicked', () => {
-        fireEvent.click(comp.getByTestId('modalPopupContainer'));
+        fireEvent.click(comp.getByTestId('modalCard'));
         expect(mockedCloseFunction).not.toHaveBeenCalled();
     });
 });

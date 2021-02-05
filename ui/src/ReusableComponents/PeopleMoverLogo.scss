@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,22 +17,22 @@
 
 @import '../Application/Styleguide/Colors';
 
-.peopleMoverLogoContainer {
+.peopleMoverLogo {
   display: flex;
   align-items: center;
   text-decoration: none;
-}
 
-.peopleMoverTitle {
-  display: inline-block;
-  margin: 0;
-  background: $logo-gradient;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 20px;
-  font-weight: bold;
-  line-height: 23px;
-  white-space: nowrap;
-  padding-top: 6px;
-  padding-left: 8px;
+  .peopleMoverTitle {
+    display: inline-block;
+    margin: 0;
+    background: $logo-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 23px;
+    white-space: nowrap;
+    padding-top: 6px;
+    padding-left: 8px;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,7 +66,7 @@ function ProductSortBy({
                 id="sortby-dropdown"
                 className="dropdown sortby-dropdown"
                 classNamePrefix="product-sort-by"
-                inputId="sortby-dropdown"
+                inputId="sortby-dropdown-input"
                 aria-labelledby="sortby-dropdown-label"
                 options={sortByOptions}
                 value={originalSortOption}

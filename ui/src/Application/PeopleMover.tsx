@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,6 +47,7 @@ import {LocationTag} from '../Locations/LocationTag.interface';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -87,7 +88,7 @@ function PeopleMover({
         if (error?.response?.status === BAD_REQUEST) {
             setRedirect(<Redirect to="/error/404"/>);
             return null;
-        } else if ( error?.response?.status === FORBIDDEN) {
+        } else if (error?.response?.status === FORBIDDEN) {
             setRedirect(<Redirect to="/error/403"/>);
             return null;
         } else {
@@ -96,13 +97,24 @@ function PeopleMover({
     }, []);
 
     useEffect(() => {
+        if (currentSpace) {
+            document.title = `${currentSpace.name} | PeopleMover`;
+            if (isReadOnly) {
+                MatomoEvents.pushEvent(currentSpace.name, 'viewOnlyVisit', '');
+            }
+        }
+        return (): void => {
+            document.title = 'PeopleMover';
+        };
+    }, [currentSpace, isReadOnly]);
+
+    useEffect(() => {
         const uuid = window.location.pathname.replace('/', '');
         if (currentModal.modal === null && uuid) {
             SpaceClient.getSpaceFromUuid(uuid)
                 .then((response) => {
                     const space = response.data;
                     setCurrentSpace(space);
-                    document.title = `${space.name} | PeopleMover`;
                 })
                 .catch(handleErrors);
         }
@@ -142,8 +154,8 @@ function PeopleMover({
         !hasProducts()
             ? <></>
             : <div className="App">
-                <div>
-                    <Header/>
+                <Header/>
+                <main>
                     <SpaceSelectionTabs/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
@@ -158,8 +170,10 @@ function PeopleMover({
                         )}
                     </div>
                     <CurrentModal/>
-                </div>
-                <Branding />
+                </main>
+                <footer>
+                    <Branding />
+                </footer>
             </div>
     );
 }

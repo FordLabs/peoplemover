@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +34,7 @@ import {Space} from '../../Space/Space';
 import SpaceForm from '../../SpaceDashboard/SpaceForm';
 import GrantEditAccessConfirmationForm from '../../AccountDropdown/GrantEditAccessConfirmationForm';
 import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSection';
+import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
 
 export interface ModalMetadataItem {
     title: string;
@@ -115,9 +116,8 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             return [{title: 'Edit Space', form: <SpaceForm space={item}/>}];
         case AvailableModals.SHARE_SPACE_ACCESS:
             return [
-                // TODO: Bring back. This was temporarily removed View Only to unblock production
-                // {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
-                {title: 'Share Access', form: <InviteEditorsFormSection/>},
+                {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
+                {title: 'Invite others to edit', form: <InviteEditorsFormSection/>},
             ];
         case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
             return [{
@@ -131,7 +131,6 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     modalMetadata: getCurrentModalMetadata(state.currentModal, state.products, state.currentSpace, state.viewingDate),
-    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

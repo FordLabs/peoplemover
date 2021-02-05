@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,25 +28,23 @@ interface Props {
 
 function ErrorPageTemplate({errorGraphic, errorText}: Props): JSX.Element {
     return (
-        <div className="ErrorPageContainer">
+        <div className="ErrorPageContainer" data-testid="errorPageTemplate">
             <Header hideAllButtons={true}/>
-            <div className="ErrorImageAndTextContainer">
+            <main className="ErrorImageAndTextContainer">
                 <h1 className="oopsText">Oops!</h1>
                 <img src={errorGraphic} alt="" className="errorGraphic"/>
                 <div>
-                    <div className="heading">{ errorText }</div>
+                    <h2 className="heading">{ errorText }</h2>
                 </div>
                 <a href="/user/dashboard">
                     <FormButton className="backToDashboardButton">
                         Back to Dashboard
                     </FormButton>
                 </a>
-            </div>
-
+            </main>
             <footer className="errorPageFooter">
                 <Branding />
             </footer>
-
         </div>
     );
 }

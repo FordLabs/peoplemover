@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,13 @@ import {Router} from 'react-router-dom';
 import {createBrowserHistory, History} from 'history';
 import selectEvent from 'react-select-event';
 import SpaceClient from '../Space/SpaceClient';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {PreloadedState, Store} from 'redux';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
+import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {createEmptySpace} from '../Space/Space';
+import {AvailableActions} from '../Redux/Actions';
+import thunk from 'redux-thunk';
+declare let window: MatomoWindow;
 
 jest.mock('axios');
 
@@ -32,6 +37,7 @@ describe('PeopleMover', () => {
     let app: RenderResult;
     let history: History;
     const addProductButtonText = 'Add Product';
+    let store: Store;
 
     function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
         let history = createBrowserHistory();
@@ -49,7 +55,18 @@ describe('PeopleMover', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+        window._paq = [];
     });
+
+    function getEventCount(eventString: string): number {
+        let returnValue = 0;
+        window._paq.forEach((event) => {
+            if (event.includes(eventString)) {
+                returnValue++;
+            }
+        });
+        return returnValue;
+    }
 
     describe('Read Only Mode', function() {
         beforeEach(async () => {
@@ -59,7 +76,8 @@ describe('PeopleMover', () => {
                     products: TestUtils.products,
                     currentSpace: TestUtils.space,
                 } as GlobalStateProps;
-                app = applicationSetup(undefined, initialState);
+                store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+                app = applicationSetup(store, initialState);
             });
         });
 
@@ -68,6 +86,27 @@ describe('PeopleMover', () => {
             expect(app.queryByTestId('unassignedDrawer')).toBeNull();
             expect(app.queryByTestId('archivedProductsDrawer')).toBeNull();
             expect(app.queryByTestId('reassignmentDrawer')).toBeNull();
+        });
+
+        it('should trigger a matomo read-only visit event each time the current space changes', () => {
+            const nextSpace = {...createEmptySpace(), name: 'newSpace'};
+
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'viewOnlyVisit', '']);
+            expect(window._paq).not.toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
+            expect(getEventCount('viewOnlyVisit')).toEqual(1);
+
+            store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: nextSpace });
+
+            expect(window._paq).toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
+            expect(getEventCount('viewOnlyVisit')).toEqual(2);
+        });
+
+        it('should not trigger a matomo read-only visit event if no space has been defined', () => {
+            expect(getEventCount('viewOnlyVisit')).toEqual(1);
+
+            store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: null });
+
+            expect(getEventCount('viewOnlyVisit')).toEqual(1);
         });
     });
 
@@ -101,9 +140,22 @@ describe('PeopleMover', () => {
             await app.findByText('Powered by');
             await app.findByText('FordLabs');
         });
+    });
+
+    describe('Page Title', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup();
+            });
+        });
 
         it('should update the page title with the space name', () => {
             expect(document.title).toEqual('testSpace | PeopleMover');
+        });
+
+        it('should set the page title back to the default when the component is unmounted', () => {
+            app.unmount();
+            expect(document.title).toEqual('PeopleMover');
         });
     });
 

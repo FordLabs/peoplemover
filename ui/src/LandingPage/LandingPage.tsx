@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@ function LandingPage(): JSX.Element {
 
     return (
         <>
-            <main className="landingPageContainer">
+            <main className="landingPageContainer" data-testid="landingPage">
                 <div className="landingPageInfoContainer">
                     <PeopleMoverLogo/>
                     <h1 className="landingPageInfoHeading">It’s about the people. Your people.</h1>

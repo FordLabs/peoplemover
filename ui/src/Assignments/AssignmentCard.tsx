@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -221,11 +221,14 @@ function AssignmentCard({
                 isUnassignedProduct={isUnassignedProduct}/>
             <button ref={assignmentEditRef}
                 className="personRoleColor"
+                aria-label="Person Menu"
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
             >
-                {
-                    !isReadOnly && <i className="material-icons personEditIcon greyIcon" aria-label="Person Menu">more_vert</i>
+                {!isReadOnly &&
+                    <i className="material-icons personEditIcon greyIcon" aria-hidden>
+                        more_vert
+                    </i>
                 }
             </button>
             {editMenuIsOpened &&
