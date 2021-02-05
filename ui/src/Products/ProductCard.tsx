@@ -164,7 +164,6 @@ function ProductCard({
                                 </h2>
                                 <div className={`productControlsContainer ${readOnlyClass}`}>
                                     <button
-                                        id={product.id.toString()}
                                         data-testid={createDataTestId('addPersonToProductIcon', product.name)}
                                         className="addPersonIcon material-icons greyIcon clickableIcon"
                                         disabled={isReadOnly}

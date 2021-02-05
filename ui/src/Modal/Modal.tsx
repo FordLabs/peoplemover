@@ -87,7 +87,7 @@ function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | 
     };
 
     return !modalCardContentsArePresent ? null : (
-        <FocusTrap>
+        <FocusTrap focusTrapOptions={{escapeDeactivates: false}}>
             <div
                 className="modalBackground"
                 data-testid="modalContainer"
