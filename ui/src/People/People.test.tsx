@@ -282,11 +282,12 @@ describe('People actions', () => {
             expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestUtils.space, expectedPerson);
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: expectedPerson,
-                products: [],
-            }, TestUtils.space);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [],
+                TestUtils.space,
+                expectedPerson
+            );
         };
 
         it('assigns the person created by the PersonForm', async () => {
@@ -389,15 +390,6 @@ describe('People actions', () => {
     describe('Editing people/assignments', () => {
         let app: RenderResult;
 
-        let assignmentToCreate: CreateAssignmentsRequest = {
-            requestedDate: TestUtils.originDateString,
-            person: TestUtils.person1,
-            products: [{
-                productId: TestUtils.productWithAssignments.id,
-                placeholder: true,
-            }],
-        };
-
         let originalWindow: Window;
 
         beforeEach(async () => {
@@ -443,7 +435,17 @@ describe('People actions', () => {
 
                 let person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('Placeholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate, TestUtils.space, false);
+
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                    TestUtils.originDateString,
+                    [{
+                        productId: TestUtils.productWithAssignments.id,
+                        placeholder: true,
+                    }],
+                    TestUtils.space,
+                    TestUtils.person1,
+                    false
+                );
 
                 const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
                 fireEvent.click(editPersonButton);
@@ -452,17 +454,18 @@ describe('People actions', () => {
                 fireEvent.mouseDown(unmarkAsPlaceholderButton);
                 fireEvent.mouseUp(unmarkAsPlaceholderButton);
 
-                const assignmentWithoutPlaceholderToCreate = {
-                    ...assignmentToCreate,
-                    products: [{
+                person1Card = await app.findByTestId('assignmentCard__person_1');
+                expect(person1Card).toHaveClass('NotPlaceholder');
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                    TestUtils.originDateString,
+                    [{
                         productId: TestUtils.productWithAssignments.id,
                         placeholder: false,
                     }],
-                };
-
-                person1Card = await app.findByTestId('assignmentCard__person_1');
-                expect(person1Card).toHaveClass('NotPlaceholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate, TestUtils.space, false);
+                    TestUtils.space,
+                    TestUtils.person1,
+                    false
+                );
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'unmarkAsPlaceholder', TestUtils.person1.name]);
             });
         });
@@ -473,13 +476,14 @@ describe('People actions', () => {
             fireEvent.mouseDown(cancelAssignmentButton);
             fireEvent.mouseUp(cancelAssignmentButton);
 
-            const unassignedAssignmentToCreate = {
-                ...assignmentToCreate,
-                products: [],
-            };
-
             await wait(() => {
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate, TestUtils.space, false);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                    TestUtils.originDateString,
+                    [],
+                    TestUtils.space,
+                    TestUtils.person1,
+                    false
+                );
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'cancelAssignment', TestUtils.person1.name]);
             });
         });

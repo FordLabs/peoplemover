@@ -144,7 +144,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productTwo.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -192,7 +192,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productThree.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -235,7 +235,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productThree.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr2")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid, apr2))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -248,6 +248,8 @@ class AssignmentControllerReassignmentsApiTest {
         assertThat(actualReassignments.size).isOne()
         assertThat(actualReassignments).contains(reassignment)
     }
+
+    private fun baseReassignmentUrl(spaceUuid: String, date: String) = "/api/spaces/$spaceUuid/reassignment/$date"
 
     @Test
     fun `GET should return reassignments with empty string fromProductName when there are no previous assignments`() {
@@ -265,7 +267,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$mar1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,mar1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -288,7 +290,7 @@ class AssignmentControllerReassignmentsApiTest {
                 spaceUuid = editableSpace.uuid
         ))
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$mar1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,mar1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -343,7 +345,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -394,7 +396,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = ""
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -457,7 +459,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -521,7 +523,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = productOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -574,7 +576,7 @@ class AssignmentControllerReassignmentsApiTest {
         )
 
 
-        val result = mockMvc.perform(get("/api/reassignment/${editableSpace.uuid}/$apr1")
+        val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -616,7 +618,7 @@ class AssignmentControllerReassignmentsApiTest {
                 toProductName = readOnlyProductOne.name
         )
 
-        val result = mockMvc.perform(get("/api/reassignment/${readOnlySpace.uuid}/$today")
+        val result = mockMvc.perform(get(baseReassignmentUrl(readOnlySpace.uuid,today))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
@@ -632,7 +634,7 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should return FORBIDDEN when requested date is not today for read only space`() {
-        mockMvc.perform(get("/api/reassignment/${readOnlySpace.uuid}/$mar1")
+        mockMvc.perform(get(baseReassignmentUrl(readOnlySpace.uuid,mar1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
                 .andReturn()

@@ -25,7 +25,7 @@ import javax.persistence.*
 data class SpaceLocation (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    val id: Int? = null,
+    override val id: Int? = null,
 
     @Column(name = "space_uuid")
     override val spaceUuid: String,

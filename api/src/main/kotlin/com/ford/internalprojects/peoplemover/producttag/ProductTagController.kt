@@ -33,10 +33,10 @@ class ProductTagController (
     @PostMapping
     fun createProductTag(
         @PathVariable spaceUuid: String,
-        @Valid @RequestBody addRequest: ProductTagAddRequest
+        @Valid @RequestBody request: ProductTagRequest
     ): ResponseEntity<ProductTag> {
         val createdProductTag: ProductTag = productTagService
-            .createProductTagForSpace(addRequest, spaceUuid)
+            .createProductTagForSpace(request, spaceUuid)
         logger.logInfoMessage("Product tag [${createdProductTag.name}] created for space: [$spaceUuid].")
         return ResponseEntity.ok(createdProductTag)
     }
@@ -58,14 +58,16 @@ class ProductTagController (
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
-    @PutMapping
+    @PutMapping(path = ["/{productTagId}"])
     fun editProductTag(
             @PathVariable spaceUuid: String,
-            @RequestBody productTagEditRequest: ProductTagEditRequest
+            @PathVariable productTagId: Int,
+            @RequestBody productTagRequest: ProductTagRequest
     ): ResponseEntity<ProductTag> {
         val editedProductTag = productTagService.editProductTag(
                 spaceUuid,
-                productTagEditRequest
+                productTagId,
+                productTagRequest
         )
         return ResponseEntity.ok(editedProductTag)
     }

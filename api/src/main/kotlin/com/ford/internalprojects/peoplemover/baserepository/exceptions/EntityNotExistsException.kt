@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.producttag
+package com.ford.internalprojects.peoplemover.baserepository.exceptions
 
-data class ProductTagEditRequest (
-    val id: Int,
-    val name: String
-)
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class EntityNotExistsException : RuntimeException("Entity did not exist. Did you provide the right id and space_uuid?")

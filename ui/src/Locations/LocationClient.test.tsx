@@ -79,7 +79,7 @@ describe('Location Client', function() {
         };
         LocationClient.edit(expectedLocationEditRequest, TestUtils.space)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl, expectedLocationEditRequest, expectedConfig);
+                expect(Axios.put).toHaveBeenCalledWith(baseLocationsUrl + `/${TestUtils.annarbor.id}`, expectedLocationEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Location');
                 done();
             });

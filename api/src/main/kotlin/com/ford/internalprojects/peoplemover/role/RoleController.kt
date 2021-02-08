@@ -40,7 +40,7 @@ class RoleController(
     @PostMapping
     fun addRoleForSpace(
         @PathVariable spaceUuid: String,
-        @RequestBody request: RoleAddRequest
+        @RequestBody request: RoleRequest
     ): ResponseEntity<SpaceRole> {
         val spaceRole: SpaceRole = roleService.addRoleToSpace(
             spaceUuid,
@@ -57,19 +57,20 @@ class RoleController(
         @PathVariable spaceUuid: String,
         @PathVariable roleId: Int
     ): ResponseEntity<Unit> {
-        roleService.deleteRole(roleId)
+        roleService.deleteRole(roleId, spaceUuid)
         logger.logInfoMessage("Role id [$roleId] deleted.")
         return ResponseEntity.ok().build()
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
-    @PutMapping
+    @PutMapping("/{roleId}")
     fun editRole(
         @PathVariable spaceUuid: String,
-        @RequestBody roleEditRequest: RoleEditRequest
+        @PathVariable roleId: Int,
+        @RequestBody roleEditRequest: RoleRequest
     ): ResponseEntity<SpaceRole> {
-        val updatedRole: SpaceRole = roleService.editRole(spaceUuid, roleEditRequest)
-        logger.logInfoMessage("Role with id [${roleEditRequest.id}] edited to: " +
+        val updatedRole: SpaceRole = roleService.editRole(spaceUuid, roleId, roleEditRequest)
+        logger.logInfoMessage("Role with id [${roleId}] edited to: " +
                         "[${roleEditRequest.name}] in space [$spaceUuid].")
         return ResponseEntity.ok(updatedRole)
     }

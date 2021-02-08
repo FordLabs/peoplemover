@@ -17,6 +17,7 @@
 
 import React from 'react';
 import FormButton from '../ModalFormComponents/FormButton';
+import ModalCardBanner from './ModalCardBanner';
 
 export interface ConfirmationModalProps {
     submit(itemToDelete?: unknown): void | Promise<void>;
@@ -82,14 +83,10 @@ function ConfirmationModal({
         <div className="modalBackground">
             <div className="modalContents">
                 <div className="modalCard">
-                    <div className="modalTitleAndCloseButtonContainer">
-                        <div className="modalTitleSpacer"/>
-                        <div className="modalTitle">Are you sure?</div>
-                        <button className="material-icons closeButton"
-                            onClick={close}>
-                            close
-                        </button>
-                    </div>
+                    <ModalCardBanner
+                        title="Are you sure?"
+                        onCloseBtnClick={close}
+                    />
                     <div className="confirmationModalContent">
                         <div>{warningMessage}</div>
                         {(isArchivable()) && <ArchiveMessage />}

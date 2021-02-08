@@ -138,23 +138,6 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `GET should return the number of spaces`() {
-        spaceRepository.save(Space(name = "Ken Masters"))
-        spaceRepository.save(Space(name = "KenM"))
-        spaceRepository.save(Space(name = "Ken Starr"))
-
-        val result = mockMvc.perform(
-            get("$baseSpaceUrl/total")
-                .header("Authorization", "Bearer GOOD_TOKEN")
-        )
-            .andExpect(status().isOk).andReturn()
-
-        val actual: Int = result.response.contentAsString.toInt()
-
-        assertThat(actual).isEqualTo(3)
-    }
-
-    @Test
     fun `GET should return all spaces for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
         val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))

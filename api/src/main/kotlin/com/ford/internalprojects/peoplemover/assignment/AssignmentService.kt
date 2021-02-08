@@ -17,18 +17,15 @@
 
 package com.ford.internalprojects.peoplemover.assignment
 
-import com.ford.internalprojects.peoplemover.assignment.exceptions.AssignmentNotExistsException
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.product.exceptions.ProductNotExistsException
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import javax.transaction.Transactional
 
 @Service
 class AssignmentService(
@@ -72,12 +69,13 @@ class AssignmentService(
         return createReassignments(assignmentsWithExactDate, assignmentsWithPreviousDate)
     }
 
-    fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
-        deleteAssignmentsForDate(assignmentRequest.requestedDate, assignmentRequest.person)
-        return if (assignmentRequest.products.isNullOrEmpty() || requestOnlyContainsUnassigned(assignmentRequest)) {
-            setOf(createUnassignmentForDate(assignmentRequest.requestedDate, assignmentRequest.person))
+    fun createAssignmentFromCreateAssignmentsRequestForDate(assignmentRequest: CreateAssignmentsRequest, spaceUuid: String, personId: Int): Set<Assignment> {
+        val person = personRepository.findByIdAndSpaceUuid(personId, spaceUuid) ?: throw PersonNotExistsException()
+        deleteAssignmentsForDate(assignmentRequest.requestedDate, person)
+        return if (assignmentRequest.products.isNullOrEmpty() || requestOnlyContainsUnassigned(assignmentRequest, spaceUuid)) {
+            setOf(createUnassignmentForDate(assignmentRequest.requestedDate, person))
         } else {
-            createAssignmentsForDate(assignmentRequest)
+            createAssignmentsForDate(assignmentRequest, spaceUuid, person)
         }
     }
 
@@ -94,7 +92,8 @@ class AssignmentService(
         }
     }
 
-    fun revertAssignmentsForDate(requestedDate: LocalDate, person: Person) {
+    fun revertAssignmentsForDate(requestedDate: LocalDate, spaceUuid: String, personId: Int) {
+        val person = personRepository.findByIdAndSpaceUuid(personId, spaceUuid) ?: throw PersonNotExistsException()
         deleteAssignmentsForDate(requestedDate, person)
         val existingAssignments = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
         if (existingAssignments.isNullOrEmpty()) {
@@ -102,9 +101,8 @@ class AssignmentService(
         }
     }
 
-    @Transactional
     fun deleteOneAssignment(assignmentToDelete: Assignment) {
-        assignmentRepository.deleteAndUpdateSpaceLastModified(assignmentToDelete)
+        assignmentRepository.deleteEntityAndUpdateSpaceLastModified(assignmentToDelete.id!!, assignmentToDelete.spaceUuid)
     }
 
     fun deleteAssignmentsForDate(requestedDate: LocalDate, person: Person) {
@@ -167,8 +165,8 @@ class AssignmentService(
         }.filterNot {  reassignment ->  reassignment.toProductName == "unassigned" && reassignment.fromProductName.isNullOrEmpty() }
     }
 
-    private fun requestOnlyContainsUnassigned(assignmentRequest: CreateAssignmentsRequest): Boolean {
-        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", assignmentRequest.person.spaceUuid)
+    private fun requestOnlyContainsUnassigned(assignmentRequest: CreateAssignmentsRequest, spaceUuid: String): Boolean {
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", spaceUuid)
         return (assignmentRequest.products.size == 1 && assignmentRequest.products.first().productId == unassignedProduct!!.id)
     }
 
@@ -185,21 +183,21 @@ class AssignmentService(
         )
     }
 
-    private fun createAssignmentsForDate(assignmentRequest: CreateAssignmentsRequest): Set<Assignment> {
+    private fun createAssignmentsForDate(assignmentRequest: CreateAssignmentsRequest, spaceUuid: String, person: Person): Set<Assignment> {
         val createdAssignments = hashSetOf<Assignment>()
-        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", assignmentRequest.person.spaceUuid)
+        val unassignedProduct: Product? = productRepository.findProductByNameAndSpaceUuid("unassigned", spaceUuid)
 
         assignmentRequest.products.forEach { product ->
-            productRepository.findByIdOrNull(product.productId) ?: throw ProductNotExistsException()
+            productRepository.findByIdOrNull(product.productId) ?: throw EntityNotExistsException()
 
             if(product.productId != unassignedProduct!!.id) {
                 val assignment = assignmentRepository.saveAndUpdateSpaceLastModified(
                         Assignment(
-                                person = assignmentRequest.person,
+                                person = person,
                                 placeholder = product.placeholder,
                                 productId = product.productId,
                                 effectiveDate = assignmentRequest.requestedDate,
-                                spaceUuid = assignmentRequest.person.spaceUuid
+                                spaceUuid = spaceUuid
                         )
                 )
                 createdAssignments.add(assignment)
@@ -235,16 +233,7 @@ class AssignmentService(
         return peopleFromAssignments
     }
 
-    fun deleteAllAssignments(personId: Int, spaceUuid: String) {
-        val assignments: List<Assignment> = assignmentRepository.getByPersonIdAndSpaceUuid(personId, spaceUuid)
-        assignments.forEach { deleteOneAssignment(it) }
-    }
-
-    @Throws(AssignmentNotExistsException::class, ProductNotExistsException::class)
     fun updateAssignment(assignmentToUpdate: Assignment) {
-        assignmentRepository.findByIdOrNull(assignmentToUpdate.id!!) ?: throw AssignmentNotExistsException()
-        productRepository.findByIdOrNull(assignmentToUpdate.productId) ?: throw ProductNotExistsException()
-
-        assignmentRepository.saveAndUpdateSpaceLastModified(assignmentToUpdate)
+        assignmentRepository.updateEntityAndUpdateSpaceLastModified(assignmentToUpdate)
     }
 }

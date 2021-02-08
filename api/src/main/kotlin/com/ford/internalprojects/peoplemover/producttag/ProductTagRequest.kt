@@ -15,10 +15,13 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.location.exceptions
+package com.ford.internalprojects.peoplemover.producttag
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 
-@ResponseStatus(value = HttpStatus.CONFLICT)
-class LocationAlreadyExistsException(location: String) : RuntimeException(location)
+data class ProductTagRequest (
+    @field:NotBlank(message = "Did you forget to provide a name for the product tag?")
+    @field:Size(max = 255, message = "Name cannot be longer than 255 characters")
+    val name: String
+)

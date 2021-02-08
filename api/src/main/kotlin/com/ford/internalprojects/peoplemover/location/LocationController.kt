@@ -21,6 +21,7 @@ import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RequestMapping("/api/spaces/{spaceUuid}/locations")
 @RestController
@@ -40,19 +41,20 @@ class LocationController(
     @PostMapping
     fun addLocationForSpace(
         @PathVariable spaceUuid: String,
-        @RequestBody locationAddRequest: LocationAddRequest
+        @Valid @RequestBody locationAddRequest: LocationRequest
     ): ResponseEntity<SpaceLocation> {
         val addedLocation: SpaceLocation = locationService.addLocationToSpace(spaceUuid, locationAddRequest)
         return ResponseEntity.ok(addedLocation)
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
-    @PutMapping
+    @PutMapping(path = ["/{locationId}"])
     fun editLocationForSpace(
         @PathVariable spaceUuid: String,
-        @RequestBody locationEditRequest: LocationEditRequest
+        @PathVariable locationId: Int,
+        @Valid @RequestBody locationRequest: LocationRequest
     ): ResponseEntity<SpaceLocation> {
-        val editedLocation: SpaceLocation = locationService.editLocation(spaceUuid, locationEditRequest)
+        val editedLocation: SpaceLocation = locationService.editLocation(spaceUuid, locationRequest, locationId)
         logger.logInfoMessage("Location with id [${editedLocation.id}] is updated to have name " +
                 "[${editedLocation.name}] in space: [$spaceUuid].")
         return ResponseEntity.ok(editedLocation)
@@ -64,7 +66,7 @@ class LocationController(
         @PathVariable spaceUuid: String,
         @PathVariable locationId: Int
     ): ResponseEntity<Unit> {
-        locationService.deleteLocation(locationId)
+        locationService.deleteLocation(locationId, spaceUuid)
         logger.logInfoMessage("Deleted location with id [$locationId] in space: [$spaceUuid].")
         return ResponseEntity.ok().build()
     }

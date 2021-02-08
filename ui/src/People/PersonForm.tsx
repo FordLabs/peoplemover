@@ -156,11 +156,12 @@ function PersonForm({
             }
             if (isEditPersonForm && assignment) {
                 const response = await PeopleClient.updatePerson(currentSpace, person);
-                await AssignmentClient.createAssignmentForDate({
-                    requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                    person: assignment.person,
-                    products: getSelectedProductPairs(),
-                }, currentSpace);
+                await AssignmentClient.createAssignmentForDate(
+                    moment(viewingDate).format('YYYY-MM-DD'),
+                    getSelectedProductPairs(),
+                    currentSpace,
+                    assignment.person
+                );
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
             } else {
@@ -168,11 +169,10 @@ function PersonForm({
                 const newPerson: Person = response.data;
                 addPerson(newPerson);
                 await AssignmentClient.createAssignmentForDate(
-                    {
-                        requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                        person: newPerson,
-                        products: getSelectedProductPairs(),
-                    }, currentSpace
+                    moment(viewingDate).format('YYYY-MM-DD'),
+                    getSelectedProductPairs(),
+                    currentSpace,
+                    newPerson
                 );
             }
             closeModal();

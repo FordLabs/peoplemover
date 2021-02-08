@@ -24,11 +24,10 @@ import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Re
 import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-
 import '../Application/Styleguide/Main.scss';
 import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
+import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from '../tests/TestUtils';
@@ -109,27 +108,27 @@ function AssignmentCard({
             placeholder: fetchedAssignment.placeholder,
         } as ProductPlaceholderPair));
 
-        const assignmentToUpdate: CreateAssignmentsRequest = {
-            requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-            person: assignment.person,
-            products: productPlaceholderPairs,
-        };
-
         toggleEditMenu();
 
-        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace, false).then(() => {
-            if (markedAsPlaceholder) {
-                MatomoEvents.pushEvent(currentSpace.name, 'markAsPlaceholder', assignment.person.name);
-            } else {
-                MatomoEvents.pushEvent(currentSpace.name, 'unmarkAsPlaceholder', assignment.person.name);
-            }
-            if (fetchProducts) {
-                fetchProducts();
-            }
-        }).catch((error) => {
-            MatomoEvents.pushEvent(currentSpace.name, 'placeholderError', assignment.person.name, error.code);
-            return Promise.reject(error);
-        });
+        AssignmentClient.createAssignmentForDate(
+            moment(viewingDate).format('YYYY-MM-DD'),
+            productPlaceholderPairs,
+            currentSpace,
+            assignment.person,
+            false)
+            .then(() => {
+                if (markedAsPlaceholder) {
+                    MatomoEvents.pushEvent(currentSpace.name, 'markAsPlaceholder', assignment.person.name);
+                } else {
+                    MatomoEvents.pushEvent(currentSpace.name, 'unmarkAsPlaceholder', assignment.person.name);
+                }
+                if (fetchProducts) {
+                    fetchProducts();
+                }
+            }).catch((error) => {
+                MatomoEvents.pushEvent(currentSpace.name, 'placeholderError', assignment.person.name, error.code);
+                return Promise.reject(error);
+            });
     }
 
     async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
@@ -142,15 +141,15 @@ function AssignmentCard({
                 placeholder: fetchedAssignment.placeholder,
             } as ProductPlaceholderPair));
 
-        const assignmentToUpdate: CreateAssignmentsRequest = {
-            requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-            person: assignment.person,
-            products: productPlaceholderPairs,
-        };
-
         toggleEditMenu();
 
-        AssignmentClient.createAssignmentForDate(assignmentToUpdate, currentSpace, false).then(() => {
+        AssignmentClient.createAssignmentForDate(
+            moment(viewingDate).format('YYYY-MM-DD'),
+            productPlaceholderPairs,
+            currentSpace,
+            assignment.person,
+            false
+        ).then(() => {
             MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignment', assignment.person.name);
             if (fetchProducts) {
                 fetchProducts();

@@ -17,17 +17,15 @@
 
 package com.ford.internalprojects.peoplemover.product
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.producttag.ProductTag
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
-data class ProductEditRequest(
-        val id: Int,
-
+data class ProductRequest(
         @field:NotBlank(message = "Invalid Product in Request. Did you forget to provide a name for the product?")
+        @field:Size(max = 255, message = "Name cannot be longer than 255 characters")
         var name: String,
 
         val productTags: Set<ProductTag> = HashSet(),
@@ -36,31 +34,30 @@ data class ProductEditRequest(
 
         val endDate: LocalDate? = null,
 
+        @field:Size(max = 255, message = "dorf cannot be longer than 255 characters")
         val dorf: String = "",
 
         val spaceLocation: SpaceLocation? = null,
 
         val archived: Boolean = false,
 
-        @field:Size(max = 500)
+        @field:Size(max = 500, message = "notes cannot be longer than 500 characters")
         var notes: String = ""
-) {
-        companion object {
-                @JvmStatic
-                @JsonIgnore
-                fun toProduct(productEditRequest: ProductEditRequest, spaceUuid: String): Product {
-                        return Product(
-                                id = productEditRequest.id,
-                                name = productEditRequest.name,
-                                productTags = productEditRequest.productTags,
-                                startDate = productEditRequest.startDate,
-                                endDate = productEditRequest.endDate,
-                                dorf = productEditRequest.dorf,
-                                spaceLocation = productEditRequest.spaceLocation,
-                                archived = productEditRequest.archived,
-                                notes = productEditRequest.notes,
-                                spaceUuid = spaceUuid
-                        )
-                }
-        }
-}
+)
+
+fun ProductRequest.toProduct(productId: Int? = null, spaceUuid: String): Product =
+         Product(
+                id = productId,
+                name = name,
+                productTags = productTags,
+                startDate = startDate,
+                endDate = endDate,
+                dorf = dorf,
+                spaceLocation = spaceLocation,
+                archived = archived,
+                notes = notes,
+                spaceUuid = spaceUuid
+        )
+
+
+
