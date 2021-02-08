@@ -45,27 +45,27 @@ class ProductService(
     }
 
     @Throws(EntityAlreadyExistsException::class)
-    fun create(productAddRequest: ProductAddRequest, spaceUuid: String): Product {
-        productRepository.findProductByNameAndSpaceUuid(productAddRequest.name, spaceUuid)?.let {
+    fun create(productRequest: ProductRequest, spaceUuid: String): Product {
+        productRepository.findProductByNameAndSpaceUuid(productRequest.name, spaceUuid)?.let {
             throw EntityAlreadyExistsException()
         }
-        return productRepository.createEntityAndUpdateSpaceLastModified(productAddRequest.toProduct(spaceUuid))
+        return productRepository.createEntityAndUpdateSpaceLastModified(productRequest.toProduct(spaceUuid = spaceUuid))
     }
 
 
-    fun update(productEditRequest: ProductEditRequest, productId: Int, spaceUuid: String): Product {
-        productRepository.findProductByNameAndSpaceUuid(productEditRequest.name, spaceUuid)?.let { foundProduct ->
+    fun update(productRequest: ProductRequest, productId: Int, spaceUuid: String): Product {
+        productRepository.findProductByNameAndSpaceUuid(productRequest.name, spaceUuid)?.let { foundProduct ->
             if (foundProduct.id != productId) {
                 throw EntityAlreadyExistsException()
             }
-            if (foundProduct.startDate!! < productEditRequest.startDate!!) {
+            if (foundProduct.startDate!! < productRequest.startDate!!) {
                 foundProduct.assignments.forEach {
-                    assignmentService.changeProductStartDateForOneAssignment(it, productEditRequest.startDate)
+                    assignmentService.changeProductStartDateForOneAssignment(it, productRequest.startDate)
                 }
             }
         }
 
-        val product: Product = productEditRequest.toProduct(productId, spaceUuid)
+        val product: Product = productRequest.toProduct(productId, spaceUuid)
         return productRepository.updateEntityAndUpdateSpaceLastModified(product)
     }
 

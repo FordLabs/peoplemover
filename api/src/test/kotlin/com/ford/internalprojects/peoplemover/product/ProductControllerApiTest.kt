@@ -100,7 +100,7 @@ class ProductControllerApiTest {
 
     @Test
     fun `POST should create new Product`() {
-        val productAddRequest = ProductAddRequest(name = "product one")
+        val productAddRequest = ProductRequest(name = "product one")
 
         val result = mockMvc.perform(post(baseProductsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -122,7 +122,7 @@ class ProductControllerApiTest {
 
     @Test
     fun `POST should return 400 when trying to create product with no product name`() {
-        val productAddRequest = ProductAddRequest(name = "")
+        val productAddRequest = ProductRequest(name = "")
 
         val result = mockMvc.perform(
                 post(baseProductsUrl)
@@ -140,7 +140,7 @@ class ProductControllerApiTest {
     @Test
     fun `POST should return 409 when trying to create product of the same name`() {
         productRepository.save(Product(name = "product one", spaceUuid = space.uuid))
-        val productAddRequest = ProductAddRequest(name = "product one")
+        val productAddRequest = ProductRequest(name = "product one")
 
         mockMvc.perform(post(baseProductsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -151,7 +151,7 @@ class ProductControllerApiTest {
 
       @Test
       fun `POST should return 403 when trying to create a product without write authorization`() {
-        val requestBodyObject = ProductAddRequest("Not blank")
+        val requestBodyObject = ProductRequest("Not blank")
 
         mockMvc.perform(post(baseProductsUrl)
               .header("Authorization", "Bearer ANONYMOUS_TOKEN")
@@ -164,7 +164,7 @@ class ProductControllerApiTest {
     @Test
     fun `PUT should return 400 when trying to update product with too many characters in notes field`() {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
-        val productEditRequest = ProductEditRequest(
+        val productEditRequest = ProductRequest(
                 name = product.name,
                 notes = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678" +
                         "9012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345" +
@@ -188,7 +188,7 @@ class ProductControllerApiTest {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         val person: Person = personRepository.save(Person(name = "bob", spaceUuid = space.uuid))
         assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceUuid = space.uuid))
-        val productEditRequest = ProductEditRequest(
+        val productEditRequest = ProductRequest(
                 name = "product two"
         )
 
@@ -240,7 +240,7 @@ class ProductControllerApiTest {
     @Test
     fun `PUT should return 403 when trying to edit a product without write authorization`() {
         val product: Product = productRepository.save(Product("name", spaceUuid = space.uuid))
-        val requestBodyObject = ProductEditRequest( "newName",HashSet())
+        val requestBodyObject = ProductRequest( "newName",HashSet())
 
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
@@ -252,7 +252,7 @@ class ProductControllerApiTest {
     @Test
     fun `PUT should return 400 when trying to edit a product in a space that you don not have access to`() {
         val product: Product = productRepository.save(Product("name", spaceUuid = spaceWithoutAccess.uuid))
-        val requestBodyObject = ProductEditRequest( "newName",HashSet())
+        val requestBodyObject = ProductRequest( "newName",HashSet())
 
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN")

@@ -17,7 +17,6 @@
 
 package com.ford.internalprojects.peoplemover.person
 
-import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
 import org.springframework.stereotype.Service
 
 @Service
@@ -33,9 +32,5 @@ class PersonService(
 
     fun removePerson(personId: Int, spaceUuid: String) {
         personRepository.deleteEntityAndUpdateSpaceLastModified(personId, spaceUuid)
-    }
-
-    fun countOfPeople(): Long {
-        return personRepository.count()
     }
 }

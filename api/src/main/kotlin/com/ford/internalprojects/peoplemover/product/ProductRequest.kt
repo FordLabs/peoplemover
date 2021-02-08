@@ -23,7 +23,7 @@ import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
-data class ProductAddRequest(
+data class ProductRequest(
         @field:NotBlank(message = "Invalid Product in Request. Did you forget to provide a name for the product?")
         @field:Size(max = 255, message = "Name cannot be longer than 255 characters")
         var name: String,
@@ -45,8 +45,9 @@ data class ProductAddRequest(
         var notes: String = ""
 )
 
-fun ProductAddRequest.toProduct(spaceUuid: String): Product =
+fun ProductRequest.toProduct(productId: Int? = null, spaceUuid: String): Product =
          Product(
+                id = productId,
                 name = name,
                 productTags = productTags,
                 startDate = startDate,
@@ -57,4 +58,6 @@ fun ProductAddRequest.toProduct(spaceUuid: String): Product =
                 notes = notes,
                 spaceUuid = spaceUuid
         )
+
+
 

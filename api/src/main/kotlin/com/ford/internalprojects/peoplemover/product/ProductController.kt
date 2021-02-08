@@ -63,9 +63,9 @@ class ProductController(
     @PostMapping
     fun createProduct(
         @PathVariable spaceUuid: String,
-        @Valid @RequestBody productAddRequest: ProductAddRequest
+        @Valid @RequestBody productRequest: ProductRequest
     ): Product {
-        val createdProduct = productService.create(productAddRequest, spaceUuid)
+        val createdProduct = productService.create(productRequest, spaceUuid)
         logger.logInfoMessage("Product [${createdProduct.name}] created.")
         return createdProduct
     }
@@ -75,9 +75,9 @@ class ProductController(
     fun updateProduct(
         @PathVariable spaceUuid: String,
         @PathVariable productId: Int,
-        @Valid @RequestBody productEditRequest: ProductEditRequest
+        @Valid @RequestBody productRequest: ProductRequest
     ): Product {
-        val updatedProduct: Product = productService.update(productEditRequest, productId, spaceUuid)
+        val updatedProduct: Product = productService.update(productRequest, productId, spaceUuid)
         logger.logInfoMessage("Product with id [$productId] updated.")
         return updatedProduct
     }
