@@ -16,8 +16,7 @@
  */
 
 import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
-import React, {CSSProperties, ReactChild, ReactElement, ReactNode, RefObject, useEffect} from 'react';
-import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
+import React, {CSSProperties, ReactChild, ReactElement, ReactNode} from 'react';
 import {Option} from '../CommonTypes/Option';
 
 import './ReactSelectStyles.scss';
@@ -358,31 +357,12 @@ export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element 
     );
 };
 
-export const CustomOption = (allTheProps: OptionProps<OptionTypeBase>): JSX.Element => {
-    const {
-        ...propsForTheDiv
-    } = allTheProps;
+export const CustomOption = (props: OptionProps<OptionTypeBase>): JSX.Element => (
+    <components.Option {...props}>
+        <div className="roleOptionLabel">{props.label}</div>
+    </components.Option>
+);
 
-    const {label} = propsForTheDiv;
-    const colorBadgeRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (colorBadgeRef.current) {
-            const color = allTheProps.data.color;
-            ThemeApplier.setBackgroundColorOnElement(colorBadgeRef.current, color);
-        }
-    }, [allTheProps.data.color]);
-
-    return (
-        <components.Option {...allTheProps}>
-            <div className="optionRoleBadge"
-                ref={colorBadgeRef}
-                data-testid="roleColorBadge">
-            </div>
-            <div className="roleOptionLabel">{label}</div>
-        </components.Option>
-    );
-};
 
 export const CreateNewText = (text: string): JSX.Element => (
     <span>
