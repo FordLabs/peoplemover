@@ -44,7 +44,7 @@ describe('Filter products', () => {
 
         });
     });
-    describe('create tag from product modal', () =>{
+    describe('create tag from product modal', () => {
         it('should show filter option when new location tag is created from edit product modal', async () => {
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);

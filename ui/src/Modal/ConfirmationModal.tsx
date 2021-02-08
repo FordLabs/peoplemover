@@ -17,7 +17,7 @@
 
 import React from 'react';
 import FormButton from '../ModalFormComponents/FormButton';
-import ModalCardBanner from "./ModalCardBanner";
+import ModalCardBanner from './ModalCardBanner';
 
 export interface ConfirmationModalProps {
     submit(itemToDelete?: unknown): void | Promise<void>;
