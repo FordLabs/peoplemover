@@ -49,7 +49,7 @@ class AssignmentController(
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
-    @GetMapping(path = ["/api/assignment/dates/{spaceUuid}"])
+    @GetMapping(path = ["/api/spaces/{spaceUuid}/assignment/dates"])
     fun getAllEffectiveDates(@PathVariable spaceUuid: String): ResponseEntity<Set<LocalDate>> {
         val dates = assignmentService.getEffectiveDates(spaceUuid)
         logger.logInfoMessage("All effective dates retrieved for space with uuid: [$spaceUuid].")
@@ -57,7 +57,7 @@ class AssignmentController(
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
-    @GetMapping(path = ["/api/reassignment/{spaceUuid}/{requestedDate}"])
+    @GetMapping(path = ["/api/spaces/{spaceUuid}/reassignment/{requestedDate}"])
     fun getReassignmentsByExactDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
         val isRequestedDateNotToday = requestedDate != today
@@ -71,34 +71,30 @@ class AssignmentController(
         return ResponseEntity.ok(reassignmentsByExactDate ?: emptyList())
     }
 
-    @PreAuthorize("hasPermission(#createAssignmentRequest.person.spaceUuid, 'modify')")
-    @PostMapping(path = ["/api/assignment/create"])
-    fun createAssignmentsForDate(@RequestBody createAssignmentRequest: CreateAssignmentsRequest): ResponseEntity<Set<Assignment>> {
-        val assignmentsCreated: Set<Assignment> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest)
+    @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
+    @PostMapping(path = ["/api/spaces/{spaceUuid}/person/{personId}/assignment/create"])
+    fun createAssignmentsForDate(
+            @PathVariable spaceUuid: String,
+            @PathVariable personId: Int,
+            @RequestBody createAssignmentRequest: CreateAssignmentsRequest
+    ): ResponseEntity<Set<Assignment>> {
+        val assignmentsCreated: Set<Assignment> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, spaceUuid, personId)
         logger.logInfoMessage("[${assignmentsCreated.size}] assignment(s) created " +
                 "for person with id: [${assignmentsCreated.first().person.id}] " +
                 "with effective date: [${assignmentsCreated.first().effectiveDate}]")
         return ResponseEntity.ok(assignmentsCreated)
     }
 
-
-    @PreAuthorize("hasPermission(#assigmentToDelete.spaceUuid, 'modify')")
-    @DeleteMapping(path = ["/api/assignment/delete"])
-    fun deleteAssignment(@RequestBody assigmentToDelete: Assignment): ResponseEntity<Unit> {
-        assignmentService.deleteOneAssignment(assigmentToDelete)
+    @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
+    @DeleteMapping(path = ["/api/spaces/{spaceUuid}/person/{personId}/assignment/delete/{requestedDate}"])
+    fun deleteAssignmentForDate(
+        @PathVariable spaceUuid: String,
+        @PathVariable personId: Int,
+        @PathVariable requestedDate: String
+    ): ResponseEntity<Unit> {
+        assignmentService.revertAssignmentsForDate(LocalDate.parse(requestedDate), spaceUuid, personId)
         logger.logInfoMessage("assignment deleted " +
-                "for person with id: [${assigmentToDelete.person.id}] " +
-                "for product with id: [${assigmentToDelete.productId}] " +
-                "with effective date: [${assigmentToDelete.effectiveDate}]")
-        return ResponseEntity.ok().build()
-    }
-
-    @PreAuthorize("hasPermission(#person.spaceUuid, 'modify')")
-    @DeleteMapping(path = ["/api/assignment/delete/{requestedDate}"])
-    fun deleteAssignmentForDate(@PathVariable requestedDate: String, @RequestBody person: Person): ResponseEntity<Unit> {
-        assignmentService.revertAssignmentsForDate(LocalDate.parse(requestedDate), person)
-        logger.logInfoMessage("assignment deleted " +
-                "for person with id: [${person.id}] " +
+                "for person with id: [${personId}] " +
                 "with effective date: [${requestedDate}]")
         return ResponseEntity.ok().build()
     }

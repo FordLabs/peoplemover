@@ -35,7 +35,7 @@ class PeopleMoverRepositoryFactory(
             entityManager: EntityManager
     ): JpaRepositoryImplementation<*, *> {
         val entityInformation = getEntityInformation<SpaceComponent, Any>(information.domainType as Class<SpaceComponent>)
-        return PeopleMoverRepositoryImpl<SpaceComponent, Serializable>(
+        return PeopleMoverRepositoryImpl<SpaceComponent, Int>(
                 entityInformation,
                 entityManager,
                 spaceRepository

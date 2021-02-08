@@ -17,12 +17,10 @@
 
 package com.ford.internalprojects.peoplemover.assignment
 
-import com.ford.internalprojects.peoplemover.person.Person
 import java.time.LocalDate
 
 data class CreateAssignmentsRequest (
         val requestedDate: LocalDate,
-        val person: Person,
         val products: Set<ProductPlaceholderPair>
 )
 

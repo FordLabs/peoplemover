@@ -15,9 +15,15 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.role
+package com.ford.internalprojects.peoplemover.location
 
-data class RoleAddRequest (
-    val name: String,
-    val colorId: Int? = null
+import javax.validation.constraints.*
+
+data class LocationRequest (
+    @field:NotBlank(message = "Name is required.")
+    @field:Size(max = 255, message = "Name must be less than 255 characters.")
+    val name: String
 )
+
+fun LocationRequest.toSpaceLocation(spaceUuid: String, id: Int) : SpaceLocation =
+        SpaceLocation(id = id, name = this.name, spaceUuid = spaceUuid)

@@ -23,7 +23,9 @@ import org.springframework.data.repository.NoRepositoryBean
 
 
 @NoRepositoryBean
-interface PeopleMoverRepository<T: SpaceComponent, ID> : CrudRepository<T, ID> {
+interface PeopleMoverRepository<T: SpaceComponent, Int> : CrudRepository<T, Int> {
     fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S
-    fun <S : T> deleteAndUpdateSpaceLastModified(entity: S)
+    fun <S : T> createEntityAndUpdateSpaceLastModified(entity: S): S
+    fun <S : T> updateEntityAndUpdateSpaceLastModified(entity: S): S
+    fun deleteEntityAndUpdateSpaceLastModified(id: Int, spaceUuid: String)
 }

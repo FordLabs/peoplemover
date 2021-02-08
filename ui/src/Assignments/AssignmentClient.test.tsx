@@ -19,7 +19,6 @@ import Axios from 'axios';
 import AssignmentClient from './AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
 import TestUtils from '../tests/TestUtils';
-import {Assignment} from './Assignment';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
@@ -74,14 +73,18 @@ describe('Assignment client', () => {
 
         const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
             requestedDate: moment(date).format('YYYY-MM-DD'),
-            person: TestUtils.person1,
             products: [productPlaceholderPair],
 
         };
 
-        const expectedUrl = '/api/assignment/create';
+        const expectedUrl = `/api/spaces/${TestUtils.space.uuid}/person/${TestUtils.person1.id}/assignment/create`;
 
-        await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space);
+        await AssignmentClient.createAssignmentForDate(
+            moment(date).format('YYYY-MM-DD'),
+            [productPlaceholderPair],
+            TestUtils.space,
+            TestUtils.person1
+        );
 
         expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
         expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]);
@@ -90,15 +93,13 @@ describe('Assignment client', () => {
     it('should send matomo error event if assign person fails', async () => {
         Axios.post = jest.fn().mockRejectedValue({code: 417});
 
-        const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
-            requestedDate: moment(new Date()).format('YYYY-MM-DD'),
-            person: TestUtils.person1,
-            products: [],
-
-        };
-
         try {
-            await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space);
+            await AssignmentClient.createAssignmentForDate(
+                moment(new Date()).format('YYYY-MM-DD'),
+                [],
+                TestUtils.space,
+                TestUtils.person1
+            );
         } catch (err) {
             expect(window._paq).toContainEqual(
                 ['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]
@@ -107,12 +108,13 @@ describe('Assignment client', () => {
     });
 
     it('should not send matomo event if sendEvent is false', async () => {
-        const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
-            requestedDate: moment(new Date()).format('YYYY-MM-DD'),
-            person: TestUtils.person1,
-            products: [],
-        };
-        await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space, false);
+        await AssignmentClient.createAssignmentForDate(
+            moment(new Date()).format('YYYY-MM-DD'),
+            [],
+            TestUtils.space,
+            TestUtils.person1,
+            false
+        );
         expect(window._paq).not.toContainEqual(
             ['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]
         );
@@ -121,14 +123,14 @@ describe('Assignment client', () => {
     it('should send not matomo error event if sendEvent is false', async () => {
         Axios.post = jest.fn().mockRejectedValue({code: 417});
 
-        const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
-            requestedDate: moment(new Date()).format('YYYY-MM-DD'),
-            person: TestUtils.person1,
-            products: [],
-        };
-
         try {
-            await AssignmentClient.createAssignmentForDate(expectedCreateAssignmentRequest, TestUtils.space, false);
+            await AssignmentClient.createAssignmentForDate(
+                moment(new Date()).format('YYYY-MM-DD'),
+                [],
+                TestUtils.space,
+                TestUtils.person1,
+                false
+            );
         } catch (err) {
             expect(window._paq).not.toContainEqual(
                 ['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]
@@ -139,31 +141,15 @@ describe('Assignment client', () => {
 
     it('should get all effective dates given space', async () => {
         const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
-        const expectedUrl = `/api/assignment/dates/${spaceUuid}`;
+        const expectedUrl = `/api/spaces/${spaceUuid}/assignment/dates`;
 
         await AssignmentClient.getAssignmentEffectiveDates(spaceUuid);
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
-    it('should delete assignment given assignment', async () => {
-        const expectedAssignmentToDelete: Assignment = TestUtils.assignmentForPerson1;
-        const expectedUrl = '/api/assignment/delete';
-        const expectedConfig = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer 123456',
-            },
-            data: {'assignmentToDelete': expectedAssignmentToDelete},
-        };
-
-        await AssignmentClient.deleteAssignment(expectedAssignmentToDelete);
-
-        expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
-    });
-
     it('should delete assignment given person for a specific date', async () => {
-        const expectedUrl = '/api/assignment/delete/' + TestUtils.originDateString;
+        const expectedUrl = `/api/spaces/${TestUtils.person1.spaceUuid}/person/${TestUtils.person1.id}/assignment/delete/${TestUtils.originDateString}`;
         const expectedConfig = {
             headers: {
                 'Content-Type': 'application/json',
@@ -180,7 +166,7 @@ describe('Assignment client', () => {
         const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         const requestedDate = new Date(2020, 5, 20);
 
-        const expectedUrl = `/api/reassignment/${spaceUuid}/2020-06-20`;
+        const expectedUrl = `/api/spaces/${spaceUuid}/reassignment/2020-06-20`;
 
         await AssignmentClient.getReassignments(spaceUuid, requestedDate);
 

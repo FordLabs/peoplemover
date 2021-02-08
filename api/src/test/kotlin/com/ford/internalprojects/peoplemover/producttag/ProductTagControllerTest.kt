@@ -85,7 +85,7 @@ class ProductTagControllerTest {
 
     @Test
     fun `POST should create product tag`() {
-        val tagToCreate = ProductTagAddRequest(name = "Fin Tech")
+        val tagToCreate = ProductTagRequest(name = "Fin Tech")
 
         val result = mockMvc.perform(post(baseProductTagsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -113,7 +113,7 @@ class ProductTagControllerTest {
 
     @Test
     fun `POST should return 403 when trying to create a product tag without write authorization`() {
-        val requestBodyObject = ProductTagAddRequest("Not a blank")
+        val requestBodyObject = ProductTagRequest("Not a blank")
 
         mockMvc.perform(post(getBaseProductTagsUrl(space.uuid))
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
@@ -125,11 +125,10 @@ class ProductTagControllerTest {
     @Test
     fun `PUT should return 200 when editing product tag with already existing name in different case`() {
         val actualTag: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech", spaceUuid = space.uuid))
-        actualTag.name = actualTag.name.toLowerCase()
-        mockMvc.perform(put(baseProductTagsUrl)
+        mockMvc.perform(put("$baseProductTagsUrl/${actualTag.id}")
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(actualTag)))
+            .content(objectMapper.writeValueAsString(actualTag.copy(name = actualTag.name.toLowerCase()))))
             .andExpect(status().isOk)
     }
 
@@ -228,8 +227,8 @@ class ProductTagControllerTest {
     @Test
     fun `PUT should update product tag`() {
         val productTag: ProductTag = productTagRepository.save(ProductTag(name = "FordX", spaceUuid = space.uuid))
-        val updatedTag = ProductTagEditRequest(id = productTag.id!!, name = "Fin Tech")
-        val result = mockMvc.perform(put(baseProductTagsUrl)
+        val updatedTag = ProductTagRequest(name = "Fin Tech")
+        val result = mockMvc.perform(put("$baseProductTagsUrl/${productTag.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedTag)))
@@ -244,8 +243,8 @@ class ProductTagControllerTest {
 
     @Test
     fun `PUT should return 400 when trying to edit non existent product tag`() {
-        val attemptedEditRequest = ProductTagEditRequest(id = 700, name = "")
-        mockMvc.perform(put(baseProductTagsUrl)
+        val attemptedEditRequest = ProductTagRequest(name = "")
+        mockMvc.perform(put("$baseProductTagsUrl/700")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(attemptedEditRequest)))
@@ -259,9 +258,9 @@ class ProductTagControllerTest {
         val productTag: ProductTag = productTagRepository.save(
                 ProductTag(name = "Fin Tech", spaceUuid = spaceNotAssociatedWithUser.uuid)
         )
-        val attemptedEditRequest = ProductTagEditRequest(id = productTag.id!!, name = "different name")
+        val attemptedEditRequest = ProductTagRequest(name = "different name")
 
-        mockMvc.perform(put(baseProductTagsUrl)
+        mockMvc.perform(put("$baseProductTagsUrl/${productTag.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(attemptedEditRequest)))
@@ -271,9 +270,9 @@ class ProductTagControllerTest {
     @Test
     fun `PUT should return 403 when trying to edit a product tag without write authorization`() {
         val productTag: ProductTag = productTagRepository.save(ProductTag(name = "Valerie Felicity Frizzle", spaceUuid = space.uuid))
-        val requestBodyObject = ProductTagEditRequest(productTag.id!!, "Liz")
+        val requestBodyObject = ProductTagRequest("Liz")
 
-        mockMvc.perform(put(baseProductTagsUrl)
+        mockMvc.perform(put("$baseProductTagsUrl/${productTag.id}")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
@@ -284,8 +283,8 @@ class ProductTagControllerTest {
     fun `PUT should return 409 when editing product tag to an already existing name`() {
         productTagRepository.save(ProductTag(name = "Cool Tech", spaceUuid = space.uuid))
         val actualTag: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech", spaceUuid = space.uuid))
-        val attemptedEditRequest = ProductTagEditRequest(id = actualTag.id!!, name = "Cool Tech")
-        mockMvc.perform(put(baseProductTagsUrl)
+        val attemptedEditRequest = ProductTagRequest(name = "Cool Tech")
+        mockMvc.perform(put("$baseProductTagsUrl/${actualTag.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(attemptedEditRequest)))

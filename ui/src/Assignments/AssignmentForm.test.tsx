@@ -57,14 +57,15 @@ describe('AssignmentForm', () => {
 
             fireEvent.click(app.getByText('Assign'));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: TestUtils.person1,
-                products: [{
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [{
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: TestUtils.assignmentForPerson1.placeholder,
                 }],
-            }, TestUtils.space);
+                TestUtils.space,
+                TestUtils.person1
+            );
         });
 
         it('submits an assignment when submit event fires', async () => {
@@ -74,14 +75,15 @@ describe('AssignmentForm', () => {
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
             fireEvent.submit(app.getByTestId('assignmentForm'));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: TestUtils.person1,
-                products: [{
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [{
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: TestUtils.assignmentForPerson1.placeholder,
                 }],
-            }, TestUtils.space);
+                TestUtils.space,
+                TestUtils.person1
+            );
         });
 
         it('submits an assignment with the given placeholder status', async () => {
@@ -94,14 +96,15 @@ describe('AssignmentForm', () => {
             fireEvent.click(app.getByText('Assign'));
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: TestUtils.person1,
-                products: [{
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [{
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: true,
                 }],
-            }, TestUtils.space);
+                TestUtils.space,
+                TestUtils.person1
+            );
         });
 
         it('does not assign if person does not exist', async () => {

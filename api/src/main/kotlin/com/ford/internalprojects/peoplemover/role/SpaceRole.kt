@@ -26,7 +26,7 @@ import javax.persistence.*
 data class SpaceRole (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    val id: Int? = null,
+    override val id: Int? = null,
 
     @Column(name = "roles")
     var name: String,
