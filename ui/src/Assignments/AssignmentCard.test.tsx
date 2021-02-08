@@ -310,6 +310,17 @@ describe('Assignment Card', () => {
             expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
         });
 
+        it('should not display hover notes icon if person has valid notes, but user is readOnly', () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>,
+                undefined,
+                {...initialState, isReadOnly: true},
+            );
+            expect(underTest.queryByTestId('notesIcon')).toBeNull();
+        });
+
         it('should not display hover notes icon if person has no notes', () => {
             delete assignmentToRender.person.notes;
 
