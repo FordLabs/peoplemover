@@ -116,7 +116,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
                                 tagType={tagType}
                                 editTagCallback={(): void => setEditRoleIndex(index)}>
                                 <div className="viewTagRowColorCircle">
-                                    <span data-testid="myRolesCircle"
+                                    <span data-testid={`myRolesCircle__${role.name}`}
                                         style={{'backgroundColor': colorToUse}}
                                         className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
                                     />
