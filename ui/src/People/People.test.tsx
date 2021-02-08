@@ -28,7 +28,6 @@ import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import {Product} from '../Products/Product';
 import {Option} from '../CommonTypes/Option';
-import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
@@ -429,8 +428,6 @@ describe('People actions', () => {
         });
 
         describe('toggle placeholder from edit menu', () => {
-            const originalImpl = ThemeApplier.setBorderColorOnElement;
-
             const markAsPlaceHolder = async (): Promise<void> => {
                 await act(async () => {
                     const markAsPlaceholderButton = await app.findByText('Mark as Placeholder');
@@ -440,14 +437,6 @@ describe('People actions', () => {
 
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'markAsPlaceholder', TestUtils.person1.name]);
             };
-
-            beforeEach(async () => {
-                ThemeApplier.setBorderColorOnElement = jest.fn().mockImplementation();
-            });
-
-            afterEach(() => {
-                ThemeApplier.setBorderColorOnElement = originalImpl;
-            });
 
             it('should update an assignment to toggle placeholder when you click on Mark/Unmark as Placeholder option', async () => {
                 await markAsPlaceHolder();
