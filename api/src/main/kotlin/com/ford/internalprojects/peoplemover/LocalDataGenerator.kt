@@ -6,7 +6,7 @@ import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.ColorService
-import com.ford.internalprojects.peoplemover.location.LocationAddRequest
+import com.ford.internalprojects.peoplemover.location.LocationRequest
 import com.ford.internalprojects.peoplemover.location.LocationService
 import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.person.Person
@@ -112,7 +112,7 @@ class LocalDataGenerator(
             name = "productTag1"
         )
 
-        val locationAddRequest = LocationAddRequest(
+        val locationAddRequest = LocationRequest(
             name = "location1"
         )
 

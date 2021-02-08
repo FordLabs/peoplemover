@@ -151,7 +151,7 @@ class LocationControllerApiTest {
     @Test
     fun `POST should return 409 conflict when trying to add a duplicate space location to a space`() {
         spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
-        val duplicateLocationAddRequest = LocationAddRequest(name = "Germany")
+        val duplicateLocationAddRequest = LocationRequest(name = "Germany")
         mockMvc.perform(post(baseLocationsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -161,7 +161,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `POST should return 400 bad request when trying to add a space location with an empty name`() {
-        val locationWithEmptyName = LocationAddRequest(name = "")
+        val locationWithEmptyName = LocationRequest(name = "")
         mockMvc.perform(post(baseLocationsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -171,7 +171,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `POST should add new space location to db and return it`() {
-        val locationAddRequest = LocationAddRequest(name = "Germany")
+        val locationAddRequest = LocationRequest(name = "Germany")
         val result = mockMvc.perform(post(baseLocationsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -194,7 +194,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `POST should return 403 when trying to add location without write authorization`() {
-        val requestBodyObject = LocationAddRequest("it's lockdown there is no where BUT home")
+        val requestBodyObject = LocationRequest("it's lockdown there is no where BUT home")
 
         mockMvc.perform(post(baseLocationsUrl)
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
@@ -206,8 +206,8 @@ class LocationControllerApiTest {
     @Test
     fun `PUT should update a location and return 200`() {
         val spaceLocation: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
-        val locationEditRequest = LocationEditRequest(id = spaceLocation.id!!, name = "Dearborn")
-        val result = mockMvc.perform(put(baseLocationsUrl)
+        val locationEditRequest = LocationRequest(name = "Dearborn")
+        val result = mockMvc.perform(put("$baseLocationsUrl/${spaceLocation.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationEditRequest)))
@@ -228,9 +228,9 @@ class LocationControllerApiTest {
 
     @Test
     fun `PUT should return 403 when trying to edit location without write authorization`() {
-        val requestBodyObject = LocationEditRequest(1, "me and you, and you and me, so HAAPPPY TOGEEEETHERRRRRRR")
+        val requestBodyObject = LocationRequest("me and you, and you and me, so HAAPPPY TOGEEEETHERRRRRRR")
 
-        mockMvc.perform(put(baseLocationsUrl)
+        mockMvc.perform(put("$baseLocationsUrl/1")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
@@ -246,12 +246,9 @@ class LocationControllerApiTest {
             )
         )
 
-        val requestBodyObject = LocationEditRequest(
-            spaceLocationWithoutAccess.id!!,
-            "me and you, and you and me, so HAAPPPY TOGEEEETHERRRRRRR"
-        )
+        val requestBodyObject = LocationRequest("me and you, and you and me, so HAAPPPY TOGEEEETHERRRRRRR")
 
-        mockMvc.perform(put(baseLocationsUrl)
+        mockMvc.perform(put("$baseLocationsUrl/${spaceLocationWithoutAccess.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
@@ -262,8 +259,8 @@ class LocationControllerApiTest {
     fun `PUT should return 200 when updating name to existing space location in space with different case`() {
         val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "France", spaceUuid = space.uuid))
-        val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name.toLowerCase())
-        mockMvc.perform(put(baseLocationsUrl)
+        val locationEditRequest = LocationRequest(spaceLocation1.name.toLowerCase())
+        mockMvc.perform(put("$baseLocationsUrl/${spaceLocation2.id}")
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(locationEditRequest)))
@@ -275,8 +272,8 @@ class LocationControllerApiTest {
         val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "France", spaceUuid = space.uuid))
 
-        val locationEditRequest = LocationEditRequest(spaceLocation2.id!!, spaceLocation1.name)
-        mockMvc.perform(put(baseLocationsUrl)
+        val locationEditRequest = LocationRequest(spaceLocation1.name)
+        mockMvc.perform(put("$baseLocationsUrl/${spaceLocation2.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationEditRequest)))

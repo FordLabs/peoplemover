@@ -17,11 +17,13 @@
 
 package com.ford.internalprojects.peoplemover.location
 
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
+import javax.validation.constraints.*
 
-data class LocationAddRequest (
+data class LocationRequest (
     @field:NotBlank(message = "Name is required.")
     @field:Size(max = 255, message = "Name must be less than 255 characters.")
     val name: String
 )
+
+fun LocationRequest.toSpaceLocation(spaceUuid: String, id: Int) : SpaceLocation =
+        SpaceLocation(id = id, name = this.name, spaceUuid = spaceUuid)

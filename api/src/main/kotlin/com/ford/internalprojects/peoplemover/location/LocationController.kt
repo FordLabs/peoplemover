@@ -41,19 +41,20 @@ class LocationController(
     @PostMapping
     fun addLocationForSpace(
         @PathVariable spaceUuid: String,
-        @Valid @RequestBody locationAddRequest: LocationAddRequest
+        @Valid @RequestBody locationAddRequest: LocationRequest
     ): ResponseEntity<SpaceLocation> {
         val addedLocation: SpaceLocation = locationService.addLocationToSpace(spaceUuid, locationAddRequest)
         return ResponseEntity.ok(addedLocation)
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
-    @PutMapping
+    @PutMapping(path = ["/{locationId}"])
     fun editLocationForSpace(
         @PathVariable spaceUuid: String,
-        @Valid @RequestBody locationEditRequest: LocationEditRequest
+        @PathVariable locationId: Int,
+        @Valid @RequestBody locationRequest: LocationRequest
     ): ResponseEntity<SpaceLocation> {
-        val editedLocation: SpaceLocation = locationService.editLocation(spaceUuid, locationEditRequest)
+        val editedLocation: SpaceLocation = locationService.editLocation(spaceUuid, locationRequest, locationId)
         logger.logInfoMessage("Location with id [${editedLocation.id}] is updated to have name " +
                 "[${editedLocation.name}] in space: [$spaceUuid].")
         return ResponseEntity.ok(editedLocation)

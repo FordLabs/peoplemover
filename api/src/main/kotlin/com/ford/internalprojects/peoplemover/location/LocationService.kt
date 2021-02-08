@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service
 class LocationService(
         private val spaceLocationRepository: SpaceLocationRepository
 ) {
-    fun addLocationToSpace(spaceUuid: String, locationAddRequest: LocationAddRequest): SpaceLocation {
+    fun addLocationToSpace(spaceUuid: String, locationAddRequest: LocationRequest): SpaceLocation {
 
         val spaceLocationToSave = SpaceLocation(name = locationAddRequest.name, spaceUuid = spaceUuid)
         return try {
@@ -38,9 +38,9 @@ class LocationService(
     fun getLocationsForSpace(spaceUuid: String): Set<SpaceLocation> =
         spaceLocationRepository.findAllBySpaceUuid(spaceUuid)
 
-    fun editLocation(spaceUuid: String, locationEditRequest: LocationEditRequest): SpaceLocation {
+    fun editLocation(spaceUuid: String, locationRequest: LocationRequest, locationId: Int): SpaceLocation {
         return try {
-            spaceLocationRepository.updateEntityAndUpdateSpaceLastModified(locationEditRequest.toSpaceLocation(spaceUuid))
+            spaceLocationRepository.updateEntityAndUpdateSpaceLastModified(locationRequest.toSpaceLocation(spaceUuid, locationId))
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
         }
