@@ -84,9 +84,15 @@ class ProductService(
                 .findProductByNameAndSpaceUuid("unassigned", productToDelete.spaceUuid)
                 ?: throw EntityNotExistsException()
 
+        val unassignedPeople = unassignedProduct.assignments.map{ it.person.id }
+
         productToDelete.assignments.forEach {
-            it.productId = unassignedProduct.id!!
-            assignmentService.updateAssignment(it)
+            if (unassignedPeople.contains(it.person.id)) {
+                assignmentService.deleteOneAssignment(it)
+            } else {
+                it.productId = unassignedProduct.id!!
+                assignmentService.updateAssignment(it)
+            }
         }
     }
 
