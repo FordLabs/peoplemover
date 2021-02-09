@@ -70,20 +70,18 @@ function AssignmentCard({
     }
 
     function toggleEditMenu(): void {
-        if (!isReadOnly) {
-            if (!isUnassignedProduct) {
-                if (editMenuIsOpened) {
-                    setEditMenuIsOpened(false);
-                } else {
-                    setEditMenuIsOpened(true);
-                }
+        if (!isUnassignedProduct) {
+            if (editMenuIsOpened) {
+                setEditMenuIsOpened(false);
             } else {
-                const newModalState: CurrentModalState = {
-                    modal: AvailableModals.EDIT_PERSON,
-                    item: assignment,
-                };
-                setCurrentModal(newModalState);
+                setEditMenuIsOpened(true);
             }
+        } else {
+            const newModalState: CurrentModalState = {
+                modal: AvailableModals.EDIT_PERSON,
+                item: assignment,
+            };
+            setCurrentModal(newModalState);
         }
     }
 
@@ -206,6 +204,7 @@ function AssignmentCard({
             <button
                 className="personRoleColor"
                 aria-label="Person Menu"
+                disabled={isReadOnly}
                 style={{backgroundColor: cssRoleColor }}
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}

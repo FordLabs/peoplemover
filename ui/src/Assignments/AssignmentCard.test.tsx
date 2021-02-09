@@ -99,8 +99,10 @@ describe('Assignment Card', () => {
                 undefined,
                 initialState);
 
-            underTest.getByTestId('editPersonIconContainer__billiam_handy').click();
+            let editPersonButton = underTest.getByTestId('editPersonIconContainer__billiam_handy');
+            editPersonButton.click();
             expect(underTest.queryByTestId('editMenu')).toBeNull();
+            expect(editPersonButton.childElementCount).toEqual(0);
         });
 
         it('should not allow drag and drop if in read only mode', function() {
