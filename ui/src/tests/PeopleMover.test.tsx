@@ -123,8 +123,50 @@ describe('PeopleMover', () => {
         });
 
         it('should display My Roles button on startup', async () => {
+            await app.findByText('Add Person');
+            await app.findByTestId('addPersonIcon');
+        });
+
+        it('should display Add Person button on startup', async () => {
             await app.findByText('My Roles');
             await app.findByTestId('myRolesIcon');
+        });
+
+        it('should display Sort By dropdown on startup', async () => {
+            await app.findByText('Sort By:');
+            await app.findByText('Alphabetical');
+        });
+
+        it('should display Filter option on startup', async () => {
+            await app.findByText('Filter:');
+        });
+
+        it('should show the Flabs branding on load', async () => {
+            await app.findByText('Powered by');
+            await app.findByText('FordLabs');
+        });
+    });
+
+    describe('Read only view Header and Footer Content', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+            });
+        });
+
+        it('Should contains My Tags on initial load of People Mover', async () => {
+            expect(await app.queryByText('My Tags')).not.toBeInTheDocument();
+            expect(await app.queryByTestId('myTagsIcon')).not.toBeInTheDocument();
+        });
+
+        it('should display My Roles button on startup', async () => {
+            expect(await app.queryByText('Add Person')).not.toBeInTheDocument();
+            expect(await app.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
+        });
+
+        it('should display Add Person button on startup', async () => {
+            expect(await app.queryByText('My Roles')).not.toBeInTheDocument();
+            expect(await app.queryByTestId('myRolesIcon')).not.toBeInTheDocument();
         });
 
         it('should display Sort By dropdown on startup', async () => {

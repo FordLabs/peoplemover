@@ -22,6 +22,7 @@
     justify-content: space-between;
     background-color: $gray-5;
     max-height: 40px;
+    min-height: 40px;
     z-index: 1;
     position: sticky;
     top: 68px;
@@ -81,15 +82,6 @@ button.selectionTabButton {
 
         &.myTagsIcon {
             margin-right: 5px;
-        }
-    }
-
-    &.readOnly {
-        color: $gray-4;
-        background-color: transparent;
-
-        i {
-            color: inherit;
         }
     }
 }
