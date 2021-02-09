@@ -23,8 +23,6 @@ import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
-import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import moment from 'moment';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 
@@ -57,14 +55,15 @@ describe('AssignmentForm', () => {
 
             fireEvent.click(app.getByText('Assign'));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: TestUtils.person1,
-                products: [{
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [{
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: TestUtils.assignmentForPerson1.placeholder,
                 }],
-            }, TestUtils.space);
+                TestUtils.space,
+                TestUtils.person1
+            );
         });
 
         it('submits an assignment when submit event fires', async () => {
@@ -74,14 +73,15 @@ describe('AssignmentForm', () => {
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
             fireEvent.submit(app.getByTestId('assignmentForm'));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: TestUtils.person1,
-                products: [{
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [{
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: TestUtils.assignmentForPerson1.placeholder,
                 }],
-            }, TestUtils.space);
+                TestUtils.space,
+                TestUtils.person1
+            );
         });
 
         it('submits an assignment with the given placeholder status', async () => {
@@ -94,14 +94,15 @@ describe('AssignmentForm', () => {
             fireEvent.click(app.getByText('Assign'));
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: TestUtils.person1,
-                products: [{
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [{
                     productId: TestUtils.assignmentForPerson1.productId,
                     placeholder: true,
                 }],
-            }, TestUtils.space);
+                TestUtils.space,
+                TestUtils.person1
+            );
         });
 
         it('does not assign if person does not exist', async () => {
@@ -155,34 +156,6 @@ describe('AssignmentForm', () => {
                     initialPersonName: 'XYZ ABC 123',
                 },
             }));
-        });
-
-        describe('should render the appropriate role color', () => {
-            const originalImpl = ThemeApplier.setBackgroundColorOnElement;
-            let app: RenderResult;
-
-            beforeEach(() => {
-                ThemeApplier.setBackgroundColorOnElement = jest.fn();
-                ({ app } = renderComponent());
-            });
-
-            afterEach(() => {
-                ThemeApplier.setBackgroundColorOnElement = originalImpl;
-            });
-
-            it('should have role color banner next to name', async () => {
-                const labelElement = await app.findByLabelText('Name');
-                fireEvent.change(labelElement, {target: {value: 'Person 1'}});
-
-                const person1ColorBadge = await app.findByTestId('roleColorBadge');
-                const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
-                const person1RoleColor: Color = (person1Role.color as Color);
-
-                expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
-                    person1ColorBadge,
-                    person1RoleColor.color
-                );
-            });
         });
     });
 });

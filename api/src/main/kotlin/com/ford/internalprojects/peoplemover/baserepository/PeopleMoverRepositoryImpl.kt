@@ -17,22 +17,24 @@
 
 package com.ford.internalprojects.peoplemover.baserepository
 
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityAlreadyExistsException
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
-import java.io.Serializable
+import org.springframework.data.repository.findByIdOrNull
 import java.sql.Timestamp
 import java.util.*
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
 
-class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Serializable>(
+class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Int>(
         entityInformation: JpaEntityInformation<T, *>,
         entityManager: EntityManager,
         private val spaceRepository: SpaceRepository
-) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), PeopleMoverRepository<T, ID> {
+) : SimpleJpaRepository<T, Int>(entityInformation, entityManager), PeopleMoverRepository<T, Int> {
 
     @Transactional
     override fun <S : T> saveAndUpdateSpaceLastModified(entity: S): S {
@@ -41,9 +43,33 @@ class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Serializable>(
     }
 
     @Transactional
-    override fun <S : T> deleteAndUpdateSpaceLastModified(entity: S) {
+    override fun <S : T> createEntityAndUpdateSpaceLastModified(entity: S): S {
+        if (entity.id != null) {
+            throw EntityAlreadyExistsException()
+        } else {
+            updateSpaceLastModified(entity.spaceUuid)
+            return save(entity)
+        }
+    }
+
+    @Transactional
+    override fun <S : T> updateEntityAndUpdateSpaceLastModified(entity: S): S {
+        val entityToUpdate =  findByIdOrNull(entity.id!!)
+        if(entityToUpdate == null || entityToUpdate.spaceUuid != entity.spaceUuid) {
+            throw EntityNotExistsException()
+        }
         updateSpaceLastModified(entity.spaceUuid)
-        delete(entity)
+        return save(entity)
+    }
+
+    @Transactional
+    override fun deleteEntityAndUpdateSpaceLastModified(id: Int, spaceUuid: String) {
+        val entityToDelete =  findByIdOrNull(id)
+        if(entityToDelete == null || entityToDelete.spaceUuid != spaceUuid) {
+            throw EntityNotExistsException()
+        }
+        updateSpaceLastModified(spaceUuid)
+        delete(entityToDelete)
     }
 
     private fun updateSpaceLastModified(spaceUuid: String) {

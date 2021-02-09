@@ -25,10 +25,10 @@ import javax.persistence.*
 data class ProductTag (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+    override val id: Int? = null,
 
     @Column(name = "space_uuid")
     override val spaceUuid: String,
 
-    var name: String
+    val name: String
 ): SpaceComponent

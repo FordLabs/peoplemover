@@ -29,7 +29,7 @@ import javax.persistence.*
 data class Product (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = null,
+    override var id: Int? = null,
 
     var name: String,
 

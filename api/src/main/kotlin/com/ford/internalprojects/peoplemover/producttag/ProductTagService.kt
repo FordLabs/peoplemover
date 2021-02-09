@@ -17,24 +17,21 @@
 
 package com.ford.internalprojects.peoplemover.producttag
 
-import com.ford.internalprojects.peoplemover.producttag.exceptions.ProductTagAlreadyExistsForSpaceException
-import com.ford.internalprojects.peoplemover.producttag.exceptions.ProductTagNotExistsForSpaceException
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityAlreadyExistsException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Sort
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
 
 @Service
 class ProductTagService(
-        private val productTagRepository: ProductTagRepository,
-        private val spaceRepository: SpaceRepository
+        private val productTagRepository: ProductTagRepository
 ) {
-    fun createProductTagForSpace(addRequest: ProductTagAddRequest, spaceUuid: String): ProductTag {
-        productTagRepository.findAllByNameIgnoreCaseAndSpaceUuid(addRequest.name, spaceUuid)
-                ?.let { throw ProductTagAlreadyExistsForSpaceException() }
-        return productTagRepository.saveAndUpdateSpaceLastModified(ProductTag(name = addRequest.name, spaceUuid = spaceUuid))
+    fun createProductTagForSpace(request: ProductTagRequest, spaceUuid: String): ProductTag {
+        return try {
+            productTagRepository.createEntityAndUpdateSpaceLastModified(ProductTag(name = request.name, spaceUuid = spaceUuid))
+        } catch (e: DataIntegrityViolationException) {
+            throw EntityAlreadyExistsException()
+        }
     }
 
     fun getAllProductTags(spaceUuid: String): List<ProductTag> =
@@ -44,24 +41,20 @@ class ProductTagService(
         )
 
 
-    @Transactional
     fun deleteProductTag(productTagId: Int, spaceUuid: String) {
-        val tagToDelete: ProductTag = productTagRepository.findByIdAndSpaceUuid(productTagId, spaceUuid)
-                ?: throw ProductTagNotExistsForSpaceException()
-
-        productTagRepository.deleteAndUpdateSpaceLastModified(tagToDelete)
+        productTagRepository.deleteEntityAndUpdateSpaceLastModified(productTagId, spaceUuid)
     }
 
     fun editProductTag(
             spaceUuid: String,
-            tagEditRequest: ProductTagEditRequest
+            productTagId: Int,
+            tagEditRequest: ProductTagRequest
     ): ProductTag {
-        productTagRepository.findAllByNameAndSpaceUuid(tagEditRequest.name, spaceUuid)
-                ?.let { throw ProductTagAlreadyExistsForSpaceException() }
-        val tagFound = productTagRepository.findByIdAndSpaceUuid(tagEditRequest.id, spaceUuid)
-                ?: throw ProductTagNotExistsForSpaceException()
-        tagFound.name = tagEditRequest.name
-        return productTagRepository.saveAndUpdateSpaceLastModified(tagFound)
+        return try {
+            productTagRepository.updateEntityAndUpdateSpaceLastModified(ProductTag(productTagId, spaceUuid, tagEditRequest.name))
+        } catch (e: DataIntegrityViolationException) {
+            throw EntityAlreadyExistsException()
+        }
     }
 
 }

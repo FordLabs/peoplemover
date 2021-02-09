@@ -299,9 +299,8 @@ class ProductControllerInTimeApiTest {
 
         val newProductStartDate = LocalDate.parse(apr2)
 
-        val productEditRequest = ProductEditRequest(
+        val productEditRequest = ProductRequest(
                 name = product1.name,
-                id = product1.id!!,
                 startDate = newProductStartDate
         )
 
@@ -337,9 +336,8 @@ class ProductControllerInTimeApiTest {
 
         val newProductStartDate = LocalDate.parse(may2)
 
-        val productEditRequest = ProductEditRequest(
+        val productEditRequest = ProductRequest(
                 name = product2.name,
-                id = product2.id!!,
                 startDate = newProductStartDate
         )
 
@@ -367,9 +365,8 @@ class ProductControllerInTimeApiTest {
 
         val newProductStartDate = LocalDate.parse(may2)
 
-        val productEditRequest = ProductEditRequest(
+        val productEditRequest = ProductRequest(
                 name = product1.name,
-                id = product1.id!!,
                 startDate = newProductStartDate
         )
 

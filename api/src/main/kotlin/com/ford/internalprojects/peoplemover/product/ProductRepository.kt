@@ -26,6 +26,7 @@ import java.time.LocalDate
 interface ProductRepository : PeopleMoverRepository<Product, Int> {
     fun findByName(name: String): Product?
     fun findAllBySpaceUuid(spaceUuid: String): List<Product>
+    fun findByIdAndSpaceUuid(productId: Int, spaceUuid: String): Product?
     fun findProductByNameAndSpaceUuid(name: String, spaceUuid: String): Product?
 
     @Query("SELECT p FROM Product p WHERE p.spaceUuid = ?1 " +

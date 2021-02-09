@@ -19,30 +19,31 @@ package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.ford.internalprojects.peoplemover.role.SpaceRole
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
-import javax.persistence.*
+import javax.validation.constraints.Max
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.Size
 
-@Entity
-data class Person(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        override val id: Int? = null,
+data class PersonRequest(
 
+        @field:NotBlank(message = "Name cannot be blank.")
+        @field:Size(max = 255, message = "Name cannot exceed 255 characters.")
         val name: String,
 
-        @ManyToOne
-        @JoinColumn(name = "space_role_id")
         val spaceRole: SpaceRole? = null,
 
+        @field:Size(max = 255, message = "Notes cannot exceed 255 characters.")
         val notes: String? = "",
 
         @JsonProperty
-        @Column(name = "new_person")
-        var newPerson: Boolean = false,
+        var newPerson: Boolean = false
+)
 
-        @Column(name = "space_uuid")
-        override val spaceUuid: String
-): SpaceComponent {
-    constructor(name: String, spaceUuid: String) :
-            this(null, name, null, "", false, spaceUuid)
-}
+fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
+        id = id,
+        name = this.name,
+        spaceRole = this.spaceRole,
+        notes = this.notes,
+        newPerson = this.newPerson,
+        spaceUuid = spaceUuid
+)

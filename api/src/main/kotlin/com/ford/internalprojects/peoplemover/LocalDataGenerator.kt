@@ -6,7 +6,7 @@ import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.ColorService
-import com.ford.internalprojects.peoplemover.location.LocationAddRequest
+import com.ford.internalprojects.peoplemover.location.LocationRequest
 import com.ford.internalprojects.peoplemover.location.LocationService
 import com.ford.internalprojects.peoplemover.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.person.Person
@@ -15,7 +15,7 @@ import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.producttag.ProductTag
-import com.ford.internalprojects.peoplemover.producttag.ProductTagAddRequest
+import com.ford.internalprojects.peoplemover.producttag.ProductTagRequest
 import com.ford.internalprojects.peoplemover.producttag.ProductTagService
 import com.ford.internalprojects.peoplemover.role.RoleService
 import com.ford.internalprojects.peoplemover.role.SpaceRole
@@ -91,31 +91,28 @@ class LocalDataGenerator(
                 name = "Jane Smith",
                 spaceUuid = createdSpace.uuid,
                 spaceRole = role1
-            ),
-            createdSpace.uuid
+            )
         )
         val bob: Person = personService.createPerson(
             Person(
                 name = "Bob Barker",
                 spaceUuid = createdSpace.uuid,
                 spaceRole = role2
-            ),
-            createdSpace.uuid
+            )
         )
         val adam: Person = personService.createPerson(
             Person(
                 name = "Adam Sandler",
                 spaceUuid = createdSpace.uuid,
                 spaceRole = role3
-            ),
-            createdSpace.uuid
+            )
         )
 
-        val productTagAddRequest = ProductTagAddRequest(
+        val productTagAddRequest = ProductTagRequest(
             name = "productTag1"
         )
 
-        val locationAddRequest = LocationAddRequest(
+        val locationAddRequest = LocationRequest(
             name = "location1"
         )
 
@@ -141,25 +138,22 @@ class LocalDataGenerator(
 
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2019-01-01"),
-            person = jane,
             products = Sets.newHashSet(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = false
             ))
-        ))
+        ), createdSpace.uuid, jane.id!!)
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.now(),
-            person = bob,
             products = Sets.newHashSet(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = true
             ))
-        ))
+        ), createdSpace.uuid, bob.id!!)
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2020-06-01"),
-            person = adam,
             products = Sets.newHashSet()
-        ))
+        ), createdSpace.uuid, adam.id!!)
     }
 
 }

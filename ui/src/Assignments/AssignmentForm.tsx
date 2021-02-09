@@ -114,11 +114,12 @@ function AssignmentForm({
         event.preventDefault();
 
         if (canClickSubmit()) {
-            await AssignmentClient.createAssignmentForDate({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: selectedPerson,
-                products: getProductPairsForPerson(),
-            }, currentSpace);
+            await AssignmentClient.createAssignmentForDate(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                getProductPairsForPerson(),
+                currentSpace,
+                selectedPerson
+            );
 
             closeModal();
         }

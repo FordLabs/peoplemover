@@ -78,6 +78,7 @@ class PersonControllerApiTest {
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
     private lateinit var space: Space
+    private lateinit var spaceTwo: Space
 
     var basePeopleUrl: String = ""
 
@@ -86,6 +87,7 @@ class PersonControllerApiTest {
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "spaceWithThisName"))
+        spaceTwo = spaceRepository.save(Space(name = "spaceThatUserDoesNotHaveAccessTo"))
 
         basePeopleUrl = getBasePeopleUrl(space.uuid)
 
@@ -150,6 +152,21 @@ class PersonControllerApiTest {
                 .andExpect(status().isForbidden)
     }
 
+    @Test
+    fun `POST should return 200 and put the user in the url path space, not the person space uuid`() {
+        val newPersonName = "tryToAddToSpaceTwo"
+        val requestBodyObject = Person(name = newPersonName, spaceUuid = spaceTwo.uuid)
+
+        mockMvc.perform(post(basePeopleUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isOk)
+
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).map{ it.name }).contains(newPersonName)
+        assertThat(personRepository.findAllBySpaceUuid(spaceTwo.uuid)).isEmpty()
+    }
+
 
     @Test
     fun `PUT should return 403 when trying to edit a person in a space without write authorization`() {
@@ -161,6 +178,18 @@ class PersonControllerApiTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `PUT should return 400 when trying to edit a person that is not in the space you have access to`() {
+        val requestBodyObject = Person(name = "oldname", spaceUuid = spaceTwo.uuid)
+        personRepository.save(requestBodyObject)
+
+        mockMvc.perform(put("${getBasePeopleUrl(spaceUuid = space.uuid)}/${requestBodyObject.id!!}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -280,14 +309,23 @@ class PersonControllerApiTest {
                 .andExpect(status().isBadRequest)
     }
 
-      @Test
-      fun `DELETE should return 403 when trying to delete a person without write authorization`() {
+    @Test
+    fun `DELETE should return 403 when trying to delete a person without write authorization`() {
         val personToDelete: Person = personRepository.save(Person(name = "Donald", spaceUuid = space.uuid))
 
         mockMvc.perform(delete( "$basePeopleUrl/${personToDelete.id!!}")
               .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
               .andExpect(status().isForbidden)
-      }
+    }
+
+    @Test
+    fun `DELETE should return 400 when trying to delete a person in a space you do not have access to`() {
+        val personToDelete: Person = personRepository.save(Person(name = "Donald", spaceUuid = spaceTwo.uuid))
+
+        mockMvc.perform(delete( "$basePeopleUrl/${personToDelete.id!!}")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isBadRequest)
+    }
 
     @Test
     fun `DELETE should remove person and associated assignments`() {
@@ -310,21 +348,5 @@ class PersonControllerApiTest {
 
         assertThat(personRepository.findAll()).doesNotContain(personToDelete)
         assertThat(assignmentRepository.findAll()).doesNotContain(assignmentToDelete)
-    }
-
-    @Test
-    fun `GET total should return total number of persons`() {
-        personRepository.save(Person(name = "John", spaceUuid = space.uuid))
-        personRepository.save(Person(name = "Jack", spaceUuid = space.uuid))
-        personRepository.save(Person(name = "Jill", spaceUuid = space.uuid))
-
-        val request = mockMvc.perform(get("${basePeopleUrl}/total")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
-                .andExpect(status().isOk)
-                .andReturn()
-
-        val totalPersonCount = request.response.contentAsString.toLong()
-
-        assertThat(totalPersonCount).isEqualTo(3)
     }
 }

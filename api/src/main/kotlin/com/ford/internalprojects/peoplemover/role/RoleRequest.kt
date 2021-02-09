@@ -17,8 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.role
 
-data class RoleEditRequest(
-        val id: Int,
-        val name: String,
-        val colorId: Int? = null
+data class RoleRequest (
+    val name: String,
+    val colorId: Int? = null
 )

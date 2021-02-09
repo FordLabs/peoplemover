@@ -70,6 +70,7 @@ class RoleControllerApiTest {
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
     private lateinit var space: Space
+    private lateinit var spaceWithoutAccess: Space
 
     var baseRolesUrl: String = ""
 
@@ -78,6 +79,7 @@ class RoleControllerApiTest {
     @Before
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
+        spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
 
         baseRolesUrl = getBaseRolesUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
@@ -156,7 +158,7 @@ class RoleControllerApiTest {
     @Test
     fun `POST should return 409 when trying to add duplicate space role name to same space`() {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Firefighter", spaceUuid = space.uuid))
-        val newRole = RoleAddRequest(name = spaceRole.name)
+        val newRole = RoleRequest(name = spaceRole.name)
 
         mockMvc.perform(post(baseRolesUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -169,7 +171,7 @@ class RoleControllerApiTest {
     fun `POST should add a role to a space and assign it a color`() {
         colorRepository.save(Color(color = "red"))
 
-        val newRole = RoleAddRequest(name = "Firefighter")
+        val newRole = RoleRequest(name = "Firefighter")
         val result = mockMvc.perform(post(baseRolesUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -193,7 +195,7 @@ class RoleControllerApiTest {
         val usedColor: Color = colorRepository.save(Color(color = "3"))
         spaceRolesRepository.save(SpaceRole(name = "existingRole", color = usedColor, spaceUuid = space.uuid))
 
-        val newRole = RoleAddRequest(name = "Firefighter")
+        val newRole = RoleRequest(name = "Firefighter")
         val result = mockMvc.perform(post(baseRolesUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -214,7 +216,7 @@ class RoleControllerApiTest {
         colorRepository.save(Color(color = "unused"))
         val usedColor: Color = colorRepository.save(Color(color = "used"))
 
-        val newRole = RoleAddRequest(name = "Firefighter", colorId = usedColor.id)
+        val newRole = RoleRequest(name = "Firefighter", colorId = usedColor.id)
 
         val result = mockMvc.perform(post(baseRolesUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -232,7 +234,7 @@ class RoleControllerApiTest {
 
     @Test
     fun `POST should return 403 when trying to add a role without write authorization`() {
-        val requestBodyObject = RoleAddRequest("Not a blank")
+        val requestBodyObject = RoleRequest("Not a blank")
 
         mockMvc.perform(post(baseRolesUrl)
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
@@ -250,9 +252,9 @@ class RoleControllerApiTest {
         val person2: Person = personRepository.save(Person(name = "Jill", spaceRole = originalSpaceRole, spaceUuid = space.uuid))
 
         val updatedRoleName = "Blobware Engineer"
-        val roleEditRequest = RoleEditRequest(id = originalSpaceRole.id!!, name = updatedRoleName)
+        val roleEditRequest = RoleRequest( name = updatedRoleName)
 
-        mockMvc.perform(put(baseRolesUrl)
+        mockMvc.perform(put("$baseRolesUrl/${originalSpaceRole.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(roleEditRequest)))
@@ -269,9 +271,9 @@ class RoleControllerApiTest {
     fun `PUT should return 409 when trying to edit role name to existing role name`() {
         val spaceRole1: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Firefighter", spaceUuid = space.uuid))
         val spaceRole2: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Astronaut", spaceUuid = space.uuid))
-        val roleEditRequest = RoleEditRequest(id = spaceRole2.id!!, name = spaceRole1.name)
+        val roleEditRequest = RoleRequest(name = spaceRole1.name)
 
-        mockMvc.perform(put(baseRolesUrl)
+        mockMvc.perform(put("$baseRolesUrl/${spaceRole2.id!!}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(roleEditRequest)))
@@ -280,10 +282,10 @@ class RoleControllerApiTest {
 
     @Test
     fun `PUT should return 400 when trying to edit non existent role`() {
-        mockMvc.perform(put(baseRolesUrl)
+        mockMvc.perform(put("$baseRolesUrl/0")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(RoleEditRequest(name = "role1", id = 0))))
+                .content(objectMapper.writeValueAsString(RoleRequest(name = "role1"))))
                 .andExpect(status().isBadRequest)
     }
 
@@ -294,9 +296,9 @@ class RoleControllerApiTest {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Fireman Astronaut", color = blueColor, spaceUuid = space.uuid))
 
         val updatedRoleName = "Herr Doktor-Professor"
-        val roleEditRequest = RoleEditRequest(id = spaceRole.id!!, name = updatedRoleName, colorId = greenColor.id)
+        val roleEditRequest = RoleRequest(name = updatedRoleName, colorId = greenColor.id)
 
-        val result = mockMvc.perform(put(baseRolesUrl)
+        val result = mockMvc.perform(put("$baseRolesUrl/${spaceRole.id!!}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(roleEditRequest)))
@@ -320,13 +322,26 @@ class RoleControllerApiTest {
 
     @Test
     fun `PUT should return 403 when trying to edit a role without write authorization`() {
-        val requestBodyObject = RoleEditRequest(99999, "Not a blank")
+        val requestBodyObject = RoleRequest("Not a blank")
 
-        mockMvc.perform(put(baseRolesUrl)
+        mockMvc.perform(put("$baseRolesUrl/99999")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
+
+    }
+
+    @Test
+    fun `PUT should return 400 when trying to edit a role in a space you do not have access to`() {
+        val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "role1", spaceUuid = spaceWithoutAccess.uuid))
+        val requestBodyObject = RoleRequest("Not a blank")
+
+        mockMvc.perform(put("$baseRolesUrl/${spaceRole.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isBadRequest)
 
     }
 
@@ -358,6 +373,16 @@ class RoleControllerApiTest {
 
         val updatedPerson: Person = personRepository.findByIdOrNull(person.id!!)!!
         assertThat(updatedPerson.spaceRole).isNull()
+    }
+
+    @Test
+    fun `DELETE should return 400 when trying to delete a tag in a space you do not have access to `() {
+        val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "role1", spaceUuid = spaceWithoutAccess.uuid))
+
+        mockMvc.perform(delete("$baseRolesUrl/${spaceRole.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
     }
 
 

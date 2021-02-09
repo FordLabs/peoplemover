@@ -28,8 +28,6 @@ import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import {Product} from '../Products/Product';
 import {Option} from '../CommonTypes/Option';
-import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {CreateAssignmentsRequest} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {Router} from 'react-router-dom';
@@ -205,7 +203,7 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'Some Name',
                     newPerson: true,
-                    spaceRole: {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: {color: '2', id: 2}},
+                    spaceRole: {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color2},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
                 expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
@@ -268,7 +266,7 @@ describe('People actions', () => {
         const expectedPerson: Person = {
             ...emptyPerson(),
             name: 'Some Name',
-            spaceRole: {name: 'Software Engineer', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: {color: '1', id: 1}},
+            spaceRole: {name: 'Software Engineer', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color1},
             newPerson: true,
         };
 
@@ -283,11 +281,12 @@ describe('People actions', () => {
             expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestUtils.space, expectedPerson);
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith({
-                requestedDate: moment(viewingDate).format('YYYY-MM-DD'),
-                person: expectedPerson,
-                products: [],
-            }, TestUtils.space);
+            expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                [],
+                TestUtils.space,
+                expectedPerson
+            );
         };
 
         it('assigns the person created by the PersonForm', async () => {
@@ -390,15 +389,6 @@ describe('People actions', () => {
     describe('Editing people/assignments', () => {
         let app: RenderResult;
 
-        let assignmentToCreate: CreateAssignmentsRequest = {
-            requestedDate: TestUtils.originDateString,
-            person: TestUtils.person1,
-            products: [{
-                productId: TestUtils.productWithAssignments.id,
-                placeholder: true,
-            }],
-        };
-
         let originalWindow: Window;
 
         beforeEach(async () => {
@@ -429,8 +419,6 @@ describe('People actions', () => {
         });
 
         describe('toggle placeholder from edit menu', () => {
-            const originalImpl = ThemeApplier.setBorderColorOnElement;
-
             const markAsPlaceHolder = async (): Promise<void> => {
                 await act(async () => {
                     const markAsPlaceholderButton = await app.findByText('Mark as Placeholder');
@@ -441,20 +429,22 @@ describe('People actions', () => {
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'markAsPlaceholder', TestUtils.person1.name]);
             };
 
-            beforeEach(async () => {
-                ThemeApplier.setBorderColorOnElement = jest.fn().mockImplementation();
-            });
-
-            afterEach(() => {
-                ThemeApplier.setBorderColorOnElement = originalImpl;
-            });
-
             it('should update an assignment to toggle placeholder when you click on Mark/Unmark as Placeholder option', async () => {
                 await markAsPlaceHolder();
 
                 let person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('Placeholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentToCreate, TestUtils.space, false);
+
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                    TestUtils.originDateString,
+                    [{
+                        productId: TestUtils.productWithAssignments.id,
+                        placeholder: true,
+                    }],
+                    TestUtils.space,
+                    TestUtils.person1,
+                    false
+                );
 
                 const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
                 fireEvent.click(editPersonButton);
@@ -463,17 +453,18 @@ describe('People actions', () => {
                 fireEvent.mouseDown(unmarkAsPlaceholderButton);
                 fireEvent.mouseUp(unmarkAsPlaceholderButton);
 
-                const assignmentWithoutPlaceholderToCreate = {
-                    ...assignmentToCreate,
-                    products: [{
+                person1Card = await app.findByTestId('assignmentCard__person_1');
+                expect(person1Card).toHaveClass('NotPlaceholder');
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                    TestUtils.originDateString,
+                    [{
                         productId: TestUtils.productWithAssignments.id,
                         placeholder: false,
                     }],
-                };
-
-                person1Card = await app.findByTestId('assignmentCard__person_1');
-                expect(person1Card).toHaveClass('NotPlaceholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(assignmentWithoutPlaceholderToCreate, TestUtils.space, false);
+                    TestUtils.space,
+                    TestUtils.person1,
+                    false
+                );
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'unmarkAsPlaceholder', TestUtils.person1.name]);
             });
         });
@@ -484,13 +475,14 @@ describe('People actions', () => {
             fireEvent.mouseDown(cancelAssignmentButton);
             fireEvent.mouseUp(cancelAssignmentButton);
 
-            const unassignedAssignmentToCreate = {
-                ...assignmentToCreate,
-                products: [],
-            };
-
             await wait(() => {
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(unassignedAssignmentToCreate, TestUtils.space, false);
+                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+                    TestUtils.originDateString,
+                    [],
+                    TestUtils.space,
+                    TestUtils.person1,
+                    false
+                );
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'cancelAssignment', TestUtils.person1.name]);
             });
         });

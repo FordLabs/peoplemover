@@ -61,7 +61,7 @@ class ProductTagClient implements TagClient {
 
     async edit(productTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<ProductTag>> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseProductTagsUrl(space.uuid!!);
+        const url = `${this.getBaseProductTagsUrl(space.uuid!!)}/${productTagEditRequest.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',

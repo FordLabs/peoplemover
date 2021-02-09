@@ -235,9 +235,9 @@ class TestUtils {
         TestUtils.productTag4,
     ];
 
-    static color1: Color = {color: '1', id: 1};
-    static color2: Color = {color: '2', id: 2};
-    static color3: Color = {color: '3', id: 3};
+    static color1: Color = {color: '#EFEFEF', id: 1};
+    static color2: Color = {color: '#ABABAB', id: 2};
+    static color3: Color = {color: '#CDCDCD', id: 3};
     static whiteColor: Color = {color: 'white', id: 4};
 
     static colors: Array<Color> = [

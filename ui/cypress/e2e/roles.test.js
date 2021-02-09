@@ -74,9 +74,9 @@ describe('Roles', () => {
         cy.contains(mockRole).parent('[data-testid=viewTagRow]').should(($lis) => {
             expect($lis).to.have.descendants('[data-testid=editIcon__role]');
             expect($lis).to.have.descendants('[data-testid=deleteIcon__role]');
-            expect($lis).to.have.descendants('[data-testid=myRolesCircle]');
+            expect($lis).to.have.descendants(`[data-testid="myRolesCircle__${mockRole}"]`);
         }).then(($lis) => {
-            cy.get($lis).find('[data-testid=myRolesCircle]').should('have.css', 'background-color', pink);
+            cy.get($lis).find(`[data-testid="myRolesCircle__${mockRole}"]`).should('have.css', 'background-color', pink);
         });
 
         cy.closeModal();

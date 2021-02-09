@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.producttag
+package com.ford.internalprojects.peoplemover.baserepository.exceptions
 
-data class ProductTagAddRequest (val name: String)
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+
+@ResponseStatus(value = HttpStatus.CONFLICT)
+class EntityAlreadyExistsException : RuntimeException("Entity already exists.")
