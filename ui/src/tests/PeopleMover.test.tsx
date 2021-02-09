@@ -239,6 +239,67 @@ describe('PeopleMover', () => {
         });
     });
 
+    describe('Products in read only view', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+            });
+        });
+
+        it('should group products by location without add product buttons',  async () => {
+            await wait(() => {
+                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Location']);
+            });
+
+            const productGroups = await app.findAllByTestId('productGroup');
+
+            expect(productGroups.length).toBe(4);
+            const productGroup1 = productGroups[0];
+            expect(productGroup1).toHaveTextContent('Ann Arbor');
+            expect(productGroup1).toHaveTextContent('Hanky Product');
+            expect(productGroup1).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup2 = productGroups[1];
+            expect(productGroup2).toHaveTextContent('Dearborn');
+            expect(productGroup2).toHaveTextContent('Product 3');
+            expect(productGroup2).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup3 = productGroups[2];
+            expect(productGroup3).toHaveTextContent('Southfield');
+            expect(productGroup3).toHaveTextContent('Product 1');
+            expect(productGroup3).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup4 = productGroups[3];
+            expect(productGroup4).toHaveTextContent('No Location');
+            expect(productGroup4).toHaveTextContent('Awesome Product');
+            expect(productGroup4).not.toHaveTextContent(addProductButtonText);
+        });
+
+        it('should group products by product tag without add product buttons',  async () => {
+            await wait(() => {
+                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Product Tag']);
+            });
+
+            const productGroups = await app.findAllByTestId('productGroup');
+
+            expect(productGroups.length).toBe(3);
+            const productGroup1 = productGroups[0];
+            expect(productGroup1).toHaveTextContent('AV');
+            expect(productGroup1).toHaveTextContent('Product 3');
+            expect(productGroup1).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup2 = productGroups[1];
+            expect(productGroup2).toHaveTextContent('FordX');
+            expect(productGroup2).toHaveTextContent('Product 1');
+            expect(productGroup2).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup3 = productGroups[2];
+            expect(productGroup3).toHaveTextContent('No Product Tag');
+            expect(productGroup3).toHaveTextContent('Hanky Product');
+            expect(productGroup3).not.toHaveTextContent(addProductButtonText);
+        });
+    });
+
     describe('Routing', () => {
         const BAD_REQUEST = 400;
         const FORBIDDEN = 403;

@@ -104,6 +104,39 @@ describe('Product List tests', () => {
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(3);
         });
 
+        it('should return two aa products with location filter but not a product add button with readonly', async () => {
+            const productWithAnnArborLocation: Product = {
+                id: 99,
+                name: 'AA',
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                startDate: '2011-01-01',
+                endDate: undefined,
+                spaceLocation: TestUtils.annarbor,
+                assignments: [],
+                archived: false,
+                productTags: [TestUtils.productTag2],
+                notes: '',
+            };
+            let products: Array<Product> = Object.assign([], TestUtils.products);
+            products.push(productWithAnnArborLocation);
+
+            const initialState = {
+                products: products,
+                productTags: TestUtils.productTags,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+                viewingDate: moment().toDate(),
+                productSortBy: 'name',
+                currentSpace: TestUtils.space,
+                isReadOnly: true,
+            } as GlobalStateProps;
+
+            let component = await renderWithRedux(<ProductList/>, undefined, initialState);
+            await component.findByText(TestUtils.productForHank.name);
+            await component.findByText(productWithAnnArborLocation.name);
+            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
+            expect(component.queryByTestId('newProductButton')).not.toBeInTheDocument();
+        });
+
         it('should return all products with the selected product tag filter', async () => {
             const allGroupedTagFilterOptions = [
                 {
@@ -136,6 +169,42 @@ describe('Product List tests', () => {
             let component = await renderWithRedux(<ProductList/>, undefined, initialState);
             await component.findByText(TestUtils.productWithAssignments.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
+        });
+
+        it('should return one FordX products with product tag filter but not a product add button with readonly', async () => {
+            const allGroupedTagFilterOptions = [
+                {
+                    label:'Location Tags:',
+                    options: [],
+                },
+                {
+                    label:'Product Tags:',
+                    options: [{
+                        label: 'FordX',
+                        value: '1_FordX',
+                        selected: true,
+                    }],
+                },
+                {
+                    label:'Role Tags:',
+                    options: [],
+                },
+            ];
+
+            const initialState = {
+                products: TestUtils.products,
+                productTags: TestUtils.productTags,
+                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+                viewingDate: moment().toDate(),
+                productSortBy: 'name',
+                currentSpace: TestUtils.space,
+                isReadOnly: true,
+            } as GlobalStateProps;
+
+            let component = await renderWithRedux(<ProductList/>, undefined, initialState);
+            await component.findByText(TestUtils.productWithAssignments.name);
+            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(1);
+            expect(component.queryByTestId('newProductButton')).not.toBeInTheDocument();
         });
 
         it('should return all products with the selected product tag filter', async () => {
