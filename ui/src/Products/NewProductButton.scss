@@ -44,13 +44,4 @@ button.newProduct {
     margin-left: 11px;
     margin-right: 8px;
   }
-
-  &.readOnly:disabled {
-    background-color: $gray-5;
-    color: $gray-4;
-
-    .addProductIcon.material-icons {
-      color: $gray-4;
-    }
-  }
 }

@@ -123,8 +123,50 @@ describe('PeopleMover', () => {
         });
 
         it('should display My Roles button on startup', async () => {
+            await app.findByText('Add Person');
+            await app.findByTestId('addPersonIcon');
+        });
+
+        it('should display Add Person button on startup', async () => {
             await app.findByText('My Roles');
             await app.findByTestId('myRolesIcon');
+        });
+
+        it('should display Sort By dropdown on startup', async () => {
+            await app.findByText('Sort By:');
+            await app.findByText('Alphabetical');
+        });
+
+        it('should display Filter option on startup', async () => {
+            await app.findByText('Filter:');
+        });
+
+        it('should show the Flabs branding on load', async () => {
+            await app.findByText('Powered by');
+            await app.findByText('FordLabs');
+        });
+    });
+
+    describe('Read only view Header and Footer Content', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+            });
+        });
+
+        it('Should contains My Tags on initial load of People Mover', async () => {
+            expect(await app.queryByText('My Tags')).not.toBeInTheDocument();
+            expect(await app.queryByTestId('myTagsIcon')).not.toBeInTheDocument();
+        });
+
+        it('should display My Roles button on startup', async () => {
+            expect(await app.queryByText('Add Person')).not.toBeInTheDocument();
+            expect(await app.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
+        });
+
+        it('should display Add Person button on startup', async () => {
+            expect(await app.queryByText('My Roles')).not.toBeInTheDocument();
+            expect(await app.queryByTestId('myRolesIcon')).not.toBeInTheDocument();
         });
 
         it('should display Sort By dropdown on startup', async () => {
@@ -236,6 +278,67 @@ describe('PeopleMover', () => {
             expect(productGroup3).toHaveTextContent('No Product Tag');
             expect(productGroup3).toHaveTextContent('Hanky Product');
             expect(productGroup3).toHaveTextContent(addProductButtonText);
+        });
+    });
+
+    describe('Products in read only view', () => {
+        beforeEach(async () => {
+            await wait(() => {
+                app = applicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+            });
+        });
+
+        it('should group products by location without add product buttons',  async () => {
+            await wait(() => {
+                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Location']);
+            });
+
+            const productGroups = await app.findAllByTestId('productGroup');
+
+            expect(productGroups.length).toBe(4);
+            const productGroup1 = productGroups[0];
+            expect(productGroup1).toHaveTextContent('Ann Arbor');
+            expect(productGroup1).toHaveTextContent('Hanky Product');
+            expect(productGroup1).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup2 = productGroups[1];
+            expect(productGroup2).toHaveTextContent('Dearborn');
+            expect(productGroup2).toHaveTextContent('Product 3');
+            expect(productGroup2).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup3 = productGroups[2];
+            expect(productGroup3).toHaveTextContent('Southfield');
+            expect(productGroup3).toHaveTextContent('Product 1');
+            expect(productGroup3).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup4 = productGroups[3];
+            expect(productGroup4).toHaveTextContent('No Location');
+            expect(productGroup4).toHaveTextContent('Awesome Product');
+            expect(productGroup4).not.toHaveTextContent(addProductButtonText);
+        });
+
+        it('should group products by product tag without add product buttons',  async () => {
+            await wait(() => {
+                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Product Tag']);
+            });
+
+            const productGroups = await app.findAllByTestId('productGroup');
+
+            expect(productGroups.length).toBe(3);
+            const productGroup1 = productGroups[0];
+            expect(productGroup1).toHaveTextContent('AV');
+            expect(productGroup1).toHaveTextContent('Product 3');
+            expect(productGroup1).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup2 = productGroups[1];
+            expect(productGroup2).toHaveTextContent('FordX');
+            expect(productGroup2).toHaveTextContent('Product 1');
+            expect(productGroup2).not.toHaveTextContent(addProductButtonText);
+
+            const productGroup3 = productGroups[2];
+            expect(productGroup3).toHaveTextContent('No Product Tag');
+            expect(productGroup3).toHaveTextContent('Hanky Product');
+            expect(productGroup3).not.toHaveTextContent(addProductButtonText);
         });
     });
 
