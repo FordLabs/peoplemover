@@ -23,6 +23,7 @@ import {createMemoryHistory, MemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
 import Axios, {AxiosResponse} from 'axios';
 import {RunConfig} from '../index';
+import {OAUTH_REDIRECT_KEY} from '../ReusableComponents/OAuthRedirect';
 
 describe('AuthenticatedRoute', function() {
     let originalWindow: Window;
@@ -30,6 +31,7 @@ describe('AuthenticatedRoute', function() {
     beforeEach(() => {
         originalWindow = window;
         delete window.location;
+        sessionStorage.clear();
         (window as Window) = Object.create(window);
         new Cookies().remove('accessToken');
     });
@@ -59,8 +61,31 @@ describe('AuthenticatedRoute', function() {
         });
     });
 
-    function renderComponent({authenticated}: ComponentState): RenderedComponent {
-        const history = createMemoryHistory({ initialEntries: ['/secure'] });
+    it('should set the appropriate space UUID in the ADFS redirect session storage variable', async () => {
+        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+        let pathname = '/01234567-0123-0123-0123-0123456789ab';
+        window.location = {href: '', origin: 'http://localhost', pathname: pathname} as Location;
+        setRunConfig();
+        renderAuthRoute(createMemoryHistory(), pathname);
+
+        await wait(() => {
+            expect(sessionStorage.getItem(OAUTH_REDIRECT_KEY)).toEqual(pathname);
+        });
+    });
+
+    it('should not set the space UUID if not a real uuid', async () => {
+        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+        let pathname = '/not-a-real-uuid';
+        window.location = {href: '', origin: 'http://localhost', pathname: pathname} as Location;
+        setRunConfig();
+        renderAuthRoute(createMemoryHistory(), pathname);
+
+        await wait(() => {
+            expect(sessionStorage.getItem(OAUTH_REDIRECT_KEY)).toBeFalsy();
+        });
+    });
+
+    function setRunConfig(): void {
         /* eslint-disable @typescript-eslint/camelcase */
         window.runConfig = {
             adfs_url_template: 'http://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s',
@@ -68,17 +93,26 @@ describe('AuthenticatedRoute', function() {
             adfs_resource: 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb',
         } as RunConfig;
         /* eslint-enable @typescript-eslint/camelcase */
+    }
+
+    function renderAuthRoute(history: MemoryHistory, path: string):  RenderResult {
+        return render(
+            <Router history={history}>
+                <AuthenticatedRoute exact path={path}>
+                    <div>Hello, Secured World!</div>
+                </AuthenticatedRoute>
+            </Router>,
+        );
+    }
+
+    function renderComponent({authenticated}: ComponentState): RenderedComponent {
+        const history = createMemoryHistory({ initialEntries: ['/secure'] });
+        setRunConfig();
         if (authenticated) {
             new Cookies().set('accessToken', 'TOTALLY_REAL_ACCESS_TOKEN', {path: '/'});
         }
 
-        const component = render(
-            <Router history={history}>
-                <AuthenticatedRoute exact path={'/secure'}>
-                    <div>Hello, Secured World!</div>
-                </AuthenticatedRoute>
-            </Router>
-        );
+        const component = renderAuthRoute(history, '/secure');
 
         return {history, component};
     }

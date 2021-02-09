@@ -16,7 +16,7 @@
  */
 
 import {render} from '@testing-library/react';
-import OAuthRedirect from '../ReusableComponents/OAuthRedirect';
+import {OAuthRedirect, OAUTH_REDIRECT_DEFAULT, OAUTH_REDIRECT_KEY} from '../ReusableComponents/OAuthRedirect';
 import * as React from 'react';
 import {MemoryRouter, Router} from 'react-router';
 import {createMemoryHistory} from 'history';
@@ -45,13 +45,14 @@ describe('OAuthRedirect', function() {
 
         render(
             <MemoryRouter>
-                <OAuthRedirect redirectUrl={'/user/dashboard'}/>
+                <OAuthRedirect/>
             </MemoryRouter>
         );
         expect(new Cookies().get('accessToken')).toEqual(expectedToken);
     });
 
-    it('should redirect to specified page', function() {
+    it('should redirect to default page', function() {
+        const expectedPathname = OAUTH_REDIRECT_DEFAULT;
         const expectedToken = 'EXPECTED_TOKEN';
         window.location = {
             href: `http://localhost/#access_token=${expectedToken}`,
@@ -62,9 +63,30 @@ describe('OAuthRedirect', function() {
 
         render(
             <Router history={history}>
-                <OAuthRedirect redirectUrl={'/user/dashboard'}/>
+                <OAuthRedirect/>
             </Router>
         );
-        expect(history.location.pathname).toEqual(`/user/dashboard`);
+        expect(history.location.pathname).toEqual(expectedPathname);
+    });
+
+    it('should redirect to a provided space when the space is set in session storage', () => {
+        const expectedPathname = '/CAFE8441-CAFE-ADEC-FADE-ABBAEDDABABE';
+        const expectedToken = 'EXPECTED_TOKEN';
+        window.location = {
+            href: `http://localhost/#access_token=${expectedToken}`,
+            hash: `#access_token=${expectedToken}`,
+        } as Location;
+
+        sessionStorage.setItem(OAUTH_REDIRECT_KEY, expectedPathname);
+
+        const history = createMemoryHistory({ initialEntries: ['/login'] });
+
+        render(
+            <Router history={history}>
+                <OAuthRedirect/>
+            </Router>
+        );
+        expect(history.location.pathname).toEqual(expectedPathname);
+        expect(sessionStorage.getItem(OAUTH_REDIRECT_KEY)).toBeFalsy();
     });
 });
