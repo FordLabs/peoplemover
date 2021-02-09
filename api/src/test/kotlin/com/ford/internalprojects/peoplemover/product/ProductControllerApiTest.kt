@@ -274,7 +274,7 @@ class ProductControllerApiTest {
     }
 
     @Test
-    fun `DELETE should delete associated assignments`() {
+    fun `DELETE product should unassign person from product`() {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", spaceUuid = space.uuid))
         val person = personRepository.save(Person(name = "person", spaceUuid = space.uuid))
@@ -289,6 +289,25 @@ class ProductControllerApiTest {
         assertThat(assignmentRepository.count()).isOne()
         assertThat(people.first().person.name).isEqualTo(person.name)
         assertThat(people.first().productId).isEqualTo(unassignedProduct.id)
+    }
+
+    @Test
+    fun `DELETE product should unassign person from product and handle cases where person is already unassigned`() {
+        val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
+        val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", spaceUuid = space.uuid))
+        val person = personRepository.save(Person(name = "person", spaceUuid = space.uuid))
+        assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceUuid = space.uuid))
+        assignmentRepository.save(Assignment(person = person, productId = unassignedProduct.id!!, spaceUuid = space.uuid))
+
+        mockMvc.perform(delete(getSingleProductUrl(product.id!!))
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val people: Iterable<Assignment> = assignmentRepository.findAll()
+        assertThat(assignmentRepository.count()).isOne()
+        assertThat(people.first().person.name).isEqualTo(person.name)
+        assertThat(people.first().productId).isEqualTo(unassignedProduct.id!!)
     }
 
     @Test
