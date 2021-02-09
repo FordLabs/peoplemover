@@ -118,6 +118,10 @@ div.Placeholder {
   align-items: center;
   min-width: 20px;
   border-radius: 0;
+  &:disabled {
+    cursor: initial;
+    opacity: inherit;
+  }
 }
 
 .borderedPeople {

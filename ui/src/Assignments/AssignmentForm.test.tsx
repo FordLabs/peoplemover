@@ -23,8 +23,6 @@ import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
-import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
-import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import moment from 'moment';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 
@@ -158,34 +156,6 @@ describe('AssignmentForm', () => {
                     initialPersonName: 'XYZ ABC 123',
                 },
             }));
-        });
-
-        describe('should render the appropriate role color', () => {
-            const originalImpl = ThemeApplier.setBackgroundColorOnElement;
-            let app: RenderResult;
-
-            beforeEach(() => {
-                ThemeApplier.setBackgroundColorOnElement = jest.fn();
-                ({ app } = renderComponent());
-            });
-
-            afterEach(() => {
-                ThemeApplier.setBackgroundColorOnElement = originalImpl;
-            });
-
-            it('should have role color banner next to name', async () => {
-                const labelElement = await app.findByLabelText('Name');
-                fireEvent.change(labelElement, {target: {value: 'Person 1'}});
-
-                const person1ColorBadge = await app.findByTestId('roleColorBadge');
-                const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
-                const person1RoleColor: Color = (person1Role.color as Color);
-
-                expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
-                    person1ColorBadge,
-                    person1RoleColor.color
-                );
-            });
         });
     });
 });

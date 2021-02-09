@@ -49,10 +49,9 @@ describe('My Roles Form', () => {
     });
 
     it('should show existing roles with color-circle', async () => {
-        const circles: Array<HTMLElement> = await app.findAllByTestId('myRolesCircle');
-        expect(circles[0]).toHaveStyle('background-color: 1');
-        expect(circles[1]).toHaveStyle('background-color: 2');
-        expect(circles[2]).toHaveStyle('background-color: 3');
+        expect(await app.findByTestId(`myRolesCircle__${TestUtils.roles[0].name}`)).toHaveStyle(`background-color: ${TestUtils.color1.color}`);
+        expect(await app.findByTestId(`myRolesCircle__${TestUtils.roles[1].name}`)).toHaveStyle(`background-color: ${TestUtils.color2.color}`);
+        expect(await app.findByTestId(`myRolesCircle__${TestUtils.roles[2].name}`)).toHaveStyle(`background-color: ${TestUtils.color3.color}`);
     });
 
     describe('adding roles', () => {

@@ -28,7 +28,6 @@ import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import {Product} from '../Products/Product';
 import {Option} from '../CommonTypes/Option';
-import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {Router} from 'react-router-dom';
@@ -204,7 +203,7 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'Some Name',
                     newPerson: true,
-                    spaceRole: {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: {color: '2', id: 2}},
+                    spaceRole: {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color2},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
                 expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
@@ -267,7 +266,7 @@ describe('People actions', () => {
         const expectedPerson: Person = {
             ...emptyPerson(),
             name: 'Some Name',
-            spaceRole: {name: 'Software Engineer', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: {color: '1', id: 1}},
+            spaceRole: {name: 'Software Engineer', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color1},
             newPerson: true,
         };
 
@@ -420,8 +419,6 @@ describe('People actions', () => {
         });
 
         describe('toggle placeholder from edit menu', () => {
-            const originalImpl = ThemeApplier.setBorderColorOnElement;
-
             const markAsPlaceHolder = async (): Promise<void> => {
                 await act(async () => {
                     const markAsPlaceholderButton = await app.findByText('Mark as Placeholder');
@@ -431,14 +428,6 @@ describe('People actions', () => {
 
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'markAsPlaceholder', TestUtils.person1.name]);
             };
-
-            beforeEach(async () => {
-                ThemeApplier.setBorderColorOnElement = jest.fn().mockImplementation();
-            });
-
-            afterEach(() => {
-                ThemeApplier.setBorderColorOnElement = originalImpl;
-            });
 
             it('should update an assignment to toggle placeholder when you click on Mark/Unmark as Placeholder option', async () => {
                 await markAsPlaceHolder();

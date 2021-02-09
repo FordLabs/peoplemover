@@ -20,7 +20,6 @@ import React from 'react';
 import AssignmentCard from './AssignmentCard';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Assignment} from './Assignment';
-import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import {GlobalStateProps} from '../Redux/Reducers';
 
@@ -100,8 +99,10 @@ describe('Assignment Card', () => {
                 undefined,
                 initialState);
 
-            underTest.getByTestId('editPersonIconContainer__billiam_handy').click();
+            let editPersonButton = underTest.getByTestId('editPersonIconContainer__billiam_handy');
+            editPersonButton.click();
             expect(underTest.queryByTestId('editMenu')).toBeNull();
+            expect(editPersonButton.childElementCount).toEqual(0);
         });
 
         it('should not allow drag and drop if in read only mode', function() {
@@ -117,22 +118,33 @@ describe('Assignment Card', () => {
             fireEvent.mouseDown(underTest.getByTestId('assignmentCard__billiam_handy'));
             expect(startDraggingAssignment).not.toBeCalled();
         });
+
+        it('should not show placeholder style in readonly', () => {
+            const placeholderAssignment = {
+                ...assignmentToRender,
+                placeholder: true,
+            };
+            const {getByTestId} = renderWithRedux(<AssignmentCard
+                assignment={placeholderAssignment}
+                isUnassignedProduct={false}/>,
+            undefined,
+            initialState);
+
+            const assignmentCard = getByTestId('assignmentCard__billiam_handy');
+            expect(assignmentCard).toHaveClass('NotPlaceholder');
+            expect(assignmentCard).not.toHaveClass('Placeholder');
+        });
+
     });
 
     describe('Role color', () => {
-        const originalImpl = ThemeApplier.setBackgroundColorOnElement;
 
         let initialState: GlobalStateProps;
 
         beforeEach(() => {
-            ThemeApplier.setBackgroundColorOnElement = jest.fn().mockImplementation();
             initialState = {
                 currentSpace: TestUtils.space,
             } as GlobalStateProps;
-        });
-
-        afterEach(() => {
-            ThemeApplier.setBackgroundColorOnElement = originalImpl;
         });
 
         it('should render software engineer color correctly', () => {
@@ -144,10 +156,7 @@ describe('Assignment Card', () => {
             const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
             const person1RoleColor: Color = (person1Role.color as Color);
-            expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
-                assignmentCardEditContainer,
-                person1RoleColor.color
-            );
+            expect(assignmentCardEditContainer).toHaveStyle(`background-color: ${person1RoleColor.color}`);
         });
 
         it('should show base color if no color for role', () => {
@@ -167,10 +176,7 @@ describe('Assignment Card', () => {
                 initialState,
             );
             const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
-            expect(ThemeApplier.setBackgroundColorOnElement).toHaveBeenCalledWith(
-                assignmentCardEditContainer,
-                undefined
-            );
+            expect(assignmentCardEditContainer).toHaveStyle('background-color: transparent');
         });
 
         it('should close the EditMenu when you click the colorful div w/ triple dots if it was open when you clicked', () => {
@@ -308,6 +314,17 @@ describe('Assignment Card', () => {
                 initialState,
             );
             expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
+        });
+
+        it('should not display hover notes icon if person has valid notes, but user is readOnly', () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>,
+                undefined,
+                {...initialState, isReadOnly: true},
+            );
+            expect(underTest.queryByTestId('notesIcon')).toBeNull();
         });
 
         it('should not display hover notes icon if person has no notes', () => {

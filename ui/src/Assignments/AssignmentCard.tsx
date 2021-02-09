@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useEffect, useState} from 'react';
+import React, {RefObject, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
@@ -24,11 +24,9 @@ import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Re
 import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-
 import '../Application/Styleguide/Main.scss';
 import './AssignmentCard.scss';
 import {Assignment} from './Assignment';
-import {ThemeApplier} from '../ReusableComponents/ThemeApplier';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
@@ -66,27 +64,24 @@ function AssignmentCard({
     const spaceUuid = currentSpace.uuid!;
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
-    const assignmentEditRef: RefObject<HTMLButtonElement> = React.useRef<HTMLButtonElement>(null);
 
     function onEditMenuClosed(): void {
         setEditMenuIsOpened(false);
     }
 
     function toggleEditMenu(): void {
-        if (!isReadOnly) {
-            if (!isUnassignedProduct) {
-                if (editMenuIsOpened) {
-                    setEditMenuIsOpened(false);
-                } else {
-                    setEditMenuIsOpened(true);
-                }
+        if (!isUnassignedProduct) {
+            if (editMenuIsOpened) {
+                setEditMenuIsOpened(false);
             } else {
-                const newModalState: CurrentModalState = {
-                    modal: AvailableModals.EDIT_PERSON,
-                    item: assignment,
-                };
-                setCurrentModal(newModalState);
+                setEditMenuIsOpened(true);
             }
+        } else {
+            const newModalState: CurrentModalState = {
+                modal: AvailableModals.EDIT_PERSON,
+                item: assignment,
+            };
+            setCurrentModal(newModalState);
         }
     }
 
@@ -182,32 +177,19 @@ function AssignmentCard({
             }];
     }
 
-    useEffect(() => {
-        let color: string | undefined;
-        if (assignment.person.spaceRole && assignment.person.spaceRole.color) {
-            color = assignment.person.spaceRole.color.color;
-        }
-
-        if (assignmentEditRef.current) {
-            ThemeApplier.setBackgroundColorOnElement(assignmentEditRef.current, color);
-        }
-
-        if (assignment.placeholder && assignmentRef.current) {
-            ThemeApplier.setBorderColorOnElement(assignmentRef.current, color);
-        }
-    }, [assignment]);
-
     const classNames = `personContainer 
         ${container === 'productDrawerContainer' ? 'borderedPeople' : ''}
-        ${assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}
+        ${!isReadOnly && assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}
         ${isReadOnly ? 'readOnlyAssignmentCard' : ''}`;
 
+    const cssRoleColor = assignment.person.spaceRole?.color?.color ? assignment.person.spaceRole.color.color : 'transparent';
 
     return (
         <div
             className={classNames}
             data-testid={createDataTestId('assignmentCard', assignment.person.name)}
             ref={assignmentRef}
+            style={{borderColor: assignment.placeholder ? cssRoleColor : 'transparent' }}
             onMouseDown={(e): void => {
                 if (!isReadOnly && startDraggingAssignment) {
                     startDraggingAssignment(assignmentRef, assignment, e);
@@ -219,9 +201,11 @@ function AssignmentCard({
                 isReadOnly={isReadOnly}
                 assignment={assignment}
                 isUnassignedProduct={isUnassignedProduct}/>
-            <button ref={assignmentEditRef}
+            <button
                 className="personRoleColor"
                 aria-label="Person Menu"
+                disabled={isReadOnly}
+                style={{backgroundColor: cssRoleColor }}
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
             >

@@ -32,8 +32,6 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
     const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
-    const showHoverBox = !isReadOnly && hoverBoxIsOpened;
-
     const HoverBox = ({notes}: {
         notes: string;
     }): JSX.Element  => {
@@ -60,18 +58,29 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
         }
     };
 
+    const NotesIcon = (): ReactElement => {
+        if (isReadOnly || !person.notes?.trim().length) {
+            return <></>;
+        }
+        return  <i
+            className={`material-icons notesIcon ${isUnassignedProduct ? 'unassignedNotesIcon' : ''}`}
+            data-testid="notesIcon"
+            onMouseEnter={(): void => onNoteHover(true)}
+            onMouseLeave={(): void => onNoteHover(false)}
+        >
+            note
+            {!isDragging && hoverBoxIsOpened && <HoverBox notes={person.notes}/>}
+        </i>;
+
+    };
+
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer">
             <div className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
                 data-testid="personName">
                 {person.name}
-                {!!person.notes && !!person.notes.trim() &&
-                    <i className={`material-icons notesIcon ${isUnassignedProduct ? 'unassignedNotesIcon' : ''}`} data-testid="notesIcon" onMouseEnter={(): void => onNoteHover(true)} onMouseLeave={(): void => onNoteHover(false)}>
-                        note
-                        {!isDragging && showHoverBox && <HoverBox notes={person.notes}/>}
-                    </i>
-                }
+                <NotesIcon/>
             </div>
             {person?.spaceRole?.name && (
                 <div className="personRole">
