@@ -20,6 +20,7 @@ package com.ford.internalprojects.peoplemover.person
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
@@ -91,7 +92,7 @@ class PersonControllerApiTest {
 
         basePeopleUrl = getBasePeopleUrl(space.uuid)
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
 
     @After
@@ -195,7 +196,7 @@ class PersonControllerApiTest {
     @Test
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = emptySpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = emptySpace.uuid, permission = PERMISSION_OWNER))
 
         val result = mockMvc
                 .perform(get(getBasePeopleUrl(emptySpace.uuid))

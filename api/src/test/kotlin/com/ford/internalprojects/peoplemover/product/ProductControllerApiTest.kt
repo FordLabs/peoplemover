@@ -20,6 +20,7 @@ package com.ford.internalprojects.peoplemover.product
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
@@ -86,7 +87,7 @@ class ProductControllerApiTest {
         space = spaceRepository.save(Space(name = "tok"))
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
         baseProductsUrl = getBaseProductUrl(space.uuid)
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
 
     @After

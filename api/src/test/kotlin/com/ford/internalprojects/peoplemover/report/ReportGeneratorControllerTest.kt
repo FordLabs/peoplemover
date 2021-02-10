@@ -20,6 +20,8 @@ package com.ford.internalprojects.peoplemover.report
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.Assignment
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.person.Person
@@ -103,10 +105,10 @@ class ReportGeneratorControllerTest {
         person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, notes = "Notes", spaceUuid = space1.uuid))
         person2 = personRepository.save(Person(name = "Person 2", spaceUuid = space1.uuid))
         person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceUuid = space2.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = PERMISSION_EDITOR))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceUuid = space1.uuid, permission = PERMISSION_OWNER))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceUuid = space1.uuid, permission = PERMISSION_EDITOR))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceUuid = space2.uuid, permission = PERMISSION_OWNER))
         assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, effectiveDate = LocalDate.parse(mar1), spaceUuid = space1.uuid))
         assignmentRepository.save(Assignment(person = person2, productId = productB.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
         assignmentRepository.save(Assignment(person = person3, productId = productA.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
