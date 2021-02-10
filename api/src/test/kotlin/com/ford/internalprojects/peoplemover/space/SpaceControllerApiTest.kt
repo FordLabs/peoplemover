@@ -229,6 +229,78 @@ class SpaceControllerApiTest {
     }
 
     @Test
+    fun `GET should return all user id that have edit access for a space`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+        val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_SPACE_ANOTHER_USER_ID", spaceUuid = space2.uuid))
+
+        val result = mockMvc.perform(
+            get(baseSpaceUrl + "/${space1.uuid}/editors")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+        .andExpect(status().isOk)
+        .andReturn()
+
+        val returnedEditors: List<String> = objectMapper.readValue(
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableList::class.java, String::class.java)
+        )
+
+        assertThat(returnedEditors).containsExactlyInAnyOrder("USER_ID", "ANOTHER_USER_ID")
+    }
+
+    @Test
+    fun `GET should return all user id that have edit access for a space and ignore empty and null user ids`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "", spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = null, spaceUuid = space1.uuid))
+
+        val result = mockMvc.perform(
+                get(baseSpaceUrl + "/${space1.uuid}/editors")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val returnedEditors: List<String> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, String::class.java)
+        )
+
+        assertThat(returnedEditors).containsExactlyInAnyOrder("USER_ID", "ANOTHER_USER_ID", "UNKNOWN_USER", "UNKNOWN_USER")
+    }
+
+    @Test
+    fun `GET should return 403 if the user does not have write access to the space`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
+
+        mockMvc.perform(
+                get(baseSpaceUrl + "/${space1.uuid}/editors")
+                        .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        )
+        .andExpect(status().isForbidden)
+        .andReturn()
+    }
+
+    @Test
+    fun `GET should return 403 if the space does not exist`() {
+        mockMvc.perform(
+            get(baseSpaceUrl + "/aaaaaaaa-aaaa-aaaa-aaaa-badspace1234/editors")
+            .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+        .andExpect(status().isForbidden)
+        .andReturn()
+    }
+
+    @Test
     fun `Edit Space Request should return 200 if space is edited correctly`() {
         val space = spaceRepository.save(Space(name = "test"))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))

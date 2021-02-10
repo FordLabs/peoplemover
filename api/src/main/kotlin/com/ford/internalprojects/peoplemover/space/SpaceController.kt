@@ -32,8 +32,7 @@ import javax.validation.Valid
 class SpaceController(
         private val logger: BasicLogger,
         private val userSpaceMappingRepository: UserSpaceMappingRepository,
-        private val spaceService: SpaceService,
-        private val spaceRepository: SpaceRepository
+        private val spaceService: SpaceService
 ) {
     @GetMapping("")
     fun allSpaces(): List<Space> {
@@ -65,6 +64,12 @@ class SpaceController(
     @GetMapping("/user")
     fun getAllSpacesForUser(@RequestHeader(name = "Authorization") accessToken: String): List<Space> {
         return spaceService.getSpacesForUser(accessToken.replace("Bearer ", ""))
+    }
+
+    @PreAuthorize("hasPermission(#uuid, 'modify')")
+    @GetMapping("/{uuid}/editors")
+    fun getAllEditors(@PathVariable uuid: String): List<String> {
+        return spaceService.getEditorsForSpace(uuid)
     }
 
 

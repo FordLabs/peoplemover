@@ -1,0 +1,1 @@
+UPDATE user_space_mapping SET user_id = ltrim(user_id)
