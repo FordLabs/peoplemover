@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.producttag
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.Product
@@ -73,7 +74,7 @@ class ProductTagControllerTest {
     fun setUp() {
         space = spaceRepository.save(Space(name = "anotherSpaceName"))
         baseProductTagsUrl = getBaseProductTagsUrl(space.uuid)
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
 
     @After
