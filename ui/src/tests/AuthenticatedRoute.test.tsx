@@ -23,7 +23,8 @@ import {createMemoryHistory, MemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
 import Axios, {AxiosResponse} from 'axios';
 import {RunConfig} from '../index';
-import {OAUTH_REDIRECT_SESSIONSTORAGE_KEY} from '../ReusableComponents/OAuthRedirect';
+
+const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 
 describe('AuthenticatedRoute', function() {
     let originalWindow: Window;
@@ -31,7 +32,6 @@ describe('AuthenticatedRoute', function() {
     beforeEach(() => {
         originalWindow = window;
         delete window.location;
-        sessionStorage.clear();
         (window as Window) = Object.create(window);
         new Cookies().remove('accessToken');
     });
@@ -61,45 +61,45 @@ describe('AuthenticatedRoute', function() {
         });
     });
 
-    it('should set the appropriate space UUID in the ADFS redirect session storage variable', async () => {
-        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
-        let pathname = '/01234567-0123-0123-0123-0123456789ab';
-        window.location = {href: '', origin: 'http://localhost', pathname: pathname} as Location;
-        setRunConfig();
-        renderAuthRoute(createMemoryHistory(), pathname);
-
-        await wait(() => {
-            expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toEqual(pathname);
+    describe('set redirect pathname variable', () => {
+        beforeEach(() => {
+            sessionStorage.clear();
+            Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+            setRunConfig();
         });
-    });
 
-    it('should not set the redirect URL to dashboard if no path has been set', async () => {
-        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
-        let pathname = '/';
-        window.location = {href: '', origin: 'http://localhost', pathname: pathname} as Location;
-        setRunConfig();
+        it('should set the appropriate space UUID in the ADFS redirect session storage variable', async () => {
+            let pathname = '/01234567-0123-0123-0123-0123456789ab';
+            setWindowHistoryAndRender(pathname);
 
-        renderAuthRoute(createMemoryHistory(), pathname);
-
-        await wait(() => {
-            expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toBeFalsy();
+            await wait(() => {
+                expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toEqual(pathname);
+            });
         });
-    });
 
-    it('should not reset the redirect URL to dashboard if the redirect URL has already been set', async () => {
-        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
-        let updatedRedirect = '/if-this-is-put-in-session-storage-the-test-should-fail';
-        window.location = {href: '', origin: 'http://localhost', pathname: updatedRedirect} as Location;
-        setRunConfig();
+        it('should not set the redirect URL to dashboard if no path has been set', async () => {
+            setWindowHistoryAndRender('/');
 
-        let expectedRedirect = '/expected-redirect';
-        sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, expectedRedirect);
-
-        renderAuthRoute(createMemoryHistory(), updatedRedirect);
-
-        await wait(() => {
-            expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toEqual(expectedRedirect);
+            await wait(() => {
+                expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toBeFalsy();
+            });
         });
+
+        it('should not reset the redirect URL to dashboard if the redirect URL has already been set', async () => {
+            let expectedRedirect = '/expected-redirect';
+            sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, expectedRedirect);
+
+            setWindowHistoryAndRender('/if-this-is-put-in-session-storage-the-test-should-fail');
+
+            await wait(() => {
+                expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toEqual(expectedRedirect);
+            });
+        });
+
+        function setWindowHistoryAndRender(pathname: string): void {
+            window.location = {href: '', origin: 'http://localhost', pathname: pathname} as Location;
+            renderAuthRoute(createMemoryHistory(), pathname);
+        }
     });
 
     function setRunConfig(): void {

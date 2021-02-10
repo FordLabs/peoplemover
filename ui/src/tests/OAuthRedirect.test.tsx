@@ -16,11 +16,14 @@
  */
 
 import {render} from '@testing-library/react';
-import {OAuthRedirect, OAUTH_REDIRECT_DEFAULT, OAUTH_REDIRECT_SESSIONSTORAGE_KEY} from '../ReusableComponents/OAuthRedirect';
+import {OAuthRedirect} from '../ReusableComponents/OAuthRedirect';
 import * as React from 'react';
 import {MemoryRouter, Router} from 'react-router';
 import {createMemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
+
+const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
+const OAUTH_REDIRECT_DEFAULT = '/user/dashboard';
 
 describe('OAuthRedirect', function() {
     let originalWindow: Window;

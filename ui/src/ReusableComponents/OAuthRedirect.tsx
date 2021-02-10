@@ -26,12 +26,28 @@ function OAuthRedirect(): JSX.Element {
     const searchParams = new URLSearchParams(window.location.hash.replace('#', ''));
     const accessToken = searchParams.get('access_token');
     const cookies = new Cookies();
-    const adfsSpaceRedirect = sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
-    const redirectUrl = (adfsSpaceRedirect ? adfsSpaceRedirect : OAUTH_REDIRECT_DEFAULT);
-    sessionStorage.removeItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
     cookies.set('accessToken', accessToken, {path: '/'});
+
+    const redirectUrl = getOauthRedirect();
+    sessionStorage.removeItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
 
     return (<Redirect to={redirectUrl}/>);
 }
 
-export {OAuthRedirect, OAUTH_REDIRECT_DEFAULT, OAUTH_REDIRECT_SESSIONSTORAGE_KEY};
+function getOauthRedirect(): string {
+    const adfsSpaceRedirect = sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
+    return (adfsSpaceRedirect ? adfsSpaceRedirect : OAUTH_REDIRECT_DEFAULT);
+}
+
+function setOauthRedirect(pathName: string): void {
+    const oauthRedirectUnset = !sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
+    const pathnameExists = pathName?.length > 1;
+    if (
+        oauthRedirectUnset
+        && pathnameExists
+    ) {
+        sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, pathName);
+    }
+}
+
+export {OAuthRedirect, setOauthRedirect};
