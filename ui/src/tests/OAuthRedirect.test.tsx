@@ -16,7 +16,7 @@
  */
 
 import {render} from '@testing-library/react';
-import {OAuthRedirect, OAUTH_REDIRECT_DEFAULT, OAUTH_REDIRECT_KEY} from '../ReusableComponents/OAuthRedirect';
+import {OAuthRedirect, OAUTH_REDIRECT_DEFAULT, OAUTH_REDIRECT_SESSIONSTORAGE_KEY} from '../ReusableComponents/OAuthRedirect';
 import * as React from 'react';
 import {MemoryRouter, Router} from 'react-router';
 import {createMemoryHistory} from 'history';
@@ -30,6 +30,8 @@ describe('OAuthRedirect', function() {
         delete window.location;
         (window as Window) = Object.create(window);
         new Cookies().remove('accessToken');
+
+        sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, '/user/dashboard');
     });
 
     afterEach(() => {
@@ -51,7 +53,8 @@ describe('OAuthRedirect', function() {
         expect(new Cookies().get('accessToken')).toEqual(expectedToken);
     });
 
-    it('should redirect to default page', function() {
+    it('should redirect to a default fallback page if no session storage redirect has been set', function() {
+        sessionStorage.clear();
         const expectedPathname = OAUTH_REDIRECT_DEFAULT;
         const expectedToken = 'EXPECTED_TOKEN';
         window.location = {
@@ -77,7 +80,7 @@ describe('OAuthRedirect', function() {
             hash: `#access_token=${expectedToken}`,
         } as Location;
 
-        sessionStorage.setItem(OAUTH_REDIRECT_KEY, expectedPathname);
+        sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, expectedPathname);
 
         const history = createMemoryHistory({ initialEntries: ['/login'] });
 
@@ -87,6 +90,6 @@ describe('OAuthRedirect', function() {
             </Router>
         );
         expect(history.location.pathname).toEqual(expectedPathname);
-        expect(sessionStorage.getItem(OAUTH_REDIRECT_KEY)).toBeFalsy();
+        expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toBeFalsy();
     });
 });

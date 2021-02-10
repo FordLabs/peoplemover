@@ -21,7 +21,7 @@ import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useState} from 'react';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {getToken} from './TokenProvider';
-import {OAUTH_REDIRECT_KEY} from '../ReusableComponents/OAuthRedirect';
+import {OAUTH_REDIRECT_SESSIONSTORAGE_KEY} from '../ReusableComponents/OAuthRedirect';
 
 export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
@@ -39,11 +39,19 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
     return <>{renderedElement}</>;
 }
 
-export function RedirectToADFS(): null {
-    let uuidRegEx = '^\\b[a-f0-9]{8}\\b-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-\\b[a-f0-9]{12}\\b$';
-    if (window.location.pathname?.split('/')[1].match(uuidRegEx)) {
-        sessionStorage.setItem(OAUTH_REDIRECT_KEY, window.location.pathname);
+function setOauthRedirect(): void {
+    const oauthRedirectUnset = !sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
+    const pathnameExists = window.location.pathname?.length > 1;
+    if (
+        oauthRedirectUnset
+        && pathnameExists
+    ) {
+        sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, window.location.pathname);
     }
+}
+
+export function RedirectToADFS(): null {
+    setOauthRedirect();
 
     /* eslint-disable @typescript-eslint/camelcase */
     let oauthUri: string = window.runConfig.adfs_url_template;

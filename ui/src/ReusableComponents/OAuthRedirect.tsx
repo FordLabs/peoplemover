@@ -20,18 +20,18 @@ import {Redirect} from 'react-router';
 import Cookies from 'universal-cookie';
 
 const OAUTH_REDIRECT_DEFAULT = '/user/dashboard';
-const OAUTH_REDIRECT_KEY = 'oauth_redirect';
+const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 
 function OAuthRedirect(): JSX.Element {
     const searchParams = new URLSearchParams(window.location.hash.replace('#', ''));
     const accessToken = searchParams.get('access_token');
     const cookies = new Cookies();
-    const adfsSpaceRedirect = sessionStorage.getItem(OAUTH_REDIRECT_KEY);
+    const adfsSpaceRedirect = sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
     const redirectUrl = (adfsSpaceRedirect ? adfsSpaceRedirect : OAUTH_REDIRECT_DEFAULT);
-    sessionStorage.removeItem(OAUTH_REDIRECT_KEY);
+    sessionStorage.removeItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
     cookies.set('accessToken', accessToken, {path: '/'});
 
     return (<Redirect to={redirectUrl}/>);
 }
 
-export {OAuthRedirect, OAUTH_REDIRECT_DEFAULT, OAUTH_REDIRECT_KEY};
+export {OAuthRedirect, OAUTH_REDIRECT_DEFAULT, OAUTH_REDIRECT_SESSIONSTORAGE_KEY};

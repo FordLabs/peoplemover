@@ -23,7 +23,7 @@ import {createMemoryHistory, MemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
 import Axios, {AxiosResponse} from 'axios';
 import {RunConfig} from '../index';
-import {OAUTH_REDIRECT_KEY} from '../ReusableComponents/OAuthRedirect';
+import {OAUTH_REDIRECT_SESSIONSTORAGE_KEY} from '../ReusableComponents/OAuthRedirect';
 
 describe('AuthenticatedRoute', function() {
     let originalWindow: Window;
@@ -69,19 +69,36 @@ describe('AuthenticatedRoute', function() {
         renderAuthRoute(createMemoryHistory(), pathname);
 
         await wait(() => {
-            expect(sessionStorage.getItem(OAUTH_REDIRECT_KEY)).toEqual(pathname);
+            expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toEqual(pathname);
         });
     });
 
-    it('should not set the space UUID if not a real uuid', async () => {
+    it('should not set the redirect URL to dashboard if no path has been set', async () => {
         Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
-        let pathname = '/not-a-real-uuid';
+        let pathname = '/';
         window.location = {href: '', origin: 'http://localhost', pathname: pathname} as Location;
         setRunConfig();
+
         renderAuthRoute(createMemoryHistory(), pathname);
 
         await wait(() => {
-            expect(sessionStorage.getItem(OAUTH_REDIRECT_KEY)).toBeFalsy();
+            expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toBeFalsy();
+        });
+    });
+
+    it('should not reset the redirect URL to dashboard if the redirect URL has already been set', async () => {
+        Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+        let updatedRedirect = '/if-this-is-put-in-session-storage-the-test-should-fail';
+        window.location = {href: '', origin: 'http://localhost', pathname: updatedRedirect} as Location;
+        setRunConfig();
+
+        let expectedRedirect = '/expected-redirect';
+        sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, expectedRedirect);
+
+        renderAuthRoute(createMemoryHistory(), updatedRedirect);
+
+        await wait(() => {
+            expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toEqual(expectedRedirect);
         });
     });
 
