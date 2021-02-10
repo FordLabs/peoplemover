@@ -110,7 +110,9 @@ create table user_space_mapping
     last_modified_by varchar(30),
     created_date datetime,
     created_by varchar(30),
+    permission varchar(36) NOT NULL default 'editor',
 
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     constraint UQ_User_Space_Mapping unique (user_id, space_uuid)
 );
+

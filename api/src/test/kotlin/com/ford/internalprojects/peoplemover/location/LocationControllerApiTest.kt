@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.location
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.Product
@@ -77,7 +78,7 @@ class LocationControllerApiTest {
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
 
         baseLocationsUrl = getBaseLocationsUrl(space.uuid)
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
     }
 

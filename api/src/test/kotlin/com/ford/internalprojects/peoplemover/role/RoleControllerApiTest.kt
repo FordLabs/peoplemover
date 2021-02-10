@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.role
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.Color
@@ -82,7 +83,7 @@ class RoleControllerApiTest {
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
 
         baseRolesUrl = getBaseRolesUrl(space.uuid)
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
 
     @After

@@ -62,7 +62,6 @@ function ProductCard({
     setCurrentModal,
     fetchProducts,
 }: ProductCardProps): JSX.Element {
-    const readOnlyClass = isReadOnly ? 'readOnly' : '';
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
@@ -162,24 +161,24 @@ function ProductCard({
                                 <h2 className="productName" data-testid="productName">
                                     {product.name}
                                 </h2>
-                                <div className={`productControlsContainer ${readOnlyClass}`}>
-                                    <button
-                                        data-testid={createDataTestId('addPersonToProductIcon', product.name)}
-                                        className="addPersonIcon material-icons greyIcon clickableIcon"
-                                        disabled={isReadOnly}
-                                        onClick={setCurrentModalToCreateAssignment}
-                                        onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
-                                        <i className="material-icons" aria-label="Assign Person">person_add</i>
-                                    </button>
-                                    <button
-                                        disabled={isReadOnly}
-                                        className="editIcon material-icons greyIcon clickableIcon"
-                                        data-testid={createDataTestId('editProductIcon', product.name)}
-                                        onClick={toggleEditMenu}
-                                    >
-                                        <i className="material-icons" aria-label="Product Menu">more_vert</i>
-                                    </button>
-                                </div>
+                                {!isReadOnly && (
+                                    <div className={'productControlsContainer'}>
+                                        <button
+                                            data-testid={createDataTestId('addPersonToProductIcon', product.name)}
+                                            className="addPersonIcon material-icons greyIcon clickableIcon"
+                                            onClick={setCurrentModalToCreateAssignment}
+                                            onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
+                                            <i className="material-icons" aria-label="Assign Person">person_add</i>
+                                        </button>
+                                        <button
+                                            className="editIcon material-icons greyIcon clickableIcon"
+                                            data-testid={createDataTestId('editProductIcon', product.name)}
+                                            onClick={toggleEditMenu}
+                                        >
+                                            <i className="material-icons" aria-label="Product Menu">more_vert</i>
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                             <TagList />
                             {
