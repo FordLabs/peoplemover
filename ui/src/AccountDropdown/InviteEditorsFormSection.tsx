@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, FormEvent, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
@@ -38,6 +38,15 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
     const isExpanded = !collapsed;
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
+    const [editorsList, setEditorsList] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (currentSpace.uuid) {
+            SpaceClient.getEditorsForSpace(currentSpace.uuid).then((response) => {
+                setEditorsList(response.data);
+            });
+        }
+    }, [currentSpace]);
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
@@ -76,6 +85,18 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                         data-testid="inviteEditorsFormEmailTextarea"
                         hidden={collapsed}
                     />
+                    <div>
+                        <ul className="editorList">
+                            {editorsList.map((editor, index) => {
+                                return (
+                                    <li className="editorListItem" key={index}>
+                                        <i className="material-icons editorIcon" aria-hidden>account_circle</i>
+                                        {editor}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
                     <div className="buttonsContainer" hidden={collapsed}>
                         <FormButton
                             buttonStyle="secondary"

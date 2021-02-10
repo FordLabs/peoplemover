@@ -60,6 +60,25 @@
     }
   }
 
+  .editorList {
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 32px;
+
+    .editorListItem {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      color: $gray-1;
+      text-transform: lowercase;
+
+      .editorIcon {
+        margin-right: 11px;
+      }
+    }
+  }
+
   .buttonsContainer {
     text-align: center;
     height: 32px;
