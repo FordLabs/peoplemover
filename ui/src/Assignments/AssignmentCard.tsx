@@ -189,7 +189,7 @@ function AssignmentCard({
             className={classNames}
             data-testid={createDataTestId('assignmentCard', assignment.person.name)}
             ref={assignmentRef}
-            style={{borderColor: assignment.placeholder ? cssRoleColor : 'transparent' }}
+            style={{border: assignment.placeholder ? `2px solid ${cssRoleColor}` :  '1px solid #EDEBEB' }}
             onMouseDown={(e): void => {
                 if (!isReadOnly && startDraggingAssignment) {
                     startDraggingAssignment(assignmentRef, assignment, e);
