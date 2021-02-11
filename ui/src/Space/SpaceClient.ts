@@ -49,6 +49,18 @@ class SpaceClient {
         return Axios.get(url, config);
     }
 
+    static async getEditorsForSpace(spaceUuid: string): Promise<AxiosResponse<string[]>> {
+        const url = `${baseSpaceUrl}/${spaceUuid}/editors`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.get(url, config);
+    }
+
     static async createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
         const url = `${baseSpaceUrl}/user`;
         const data = { spaceName };
