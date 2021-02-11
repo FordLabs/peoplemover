@@ -234,9 +234,9 @@ class SpaceControllerApiTest {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
         val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_SPACE_ANOTHER_USER_ID", spaceUuid = space2.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "editor"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_SPACE_ANOTHER_USER_ID", spaceUuid = space2.uuid, permission = "editor"))
 
         val result = mockMvc.perform(
             get(baseSpaceUrl + "/${space1.uuid}/editors")
@@ -257,10 +257,10 @@ class SpaceControllerApiTest {
     fun `GET should return all user id that have edit access for a space and ignore empty and null user ids`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = null, spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "editor"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "", spaceUuid = space1.uuid, permission = "editor"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = null, spaceUuid = space1.uuid, permission = "editor"))
 
         val result = mockMvc.perform(
                 get(baseSpaceUrl + "/${space1.uuid}/editors")
@@ -281,7 +281,7 @@ class SpaceControllerApiTest {
     fun `GET should return 403 if the user does not have write access to the space`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "editor"))
 
         mockMvc.perform(
                 get(baseSpaceUrl + "/${space1.uuid}/editors")
