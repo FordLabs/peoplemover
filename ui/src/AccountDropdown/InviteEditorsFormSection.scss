@@ -63,18 +63,19 @@
   .editorList {
     padding-left: 0;
     margin-top: 0;
-    margin-bottom: 32px;
+    margin-bottom: 2rem;
 
     .editorListItem {
       list-style: none;
       display: flex;
       align-items: center;
-      font-size: 16px;
+      font-size: 1rem;
       color: $gray-1;
       text-transform: lowercase;
+      margin-bottom: 1rem;
 
       .editorIcon {
-        margin-right: 11px;
+        margin-right: 0.75rem;
       }
     }
   }
