@@ -91,7 +91,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                                 return (
                                     <li className="editorListItem" key={index}>
                                         <i className="material-icons editorIcon" aria-hidden>account_circle</i>
-                                        {editor}
+                                        <span data-testid="editorId">{editor}</span>
                                     </li>
                                 );
                             })}
