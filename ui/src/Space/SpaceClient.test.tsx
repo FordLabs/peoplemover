@@ -102,6 +102,15 @@ describe('Space Client', function() {
         });
     });
 
+    it('should get all the editors for a space', function(done) {
+        const expectedUrl = baseSpaceUrl + '/uuidbob/editors';
+
+        SpaceClient.getEditorsForSpace('uuidbob').then(() => {
+            expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+            done();
+        });
+    });
+
     it('should invite users to a space and send event to matomo', function(done) {
         const expectedUrl = `/api/spaces/${TestUtils.space.uuid}:invite`;
         const expectedData = {
