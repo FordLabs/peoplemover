@@ -32,6 +32,7 @@ import {
     setPeopleAction,
 } from '../Redux/Actions';
 import SpaceSelectionTabs from '../Header/SpaceSelectionTabs';
+import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
@@ -147,6 +148,8 @@ function PeopleMover({
     }, [viewingDate, currentSpace]);
     /* eslint-enable */
 
+    const NEW_UI = window.location.hash === '#newui';
+
     if (redirect) {
         return redirect;
     }
@@ -156,7 +159,7 @@ function PeopleMover({
             : <div className="App">
                 <Header/>
                 <main>
-                    <SpaceSelectionTabs/>
+                    {NEW_UI ? <SubHeader/> : <SpaceSelectionTabs/>}
                     <div className="productAndAccordionContainer">
                         <ProductList/>
                         {!isReadOnly && (
