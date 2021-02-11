@@ -37,12 +37,12 @@
 
   .personName {
     word-break: break-word;
+
   }
 
   .personName,
   .personRole {
     margin: 2px;
-    user-select: none;
     max-width: 132px;
   }
 
@@ -50,6 +50,10 @@
     font-size: 10px;
     line-height: 11px;
     font-weight: normal;
+  }
+
+  .notReadOnly {
+    user-select: none;
   }
 }
 

@@ -94,4 +94,16 @@ class SpaceService(
         val spacesForUser = getSpacesForUser(SecurityContextHolder.getContext().authentication.name).map { it.uuid }
         return spacesForUser.contains(spaceUuid)
     }
+
+    fun getEditorsForSpace(uuid: String): List<String> {
+        val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAllBySpaceUuid(uuid)
+
+        return userSpaceMappings.map { userSpaceMapping ->
+            if (userSpaceMapping.userId == null || userSpaceMapping.userId == "") {
+                "UNKNOWN_USER"
+            } else {
+                userSpaceMapping.userId
+            }
+        }.toList()
+    }
 }

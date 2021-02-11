@@ -131,6 +131,10 @@ class TestUtils {
             data: TestUtils.space,
         } as AxiosResponse));
 
+        SpaceClient.getEditorsForSpace = jest.fn(() => Promise.resolve({
+            data: ['user_id', 'user_id_2'],
+        } as AxiosResponse));
+
         AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({
             data: [TestUtils.assignmentForPerson1],
         } as AxiosResponse));
