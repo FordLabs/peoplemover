@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.space
 
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
@@ -56,7 +57,8 @@ class SpaceService(
             userSpaceMappingRepository.save(
                 UserSpaceMapping(
                     userId = userId,
-                    spaceUuid = createdSpace.uuid
+                    spaceUuid = createdSpace.uuid,
+                    permission = PERMISSION_OWNER
                 )
             )
             return SpaceResponse(createdSpace)

@@ -16,11 +16,14 @@
  */
 
 import {render} from '@testing-library/react';
-import OAuthRedirect from '../ReusableComponents/OAuthRedirect';
+import {OAuthRedirect} from '../ReusableComponents/OAuthRedirect';
 import * as React from 'react';
 import {MemoryRouter, Router} from 'react-router';
 import {createMemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
+
+const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
+const OAUTH_REDIRECT_DEFAULT = '/user/dashboard';
 
 describe('OAuthRedirect', function() {
     let originalWindow: Window;
@@ -30,6 +33,8 @@ describe('OAuthRedirect', function() {
         delete window.location;
         (window as Window) = Object.create(window);
         new Cookies().remove('accessToken');
+
+        sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, '/user/dashboard');
     });
 
     afterEach(() => {
@@ -45,13 +50,15 @@ describe('OAuthRedirect', function() {
 
         render(
             <MemoryRouter>
-                <OAuthRedirect redirectUrl={'/user/dashboard'}/>
+                <OAuthRedirect/>
             </MemoryRouter>
         );
         expect(new Cookies().get('accessToken')).toEqual(expectedToken);
     });
 
-    it('should redirect to specified page', function() {
+    it('should redirect to a default fallback page if no session storage redirect has been set', function() {
+        sessionStorage.clear();
+        const expectedPathname = OAUTH_REDIRECT_DEFAULT;
         const expectedToken = 'EXPECTED_TOKEN';
         window.location = {
             href: `http://localhost/#access_token=${expectedToken}`,
@@ -62,9 +69,30 @@ describe('OAuthRedirect', function() {
 
         render(
             <Router history={history}>
-                <OAuthRedirect redirectUrl={'/user/dashboard'}/>
+                <OAuthRedirect/>
             </Router>
         );
-        expect(history.location.pathname).toEqual(`/user/dashboard`);
+        expect(history.location.pathname).toEqual(expectedPathname);
+    });
+
+    it('should redirect to a provided space when the space is set in session storage', () => {
+        const expectedPathname = '/CAFE8441-CAFE-ADEC-FADE-ABBAEDDABABE';
+        const expectedToken = 'EXPECTED_TOKEN';
+        window.location = {
+            href: `http://localhost/#access_token=${expectedToken}`,
+            hash: `#access_token=${expectedToken}`,
+        } as Location;
+
+        sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, expectedPathname);
+
+        const history = createMemoryHistory({ initialEntries: ['/login'] });
+
+        render(
+            <Router history={history}>
+                <OAuthRedirect/>
+            </Router>
+        );
+        expect(history.location.pathname).toEqual(expectedPathname);
+        expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toBeFalsy();
     });
 });

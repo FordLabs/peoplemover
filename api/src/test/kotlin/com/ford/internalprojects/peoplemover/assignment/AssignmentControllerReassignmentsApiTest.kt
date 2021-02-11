@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
@@ -104,7 +105,7 @@ class AssignmentControllerReassignmentsApiTest {
         person = personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceUuid = editableSpace.uuid))
         personTwo = personRepository.save(Person(name = "Joey Britten", newPerson = true, spaceUuid = editableSpace.uuid))
         personInReadOnlySpace = personRepository.save(Person(name = "Wallace Britten", newPerson = true, spaceUuid = editableSpace.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = editableSpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = editableSpace.uuid, permission = PERMISSION_OWNER))
     }
 
     @After

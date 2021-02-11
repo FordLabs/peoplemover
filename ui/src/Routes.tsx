@@ -19,7 +19,7 @@ import React from 'react';
 import {BrowserRouter as Router, Redirect} from 'react-router-dom';
 import {Route, Switch} from 'react-router';
 import LandingPage from './LandingPage/LandingPage';
-import OAuthRedirect from './ReusableComponents/OAuthRedirect';
+import {OAuthRedirect} from './ReusableComponents/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
@@ -42,7 +42,7 @@ function Routes(): JSX.Element {
                 </Route>
 
                 <Route exact path="/adfs/catch">
-                    <OAuthRedirect redirectUrl={dashboardUrl}/>
+                    <OAuthRedirect/>
                 </Route>
 
                 <AuthenticatedRoute exact path="/user/login">

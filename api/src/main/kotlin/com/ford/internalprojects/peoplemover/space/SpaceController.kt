@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.AuthInviteUsersToSpaceRequest
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
@@ -83,7 +84,7 @@ class SpaceController(
         request.emails.forEach { email ->
             val userId = email.substringBefore('@').toUpperCase().trim()
             try {
-                userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceUuid = uuid))
+                userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceUuid = uuid, permission = PERMISSION_EDITOR))
             } catch (e: DataIntegrityViolationException) {
                 logger.logInfoMessage("$userId already has access to this space.")
             } catch (e: Exception) {

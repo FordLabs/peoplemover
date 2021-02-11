@@ -3,6 +3,7 @@ package com.ford.internalprojects.peoplemover
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
 import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.ColorService
@@ -64,7 +65,7 @@ class LocalDataGenerator(
         )
         productService.createDefaultProducts(createdSpace);
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = createdSpace.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = createdSpace.uuid, permission = PERMISSION_EDITOR))
 
         var colors = colorService.getColors()
         if (colors.isEmpty() && addColors) {

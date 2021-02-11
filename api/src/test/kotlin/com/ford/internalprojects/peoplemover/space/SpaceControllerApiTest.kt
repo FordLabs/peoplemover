@@ -97,6 +97,7 @@ class SpaceControllerApiTest {
         assertThat(userSpaceMappings).hasSize(1)
         assertThat(userSpaceMappings[0].userId).isEqualTo(expectedUserId)
         assertThat(userSpaceMappings[0].spaceUuid).isEqualTo(actualSpaceResponse.space.uuid)
+        assertThat(userSpaceMappings[0].permission).isEqualTo(PERMISSION_OWNER)
     }
 
     @Test
@@ -143,8 +144,8 @@ class SpaceControllerApiTest {
         val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
         spaceRepository.save(Space(name = "SpaceThree"))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space2.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = PERMISSION_OWNER))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space2.uuid, permission = PERMISSION_OWNER))
 
         val accessToken = "TOKEN"
 
@@ -168,7 +169,7 @@ class SpaceControllerApiTest {
     @Test
     fun `GET should return correct space for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = PERMISSION_OWNER))
 
         val result = mockMvc.perform(
             get(baseSpaceUrl + "/" + space1.uuid)
@@ -303,7 +304,7 @@ class SpaceControllerApiTest {
     @Test
     fun `Edit Space Request should return 200 if space is edited correctly`() {
         val space = spaceRepository.save(Space(name = "test"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
         val editedSpace = EditSpaceRequest(name = "edited")
 
         val result = mockMvc.perform(
@@ -328,7 +329,7 @@ class SpaceControllerApiTest {
     @Test
     fun `Edit Space Request should change public view flag correctly`() {
         val space = spaceRepository.save(Space(name = "test", todayViewIsPublic = false))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
         val spaceRequest = EditSpaceRequest(todayViewIsPublic = true)
 
         mockMvc.perform(
@@ -347,7 +348,7 @@ class SpaceControllerApiTest {
     @Test
     fun `Edit Space Request should change both the name and the public view flag correctly`() {
         val space = spaceRepository.save(Space(name = "oldname", todayViewIsPublic = false))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
         val expectedName = "newname"
         val expectedReadOnlyFlag = true
@@ -377,7 +378,7 @@ class SpaceControllerApiTest {
                         lastModifiedDate = expectedTimeStamp
                 )
         )
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
         val spaceRequest = EditSpaceRequest()
 
@@ -403,7 +404,7 @@ class SpaceControllerApiTest {
     @Test
     fun `Edit Space Request New Space Name is Too Long`() {
         val space = spaceRepository.save(Space(name = "space"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
         val editedSpace = EditSpaceRequest(name = "12345678901234567890123456789012345678901")
 
@@ -435,7 +436,7 @@ class SpaceControllerApiTest {
     fun `Edit Space Request should not change the name of a space if name is null`() {
         val expectedName = "oldname"
         val space = spaceRepository.save(Space(name = expectedName))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
         val editedSpace = EditSpaceRequest(name = null)
 
         mockMvc.perform(
@@ -456,7 +457,7 @@ class SpaceControllerApiTest {
         val emails = listOf("email_1@email.com", "email_2@otheremail.com")
 
         val space = spaceRepository.save(Space(name = "spaceName"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
         val request = AuthInviteUsersToSpaceRequest(emails = emails)
 
@@ -471,12 +472,12 @@ class SpaceControllerApiTest {
 
         assertThat(result.response.contentLength).isEqualTo(0)
 
-        val savedIds: List<String> = userSpaceMappingRepository.findAll().map { it.userId!! }
+        val savedIds = userSpaceMappingRepository.findAll().map { Pair(it.userId!!, it.permission)}
 
         assertThat(userSpaceMappingRepository.count()).isEqualTo(3)
-        assertThat(savedIds).contains("USER_ID")
-        assertThat(savedIds).contains("EMAIL_1")
-        assertThat(savedIds).contains("EMAIL_2")
+        assertThat(savedIds).contains(Pair("USER_ID", PERMISSION_OWNER))
+        assertThat(savedIds).contains(Pair("EMAIL_1", PERMISSION_EDITOR))
+        assertThat(savedIds).contains(Pair("EMAIL_2", PERMISSION_EDITOR))
     }
 
     @Test

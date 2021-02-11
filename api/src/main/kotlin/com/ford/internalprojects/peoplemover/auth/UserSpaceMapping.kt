@@ -13,6 +13,12 @@ data class UserSpaceMapping(
         val userId: String?,
 
         @Column(name = "space_uuid")
-        val spaceUuid: String
+        val spaceUuid: String,
+
+        @Column(name = "permission")
+        val permission: String
 
 ) : Auditable()
+
+const val PERMISSION_EDITOR = "editor"
+const val PERMISSION_OWNER = "owner"

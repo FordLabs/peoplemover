@@ -21,6 +21,7 @@ import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useState} from 'react';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {getToken} from './TokenProvider';
+import {setOauthRedirect} from '../ReusableComponents/OAuthRedirect';
 
 export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
     const {children, ...rest} = props;
@@ -39,6 +40,8 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
 }
 
 export function RedirectToADFS(): null {
+    setOauthRedirect(window.location.pathname);
+
     /* eslint-disable @typescript-eslint/camelcase */
     let oauthUri: string = window.runConfig.adfs_url_template;
     const clientId: string = window.runConfig.adfs_client_id;
