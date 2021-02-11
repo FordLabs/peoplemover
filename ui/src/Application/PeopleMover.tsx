@@ -25,9 +25,10 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
+    AvailableModals,
     fetchLocationsAction,
     fetchProductsAction,
-    fetchProductTagsAction,
+    fetchProductTagsAction, setCurrentModalAction,
     setCurrentSpaceAction,
     setPeopleAction,
 } from '../Redux/Actions';
@@ -64,6 +65,7 @@ export interface PeopleMoverProps {
     fetchLocations(): Array<LocationTag>;
     setCurrentSpace(space: Space): Space;
     setPeople(people: Array<Person>): Array<Person>;
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function PeopleMover({
@@ -77,6 +79,7 @@ function PeopleMover({
     fetchLocations,
     setCurrentSpace,
     setPeople,
+    setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
     const [redirect, setRedirect] = useState<JSX.Element>();
 
@@ -162,6 +165,14 @@ function PeopleMover({
                         {!isReadOnly && (
                             <div className="accordionContainer">
                                 <div className="accordionHeaderContainer">
+                                    <button
+                                        type="button"
+                                        className={`addPersonButton`}
+                                        data-testid="addPersonButton"
+                                        onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
+                                        <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
+                                        <span className="addPersonButtonText">Add Person</span>
+                                    </button>
                                     <UnassignedDrawer/>
                                     <ArchivedProductsDrawer/>
                                     <ReassignedDrawer/>
@@ -193,6 +204,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchLocations: () => dispatch(fetchLocationsAction()),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
+    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleMover);
