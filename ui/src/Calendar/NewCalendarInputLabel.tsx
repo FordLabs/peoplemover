@@ -30,7 +30,7 @@ function NewCalendarCustomInput(
     const viewingDate: Date = !value ? new Date() : new Date(value);
     const dateFormatOptions = {
         year: 'numeric',
-        month: 'long',
+        month: 'short',
         day: 'numeric',
     };
 

@@ -32,7 +32,7 @@ interface Props {
 
 function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
     return (
-        <div className="spaceSelectionContainer">
+        <div className="newSpaceSelectionContainer">
             <div className="leftContent">
                 <NewCalendar/>
                 {isReadOnly && (
