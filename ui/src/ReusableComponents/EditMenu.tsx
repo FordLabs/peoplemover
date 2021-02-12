@@ -19,6 +19,7 @@ import React from 'react';
 import './EditMenu.scss';
 import {useOnLoad} from './UseOnLoad';
 import {createDataTestId} from '../tests/TestUtils';
+import FocusTrap from 'focus-trap-react';
 
 
 export interface EditMenuOption {
@@ -61,23 +62,36 @@ function EditMenu(props: EditMenuProps): JSX.Element {
         props.onClosed();
     }
 
+    function listenForKeydown(event: React.KeyboardEvent): void {
+        if (event.key === 'ArrowDown') {
+            console.log('OHOHOHOHOHHO');
+        }
+        if (event.key === 'Escape') {
+            close();
+        }
+    }
+
+
+
     return (
-        <div ref={editMenuRef} className="editMenuContainer" data-testid="editMenu">
-            <input className="hiddenInputField" type="text" ref={hiddenInputRef} onBlur={close}/>
-            {props.menuOptionList.map((menuOption, index) =>
-                <div key={index}
-                    className="editMenuContainerOption"
-                    onMouseDown={(event): void =>
-                        onOptionSelected(event, menuOption.callback)
-                    }>
-                    <i className="material-icons" 
-                        data-testid={createDataTestId('editMenuOption', menuOption.text)}>
-                        {menuOption.icon}
-                    </i>
-                    <span>{menuOption.text}</span>
-                </div>
-            )}
-        </div>
+        <FocusTrap>
+            <div ref={editMenuRef} className="editMenuContainer" data-testid="editMenu" onKeyDown={(e): void => listenForKeydown(e)}>
+                <input className="hiddenInputField" type="text" ref={hiddenInputRef} onBlur={close}/>
+                {props.menuOptionList.map((menuOption, index) =>
+                    <button key={index}
+                        className="editMenuContainerOption"
+                        onMouseDown={(event): void =>
+                            onOptionSelected(event, menuOption.callback)
+                        }>
+                        <i className="material-icons" 
+                            data-testid={createDataTestId('editMenuOption', menuOption.text)}>
+                            {menuOption.icon}
+                        </i>
+                        <span>{menuOption.text}</span>
+                    </button>
+                )}
+            </div>
+        </FocusTrap>
     );
 }
 

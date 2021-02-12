@@ -132,6 +132,12 @@ function ProductCard({
         }
     }
 
+    function listenKeyDown(event: React.KeyboardEvent): void {
+        if (event.key === 'ArrowDown') {
+            toggleEditMenu();
+        }
+    }
+
     const TagList = (): JSX.Element => {
         const locationTag = product.spaceLocation?.name;
         const locationTagExists = !!locationTag;
@@ -167,13 +173,15 @@ function ProductCard({
                                             data-testid={createDataTestId('addPersonToProductIcon', product.name)}
                                             className="addPersonIcon material-icons greyIcon clickableIcon"
                                             onClick={setCurrentModalToCreateAssignment}
-                                            onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}>
+                                            onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
+                                        >
                                             <i className="material-icons" aria-label="Assign Person">person_add</i>
                                         </button>
                                         <button
                                             className="editIcon material-icons greyIcon clickableIcon"
                                             data-testid={createDataTestId('editProductIcon', product.name)}
                                             onClick={toggleEditMenu}
+                                            onKeyDown={(e): void => listenKeyDown(e)}
                                         >
                                             <i className="material-icons" aria-label="Product Menu">more_vert</i>
                                         </button>
