@@ -171,7 +171,7 @@ function PeopleMover({
                                         data-testid="addPersonButton"
                                         onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
                                         <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
-                                        <span className="addPersonButtonText">Add Person</span>
+                                        Add Person
                                     </button>
                                     <UnassignedDrawer/>
                                     <ArchivedProductsDrawer/>
