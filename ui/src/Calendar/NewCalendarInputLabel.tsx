@@ -26,6 +26,7 @@ interface CustomInputProps {
 
 function NewCalendarCustomInput(
     {isReadOnly, isOpen, setIsOpen, value}: CustomInputProps,
+    forwardedRef: Ref<HTMLDivElement>
 ): JSX.Element {
     const viewingDate: Date = !value ? new Date() : new Date(value);
     const dateFormatOptions = {
