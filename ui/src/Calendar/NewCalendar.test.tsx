@@ -26,7 +26,7 @@ describe('NewCalendar', () => {
     let resetCreateRange: () => void;
 
     const initialState: PreloadedState<GlobalStateProps> = {
-        viewingDate: new Date(2020, 4, 14),
+        viewingDate: new Date(2020, 10, 14),
         currentSpace: TestUtils.space,
     } as GlobalStateProps;
 
@@ -49,7 +49,7 @@ describe('NewCalendar', () => {
     it('should display current date on initial load', async () => {
         const app = renderWithRedux(<NewCalendar/>, undefined, initialState);
         const dateViewElement = await app.findByTestId('calendarToggle');
-        expect(dateViewElement.innerHTML).toContain('May 14, 2020');
+        expect(dateViewElement.innerHTML).toContain('Nov 14, 2020');
     });
 
     it('should have down caret when closed and up arrow when open', async () => {

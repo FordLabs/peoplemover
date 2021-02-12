@@ -113,8 +113,63 @@ describe('PeopleMover', () => {
     describe('Header and Footer Content', () => {
         beforeEach(async () => {
             await wait(() => {
-                app = applicationSetup();
+                app = applicationSetup(undefined, {viewingDate: new Date(2020, 10, 14),
+                } as GlobalStateProps);
             });
+        });
+
+        it('Should contain calendar button', async () => {
+            await app.findByText(/viewing:/i);
+            await app.findByText(/November 14, 2020/);
+        });
+
+        it('Should contains My Tags on initial load of People Mover', async () => {
+            await app.findByText('My Tags');
+            await app.findByTestId('myTagsIcon');
+        });
+
+        it('should display My Roles button on startup', async () => {
+            await app.findByText('Add Person');
+            await app.findByTestId('addPersonIcon');
+        });
+
+        it('should display Add Person button on startup', async () => {
+            await app.findByText('My Roles');
+            await app.findByTestId('myRolesIcon');
+        });
+
+        it('should display Sort By dropdown on startup', async () => {
+            await app.findByText('Sort By:');
+            await app.findByText('Alphabetical');
+        });
+
+        it('should display Filter option on startup', async () => {
+            await app.findByText('Filter:');
+        });
+
+        it('should show the Flabs branding on load', async () => {
+            await app.findByText('Powered by');
+            await app.findByText('FordLabs');
+        });
+    });
+
+    describe('New Header and Footer Content', () => {
+        beforeEach(async () => {
+            document.location.hash = '#newui';
+            await wait(() => {
+                app = applicationSetup(undefined, {viewingDate: new Date(2020, 10, 14),
+                } as GlobalStateProps);
+            });
+        });
+
+        afterEach(() => {
+            document.location.hash = '';
+        });
+
+        it('Should contain calendar button', async () => {
+            await app.findByText(/viewing:/i);
+            await app.findByText(/calendar_today/);
+            await app.findByText(/November 14, 2020/);
         });
 
         it('Should contains My Tags on initial load of People Mover', async () => {
