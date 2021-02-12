@@ -42,7 +42,7 @@ function NewCalendarCustomInput(
     return (
         <div className={'calendarSubHeader'}>
             <div className={'calendarLabel'}>
-                <i className="material-icons calendarIcon">calendar_today
+                <i className="material-icons calendarIcon" aria-hidden>calendar_today
                 </i>
                 <span>
                     Viewing:
@@ -66,6 +66,4 @@ function NewCalendarCustomInput(
     );
 }
 
-const CalendarInputLabel = forwardRef<HTMLDivElement, CustomInputProps>(NewCalendarCustomInput);
-
-export default CalendarInputLabel;
+export default forwardRef<HTMLDivElement, CustomInputProps>(NewCalendarCustomInput);
