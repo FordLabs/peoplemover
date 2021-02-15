@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import './SubHeader.scss';
+import './NewSubHeader.scss';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -30,7 +30,22 @@ interface Props {
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
+/*
+
+THIS COMMENT NEEDS TO BE DELETED!
+
+BUT! Before it gets deleted, the New UI needs to go
+live. Then the '#newui' hash can be removed, along with
+where it appears in tests.
+
+Then, this file needs to be renamed to SubHeader
+(along with the corresponding scss)
+
+As a BONUS, the SpaceSelectionTabs.tsx file (and corresponding scss) can be
+deleted, as well
+
+ */
+function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
     return (
         <div className="newSpaceSelectionContainer">
             <div className="leftContent">
@@ -71,5 +86,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubHeader);
+export default connect(mapStateToProps, mapDispatchToProps)(NewSubHeader);
 /* eslint-enable */

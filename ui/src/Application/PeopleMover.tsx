@@ -33,7 +33,7 @@ import {
     setPeopleAction,
 } from '../Redux/Actions';
 import SpaceSelectionTabs from '../Header/SpaceSelectionTabs';
-import SubHeader from '../Header/SubHeader';
+import SubHeader from '../Header/NewSubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
