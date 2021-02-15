@@ -92,6 +92,11 @@ describe('PeopleMover', () => {
             expect(app.queryByTestId('reassignmentDrawer')).toBeNull();
         });
 
+        it('should display Add Person button on startup', async () => {
+            expect(await app.queryByText('Add Person')).not.toBeInTheDocument();
+            expect(await app.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
+        });
+
         it('should trigger a matomo read-only visit event each time the current space changes', () => {
             const nextSpace = {...createEmptySpace(), name: 'newSpace'};
 
@@ -133,11 +138,6 @@ describe('PeopleMover', () => {
         });
 
         it('should display My Roles button on startup', async () => {
-            await app.findByText('Add Person');
-            await app.findByTestId('addPersonIcon');
-        });
-
-        it('should display Add Person button on startup', async () => {
             await app.findByText('My Roles');
             await app.findByTestId('myRolesIcon');
         });
@@ -178,11 +178,6 @@ describe('PeopleMover', () => {
         });
 
         it('should display My Roles button on startup', async () => {
-            await app.findByText('Add Person');
-            await app.findByTestId('addPersonIcon');
-        });
-
-        it('should display Add Person button on startup', async () => {
             await app.findByText('My Roles');
             await app.findByTestId('myRolesIcon');
         });
@@ -215,11 +210,6 @@ describe('PeopleMover', () => {
         });
 
         it('should display My Roles button on startup', async () => {
-            expect(await app.queryByText('Add Person')).not.toBeInTheDocument();
-            expect(await app.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
-        });
-
-        it('should display Add Person button on startup', async () => {
             expect(await app.queryByText('My Roles')).not.toBeInTheDocument();
             expect(await app.queryByTestId('myRolesIcon')).not.toBeInTheDocument();
         });
