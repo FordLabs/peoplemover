@@ -20,7 +20,7 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
-import {createBrowserHistory, History} from 'history';
+import {createBrowserHistory, History, Location} from 'history';
 import selectEvent from 'react-select-event';
 import SpaceClient from '../Space/SpaceClient';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
@@ -39,9 +39,13 @@ describe('PeopleMover', () => {
     const addProductButtonText = 'Add Product';
     let store: Store;
 
-    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
+    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>, location?: Location): RenderResult {
         let history = createBrowserHistory();
-        history.push('/uuid');
+        if (location) {
+            history.push(location);
+        } else {
+            history.push('/uuid');
+        }
 
         return renderWithRedux(
             <Router history={history}>
@@ -155,21 +159,17 @@ describe('PeopleMover', () => {
 
     describe('New Header and Footer Content', () => {
         beforeEach(async () => {
-            document.location.hash = '#newui';
+            let location: Location = {hash: '#newui', pathname: '/uuid', search: '', state: undefined};
+            let initialState = {viewingDate: new Date(2020, 10, 14)} as GlobalStateProps;
             await wait(() => {
-                app = applicationSetup(undefined, {viewingDate: new Date(2020, 10, 14),
-                } as GlobalStateProps);
+                app = applicationSetup(undefined, initialState, location);
             });
-        });
-
-        afterEach(() => {
-            document.location.hash = '';
         });
 
         it('Should contain calendar button', async () => {
             await app.findByText(/viewing:/i);
             await app.findByText(/calendar_today/);
-            await app.findByText(/November 14, 2020/);
+            await app.findByText(/Nov 14, 2020/);
         });
 
         it('Should contains My Tags on initial load of People Mover', async () => {
