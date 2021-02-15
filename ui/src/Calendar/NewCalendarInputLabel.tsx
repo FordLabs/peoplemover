@@ -40,8 +40,8 @@ function NewCalendarCustomInput(
     }
 
     return (
-        <div className={'calendarSubHeader'}>
-            <div className={'calendarLabel'}>
+        <div className="calendarSubHeader">
+            <div className="calendarLabel">
                 <i className="material-icons calendarIcon" aria-hidden>calendar_today
                 </i>
                 <span>
