@@ -77,13 +77,13 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer">
-            <div className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} personName`}
+            <div className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
                 {person.name}
                 <NotesIcon/>
             </div>
             {person?.spaceRole?.name && (
-                <div className="personRole">
+                <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
                     {person.spaceRole.name}
                 </div>
             )}

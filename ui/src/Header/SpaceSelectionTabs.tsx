@@ -57,14 +57,6 @@ function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element
                     <i className="material-icons myRolesIcon" aria-hidden data-testid="myRolesIcon">assignment_ind</i>
                     My Roles
                 </button>
-                <button
-                    type="button"
-                    className={`addPersonButton`}
-                    data-testid="addPersonButton"
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
-                    <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
-                    Add Person
-                </button>
             </div>}
         </div>
     );
