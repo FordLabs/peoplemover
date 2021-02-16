@@ -219,6 +219,7 @@ function AssignmentCard({
             <EditMenu
                 menuOptionList={getMenuOptionList()}
                 onClosed={onEditMenuClosed}
+                testId={createDataTestId('editMenu', assignment.person.name)}
             />
             }
         </div>
