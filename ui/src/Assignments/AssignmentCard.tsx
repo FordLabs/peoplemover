@@ -177,19 +177,37 @@ function AssignmentCard({
             }];
     }
 
-    const classNames = `personContainer 
-        ${container === 'productDrawerContainer' ? 'borderedPeople' : ''}
-        ${!isReadOnly && assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}
-        ${isReadOnly ? 'readOnlyAssignmentCard' : ''}`;
-
     const cssRoleColor = assignment.person.spaceRole?.color?.color ? assignment.person.spaceRole.color.color : 'transparent';
+
+    const assignmentCardState = (): string => {
+        if (isReadOnly)
+            return 'readOnly';
+        else if (assignment.placeholder)
+            return 'placeholder';
+        else
+            return 'default';
+    };
+
+    let classNameAndRoleColor = {className: '', roleColor: ''};
+    switch (assignmentCardState()) {
+        case 'readOnly':
+            classNameAndRoleColor = {className: 'personContainer NotPlaceholder readOnlyAssignmentCard', roleColor: '1px solid #EDEBEB'};
+            break;
+        case 'placeholder':
+            classNameAndRoleColor = {className: 'personContainer Placeholder', roleColor: `2px solid ${cssRoleColor}`};
+            break;
+        case 'default':
+        default:
+            classNameAndRoleColor = {className: 'personContainer NotPlaceholder', roleColor: '1px solid #EDEBEB'};
+    }
+
 
     return (
         <div
-            className={classNames}
+            className={classNameAndRoleColor.className}
             data-testid={createDataTestId('assignmentCard', assignment.person.name)}
             ref={assignmentRef}
-            style={{border: assignment.placeholder ? `2px solid ${cssRoleColor}` :  '1px solid #EDEBEB' }}
+            style={{border: classNameAndRoleColor.roleColor}}
             onMouseDown={(e): void => {
                 if (!isReadOnly && startDraggingAssignment) {
                     startDraggingAssignment(assignmentRef, assignment, e);
