@@ -179,28 +179,19 @@ function AssignmentCard({
 
     const cssRoleColor = assignment.person.spaceRole?.color?.color ? assignment.person.spaceRole.color.color : 'transparent';
 
-    const assignmentCardState = (): string => {
-        if (isReadOnly)
-            return 'readOnly';
-        else if (assignment.placeholder)
-            return 'placeholder';
-        else
-            return 'default';
+    let classNameAndRoleColor = {
+        className: 'personContainer NotPlaceholder',
+        roleColor: '1px solid #EDEBEB',
     };
 
-    let classNameAndRoleColor = {className: '', roleColor: ''};
-    switch (assignmentCardState()) {
-        case 'readOnly':
-            classNameAndRoleColor = {className: 'personContainer NotPlaceholder readOnlyAssignmentCard', roleColor: '1px solid #EDEBEB'};
-            break;
-        case 'placeholder':
-            classNameAndRoleColor = {className: 'personContainer Placeholder', roleColor: `2px solid ${cssRoleColor}`};
-            break;
-        case 'default':
-        default:
-            classNameAndRoleColor = {className: 'personContainer NotPlaceholder', roleColor: '1px solid #EDEBEB'};
+    if (isReadOnly) {
+        classNameAndRoleColor.className += ' readOnlyAssignmentCard';
+    } else if (assignment.placeholder) {
+        classNameAndRoleColor = {
+            className: 'personContainer Placeholder',
+            roleColor: `2px solid ${cssRoleColor}`,
+        };
     }
-
 
     return (
         <div
