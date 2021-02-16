@@ -43,7 +43,7 @@ function EditMenu(props: EditMenuProps): JSX.Element {
         <AccessibleDropdownContainer handleClose={props.onClosed} className="editMenuContainer" testId={props.testId}>
             {props.menuOptionList.map((menuOption, index) =>
                 <button key={index}
-                    autoFocus={index == 0}
+                    autoFocus={index === 0}
                     className="editMenuContainerOption"
                     onClick={(event): void =>
                         onOptionSelected(event, menuOption.callback)
