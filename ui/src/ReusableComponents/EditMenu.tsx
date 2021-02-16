@@ -20,8 +20,6 @@ import './EditMenu.scss';
 import AccessibleDropdownContainer from './AccessibleDropdownContainer';
 import {createDataTestId} from '../tests/TestUtils';
 
-
-
 export interface EditMenuOption {
     callback(): void;
     text: string;
@@ -45,6 +43,7 @@ function EditMenu(props: EditMenuProps): JSX.Element {
         <AccessibleDropdownContainer handleClose={props.onClosed} className="editMenuContainer" testId={props.testId}>
             {props.menuOptionList.map((menuOption, index) =>
                 <button key={index}
+                    autoFocus={index == 0}
                     className="editMenuContainerOption"
                     onClick={(event): void =>
                         onOptionSelected(event, menuOption.callback)
