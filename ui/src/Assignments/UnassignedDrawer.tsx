@@ -38,8 +38,7 @@ function UnassignedDrawer({
     product,
 }: UnassignedDrawerProps): JSX.Element {
     const containee =
-        <ProductCard product={product}
-            container={'productDrawerContainer'}/>;
+        <ProductCard product={product} />;
     return (
         <DrawerContainer
             drawerIcon="supervisor_account"

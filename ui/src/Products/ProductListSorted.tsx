@@ -64,9 +64,7 @@ function SortedByList({ products, productSortBy}: Props): JSX.Element {
             {sortedProducts && sortedProducts.map((product: Product) => {
                 return (
                     <span key={product.id}>
-                        <ProductCard
-                            product={product}
-                            container="productCardContainer"/>
+                        <ProductCard product={product} />
                     </span>
                 );
             })}
