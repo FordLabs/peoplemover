@@ -26,7 +26,7 @@ import {
     ProductCardRefAndProductPair,
 } from '../Products/ProductDnDHelper';
 import AssignmentCard from '../Assignments/AssignmentCard';
-import {Product} from '../Products/Product';
+import {isUnassignedProduct, Product} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Assignment} from './Assignment';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -34,11 +34,10 @@ import AssignmentClient from './AssignmentClient';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
-import { getSelectedFilterLabels } from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import {Space} from '../Space/Space';
 
 interface AssignmentCardListProps {
-    container: string;
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
     currentSpace: Space;
@@ -50,7 +49,6 @@ interface AssignmentCardListProps {
 }
 
 function AssignmentCardList({
-    container,
     product,
     productRefs,
     currentSpace,
@@ -221,24 +219,21 @@ function AssignmentCardList({
         }
     }
 
-    function containerClass(container: string): string {
-        return container === 'productDrawerContainer' ? 'unassignedPeopleContainer' : 'productPeopleContainer';
-    }
+    const classNameAndDataTestId = isUnassignedProduct(product) ? 'unassignedPeopleContainer' : 'productPeopleContainer';
 
     return (
         <React.Fragment>
             <div className="antiHighlightCover" ref={antiHighlightCoverRef}/>
             <div
-                className={containerClass(container)}
-                data-testid={containerClass(container)}>
+                className={classNameAndDataTestId}
+                data-testid={classNameAndDataTestId}>
                 {assignmentsSortedByPersonRoleStably()
                     .filter(filterAssignmentByRole)
                     .map((assignment: Assignment) =>
                         <AssignmentCard assignment={assignment}
-                            isUnassignedProduct={product.name === 'unassigned'}
+                            isUnassignedProduct={isUnassignedProduct(product)}
                             startDraggingAssignment={startDraggingAssignment}
                             key={assignment.id}
-                            container={container}
                         />
                     )}
             </div>

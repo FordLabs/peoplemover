@@ -38,7 +38,6 @@ interface AssignmentCardProps {
     currentSpace: Space;
     viewingDate: Date;
     assignment: Assignment;
-    container?: string;
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
 
@@ -53,7 +52,6 @@ function AssignmentCard({
     currentSpace,
     viewingDate,
     assignment = {id: 0} as Assignment,
-    container,
     isUnassignedProduct,
     isReadOnly,
     startDraggingAssignment,
@@ -177,19 +175,28 @@ function AssignmentCard({
             }];
     }
 
-    const classNames = `personContainer 
-        ${container === 'productDrawerContainer' ? 'borderedPeople' : ''}
-        ${!isReadOnly && assignment.placeholder ? 'Placeholder' : 'NotPlaceholder'}
-        ${isReadOnly ? 'readOnlyAssignmentCard' : ''}`;
-
     const cssRoleColor = assignment.person.spaceRole?.color?.color ? assignment.person.spaceRole.color.color : 'transparent';
+
+    let classNameAndRoleColor = {
+        className: 'personContainer NotPlaceholder',
+        roleColor: '1px solid #EDEBEB',
+    };
+
+    if (isReadOnly) {
+        classNameAndRoleColor.className += ' readOnlyAssignmentCard';
+    } else if (assignment.placeholder) {
+        classNameAndRoleColor = {
+            className: 'personContainer Placeholder',
+            roleColor: `2px solid ${cssRoleColor}`,
+        };
+    }
 
     return (
         <div
-            className={classNames}
+            className={classNameAndRoleColor.className}
             data-testid={createDataTestId('assignmentCard', assignment.person.name)}
             ref={assignmentRef}
-            style={{border: assignment.placeholder ? `2px solid ${cssRoleColor}` :  '1px solid #EDEBEB' }}
+            style={{border: classNameAndRoleColor.roleColor}}
             onMouseDown={(e): void => {
                 if (!isReadOnly && startDraggingAssignment) {
                     startDraggingAssignment(assignmentRef, assignment, e);

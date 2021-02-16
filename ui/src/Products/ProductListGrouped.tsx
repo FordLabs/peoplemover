@@ -106,9 +106,7 @@ function GroupedByList({
                         <div className="groupedProducts">
                             {filteredProducts.map(product => (
                                 <span key={product.id}>
-                                    <ProductCard
-                                        product={product}
-                                        container="productCardContainer"/>
+                                    <ProductCard product={product} />
                                 </span>
                             ))}
                             <NewProductButton modalState={modalState}/>
