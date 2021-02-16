@@ -5,9 +5,10 @@ interface DropdownProps {
     ariaLabelledBy?: string;
     className?: string;
     children?: ReactNode;
+    testId?: string;
 }
 
-export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children}: DropdownProps): JSX.Element {
+export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId}: DropdownProps): JSX.Element {
 
     const dropdownContainer = createRef<HTMLDivElement>();
 
@@ -34,6 +35,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
             role="menu"
             className={className}
             aria-labelledby={ariaLabelledBy}
+            data-testid={testId}
         >
             {children}
         </div>

@@ -69,8 +69,7 @@ describe('The edit menu', () => {
 
             const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={TestUtils.dummyCallback}/>);
             expect(testPassed).toBeFalsy();
-            fireEvent.mouseDown(underTest.getByText('Edit Person'));
-            fireEvent.mouseUp(underTest.getByText('Edit Person'));
+            fireEvent.click(underTest.getByText('Edit Person'));
             expect(testPassed).toBeTruthy();
         });
     });

@@ -47,31 +47,6 @@ describe('Product List tests', () => {
         } as GlobalStateProps;
     });
 
-    it('should only have one edit menu open at a time', async () => {
-        let history = createBrowserHistory();
-        history.push('/uuid');
-
-        await act(async () => {
-            app = renderWithRedux(
-                <Router history={history}>
-                    <PeopleMover/>
-                </Router>,
-                undefined,
-                initialState
-            );
-
-            const editPerson1Button = await app.findByTestId('editPersonIconContainer__person_1');
-            const editPerson3Button = await app.findByTestId('editPersonIconContainer__hank');
-
-            fireEvent.click(editPerson1Button);
-            await app.findByTestId('editMenu');
-
-            fireEvent.click(editPerson3Button);
-            await app.findByTestId('editMenu');
-        });
-        expect(app.getAllByTestId('editMenu').length).toEqual(1);
-    });
-
     describe('Product list test filtering', () => {
         it('should return all products with the selected location filter', async () => {
             const productWithAnnArborLocation: Product = {

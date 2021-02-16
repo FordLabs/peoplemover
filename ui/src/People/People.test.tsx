@@ -82,7 +82,7 @@ describe('People actions', () => {
             fireEvent.click(editPersonIcon);
 
             const editPersonButton = await app.findByText('Edit Person');
-            fireEvent.mouseDown(editPersonButton);
+            fireEvent.click(editPersonButton);
 
             await app.findByText('Save');
         });
@@ -100,8 +100,7 @@ describe('People actions', () => {
 
             await app.findByText('Edit Person');
 
-            fireEvent.mouseDown(app.getByText('Edit Person'));
-            fireEvent.mouseUp(app.getByText('Edit Person'));
+            fireEvent.click(app.getByText('Edit Person'));
 
             const saveButton = await app.findByText('Save');
             fireEvent.click(saveButton);
@@ -412,8 +411,7 @@ describe('People actions', () => {
         it('should show Edit Person Modal when you click on edit person option', async () => {
             const editPersonButton = await app.findByText('Edit Person');
 
-            fireEvent.mouseDown(editPersonButton);
-            fireEvent.mouseUp(editPersonButton);
+            fireEvent.click(editPersonButton);
 
             await app.findByText('Save');
         });
@@ -422,8 +420,7 @@ describe('People actions', () => {
             const markAsPlaceHolder = async (): Promise<void> => {
                 await act(async () => {
                     const markAsPlaceholderButton = await app.findByText('Mark as Placeholder');
-                    fireEvent.mouseDown(markAsPlaceholderButton);
-                    fireEvent.mouseUp(markAsPlaceholderButton);
+                    fireEvent.click(markAsPlaceholderButton);
                 });
 
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'markAsPlaceholder', TestUtils.person1.name]);
@@ -450,8 +447,7 @@ describe('People actions', () => {
                 fireEvent.click(editPersonButton);
 
                 const unmarkAsPlaceholderButton = await app.findByText('Unmark as Placeholder');
-                fireEvent.mouseDown(unmarkAsPlaceholderButton);
-                fireEvent.mouseUp(unmarkAsPlaceholderButton);
+                fireEvent.click(unmarkAsPlaceholderButton);
 
                 person1Card = await app.findByTestId('assignmentCard__person_1');
                 expect(person1Card).toHaveClass('NotPlaceholder');
@@ -472,8 +468,7 @@ describe('People actions', () => {
         it('should cancel an assignment when you click on Cancel Assignment option', async () => {
             const cancelAssignmentButton = await app.findByText('Cancel Assignment');
 
-            fireEvent.mouseDown(cancelAssignmentButton);
-            fireEvent.mouseUp(cancelAssignmentButton);
+            fireEvent.click(cancelAssignmentButton);
 
             await wait(() => {
                 expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
@@ -510,8 +505,7 @@ describe('Deleting a Person', () => {
     describe('click delete from edit person form', () => {
         beforeEach(async () => {
             fireEvent.click(app.getByTestId('editPersonIconContainer__person_1'));
-            fireEvent.mouseDown(app.getByText('Edit Person'));
-            fireEvent.mouseUp(app.getByText('Edit Person'));
+            fireEvent.click(app.getByText('Edit Person'));
             await app.findByText('Delete');
             fireEvent.click(app.getByText('Delete'));
         });

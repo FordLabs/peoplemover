@@ -281,6 +281,21 @@ describe('People', () => {
             });
         });
     });
+
+
+    context('Edit Menu', () => {
+        it('Only allow one person\'s edit menu to be open at a time', () => {
+            cy.get('[data-testid=editMenu__jane_smith]').should('not.exist');
+            cy.get('[data-testid=editMenu__bob_barker]').should('not.exist');
+
+            cy.get('[data-testid=editPersonIconContainer__jane_smith]').click();
+            cy.get('[data-testid=editMenu__jane_smith]').should('exist');
+
+            cy.get('[data-testid=editPersonIconContainer__bob_barker]').click();
+            cy.get('[data-testid=editMenu__jane_smith]').should('not.exist');
+            cy.get('[data-testid=editMenu__bob_barker]').should('exist');
+        });
+    });
 });
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

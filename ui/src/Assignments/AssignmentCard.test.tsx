@@ -208,7 +208,7 @@ describe('Assignment Card', () => {
 
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
 
-            fireEvent.mouseDown(getByText('Edit Person'));
+            fireEvent.click(getByText('Edit Person'));
 
             expect(queryByText('Edit Person')).not.toBeInTheDocument();
         });
