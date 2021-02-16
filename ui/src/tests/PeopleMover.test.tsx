@@ -20,7 +20,7 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
-import {createBrowserHistory, History} from 'history';
+import {createBrowserHistory, History, Location} from 'history';
 import selectEvent from 'react-select-event';
 import SpaceClient from '../Space/SpaceClient';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
@@ -39,9 +39,13 @@ describe('PeopleMover', () => {
     const addProductButtonText = 'Add Product';
     let store: Store;
 
-    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
+    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>, location?: Location): RenderResult {
         let history = createBrowserHistory();
-        history.push('/uuid');
+        if (location) {
+            history.push(location);
+        } else {
+            history.push('/uuid');
+        }
 
         return renderWithRedux(
             <Router history={history}>
@@ -88,6 +92,11 @@ describe('PeopleMover', () => {
             expect(app.queryByTestId('reassignmentDrawer')).toBeNull();
         });
 
+        it('should display Add Person button on startup', async () => {
+            expect(await app.queryByText('Add Person')).not.toBeInTheDocument();
+            expect(await app.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
+        });
+
         it('should trigger a matomo read-only visit event each time the current space changes', () => {
             const nextSpace = {...createEmptySpace(), name: 'newSpace'};
 
@@ -113,8 +122,14 @@ describe('PeopleMover', () => {
     describe('Header and Footer Content', () => {
         beforeEach(async () => {
             await wait(() => {
-                app = applicationSetup();
+                app = applicationSetup(undefined, {viewingDate: new Date(2020, 10, 14),
+                } as GlobalStateProps);
             });
+        });
+
+        it('Should contain calendar button', async () => {
+            await app.findByText(/viewing:/i);
+            await app.findByText(/November 14, 2020/);
         });
 
         it('Should contains My Tags on initial load of People Mover', async () => {
@@ -123,11 +138,46 @@ describe('PeopleMover', () => {
         });
 
         it('should display My Roles button on startup', async () => {
-            await app.findByText('Add Person');
-            await app.findByTestId('addPersonIcon');
+            await app.findByText('My Roles');
+            await app.findByTestId('myRolesIcon');
         });
 
-        it('should display Add Person button on startup', async () => {
+        it('should display Sort By dropdown on startup', async () => {
+            await app.findByText('Sort By:');
+            await app.findByText('Alphabetical');
+        });
+
+        it('should display Filter option on startup', async () => {
+            await app.findByText('Filter:');
+        });
+
+        it('should show the Flabs branding on load', async () => {
+            await app.findByText('Powered by');
+            await app.findByText('FordLabs');
+        });
+    });
+
+    describe('New Header and Footer Content', () => {
+        beforeEach(async () => {
+            let location: Location = {hash: '#newui', pathname: '/uuid', search: '', state: undefined};
+            let initialState = {viewingDate: new Date(2020, 10, 14)} as GlobalStateProps;
+            await wait(() => {
+                app = applicationSetup(undefined, initialState, location);
+            });
+        });
+
+        it('Should contain calendar button', async () => {
+            await app.findByText(/viewing:/i);
+            await app.findByText(/calendar_today/);
+            await app.findByText(/Nov 14, 2020/);
+        });
+
+        it('Should contains My Tags on initial load of People Mover', async () => {
+            await app.findByText('My Tags');
+            await app.findByTestId('myTagsIcon');
+        });
+
+        it('should display My Roles button on startup', async () => {
             await app.findByText('My Roles');
             await app.findByTestId('myRolesIcon');
         });
@@ -160,11 +210,6 @@ describe('PeopleMover', () => {
         });
 
         it('should display My Roles button on startup', async () => {
-            expect(await app.queryByText('Add Person')).not.toBeInTheDocument();
-            expect(await app.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
-        });
-
-        it('should display Add Person button on startup', async () => {
             expect(await app.queryByText('My Roles')).not.toBeInTheDocument();
             expect(await app.queryByTestId('myRolesIcon')).not.toBeInTheDocument();
         });

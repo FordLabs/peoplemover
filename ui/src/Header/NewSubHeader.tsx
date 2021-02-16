@@ -16,13 +16,13 @@
  */
 
 import React from 'react';
-import './SpaceSelectionTabs.scss';
+import './NewSubHeader.scss';
 import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
-import Calendar from '../Calendar/Calendar';
+import NewCalendar from '../Calendar/NewCalendar';
 import {GlobalStateProps} from '../Redux/Reducers';
 
 interface Props {
@@ -30,11 +30,26 @@ interface Props {
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element {
+/*
+
+THIS COMMENT NEEDS TO BE DELETED!
+
+BUT! Before it gets deleted, the New UI needs to go
+live. Then the '#newui' hash can be removed, along with
+where it appears in tests.
+
+Then, this file needs to be renamed to SubHeader
+(along with the corresponding scss)
+
+As a BONUS, the SpaceSelectionTabs.tsx file (and corresponding scss) can be
+deleted, as well
+
+ */
+function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
     return (
-        <div className="spaceSelectionContainer">
+        <div className="newSpaceSelectionContainer">
             <div className="leftContent">
-                <Calendar/>
+                <NewCalendar/>
                 {isReadOnly && (
                     <span className="viewState">
                         <i className="material-icons">visibility</i>
@@ -71,5 +86,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SpaceSelectionTabs);
+export default connect(mapStateToProps, mapDispatchToProps)(NewSubHeader);
 /* eslint-enable */

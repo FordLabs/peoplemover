@@ -304,7 +304,7 @@ function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth() {
     const firstDayOfMonth = Cypress.moment().startOf('month');
     const twoWeeksIntoMonth = firstDayOfMonth.add(2, 'weeks');
     const closestWorkdayToMiddleOfMonth = twoWeeksIntoMonth.isoWeekday() <= 5 ? twoWeeksIntoMonth : twoWeeksIntoMonth.add(8 - twoWeeksIntoMonth.isoWeekday(), 'days');
-    if (todaysDate === closestWorkdayToMiddleOfMonth) {
+    if (todaysDate === closestWorkdayToMiddleOfMonth.format('yyyy-MM-DD')) {
         if (closestWorkdayToMiddleOfMonth.isoWeek() === 5) {
             closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.subtract(1, 'days').format('yyyy-MM-DD');
         } else {
