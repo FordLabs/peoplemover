@@ -27,7 +27,7 @@ import {
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
 import {ProductCardRefAndProductPair} from './ProductDnDHelper';
-import {Product} from './Product';
+import {isUnassignedProduct, Product} from './Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AxiosResponse} from 'axios';
@@ -39,7 +39,6 @@ import {createDataTestId} from '../tests/TestUtils';
 import './Product.scss';
 
 interface ProductCardProps {
-    container: string;
     product: Product;
     currentSpace: Space;
     viewingDate: Date;
@@ -52,7 +51,6 @@ interface ProductCardProps {
 }
 
 function ProductCard({
-    container,
     product,
     currentSpace,
     viewingDate,
@@ -151,10 +149,12 @@ function ProductCard({
             : <></>;
     };
 
+    const classNameAndDataTestId = isUnassignedProduct(product) ? 'productDrawerContainer' : 'productCardContainer';
+
     return (
-        <div className={container} data-testid={createDataTestId(container, product.name)} ref={productRef}>
+        <div className={classNameAndDataTestId} data-testid={createDataTestId(classNameAndDataTestId, product.name)} ref={productRef}>
             <div key={product.name}>
-                {container === 'productCardContainer' && (
+                {!isUnassignedProduct(product) && (
                     <div>
                         <div className="productNameEditContainer">
                             <div className="productDetails">
@@ -198,7 +198,7 @@ function ProductCard({
                         )}
                     </div>
                 )}
-                <AssignmentCardList container={container} product={product} />
+                <AssignmentCardList product={product} />
             </div>
         </div>
     );

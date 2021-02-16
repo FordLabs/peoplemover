@@ -47,3 +47,9 @@ export function emptyProduct(spaceUuid?: string): Product {
         assignments: [],
     };
 }
+
+const unassignedProductName = 'unassigned';
+
+export function isUnassignedProduct(product: Product): boolean {
+    return product.name === unassignedProductName;
+}
