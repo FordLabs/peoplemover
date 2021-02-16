@@ -74,24 +74,22 @@ function EditMenu(props: EditMenuProps): JSX.Element {
 
 
     return (
-        <FocusTrap>
-            <div ref={editMenuRef} className="editMenuContainer" data-testid="editMenu" onKeyDown={(e): void => listenForKeydown(e)}>
-                <input className="hiddenInputField" type="text" ref={hiddenInputRef} onBlur={close}/>
-                {props.menuOptionList.map((menuOption, index) =>
-                    <button key={index}
-                        className="editMenuContainerOption"
-                        onMouseDown={(event): void =>
-                            onOptionSelected(event, menuOption.callback)
-                        }>
-                        <i className="material-icons" 
-                            data-testid={createDataTestId('editMenuOption', menuOption.text)}>
-                            {menuOption.icon}
-                        </i>
-                        <span>{menuOption.text}</span>
-                    </button>
-                )}
-            </div>
-        </FocusTrap>
+        <div ref={editMenuRef} className="editMenuContainer" data-testid="editMenu" onKeyDown={(e): void => listenForKeydown(e)}>
+            <input className="hiddenInputField" type="text" ref={hiddenInputRef} onBlur={close}/>
+            {props.menuOptionList.map((menuOption, index) =>
+                <button key={index}
+                    className="editMenuContainerOption"
+                    onClick={(event): void =>
+                        onOptionSelected(event, menuOption.callback)
+                    }>
+                    <i className="material-icons"
+                        data-testid={createDataTestId('editMenuOption', menuOption.text)}>
+                        {menuOption.icon}
+                    </i>
+                    <span>{menuOption.text}</span>
+                </button>
+            )}
+        </div>
     );
 }
 

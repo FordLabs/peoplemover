@@ -176,8 +176,7 @@ describe('Unassigned Products', () => {
             });
 
             const editPerson1 = await app.findByText('Edit Person');
-            fireEvent.mouseDown(editPerson1);
-            fireEvent.mouseUp(editPerson1);
+            fireEvent.click(editPerson1);
 
             const person1Name = await app.findByLabelText('Name');
             // @ts-ignore

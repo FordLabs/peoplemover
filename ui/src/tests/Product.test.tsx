@@ -113,8 +113,7 @@ describe('Products', () => {
                 AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({} as AxiosResponse));
 
                 const person1AssignmentCard = await app.findByText('Person 1');
-                fireEvent.mouseDown(person1AssignmentCard);
-                fireEvent.mouseUp(person1AssignmentCard);
+                fireEvent.click(person1AssignmentCard);
                 expect(AssignmentClient.createAssignmentForDate).not.toHaveBeenCalled();
             });
         });
@@ -398,8 +397,7 @@ describe('Products', () => {
             fireEvent.click(editProductMenuButton);
 
             const editProductOption = await app.findByTestId('editMenuOption__edit_product');
-            fireEvent.mouseDown(editProductOption);
-            fireEvent.mouseUp(editProductOption);
+            fireEvent.click(editProductOption);
 
             await app.findByText('Edit Product');
 
@@ -416,8 +414,7 @@ describe('Products', () => {
             fireEvent.click(editProductMenuButton);
 
             const editProductOption = await app.findByTestId('editMenuOption__edit_product');
-            fireEvent.mouseDown(editProductOption);
-            fireEvent.mouseUp(editProductOption);
+            fireEvent.click(editProductOption);
 
             const notesFieldText = await app.findByTestId('notesFieldText');
             const expectedNotes = TestUtils.productWithAssignments.notes || '';
@@ -443,8 +440,7 @@ describe('Products', () => {
             const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
             const editProductMenuOption = await app.findByText('Edit Product');
-            fireEvent.mouseDown(editProductMenuOption);
-            fireEvent.mouseUp(editProductMenuOption);
+            fireEvent.click(editProductMenuOption);
 
             await app.findByText('Delete Product');
         });
@@ -454,8 +450,7 @@ describe('Products', () => {
             const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
             const editProductMenuOption = await app.findByText('Edit Product');
-            fireEvent.mouseDown(editProductMenuOption);
-            fireEvent.mouseUp(editProductMenuOption);
+            fireEvent.click(editProductMenuOption);
             fireEvent.click(app.getByText('Delete Product'));
 
             await app.findByText('Delete');
@@ -467,8 +462,7 @@ describe('Products', () => {
                 const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
                 fireEvent.click(editProduct3Button);
                 const editProductMenuOption = await app.findByText('Edit Product');
-                fireEvent.mouseDown(editProductMenuOption);
-                fireEvent.mouseUp(editProductMenuOption);
+                fireEvent.click(editProductMenuOption);
                 const deleteProductButton = await app.findByText('Delete Product');
                 fireEvent.click(deleteProductButton);
                 const deleteButton = await app.findByText('Delete');
@@ -505,8 +499,7 @@ describe('Products', () => {
                     const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
                     fireEvent.click(editProduct3Button);
                     const editProductMenuOption = await app.findByText('Edit Product');
-                    fireEvent.mouseDown(editProductMenuOption);
-                    fireEvent.mouseUp(editProductMenuOption);
+                    fireEvent.click(editProductMenuOption);
                     const deleteProductButton = await app.findByText('Delete Product');
                     fireEvent.click(deleteProductButton);
                     const archiveButton = await app.findByText('Archive');
@@ -536,8 +529,7 @@ describe('Products', () => {
             fireEvent.click(myProductElipsis);
 
             const editProductMenuOption = await app.findByText('Edit Product');
-            fireEvent.mouseDown(editProductMenuOption);
-            fireEvent.mouseUp(editProductMenuOption);
+            fireEvent.click(editProductMenuOption);
             await app.findByText('Edit Product');
             await app.findByText('Save');
         });
@@ -565,8 +557,7 @@ describe('Products', () => {
 
             const archiveProductMenuOption = await app.findByText('Archive Product');
             updateGetAllProductsResponse();
-            fireEvent.mouseDown(archiveProductMenuOption);
-            fireEvent.mouseUp(archiveProductMenuOption);
+            fireEvent.click(archiveProductMenuOption);
             await wait(() => {
                 expect(app.queryByText('Archive Product')).not.toBeInTheDocument();
                 expect(app.queryByText('Product 1')).not.toBeInTheDocument();
