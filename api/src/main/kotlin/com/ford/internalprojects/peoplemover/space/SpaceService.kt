@@ -106,4 +106,8 @@ class SpaceService(
             }
         }.toList()
     }
+
+    fun getUsersForSpace(uuid: String): List<UserSpaceMapping> {
+        return userSpaceMappingRepository.findAllBySpaceUuid(uuid)
+    }
 }

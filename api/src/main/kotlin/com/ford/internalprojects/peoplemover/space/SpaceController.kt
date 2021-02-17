@@ -73,6 +73,12 @@ class SpaceController(
         return spaceService.getEditorsForSpace(uuid)
     }
 
+    @PreAuthorize("hasPermission(#uuid, 'modify')")
+    @GetMapping("/{uuid}/users")
+    fun getAllUsers(@PathVariable uuid: String): List<UserSpaceMapping> {
+        return spaceService.getUsersForSpace(uuid)
+    }
+
 
     @PreAuthorize("hasPermission(#uuid, 'modify')")
     @PutMapping("/{uuid}:invite")
