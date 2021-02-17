@@ -67,6 +67,8 @@ class SpaceController(
         return spaceService.getSpacesForUser(accessToken.replace("Bearer ", ""))
     }
 
+    // todo: Remove this endpoint
+    @Deprecated("No longer used. Use /{uuid}/users instead")
     @PreAuthorize("hasPermission(#uuid, 'modify')")
     @GetMapping("/{uuid}/editors")
     fun getAllEditors(@PathVariable uuid: String): List<String> {

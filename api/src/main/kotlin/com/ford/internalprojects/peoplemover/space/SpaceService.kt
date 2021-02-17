@@ -95,6 +95,8 @@ class SpaceService(
         return spacesForUser.contains(spaceUuid)
     }
 
+    // todo: Remove this service call
+    @Deprecated("No longer used. Use getUserForSpace instead")
     fun getEditorsForSpace(uuid: String): List<String> {
         val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAllBySpaceUuid(uuid)
 
