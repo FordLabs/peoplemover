@@ -287,7 +287,6 @@ export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Elem
     </components.DropdownIndicator>
 );
 
-
 export const SortByOption = (props: OptionProps<OptionTypeBase>): JSX.Element => {
     const {label, innerProps, isSelected} = props;
     return (

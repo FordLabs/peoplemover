@@ -1,0 +1,140 @@
+/*!
+ * Copyright (c) 2021 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Application/Styleguide/Colors.scss';
+
+.newSortByDropdownContainer {
+  display: flex;
+
+  .sortby-icon {
+    align-self: center;
+    padding-right: .625rem;
+  }
+
+  .dropdown-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    font-size: 0.875rem;
+    color: $gray-1 !important;
+    min-width: 50px;
+  }
+
+  .sortby-dropdown-selected-option {
+    border: 1px solid transparent;
+    &:hover {
+      cursor: pointer;
+    };
+    flex-wrap: unset;
+    background-color: white;
+    width: 8.5rem;
+    margin: auto;
+    margin-right: 2rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0 .75rem;
+  }
+
+  .dropdown {
+    width: auto;
+    font-size: 14px;
+    font-weight: 700;
+    color: $gray-1;
+    padding-right: 30px;
+    margin: auto;
+  }
+
+  .sortby-dropdown {
+    min-width: 145px;
+
+    .sortby-option {
+      height: 22px;
+      font-size: 12px;
+      padding: 0 4px;
+      display: flex;
+      align-items:center;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $gray-6;
+        color: $purple;
+        border-radius: 2px;
+      }
+
+      .sortby-option-check {
+        font-size: 18px;
+        margin-left: auto;
+      }
+    }
+  }
+}
+
+.sortDropdown {
+  position: absolute;
+  background-color: white;
+  width: 150px;
+  border-radius: 6px;
+  border: 1px solid #EDEBEB;
+  right: 12px;
+  top: 50px;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
+  padding: 16px 15px;
+  box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+
+  .sortDropdownOption {
+    list-style-type: none;
+    text-align: left;
+    padding: 4px 6px;
+    color: $gray-1;
+    background-color: transparent;
+    font-size: inherit;
+    font-family: inherit;
+    width: 100%;
+
+    &:hover {
+      background-color: $gray-6;
+      color: $purple;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+  }
+}
+
+.filter-option {
+  margin-top: 6px;
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.filter-option > .checkbox {
+  margin: 0;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.filter-option > .filter-label-name {
+  word-break: break-word;
+  padding-right: 16px;
+}
