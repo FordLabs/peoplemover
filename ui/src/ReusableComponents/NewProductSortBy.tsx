@@ -59,16 +59,23 @@ function ProductSortBy({
     }, [productSortBy]);
     /* eslint-enable */
 
+    const toggleDropdownMenu = (): void => {
+        setDropdownToggle(!dropdownToggle);
+    };
+
     return (
 
 
         <div className="newSortByDropdownContainer" data-testid="sortByContainer">
             <i className="material-icons sortby-icon" aria-hidden >sort</i>
             <label id="sortby-dropdown-label" htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
-            <button className="sortby-dropdown-selected-option" onClick={(): void => setDropdownToggle(!dropdownToggle)} data-testid="sortByDropdownButton">
+            <button id="sortby-dropdown-button" className="sortby-dropdown-selected-option" onClick={(): void => {
+                toggleDropdownMenu();
+                console.log('Press dropdown button');
+            }} data-testid="sortByDropdownButton">
                 {selectedSortOption?.label}
                 {dropdownToggle
-                    ? <i className="material-icons greyIcon">keyboard_arrow_up</i>
+                    ? <i id="sortby-dropdown-button-arrow-up" className="material-icons greyIcon">keyboard_arrow_up</i>
                     : <i className="material-icons greyIcon">keyboard_arrow_down</i>
                 }
             </button>
@@ -78,7 +85,8 @@ function ProductSortBy({
                     handleClose={(): void => {
                         setDropdownToggle(false);
                     }}
-                    testId="sortByDropdownMenu">
+                    testId="sortByDropdownMenu"
+                    dontCloseForTheseIds={["sortby-dropdown-button", "sortby-dropdown-button-arrow-up"]}>
                     {sortByOptions.map(option => {
                         return <button
                             className="sortDropdownOption"
@@ -86,8 +94,10 @@ function ProductSortBy({
                             onClick={ (): void => {
                                 setProductSortBy(option.value);
                                 MatomoEvents.pushEvent(currentSpace.name, 'sort', option.label);
+                                setDropdownToggle(false);
                             }}>
                             {option.label}
+                            {option.value == selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}
                         </button>;
                     })}
                 </AccessibleDropdownContainer>

@@ -79,11 +79,6 @@
         color: $purple;
         border-radius: 2px;
       }
-
-      .sortby-option-check {
-        font-size: 18px;
-        margin-left: auto;
-      }
     }
   }
 }
@@ -111,12 +106,22 @@
     font-size: inherit;
     font-family: inherit;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: .75rem;
+    height: 1.5rem;
 
     &:hover {
       background-color: $gray-6;
       color: $purple;
       border-radius: 2px;
       cursor: pointer;
+    }
+
+    .sortby-option-check {
+      font-size: 1.125rem;
+      margin-left: auto;
     }
   }
 }

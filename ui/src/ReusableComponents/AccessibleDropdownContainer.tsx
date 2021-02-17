@@ -6,14 +6,16 @@ interface DropdownProps {
     className?: string;
     children?: ReactNode;
     testId?: string;
+    dontCloseForTheseIds?: string[];
+
 }
 
-export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId}: DropdownProps): JSX.Element {
+export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dontCloseForTheseIds}: DropdownProps): JSX.Element {
 
     const dropdownContainer = createRef<HTMLDivElement>();
 
     const leaveFocusListener = useCallback((e: {target: EventTarget | null; key?: string}) => {
-        if (!dropdownContainer.current?.contains(e.target as HTMLElement)) {
+        if (!dropdownContainer.current?.contains(e.target as HTMLElement) && !dontCloseForTheseIds?.includes((e.target as HTMLElement).id)) {
             handleClose();
         }
         if (e.key === 'Escape') {
