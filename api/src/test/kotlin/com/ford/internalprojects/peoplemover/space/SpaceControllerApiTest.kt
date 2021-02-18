@@ -277,6 +277,31 @@ class SpaceControllerApiTest {
         assertThat(returnedEditors).containsExactlyInAnyOrder("USER_ID", "ANOTHER_USER_ID", "UNKNOWN_USER", "UNKNOWN_USER")
     }
 
+
+    @Test
+    fun `GET should return 403 if the user does not have write access to the space`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "editor"))
+
+        mockMvc.perform(
+            get(baseSpaceUrl + "/${space1.uuid}/editors")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        )
+            .andExpect(status().isForbidden)
+            .andReturn()
+    }
+
+    @Test
+    fun `GET should return 403 if the space does not exist`() {
+        mockMvc.perform(
+            get(baseSpaceUrl + "/aaaaaaaa-aaaa-aaaa-aaaa-badspace1234/editors")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+            .andExpect(status().isForbidden)
+            .andReturn()
+    }
+
     @Test
     fun `GET should return all users for a space`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
@@ -311,27 +336,115 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `GET should return 403 if the user does not have write access to the space`() {
+    fun `DELETE should remove user for a space`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "editor"))
+        val user1 = UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "owner")
+        val user2 = UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor")
+        userSpaceMappingRepository.save(user1)
+        userSpaceMappingRepository.save(user2)
 
         mockMvc.perform(
-                get(baseSpaceUrl + "/${space1.uuid}/editors")
+            delete(baseSpaceUrl + "/${space1.uuid}/users/${user2.userId}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+            .andExpect(status().isOk)
+
+        val users = userSpaceMappingRepository.findAllBySpaceUuid(space1.uuid)
+
+        assertThat(users).hasSize(1)
+        assertThat(users).contains(user1);
+        assertThat(users).doesNotContain(user2);
+    }
+
+    @Test
+    fun `DELETE should return 403 if the user does not have write access to the space`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
+        val user1 = UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "owner")
+        val user2 = UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor")
+        userSpaceMappingRepository.save(user1)
+        userSpaceMappingRepository.save(user2)
+
+        mockMvc.perform(
+                delete(baseSpaceUrl + "/${space1.uuid}/users/${user2.userId}")
                         .header("Authorization", "Bearer ANONYMOUS_TOKEN")
         )
         .andExpect(status().isForbidden)
         .andReturn()
+
+        val users = userSpaceMappingRepository.findAllBySpaceUuid(space1.uuid)
+
+        assertThat(users).hasSize(2)
+        assertThat(users).contains(user1);
+        assertThat(users).contains(user2);
     }
 
     @Test
-    fun `GET should return 403 if the space does not exist`() {
+    fun `DELETE should return 406 if the caller tries to delete owner`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
+        val user1 = UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "owner")
+        val user2 = UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor")
+        userSpaceMappingRepository.save(user1)
+        userSpaceMappingRepository.save(user2)
+
         mockMvc.perform(
-            get(baseSpaceUrl + "/aaaaaaaa-aaaa-aaaa-aaaa-badspace1234/editors")
-            .header("Authorization", "Bearer GOOD_TOKEN")
+                delete(baseSpaceUrl + "/${space1.uuid}/users/${user1.userId}")
+                    .header("Authorization", "Bearer GOOD_TOKEN")
         )
-        .andExpect(status().isForbidden)
+        .andExpect(status().isNotAcceptable)
         .andReturn()
+
+        val users = userSpaceMappingRepository.findAllBySpaceUuid(space1.uuid)
+
+        assertThat(users).hasSize(2)
+        assertThat(users).contains(user1);
+        assertThat(users).contains(user2);
+    }
+
+    @Test
+    fun `DELETE should return 400 if the user doesn't exist`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
+        val user1 = UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "owner")
+        val user2 = UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor")
+        userSpaceMappingRepository.save(user1)
+
+        mockMvc.perform(
+                delete(baseSpaceUrl + "/${space1.uuid}/users/${user2.userId}")
+                    .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+        .andExpect(status().isBadRequest)
+        .andReturn()
+
+        val users = userSpaceMappingRepository.findAllBySpaceUuid(space1.uuid)
+
+        assertThat(users).hasSize(1)
+        assertThat(users).contains(user1);
+    }
+
+    @Test
+    fun `DELETE should return 400 if trying to delete a user from another space`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+        val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
+
+        val user1 = UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "owner")
+        val user2 = UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space2.uuid, permission = "editor")
+        userSpaceMappingRepository.save(user1)
+        userSpaceMappingRepository.save(user2)
+
+        mockMvc.perform(
+            delete(baseSpaceUrl + "/${space1.uuid}/users/${user2.userId}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+            .andExpect(status().isBadRequest)
+            .andReturn()
+
+        val users = userSpaceMappingRepository.findAllBySpaceUuid(space2.uuid)
+
+        assertThat(users).hasSize(1)
+        assertThat(users).contains(user2);
     }
 
     @Test
