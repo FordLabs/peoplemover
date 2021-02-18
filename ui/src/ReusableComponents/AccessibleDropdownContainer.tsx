@@ -1,4 +1,10 @@
-import React, {createRef, ReactElement, ReactNode, useCallback, useEffect} from 'react';
+import React, {
+    createRef,
+    ReactElement,
+    ReactNode,
+    useCallback,
+    useEffect,
+} from 'react';
 
 interface DropdownProps {
     handleClose: () => void;
@@ -7,7 +13,6 @@ interface DropdownProps {
     children?: ReactNode;
     testId?: string;
     dontCloseForTheseIds?: string[];
-
 }
 
 export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dontCloseForTheseIds}: DropdownProps): JSX.Element {
@@ -24,36 +29,53 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         }
 
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-            let movementDirection = 0;
-            if (e.key === 'ArrowDown') {
-                movementDirection = 1;
-            } else {
-                movementDirection = -1;
-            }
-
-            const childrenWithNullId = React.Children.toArray(children).filter(child => (child as ReactElement).props.id === undefined);
-
-            if (childrenWithNullId.length === 0) {
-                let target = e.target as HTMLElement;
-
-                const totalNumberOfChildren = React.Children.count(children);
-                const childIndex = React.Children.toArray(children).findIndex(child => (child as ReactElement).props.id == target.id);
-
-                const nextIndex = childIndex + movementDirection;
-                if (nextIndex >= totalNumberOfChildren) {
-                    // @ts-ignore
-                    document.getElementById((React.Children.toArray(children)[0] as ReactElement).props.id).focus();
-                } else if (nextIndex < 0) {
-                    // @ts-ignore
-                    document.getElementById((React.Children.toArray(children)[totalNumberOfChildren - 1] as ReactElement).props.id).focus();
-                } else  {
-                    // @ts-ignore
-                    document.getElementById((React.Children.toArray(children)[nextIndex] as ReactElement).props.id).focus();
-                }
-            }
-
+            setFocusOnExpectedElementWhenUsingUpOrDownKey(e);
         }
     }, [dropdownContainer, handleClose]);
+
+    const setFocusOnExpectedElementWhenUsingUpOrDownKey = (e: { target: EventTarget | null; key?: string }): void => {
+        if (isArrowKeyFunctionalitySetup()) {
+            const movementDirection = getMovementDirection(e.key);
+            setFocusState(e, movementDirection);
+        }
+    };
+
+    const getMovementDirection = (key?: string ): number => {
+        if (key === 'ArrowDown') {
+            return 1;
+        } else {
+            return -1;
+        }
+    };
+
+    const isArrowKeyFunctionalitySetup = (): boolean => {
+        const childrenWithUndefinedId = React.Children.toArray(children).filter(child => (child as ReactElement).props.id === undefined);
+        // @ts-ignore
+        const childrenWithNullRef = React.Children.toArray(children).filter(child => (child as ReactElement).ref === null);
+
+        return childrenWithUndefinedId.length === 0 && childrenWithNullRef.length == 0;
+    };
+
+    const setFocusState = (e: { target: EventTarget | null; key?: string }, movementDirection: number) =>{
+        let target = e.target as HTMLElement;
+
+        const totalNumberOfChildren = React.Children.count(children);
+        const childIndex = React.Children.toArray(children).findIndex(child => (child as ReactElement).props.id == target.id);
+
+        const nextIndex = childIndex + movementDirection;
+        if (nextIndex >= totalNumberOfChildren) {
+            focusChild(0);
+        } else if (nextIndex < 0) {
+            focusChild(totalNumberOfChildren - 1);
+        } else {
+            focusChild(nextIndex);
+        }
+    };
+
+    const focusChild = (index: number): void => {
+        // @ts-ignore
+        React.Children.toArray(children)[index].ref.current.focus();
+    };
 
     useEffect(() => {
         document.addEventListener('mouseup', leaveFocusListener);

@@ -16,7 +16,7 @@
  */
 
 import { SortByOption } from '../ModalFormComponents/ReactSelectStyles';
-import React, {useEffect, useState} from 'react';
+import React, {createRef, useEffect, useState} from 'react';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import './NewProductFilterOrSortBy.scss';
@@ -93,6 +93,7 @@ function ProductSortBy({
                             id={`sortDropdownOption_${option.value}`}
                             className="sortDropdownOption"
                             data-testid={`sortDropdownOption_${option.value}`}
+                            ref={createRef<HTMLButtonElement>()}
                             onClick={ (): void => {
                                 setProductSortBy(option.value);
                                 MatomoEvents.pushEvent(currentSpace.name, 'sort', option.label);
