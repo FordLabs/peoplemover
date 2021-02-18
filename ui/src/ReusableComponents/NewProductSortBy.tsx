@@ -86,9 +86,11 @@ function ProductSortBy({
                         setDropdownToggle(false);
                     }}
                     testId="sortByDropdownMenu"
-                    dontCloseForTheseIds={["sortby-dropdown-button", "sortby-dropdown-button-arrow-up"]}>
-                    {sortByOptions.map(option => {
+                    dontCloseForTheseIds={['sortby-dropdown-button', 'sortby-dropdown-button-arrow-up']}>
+                    {sortByOptions.map((option, index) => {
                         return <button
+                            key={option.value}
+                            id={`sortDropdownOption_${option.value}`}
                             className="sortDropdownOption"
                             data-testid={`sortDropdownOption_${option.value}`}
                             onClick={ (): void => {
