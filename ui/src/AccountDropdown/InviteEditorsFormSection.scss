@@ -44,7 +44,7 @@
     font-size: 14px;
     line-height: 16px;
     min-height: 32px;
-    height: 64px;
+    height: 36px;
     width: 100%;
     box-sizing: border-box;
     resize: vertical;
@@ -60,22 +60,38 @@
     }
   }
 
-  .editorList {
+  .userList {
     padding-left: 0;
     margin-top: 0;
     margin-bottom: 2rem;
 
-    .editorListItem {
+    .userListItem {
       list-style: none;
       display: flex;
       align-items: center;
       font-size: 1rem;
       color: $gray-1;
-      text-transform: lowercase;
       margin-bottom: 1rem;
 
       .editorIcon {
         margin-right: 0.75rem;
+      }
+
+      .userName {
+        width: 19rem;
+        justify-content: left;
+        text-transform: lowercase;
+      }
+
+      .userPermission {
+        width: 3rem;
+        justify-content: right;
+        text-transform: capitalize;
+        font-size: 14px;
+      }
+
+      .editorCaret {
+        width: 1.2rem;
       }
     }
   }

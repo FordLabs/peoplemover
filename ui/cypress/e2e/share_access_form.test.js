@@ -63,7 +63,7 @@ describe('Share Access Form', () => {
             const spaceUuid = Cypress.env('SPACE_UUID');
             const baseUrl = Cypress.config().baseUrl;
 
-            cy.get('[data-testid=editorId]').eq(0).should('contain.text', 'USER_ID');
+            cy.get('[data-testid=userIdName]').eq(0).should('contain.text', 'USER_ID');
 
             cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().clear().type('aaaaaa');
             cy.get('.primaryButton').should('be.disabled');
@@ -93,8 +93,10 @@ describe('Share Access Form', () => {
             openShareAccessForm();
             expandInviteToEditModalCard();
 
-            cy.get('[data-testid=editorId]').eq(0).should('contain.text', 'USER_ID');
-            cy.get('[data-testid=editorId]').eq(1).should('contain.text', 'ELISE');
+            cy.get('[data-testid=userIdName]').eq(0).should('contain.text', 'USER_ID');
+            cy.get('[data-testid=userIdPermission]').eq(0).should('contain.text', 'owner');
+            cy.get('[data-testid=userIdName]').eq(1).should('contain.text', 'ELISE');
+            cy.get('[data-testid=userIdPermission]').eq(1).should('contain.text', 'editor');
         });
     });
 });

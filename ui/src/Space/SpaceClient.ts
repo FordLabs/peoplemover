@@ -19,6 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {Space} from './Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 import {getToken} from '../Auth/TokenProvider';
+import {UserSpaceMapping} from './UserSpaceMapping';
 import MatomoEvents from '../Matomo/MatomoEvents';
 
 const baseSpaceUrl = `/api/spaces`;
@@ -49,8 +50,9 @@ class SpaceClient {
         return Axios.get(url, config);
     }
 
-    static async getEditorsForSpace(spaceUuid: string): Promise<AxiosResponse<string[]>> {
-        const url = `${baseSpaceUrl}/${spaceUuid}/editors`;
+
+    static async getUsersForSpace(spaceUuid: string): Promise<AxiosResponse<UserSpaceMapping[]>> {
+        const url = `${baseSpaceUrl}/${spaceUuid}/users`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
