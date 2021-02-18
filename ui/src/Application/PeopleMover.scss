@@ -156,3 +156,22 @@ button.addPersonButton {
     border: 2px solid white;
   }
 }
+
+.skipToProducts {
+  z-index: 9;
+  position: absolute;
+  margin: 5px;
+  border: 2px solid transparent;
+  padding: 26px;
+  background: $prime-1;
+  border-radius: 6px;
+  font: 18px Helvetica, sans-serif;
+  color: white;
+  text-decoration: none;
+
+  transform: translateX(-120%);
+  &:focus {
+    transform: translateX(0%);
+    border: 2px solid white;
+  }
+}
