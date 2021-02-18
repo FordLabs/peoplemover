@@ -69,10 +69,10 @@ function ProductSortBy({
         <div className="newSortByDropdownContainer" data-testid="sortByContainer">
             <i className="material-icons sortby-icon" aria-hidden >sort</i>
             <label id="sortby-dropdown-label" htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
-            <button id="sortby-dropdown-button" className="sortby-dropdown-selected-option" onClick={(): void => {
-                toggleDropdownMenu();
-                console.log('Press dropdown button');
-            }} data-testid="sortByDropdownButton">
+            <button id="sortby-dropdown-button" className="sortby-dropdown-selected-option"
+                onClick={(): void => { toggleDropdownMenu();}}
+                onKeyUp={(event): void => { if (event.key === 'ArrowDown' && !dropdownToggle) { toggleDropdownMenu();} }}
+                data-testid="sortByDropdownButton">
                 {selectedSortOption?.label}
                 {dropdownToggle
                     ? <i id="sortby-dropdown-button-arrow-up" className="material-icons greyIcon">keyboard_arrow_up</i>
@@ -100,7 +100,7 @@ function ProductSortBy({
                                 setDropdownToggle(false);
                             }}>
                             {option.label}
-                            {option.value == selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}
+                            {option.value === selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}
                         </button>;
                     })}
                 </AccessibleDropdownContainer>

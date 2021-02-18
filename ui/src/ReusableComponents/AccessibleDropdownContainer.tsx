@@ -53,14 +53,14 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         // @ts-ignore
         const childrenWithNullRef = React.Children.toArray(children).filter(child => (child as ReactElement).ref === null);
 
-        return childrenWithUndefinedId.length === 0 && childrenWithNullRef.length == 0;
+        return childrenWithUndefinedId.length === 0 && childrenWithNullRef.length === 0;
     };
 
-    const setFocusState = (e: { target: EventTarget | null; key?: string }, movementDirection: number) =>{
+    const setFocusState = (e: { target: EventTarget | null; key?: string }, movementDirection: number): void => {
         let target = e.target as HTMLElement;
 
         const totalNumberOfChildren = React.Children.count(children);
-        const childIndex = React.Children.toArray(children).findIndex(child => (child as ReactElement).props.id == target.id);
+        const childIndex = React.Children.toArray(children).findIndex(child => (child as ReactElement).props.id === target.id);
 
         const nextIndex = childIndex + movementDirection;
         if (nextIndex >= totalNumberOfChildren) {
