@@ -19,7 +19,7 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {GlobalStateProps} from '../Redux/Reducers';
-
+import {fireEvent} from '@testing-library/dom';
 
 describe('Invite Editors Form', function() {
     beforeEach( () => {
@@ -32,6 +32,13 @@ describe('Invite Editors Form', function() {
         await component.findByText('user_id');
         await component.findByText('owner');
         await component.findByText('user_id_2');
-        await component.findByText('editor');
+        await component.findByText(/editor/i);
+    });
+
+    it('should open UserAccessList popup', async () => {
+        const component = renderWithRedux(<InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+        const editor = await component.findByTestId('userAccess');
+        fireEvent.keyDown(editor.children[0], {key: 'ArrowDown'});
+        await component.findByText(/remove/i);
     });
 });

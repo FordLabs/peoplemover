@@ -269,6 +269,53 @@ export const filterByStyles = {
     }),
 };
 
+export const userAccessStyle = {
+    ...reactSelectStyles,
+    control: (provided: CSSProperties, props: Props): CSSProperties => ({
+        ...provided,
+        border: '1px solid transparent',
+        backgroundColor: 'transparent',
+        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
+        // @ts-ignore
+        '&:hover': {
+            boxShadow:  'none !important',
+            cursor: 'pointer',
+        },
+        flexWrap: 'unset',
+    }),
+    singleValue: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        borderRadius: '6px',
+        padding: '6px',
+        color: '#403D3D',
+        float: 'right',
+    }),
+    menu: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        left: '1rem',
+        padding: '0px 0px',
+        margin: '0',
+        minWidth: '8.125rem',
+        borderRadius: '6px',
+    }),
+    option: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        fontFamily: 'Helvetica, sans-serif',
+        fontSize: '12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0px 10px',
+        height: '30px',
+        margin: '3px 0px',
+        cursor: 'pointer',
+    }),
+    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0px',
+    }),
+};
+
 const isUserTabbingAndFocusedOnElement = ({isFocused}: Props): boolean => {
     return isFocused && document.body.classList.contains('user-is-tabbing');
 };
@@ -304,6 +351,16 @@ export const FilterOptions = (props: OptionProps<OptionTypeBase>): JSX.Element =
         <div className="filter-option" {...innerProps}>
             <input className={'checkbox'} type="checkbox" name="optionCheckbox" checked={isSelected} readOnly/>
             <div className="filter-label-name">{label}</div>
+        </div>
+    );
+};
+
+export const UserAccessListOption = (props: OptionProps<OptionTypeBase>): JSX.Element => {
+    const {label, innerProps, isSelected} = props;
+    return (
+        <div className="userAccess-option" {...innerProps}>
+            <span className="userAccess-label-name">{label}</span>
+            {isSelected && <i className="material-icons">check</i>}
         </div>
     );
 };

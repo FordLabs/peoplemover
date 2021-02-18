@@ -27,6 +27,7 @@ import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import './InviteEditorsFormSection.scss';
+import UserAccessList from '../ReusableComponents/UserAccessList';
 
 interface Props {
     collapsed?: boolean;
@@ -107,12 +108,10 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                                     <li className="userListItem" key={index}>
                                         <i className="material-icons editorIcon" aria-hidden>account_circle</i>
                                         <span className="userName" data-testid="userIdName">{user.userId}</span>
-                                        <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>
-                                        <span className="editorCaret">
-                                            {(user.permission !== 'owner' &&
-                                                <i className="material-icons" aria-hidden>arrow_drop_down</i>
-                                            )}
-                                        </span>
+                                        {user.permission !== 'owner' ?
+                                            <UserAccessList currentSpace={currentSpace} user={user}></UserAccessList> :
+                                            <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>
+                                        }
                                     </li>
                                 );
                             })}

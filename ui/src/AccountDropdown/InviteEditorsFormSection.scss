@@ -71,7 +71,7 @@
       align-items: center;
       font-size: 1rem;
       color: $gray-1;
-      margin-bottom: 1rem;
+      min-height: 2rem;
 
       .editorIcon {
         margin-right: 0.75rem;
@@ -87,7 +87,7 @@
         width: 3rem;
         justify-content: right;
         text-transform: capitalize;
-        font-size: 14px;
+        font-size: 0.875rem;
       }
 
       .editorCaret {

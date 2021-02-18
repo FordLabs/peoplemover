@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
@@ -15,9 +15,38 @@
  * limitations under the License.
  */
 
-export interface UserSpaceMapping {
-    id: string;
-    userId: string;
-    permission: string;
-    spaceUuid: string;
+@import '../Application/Styleguide/Colors.scss';
+
+.userAccess-dropdown {
+  font-size: 0.875rem;
+  color: $gray-1;
+  min-width: 5rem;
+}
+
+.userAccessDropdownContainer {
+  display: flex;
+}
+
+.userAccess-option {
+  height: 2rem;
+  font-size: 0.75rem;
+  display: flex;
+  align-items:center;
+  cursor: pointer;
+  padding: 0.25rem 1rem;
+
+  &:hover {
+    background-color: $gray-6;
+    color: $purple;
+    border-radius: 2px;
+  }
+
+  &:last-child {
+    border-top: 2px solid $gray-5;
+  }
+
+  .material-icons {
+    font-size: 0.75rem;
+    margin-left: auto;
+  }
 }
