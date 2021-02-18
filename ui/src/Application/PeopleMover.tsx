@@ -160,10 +160,11 @@ function PeopleMover({
         !hasProducts()
             ? <></>
             : <div className="App">
+                <a href="#product-container" className="skipToProducts" data-testid="skipToContentLink">Skip to main content</a>
                 <Header/>
                 <main>
                     {NEW_UI ? <SubHeader/> : <SpaceSelectionTabs/>}
-                    <div className="productAndAccordionContainer">
+                    <div className="productAndAccordionContainer" id="product-container">
                         <ProductList/>
                         {!isReadOnly && (
                             <div className="accordionContainer">
