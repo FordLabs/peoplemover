@@ -19,12 +19,10 @@ import Select from 'react-select';
 import {
     CustomIndicator,
     userAccessStyle,
-    SortByOption,
     UserAccessListOption,
 } from '../ModalFormComponents/ReactSelectStyles';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Space} from '../Space/Space';
-import MatomoEvents from '../Matomo/MatomoEvents';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import './UserAccessList.scss';
@@ -60,9 +58,6 @@ function UserAccessList({
                 aria-labelledby="userAccess-dropdown-label"
                 options={permissionOption}
                 value={permissionOption[0]}
-                onChange={(value): void => {
-                    const i = true;
-                }}
                 isSearchable={false}
                 components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
         </div>
