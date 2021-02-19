@@ -86,6 +86,18 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
         return re.test(String(email).toLowerCase());
     };
 
+    function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
+        if (window.location.hash === '#perm') {
+            if (user.permission !== 'owner')
+                return <UserAccessList currentSpace={currentSpace} user={user}></UserAccessList>;
+            else
+                return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
+        } else {
+            return <></>;
+        }
+
+    }
+
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
             <label htmlFor="emailTextarea" className="inviteEditorsLabel">
@@ -108,10 +120,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                                     <li className="userListItem" key={index}>
                                         <i className="material-icons editorIcon" aria-hidden>account_circle</i>
                                         <span className="userName" data-testid="userIdName">{user.userId}</span>
-                                        {user.permission !== 'owner' ?
-                                            <UserAccessList currentSpace={currentSpace} user={user}></UserAccessList> :
-                                            <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>
-                                        }
+                                        <UserPermission user={user}></UserPermission>
                                     </li>
                                 );
                             })}
@@ -129,7 +138,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                             buttonStyle="primary"
                             testId="inviteEditorsFormSubmitButton"
                             disabled={!enableInviteButton}>
-                        Invite
+                            Invite
                         </FormButton>
                     </div>
                 </>

@@ -60,7 +60,8 @@ function UserAccessList({
                 aria-labelledby="userAccess-dropdown-label"
                 options={permissionOption}
                 value={permissionOption[0]}
-                onChange={(value): void => { const i = true;
+                onChange={(value): void => {
+                    const i = true;
                 }}
                 isSearchable={false}
                 components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
