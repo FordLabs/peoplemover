@@ -17,7 +17,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Unit Tests
 ```
-npm run test
+npm run test:unit
 ```
 
 ### End-To-End Tests
