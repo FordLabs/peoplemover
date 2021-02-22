@@ -104,8 +104,14 @@ function GroupedByList({
                     <div data-testid="productGroup" key={tagName}>
                         <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
                         <div className="groupedProducts">
-                            {filteredProducts.map(product => (
-                                <span key={product.id}>
+                            {filteredProducts.map((product, index) => (
+                                <span key={product.id} id={`product-card-${index}`} >
+                                    {
+                                        index + 1 < filteredProducts.length &&
+                                        (<a href={`#product-card-${index + 1}`} className="skipToNextProduct">
+                                            Skip to next product
+                                        </a>)
+                                    }
                                     <ProductCard product={product} />
                                 </span>
                             ))}
