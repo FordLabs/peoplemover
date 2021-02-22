@@ -128,7 +128,7 @@ class SpaceClient {
     }
 
     static removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
-        const url = `${baseSpaceUrl}/${space.uuid}/user/${user.userId}`;
+        const url = `${baseSpaceUrl}/${space.uuid}/users/${user.userId}`;
         const config = {
             headers: {
                 'Authorization': `Bearer ${getToken()}`,

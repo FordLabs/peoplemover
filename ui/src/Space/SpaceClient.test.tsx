@@ -132,7 +132,7 @@ describe('Space Client', function() {
         SpaceClient.removeUser(TestUtils.space, user)
             .then(() => {
                 expect(Axios.delete).toHaveBeenCalledWith(
-                    `/api/spaces/${TestUtils.space.uuid}/user/${user.userId}`,
+                    `/api/spaces/${TestUtils.space.uuid}/users/${user.userId}`,
                     {headers: {Authorization: 'Bearer 123456'}}
                 );
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'removeUser', user.userId]);

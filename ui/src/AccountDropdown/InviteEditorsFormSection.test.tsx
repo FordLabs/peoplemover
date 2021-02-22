@@ -61,7 +61,7 @@ describe('Invite Editors Form', function() {
                 const removeButton = await component.findByText(/remove/i);
                 await fireEvent.click(removeButton);
                 expect(Axios.delete).toHaveBeenCalledWith(
-                    `/api/spaces/${TestUtils.space.uuid}/user/user_id_2`,
+                    `/api/spaces/${TestUtils.space.uuid}/users/user_id_2`,
                     {headers: {Authorization: 'Bearer 123456'}}
                 );
                 await wait(() => {
