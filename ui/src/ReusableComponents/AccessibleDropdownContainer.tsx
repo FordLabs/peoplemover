@@ -57,20 +57,20 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         }
     };
 
-    const getMovementDirection = (key?: string ): number => {
-        if (key === 'ArrowDown') {
-            return 1;
-        } else {
-            return -1;
-        }
-    };
-
     const isArrowKeyFunctionalitySetup = (): boolean => {
         const childrenWithUndefinedId = React.Children.toArray(children).filter(child => (child as ReactElement).props.id === undefined);
         // @ts-ignore
         const childrenWithNullRef = React.Children.toArray(children).filter(child => (child as ReactElement).ref === null);
 
         return childrenWithUndefinedId.length === 0 && childrenWithNullRef.length === 0;
+    };
+
+    const getMovementDirection = (key?: string ): number => {
+        if (key === 'ArrowDown') {
+            return 1;
+        } else {
+            return -1;
+        }
     };
 
     const setFocusState = (e: { target: EventTarget | null; key?: string }, movementDirection: number): void => {

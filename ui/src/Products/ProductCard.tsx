@@ -131,7 +131,7 @@ function ProductCard({
     }
 
     function listenKeyDown(event: React.KeyboardEvent): void {
-        if (event.key === 'ArrowDown') {
+        if (event.key === 'ArrowDown' && !isEditMenuOpen) {
             toggleEditMenu();
         }
     }
@@ -181,9 +181,9 @@ function ProductCard({
                                             className="editIcon material-icons greyIcon clickableIcon"
                                             data-testid={createDataTestId('editProductIcon', product.name)}
                                             onClick={toggleEditMenu}
-                                            onKeyDown={(e): void => listenKeyDown(e)}
+                                            onKeyUp={(e): void => listenKeyDown(e)}
                                         >
-                                            <i className="material-icons" aria-label="Product Menu">more_vert</i>
+                                            <i className="material-icons" aria-label="Product Menu" id={'product-card-edit-menu-icon'}>more_vert</i>
                                         </button>
                                     </div>
                                 )}
