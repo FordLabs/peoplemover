@@ -359,7 +359,7 @@ export const UserAccessListOption = (props: OptionProps<OptionTypeBase>): JSX.El
     const {label, innerProps, isSelected} = props;
     return (
         <div className="userAccess-option" {...innerProps}>
-            <span className="userAccess-label-name">{label}</span>
+            <span className="userAccess-label-name" data-testid="userAccessOptionLabel">{label}</span>
             {isSelected && <i className="material-icons">check</i>}
         </div>
     );
