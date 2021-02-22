@@ -186,6 +186,11 @@ button.addPersonButton {
 .skipToNextProduct {
   @extend .skipToContent;
 
-  margin-top: -24px;
   padding: 9px 12px;
+  max-width: 184px;
+  overflow-wrap: break-word;
+
+  &:focus {
+    transform: translate(0, -70%);
+  }
 }

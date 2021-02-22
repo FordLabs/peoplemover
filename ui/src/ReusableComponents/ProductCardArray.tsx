@@ -17,7 +17,7 @@ export function ProductCardArray({
                 <span key={product.id} id={createProductId(index, arrayId)} >
                     { index + 1 < products.length &&
                         (<a href={`#${createProductId(index + 1, arrayId)}`} className="skipToNextProduct">
-                            Skip to next product
+                            {`Skip to ${products[index + 1].name}`}
                         </a>)
                     }
                     <ProductCard product={product} />
