@@ -21,6 +21,7 @@ import Cookies from 'universal-cookie';
 import {createEmptySpace} from './Space';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import TestUtils from '../tests/TestUtils';
+import {UserSpaceMapping} from './UserSpaceMapping';
 
 declare let window: MatomoWindow;
 
@@ -41,6 +42,7 @@ describe('Space Client', function() {
         Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse));
         Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse));
         Axios.get = jest.fn(x => Promise.resolve({} as AxiosResponse));
+        Axios.delete = jest.fn( x => Promise.resolve({} as AxiosResponse));
         originalWindow = window;
         window._paq = [];
     });
@@ -121,6 +123,19 @@ describe('Space Client', function() {
             .then(() => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'inviteUser', expectedData.emails.join(', ')]);
+                done();
+            });
+    });
+
+    it('should remove users from space', (done) => {
+        const user: UserSpaceMapping = {id: 'blah', userId: 'user1', spaceUuid: `${TestUtils.space.uuid}`, permission: 'fakePermission'};
+        SpaceClient.removeUser(TestUtils.space, user)
+            .then(() => {
+                expect(Axios.delete).toHaveBeenCalledWith(
+                    `/api/spaces/${TestUtils.space.uuid}/user/${user.userId}`,
+                    {headers: {Authorization: 'Bearer 123456'}}
+                );
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'removeUser', user.userId]);
                 done();
             });
     });

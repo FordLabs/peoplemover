@@ -126,6 +126,22 @@ class SpaceClient {
             return Promise.reject(error);
         });
     }
+
+    static removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
+        const url = `${baseSpaceUrl}/${space.uuid}/user/${user.userId}`;
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.delete(url, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, 'removeUser', user.userId);
+            return result;
+        }).catch((error) => {
+            MatomoEvents.pushEvent(space.name, 'removeUserError', user.userId, error.code);
+            return Promise.reject(error);
+        });
+    }
 }
 
 export default SpaceClient;
