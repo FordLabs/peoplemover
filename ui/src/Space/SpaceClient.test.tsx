@@ -39,10 +39,10 @@ describe('Space Client', function() {
 
     beforeEach(function() {
         cookies.set('accessToken', '123456');
-        Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse));
-        Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse));
-        Axios.get = jest.fn(x => Promise.resolve({} as AxiosResponse));
-        Axios.delete = jest.fn( x => Promise.resolve({} as AxiosResponse));
+        Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
+        Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
+        Axios.get = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
+        Axios.delete = jest.fn( x => Promise.resolve({} as AxiosResponse)) as any;
         originalWindow = window;
         window._paq = [];
     });

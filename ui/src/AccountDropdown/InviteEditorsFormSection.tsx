@@ -86,16 +86,20 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
         return re.test(String(email).toLowerCase());
     };
 
+    const onRemoveUser = (user: UserSpaceMapping): void => {
+        const updatedUsers = usersList.filter(u => u.userId !== user.userId);
+        setUsersList(updatedUsers);
+    };
+
     function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
         if (window.location.hash === '#perm') {
             if (user.permission !== 'owner')
-                return <UserAccessList currentSpace={currentSpace} user={user}></UserAccessList>;
+                return <UserAccessList currentSpace={currentSpace} user={user} onRemoveUser={onRemoveUser}></UserAccessList>;
             else
                 return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
         } else {
             return <></>;
         }
-
     }
 
     return (

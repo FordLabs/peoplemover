@@ -21,10 +21,15 @@ import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {fireEvent, wait} from '@testing-library/dom';
 import {act} from 'react-dom/test-utils';
+import Axios, {AxiosResponse} from 'axios';
+import Cookies from 'universal-cookie';
 
 describe('Invite Editors Form', function() {
+    const cookies = new Cookies();
     beforeEach( () => {
         TestUtils.mockClientCalls();
+        Axios.delete = jest.fn( x => Promise.resolve({} as AxiosResponse)) as any;
+        cookies.set('accessToken', '123456');
     });
 
     describe('feature toggle enabled', () => {
@@ -53,7 +58,16 @@ describe('Invite Editors Form', function() {
                     <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
                 const editor = await component.findByTestId('userAccess');
                 fireEvent.keyDown(editor.children[0], {key: 'ArrowDown'});
-                await component.findByText(/remove/i);
+                const removeButton = await component.findByText(/remove/i);
+                await fireEvent.click(removeButton);
+                expect(Axios.delete).toHaveBeenCalledWith(
+                    `/api/spaces/${TestUtils.space.uuid}/user/user_id_2`,
+                    {headers: {Authorization: 'Bearer 123456'}}
+                );
+                await wait(() => {
+                    expect(component.queryByText('user_id_2')).not.toBeInTheDocument();
+                    expect(component.queryByText(/editor/i)).not.toBeInTheDocument();
+                });
             });
         });
     });

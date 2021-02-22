@@ -26,6 +26,7 @@ import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import './UserAccessList.scss';
+import SpaceClient from '../Space/SpaceClient';
 
 interface PermissionType {
     label: string;
@@ -40,12 +41,21 @@ const permissionOption: Array<PermissionType> = [
 interface UserAccessListProps {
     currentSpace: Space;
     user: UserSpaceMapping;
+    onRemoveUser: (userSpaceMapping: UserSpaceMapping) => void;
 }
 
 function UserAccessList({
     currentSpace,
     user,
+    onRemoveUser,
 }: UserAccessListProps): JSX.Element {
+
+    // @ts-ignore
+    const onChange = (value): void => {
+        if ((value as PermissionType).value === 'remove') {
+            SpaceClient.removeUser(currentSpace, user).then(() => onRemoveUser(user));
+        }
+    };
 
     return (
         <div className="userAccessDropdownContainer" data-testid="userAccess">
@@ -58,6 +68,7 @@ function UserAccessList({
                 aria-labelledby="userAccess-dropdown-label"
                 options={permissionOption}
                 value={permissionOption[0]}
+                onChange={onChange}
                 isSearchable={false}
                 components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
         </div>
