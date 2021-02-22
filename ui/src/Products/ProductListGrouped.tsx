@@ -16,7 +16,6 @@
  */
 
 import React from 'react';
-import ProductCard from './ProductCard';
 import {Product} from './Product';
 import NewProductButton from './NewProductButton';
 import {AvailableModals} from '../Redux/Actions';
@@ -28,6 +27,7 @@ import {ProductTag} from '../ProductTag/ProductTag';
 import {LocationTag} from '../Locations/LocationTag.interface';
 
 import './ProductListGrouped.scss';
+import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
 
 interface GroupedByListProps {
     products: Array<Product>;
@@ -104,17 +104,7 @@ function GroupedByList({
                     <div data-testid="productGroup" key={tagName}>
                         <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
                         <div className="groupedProducts">
-                            {filteredProducts.map((product, index) => (
-                                <span key={product.id} id={`product-card-${index}`} >
-                                    {
-                                        index + 1 < filteredProducts.length &&
-                                        (<a href={`#product-card-${index + 1}`} className="skipToNextProduct">
-                                            Skip to next product
-                                        </a>)
-                                    }
-                                    <ProductCard product={product} />
-                                </span>
-                            ))}
+                            <ProductCardArray products={filteredProducts} arrayId={tagName}/>
                             <NewProductButton modalState={modalState}/>
                         </div>
                     </div>
