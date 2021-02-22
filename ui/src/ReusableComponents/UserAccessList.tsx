@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import Select from 'react-select';
+import Select, {OptionProps, OptionTypeBase, Props} from 'react-select';
 import {
     CustomIndicator,
-    userAccessStyle,
-    UserAccessListOption,
+    isUserTabbingAndFocusedOnElement,
+    reactSelectStyles,
 } from '../ModalFormComponents/ReactSelectStyles';
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
@@ -43,6 +43,63 @@ interface UserAccessListProps {
     user: UserSpaceMapping;
     onRemoveUser: (userSpaceMapping: UserSpaceMapping) => void;
 }
+
+const UserAccessListOption = (props: OptionProps<OptionTypeBase>): JSX.Element => {
+    const {label, innerProps, isSelected} = props;
+    return (
+        <div className="userAccess-option" {...innerProps}>
+            <span className="userAccess-label-name" data-testid="userAccessOptionLabel">{label}</span>
+            {isSelected && <i className="material-icons">check</i>}
+        </div>
+    );
+};
+
+const userAccessStyle = {
+    ...reactSelectStyles,
+    control: (provided: CSSProperties, props: Props): CSSProperties => ({
+        ...provided,
+        border: '1px solid transparent',
+        backgroundColor: 'transparent',
+        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
+        // @ts-ignore
+        '&:hover': {
+            boxShadow: 'none !important',
+            cursor: 'pointer',
+        },
+        flexWrap: 'unset',
+    }),
+    singleValue: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        borderRadius: '6px',
+        padding: '6px',
+        color: '#403D3D',
+        float: 'right',
+    }),
+    menu: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        left: '1rem',
+        padding: '0px 0px',
+        margin: '0',
+        minWidth: '8.125rem',
+        borderRadius: '6px',
+    }),
+    option: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        fontFamily: 'Helvetica, sans-serif',
+        fontSize: '12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0px 10px',
+        height: '30px',
+        margin: '3px 0px',
+        cursor: 'pointer',
+    }),
+    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0px',
+    }),
+};
 
 function UserAccessList({
     currentSpace,
