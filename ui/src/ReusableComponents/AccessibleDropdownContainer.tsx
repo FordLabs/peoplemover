@@ -36,20 +36,6 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
 
     const dropdownContainer = createRef<HTMLDivElement>();
 
-    const leaveFocusListener = useCallback((e: {target: EventTarget | null; key?: string}) => {
-        if (!dropdownContainer.current?.contains(e.target as HTMLElement) && !dontCloseForTheseIds?.includes((e.target as HTMLElement).id)) {
-            handleClose();
-        }
-
-        if (e.key === 'Escape') {
-            handleClose();
-        }
-
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-            setFocusOnExpectedElementWhenUsingUpOrDownKey(e);
-        }
-    }, [dropdownContainer, handleClose]);
-
     const setFocusOnExpectedElementWhenUsingUpOrDownKey = (e: { target: EventTarget | null; key?: string }): void => {
         if (isArrowKeyFunctionalitySetup()) {
             const movementDirection = getMovementDirection(e.key);
@@ -93,6 +79,27 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         // @ts-ignore
         React.Children.toArray(children)[index].ref.current.focus();
     };
+
+    const leaveFocusListener = useCallback((e: {target: EventTarget | null; key?: string}) => {
+        if (!dropdownContainer.current?.contains(e.target as HTMLElement) && !dontCloseForTheseIds?.includes((e.target as HTMLElement).id)) {
+            handleClose();
+        }
+
+        if (e.key === 'Escape') {
+            handleClose();
+        }
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            setFocusOnExpectedElementWhenUsingUpOrDownKey(e);
+        }
+    }, [dropdownContainer,
+        handleClose,
+        setFocusOnExpectedElementWhenUsingUpOrDownKey,
+        isArrowKeyFunctionalitySetup,
+        getMovementDirection,
+        setFocusState,
+        focusChild]);
+
 
     useEffect(() => {
         document.addEventListener('mouseup', leaveFocusListener);
