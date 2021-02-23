@@ -27,9 +27,11 @@ describe('Invite Editors Form', function() {
         TestUtils.mockClientCalls();
     });
 
-    it('should show editors for the space', async function() {
+    it('should show owners and editors for the space', async function() {
         const component = renderWithRedux(<InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
         await component.findByText('user_id');
+        await component.findByText('owner');
         await component.findByText('user_id_2');
+        await component.findByText('editor');
     });
 });

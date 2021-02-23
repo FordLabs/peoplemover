@@ -24,6 +24,7 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
+import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import './InviteEditorsFormSection.scss';
 
@@ -38,15 +39,29 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
     const isExpanded = !collapsed;
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
-    const [editorsList, setEditorsList] = useState<string[]>([]);
+    const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
 
     useEffect(() => {
         if (currentSpace.uuid) {
-            SpaceClient.getEditorsForSpace(currentSpace.uuid).then((response) => {
-                setEditorsList(response.data);
+            SpaceClient.getUsersForSpace(currentSpace.uuid).then((response) => {
+                const users: UserSpaceMapping[] = response.data;
+                users.sort(compareByPermissionThenByUserId);
+                setUsersList(users);
             });
         }
     }, [currentSpace]);
+
+    function compareByPermissionThenByUserId(a: UserSpaceMapping, b: UserSpaceMapping): number {
+        let comparison = 0;
+        if (a.permission === b.permission) {
+            if (a.userId > b.userId) comparison = 1;
+            else if (a.userId < b.userId) comparison = -1;
+        } else {
+            if (a.permission.toLowerCase() === 'owner') comparison = -1;
+            else if (b.permission.toLowerCase() === 'owner') comparison = 1;
+        }
+        return comparison;
+    }
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
@@ -58,7 +73,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
             });
     };
 
-    const parseEmails = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+    const parseEmails = (event: ChangeEvent<HTMLInputElement>): void => {
         const emails: string[] = event.target.value.split(',').map((email: string) => email.trim());
         setEnableInviteButton(validateEmail(emails[0]));
         setInvitedUserEmails(emails);
@@ -77,21 +92,27 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
             </label>
             {isExpanded && (
                 <>
-                    <textarea
+                    <input
                         id="emailTextarea"
                         className="emailTextarea"
-                        placeholder="cdsid@ford.com, cdsid@ford.com"
+                        placeholder="Enter CDSID of your editors"
                         onChange={parseEmails}
                         data-testid="inviteEditorsFormEmailTextarea"
                         hidden={collapsed}
                     />
                     <div>
-                        <ul className="editorList">
-                            {editorsList.map((editor, index) => {
+                        <ul className="userList">
+                            {usersList.map((user, index) => {
                                 return (
-                                    <li className="editorListItem" key={index}>
+                                    <li className="userListItem" key={index}>
                                         <i className="material-icons editorIcon" aria-hidden>account_circle</i>
-                                        <span data-testid="editorId">{editor}</span>
+                                        <span className="userName" data-testid="userIdName">{user.userId}</span>
+                                        <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>
+                                        <span className="editorCaret">
+                                            {(user.permission !== 'owner' &&
+                                                <i className="material-icons" aria-hidden>arrow_drop_down</i>
+                                            )}
+                                        </span>
                                     </li>
                                 );
                             })}
