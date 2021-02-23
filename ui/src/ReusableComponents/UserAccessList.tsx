@@ -44,15 +44,14 @@ interface UserAccessListProps {
     onRemoveUser: (userSpaceMapping: UserSpaceMapping) => void;
 }
 
-const UserAccessListOption = (props: OptionProps<OptionTypeBase>): JSX.Element => {
-    const {label, innerProps, isSelected} = props;
-    return (
+const UserAccessListOption = ({label, innerProps, isSelected}: OptionProps<OptionTypeBase>): JSX.Element =>
+    (
         <div className="userAccess-option" {...innerProps}>
             <span className="userAccess-label-name" data-testid="userAccessOptionLabel">{label}</span>
             {isSelected && <i className="material-icons">check</i>}
         </div>
     );
-};
+
 
 const userAccessStyle = {
     ...reactSelectStyles,
@@ -78,22 +77,10 @@ const userAccessStyle = {
     menu: (provided: CSSProperties): CSSProperties => ({
         ...provided,
         left: '1rem',
-        padding: '0px 0px',
+        padding: '0',
         margin: '0',
         minWidth: '8.125rem',
         borderRadius: '6px',
-    }),
-    option: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        fontFamily: 'Helvetica, sans-serif',
-        fontSize: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0px 10px',
-        height: '30px',
-        margin: '3px 0px',
-        cursor: 'pointer',
     }),
     dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
         ...provided,

@@ -28,6 +28,7 @@ describe('Invite Editors Form', function() {
     const cookies = new Cookies();
     beforeEach( () => {
         TestUtils.mockClientCalls();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Axios.delete = jest.fn( x => Promise.resolve({} as AxiosResponse)) as any;
         cookies.set('accessToken', '123456');
     });
