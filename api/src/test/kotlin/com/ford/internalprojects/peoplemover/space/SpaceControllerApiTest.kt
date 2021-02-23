@@ -278,6 +278,39 @@ class SpaceControllerApiTest {
     }
 
     @Test
+    fun `GET should return all users for a space`() {
+        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
+        val user1 = UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "owner")
+        val user2 = UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor")
+        val user3 = UserSpaceMapping(userId = "", spaceUuid = space1.uuid, permission = "editor")
+        val user4 = UserSpaceMapping(userId = null, spaceUuid = space1.uuid, permission = "editor")
+        userSpaceMappingRepository.save(user1)
+        userSpaceMappingRepository.save(user2)
+        userSpaceMappingRepository.save(user3)
+        userSpaceMappingRepository.save(user4)
+
+        val result = mockMvc.perform(
+            get(baseSpaceUrl + "/${space1.uuid}/users")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val returnedEditors: List<UserSpaceMapping> = objectMapper.readValue(
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableList::class.java, UserSpaceMapping::class.java)
+        )
+
+        assertThat(returnedEditors).hasSize(4)
+        assertThat(returnedEditors).contains(user1);
+        assertThat(returnedEditors).contains(user2);
+        assertThat(returnedEditors).contains(user3);
+        assertThat(returnedEditors).contains(user4);
+
+    }
+
+    @Test
     fun `GET should return 403 if the user does not have write access to the space`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 

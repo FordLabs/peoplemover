@@ -102,10 +102,10 @@ describe('Space Client', function() {
         });
     });
 
-    it('should get all the editors for a space', function(done) {
-        const expectedUrl = baseSpaceUrl + '/uuidbob/editors';
+    it('should get all the users for a space', function(done) {
+        const expectedUrl = baseSpaceUrl + '/uuidbob/users';
 
-        SpaceClient.getEditorsForSpace('uuidbob').then(() => {
+        SpaceClient.getUsersForSpace('uuidbob').then(() => {
             expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
             done();
         });
