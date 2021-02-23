@@ -92,10 +92,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             setFocusOnExpectedElementWhenUsingUpOrDownKey(e);
         }
-    }, [dropdownContainer,
-        handleClose,
-        dontCloseForTheseIds]);
-
+    }, [dropdownContainer, handleClose, children, dontCloseForTheseIds]);
 
     useEffect(() => {
         document.addEventListener('mouseup', leaveFocusListener);
