@@ -136,6 +136,10 @@ function ProductCard({
         }
     }
 
+    const generateIdName = (): string => {
+        return `product-card-edit-menu-icon_${product.id}`;
+    };
+
     const TagList = (): JSX.Element => {
         const locationTag = product.spaceLocation?.name;
         const locationTagExists = !!locationTag;
@@ -183,7 +187,7 @@ function ProductCard({
                                             onClick={toggleEditMenu}
                                             onKeyUp={(e): void => listenKeyDown(e)}
                                         >
-                                            <i className="material-icons" aria-label="Product Menu" id={'product-card-edit-menu-icon'}>more_vert</i>
+                                            <i className="material-icons" aria-label="Product Menu" id={generateIdName()}>more_vert</i>
                                         </button>
                                     </div>
                                 )}
@@ -191,7 +195,7 @@ function ProductCard({
                             <TagList />
                             {
                                 isEditMenuOpen &&
-                                <EditMenu menuOptionList={getMenuOptionList()}
+                                <EditMenu idToPass={generateIdName()} menuOptionList={getMenuOptionList()}
                                     onClosed={toggleEditMenu}/>
                             }
                         </div>
