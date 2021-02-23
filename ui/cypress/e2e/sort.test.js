@@ -105,7 +105,7 @@ describe('Sort', () => {
         cy.get('[data-testid=sortDropdownOption_name]').click();
 
         cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Alphabetical');
-        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_up');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
 
         cy.get('[data-testid=productListSortedContainer]')
             .find('[data-testid*=productCardContainer__]')
@@ -131,7 +131,7 @@ describe('Sort', () => {
         cy.get('[data-testid=sortDropdownOption_location]').click();
 
         cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Location');
-        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_up');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
 
         cy.get('[data-testid=productListGroupedContainer]')
             .find('[data-testid=productGroup]')
@@ -159,7 +159,7 @@ describe('Sort', () => {
         cy.get('[data-testid=sortDropdownOption_product-tag]').click();
 
         cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Product Tag');
-        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_up');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
 
         cy.get('[data-testid=productListGroupedContainer]')
             .find('[data-testid=productGroup]')
