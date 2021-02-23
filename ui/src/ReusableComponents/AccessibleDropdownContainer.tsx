@@ -98,7 +98,8 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         isArrowKeyFunctionalitySetup,
         getMovementDirection,
         setFocusState,
-        focusChild]);
+        focusChild,
+        dontCloseForTheseIds]);
 
 
     useEffect(() => {
