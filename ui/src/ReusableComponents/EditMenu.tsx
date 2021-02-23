@@ -41,7 +41,7 @@ function EditMenu(props: EditMenuProps): JSX.Element {
     }
 
     return (
-        <AccessibleDropdownContainer handleClose={props.onClosed} className="editMenuContainer" testId={props.testId} dontCloseForTheseIds={[props.idToPass !== undefined ? props.idToPass : 'nothing']}>
+        <AccessibleDropdownContainer handleClose={props.onClosed} className="editMenuContainer" testId={props.testId} dontCloseForTheseIds={props.idToPass !== undefined ? [props.idToPass] : []}>
             {props.menuOptionList.map((menuOption, index) =>
                 <button key={index}
                     autoFocus={index === 0}
