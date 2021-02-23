@@ -44,9 +44,13 @@ interface UserAccessListProps {
     onRemoveUser: (userSpaceMapping: UserSpaceMapping) => void;
 }
 
-const UserAccessListOption = ({label, innerProps, isSelected}: OptionProps<OptionTypeBase>): JSX.Element =>
+const UserAccessListOption = ({label, innerProps, isSelected, isFocused}: OptionProps<OptionTypeBase>): JSX.Element =>
     (
-        <div className="userAccess-option" {...innerProps}>
+        <div className="userAccess-option" {...innerProps} style={
+            isFocused ?
+                { backgroundColor: '#F2F2F2', boxShadow: '0 0 0 2px #4C8EF5'} :
+                { backgroundColor: 'transparent', boxShadow: 'none'}
+        }>
             <span className="userAccess-label-name" data-testid="userAccessOptionLabel">{label}</span>
             {isSelected && <i className="material-icons">check</i>}
         </div>
