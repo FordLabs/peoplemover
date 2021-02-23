@@ -95,10 +95,6 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
     }, [dropdownContainer,
         handleClose,
         setFocusOnExpectedElementWhenUsingUpOrDownKey,
-        isArrowKeyFunctionalitySetup,
-        getMovementDirection,
-        setFocusState,
-        focusChild,
         dontCloseForTheseIds]);
 
 
