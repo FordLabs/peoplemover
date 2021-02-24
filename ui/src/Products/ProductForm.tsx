@@ -247,14 +247,14 @@ function ProductForm({
                     </FormButton>
                 </div>
                 {editing && (
-                    <div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
+                    <button className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
                         <i className="material-icons">delete</i>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
                             data-testid="deleteProduct"
                             onClick={displayDeleteProductModal}
                             onKeyDown={(e): void => handleKeyDownForDisplayDeleteProductModal(e)}>Delete Product</span>
-                    </div>)}
+                    </button>)}
             </form>
             {confirmDeleteModal}
         </div>

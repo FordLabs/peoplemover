@@ -323,7 +323,7 @@ function PersonForm({
                     </FormButton>
                 </div>
                 {isEditPersonForm && (
-                    <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
+                    <button className="deleteButtonContainer alignSelfCenter deleteLinkColor">
                         <i className="material-icons">delete</i>
                         <div className="trashCanSpacer"/>
                         <span className="obliterateLink"
@@ -332,7 +332,7 @@ function PersonForm({
                             onKeyDown={handleKeyDownForDisplayRemovePersonModal}>
                             Delete
                         </span>
-                    </div>
+                    </button>
                 )}
             </form>
             {confirmDeleteModal}
