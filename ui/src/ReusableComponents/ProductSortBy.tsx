@@ -15,9 +15,13 @@
  * limitations under the License.
  */
 
-import Select from 'react-select';
-import {CustomIndicator, sortByStyle, SortByOption} from '../ModalFormComponents/ReactSelectStyles';
-import React, {useEffect, useState} from 'react';
+import Select, {OptionProps, OptionTypeBase, Props} from 'react-select';
+import {
+    CustomIndicator,
+    isUserTabbingAndFocusedOnElement,
+    reactSelectStyles,
+} from '../ModalFormComponents/ReactSelectStyles';
+import React, {CSSProperties, useEffect, useState} from 'react';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import './ProductFilterOrSortBy.scss';
@@ -35,6 +39,65 @@ interface ProductSortByProps {
     currentSpace: Space;
     setProductSortBy(productSortBy: SortByType): void;
 }
+
+const SortByOption = (props: OptionProps<OptionTypeBase>): JSX.Element => {
+    const {label, innerProps, isSelected} = props;
+    return (
+        <div className="sortby-option" {...innerProps}>
+            <span className="sortby-label-name">{label}</span>
+            {isSelected && <i className="material-icons sortby-option-check">check</i>}
+        </div>
+    );
+};
+
+const sortByStyle = {
+    ...reactSelectStyles,
+    control: (provided: CSSProperties, props: Props): CSSProperties => ({
+        ...provided,
+        border: '1px solid transparent',
+        backgroundColor: 'transparent',
+        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
+        // @ts-ignore
+        '&:hover': {
+            boxShadow: 'none !important',
+            borderColor: '#EDEBEB',
+            cursor: 'pointer',
+        },
+        flexWrap: 'unset',
+    }),
+    singleValue: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        backgroundColor: '#F2E7F3',
+        borderRadius: '6px',
+        padding: '6px',
+        color: '#403D3D',
+        float: 'right',
+    }),
+    menu: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        maxWidth: '150px',
+        minWidth: '150px',
+        right: '0',
+        padding: '16px 15px',
+        margin: '0',
+    }),
+    option: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        fontFamily: 'Helvetica, sans-serif',
+        fontSize: '12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0px 10px',
+        height: '30px',
+        margin: '3px 0px',
+        cursor: 'pointer',
+    }),
+    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0px',
+    }),
+};
 
 function ProductSortBy({
     productSortBy,

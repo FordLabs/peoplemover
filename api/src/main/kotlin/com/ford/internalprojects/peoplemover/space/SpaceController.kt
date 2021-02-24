@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,6 +81,11 @@ class SpaceController(
         return spaceService.getUsersForSpace(uuid)
     }
 
+    @PreAuthorize("hasPermission(#uuid, 'modify')")
+    @DeleteMapping("/{uuid}/users/{userId}")
+    fun deleteUserFromSpace(@PathVariable uuid: String, @PathVariable userId: String) {
+        spaceService.deleteUserFromSpace(uuid, userId)
+    }
 
     @PreAuthorize("hasPermission(#uuid, 'modify')")
     @PutMapping("/{uuid}:invite")

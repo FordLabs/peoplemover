@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 
-import {components, ControlProps, IndicatorProps, OptionProps, OptionTypeBase, Props} from 'react-select';
-import React, {CSSProperties, ReactChild, ReactElement, ReactNode} from 'react';
-import {Option} from '../CommonTypes/Option';
+import {components, IndicatorProps, OptionTypeBase, Props} from 'react-select';
+import React, {CSSProperties} from 'react';
 
 import './ReactSelectStyles.scss';
 
 export const reactSelectStyles = {
-    // @ts-ignore
-    control: (provided: CSSProperties, {isFocused}): CSSProperties => ({
+    control: (provided: CSSProperties, {isFocused}: Props): CSSProperties => ({
         ...provided,
         minHeight: '32px',
         borderRadius: '2px',
@@ -135,141 +133,7 @@ export const reactSelectStyles = {
     }),
 };
 
-export const sortByStyle = {
-    ...reactSelectStyles,
-    control: (provided: CSSProperties, props: Props): CSSProperties => ({
-        ...provided,
-        border: '1px solid transparent',
-        backgroundColor: 'transparent',
-        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
-        // @ts-ignore
-        '&:hover': {
-            boxShadow:  'none !important',
-            borderColor: '#EDEBEB',
-            cursor: 'pointer',
-        },
-        flexWrap: 'unset',
-    }),
-    singleValue: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        backgroundColor: '#F2E7F3',
-        borderRadius: '6px',
-        padding: '6px',
-        color: '#403D3D',
-        float: 'right',
-    }),
-    menu: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        maxWidth: '150px',
-        minWidth: '150px',
-        right: '0',
-        padding: '16px 15px',
-        margin: '0',
-    }),
-    option: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        fontFamily: 'Helvetica, sans-serif',
-        fontSize: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0px 10px',
-        height: '30px',
-        margin: '3px 0px',
-        cursor: 'pointer',
-    }),
-    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        padding: '0px',
-    }),
-};
-
-export const filterByStyles = {
-    ...reactSelectStyles,
-    control: (provided: CSSProperties, props: Props): CSSProperties => ({
-        ...provided,
-        border: '1px solid transparent',
-        backgroundColor: 'transparent',
-        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
-
-        // @ts-ignore
-        '&:hover': {
-            boxShadow: 'none !important',
-            borderColor: '#EDEBEB',
-            cursor: 'pointer',
-        },
-        flexWrap: 'unset',
-    }),
-    singleValue: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        backgroundColor: '#F2E7F3',
-        borderRadius: '6px',
-        padding: '6px',
-        color: '#403D3D',
-        float: 'right',
-    }),
-    valueContainer: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        overflow: 'unset',
-        padding: '0 8px 0 2px',
-        flexWrap: 'unset',
-    }),
-    option: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        fontFamily: 'Helvetica, sans-serif',
-        fontSize: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0px 10px',
-        height: '30px',
-        margin: '3px 0px',
-        cursor: 'pointer',
-    }),
-    indicatorSeparator: (): CSSProperties => ({
-        display: 'none',
-    }),
-    clearIndicator: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        padding: '0',
-        fontSize: '12px',
-        // @ts-ignore
-        svg: {
-            height: '14px',
-            width: 'auto',
-            fill: '#403D3D',
-        },
-        'svg:hover': {
-            fill: '#5463B0',
-        },
-    }),
-    menu: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        maxWidth: '150px',
-        minWidth: '150px',
-        right: '0',
-        padding: '16px 0px 16px 15px',
-        margin: '0',
-    }),
-    groupHeading: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        fontWeight: 'bold',
-        color: '#403D3D',
-        fontSize: '12px',
-        textTransform: 'none',
-        paddingLeft: '0',
-    }),
-    group: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        fontSize: '12px',
-    }),
-    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        padding: '0px',
-    }),
-};
-
-const isUserTabbingAndFocusedOnElement = ({isFocused}: Props): boolean => {
+export const isUserTabbingAndFocusedOnElement = ({isFocused}: Props): boolean => {
     return isFocused && document.body.classList.contains('user-is-tabbing');
 };
 
@@ -285,87 +149,4 @@ export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Elem
                 )
         }
     </components.DropdownIndicator>
-);
-
-
-export const SortByOption = (props: OptionProps<OptionTypeBase>): JSX.Element => {
-    const {label, innerProps, isSelected} = props;
-    return (
-        <div className="sortby-option" {...innerProps}>
-            <span className="sortby-label-name">{label}</span>
-            {isSelected && <i className="material-icons sortby-option-check">check</i>}
-        </div>
-    );
-};
-
-export const FilterOptions = (props: OptionProps<OptionTypeBase>): JSX.Element => {
-    const {label, innerProps, isSelected} = props;
-    return (
-        <div className="filter-option" {...innerProps}>
-            <input className={'checkbox'} type="checkbox" name="optionCheckbox" checked={isSelected} readOnly/>
-            <div className="filter-label-name">{label}</div>
-        </div>
-    );
-};
-
-export const FilterControl = (props: ControlProps<OptionTypeBase>): JSX.Element => {
-    const {children, selectProps} = props;
-    const maxToShow = 3;
-    const numberOfSelectedFilters = selectProps.value ? selectProps.value.length : 0;
-    const filterChips: Array<ReactNode> = React.Children.toArray(children);
-    const valueContainer: ReactElement = filterChips[0] as ReactElement;
-    const multiValueContainers: Array<ReactChild> = valueContainer.props.children[0];
-
-    if (numberOfSelectedFilters > maxToShow) {
-        multiValueContainers.splice(maxToShow, numberOfSelectedFilters - maxToShow);
-        const showMoreFiltersDiv: JSX.Element = (
-            <div className="addtionalFilterMultiValue" key="andMoreFilters">
-                {`and ${numberOfSelectedFilters - maxToShow} more...`}
-            </div>
-        );
-        if (Array.isArray(multiValueContainers)) {
-            multiValueContainers.push(showMoreFiltersDiv);
-        }
-    }
-
-    return (
-        <components.Control {...props}>
-            {props.children}
-        </components.Control>
-    );
-};
-
-export const CustomControl = (props: ControlProps<OptionTypeBase>): JSX.Element => {
-    let color = 'transparent';
-
-    if (props.hasValue) {
-        const values = props.getValue() as Array<Option>;
-        color = values[0]?.color ? values[0].color : 'transparent';
-    } else if (props.children) {
-        const valueContainer = (props.children as Array<JSX.Element>)[0];
-        const inputContainer = valueContainer.props.children[1];
-        color = inputContainer.props.value.color ? inputContainer.props.value.color : 'transparent';
-    }
-
-    return (
-        <div className="customControlContainer">
-            <div data-testid="custom-control-role-badge"
-                style={{backgroundColor: color}}
-                className="optionRoleBadge"/>
-            <components.Control {...props}>{props.children}</components.Control>
-        </div>
-    );
-};
-
-export const CustomOption = (props: OptionProps<OptionTypeBase>): JSX.Element => (
-    <components.Option {...props}>
-        <div className="roleOptionLabel">{props.label}</div>
-    </components.Option>
-);
-
-
-export const CreateNewText = (text: string): JSX.Element => (
-    <span>
-        {`Create "${text}"`}
-    </span>
 );

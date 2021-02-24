@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,11 +20,14 @@ package com.ford.internalprojects.peoplemover.space
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
 import com.ford.internalprojects.peoplemover.product.ProductService
+import com.ford.internalprojects.peoplemover.space.exceptions.CannotDeleteOwnerException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
 import java.util.*
 
@@ -111,5 +114,13 @@ class SpaceService(
 
     fun getUsersForSpace(uuid: String): List<UserSpaceMapping> {
         return userSpaceMappingRepository.findAllBySpaceUuid(uuid)
+    }
+
+    @Transactional
+    fun deleteUserFromSpace(uuid: String, userId: String) {
+        val user = userSpaceMappingRepository.findByUserIdAndSpaceUuid(userId, uuid)
+            .orElseThrow{ EntityNotExistsException() }
+        if(user.permission == PERMISSION_OWNER) throw CannotDeleteOwnerException()
+        userSpaceMappingRepository.delete(user)
     }
 }
