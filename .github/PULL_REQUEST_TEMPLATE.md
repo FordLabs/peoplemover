@@ -8,7 +8,10 @@ Resolves XXX (where XXX is the related issue)
 1.
 
 ## Accessiblity Criteria
+### Testing
+- [ ] Add jest-axe unit tests (for new ui components)
 
+### Manual Checks
 - [ ] Text and background color meets a minimum color contrast ratio of 4.5:1
 - [ ] All non-text content (e.g. images, icon) has alt text
 - [ ] Web page includes appropriate headings to communicate structure/hierarchy (h1>h2>h3)
