@@ -37,6 +37,7 @@
 
   .sortby-dropdown-selected-option {
     border: 1px solid transparent;
+    color: $gray-1;
     &:hover {
       cursor: pointer;
     };
