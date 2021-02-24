@@ -16,8 +16,6 @@
  */
 
 import React from 'react';
-import {act, fireEvent, RenderResult} from '@testing-library/react';
-import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {AxiosResponse} from 'axios';
 import ProductClient from '../Products/ProductClient';
@@ -25,26 +23,16 @@ import ProductList from '../Products/ProductList';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
 import {Product} from '../Products/Product';
-import {createBrowserHistory} from 'history';
-import {Router} from 'react-router-dom';
 
 describe('Product List tests', () => {
-    let app: RenderResult;
-    let initialState: GlobalStateProps;
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve(
-            {
-                data: TestUtils.products,
-            } as AxiosResponse
-        ));
-
-        initialState = {
-            currentSpace: TestUtils.space,
-        } as GlobalStateProps;
+        ProductClient.getProductsForDate = jest.fn(() =>
+            Promise.resolve({ data: TestUtils.products } as AxiosResponse)
+        );
     });
 
     describe('Product list test filtering', () => {
