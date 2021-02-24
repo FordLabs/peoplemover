@@ -113,7 +113,7 @@ function UserAccessList({
                 className="userAccess-dropdown"
                 classNamePrefix="userAccess"
                 inputId="userAccess-dropdown-input"
-                aria-labelledby="userAccess-dropdown-label"
+                aria-label={user.permission}
                 options={permissionOption}
                 value={permissionOption[0]}
                 onChange={onChange}
