@@ -112,7 +112,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                     <input
                         id="emailTextarea"
                         className="emailTextarea"
-                        placeholder="Enter CDSID of your editors"
+                        placeholder="cdsid@ford.com, cdsid@ford.com"
                         onChange={parseEmails}
                         data-testid="inviteEditorsFormEmailTextarea"
                         hidden={collapsed}
