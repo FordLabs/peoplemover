@@ -18,15 +18,9 @@
 import React, {CSSProperties, useState} from 'react';
 import {JSX} from '@babel/types';
 import Creatable from 'react-select/creatable';
-import {
-    CreateNewText,
-    CustomControl,
-    CustomIndicator,
-    CustomOption,
-    reactSelectStyles,
-} from './ReactSelectStyles';
+import {CustomIndicator, reactSelectStyles} from './ReactSelectStyles';
 import {Option} from '../CommonTypes/Option';
-import {StylesConfig} from 'react-select';
+import {components, ControlProps, OptionProps, OptionTypeBase, StylesConfig} from 'react-select';
 
 const ReactSelectDropdownStyles: StylesConfig = {
     ...reactSelectStyles,
@@ -108,6 +102,40 @@ export interface ReactSelectProps {
     isLoading?: boolean;
 }
 
+const CreateNewText = (text: string): JSX.Element => (
+    <span>
+        {`Create "${text}"`}
+    </span>
+);
+
+const CreateOption = (props: OptionProps<OptionTypeBase>): JSX.Element => (
+    <components.Option {...props}>
+        <div className="roleOptionLabel">{props.label}</div>
+    </components.Option>
+);
+
+const SelectWithCreateControl = (props: ControlProps<OptionTypeBase>): JSX.Element => {
+    let color = 'transparent';
+
+    if (props.hasValue) {
+        const values = props.getValue() as Array<Option>;
+        color = values[0]?.color ? values[0].color : 'transparent';
+    } else if (props.children) {
+        const valueContainer = (props.children as Array<JSX.Element>)[0];
+        const inputContainer = valueContainer.props.children[1];
+        color = inputContainer.props.value.color ? inputContainer.props.value.color : 'transparent';
+    }
+
+    return (
+        <div className="customControlContainer">
+            <div data-testid="custom-control-role-badge"
+                style={{backgroundColor: color}}
+                className="optionRoleBadge"/>
+            <components.Control {...props}>{props.children}</components.Control>
+        </div>
+    );
+};
+
 function SelectWithCreateOption({
     className,
     metadata: {
@@ -128,9 +156,9 @@ function SelectWithCreateOption({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const components: any = {
         DropdownIndicator: CustomIndicator,
-        Option: CustomOption,
+        Option: CreateOption,
     };
-    if (useColorBadge) components.Control = CustomControl;
+    if (useColorBadge) components.Control = SelectWithCreateControl;
 
     const onInputChange = (e: string): void => setTypedInValue(e);
 
