@@ -18,7 +18,7 @@
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
-import {RenderResult, wait} from '@testing-library/react';
+import {queryByAttribute, RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createBrowserHistory, History, Location} from 'history';
 import selectEvent from 'react-select-event';
@@ -272,6 +272,11 @@ describe('PeopleMover', () => {
             );
         });
 
+        it('should include a properly formatted ID on the product cards', async () => {
+            const getById = queryByAttribute.bind(null, 'id');
+            expect(getById(app.container, 'product-card-0')).toBeTruthy();
+        });
+
         it('should group products by location',  async () => {
             await wait(() => {
                 selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Location']);
@@ -299,6 +304,18 @@ describe('PeopleMover', () => {
             expect(productGroup4).toHaveTextContent('No Location');
             expect(productGroup4).toHaveTextContent('Awesome Product');
             expect(productGroup4).toHaveTextContent(addProductButtonText);
+        });
+
+        it('should include a properly formatted ID on the product cards containing the value for the current groups sorted field', async () => {
+            const sortByOption = 'Location';
+            const expectedLocationId = 'ann-arbor';
+
+            await wait(() => {
+                selectEvent.select(app.getAllByLabelText('Sort By:')[0], [sortByOption]);
+            });
+
+            const getById = queryByAttribute.bind(null, 'id');
+            expect(getById(app.container, `product-card-${expectedLocationId}-0`)).toBeTruthy();
         });
 
         it('should group products by product tag',  async () => {
