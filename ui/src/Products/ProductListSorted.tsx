@@ -17,10 +17,10 @@
 
 import React from 'react';
 import {Product} from './Product';
-import ProductCard from './ProductCard';
 import NewProductButton from './NewProductButton';
 
 import './ProductListSorted.scss';
+import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
 
 interface Props {
     products: Array<Product>;
@@ -61,13 +61,7 @@ function SortedByList({ products, productSortBy}: Props): JSX.Element {
 
     return (
         <div className="productListSortedContainer" data-testid="productListSortedContainer">
-            {sortedProducts && sortedProducts.map((product: Product) => {
-                return (
-                    <span key={product.id}>
-                        <ProductCard product={product} />
-                    </span>
-                );
-            })}
+            {sortedProducts && <ProductCardArray products={sortedProducts}/>}
             <NewProductButton />
         </div>
     );
