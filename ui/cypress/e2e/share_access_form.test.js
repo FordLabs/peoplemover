@@ -17,7 +17,7 @@
 
 describe('Share Access Form', () => {
     beforeEach(() => {
-        cy.visitSpace();
+        cy.visitSpace({}, '#perm');
         openShareAccessForm();
 
         cy.get('[data-testid=modalCard]').eq(0)
@@ -96,7 +96,12 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=userIdName]').eq(0).should('contain.text', 'USER_ID');
             cy.get('[data-testid=userIdPermission]').eq(0).should('contain.text', 'owner');
             cy.get('[data-testid=userIdName]').eq(1).should('contain.text', 'ELISE');
-            cy.get('[data-testid=userIdPermission]').eq(1).should('contain.text', 'editor');
+            cy.get('[data-testid=userAccess]').eq(0).should('contain.text', 'Editor')
+                .click();
+            cy.get('[data-testid=userAccessOptionLabel]').eq(1).should('contain.text', 'Remove')
+                .click();
+            cy.get('[data-testid=userIdName]').eq(1).should('not.exist');
+            cy.get('[data-testid=userAccess]').should('not.exist');
         });
     });
 });

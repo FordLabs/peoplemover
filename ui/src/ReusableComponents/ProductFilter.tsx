@@ -15,12 +15,16 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
-import Select from 'react-select';
+import React, {CSSProperties, ReactChild, ReactElement, ReactNode, useEffect, useState} from 'react';
+import Select, {components, ControlProps, OptionProps, OptionTypeBase, Props} from 'react-select';
 import {connect} from 'react-redux';
 import {AxiosResponse} from 'axios';
 import {Dispatch} from 'redux';
-import {CustomIndicator, filterByStyles, FilterControl, FilterOptions} from '../ModalFormComponents/ReactSelectStyles';
+import {
+    CustomIndicator,
+    isUserTabbingAndFocusedOnElement,
+    reactSelectStyles,
+} from '../ModalFormComponents/ReactSelectStyles';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
 import RoleClient from '../Roles/RoleClient';
@@ -52,6 +56,128 @@ interface ProductFilterProps {
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 }
+
+const FilterOptions = (props: OptionProps<OptionTypeBase>): JSX.Element => {
+    const {label, innerProps, isSelected} = props;
+    return (
+        <div className="filter-option" {...innerProps}>
+            <input className={'checkbox'} type="checkbox" name="optionCheckbox" checked={isSelected} readOnly/>
+            <div className="filter-label-name">{label}</div>
+        </div>
+    );
+};
+
+const FilterControl = (props: ControlProps<OptionTypeBase>): JSX.Element => {
+    const {children, selectProps} = props;
+    const maxToShow = 3;
+    const numberOfSelectedFilters = selectProps.value ? selectProps.value.length : 0;
+    const filterChips: Array<ReactNode> = React.Children.toArray(children);
+    const valueContainer: ReactElement = filterChips[0] as ReactElement;
+    const multiValueContainers: Array<ReactChild> = valueContainer.props.children[0];
+
+    if (numberOfSelectedFilters > maxToShow) {
+        multiValueContainers.splice(maxToShow, numberOfSelectedFilters - maxToShow);
+        const showMoreFiltersDiv: JSX.Element = (
+            <div className="addtionalFilterMultiValue" key="andMoreFilters">
+                {`and ${numberOfSelectedFilters - maxToShow} more...`}
+            </div>
+        );
+        if (Array.isArray(multiValueContainers)) {
+            multiValueContainers.push(showMoreFiltersDiv);
+        }
+    }
+
+    return (
+        <components.Control {...props}>
+            {props.children}
+        </components.Control>
+    );
+};
+
+const filterByStyles = {
+    ...reactSelectStyles,
+    control: (provided: CSSProperties, props: Props): CSSProperties => ({
+        ...provided,
+        border: '1px solid transparent',
+        backgroundColor: 'transparent',
+        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
+
+        // @ts-ignore
+        '&:hover': {
+            boxShadow: 'none !important',
+            borderColor: '#EDEBEB',
+            cursor: 'pointer',
+        },
+        flexWrap: 'unset',
+    }),
+    singleValue: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        backgroundColor: '#F2E7F3',
+        borderRadius: '6px',
+        padding: '6px',
+        color: '#403D3D',
+        float: 'right',
+    }),
+    valueContainer: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        overflow: 'unset',
+        padding: '0 8px 0 2px',
+        flexWrap: 'unset',
+    }),
+    option: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        fontFamily: 'Helvetica, sans-serif',
+        fontSize: '12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0px 10px',
+        height: '30px',
+        margin: '3px 0px',
+        cursor: 'pointer',
+    }),
+    indicatorSeparator: (): CSSProperties => ({
+        display: 'none',
+    }),
+    clearIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0',
+        fontSize: '12px',
+        // @ts-ignore
+        svg: {
+            height: '14px',
+            width: 'auto',
+            fill: '#403D3D',
+        },
+        'svg:hover': {
+            fill: '#5463B0',
+        },
+    }),
+    menu: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        maxWidth: '150px',
+        minWidth: '150px',
+        right: '0',
+        padding: '16px 0px 16px 15px',
+        margin: '0',
+    }),
+    groupHeading: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        fontWeight: 'bold',
+        color: '#403D3D',
+        fontSize: '12px',
+        textTransform: 'none',
+        paddingLeft: '0',
+    }),
+    group: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        fontSize: '12px',
+    }),
+    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
+        ...provided,
+        padding: '0px',
+    }),
+};
 
 function ProductFilter({
     currentSpace,

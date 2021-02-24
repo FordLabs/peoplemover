@@ -15,27 +15,11 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth
+package com.ford.internalprojects.peoplemover.space.exceptions
 
-import com.ford.internalprojects.peoplemover.baserepository.Auditable
-import javax.persistence.*
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+import java.lang.RuntimeException
 
-@Entity
-data class UserSpaceMapping(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int? = null,
-
-        @Column(name = "user_id")
-        val userId: String?,
-
-        @Column(name = "space_uuid")
-        val spaceUuid: String,
-
-        @Column(name = "permission")
-        val permission: String
-
-) : Auditable()
-
-const val PERMISSION_EDITOR = "editor"
-const val PERMISSION_OWNER = "owner"
+@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+class CannotDeleteOwnerException : RuntimeException("Owners cannot be deleted ")

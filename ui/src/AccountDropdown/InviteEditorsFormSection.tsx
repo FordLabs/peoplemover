@@ -27,6 +27,7 @@ import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import './InviteEditorsFormSection.scss';
+import UserAccessList from '../ReusableComponents/UserAccessList';
 
 interface Props {
     collapsed?: boolean;
@@ -85,6 +86,22 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
         return re.test(String(email).toLowerCase());
     };
 
+    const onRemoveUser = (user: UserSpaceMapping): void => {
+        const updatedUsers = usersList.filter(u => u.userId !== user.userId);
+        setUsersList(updatedUsers);
+    };
+
+    function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
+        if (window.location.hash === '#perm') {
+            if (user.permission !== 'owner')
+                return <UserAccessList currentSpace={currentSpace} user={user} onRemoveUser={onRemoveUser}></UserAccessList>;
+            else
+                return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
+        } else {
+            return <></>;
+        }
+    }
+
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
             <label htmlFor="emailTextarea" className="inviteEditorsLabel">
@@ -95,7 +112,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                     <input
                         id="emailTextarea"
                         className="emailTextarea"
-                        placeholder="Enter CDSID of your editors"
+                        placeholder="cdsid@ford.com, cdsid@ford.com"
                         onChange={parseEmails}
                         data-testid="inviteEditorsFormEmailTextarea"
                         hidden={collapsed}
@@ -107,12 +124,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                                     <li className="userListItem" key={index}>
                                         <i className="material-icons editorIcon" aria-hidden>account_circle</i>
                                         <span className="userName" data-testid="userIdName">{user.userId}</span>
-                                        <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>
-                                        <span className="editorCaret">
-                                            {(user.permission !== 'owner' &&
-                                                <i className="material-icons" aria-hidden>arrow_drop_down</i>
-                                            )}
-                                        </span>
+                                        <UserPermission user={user}></UserPermission>
                                     </li>
                                 );
                             })}
@@ -130,7 +142,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                             buttonStyle="primary"
                             testId="inviteEditorsFormSubmitButton"
                             disabled={!enableInviteButton}>
-                        Invite
+                            Invite
                         </FormButton>
                     </div>
                 </>
