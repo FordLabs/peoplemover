@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import { SortByOption } from '../ModalFormComponents/ReactSelectStyles';
 import React, {createRef, useEffect, useState} from 'react';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
@@ -64,8 +63,6 @@ function ProductSortBy({
     };
 
     return (
-
-
         <div className="newSortByDropdownContainer" data-testid="sortByContainer">
             <i className="material-icons sortby-icon" aria-hidden >sort</i>
             <label id="sortby-dropdown-label" htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
