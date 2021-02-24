@@ -24,7 +24,8 @@
     max-height: 40px;
     min-height: 40px;
     z-index: 1;
-    position: sticky;
+    position: fixed;
+    width: 100%;
     top: 68px;
 
     .tab {
