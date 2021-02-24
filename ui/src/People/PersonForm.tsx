@@ -250,7 +250,13 @@ function PersonForm({
     };
 
     function handleKeyDownForDisplayRemovePersonModal(event: React.KeyboardEvent): void {
+        event.preventDefault();
         if (event.key === 'Enter') displayRemovePersonModal();
+    }
+
+    function handleMouseClickForDisplayRemovePersonModal(event: React.MouseEvent): void {
+        event.preventDefault();
+        displayRemovePersonModal();
     }
 
     return (
@@ -323,13 +329,14 @@ function PersonForm({
                     </FormButton>
                 </div>
                 {isEditPersonForm && (
-                    <button className="deleteButtonContainer alignSelfCenter deleteLinkColor">
+                    <button className="deleteButtonContainer alignSelfCenter deleteLinkColor"
+                        data-testid="deletePersonButton"
+                        onClick={handleMouseClickForDisplayRemovePersonModal}
+                        onKeyDown={handleKeyDownForDisplayRemovePersonModal}
+                    >
                         <i className="material-icons">delete</i>
                         <div className="trashCanSpacer"/>
-                        <span className="obliterateLink"
-                            data-testid="deletePersonButton"
-                            onClick={displayRemovePersonModal}
-                            onKeyDown={handleKeyDownForDisplayRemovePersonModal}>
+                        <span className="obliterateLink">
                             Delete
                         </span>
                     </button>
