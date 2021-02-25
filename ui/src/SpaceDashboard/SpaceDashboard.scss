@@ -40,6 +40,10 @@ $spaceTileWidth: 400px;
     justify-self: center;
     width: 400px;
     height: 128px;
+
+    @include phone {
+      width: 90vw;
+    }
   }
 }
 
