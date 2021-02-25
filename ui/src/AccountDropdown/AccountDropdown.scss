@@ -32,17 +32,11 @@
     padding-right: 4px;
   }
 
-  .userIcon {
-    @include phone {
-      display: none;
-    }
-  }
-
   .welcomeUser {
     margin: 0 12px;
 
     @include phone {
-      margin: 0;
+      display: none;
     }
 
     .userName {
