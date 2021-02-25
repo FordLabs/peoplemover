@@ -64,6 +64,10 @@ $spaceTileWidth: 400px;
     margin: 0;
   }
 
+  @include phone {
+    width: 90vw;
+  }
+
   .createNewSpaceIcon {
     font-size: 34px;
     margin-bottom: 7px;
@@ -82,6 +86,10 @@ $spaceTileWidth: 400px;
   justify-content: center;
   align-items: center;
 
+  @include phone {
+    max-width: 100vw;
+  }
+
   .welcomeMessageTitle {
     font-size: 72px;
     line-height: 72px;
@@ -90,12 +98,22 @@ $spaceTileWidth: 400px;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: 0;
+
+    @include phone {
+      font-size: 50px;
+      line-height: 60px;
+    }
   }
 
   .welcomeMessageSubtitle {
     font-size: 24px;
     line-height: 32px;
     margin: 31px 0 9px;
+
+    @include phone {
+      font-size: 18px;
+      line-height: 24px;
+    }
   }
 
   .welcomeMessageParagraph {
