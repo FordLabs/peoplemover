@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .spaceButtons button {
   margin: 0 12px;
@@ -30,6 +31,10 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+
+  @include phone {
+    flex-direction: column;
+  }
 }
 
 .accordionContainer {
@@ -133,6 +138,7 @@ button.addPersonButton {
   padding: 3px 30px;
   display: flex;
   align-items: center;
+  justify-content: center;
   background-color: $prime-1;
   color: $white;
 
@@ -148,6 +154,13 @@ button.addPersonButton {
   border-radius: 6px;
   border: 2px solid transparent;
   text-align: center;
+
+  @include phone {
+    min-width: unset;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 15px 0;
+  }
 
   i {
     padding-right: 8px;

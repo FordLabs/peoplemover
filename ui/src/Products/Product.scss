@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .productCardContainer {
   background-color: $gray-5;
@@ -55,6 +56,10 @@
   text-align: left;
   width: 200px;
   min-height: 75px;
+
+  @include phone {
+    width: 100%;
+  }
 }
 
 .productNameEditContainer {
@@ -163,6 +168,11 @@ button.archivedProduct,
   font-size: 14px;
   font-weight: 700;
   letter-spacing: normal;
+
+  @include phone {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 
 .productInfoContainer {

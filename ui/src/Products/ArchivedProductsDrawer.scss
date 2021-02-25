@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .graveyardDrawer,
 .graveyardDrawerHandle,
@@ -56,4 +57,8 @@
     flex-direction: column;
     justify-content: space-around;
     margin-left: 10px;
+
+    @include phone {
+        margin-right: 10px;
+    }
 }
