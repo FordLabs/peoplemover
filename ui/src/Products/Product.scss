@@ -25,6 +25,12 @@
   box-shadow: 1px 2px 3px rgba(black, 0.3);
   width: 184px;
   border-radius: 6px;
+
+  @include phone {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 10px 0;
+  }
 }
 
 .emptyProductText {

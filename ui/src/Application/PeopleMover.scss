@@ -160,6 +160,7 @@ button.addPersonButton {
     width: 100%;
     box-sizing: border-box;
     margin: 15px 0;
+    padding: 8px 0;
   }
 
   i {
@@ -205,6 +206,12 @@ button.addPersonButton {
 
   &:focus {
     transform: translate(0, -80%);
+  }
+}
+
+.productCardSpan {
+  @include phone {
+    width: 100%;
   }
 }
 
