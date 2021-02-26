@@ -60,6 +60,10 @@
     &[hidden] {
         overflow: hidden;
         max-height: 65px;
+
+        @include phone {
+            max-height: initial;
+        }
     }
 }
 
