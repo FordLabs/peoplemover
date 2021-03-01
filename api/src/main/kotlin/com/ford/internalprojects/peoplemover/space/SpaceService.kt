@@ -23,6 +23,7 @@ import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.CannotDeleteOwnerException
+import com.ford.internalprojects.peoplemover.space.exceptions.InvalidUserModification
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameTooLongException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.security.core.context.SecurityContextHolder
@@ -122,5 +123,15 @@ class SpaceService(
             .orElseThrow{ EntityNotExistsException() }
         if(user.permission == PERMISSION_OWNER) throw CannotDeleteOwnerException()
         userSpaceMappingRepository.delete(user)
+    }
+
+    @Transactional
+    fun modifyUserPermission(uuid: String, userId: String) {
+        val editorResult = userSpaceMappingRepository.setOwnerToEditor(spaceUuid = uuid)
+        val ownerResult = userSpaceMappingRepository.setEditorToOwner(spaceUuid = uuid, userId = userId)
+
+        if (editorResult != 1 || ownerResult != 1) {
+            throw InvalidUserModification()
+        }
     }
 }

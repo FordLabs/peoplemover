@@ -18,6 +18,8 @@
 package com.ford.internalprojects.peoplemover.auth
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -26,4 +28,13 @@ interface UserSpaceMappingRepository : JpaRepository<UserSpaceMapping, Int> {
     fun findAllByUserId(userId: String): List<UserSpaceMapping>
     fun findByUserIdAndSpaceUuid(userId: String, spaceUuid: String): Optional<UserSpaceMapping>
     fun findAllBySpaceUuid(uuid: String): List<UserSpaceMapping>
+    fun findByUserIdAndSpaceUuidAndPermission(userId: String, spaceUuid: String, permission: String): Optional<UserSpaceMapping>
+
+    @Modifying
+    @Query("update UserSpaceMapping u set u.permission = 'editor' where u.spaceUuid = ?1 and u.permission = 'owner'")
+    fun setOwnerToEditor(spaceUuid: String): Int
+
+    @Modifying
+    @Query("update UserSpaceMapping u set u.permission = 'owner' where u.userId = ?1 and u.spaceUuid = ?2")
+    fun setEditorToOwner(userId: String, spaceUuid: String): Int
 }
