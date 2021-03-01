@@ -24,6 +24,7 @@ import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import NewCalendar from '../Calendar/NewCalendar';
 import {GlobalStateProps} from '../Redux/Reducers';
+import NewProductSortBy from '../ReusableComponents/NewProductSortBy';
 
 interface Props {
     isReadOnly: boolean;
@@ -72,6 +73,7 @@ function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
                     <i className="material-icons myRolesIcon" aria-hidden data-testid="myRolesIcon">assignment_ind</i>
                     My Roles
                 </button>
+                <NewProductSortBy/>
             </div>}
         </div>
     );

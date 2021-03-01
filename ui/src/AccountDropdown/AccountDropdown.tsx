@@ -42,6 +42,12 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
 
     if (redirect) return redirect;
 
+    const openDropdown = (event: React.KeyboardEvent): void => {
+        if (event.key === 'ArrowDown' && !dropdownToggle) {
+            toggleDropdown();
+        }
+    };
+
     const toggleDropdown = (): void => {
         setDropdownToggle(!dropdownToggle);
     };
@@ -51,6 +57,12 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
             <AccessibleDropdownContainer
                 handleClose={(): void => {setDropdownToggle(false);}}
                 className="accountDropdown"
+                dontCloseForTheseIds={[
+                    'accountDropdownToggle',
+                    'accountDropdownToggle-arrow',
+                    'accountDropdownToggle-name',
+                    'accountDropdownToggle-welcome',
+                    'accountDropdownToggle-personIcon']}
             >
                 {(!hideSpaceButtons && !isReadOnly) ? (
                     <>
@@ -74,16 +86,18 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
                 data-testid="accountDropdownToggle"
                 className="accountDropdownToggle"
                 onClick={toggleDropdown}
+                id={'accountDropdownToggle'}
+                onKeyUp={(e): void => {openDropdown(e);}}
             >
-                <i className="material-icons userIcon" data-testid="userIcon" aria-hidden>
+                <i className="material-icons userIcon" data-testid="userIcon" aria-hidden id={'accountDropdownToggle-personIcon'}>
                     person
                 </i>
                 {userName && (
-                    <div className="welcomeUser">
-                        Welcome, <span className="userName">{userName}</span>
+                    <div className="welcomeUser" id={'accountDropdownToggle-welcome'}>
+                        Welcome, <span id={'accountDropdownToggle-name'} className="userName">{userName}</span>
                     </div>
                 )}
-                <i className="material-icons selectDropdownArrow">
+                <i className="material-icons selectDropdownArrow" id={'accountDropdownToggle-arrow'}>
                     {dropdownToggle ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </i>
             </button>

@@ -17,13 +17,13 @@
 
 /// <reference types="Cypress" />
 
-describe('Sort', () => {
+describe('Sort for old ui', () => {
     beforeEach(() => {
         cy.visitSpace();
         cy.server();
     });
 
-    it('Sort products alphabetically', () => {
+    it('Old sort products alphabetically', () => {
         cy.get('[data-testid=productCardContainer__my_product]');
         cy.get('[data-testid=productCardContainer__baguette_bakery]');
 
@@ -43,7 +43,7 @@ describe('Sort', () => {
             });
     });
 
-    it('Sort products by location', () => {
+    it('Old sort products by location', () => {
         cy.get('[data-testid=productCardContainer__my_product]');
         cy.get('[data-testid=productCardContainer__baguette_bakery]');
 
@@ -65,7 +65,7 @@ describe('Sort', () => {
             });
     });
 
-    it('Sort products by product tag', () => {
+    it('Old sort products by product tag', () => {
         cy.get('[data-testid=productCardContainer__my_product]');
         cy.get('[data-testid=productCardContainer__baguette_bakery]');
 
@@ -86,4 +86,94 @@ describe('Sort', () => {
 
             });
     });
+});
+
+describe('Sort', () => {
+    beforeEach(() => {
+        cy.visitSpace({}, '#newui');
+        cy.server();
+    });
+
+    it('Sort products alphabetically', () => {
+        cy.get('[data-testid=productCardContainer__my_product]');
+        cy.get('[data-testid=productCardContainer__baguette_bakery]');
+
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Alphabetical');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
+
+        cy.get('[data-testid=sortByDropdownButton]').click();
+        cy.get('[data-testid=sortDropdownOption_name]').click();
+
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Alphabetical');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
+
+        cy.get('[data-testid=productListSortedContainer]')
+            .find('[data-testid*=productCardContainer__]')
+            .should('have.length', 2)
+            .eq(0)
+            .should('contain', 'Baguette Bakery');
+
+        cy.get('[data-testid=productListSortedContainer]')
+            .find('[data-testid*=productCardContainer__]')
+            .eq(1)
+            .should('contain', 'My Product');
+
+    });
+
+    it('Sort products by location', () => {
+        cy.get('[data-testid=productCardContainer__my_product]');
+        cy.get('[data-testid=productCardContainer__baguette_bakery]');
+
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Alphabetical');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
+
+        cy.get('[data-testid=sortByDropdownButton]').click();
+        cy.get('[data-testid=sortDropdownOption_location]').click();
+
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Location');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
+
+        cy.get('[data-testid=productListGroupedContainer]')
+            .find('[data-testid=productGroup]')
+            .should('have.length', 2)
+            .eq(0)
+            .should('contain', 'Baguette Bakery')
+            .should('contain', 'location1');
+
+        cy.get('[data-testid=productListGroupedContainer]')
+            .find('[data-testid=productGroup]')
+            .eq(1)
+            .should('contain', 'My Product')
+            .should('contain', 'No Location');
+
+    });
+
+    it('Sort products by product tag', () => {
+        cy.get('[data-testid=productCardContainer__my_product]');
+        cy.get('[data-testid=productCardContainer__baguette_bakery]');
+
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Alphabetical');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
+
+        cy.get('[data-testid=sortByDropdownButton]').click();
+        cy.get('[data-testid=sortDropdownOption_product-tag]').click();
+
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'Product Tag');
+        cy.get('[data-testid=sortByDropdownButton]').should('contain', 'keyboard_arrow_down');
+
+        cy.get('[data-testid=productListGroupedContainer]')
+            .find('[data-testid=productGroup]')
+            .should('have.length', 2)
+            .eq(0)
+            .should('contain', 'My Product')
+            .should('contain', 'productTag1');
+
+        cy.get('[data-testid=productListGroupedContainer]')
+            .find('[data-testid=productGroup]')
+            .eq(1)
+            .should('contain', 'Baguette Bakery')
+            .should('contain', 'No Product Tag');
+
+    });
+
 });
