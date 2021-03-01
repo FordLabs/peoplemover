@@ -325,7 +325,7 @@ function PersonForm({
                     data-testid="deletePersonButton"
                     onClick={displayRemovePersonModal}
                 >
-                    <i className="material-icons">delete</i>
+                    <i className="material-icons" aria-hidden>delete</i>
                     <div className="trashCanSpacer"/>
                     <span className="obliterateLink">
                             Delete

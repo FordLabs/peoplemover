@@ -246,7 +246,7 @@ function ProductForm({
                     data-testid="deleteProduct"
                     onClick={displayDeleteProductModal}
                 >
-                    <i className="material-icons">delete</i>
+                    <i className="material-icons" aria-hidden>delete</i>
                     <div className="trashCanSpacer"/>
                     <span className="obliterateLink">Delete Product</span>
                 </button>)}
