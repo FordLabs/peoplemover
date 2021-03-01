@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {createRef} from 'react';
+import React from 'react';
 import './EditMenu.scss';
 import AccessibleDropdownContainer from './AccessibleDropdownContainer';
 import {createDataTestId} from '../tests/TestUtils';
@@ -30,7 +30,6 @@ export interface EditMenuProps {
     menuOptionList: EditMenuOption[];
     onClosed(): void;
     testId?: string;
-    idToPass?: string;
 }
 
 function EditMenu(props: EditMenuProps): JSX.Element {
@@ -41,13 +40,11 @@ function EditMenu(props: EditMenuProps): JSX.Element {
     }
 
     return (
-        <AccessibleDropdownContainer handleClose={props.onClosed} className="editMenuContainer" testId={props.testId} dontCloseForTheseIds={props.idToPass !== undefined ? [props.idToPass] : []}>
+        <AccessibleDropdownContainer handleClose={props.onClosed} className="editMenuContainer" testId={props.testId}>
             {props.menuOptionList.map((menuOption, index) =>
                 <button key={index}
                     autoFocus={index === 0}
                     className="editMenuContainerOption"
-                    id={menuOption.text}
-                    ref={createRef<HTMLButtonElement>()}
                     onClick={(event): void =>
                         onOptionSelected(event, menuOption.callback)
                     }>

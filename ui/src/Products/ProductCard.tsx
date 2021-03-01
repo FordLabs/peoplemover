@@ -130,15 +130,11 @@ function ProductCard({
         }
     }
 
-    function listenKeyUp(event: React.KeyboardEvent): void {
-        if (event.key === 'ArrowDown' && !isEditMenuOpen) {
+    function listenKeyDown(event: React.KeyboardEvent): void {
+        if (event.key === 'ArrowDown') {
             toggleEditMenu();
         }
     }
-
-    const generateIdName = (): string => {
-        return `product-card-edit-menu-icon_${product.id}`;
-    };
 
     const TagList = (): JSX.Element => {
         const locationTag = product.spaceLocation?.name;
@@ -185,9 +181,9 @@ function ProductCard({
                                             className="editIcon material-icons greyIcon clickableIcon"
                                             data-testid={createDataTestId('editProductIcon', product.name)}
                                             onClick={toggleEditMenu}
-                                            onKeyUp={(e): void => listenKeyUp(e)}
+                                            onKeyDown={(e): void => listenKeyDown(e)}
                                         >
-                                            <i className="material-icons" aria-label="Product Menu" id={generateIdName()}>more_vert</i>
+                                            <i className="material-icons" aria-label="Product Menu">more_vert</i>
                                         </button>
                                     </div>
                                 )}
@@ -195,7 +191,7 @@ function ProductCard({
                             <TagList />
                             {
                                 isEditMenuOpen &&
-                                <EditMenu idToPass={generateIdName()} menuOptionList={getMenuOptionList()}
+                                <EditMenu menuOptionList={getMenuOptionList()}
                                     onClosed={toggleEditMenu}/>
                             }
                         </div>

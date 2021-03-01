@@ -41,8 +41,6 @@ function Header({
     const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
     const spaceName = currentSpace?.name;
 
-    const NEW_UI = window.location.hash === '#newui';
-
     return (
         <header className="peopleMoverHeader">
             <div className="headerLeftContainer">
@@ -54,7 +52,7 @@ function Header({
                     {!hideSpaceButtons &&
                         <>
                             <ProductFilter/>
-                            {NEW_UI || <ProductSortBy/>}
+                            <ProductSortBy/>
                         </>
                     }
                     <AccountDropdown hideSpaceButtons={hideSpaceButtons}/>
