@@ -113,21 +113,18 @@ function UserAccessList({
     };
 
     return (
-        // TODO: Possibly Remove DIV
-        <div className="userAccessDropdownContainer">
-            <Select
-                styles={userAccessStyle}
-                id="userAccess-dropdown"
-                className="userAccess-dropdown"
-                classNamePrefix="userAccess"
-                inputId="userAccess-dropdown-input"
-                aria-label={user.permission}
-                options={permissionOption}
-                value={permissionOption[1]}
-                onChange={onChangeEvent}
-                isSearchable={false}
-                components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
-        </div>
+        <Select
+            styles={userAccessStyle}
+            id="userAccess-dropdown"
+            className="userAccess-dropdown"
+            classNamePrefix="userAccess"
+            inputId="userAccess-dropdown-input"
+            aria-label={user.permission}
+            options={permissionOption}
+            value={permissionOption[1]}
+            onChange={onChangeEvent}
+            isSearchable={false}
+            components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
     );
 }
 
