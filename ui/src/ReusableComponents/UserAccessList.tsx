@@ -34,6 +34,7 @@ interface PermissionType {
 }
 
 const permissionOption: Array<PermissionType> = [
+    {label:'Owner', value:'owner'},
     {label:'Editor', value:'editor'},
     {label:'Remove', value:'remove'},
 ];
@@ -41,7 +42,8 @@ const permissionOption: Array<PermissionType> = [
 interface UserAccessListProps {
     currentSpace: Space;
     user: UserSpaceMapping;
-    onRemoveUser: (userSpaceMapping: UserSpaceMapping) => void;
+    onChange: () => void;
+    owner: UserSpaceMapping;
 }
 
 const UserAccessListOption = ({label, innerProps, isSelected, isFocused}: OptionProps<OptionTypeBase>): JSX.Element =>
@@ -95,18 +97,24 @@ const userAccessStyle = {
 function UserAccessList({
     currentSpace,
     user,
-    onRemoveUser,
+    onChange,
+    owner,
 }: UserAccessListProps): JSX.Element {
 
     // @ts-ignore
-    const onChange = (value): void => {
-        if ((value as PermissionType).value === 'remove') {
-            SpaceClient.removeUser(currentSpace, user).then(() => onRemoveUser(user));
+    const onChangeEvent = (value): void => {
+        switch ((value as PermissionType).value) {
+            case 'remove':
+                SpaceClient.removeUser(currentSpace, user).then(onChange);
+                break;
+            case 'owner':
+                SpaceClient.changeOwner(currentSpace, owner, user).then(onChange);
         }
     };
 
     return (
-        <div className="userAccessDropdownContainer" data-testid="userAccess">
+        // TODO: Possibly Remove DIV
+        <div className="userAccessDropdownContainer">
             <Select
                 styles={userAccessStyle}
                 id="userAccess-dropdown"
@@ -115,8 +123,8 @@ function UserAccessList({
                 inputId="userAccess-dropdown-input"
                 aria-label={user.permission}
                 options={permissionOption}
-                value={permissionOption[0]}
-                onChange={onChange}
+                value={permissionOption[1]}
+                onChange={onChangeEvent}
                 isSearchable={false}
                 components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
         </div>

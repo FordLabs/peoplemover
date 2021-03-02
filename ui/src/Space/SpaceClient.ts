@@ -142,6 +142,23 @@ class SpaceClient {
             return Promise.reject(error);
         });
     }
+
+    static async changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping) {
+        const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, null, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`);
+            return result;
+        }).catch((error) => {
+            MatomoEvents.pushEvent(space.name, 'updateOwnerError', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`, error.code);
+            return Promise.reject(error);
+        });
+    }
 }
 
 export default SpaceClient;

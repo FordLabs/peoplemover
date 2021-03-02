@@ -43,6 +43,10 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
 
     useEffect(() => {
+        getUsers();
+    }, [currentSpace]);
+
+    const getUsers = (): void => {
         if (currentSpace.uuid) {
             SpaceClient.getUsersForSpace(currentSpace.uuid).then((response) => {
                 const users: UserSpaceMapping[] = response.data;
@@ -50,7 +54,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                 setUsersList(users);
             });
         }
-    }, [currentSpace]);
+    };
 
     function compareByPermissionThenByUserId(a: UserSpaceMapping, b: UserSpaceMapping): number {
         let comparison = 0;
@@ -86,21 +90,19 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
         return re.test(String(email).toLowerCase());
     };
 
-    const onRemoveUser = (user: UserSpaceMapping): void => {
-        const updatedUsers = usersList.filter(u => u.userId !== user.userId);
-        setUsersList(updatedUsers);
-    };
-
     function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
         if (window.location.hash === '#perm') {
-            if (user.permission !== 'owner')
-                return <UserAccessList currentSpace={currentSpace} user={user} onRemoveUser={onRemoveUser}></UserAccessList>;
-            else
+            if (user.permission !== 'owner') {
+                const spaceOwner = usersList.filter(user => user.permission === 'owner')[0];
+                return <UserAccessList currentSpace={currentSpace} user={user} onChange={getUsers} owner={spaceOwner}/>;
+            } else {
                 return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
+            }
         } else {
             return <></>;
         }
     }
+
 
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
@@ -121,7 +123,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                         <ul className="userList">
                             {usersList.map((user, index) => {
                                 return (
-                                    <li className="userListItem" key={index}>
+                                    <li className="userListItem" key={index} data-testid={`userListItem__${user.userId}`}>
                                         <i className="material-icons editorIcon" aria-hidden>account_circle</i>
                                         <span className="userName" data-testid="userIdName">{user.userId}</span>
                                         <UserPermission user={user}></UserPermission>

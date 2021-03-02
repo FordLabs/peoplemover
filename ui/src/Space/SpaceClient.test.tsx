@@ -141,4 +141,19 @@ describe('Space Client', function() {
                 done();
             });
     });
+
+    it('should assign owner permission to specified user from space', (done) => {
+        const newOwner: UserSpaceMapping = {id: 'blah', userId: 'newOwner', spaceUuid: `${TestUtils.space.uuid}`, permission: 'editor'};
+        const currentOwner: UserSpaceMapping = {id: 'blah', userId: 'currentOwner', spaceUuid: `${TestUtils.space.uuid}`, permission: 'owner'};
+        SpaceClient.changeOwner(TestUtils.space, currentOwner, newOwner)
+            .then(() => {
+                expect(Axios.put).toHaveBeenCalledWith(
+                    `/api/spaces/${TestUtils.space.uuid}/users/${newOwner.userId}`,
+                    null,
+                    {headers: {Authorization: 'Bearer 123456'}}
+                );
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`]);
+                done();
+            });
+    });
 });
