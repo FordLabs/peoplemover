@@ -34,16 +34,25 @@ interface PermissionType {
 }
 
 const permissionOption: Array<PermissionType> = [
-    {label:'Owner', value:'owner'},
     {label:'Editor', value:'editor'},
+    {label:'Owner', value:'owner'},
     {label:'Remove', value:'remove'},
 ];
+
+const getPermissionOption = (isUserOwner: boolean): Array<PermissionType> => {
+    if (isUserOwner) {
+        return permissionOption;
+    } else {
+        return [permissionOption[0], permissionOption[2]];
+    }
+};
 
 interface UserAccessListProps {
     currentSpace: Space;
     user: UserSpaceMapping;
     onChange: () => void;
     owner: UserSpaceMapping;
+    isUserOwner: boolean;
 }
 
 const UserAccessListOption = ({label, innerProps, isSelected, isFocused}: OptionProps<OptionTypeBase>): JSX.Element =>
@@ -99,6 +108,7 @@ function UserAccessList({
     user,
     onChange,
     owner,
+    isUserOwner,
 }: UserAccessListProps): JSX.Element {
 
     // @ts-ignore
@@ -120,8 +130,8 @@ function UserAccessList({
             classNamePrefix="userAccess"
             inputId="userAccess-dropdown-input"
             aria-label={user.permission}
-            options={permissionOption}
-            value={permissionOption[1]}
+            options={getPermissionOption(isUserOwner)}
+            value={permissionOption[0]}
             onChange={onChangeEvent}
             isSearchable={false}
             components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>

@@ -90,7 +90,7 @@ describe('Invite Editors Form', function() {
         it('should change owner', async () => {
             await act(async () => {
                 const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser: 'user_id'} as GlobalStateProps);
                 const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
                 const editor = editorRow.getByText(/editor/i);
                 fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -115,6 +115,19 @@ describe('Invite Editors Form', function() {
                     const editorRow = within(await component.findByTestId('userListItem__user_id'));
                     editorRow.getByText(/editor/i);
                     editorRow.getByText(/user_id/i);
+                });
+            });
+        });
+
+        it('should not be able to change owner', async () => {
+            await act(async () => {
+                const component = renderWithRedux(
+                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser: 'user_id_2'} as GlobalStateProps);
+                const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
+                const editor = editorRow.getByText(/editor/i);
+                fireEvent.keyDown(editor, {key: 'ArrowDown'});
+                await wait(() => {
+                    expect(editorRow.queryByText(/owner/i)).not.toBeInTheDocument();
                 });
             });
         });

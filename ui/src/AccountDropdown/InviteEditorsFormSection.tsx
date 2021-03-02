@@ -32,11 +32,12 @@ import UserAccessList from '../ReusableComponents/UserAccessList';
 interface Props {
     collapsed?: boolean;
     currentSpace: Space;
+    currentUser: string;
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurrentModal}: Props): JSX.Element {
+function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: Props): JSX.Element {
     const isExpanded = !collapsed;
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
@@ -94,7 +95,8 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
         if (window.location.hash === '#perm') {
             if (user.permission !== 'owner') {
                 const spaceOwner = usersList.filter(user => user.permission === 'owner')[0];
-                return <UserAccessList currentSpace={currentSpace} user={user} onChange={getUsers} owner={spaceOwner}/>;
+                const isUserOwner = spaceOwner.userId === currentUser;
+                return <UserAccessList currentSpace={currentSpace} user={user} onChange={getUsers} owner={spaceOwner} isUserOwner={isUserOwner}/>;
             } else {
                 return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
             }
@@ -161,6 +163,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
+    currentUser: state.currentUser,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(InviteEditorsFormSection);

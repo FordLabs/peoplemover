@@ -143,7 +143,7 @@ class SpaceClient {
         });
     }
 
-    static async changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping) {
+    static async changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping): Promise<AxiosResponse<void>> {
         const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
         const config = {
             headers: {
