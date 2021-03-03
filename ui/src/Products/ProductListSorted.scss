@@ -15,10 +15,16 @@
  * limitations under the License.
  */
 
+@import '../Application/Styleguide/Breakpoints.scss';
+
 .productListSortedContainer {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   flex-wrap: wrap;
-  flex-grow: 1
+  flex-grow: 1;
+
+  @include phone {
+    margin: 0 8px;
+  }
 }

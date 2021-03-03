@@ -14,7 +14,7 @@ export function ProductCardArray({
     return (
         <>
             {products.map((product, index) => (
-                <span key={product.id} id={createProductId(index, arrayId)} >
+                <span key={product.id} id={createProductId(index, arrayId)} className="productCardSpan" >
                     { index + 1 < products.length &&
                         (<a href={`#${createProductId(index + 1, arrayId)}`} className="skipToNextProduct">
                             {`Skip to ${products[index + 1].name}`}

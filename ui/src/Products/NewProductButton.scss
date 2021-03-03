@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 button.newProduct {
   display: flex;
@@ -37,6 +38,12 @@ button.newProduct {
   font-family: Helvetica, sans-serif;
   font-weight: 700;
   color: $gray-1;
+
+  @include phone {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
 
   .addProductIcon.material-icons {
     font-weight: bold;
