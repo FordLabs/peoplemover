@@ -62,6 +62,7 @@ dependencies {
     runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.2.41'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"

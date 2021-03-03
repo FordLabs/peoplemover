@@ -93,15 +93,54 @@ describe('Share Access Form', () => {
             openShareAccessForm();
             expandInviteToEditModalCard();
 
-            cy.get('[data-testid=userIdName]').eq(0).should('contain.text', 'USER_ID');
-            cy.get('[data-testid=userIdPermission]').eq(0).should('contain.text', 'owner');
-            cy.get('[data-testid=userIdName]').eq(1).should('contain.text', 'ELISE');
-            cy.get('[data-testid=userAccess]').eq(0).should('contain.text', 'Editor')
+            cy.get('[data-testid=userListItem__USER_ID]')
+                .should('contain.text', 'USER_ID')
+                .should('contain.text', 'owner');
+            cy.get('[data-testid=userListItem__ELISE]')
+                .should('contain.text', 'ELISE')
+                .find(':contains("Editor")').eq(0)
                 .click();
-            cy.get('[data-testid=userAccessOptionLabel]').eq(1).should('contain.text', 'Remove')
+            cy.get('[data-testid=userAccessOptionLabel]').eq(2).should('contain.text', 'Remove')
                 .click();
             cy.get('[data-testid=userIdName]').eq(1).should('not.exist');
-            cy.get('[data-testid=userAccess]').should('not.exist');
+            cy.get('[data-testid=userListItem__ELISE]').should('not.exist');
+        });
+
+        it('Transferring ownership to an editor should change current owner to editor', () => {
+            cy.server();
+            cy.route('PUT', Cypress.env('API_INVITE_PEOPLE_PATH')).as('putAddPersonToSpace');
+
+            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().clear().type('Elise@grif.com');
+            cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
+
+            cy.wait('@putAddPersonToSpace')
+                .should((xhrs) => {
+                    expect(xhrs.status).to.equal(200);
+                });
+
+            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
+            cy.get('[data-testid=modalPopupContainer]').should('not.exist');
+
+            openShareAccessForm();
+            expandInviteToEditModalCard();
+
+            cy.get('[data-testid=userListItem__USER_ID]')
+                .should('contain.text', 'USER_ID')
+                .should('contain.text', 'owner');
+            cy.get('[data-testid=userListItem__ELISE]')
+                .should('contain.text', 'ELISE')
+                .find(':contains("Editor")').eq(0)
+                .click();
+
+            cy.get('[data-testid=userAccessOptionLabel]').eq(1).should('contain.text', 'Owner')
+                .click();
+
+            cy.get('[data-testid=userListItem__USER_ID]')
+                .should('contain.text', 'USER_ID')
+                .find(':contains("Editor")').eq(0);
+            cy.get('[data-testid=userListItem__ELISE]')
+                .should('contain.text', 'ELISE')
+                .should('contain.text', 'owner');
         });
     });
 });

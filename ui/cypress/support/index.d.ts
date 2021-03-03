@@ -25,6 +25,7 @@ declare namespace Cypress {
         closeModal(): Chainable<any>;
 
         resetSpace(uuid: string): Chainable<any>;
+        beforeVisitSpace(): Chainable<any>;
 
         selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: string): Chainable<any>;
     }
