@@ -15,12 +15,12 @@ cfConfig {
     ccUser = peoplemoverPcfUsername
     ccPassword = peoplemoverPcfPassword
 
-    name = "featureBranchUI"
-    host = "featureBranchUI"
+    name = "engineeringEnvUI"
+    host = "engineeringEnvUI"
     ccHost = peoplemoverPcfccHost
     domain = peoplemoverPcfdomain
 }
 
 task pushBranchUI(type: Exec) {
-    commandLine "cf", "push", "featureBranchUI",  "-f",  "manifest_feature_branch.yml", "-n", "featureBranchUI"
+    commandLine "cf", "push", "engineeringEnvUI",  "-f",  "manifest_feature_branch.yml", "-n", "engineeringEnvUI"
 }
