@@ -25,6 +25,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import NewCalendar from '../Calendar/NewCalendar';
 import {GlobalStateProps} from '../Redux/Reducers';
 import NewProductSortBy from '../ReusableComponents/NewProductSortBy';
+import NewFilter from '../ReusableComponents/NewFilter';
 
 interface Props {
     isReadOnly: boolean;
@@ -59,6 +60,9 @@ function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
                 )}
             </div>
             {isReadOnly ? <></> : <div className="rightContent">
+                <i className="material-icons" aria-hidden>filter_list</i>
+                <span>Filter by: </span>
+                <NewFilter/>
                 <button
                     className={`selectionTabButton tab`}
                     onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
