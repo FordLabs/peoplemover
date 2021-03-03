@@ -120,9 +120,7 @@ textarea:focus {
 }
 
 // Use box shadow to make focus ring for all buttons, inputs, selects and textareas except in React Select Library
-:not([class*="css-"]) > div > *:focus,
-:not([class*="css-"]) > span > *:focus,
-{
+:not([class*="css-"]) > * > *:focus {
   box-shadow: 0 0 0 2px $outline-focus-blue;
 }
 

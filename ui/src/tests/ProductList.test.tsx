@@ -30,11 +30,9 @@ describe('Product List tests', () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve(
-            {
-                data: TestUtils.products,
-            } as AxiosResponse
-        ));
+        ProductClient.getProductsForDate = jest.fn(() =>
+            Promise.resolve({ data: TestUtils.products } as AxiosResponse)
+        );
     });
 
     describe('Product list test filtering', () => {
