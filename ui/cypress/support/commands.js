@@ -82,10 +82,6 @@ Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTex
 
 
 /* API requests */
-Cypress.Commands.add('beforeVisitSpace', () => {
-    cy.request('GET', BASE_API_URL);
-});
-
 Cypress.Commands.add('resetSpace', () => {
     const RESET_SPACE_URL = `${BASE_API_URL}/api/reset/${spaceUuid}`;
     cy.request('DELETE', RESET_SPACE_URL);

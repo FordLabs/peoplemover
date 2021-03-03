@@ -106,11 +106,17 @@ describe('Space Client', function() {
         });
     });
 
-    it('should get all the users for a space', function(done) {
+    it('should get all the users for a space with the owner first', function(done) {
         const expectedUrl = baseSpaceUrl + '/uuidbob/users';
 
-        SpaceClient.getUsersForSpace('uuidbob').then(() => {
+        // @ts-ignore
+        Axios.get = jest.fn(() => Promise.resolve({
+            data: [{'userId': 'user_id_2', 'permission': 'editor'}, {'userId': 'user_id', 'permission': 'owner'}],
+        } as AxiosResponse));
+
+        SpaceClient.getUsersForSpace('uuidbob').then((users) => {
             expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+            expect(users).toEqual([{'userId': 'user_id', 'permission': 'owner'}, {'userId': 'user_id_2', 'permission': 'editor'}]);
             done();
         });
     });

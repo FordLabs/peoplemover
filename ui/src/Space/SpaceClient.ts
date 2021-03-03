@@ -50,8 +50,19 @@ class SpaceClient {
         return Axios.get(url, config);
     }
 
+    static compareByPermissionThenByUserId = (a: UserSpaceMapping, b: UserSpaceMapping): number => {
+        let comparison = 0;
+        if (a.permission === b.permission) {
+            if (a.userId > b.userId) comparison = 1;
+            else if (a.userId < b.userId) comparison = -1;
+        } else {
+            if (a.permission.toLowerCase() === 'owner') comparison = -1;
+            else if (b.permission.toLowerCase() === 'owner') comparison = 1;
+        }
+        return comparison;
+    }
 
-    static async getUsersForSpace(spaceUuid: string): Promise<AxiosResponse<UserSpaceMapping[]>> {
+    static async getUsersForSpace(spaceUuid: string): Promise<UserSpaceMapping[]> {
         const url = `${baseSpaceUrl}/${spaceUuid}/users`;
         const config = {
             headers: {
@@ -60,7 +71,9 @@ class SpaceClient {
             },
         };
 
-        return Axios.get(url, config);
+        return Axios.get(url, config).then((users) => {
+            return users.data.sort(SpaceClient.compareByPermissionThenByUserId);
+        });
     }
 
     static async createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {

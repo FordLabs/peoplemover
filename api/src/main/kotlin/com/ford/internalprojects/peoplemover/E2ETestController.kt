@@ -25,16 +25,16 @@ class E2ETestController(
 
     @GetMapping
     fun returnOk(): ResponseEntity<Unit> {
-        return ResponseEntity.ok()
-                .header("Set-Cookie", "accessToken=${createJWT()}")
-                .build()
+        return ResponseEntity.ok().build()
     }
 
     @DeleteMapping("/api/reset/{uuid}")
     fun deleteTestSpace(@PathVariable uuid: String): ResponseEntity<Unit> {
         spaceService.deleteSpace(uuid)
         localDataGenerator.resetSpace(uuid)
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok()
+                .header("Set-Cookie", "accessToken=${createJWT()}")
+                .build()
     }
 
     fun createJWT(): String? {

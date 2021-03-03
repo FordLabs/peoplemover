@@ -25,6 +25,7 @@ import Axios, {AxiosResponse} from 'axios';
 import Cookies from 'universal-cookie';
 import {within} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
+import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();
@@ -71,9 +72,8 @@ describe('Invite Editors Form', function() {
                 fireEvent.keyDown(editor, {key: 'ArrowDown'});
                 const removeButton = await component.findByText(/remove/i);
 
-                SpaceClient.getUsersForSpace = jest.fn().mockReturnValueOnce(Promise.resolve({
-                    data: [{'userId': 'user_id', 'permission': 'owner'}],
-                } as AxiosResponse));
+                SpaceClient.getUsersForSpace = jest.fn().mockReturnValueOnce(Promise.resolve(
+                    [{'userId': 'user_id', 'permission': 'owner'}] as UserSpaceMapping[]));
 
                 await fireEvent.click(removeButton);
                 expect(Axios.delete).toHaveBeenCalledWith(
@@ -96,9 +96,8 @@ describe('Invite Editors Form', function() {
                 fireEvent.keyDown(editor, {key: 'ArrowDown'});
                 const permissionButton = await editorRow.findByText(/owner/i);
 
-                SpaceClient.getUsersForSpace = jest.fn().mockReturnValueOnce(Promise.resolve({
-                    data: [{'userId': 'user_id', 'permission': 'editor'}, {'userId': 'user_id_2', 'permission': 'owner'}],
-                } as AxiosResponse));
+                SpaceClient.getUsersForSpace = jest.fn().mockReturnValueOnce(Promise.resolve(
+                    [{'userId': 'user_id', 'permission': 'editor'}, {'userId': 'user_id_2', 'permission': 'owner'}] as UserSpaceMapping[]));
 
                 await fireEvent.click(permissionButton);
                 expect(Axios.put).toHaveBeenCalledWith(

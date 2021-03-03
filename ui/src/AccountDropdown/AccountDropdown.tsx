@@ -40,7 +40,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentU
 
     useEffect(() => {
         setCurrentUser(getUserNameFromAccessToken());
-    }, []);
+    }, [setCurrentUser]);
 
     if (redirect) return redirect;
 
