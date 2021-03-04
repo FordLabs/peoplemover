@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .drawerHeader {
   display: flex;
@@ -43,6 +44,11 @@
   flex-direction: column;
   max-width: 204px;
   word-wrap: break-word;
+
+  @include phone {
+    max-width: unset;
+    width: 100%;
+  }
 }
 
 .drawerArrow {
@@ -67,4 +73,8 @@
   border-radius: 50%;
   margin: auto;
   font-size: .625rem;
+
+  @include phone {
+    left: 0;
+  }
 }

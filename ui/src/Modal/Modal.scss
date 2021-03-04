@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 @import './Form.scss';
 
 .modalBackground {
@@ -51,9 +52,18 @@
     padding: 32px 0;
     margin: 0.5rem 0;
 
+    @include phone {
+        width: 100vw;
+        box-sizing: border-box;
+    }
+
     &[hidden] {
         overflow: hidden;
         max-height: 65px;
+
+        @include phone {
+            max-height: initial;
+        }
     }
 }
 

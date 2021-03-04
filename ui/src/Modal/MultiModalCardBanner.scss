@@ -17,12 +17,17 @@
 
 @import '../Application/Styleguide/Variables';
 @import '../Application/Styleguide/Colors';
+@import '../Application/Styleguide/Breakpoints';
 
 .modalCardBanner.multiModal{
   margin: 0 auto;
   width: $form-width;
   justify-content: space-between;
   padding-bottom: 18px;
+
+  @include phone {
+    width: 100%;
+  }
 
   .expandCollapseToggleButton {
     background: none;

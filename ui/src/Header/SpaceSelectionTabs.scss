@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .spaceSelectionContainer {
     display: flex;
@@ -72,6 +73,12 @@ button.selectionTabButton {
     line-height: 16px;
     margin: 0 .25rem;
     padding: .3rem;
+
+    span {
+        @include phone {
+            display: none;
+        }
+    }
 
     i {
         font-size: 18px;

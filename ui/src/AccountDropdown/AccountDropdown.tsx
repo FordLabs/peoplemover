@@ -91,7 +91,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentU
                 id={'accountDropdownToggle'}
                 onKeyUp={(e): void => {openDropdown(e);}}
             >
-                <i className="material-icons" data-testid="userIcon" aria-hidden id={'accountDropdownToggle-personIcon'}>
+                <i className="material-icons userIcon" data-testid="userIcon" aria-hidden id={'accountDropdownToggle-personIcon'}>
                     person
                 </i>
                 {currentUser && (

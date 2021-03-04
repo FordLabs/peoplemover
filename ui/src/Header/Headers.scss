@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .peopleMoverHeader {
   display: flex;
@@ -27,8 +28,13 @@
   align-items: center;
   z-index: 2;
   position: fixed;
+  box-sizing: border-box;
   width: 100%;
   top: 0;
+
+  @include phone {
+    padding: 20px 16px;
+  }
 }
 
 .headerLeftContainer {
@@ -54,4 +60,8 @@
   flex-direction: row;
   justify-content: right;
   padding-left: 100px;
+
+  @include phone {
+    padding-left: 0;
+  }
 }
