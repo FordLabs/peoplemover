@@ -64,7 +64,7 @@ function NewFilter({
 
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
-    const updateRedux = (option: FilterOption, ourIndex: number): void => {
+    const updateFilters = (option: FilterOption, ourIndex: number): void => {
         setAllGroupedTagFilterOptions(
             allGroupedTagFilterOptions.map((aGroupOfTagFilterOptions, index) => {
                 if (index === ourIndex) {
@@ -112,8 +112,7 @@ function NewFilter({
                                     id={option.value}
                                     value={option.value}
                                     onChange={(event): void => {
-                                        console.log('checkbox.onChange: ' + JSON.stringify(toggleOption(option)));
-                                        updateRedux(toggleOption(option), index);
+                                        updateFilters(toggleOption(option), index);
                                     }}
                                 />
                                 <label htmlFor={option.value}>{option.label}</label>
