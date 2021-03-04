@@ -1,3 +1,20 @@
+/*!
+ * Copyright (c) 2021 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import React, {useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
@@ -5,13 +22,15 @@ import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import AccessibleDropdownContainer from './AccessibleDropdownContainer';
 import {FilterOption} from '../CommonTypes/Option';
+import './NewFilterOrSortBy.scss';
+
 
 export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
 
 export enum FilterTypeEnum {
-    Location = 'Location Tags:',
-    Product = 'Product Tags:',
-    Role = 'Role Tags:'
+    Location = 'Location',
+    Product = 'Product',
+    Role = 'Role'
 }
 
 export interface AllGroupedTagFilterOptions {
@@ -87,26 +106,34 @@ function NewFilter({
     };
 
     return (
-        <div>
+        <div className=" dropdown-group">
             <button
                 id="NewFilter-button"
+                className="dropdown-button"
                 onClick={(): void => { toggleDropdownMenu();}}
             >
-                {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
-                && convertToLabel(filterType)}
+                <span className="dropdown-label" id={`dropdown-label_${filterType}`}>
+                    {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
+                    && convertToLabel(filterType)}
+                </span>
+                {dropdownToggle
+                    ? <i id={`dropdown-button-arrow-up_${filterType}`} className="material-icons greyIcon">keyboard_arrow_up</i>
+                    : <i className="material-icons greyIcon">keyboard_arrow_down</i>
+                }
             </button>
             {dropdownToggle &&
             <AccessibleDropdownContainer
+                className="sortby-dropdown"
                 handleClose={(): void => {
                     setDropdownToggle(false);
                 }}
-                dontCloseForTheseIds={['NewFilter-button']}
+                dontCloseForTheseIds={['NewFilter-button', `dropdown-label_${filterType}`, `dropdown-button-arrow-up_${filterType}`]}
             >
                 {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
                 && allGroupedTagFilterOptions[index].options.map(
                     (option) => {
                         return (
-                            <div key={option.value}>
+                            <div key={option.value} className="sortby-option">
                                 <input
                                     type="checkbox"
                                     id={option.value}

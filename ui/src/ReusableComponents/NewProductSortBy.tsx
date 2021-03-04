@@ -18,7 +18,7 @@
 import React, {createRef, useEffect, useState} from 'react';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import './NewProductFilterOrSortBy.scss';
+import './NewFilterOrSortBy.scss';
 import {setProductSortByAction} from '../Redux/Actions';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
@@ -63,10 +63,10 @@ function ProductSortBy({
     };
 
     return (
-        <div className="newSortByDropdownContainer" data-testid="sortByContainer">
-            <i className="material-icons sortby-icon" aria-hidden >sort</i>
+        <div className="newDropdownContainer" data-testid="sortByContainer">
+            <i className="material-icons indicator-icon" aria-hidden >sort</i>
             <label id="sortby-dropdown-label" htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
-            <button id="sortby-dropdown-button" className="sortby-dropdown-selected-option"
+            <button id="sortby-dropdown-button" className="dropdown-button"
                 onClick={(): void => { toggleDropdownMenu();}}
                 onKeyUp={(event): void => { if (event.key === 'ArrowDown' && !dropdownToggle) { toggleDropdownMenu();} }}
                 data-testid="sortByDropdownButton">

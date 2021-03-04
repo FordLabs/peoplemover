@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+import React from 'react';
+import NewFilter, {FilterTypeEnum} from './NewFilter';
+import './NewFilterOrSortBy.scss';
 
-.newFilterContainer {
-  display: flex;
-
-  .filter-icon,
-  .indicator-icon {
-    align-self: center;
-    padding-right: .625rem;
-  }
-
+function NewFilterGroup(): JSX.Element {
+    return (
+        <div className="newDropdownContainer">
+            <i className="material-icons indicator-icon" aria-hidden>filter_list</i>
+            <span className="dropdown-label">Filter by: </span>
+            <NewFilter filterType={FilterTypeEnum.Location}/>
+            <NewFilter filterType={FilterTypeEnum.Product}/>
+            <NewFilter filterType={FilterTypeEnum.Role}/>
+        </div>
+    );
 }
 
+export default NewFilterGroup;
