@@ -75,8 +75,8 @@ cfConfig {
     space = "FordLabs_Experiments_InternalProjects-prod"
     org = "FordLabs_Experiments_InternalProjects_EDC1_Prod"
 
-    name = "featureBranchAPI"
-    host = "featurebranchui"
+    name = "engineeringEnvAPI"
+    host = "engineeringenvui"
     path = "/api"
 
     buildpack = "java_buildpack_offline"
@@ -125,7 +125,7 @@ task pushBranchAPI(type: Exec) {
                 "-Pcf.environment.react.app.invite_users_to_space_enabled=true",
                 "-Pcf.environment.react.app.adfs_enabled=true",
                 "-Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=${project.properties['peoplemoverResourceserverJwtIssuer']}",
-                "-Pcf.environment.react.app.url=https://featureBranch.${project.properties['peoplemoverReactAppUrl']}",
+                "-Pcf.environment.react.app.url=https://engineeringEnv.${project.properties['peoplemoverReactAppUrl']}",
                 "-Pcf.environment.react.app.adfs_url_template=${project.properties['peoplemoverAdfsUrlTemplate']}",
                 "-Pcf.environment.react.app.adfs_client_id=${project.properties['peoplemoverAdfsClientID']}",
                 "-Pcf.environment.react.app.adfs_resource=${project.properties['peoplemoverAdfsResource']}"
