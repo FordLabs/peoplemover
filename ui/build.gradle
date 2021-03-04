@@ -22,5 +22,5 @@ cfConfig {
 }
 
 task pushBranchUI(type: Exec) {
-    commandLine "cf", "push", "engineeringEnvUI",  "-f",  "manifest_feature_branch.yml", "-n", "engineeringEnvUI"
+    commandLine "cf", "push", "engineeringEnvUI",  "-f",  "manifest_engineering_env.yml", "-n", "engineeringEnvUI"
 }
