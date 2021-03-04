@@ -659,4 +659,51 @@ class SpaceControllerApiTest {
         )
             .andExpect(status().isForbidden)
     }
+
+    @Test
+    fun `Set owner request should return 403 when trying to set owner with editor permissions`() {
+        val space = spaceRepository.save(Space(name = "spaceName"))
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_EDITOR))
+
+        mockMvc.perform(
+            put("$baseSpaceUrl/${space.uuid}/users/USER_ID")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `Set owner request should return 200 when owner tries to assign ownership to an editor`() {
+        val space = spaceRepository.save(Space(name = "spaceName"))
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "EDITOR_ID", spaceUuid = space.uuid, permission = PERMISSION_EDITOR))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+        mockMvc.perform(
+                put("$baseSpaceUrl/${space.uuid}/users/EDITOR_ID")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
+
+        assertThat(userSpaceMappingRepository.findAllByUserId("EDITOR_ID")[0].permission).isEqualTo(PERMISSION_OWNER)
+        assertThat(userSpaceMappingRepository.findAllByUserId("USER_ID")[0].permission).isEqualTo(PERMISSION_EDITOR)
+    }
+
+    @Test
+    fun `Set owner request should return 400 when owner tries to assign ownership to an editor that does not exist`() {
+        val space = spaceRepository.save(Space(name = "spaceName"))
+
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "EDITOR_ID", spaceUuid = space.uuid, permission = PERMISSION_EDITOR))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+        mockMvc.perform(
+                put("$baseSpaceUrl/${space.uuid}/users/INVALID_ID")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest)
+
+        assertThat(userSpaceMappingRepository.findAllByUserId("EDITOR_ID")[0].permission).isEqualTo(PERMISSION_EDITOR)
+        assertThat(userSpaceMappingRepository.findAllByUserId("USER_ID")[0].permission).isEqualTo(PERMISSION_OWNER)
+    }
 }

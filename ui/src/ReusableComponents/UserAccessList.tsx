@@ -35,13 +35,24 @@ interface PermissionType {
 
 const permissionOption: Array<PermissionType> = [
     {label:'Editor', value:'editor'},
+    {label:'Owner', value:'owner'},
     {label:'Remove', value:'remove'},
 ];
+
+const getPermissionOption = (isUserOwner: boolean): Array<PermissionType> => {
+    if (isUserOwner) {
+        return permissionOption;
+    } else {
+        return [permissionOption[0], permissionOption[2]];
+    }
+};
 
 interface UserAccessListProps {
     currentSpace: Space;
     user: UserSpaceMapping;
-    onRemoveUser: (userSpaceMapping: UserSpaceMapping) => void;
+    onChange: () => void;
+    owner: UserSpaceMapping;
+    isUserOwner: boolean;
 }
 
 const UserAccessListOption = ({label, innerProps, isSelected, isFocused}: OptionProps<OptionTypeBase>): JSX.Element =>
@@ -95,31 +106,35 @@ const userAccessStyle = {
 function UserAccessList({
     currentSpace,
     user,
-    onRemoveUser,
+    onChange,
+    owner,
+    isUserOwner,
 }: UserAccessListProps): JSX.Element {
 
     // @ts-ignore
-    const onChange = (value): void => {
-        if ((value as PermissionType).value === 'remove') {
-            SpaceClient.removeUser(currentSpace, user).then(() => onRemoveUser(user));
+    const onChangeEvent = (value): void => {
+        switch ((value as PermissionType).value) {
+            case 'remove':
+                SpaceClient.removeUser(currentSpace, user).then(onChange);
+                break;
+            case 'owner':
+                SpaceClient.changeOwner(currentSpace, owner, user).then(onChange);
         }
     };
 
     return (
-        <div className="userAccessDropdownContainer" data-testid="userAccess">
-            <Select
-                styles={userAccessStyle}
-                id="userAccess-dropdown"
-                className="userAccess-dropdown"
-                classNamePrefix="userAccess"
-                inputId="userAccess-dropdown-input"
-                aria-label={user.permission}
-                options={permissionOption}
-                value={permissionOption[0]}
-                onChange={onChange}
-                isSearchable={false}
-                components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
-        </div>
+        <Select
+            styles={userAccessStyle}
+            id="userAccess-dropdown"
+            className="userAccess-dropdown"
+            classNamePrefix="userAccess"
+            inputId="userAccess-dropdown-input"
+            aria-label={user.permission}
+            options={getPermissionOption(isUserOwner)}
+            value={permissionOption[0]}
+            onChange={onChangeEvent}
+            isSearchable={false}
+            components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
     );
 }
 

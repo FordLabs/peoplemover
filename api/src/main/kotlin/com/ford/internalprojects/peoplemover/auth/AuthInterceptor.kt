@@ -18,12 +18,11 @@ class CustomPermissionEvaluator(
 
         val currentSpace: Space? = spaceRepository.findByUuid(targetIdString)
 
-        return if (permission == "write" || permission == "modify") {
-            handleWritePermissions(currentSpace, auth)
-        } else if (permission == "read") {
-            handleReadPermissions(currentSpace, auth)
-        } else {
-            false
+        return when(permission) {
+            "write","modify" -> handleWritePermissions(currentSpace, auth)
+            "read" -> handleReadPermissions(currentSpace, auth)
+            "owner" -> handleOwnerPermissions(currentSpace, auth)
+            else -> false
         }
     }
 
@@ -41,5 +40,9 @@ class CustomPermissionEvaluator(
         else userSpaceMappingRepository.findByUserIdAndSpaceUuid(auth.name, currentSpace.uuid).isPresent
     }
 
+    private fun handleOwnerPermissions(currentSpace: Space?, auth: Authentication): Boolean {
+        if (currentSpace == null) throw SpaceNotExistsException()
+        return userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(auth.name, currentSpace.uuid, PERMISSION_OWNER).isPresent
+    }
 }
 

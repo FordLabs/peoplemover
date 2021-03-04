@@ -106,11 +106,17 @@ describe('Space Client', function() {
         });
     });
 
-    it('should get all the users for a space', function(done) {
+    it('should get all the users for a space with the owner first', function(done) {
         const expectedUrl = baseSpaceUrl + '/uuidbob/users';
 
-        SpaceClient.getUsersForSpace('uuidbob').then(() => {
+        // @ts-ignore
+        Axios.get = jest.fn(() => Promise.resolve({
+            data: [{'userId': 'user_id_2', 'permission': 'editor'}, {'userId': 'user_id', 'permission': 'owner'}],
+        } as AxiosResponse));
+
+        SpaceClient.getUsersForSpace('uuidbob').then((users) => {
             expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+            expect(users).toEqual([{'userId': 'user_id', 'permission': 'owner'}, {'userId': 'user_id_2', 'permission': 'editor'}]);
             done();
         });
     });
@@ -138,6 +144,21 @@ describe('Space Client', function() {
                     {headers: {Authorization: 'Bearer 123456'}}
                 );
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'removeUser', user.userId]);
+                done();
+            });
+    });
+
+    it('should assign owner permission to specified user from space', (done) => {
+        const newOwner: UserSpaceMapping = {id: 'blah', userId: 'newOwner', spaceUuid: `${TestUtils.space.uuid}`, permission: 'editor'};
+        const currentOwner: UserSpaceMapping = {id: 'blah', userId: 'currentOwner', spaceUuid: `${TestUtils.space.uuid}`, permission: 'owner'};
+        SpaceClient.changeOwner(TestUtils.space, currentOwner, newOwner)
+            .then(() => {
+                expect(Axios.put).toHaveBeenCalledWith(
+                    `/api/spaces/${TestUtils.space.uuid}/users/${newOwner.userId}`,
+                    null,
+                    {headers: {Authorization: 'Bearer 123456'}}
+                );
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`]);
                 done();
             });
     });
