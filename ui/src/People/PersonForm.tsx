@@ -249,10 +249,6 @@ function PersonForm({
         return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
     };
 
-    function handleKeyDownForDisplayRemovePersonModal(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') displayRemovePersonModal();
-    }
-
     return (
         <div className="formContainer">
             <form className="form"
@@ -322,19 +318,20 @@ function PersonForm({
                         {isEditPersonForm ? 'Save' : 'Add'}
                     </FormButton>
                 </div>
-                {isEditPersonForm && (
-                    <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
-                        <i className="material-icons">delete</i>
-                        <div className="trashCanSpacer"/>
-                        <span className="obliterateLink"
-                            data-testid="deletePersonButton"
-                            onClick={displayRemovePersonModal}
-                            onKeyDown={handleKeyDownForDisplayRemovePersonModal}>
-                            Delete
-                        </span>
-                    </div>
-                )}
             </form>
+
+            {isEditPersonForm && (
+                <button className="deleteButtonContainer alignSelfCenter deleteLinkColor"
+                    data-testid="deletePersonButton"
+                    onClick={displayRemovePersonModal}
+                >
+                    <i className="material-icons" aria-hidden>delete</i>
+                    <div className="trashCanSpacer"/>
+                    <span className="obliterateLink">
+                            Delete
+                    </span>
+                </button>
+            )}
             {confirmDeleteModal}
         </div>
     );

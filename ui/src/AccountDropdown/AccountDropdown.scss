@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .accountDropdownToggle {
   background: white;
@@ -33,6 +34,10 @@
 
   .welcomeUser {
     margin: 0 12px;
+
+    @include phone {
+      display: none;
+    }
 
     .userName {
       font-weight: bold;

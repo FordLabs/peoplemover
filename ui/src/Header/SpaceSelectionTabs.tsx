@@ -48,14 +48,14 @@ function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element
                     onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
                     data-testid="myTagsButton">
                     <i className="material-icons myTagsIcon" aria-hidden data-testid="myTagsIcon">local_offer</i>
-                    My Tags
+                    <span>My Tags</span>
                 </button>
                 <button
                     className={`selectionTabButton tab`}
                     data-testid="myRolesButton"
                     onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
                     <i className="material-icons myRolesIcon" aria-hidden data-testid="myRolesIcon">assignment_ind</i>
-                    My Roles
+                    <span>My Roles</span>
                 </button>
             </div>}
         </div>

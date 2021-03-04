@@ -29,7 +29,7 @@ function PeopleMoverLogo({ href }: Props): JSX.Element {
 
     const Logo = (): JSX.Element => (
         <>
-            <img src={PersonIcon} alt="" aria-hidden />
+            <img src={PersonIcon} className="peopleMoverImage" alt="" aria-hidden />
             <span className="peopleMoverTitle">PEOPLEMOVER</span>
         </>
     );

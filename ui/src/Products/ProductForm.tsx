@@ -180,12 +180,6 @@ function ProductForm({
         updateProductField('notes', notes);
     }
 
-    function handleKeyDownForDisplayDeleteProductModal(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            displayDeleteProductModal();
-        }
-    }
-
     return currentSpace.uuid ? (
         <div className="formContainer">
             <form className="form"
@@ -246,16 +240,16 @@ function ProductForm({
                         {editing ? 'Save' : 'Add'}
                     </FormButton>
                 </div>
-                {editing && (
-                    <div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
-                        <i className="material-icons">delete</i>
-                        <div className="trashCanSpacer"/>
-                        <span className="obliterateLink"
-                            data-testid="deleteProduct"
-                            onClick={displayDeleteProductModal}
-                            onKeyDown={(e): void => handleKeyDownForDisplayDeleteProductModal(e)}>Delete Product</span>
-                    </div>)}
             </form>
+            {editing && (
+                <button className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}
+                    data-testid="deleteProduct"
+                    onClick={displayDeleteProductModal}
+                >
+                    <i className="material-icons" aria-hidden>delete</i>
+                    <div className="trashCanSpacer"/>
+                    <span className="obliterateLink">Delete Product</span>
+                </button>)}
             {confirmDeleteModal}
         </div>
     ) : <></>;
