@@ -109,6 +109,8 @@ describe('Share Access Form', () => {
         it('Transferring ownership to an editor should change current owner to editor', () => {
             cy.server();
             cy.route('PUT', Cypress.env('API_INVITE_PEOPLE_PATH')).as('putAddPersonToSpace');
+            cy.route('PUT', `${Cypress.env('API_USERS_PATH')}/ELISE`).as('putChangeOwner');
+            cy.route('GET', Cypress.env('API_USERS_PATH')).as('getAllUsers');
 
             cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().clear().type('Elise@grif.com');
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
@@ -135,11 +137,23 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=userAccessOptionLabel]').eq(1).should('contain.text', 'Owner')
                 .click();
 
+            cy.wait('@putChangeOwner')
+                .should((xhrs) => {
+                    expect(xhrs.status).to.equal(200);
+                });
+
+            cy.wait('@getAllUsers')
+                .should((xhrs) => {
+                    expect(xhrs.status).to.equal(200);
+                });
+
             cy.get('[data-testid=userListItem__USER_ID]')
-                .should('contain.text', 'USER_ID')
-                .find(':contains("Editor")').eq(0);
+                .should('contain.text', 'USER_ID');
+            cy.get('[data-testid=userListItem__USER_ID]')
+                .should('contain.text', 'Editor');
             cy.get('[data-testid=userListItem__ELISE]')
-                .should('contain.text', 'ELISE')
+                .should('contain.text', 'ELISE');
+            cy.get('[data-testid=userListItem__ELISE]')
                 .should('contain.text', 'owner');
         });
     });
