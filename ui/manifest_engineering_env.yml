@@ -1,6 +1,6 @@
 ---
 applications:
-  - name: featureBranchUI
+  - name: engineeringEnvUI
     path: build
     buildpack: staticfile_buildpack
     stack: cflinuxfs3
