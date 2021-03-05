@@ -144,6 +144,7 @@ function ProductForm({
             archiveCallback: archiveProduct,
             isArchived: determineIfProductIsArchived(),
             warningMessage: 'Deleting this product will permanently remove it from this space.',
+            content: determineIfProductIsArchived() ? <></> : <div><br/>You can also choose to archive this product to be able to access it later.</div>,
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);
