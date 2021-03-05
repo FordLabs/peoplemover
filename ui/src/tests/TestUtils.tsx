@@ -390,7 +390,7 @@ class TestUtils {
         name: 'I am archived',
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '',
-        endDate: '2020-11-02',
+        endDate: '2019-11-02',
         spaceLocation: TestUtils.detroit,
         assignments: [],
         archived: true,
