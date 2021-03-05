@@ -100,23 +100,13 @@ describe('ProductForm', function() {
         });
     });
 
-    it('should show delete modal with archive text when a non-archived product is being deleted', async () => {
+    it('should show delete modal with archive text when an archive product is being deleted', async () => {
         await act(async () => {
             const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store, undefined);
             const deleteSpan = await app.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
             expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
             expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeTruthy();
-        });
-    });
-
-    it('should show delete modal without archive text when an archived product is being deleted', async () => {
-        await act(async () => {
-            const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.archivedProduct}/>, store, undefined);
-            const deleteSpan = await app.findByTestId('deleteProduct');
-            fireEvent.click(deleteSpan);
-            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
-            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeFalsy();
         });
     });
 });

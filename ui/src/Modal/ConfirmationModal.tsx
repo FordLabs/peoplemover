@@ -26,9 +26,9 @@ export interface ConfirmationModalProps {
 
     canArchive?: boolean;
     isArchived?: boolean;
+    confirmClose?: boolean;
     warningMessage: string;
     submitButtonLabel?: string;
-    content?: JSX.Element;
 }
 
 function ConfirmationModal({
@@ -36,12 +36,20 @@ function ConfirmationModal({
     archiveCallback,
     close,
     canArchive,
+    confirmClose,
     isArchived,
     warningMessage,
     submitButtonLabel,
-    content,
 }: ConfirmationModalProps): JSX.Element {
     const isArchivable = (): boolean => Boolean(canArchive && !isArchived);
+
+    const ArchiveMessage = (): JSX.Element => (
+        <div><br/>You can also choose to archive this product to be able to access it later.</div>
+    );
+
+    const CloseConfirmationMessage = (): JSX.Element => (
+        <div><br/>Are you sure you want to close the window?</div>
+    );
     
     const DeleteButton = (): JSX.Element => (
         <FormButton
@@ -81,7 +89,8 @@ function ConfirmationModal({
                     />
                     <div className="confirmationModalContent">
                         <div>{warningMessage}</div>
-                        {content}
+                        {(isArchivable()) && <ArchiveMessage />}
+                        {(confirmClose) && <CloseConfirmationMessage />}
                     </div>
                     <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${canArchive ? 'archivable' : ''}`}>
                         <div className={`cancelAndArchiveContainer ${isArchivable() ? 'archivable' : ''}`}>
