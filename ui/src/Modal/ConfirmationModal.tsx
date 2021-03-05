@@ -26,7 +26,6 @@ export interface ConfirmationModalProps {
 
     canArchive?: boolean;
     isArchived?: boolean;
-    warningMessage: string;
     submitButtonLabel?: string;
     content?: JSX.Element;
 }
@@ -37,7 +36,6 @@ function ConfirmationModal({
     close,
     canArchive,
     isArchived,
-    warningMessage,
     submitButtonLabel,
     content,
 }: ConfirmationModalProps): JSX.Element {
@@ -80,7 +78,6 @@ function ConfirmationModal({
                         onCloseBtnClick={close}
                     />
                     <div className="confirmationModalContent">
-                        <div>{warningMessage}</div>
                         {content}
                     </div>
                     <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${canArchive ? 'archivable' : ''}`}>

@@ -55,7 +55,7 @@ const LocationTags = ({
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteLocation(locationToDelete),
             close: () => setConfirmDeleteModal(null),
-            warningMessage: 'Deleting this location will remove it from any product that has been given this location.',
+            content: <div>Deleting this location will remove it from any product that has been given this location.</div>,
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);

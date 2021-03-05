@@ -35,7 +35,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteRole(roleToDelete),
             close: () => setConfirmDeleteModal(null),
-            warningMessage: `Deleting this role will remove it from any person that has been given this role.`,
+            content: <div>Deleting this role will remove it from any person that has been given this role.</div>,
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);

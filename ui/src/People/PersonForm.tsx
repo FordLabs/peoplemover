@@ -236,7 +236,7 @@ function PersonForm({
             close: () => {
                 setConfirmDeleteModal(null);
             },
-            warningMessage: 'Removing this person will remove all instances of them from your entire space.',
+            content: <div>Removing this person will remove all instances of them from your entire space.</div>,
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);

@@ -57,9 +57,18 @@ function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | 
                 closeConfirmationModal();
             },
             close: closeConfirmationModal,
-            warningMessage: 'You have unsaved changes. Closing the window will result in the changes being discarded.',
             submitButtonLabel: 'Close',
-            content: <div><br/>Are you sure you want to close the window?</div>,
+            content: (
+                <>
+                    <div>
+                        You have unsaved changes. Closing the window will result in the changes being discarded.
+                    </div>
+                    <div>
+                        <br/>
+                        Are you sure you want to close the window?
+                    </div>
+                </>
+            ),
         };
         const confirmConfirmationModal: JSX.Element = ConfirmationModal(propsForCloseConfirmationModal);
         setConfirmCloseModal(confirmConfirmationModal);
