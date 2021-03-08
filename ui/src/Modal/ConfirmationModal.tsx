@@ -23,6 +23,7 @@ export interface ConfirmationModalProps {
     submit(itemToDelete?: unknown): void | Promise<void>;
     close(): void;
     submitButtonLabel?: string;
+    title?: string;
     content?: JSX.Element;
     secondaryButton?: JSX.Element;
 }
@@ -31,6 +32,7 @@ function ConfirmationModal({
     submit,
     close,
     submitButtonLabel,
+    title = 'Are you sure?',
     content,
     secondaryButton,
 }: ConfirmationModalProps): JSX.Element {
@@ -58,7 +60,7 @@ function ConfirmationModal({
             <div className="modalContents">
                 <div className="modalCard">
                     <ModalCardBanner
-                        title="Are you sure?"
+                        title={title}
                         onCloseBtnClick={close}
                     />
                     <div className="confirmationModalContent">
