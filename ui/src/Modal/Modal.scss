@@ -102,6 +102,8 @@
 
 .confirmationModalControls.secondaryButtonContainer {
     justify-content: space-between;
+    width: unset;
+    align-self: unset;
 }
 
 .confirmationModalDelete {
@@ -109,12 +111,11 @@
     flex-grow:0;
 }
 
-.yesNoButtons.confirmationModalControls {
-    padding: 0 52px;
-}
-
 .confirmationControlButtons {
     margin-top: 32px;
+    justify-content: space-evenly;
+    width: 50%;
+    align-self: center;
 }
 
 .cancelAndArchiveContainer {
