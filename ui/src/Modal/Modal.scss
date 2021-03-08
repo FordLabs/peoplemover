@@ -100,7 +100,7 @@
     line-height: 16px;
 }
 
-.confirmationModalControls.archivable {
+.confirmationModalControls.secondaryButtonContainer {
     justify-content: space-between;
 }
 
@@ -121,7 +121,7 @@
     justify-content: flex-start;
 }
 
-.cancelAndArchiveContainer.archivable {
+.cancelAndArchiveContainer.secondaryButtonContainer {
     display: flex;
     flex-direction: row;
     min-width: 218px;

@@ -21,42 +21,26 @@ import ModalCardBanner from './ModalCardBanner';
 
 export interface ConfirmationModalProps {
     submit(itemToDelete?: unknown): void | Promise<void>;
-    archiveCallback?(): void;
     close(): void;
-
-    canArchive?: boolean;
-    isArchived?: boolean;
     submitButtonLabel?: string;
     content?: JSX.Element;
+    secondaryButton?: JSX.Element;
 }
 
 function ConfirmationModal({
     submit,
-    archiveCallback,
     close,
-    canArchive,
-    isArchived,
     submitButtonLabel,
     content,
+    secondaryButton,
 }: ConfirmationModalProps): JSX.Element {
-    const isArchivable = (): boolean => Boolean(canArchive && !isArchived);
-    
-    const DeleteButton = (): JSX.Element => (
+    const SubmitButton = (): JSX.Element => (
         <FormButton
             className="confirmationModalDelete"
             onClick={submit}
             buttonStyle="primary"
             testId="confirmDeleteButton">
             {submitButtonLabel ? submitButtonLabel : 'Delete'}
-        </FormButton>
-    );
-    
-    const ArchiveButton = (): JSX.Element => (
-        <FormButton
-            buttonStyle="secondary"
-            testId="confirmationModalArchive"
-            onClick={archiveCallback}>
-            Archive
         </FormButton>
     );
 
@@ -80,12 +64,12 @@ function ConfirmationModal({
                     <div className="confirmationModalContent">
                         {content}
                     </div>
-                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${canArchive ? 'archivable' : ''}`}>
-                        <div className={`cancelAndArchiveContainer ${isArchivable() ? 'archivable' : ''}`}>
+                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${secondaryButton ? 'secondaryButtonContainer' : ''}`}>
+                        <div className={`cancelAndArchiveContainer ${secondaryButton ? 'secondaryButtonContainer' : ''}`}>
                             <CancelButton />
-                            {isArchivable() && <ArchiveButton />}
+                            {secondaryButton}
                         </div>
-                        <DeleteButton />
+                        <SubmitButton />
                     </div>
                 </div>
             </div>
