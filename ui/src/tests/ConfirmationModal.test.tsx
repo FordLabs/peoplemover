@@ -24,7 +24,9 @@ import FormButton from '../ModalFormComponents/FormButton';
 describe('the confirmation modal for deleting a board', () => {
     it('should call back properly when the archive button is clicked', async () => {
         let archiveClicked = false;
-        const component = render(<ConfirmationModal close={noop}
+        const component = render(<ConfirmationModal
+            content={<></>}
+            close={noop}
             submit={(): void => undefined}
             secondaryButton={(
                 <FormButton
@@ -40,13 +42,17 @@ describe('the confirmation modal for deleting a board', () => {
     });
 
     it('should not show the "Archive" option if you are deleting a person', () => {
-        const component = render(<ConfirmationModal close={noop}
+        const component = render(<ConfirmationModal
+            content={<></>}
+            close={noop}
             submit={(): void => undefined}/>);
         expect(component.queryByText('Archive')).not.toBeInTheDocument();
     });
 
     it('should show the "Archive" option if you are deleting a product', () => {
-        const productComponent = render(<ConfirmationModal close={noop}
+        const productComponent = render(<ConfirmationModal
+            content={<></>}
+            close={noop}
             submit={(): void => undefined}
             secondaryButton={(
                 <FormButton

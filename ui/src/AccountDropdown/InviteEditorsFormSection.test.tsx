@@ -19,7 +19,7 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {fireEvent, wait} from '@testing-library/dom';
+import {findByText, fireEvent, wait} from '@testing-library/dom';
 import {act} from 'react-dom/test-utils';
 import Axios, {AxiosResponse} from 'axios';
 import Cookies from 'universal-cookie';
@@ -100,6 +100,7 @@ describe('Invite Editors Form', function() {
                     [{'userId': 'user_id', 'permission': 'editor'}, {'userId': 'user_id_2', 'permission': 'owner'}] as UserSpaceMapping[]));
 
                 await fireEvent.click(permissionButton);
+                await fireEvent.click(await component.findByText(/yes/i));
                 expect(Axios.put).toHaveBeenCalledWith(
                     `/api/spaces/${TestUtils.space.uuid}/users/user_id_2`,
                     null,
@@ -114,6 +115,32 @@ describe('Invite Editors Form', function() {
                     const editorRow = within(await component.findByTestId('userListItem__user_id'));
                     editorRow.getByText(/editor/i);
                     editorRow.getByText(/user_id/i);
+                });
+            });
+        });
+
+        it('should not change owner after cancelling', async () => {
+            await act(async () => {
+                const component = renderWithRedux(
+                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser: 'user_id'} as GlobalStateProps);
+                const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
+                const editor = editorRow.getByText(/editor/i);
+                fireEvent.keyDown(editor, {key: 'ArrowDown'});
+                const permissionButton = await editorRow.findByText(/owner/i);
+
+                await fireEvent.click(permissionButton);
+                await fireEvent.click(await component.findByText(/no/i));
+                expect(Axios.put).not.toHaveBeenCalled();
+                expect(SpaceClient.getUsersForSpace).toHaveBeenCalledTimes(1);
+
+                await wait(async () => {
+                    const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
+                    editorRow.getByText(/editor/i);
+                    editorRow.getByText(/user_id_2/i);
+
+                    const ownerRow = within(await component.findByTestId('userListItem__user_id'));
+                    ownerRow.getByText(/owner/i);
+                    ownerRow.getByText(/user_id/i);
                 });
             });
         });
