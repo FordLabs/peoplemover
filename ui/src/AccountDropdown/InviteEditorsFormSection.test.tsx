@@ -19,7 +19,7 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {findByText, fireEvent, wait} from '@testing-library/dom';
+import {fireEvent, wait} from '@testing-library/dom';
 import {act} from 'react-dom/test-utils';
 import Axios, {AxiosResponse} from 'axios';
 import Cookies from 'universal-cookie';
