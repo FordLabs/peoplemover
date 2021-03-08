@@ -20,18 +20,18 @@ import FormButton from '../ModalFormComponents/FormButton';
 import ModalCardBanner from './ModalCardBanner';
 
 export interface ConfirmationModalProps {
-    submit(itemToDelete?: unknown): void | Promise<void>;
+    submit(item?: unknown): void | Promise<void>;
     close(): void;
     submitButtonLabel?: string;
     title?: string;
-    content?: JSX.Element;
+    content: JSX.Element;
     secondaryButton?: JSX.Element;
 }
 
 function ConfirmationModal({
     submit,
     close,
-    submitButtonLabel,
+    submitButtonLabel = 'Delete',
     title = 'Are you sure?',
     content,
     secondaryButton,
@@ -42,7 +42,7 @@ function ConfirmationModal({
             onClick={submit}
             buttonStyle="primary"
             testId="confirmDeleteButton">
-            {submitButtonLabel ? submitButtonLabel : 'Delete'}
+            {submitButtonLabel}
         </FormButton>
     );
 
