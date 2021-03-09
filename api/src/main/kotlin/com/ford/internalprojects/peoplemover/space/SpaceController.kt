@@ -28,12 +28,6 @@ class SpaceController(
         private val logger: BasicLogger,
         private val spaceService: SpaceService
 ) {
-    @GetMapping("")
-    fun allSpaces(): List<Space> {
-        val spaces: List<Space> = spaceService.findAll()
-        logger.logInfoMessage("All space retrieved.")
-        return spaces
-    }
 
     @PreAuthorize("hasPermission(#uuid, 'read')")
     @GetMapping("/{uuid}")

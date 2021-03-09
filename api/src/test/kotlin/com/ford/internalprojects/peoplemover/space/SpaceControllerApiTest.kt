@@ -116,28 +116,6 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `GET should return all spaces`() {
-        val space1: Space = spaceRepository.save(Space(name = "Ken Masters"))
-        val space2: Space = spaceRepository.save(Space(name = "KenM"))
-        val space3: Space = spaceRepository.save(Space(name = "Ken Starr"))
-
-        val result = mockMvc.perform(
-            get(baseSpaceUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
-        )
-            .andExpect(status().isOk).andReturn()
-
-        val actual: List<Space> = objectMapper.readValue(
-            result.response.contentAsString,
-            objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Space::class.java)
-        )
-
-        assertThat(actual[0]).isEqualTo(space1)
-        assertThat(actual[1]).isEqualTo(space2)
-        assertThat(actual[2]).isEqualTo(space3)
-    }
-
-    @Test
     fun `GET should return all spaces for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
         val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))

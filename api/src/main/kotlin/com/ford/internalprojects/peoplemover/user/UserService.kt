@@ -13,20 +13,6 @@ import org.springframework.transaction.annotation.Transactional
 class UserService(private val userSpaceMappingRepository: UserSpaceMappingRepository) {
 
 
-    // todo: Remove this service call
-    @Deprecated("No longer used. Use getUserForSpace instead")
-    fun getEditorsForSpace(uuid: String): List<String> {
-        val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAllBySpaceUuid(uuid)
-
-        return userSpaceMappings.map { userSpaceMapping ->
-            if (userSpaceMapping.userId == null || userSpaceMapping.userId == "") {
-                "UNKNOWN_USER"
-            } else {
-                userSpaceMapping.userId
-            }
-        }.toList()
-    }
-
     fun getUsersForSpace(uuid: String): List<UserSpaceMapping> {
         return userSpaceMappingRepository.findAllBySpaceUuid(uuid)
     }

@@ -18,14 +18,6 @@ class UserController(
         private val userService: UserService
 ) {
 
-    // todo: Remove this endpoint
-    @Deprecated("No longer used. Use /{uuid}/users instead")
-    @PreAuthorize("hasPermission(#uuid, 'modify')")
-    @GetMapping("/{uuid}/editors")
-    fun getAllEditors(@PathVariable uuid: String): List<String> {
-        return userService.getEditorsForSpace(uuid)
-    }
-
     @PreAuthorize("hasPermission(#uuid, 'modify')")
     @GetMapping("/{uuid}/users")
     fun getAllUsers(@PathVariable uuid: String): List<UserSpaceMapping> {
