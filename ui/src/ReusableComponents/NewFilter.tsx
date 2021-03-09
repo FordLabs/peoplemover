@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
-import AccessibleDropdownContainer from './AccessibleDropdownContainer';
 import {FilterOption} from '../CommonTypes/Option';
 import './NewFilterOrSortBy.scss';
+import Dropdown from './Dropdown';
 
 
 export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
@@ -71,6 +71,7 @@ function toggleOption(option: FilterOption): FilterOption {
 interface NewFilterProps {
     filterType: FilterTypeEnum;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
@@ -81,72 +82,64 @@ function NewFilter({
 }: NewFilterProps): JSX.Element {
     const index = convertToIndex(filterType);
 
-    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
-
     const updateFilters = (option: FilterOption, ourIndex: number): void => {
         setAllGroupedTagFilterOptions(
             allGroupedTagFilterOptions.map((aGroupOfTagFilterOptions, index) => {
                 if (index === ourIndex) {
-                    return  {...aGroupOfTagFilterOptions, options: aGroupOfTagFilterOptions.options.map(anOption => {
-                        if (anOption.value === option.value) {
-                            return option;
-                        } else {
-                            return anOption;
-                        }
-                    })};
+                    return {
+                        ...aGroupOfTagFilterOptions, options: aGroupOfTagFilterOptions.options.map(anOption => {
+                            if (anOption.value === option.value) {
+                                return option;
+                            } else {
+                                return anOption;
+                            }
+                        }),
+                    };
                 } else {
                     return {...aGroupOfTagFilterOptions};
                 }
-            })
+            }),
         );
     };
 
-    const toggleDropdownMenu = (): void => {
-        setDropdownToggle(!dropdownToggle);
-    };
+    const dropdownContent =
+        <>
+            {allGroupedTagFilterOptions
+            && allGroupedTagFilterOptions.length > 0
+            && allGroupedTagFilterOptions[index].options.map(
+                (option) => {
+                    return (
+                        <div key={option.value} className="sortby-option">
+                            <input
+                                type="checkbox"
+                                id={option.value}
+                                value={option.value}
+                                onChange={(event): void => {
+                                    updateFilters(toggleOption(option), index);
+                                }}
+                            />
+                            <label htmlFor={option.value}>{option.label}</label>
+                        </div>
+                    );
+                })}
+        </>;
+
+    const dropdownButtonContent = 
+        <>
+            <span className="dropdown-label" id={`dropdown-label_${filterType}`}>
+                {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
+                    && convertToLabel(filterType)}
+            </span>
+        </>;
 
     return (
-        <div className=" dropdown-group">
-            <button
-                id="NewFilter-button"
-                className="dropdown-button"
-                onClick={(): void => { toggleDropdownMenu();}}
-            >
-                <span className="dropdown-label" id={`dropdown-label_${filterType}`}>
-                    {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
-                    && convertToLabel(filterType)}
-                </span>
-                {dropdownToggle
-                    ? <i id={`dropdown-button-arrow-up_${filterType}`} className="material-icons greyIcon">keyboard_arrow_up</i>
-                    : <i className="material-icons greyIcon">keyboard_arrow_down</i>
-                }
-            </button>
-            {dropdownToggle &&
-            <AccessibleDropdownContainer
-                className="sortby-dropdown"
-                handleClose={(): void => {
-                    setDropdownToggle(false);
-                }}
-                dontCloseForTheseIds={['NewFilter-button', `dropdown-label_${filterType}`, `dropdown-button-arrow-up_${filterType}`]}
-            >
-                {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
-                && allGroupedTagFilterOptions[index].options.map(
-                    (option) => {
-                        return (
-                            <div key={option.value} className="sortby-option">
-                                <input
-                                    type="checkbox"
-                                    id={option.value}
-                                    value={option.value}
-                                    onChange={(event): void => {
-                                        updateFilters(toggleOption(option), index);
-                                    }}
-                                />
-                                <label htmlFor={option.value}>{option.label}</label>
-                            </div>);
-                    })}
-            </AccessibleDropdownContainer>}
-        </div>);
+        <Dropdown
+            buttonId={`NewFilter-button_${filterType}`}
+            dropdownButtonContent={dropdownButtonContent}
+            dropdownContent={dropdownContent}
+            dropdownOptionIds={[`NewFilter-button_${filterType}`, `dropdown-label_${filterType}`, `dropdown-button-arrow-up_${filterType}`]}
+        />
+    );
 }
 
 /* eslint-disable */

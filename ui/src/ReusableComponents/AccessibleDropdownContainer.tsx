@@ -29,10 +29,10 @@ interface DropdownProps {
     className?: string;
     children?: ReactNode;
     testId?: string;
-    dontCloseForTheseIds?: string[];
+    dropdownOptionIds?: string[];
 }
 
-export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dontCloseForTheseIds}: DropdownProps): JSX.Element {
+export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dropdownOptionIds}: DropdownProps): JSX.Element {
 
     const dropdownContainer = createRef<HTMLDivElement>();
 
@@ -81,7 +81,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
             React.Children.toArray(children)[index].ref.current.focus();
         };
 
-        if (!dropdownContainer.current?.contains(e.target as HTMLElement) && !dontCloseForTheseIds?.includes((e.target as HTMLElement).id)) {
+        if (!dropdownContainer.current?.contains(e.target as HTMLElement) && !dropdownOptionIds?.includes((e.target as HTMLElement).id)) {
             handleClose();
         }
 
@@ -92,7 +92,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             setFocusOnExpectedElementWhenUsingUpOrDownKey(e);
         }
-    }, [dropdownContainer, handleClose, children, dontCloseForTheseIds]);
+    }, [dropdownContainer, handleClose, children, dropdownOptionIds]);
 
     useEffect(() => {
         document.addEventListener('mouseup', leaveFocusListener);

@@ -57,7 +57,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
             <AccessibleDropdownContainer
                 handleClose={(): void => {setDropdownToggle(false);}}
                 className="accountDropdown"
-                dontCloseForTheseIds={[
+                dropdownOptionIds={[
                     'accountDropdownToggle',
                     'accountDropdownToggle-arrow',
                     'accountDropdownToggle-name',

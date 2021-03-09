@@ -1,0 +1,49 @@
+import AccessibleDropdownContainer from './AccessibleDropdownContainer';
+import React, {ReactNode, useState} from 'react';
+
+interface DropdownProps {
+    buttonId: string;
+    dropdownButtonContent: ReactNode;
+    dropdownContent: ReactNode;
+    dropdownOptionIds: string[];
+    dropdownTestId?: string;
+    buttonTestId?: string;
+}
+
+export default function Dropdown({buttonId, dropdownButtonContent, dropdownContent, dropdownOptionIds, dropdownTestId, buttonTestId}: DropdownProps): JSX.Element {
+
+    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
+
+    const toggleDropdownMenu = (): void => {
+        setDropdownToggle(!dropdownToggle);
+    };
+
+    return (
+        <div className="dropdown-group">
+            <button
+                onClick={(): void => {toggleDropdownMenu();}}
+                id={buttonId}
+                data-testid={buttonTestId}
+                className="dropdown-button"
+            >
+                {dropdownButtonContent}
+                {dropdownToggle
+                    ? <i className="material-icons greyIcon">keyboard_arrow_up</i>
+                    : <i className="material-icons greyIcon">keyboard_arrow_down</i>
+                }
+            </button>
+            {dropdownToggle &&
+            <AccessibleDropdownContainer
+                testId={dropdownTestId}
+                className="sortby-dropdown"
+                handleClose={(): void => {
+                    setDropdownToggle(false);
+                }}
+                dropdownOptionIds={dropdownOptionIds}
+            >
+                {dropdownContent}
+
+            </AccessibleDropdownContainer>}
+        </div>
+    );
+}

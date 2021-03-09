@@ -22,7 +22,7 @@ import './NewFilterOrSortBy.scss';
 import {setProductSortByAction} from '../Redux/Actions';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import AccessibleDropdownContainer from './AccessibleDropdownContainer';
+import Dropdown from './Dropdown';
 
 interface SortByOption {
     label: string;
@@ -40,7 +40,6 @@ function ProductSortBy({
     currentSpace,
     setProductSortBy,
 }: ProductSortByProps): JSX.Element {
-    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
     const [selectedSortOption, setSelectedSortOption] = useState<SortByOption>();
     const sortByOptions: Array<SortByOption> = [
         {label:'Alphabetical', value:'name'},
@@ -58,50 +57,59 @@ function ProductSortBy({
     }, [productSortBy]);
     /* eslint-enable */
 
-    const toggleDropdownMenu = (): void => {
-        setDropdownToggle(!dropdownToggle);
-    };
+    const dropdownContent = 
+        <>
+            {sortByOptions.map((option, index) => {
+                return <button
+                    key={option.value}
+                    id={`sortDropdownOption_${option.value}`}
+                    className="sortDropdownOption"
+                    data-testid={`sortDropdownOption_${option.value}`}
+                    ref={createRef<HTMLButtonElement>()}
+                    onClick={(): void => {
+                        setProductSortBy(option.value);
+                        MatomoEvents.pushEvent(currentSpace.name, 'sort', option.label);
+                    }}>
+                    {option.label}
+                    {option.value === selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}
+                </button>;
+            })}
+        </>;
 
     return (
-        <div className="newDropdownContainer" data-testid="sortByContainer">
-            <i className="material-icons indicator-icon" aria-hidden >sort</i>
+        <div className="newDropdownContainer">
+            <i className="material-icons indicator-icon" aria-hidden>sort</i>
             <label id="sortby-dropdown-label" htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
-            <button id="sortby-dropdown-button" className="dropdown-button"
-                onClick={(): void => { toggleDropdownMenu();}}
-                onKeyUp={(event): void => { if (event.key === 'ArrowDown' && !dropdownToggle) { toggleDropdownMenu();} }}
-                data-testid="sortByDropdownButton">
-                {selectedSortOption?.label}
-                {dropdownToggle
-                    ? <i id="sortby-dropdown-button-arrow-up" className="material-icons greyIcon">keyboard_arrow_up</i>
-                    : <i className="material-icons greyIcon">keyboard_arrow_down</i>
-                }
-            </button>
-            {dropdownToggle &&
-                <AccessibleDropdownContainer
-                    className="sortDropdown"
-                    handleClose={(): void => {
-                        setDropdownToggle(false);
-                    }}
-                    testId="sortByDropdownMenu"
-                    dontCloseForTheseIds={['sortby-dropdown-button', 'sortby-dropdown-button-arrow-up']}>
-                    {sortByOptions.map((option, index) => {
-                        return <button
-                            key={option.value}
-                            id={`sortDropdownOption_${option.value}`}
-                            className="sortDropdownOption"
-                            data-testid={`sortDropdownOption_${option.value}`}
-                            ref={createRef<HTMLButtonElement>()}
-                            onClick={ (): void => {
-                                setProductSortBy(option.value);
-                                MatomoEvents.pushEvent(currentSpace.name, 'sort', option.label);
-                                setDropdownToggle(false);
-                            }}>
-                            {option.label}
-                            {option.value === selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}
-                        </button>;
-                    })}
-                </AccessibleDropdownContainer>
-            }
+            <Dropdown
+                buttonId="sortby-dropdown-button"
+                dropdownButtonContent={selectedSortOption?.label}
+                dropdownContent={dropdownContent}
+                dropdownOptionIds={['sortby-dropdown-button']}
+                buttonTestId="sortByDropdownButton"
+                dropdownTestId="sortByDropdownMenu"
+            />
+            {/*<div className="dropdown-group" data-testid="sortByContainer">*/}
+
+            {/*    <button*/}
+            {/*        onClick={(): void => {toggleDropdownMenu();}}*/}
+            {/*        id="sortby-dropdown-button"*/}
+            {/*        className="dropdown-button"*/}
+            {/*        data-testid="sortByDropdownButton"*/}
+            {/*    >*/}
+            {/*        {dropdownButtonContent}*/}
+            {/*    </button>*/}
+            {/*    {dropdownToggle &&*/}
+            {/*    <AccessibleDropdownContainer*/}
+            {/*        className="sortDropdown"*/}
+            {/*        handleClose={(): void => {*/}
+            {/*            setDropdownToggle(false);*/}
+            {/*        }}*/}
+            {/*        testId="sortByDropdownMenu"*/}
+            {/*        dropdownOptionIds={['sortby-dropdown-button']}>*/}
+            {/*        {dropdownContent}*/}
+            {/*    </AccessibleDropdownContainer>*/}
+            {/*    }*/}
+            {/*</div>*/}
         </div>
     );
 }
