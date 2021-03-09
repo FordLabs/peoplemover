@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
 
 @AutoConfigureMockMvc
 @RunWith(SpringRunner::class)
@@ -600,12 +599,12 @@ class SpaceControllerApiTest {
 
     @Test
     fun `Invite Users Request should return Ok and an empty list with a valid ADFS request`() {
-        val emails = listOf("email_1@email.com", "email_2@otheremail.com")
+        val emails = listOf("email1", "email2")
 
         val space = spaceRepository.save(Space(name = "spaceName"))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
-        val request = AuthInviteUsersToSpaceRequest(emails = emails)
+        val request = AuthInviteUsersToSpaceRequest(userIds = emails)
 
         val result = mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}:invite")
@@ -622,17 +621,35 @@ class SpaceControllerApiTest {
 
         assertThat(userSpaceMappingRepository.count()).isEqualTo(3)
         assertThat(savedIds).contains(Pair("USER_ID", PERMISSION_OWNER))
-        assertThat(savedIds).contains(Pair("EMAIL_1", PERMISSION_EDITOR))
-        assertThat(savedIds).contains(Pair("EMAIL_2", PERMISSION_EDITOR))
+        assertThat(savedIds).contains(Pair("EMAIL1", PERMISSION_EDITOR))
+        assertThat(savedIds).contains(Pair("EMAIL2", PERMISSION_EDITOR))
     }
 
     @Test
     fun `Invite Users Request should return BAD_REQUEST if no emails were provided`() {
         val request = AuthInviteUsersToSpaceRequest(
-            emails = listOf()
+            userIds = listOf()
         )
 
         val space = spaceRepository.save(Space(name = "spaceName"))
+
+        mockMvc.perform(
+            put("$baseSpaceUrl/${space.uuid}:invite")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType("application/json")
+        ).andExpect(
+            status().isBadRequest
+        )
+    }
+    @Test
+    fun `Invite Users Request should return BAD_REQUEST if cdsids are not valid`() {
+        val request = AuthInviteUsersToSpaceRequest(
+            userIds = listOf("abc12", "1@5")
+        )
+
+        val space = spaceRepository.save(Space(name = "spaceName"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}:invite")
@@ -649,7 +666,7 @@ class SpaceControllerApiTest {
         val space = spaceRepository.save(Space(name = "spaceName"))
 
         val requestBodyObject =
-            AuthInviteUsersToSpaceRequest(emails = listOf("email_1@email.com", "email_2@otheremail.com"))
+            AuthInviteUsersToSpaceRequest(userIds = listOf("email1", "email2"))
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}:invite")

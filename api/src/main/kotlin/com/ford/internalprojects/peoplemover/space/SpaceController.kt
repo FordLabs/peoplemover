@@ -100,8 +100,8 @@ class SpaceController(
             @PathVariable uuid: String
     ): ResponseEntity<ArrayList<String>> {
         val failures = arrayListOf<String>()
-        request.emails.forEach { email ->
-            val userId = email.substringBefore('@').toUpperCase().trim()
+        request.userIds.forEach { email ->
+            val userId = email.toUpperCase().trim()
             try {
                 userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceUuid = uuid, permission = PERMISSION_EDITOR))
             } catch (e: DataIntegrityViolationException) {

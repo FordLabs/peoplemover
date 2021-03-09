@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +17,14 @@
 
 package com.ford.internalprojects.peoplemover.auth
 
+import com.ford.internalprojects.peoplemover.utilities.ListPattern
 import javax.validation.constraints.NotEmpty
 
 data class AuthInviteUsersToSpaceRequest(
         @field:NotEmpty(message = "emails cannot be empty")
-        val emails: List<String>
+        @field:ListPattern(value = "^[a-zA-Z][a-zA-Z0-9]{1,8}$", message = "must be valid cdsid")
+        val userIds: List<String>
 )
+
+
+
