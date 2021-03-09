@@ -21,9 +21,15 @@ import com.ford.internalprojects.peoplemover.utilities.ListPattern
 import javax.validation.constraints.NotEmpty
 
 data class AuthInviteUsersToSpaceRequest(
-        @field:NotEmpty(message = "emails cannot be empty")
+        @field:NotEmpty(message = "user ids cannot be empty")
         @field:ListPattern(value = "^[a-zA-Z][a-zA-Z0-9]{1,8}$", message = "must be valid cdsid")
         val userIds: List<String>
+)
+
+@Deprecated("Delete ME and OLD invite endpoint")
+data class OldAuthInviteUsersToSpaceRequest(
+        @field:NotEmpty(message = "emails cannot be empty")
+        val emails: List<String>
 )
 
 

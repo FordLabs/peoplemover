@@ -3,6 +3,7 @@ package com.ford.internalprojects.peoplemover.user
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
+import com.ford.internalprojects.peoplemover.user.exceptions.InvalidUserModification
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.ResponseEntity
@@ -37,8 +38,24 @@ class UserController(
     }
 
     @PreAuthorize("hasPermission(#uuid, 'modify')")
-//   TODO: Remove @RequestMapping and use this: @PostMapping("/{uuid}/users")
-    @RequestMapping(value = ["/{uuid}:invite", "/{uuid}/users"], method = [RequestMethod.POST, RequestMethod.PUT])
+    @Deprecated("Delete ME use new POST /users endpoint")
+    @PutMapping("/{uuid}:invite")
+    fun oldInviteUsersToSpace(
+            @RequestBody request: OldAuthInviteUsersToSpaceRequest,
+            @PathVariable uuid: String
+    ): ResponseEntity<ArrayList<String>> {
+        val filteredEmails = AuthInviteUsersToSpaceRequest(
+                request.emails
+                        .map { it.substringBefore("@") }
+                        .filter { it.isNotBlank() })
+        if (filteredEmails.userIds.isEmpty())
+            throw InvalidUserModification()
+        return inviteUsersToSpace(filteredEmails, uuid)
+    }
+
+
+    @PreAuthorize("hasPermission(#uuid, 'modify')")
+    @PostMapping("/{uuid}/users")
     fun inviteUsersToSpace(
             @Valid @RequestBody request: AuthInviteUsersToSpaceRequest,
             @PathVariable uuid: String

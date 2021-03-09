@@ -56,6 +56,71 @@ internal class UserControllerApiTest {
 
 
     @Test
+    @Deprecated("Delete ME and OLD invite endpoint")
+    fun `Invite Users Request should return Ok and an empty list with a valid emails in request`() {
+        val emails = listOf("email1@email.com", "email2@email.com")
+
+        val space = spaceRepository.save(Space(name = "spaceName"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+        val request = OldAuthInviteUsersToSpaceRequest(emails = emails)
+
+        val result = mockMvc.perform(
+                MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}:invite")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType("application/json")
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk
+        ).andReturn()
+
+        Assertions.assertThat(result.response.contentLength).isEqualTo(0)
+
+        val savedIds = userSpaceMappingRepository.findAll().map { Pair(it.userId!!, it.permission)}
+
+        Assertions.assertThat(userSpaceMappingRepository.count()).isEqualTo(3)
+        Assertions.assertThat(savedIds).contains(Pair("USER_ID", PERMISSION_OWNER))
+        Assertions.assertThat(savedIds).contains(Pair("EMAIL1", PERMISSION_EDITOR))
+        Assertions.assertThat(savedIds).contains(Pair("EMAIL2", PERMISSION_EDITOR))
+    }
+
+    @Test
+    @Deprecated("Delete ME and OLD invite endpoint")
+    fun `Invite Users Request should return BAD_REQUEST if no emails were provided`() {
+        val request = OldAuthInviteUsersToSpaceRequest(
+                emails = listOf()
+        )
+
+        val space = spaceRepository.save(Space(name = "spaceName"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}:invite")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType("application/json")
+        ).andExpect(
+                MockMvcResultMatchers.status().isBadRequest
+        )
+    }
+    @Test
+    @Deprecated("Delete ME and OLD invite endpoint")
+    fun `Invite Users Request should return 403 when trying to add user emails to space without write authorization`() {
+        val space = spaceRepository.save(Space(name = "spaceName"))
+
+        val requestBodyObject =
+                OldAuthInviteUsersToSpaceRequest(emails = listOf("email1@email.com", "email2@emil.com"))
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}:invite")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestBodyObject))
+        )
+                .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @Test
     fun `Invite Users Request should return Ok and an empty list with a valid ADFS request`() {
         val emails = listOf("email1", "email2")
 
@@ -84,33 +149,16 @@ internal class UserControllerApiTest {
     }
 
     @Test
-    fun `Invite Users Request should return BAD_REQUEST if no emails were provided`() {
+    fun `Invite Users Request should return BAD_REQUEST if no cdsids were provided`() {
         val request = AuthInviteUsersToSpaceRequest(
                 userIds = listOf()
-        )
-
-        val space = spaceRepository.save(Space(name = "spaceName"))
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}:invite")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType("application/json")
-        ).andExpect(
-                MockMvcResultMatchers.status().isBadRequest
-        )
-    }
-    @Test
-    fun `Invite Users Request should return BAD_REQUEST if cdsids are not valid`() {
-        val request = AuthInviteUsersToSpaceRequest(
-                userIds = listOf("abc12", "1@5")
         )
 
         val space = spaceRepository.save(Space(name = "spaceName"))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}:invite")
+                MockMvcRequestBuilders.post("$baseSpaceUrl/${space.uuid}/users")
                         .header("Authorization", "Bearer GOOD_TOKEN")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType("application/json")
@@ -127,12 +175,31 @@ internal class UserControllerApiTest {
                 AuthInviteUsersToSpaceRequest(userIds = listOf("email1", "email2"))
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}:invite")
+                MockMvcRequestBuilders.post("$baseSpaceUrl/${space.uuid}/users")
                         .header("Authorization", "Bearer GOOD_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestBodyObject))
         )
                 .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @Test
+    fun `Invite Users Request should return BAD_REQUEST if cdsids are not valid`() {
+        val request = AuthInviteUsersToSpaceRequest(
+                userIds = listOf("abc12", "1@5")
+        )
+
+        val space = spaceRepository.save(Space(name = "spaceName"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("$baseSpaceUrl/${space.uuid}/users")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType("application/json")
+        ).andExpect(
+                MockMvcResultMatchers.status().isBadRequest
+        )
     }
 
     @Test
@@ -182,54 +249,6 @@ internal class UserControllerApiTest {
         Assertions.assertThat(userSpaceMappingRepository.findAllByUserId("USER_ID")[0].permission).isEqualTo(PERMISSION_OWNER)
     }
 
-    @Test
-    fun `GET should return all user id that have edit access for a space`() {
-        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
-        val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
-
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "editor"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_SPACE_ANOTHER_USER_ID", spaceUuid = space2.uuid, permission = "editor"))
-
-        val result = mockMvc.perform(
-                MockMvcRequestBuilders.get(baseSpaceUrl + "/${space1.uuid}/editors")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andReturn()
-
-        val returnedEditors: List<String> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, String::class.java)
-        )
-
-        Assertions.assertThat(returnedEditors).containsExactlyInAnyOrder("USER_ID", "ANOTHER_USER_ID")
-    }
-
-    @Test
-    fun `GET should return all user id that have edit access for a space and ignore empty and null user ids`() {
-        val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
-
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "editor"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "ANOTHER_USER_ID", spaceUuid = space1.uuid, permission = "editor"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "", spaceUuid = space1.uuid, permission = "editor"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = null, spaceUuid = space1.uuid, permission = "editor"))
-
-        val result = mockMvc.perform(
-                MockMvcRequestBuilders.get(baseSpaceUrl + "/${space1.uuid}/editors")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andReturn()
-
-        val returnedEditors: List<String> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, String::class.java)
-        )
-
-        Assertions.assertThat(returnedEditors).containsExactlyInAnyOrder("USER_ID", "ANOTHER_USER_ID", "UNKNOWN_USER", "UNKNOWN_USER")
-    }
-
 
     @Test
     fun `GET should return 403 if the user does not have write access to the space`() {
@@ -238,7 +257,7 @@ internal class UserControllerApiTest {
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = "editor"))
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get(baseSpaceUrl + "/${space1.uuid}/editors")
+                MockMvcRequestBuilders.get(baseSpaceUrl + "/${space1.uuid}/users")
                         .header("Authorization", "Bearer ANONYMOUS_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isForbidden)
@@ -248,7 +267,7 @@ internal class UserControllerApiTest {
     @Test
     fun `GET should return 403 if the space does not exist`() {
         mockMvc.perform(
-                MockMvcRequestBuilders.get(baseSpaceUrl + "/aaaaaaaa-aaaa-aaaa-aaaa-badspace1234/editors")
+                MockMvcRequestBuilders.get(baseSpaceUrl + "/aaaaaaaa-aaaa-aaaa-aaaa-badspace1234/users")
                         .header("Authorization", "Bearer GOOD_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isForbidden)
