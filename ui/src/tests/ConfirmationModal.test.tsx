@@ -19,15 +19,22 @@ import ConfirmationModal from '../Modal/ConfirmationModal';
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react';
 import {noop} from '@babel/types';
+import FormButton from '../ModalFormComponents/FormButton';
 
 describe('the confirmation modal for deleting a board', () => {
     it('should call back properly when the archive button is clicked', async () => {
         let archiveClicked = false;
-        const component = render(<ConfirmationModal close={noop}
+        const component = render(<ConfirmationModal
+            content={<></>}
+            close={noop}
             submit={(): void => undefined}
-            archiveCallback={(): void => {archiveClicked = true;}}
-            warningMessage=""
-            canArchive={true}/>);
+            secondaryButton={(
+                <FormButton
+                    buttonStyle="secondary"
+                    testId="confirmationModalArchive"
+                    onClick={(): void => {archiveClicked = true;}}>
+                    Archive
+                </FormButton>)}/>);
 
         expect(archiveClicked).toBeFalsy();
         fireEvent.click(component.getByTestId('confirmationModalArchive'));
@@ -35,19 +42,25 @@ describe('the confirmation modal for deleting a board', () => {
     });
 
     it('should not show the "Archive" option if you are deleting a person', () => {
-        const component = render(<ConfirmationModal close={noop}
-            submit={(): void => undefined}
-            archiveCallback={noop}
-            warningMessage=""/>);
+        const component = render(<ConfirmationModal
+            content={<></>}
+            close={noop}
+            submit={(): void => undefined}/>);
         expect(component.queryByText('Archive')).not.toBeInTheDocument();
     });
 
     it('should show the "Archive" option if you are deleting a product', () => {
-        const productComponent = render(<ConfirmationModal close={noop}
+        const productComponent = render(<ConfirmationModal
+            content={<></>}
+            close={noop}
             submit={(): void => undefined}
-            archiveCallback={noop}
-            warningMessage=""
-            canArchive={true}/>);
+            secondaryButton={(
+                <FormButton
+                    buttonStyle="secondary"
+                    testId="confirmationModalArchive"
+                    onClick={noop}>
+                   Archive
+                </FormButton>)}/>);
         expect(productComponent.getByText('Archive')).toBeInTheDocument();
     });
 });

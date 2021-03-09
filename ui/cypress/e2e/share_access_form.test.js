@@ -137,6 +137,8 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=userAccessOptionLabel]').eq(1).should('contain.text', 'Owner')
                 .click();
 
+            cy.get('[data-testid=confirmDeleteButton]').should('contain.text', 'Yes').click();
+
             cy.wait('@putChangeOwner')
                 .should((xhrs) => {
                     expect(xhrs.status).to.equal(200);

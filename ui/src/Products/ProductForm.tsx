@@ -137,13 +137,22 @@ function ProductForm({
     function displayDeleteProductModal(): void {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: deleteProduct,
-            canArchive: true,
             close: () => {
                 setConfirmDeleteModal(null);
             },
-            archiveCallback: archiveProduct,
-            isArchived: determineIfProductIsArchived(),
-            warningMessage: 'Deleting this product will permanently remove it from this space.',
+            secondaryButton: determineIfProductIsArchived() ? undefined : (
+                <FormButton
+                    buttonStyle="secondary"
+                    testId="confirmationModalArchive"
+                    onClick={archiveProduct}>
+                    Archive
+                </FormButton>),
+            content: (
+                <>
+                    <div>Deleting this product will permanently remove it from this space.</div>
+                    {determineIfProductIsArchived() ? <></> : <div><br/>You can also choose to archive this product to be able to access it later.</div>}
+                </>
+            ),
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);
