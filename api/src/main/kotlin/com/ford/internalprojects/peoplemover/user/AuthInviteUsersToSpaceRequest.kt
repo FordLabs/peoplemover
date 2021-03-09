@@ -15,11 +15,16 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.space.exceptions
+package com.ford.internalprojects.peoplemover.user
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
-import java.lang.RuntimeException
+import com.ford.internalprojects.peoplemover.utilities.ListPattern
+import javax.validation.constraints.NotEmpty
 
-@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-class CannotDeleteOwnerException : RuntimeException("Owners cannot be deleted ")
+data class AuthInviteUsersToSpaceRequest(
+        @field:NotEmpty(message = "emails cannot be empty")
+        @field:ListPattern(value = "^[a-zA-Z][a-zA-Z0-9]{1,8}$", message = "must be valid cdsid")
+        val userIds: List<String>
+)
+
+
+
