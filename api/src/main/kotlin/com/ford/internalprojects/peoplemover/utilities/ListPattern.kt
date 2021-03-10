@@ -18,11 +18,11 @@ annotation class ListPattern( val value: String,
 class ListPatternValidator : ConstraintValidator<ListPattern, List<*>> {
 
     private lateinit var pattern: Regex
-    override fun initialize(constraintAnnotation: ListPattern) {
-        pattern = constraintAnnotation.value.toRegex()
+    override fun initialize(listPattern: ListPattern) {
+        pattern = listPattern.value.toRegex()
     }
 
     override fun isValid(payload: List<*>, context: ConstraintValidatorContext): Boolean
-            = payload.map { pattern.matches(it.toString()) }.all {it }
+            = payload.all { pattern.matches(it.toString()) }
 
 }
