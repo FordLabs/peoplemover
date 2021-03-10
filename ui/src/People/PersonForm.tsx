@@ -236,7 +236,7 @@ function PersonForm({
             close: () => {
                 setConfirmDeleteModal(null);
             },
-            warningMessage: 'Removing this person will remove all instances of them from your entire space.',
+            content: <div>Removing this person will remove all instances of them from your entire space.</div>,
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);
@@ -248,10 +248,6 @@ function PersonForm({
         alphabetize(filteredProducts);
         return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
     };
-
-    function handleKeyDownForDisplayRemovePersonModal(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') displayRemovePersonModal();
-    }
 
     return (
         <div className="formContainer">
@@ -322,19 +318,20 @@ function PersonForm({
                         {isEditPersonForm ? 'Save' : 'Add'}
                     </FormButton>
                 </div>
-                {isEditPersonForm && (
-                    <div className="deleteButtonContainer alignSelfCenter deleteLinkColor">
-                        <i className="material-icons">delete</i>
-                        <div className="trashCanSpacer"/>
-                        <span className="obliterateLink"
-                            data-testid="deletePersonButton"
-                            onClick={displayRemovePersonModal}
-                            onKeyDown={handleKeyDownForDisplayRemovePersonModal}>
-                            Delete
-                        </span>
-                    </div>
-                )}
             </form>
+
+            {isEditPersonForm && (
+                <button className="deleteButtonContainer alignSelfCenter deleteLinkColor"
+                    data-testid="deletePersonButton"
+                    onClick={displayRemovePersonModal}
+                >
+                    <i className="material-icons" aria-hidden>delete</i>
+                    <div className="trashCanSpacer"/>
+                    <span className="obliterateLink">
+                            Delete
+                    </span>
+                </button>
+            )}
             {confirmDeleteModal}
         </div>
     );

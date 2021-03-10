@@ -16,11 +16,18 @@
  */
 
 @import '../Application/Styleguide/Colors';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .peopleMoverLogo {
   display: flex;
   align-items: center;
   text-decoration: none;
+
+  .peopleMoverImage {
+    @include phone {
+      max-width: 24px;
+    }
+  }
 
   .peopleMoverTitle {
     display: inline-block;
@@ -34,5 +41,9 @@
     white-space: nowrap;
     padding-top: 6px;
     padding-left: 8px;
+
+    @include phone {
+      font-size: 16px;
+    }
   }
 }

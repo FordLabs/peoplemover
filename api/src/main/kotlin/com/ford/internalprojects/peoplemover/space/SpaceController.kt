@@ -87,6 +87,12 @@ class SpaceController(
         spaceService.deleteUserFromSpace(uuid, userId)
     }
 
+    @PreAuthorize("hasPermission(#uuid, 'owner')")
+    @PutMapping("/{uuid}/users/{userId}")
+    fun updateUserForSpace(@PathVariable uuid: String, @PathVariable userId: String) {
+        spaceService.modifyUserPermission(uuid, userId)
+    }
+
     @PreAuthorize("hasPermission(#uuid, 'modify')")
     @PutMapping("/{uuid}:invite")
     fun inviteUsersToSpace(

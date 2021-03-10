@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 @import './Form.scss';
 
 .modalBackground {
@@ -51,9 +52,18 @@
     padding: 32px 0;
     margin: 0.5rem 0;
 
+    @include phone {
+        width: 100vw;
+        box-sizing: border-box;
+    }
+
     &[hidden] {
         overflow: hidden;
         max-height: 65px;
+
+        @include phone {
+            max-height: initial;
+        }
     }
 }
 
@@ -90,8 +100,10 @@
     line-height: 16px;
 }
 
-.confirmationModalControls.archivable {
+.confirmationModalControls.secondaryButtonContainer {
     justify-content: space-between;
+    width: unset;
+    align-self: unset;
 }
 
 .confirmationModalDelete {
@@ -99,19 +111,18 @@
     flex-grow:0;
 }
 
-.yesNoButtons.confirmationModalControls {
-    padding: 0 52px;
-}
-
 .confirmationControlButtons {
     margin-top: 32px;
+    justify-content: space-evenly;
+    width: 50%;
+    align-self: center;
 }
 
 .cancelAndArchiveContainer {
     justify-content: flex-start;
 }
 
-.cancelAndArchiveContainer.archivable {
+.cancelAndArchiveContainer.secondaryButtonContainer {
     display: flex;
     flex-direction: row;
     min-width: 218px;

@@ -15,35 +15,14 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Variables';
-@import '../Application/Styleguide/Colors';
-@import '../Application/Styleguide/Breakpoints';
+import {AvailableActions} from '../Actions';
 
-.modalCardBanner.multiModal{
-  margin: 0 auto;
-  width: $form-width;
-  justify-content: space-between;
-  padding-bottom: 18px;
-
-  @include phone {
-    width: 100%;
-  }
-
-  .expandCollapseToggleButton {
-    background: none;
-    display: flex;
-    padding: 0;
-
-    .modalTitle {
-      margin: 0 1rem 0 0;
+const currentUserReducer = (state: string | null = null, action: {type: AvailableActions; currentUser: string} ): string | null => {
+    if (action.type === AvailableActions.SET_CURRENT_USER) {
+        return action.currentUser;
+    } else {
+        return state;
     }
+};
 
-    .focusedModalArrow {
-      background-color: $sec-5;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      align-self: center;
-    }
-  }
-}
+export default currentUserReducer;

@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .dropdown {
   width: auto;
@@ -27,6 +28,10 @@
 .filterDropdownContainer,
 .sortByDropdownContainer {
   display: flex;
+
+  @include phone {
+    display: none;
+  }
 }
 
 .sortby-dropdown {

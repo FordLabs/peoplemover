@@ -25,20 +25,22 @@ import SignOutButton from './SignOutButton';
 
 import './AccountDropdown.scss';
 import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
+import { setCurrentUserAction} from '../Redux/Actions';
 
 interface Props {
     hideSpaceButtons?: boolean;
     isReadOnly: boolean;
+    currentUser: string;
+    setCurrentUser(user: string): string;
 }
 
-function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
-    const [userName, setUserName] = useState<string>('');
+function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentUser}: Props): JSX.Element {
     const [redirect, setRedirect] = useState<JSX.Element>();
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     useEffect(() => {
-        setUserName(getUserNameFromAccessToken());
-    }, []);
+        setCurrentUser(getUserNameFromAccessToken());
+    }, [setCurrentUser]);
 
     if (redirect) return redirect;
 
@@ -66,7 +68,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
             >
                 {(!hideSpaceButtons && !isReadOnly) ? (
                     <>
-                        <ShareAccessButton focusOnRender={true}/>
+                        <ShareAccessButton focusOnRender={true} />
                         <DownloadReportButton/>
                         <SignOutButton setRedirect={setRedirect}/>
                     </>
@@ -89,12 +91,12 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
                 id={'accountDropdownToggle'}
                 onKeyUp={(e): void => {openDropdown(e);}}
             >
-                <i className="material-icons" data-testid="userIcon" aria-hidden id={'accountDropdownToggle-personIcon'}>
+                <i className="material-icons userIcon" data-testid="userIcon" aria-hidden id={'accountDropdownToggle-personIcon'}>
                     person
                 </i>
-                {userName && (
+                {currentUser && (
                     <div className="welcomeUser" id={'accountDropdownToggle-welcome'}>
-                        Welcome, <span id={'accountDropdownToggle-name'} className="userName">{userName}</span>
+                        Welcome, <span id={'accountDropdownToggle-name'} className="userName">{currentUser}</span>
                     </div>
                 )}
                 <i className="material-icons selectDropdownArrow" id={'accountDropdownToggle-arrow'}>
@@ -109,7 +111,12 @@ function AccountDropdown({hideSpaceButtons, isReadOnly}: Props): JSX.Element {
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isReadOnly: state.isReadOnly,
+    currentUser: state.currentUser,
 });
 
-export default connect(mapStateToProps)(AccountDropdown);
+const mapDispatchToProps = (dispatch: any) => ({
+    setCurrentUser: (currentUser: string) => dispatch(setCurrentUserAction(currentUser)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountDropdown);
 /* eslint-enable */

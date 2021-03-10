@@ -16,6 +16,7 @@
  */
 
 @import '../Application/Styleguide/Colors.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .landingPageContainer {
   display: flex;
@@ -23,11 +24,23 @@
   height: 100%;
   width: 100%;
   position: absolute;
+
+  @include phone {
+    height: auto;
+    min-height: 100%;
+    flex-direction: column;
+    padding: 40px 50px;
+    box-sizing: border-box;
+  }
 }
 
 .landingPageInfoContainer {
   width: 380px;
   margin: 0 100px;
+
+  @include phone {
+    width: 100%;
+  }
 }
 
 .landingPageImageContainer {
@@ -38,21 +51,33 @@
   width: 760px;
   margin: auto;
 
+  @include phone {
+    width: 100%;
+    padding-top: 3rem;
+  }
+
   .brandingContainer {
     padding-top: 3rem;
 
+    @include phone {
+      align-self: center;
+    }
+
     .brandingMessage {
       color: white;
+
+      @include phone {
+        color: $gray-2;
+      }
     }
   }
 
   .landingPageImage {
-    width: 760px;
-    height: 540px;
+    width: 100%;
+    height: auto;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
 }
-
 
 .landingPageBackground {
   position: absolute;
@@ -61,6 +86,10 @@
   height: 100%;
   z-index: -1;
   overflow-y: hidden;
+
+  @include phone {
+    display: none;
+  }
 }
 
 .landingPageInfoHeading {

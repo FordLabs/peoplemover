@@ -32,37 +32,26 @@ import UserAccessList from '../ReusableComponents/UserAccessList';
 interface Props {
     collapsed?: boolean;
     currentSpace: Space;
+    currentUser: string;
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurrentModal}: Props): JSX.Element {
+const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
+    if (currentSpace.uuid) {
+        SpaceClient.getUsersForSpace(currentSpace.uuid).then((users) => setUsersList(users));
+    }
+};
+
+function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: Props): JSX.Element {
     const isExpanded = !collapsed;
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
 
     useEffect(() => {
-        if (currentSpace.uuid) {
-            SpaceClient.getUsersForSpace(currentSpace.uuid).then((response) => {
-                const users: UserSpaceMapping[] = response.data;
-                users.sort(compareByPermissionThenByUserId);
-                setUsersList(users);
-            });
-        }
-    }, [currentSpace]);
-
-    function compareByPermissionThenByUserId(a: UserSpaceMapping, b: UserSpaceMapping): number {
-        let comparison = 0;
-        if (a.permission === b.permission) {
-            if (a.userId > b.userId) comparison = 1;
-            else if (a.userId < b.userId) comparison = -1;
-        } else {
-            if (a.permission.toLowerCase() === 'owner') comparison = -1;
-            else if (b.permission.toLowerCase() === 'owner') comparison = 1;
-        }
-        return comparison;
-    }
+        getUsers(currentSpace, setUsersList);
+    }, [currentSpace, setUsersList]);
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
@@ -86,21 +75,20 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
         return re.test(String(email).toLowerCase());
     };
 
-    const onRemoveUser = (user: UserSpaceMapping): void => {
-        const updatedUsers = usersList.filter(u => u.userId !== user.userId);
-        setUsersList(updatedUsers);
-    };
-
     function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
         if (window.location.hash === '#perm') {
-            if (user.permission !== 'owner')
-                return <UserAccessList currentSpace={currentSpace} user={user} onRemoveUser={onRemoveUser}></UserAccessList>;
-            else
+            if (user.permission !== 'owner') {
+                const spaceOwner = usersList.filter(user => user.permission === 'owner')[0];
+                const isUserOwner = spaceOwner.userId === currentUser;
+                return <UserAccessList currentSpace={currentSpace} user={user} onChange={(): void => {getUsers(currentSpace, setUsersList);}} owner={spaceOwner} isUserOwner={isUserOwner}/>;
+            } else {
                 return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
+            }
         } else {
             return <></>;
         }
     }
+
 
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
@@ -121,7 +109,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                         <ul className="userList">
                             {usersList.map((user, index) => {
                                 return (
-                                    <li className="userListItem" key={index}>
+                                    <li className="userListItem" key={index} data-testid={`userListItem__${user.userId}`}>
                                         <i className="material-icons editorIcon" aria-hidden>account_circle</i>
                                         <span className="userName" data-testid="userIdName">{user.userId}</span>
                                         <UserPermission user={user}></UserPermission>
@@ -159,6 +147,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
+    currentUser: state.currentUser,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(InviteEditorsFormSection);

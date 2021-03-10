@@ -20,53 +20,31 @@ import FormButton from '../ModalFormComponents/FormButton';
 import ModalCardBanner from './ModalCardBanner';
 
 export interface ConfirmationModalProps {
-    submit(itemToDelete?: unknown): void | Promise<void>;
-    archiveCallback?(): void;
+    submit(item?: unknown): void | Promise<void>;
     close(): void;
-
-    canArchive?: boolean;
-    isArchived?: boolean;
-    confirmClose?: boolean;
-    warningMessage: string;
     submitButtonLabel?: string;
+    closeButtonLabel?: string;
+    title?: string;
+    content: JSX.Element;
+    secondaryButton?: JSX.Element;
 }
 
 function ConfirmationModal({
     submit,
-    archiveCallback,
     close,
-    canArchive,
-    confirmClose,
-    isArchived,
-    warningMessage,
-    submitButtonLabel,
+    submitButtonLabel = 'Delete',
+    closeButtonLabel = 'Cancel',
+    title = 'Are you sure?',
+    content,
+    secondaryButton,
 }: ConfirmationModalProps): JSX.Element {
-    const isArchivable = (): boolean => Boolean(canArchive && !isArchived);
-
-    const ArchiveMessage = (): JSX.Element => (
-        <div><br/>You can also choose to archive this product to be able to access it later.</div>
-    );
-
-    const CloseConfirmationMessage = (): JSX.Element => (
-        <div><br/>Are you sure you want to close the window?</div>
-    );
-    
-    const DeleteButton = (): JSX.Element => (
+    const SubmitButton = (): JSX.Element => (
         <FormButton
             className="confirmationModalDelete"
             onClick={submit}
             buttonStyle="primary"
             testId="confirmDeleteButton">
-            {submitButtonLabel ? submitButtonLabel : 'Delete'}
-        </FormButton>
-    );
-    
-    const ArchiveButton = (): JSX.Element => (
-        <FormButton
-            buttonStyle="secondary"
-            testId="confirmationModalArchive"
-            onClick={archiveCallback}>
-            Archive
+            {submitButtonLabel}
         </FormButton>
     );
 
@@ -75,7 +53,7 @@ function ConfirmationModal({
             buttonStyle="secondary"
             testId="confirmationModalCancel"
             onClick={close}>
-            Cancel
+            {closeButtonLabel}
         </FormButton>
     );
 
@@ -84,20 +62,18 @@ function ConfirmationModal({
             <div className="modalContents">
                 <div className="modalCard">
                     <ModalCardBanner
-                        title="Are you sure?"
+                        title={title}
                         onCloseBtnClick={close}
                     />
                     <div className="confirmationModalContent">
-                        <div>{warningMessage}</div>
-                        {(isArchivable()) && <ArchiveMessage />}
-                        {(confirmClose) && <CloseConfirmationMessage />}
+                        {content}
                     </div>
-                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${canArchive ? 'archivable' : ''}`}>
-                        <div className={`cancelAndArchiveContainer ${isArchivable() ? 'archivable' : ''}`}>
+                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${secondaryButton ? 'secondaryButtonContainer' : ''}`}>
+                        <div className={`cancelAndArchiveContainer ${secondaryButton ? 'secondaryButtonContainer' : ''}`}>
                             <CancelButton />
-                            {isArchivable() && <ArchiveButton />}
+                            {secondaryButton}
                         </div>
-                        <DeleteButton />
+                        <SubmitButton />
                     </div>
                 </div>
             </div>

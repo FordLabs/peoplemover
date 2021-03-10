@@ -16,12 +16,17 @@
  */
 
 @import '../Application/Styleguide/Main.scss';
+@import '../Application/Styleguide/Breakpoints.scss';
 
 .myTraitsContainer {
   display: flex;
   flex-direction: column;
   justify-items: left;
   margin: 0 94px;
+
+  @include phone {
+    margin: 0;
+  }
 }
 
 .lineSeparator {
@@ -204,6 +209,11 @@
   display: flex;
   justify-content: space-between;
   border-radius: 4px;
+
+  @include phone {
+    width: 100%;
+    box-sizing: border-box;
+  }
 
   .warningIcon {
     height: 15px;

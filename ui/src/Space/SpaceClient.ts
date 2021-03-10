@@ -50,8 +50,19 @@ class SpaceClient {
         return Axios.get(url, config);
     }
 
+    static compareByPermissionThenByUserId = (a: UserSpaceMapping, b: UserSpaceMapping): number => {
+        let comparison = 0;
+        if (a.permission === b.permission) {
+            if (a.userId > b.userId) comparison = 1;
+            else if (a.userId < b.userId) comparison = -1;
+        } else {
+            if (a.permission.toLowerCase() === 'owner') comparison = -1;
+            else if (b.permission.toLowerCase() === 'owner') comparison = 1;
+        }
+        return comparison;
+    }
 
-    static async getUsersForSpace(spaceUuid: string): Promise<AxiosResponse<UserSpaceMapping[]>> {
+    static async getUsersForSpace(spaceUuid: string): Promise<UserSpaceMapping[]> {
         const url = `${baseSpaceUrl}/${spaceUuid}/users`;
         const config = {
             headers: {
@@ -60,7 +71,9 @@ class SpaceClient {
             },
         };
 
-        return Axios.get(url, config);
+        return Axios.get(url, config).then((users) => {
+            return users.data.sort(SpaceClient.compareByPermissionThenByUserId);
+        });
     }
 
     static async createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
@@ -139,6 +152,23 @@ class SpaceClient {
             return result;
         }).catch((error) => {
             MatomoEvents.pushEvent(space.name, 'removeUserError', user.userId, error.code);
+            return Promise.reject(error);
+        });
+    }
+
+    static async changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping): Promise<AxiosResponse<void>> {
+        const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+
+        return Axios.put(url, null, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`);
+            return result;
+        }).catch((error) => {
+            MatomoEvents.pushEvent(space.name, 'updateOwnerError', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`, error.code);
             return Promise.reject(error);
         });
     }

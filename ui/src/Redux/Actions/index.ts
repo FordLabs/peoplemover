@@ -48,7 +48,8 @@ export enum AvailableActions {
     SET_PRODUCT_SORT_BY,
     SET_USER_SPACES,
     SET_IS_READ_ONLY,
-    SET_IS_DRAGGING
+    SET_IS_DRAGGING,
+    SET_CURRENT_USER
 }
 
 export enum AvailableModals {
@@ -116,6 +117,11 @@ export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: 
 export const setCurrentSpaceAction = (space: Space) => ({
     type: AvailableActions.SET_CURRENT_SPACE,
     space,
+});
+
+export const setCurrentUserAction = (currentUser: string) => ({
+    type: AvailableActions.SET_CURRENT_USER,
+    currentUser,
 });
 
 export const setViewingDateAction = (date: Date) => ({

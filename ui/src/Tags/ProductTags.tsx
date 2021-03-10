@@ -55,7 +55,7 @@ const ProductTags = ({
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteProductTag(productTagToDelete),
             close: () => setConfirmDeleteModal(null),
-            warningMessage: `Deleting this product tag will remove it from any product that has been given this product tag.`,
+            content: <div>Deleting this product tag will remove it from any product that has been given this product tag.</div>,
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);

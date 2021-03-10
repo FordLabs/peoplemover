@@ -137,13 +137,22 @@ function ProductForm({
     function displayDeleteProductModal(): void {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: deleteProduct,
-            canArchive: true,
             close: () => {
                 setConfirmDeleteModal(null);
             },
-            archiveCallback: archiveProduct,
-            isArchived: determineIfProductIsArchived(),
-            warningMessage: 'Deleting this product will permanently remove it from this space.',
+            secondaryButton: determineIfProductIsArchived() ? undefined : (
+                <FormButton
+                    buttonStyle="secondary"
+                    testId="confirmationModalArchive"
+                    onClick={archiveProduct}>
+                    Archive
+                </FormButton>),
+            content: (
+                <>
+                    <div>Deleting this product will permanently remove it from this space.</div>
+                    {determineIfProductIsArchived() ? <></> : <div><br/>You can also choose to archive this product to be able to access it later.</div>}
+                </>
+            ),
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);
@@ -178,12 +187,6 @@ function ProductForm({
 
     function notesChanged(notes: string): void {
         updateProductField('notes', notes);
-    }
-
-    function handleKeyDownForDisplayDeleteProductModal(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            displayDeleteProductModal();
-        }
     }
 
     return currentSpace.uuid ? (
@@ -246,16 +249,16 @@ function ProductForm({
                         {editing ? 'Save' : 'Add'}
                     </FormButton>
                 </div>
-                {editing && (
-                    <div className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}>
-                        <i className="material-icons">delete</i>
-                        <div className="trashCanSpacer"/>
-                        <span className="obliterateLink"
-                            data-testid="deleteProduct"
-                            onClick={displayDeleteProductModal}
-                            onKeyDown={(e): void => handleKeyDownForDisplayDeleteProductModal(e)}>Delete Product</span>
-                    </div>)}
             </form>
+            {editing && (
+                <button className={'deleteButtonContainer alignSelfCenter deleteLinkColor'}
+                    data-testid="deleteProduct"
+                    onClick={displayDeleteProductModal}
+                >
+                    <i className="material-icons" aria-hidden>delete</i>
+                    <div className="trashCanSpacer"/>
+                    <span className="obliterateLink">Delete Product</span>
+                </button>)}
             {confirmDeleteModal}
         </div>
     ) : <></>;

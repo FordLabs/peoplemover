@@ -39,6 +39,7 @@ import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import {Space} from '../Space/Space';
 import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
@@ -131,9 +132,8 @@ class TestUtils {
             data: TestUtils.space,
         } as AxiosResponse));
 
-        SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve({
-            data: [{'userId': 'user_id_2', 'permission': 'editor'}, {'userId': 'user_id', 'permission': 'owner'}],
-        } as AxiosResponse));
+        SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
+            [{'userId': 'user_id', 'permission': 'owner'}, {'userId': 'user_id_2', 'permission': 'editor'}] as UserSpaceMapping[]));
 
         AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({
             data: [TestUtils.assignmentForPerson1],
@@ -390,7 +390,7 @@ class TestUtils {
         name: 'I am archived',
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '',
-        endDate: '2020-11-02',
+        endDate: '2019-11-02',
         spaceLocation: TestUtils.detroit,
         assignments: [],
         archived: true,
