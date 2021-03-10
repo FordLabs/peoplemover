@@ -8,9 +8,10 @@ interface DropdownProps {
     dropdownOptionIds: string[];
     dropdownTestId?: string;
     buttonTestId?: string;
+    closeOnSelect?: boolean;
 }
 
-export default function Dropdown({buttonId, dropdownButtonContent, dropdownContent, dropdownOptionIds, dropdownTestId, buttonTestId}: DropdownProps): JSX.Element {
+export default function Dropdown({buttonId, dropdownButtonContent, dropdownContent, dropdownOptionIds, dropdownTestId, buttonTestId, closeOnSelect = false}: DropdownProps): JSX.Element {
 
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
@@ -40,6 +41,7 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
                     setDropdownToggle(false);
                 }}
                 dropdownOptionIds={dropdownOptionIds}
+                closeOnSelect={closeOnSelect}
             >
                 {dropdownContent}
 

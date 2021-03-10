@@ -30,9 +30,10 @@ interface DropdownProps {
     children?: ReactNode;
     testId?: string;
     dropdownOptionIds?: string[];
+    closeOnSelect?: boolean;
 }
 
-export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dropdownOptionIds}: DropdownProps): JSX.Element {
+export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dropdownOptionIds, closeOnSelect}: DropdownProps): JSX.Element {
 
     const dropdownContainer = createRef<HTMLDivElement>();
 
@@ -103,12 +104,20 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         };
     }, [leaveFocusListener]);
     return (
+        // The button presses (enter or space) on the child element buttons
+        // propogate down to trigger the onClick events down to this component.
+        // As such, the keyboard functionality is handled, just not in this component
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <div
             ref={dropdownContainer}
-            role="menu"
             className={className}
             aria-labelledby={ariaLabelledBy}
             data-testid={testId}
+            onClick={(): void => {
+                if (closeOnSelect) {
+                    handleClose();
+                }
+            }}
         >
             {children}
         </div>

@@ -23,6 +23,7 @@ import {setProductSortByAction} from '../Redux/Actions';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import Dropdown from './Dropdown';
+import NavigationSection from './NavigationSection';
 
 interface SortByOption {
     label: string;
@@ -77,9 +78,7 @@ function ProductSortBy({
         </>;
 
     return (
-        <div className="newDropdownContainer">
-            <i className="material-icons indicator-icon" aria-hidden>sort</i>
-            <label id="sortby-dropdown-label" htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
+        <NavigationSection label="Sort By" icon="sort">
             <Dropdown
                 buttonId="sortby-dropdown-button"
                 dropdownButtonContent={selectedSortOption?.label}
@@ -87,30 +86,9 @@ function ProductSortBy({
                 dropdownOptionIds={['sortby-dropdown-button']}
                 buttonTestId="sortByDropdownButton"
                 dropdownTestId="sortByDropdownMenu"
+                closeOnSelect
             />
-            {/*<div className="dropdown-group" data-testid="sortByContainer">*/}
-
-            {/*    <button*/}
-            {/*        onClick={(): void => {toggleDropdownMenu();}}*/}
-            {/*        id="sortby-dropdown-button"*/}
-            {/*        className="dropdown-button"*/}
-            {/*        data-testid="sortByDropdownButton"*/}
-            {/*    >*/}
-            {/*        {dropdownButtonContent}*/}
-            {/*    </button>*/}
-            {/*    {dropdownToggle &&*/}
-            {/*    <AccessibleDropdownContainer*/}
-            {/*        className="sortDropdown"*/}
-            {/*        handleClose={(): void => {*/}
-            {/*            setDropdownToggle(false);*/}
-            {/*        }}*/}
-            {/*        testId="sortByDropdownMenu"*/}
-            {/*        dropdownOptionIds={['sortby-dropdown-button']}>*/}
-            {/*        {dropdownContent}*/}
-            {/*    </AccessibleDropdownContainer>*/}
-            {/*    }*/}
-            {/*</div>*/}
-        </div>
+        </NavigationSection>
     );
 }
 

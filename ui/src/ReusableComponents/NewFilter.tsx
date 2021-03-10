@@ -80,6 +80,7 @@ function NewFilter({
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: NewFilterProps): JSX.Element {
+
     const index = convertToIndex(filterType);
 
     const updateFilters = (option: FilterOption, ourIndex: number): void => {
