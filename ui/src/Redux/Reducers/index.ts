@@ -23,7 +23,7 @@ import {Person} from '../../People/Person';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import productSortByReducer from './productSortByReducer';
-import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
+import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/ProductFilter';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
 import {viewingDateReducer} from './viewingDateReducer';

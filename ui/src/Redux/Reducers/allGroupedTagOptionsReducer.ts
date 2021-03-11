@@ -16,7 +16,7 @@
  */
 
 import {AvailableActions} from '../Actions';
-import {AllGroupedTagFilterOptions, LocalStorageFilters} from '../../ReusableComponents/ProductFilter';
+import {AllGroupedTagFilterOptions, LocalStorageFilters} from '../../SortingAndFiltering/ProductFilter';
 import {FilterOption} from '../../CommonTypes/Option';
 
 export function getSelectedFilterLabels(tagFilters: Array<FilterOption>): Array<string> {

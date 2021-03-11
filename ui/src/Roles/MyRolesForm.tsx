@@ -22,7 +22,7 @@ import {Dispatch} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {FilterOption} from '../CommonTypes/Option';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/ProductFilter';
 import {Color, RoleTag} from './RoleTag.interface';
 import RoleClient from './RoleClient';
 import {Tag} from '../Tags/Tag.interface';

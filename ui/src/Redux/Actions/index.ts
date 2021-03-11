@@ -20,7 +20,7 @@ import {CurrentModalState} from '../Reducers/currentModalReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
-import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
+import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/ProductFilter';
 import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';

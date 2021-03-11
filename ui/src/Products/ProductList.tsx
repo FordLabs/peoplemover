@@ -19,7 +19,7 @@ import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {connect} from 'react-redux';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/ProductFilter';
 import moment from 'moment';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';

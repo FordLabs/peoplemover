@@ -38,7 +38,7 @@ import {LocationTag} from '../Locations/LocationTag.interface';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import {Space} from '../Space/Space';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/ProductFilter';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 export function createDataTestId(prefix: string, name: string): string {

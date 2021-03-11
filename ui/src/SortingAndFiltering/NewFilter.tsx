@@ -22,7 +22,7 @@ import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {FilterOption} from '../CommonTypes/Option';
 import './NewFilterOrSortBy.scss';
-import Dropdown from './Dropdown';
+import Dropdown from "../ReusableComponents/Dropdown";
 
 
 export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
@@ -54,11 +54,11 @@ function convertToIndex(labelType: FilterTypeEnum): number {
 function convertToLabel(labelType: FilterTypeEnum): string {
     switch (labelType) {
         case FilterTypeEnum.Location:
-            return 'Product Location:';
+            return 'Product Location';
         case FilterTypeEnum.Product:
-            return 'Product Tags:';
+            return 'Product Tags';
         case FilterTypeEnum.Role:
-            return 'Role:';
+            return 'Role';
         default:
             return '';
     }
@@ -123,13 +123,17 @@ function NewFilter({
                         </div>
                     );
                 })}
+            <button>
+                <span>{`Add/edit your ${convertToLabel(filterType)}`}</span>
+                <i className="material-icons greyIcon">keyboard_arrow_right</i>
+            </button>
         </>;
 
     const dropdownButtonContent = 
         <>
             <span className="dropdown-label" id={`dropdown-label_${filterType}`}>
                 {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
-                    && convertToLabel(filterType)}
+                    && convertToLabel(filterType)}:
             </span>
         </>;
 

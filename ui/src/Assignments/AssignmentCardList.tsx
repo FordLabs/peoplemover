@@ -33,7 +33,7 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import AssignmentClient from './AssignmentClient';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/ProductFilter';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import {Space} from '../Space/Space';
 

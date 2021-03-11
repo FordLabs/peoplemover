@@ -24,8 +24,8 @@ import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import NewCalendar from '../Calendar/NewCalendar';
 import {GlobalStateProps} from '../Redux/Reducers';
-import NewProductSortBy from '../ReusableComponents/NewProductSortBy';
-import NewFilter, {FilterTypeEnum} from '../ReusableComponents/NewFilter';
+import NewProductSortBy from '../SortingAndFiltering/NewProductSortBy';
+import NewFilter, {FilterTypeEnum} from '../SortingAndFiltering/NewFilter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
 
 interface Props {

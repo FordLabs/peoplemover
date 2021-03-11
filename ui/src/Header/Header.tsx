@@ -20,8 +20,8 @@ import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
-import ProductFilter from '../ReusableComponents/ProductFilter';
-import ProductSortBy from '../ReusableComponents/ProductSortBy';
+import ProductFilter from '../SortingAndFiltering/ProductFilter';
+import ProductSortBy from '../SortingAndFiltering/ProductSortBy';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
 
 import './Headers.scss';

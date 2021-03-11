@@ -21,7 +21,7 @@ import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {Tag} from './Tag.interface';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/ProductFilter';
 import {JSX} from '@babel/types';
 import {FilterOption} from '../CommonTypes/Option';
 import {LocationTag} from '../Locations/LocationTag.interface';

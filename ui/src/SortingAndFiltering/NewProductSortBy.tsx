@@ -22,8 +22,8 @@ import './NewFilterOrSortBy.scss';
 import {setProductSortByAction} from '../Redux/Actions';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import Dropdown from './Dropdown';
-import NavigationSection from './NavigationSection';
+import Dropdown from '../ReusableComponents/Dropdown';
+import NavigationSection from '../ReusableComponents/NavigationSection';
 
 interface SortByOption {
     label: string;
