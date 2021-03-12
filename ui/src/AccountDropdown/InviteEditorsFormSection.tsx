@@ -124,6 +124,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
             setEnableInviteButton(enable);
         }
     };
+
     const onChange = (input: unknown): void => {
         if (input) {
             const options = input as Option[];
@@ -134,9 +135,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
     function handleKeyDownEvent(key: React.KeyboardEvent<HTMLElement>): void {
         if (key.key === 'Enter') {
             key.preventDefault();
-            const user: Option = {value: inputValue, label: inputValue};
-            setInvitedUserIds([...invitedUserIds, user]);
-            setInputValue('');
+            addUser(inputValue, true);
         }
     }
 

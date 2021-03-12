@@ -101,6 +101,25 @@ describe('Invite Editors Form', function() {
                 expect(Axios.post).not.toHaveBeenCalled();
             });
 
+            it('should not add invalid cdsid user as editor (on Enter)', async function() {
+                const component = renderComponent();
+                await component.findByText('Enter CDSID of your editors');
+                const inputField = component.getByLabelText('People with this permission can edit');
+                fireEvent.change(inputField,
+                    {target: {value: '#ford'}});
+                fireEvent.keyDown(inputField, {key: 'Enter'});
+                fireEvent.blur(inputField);
+
+                expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                component.getByText('#ford');
+
+                const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
+                expect(submitButton).toHaveAttribute('disabled');
+                await fireEvent.click(submitButton);
+
+                expect(Axios.post).not.toHaveBeenCalled();
+            });
+
             it('should not add users as editors when one of them is invalid', async function() {
                 const component = renderComponent();
                 await component.findByText('Enter CDSID of your editors');
