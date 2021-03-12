@@ -29,6 +29,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {createEmptySpace} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
 import thunk from 'redux-thunk';
+
 declare let window: MatomoWindow;
 
 jest.mock('axios');

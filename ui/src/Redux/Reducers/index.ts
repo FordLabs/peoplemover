@@ -23,7 +23,6 @@ import {Person} from '../../People/Person';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import productSortByReducer from './productSortByReducer';
-import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/ProductFilter';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
 import {viewingDateReducer} from './viewingDateReducer';
@@ -38,6 +37,7 @@ import userSpacesReducer from './userSpacesReducer';
 import isReadOnlyReducer from './isReadOnlyReducer';
 import isDraggingReducer from "./isDraggingReducer";
 import currentUserReducer from './currentUserReducer';
+import {AllGroupedTagFilterOptions} from "../../SortingAndFiltering/FilterConstants";
 
 export type SortByType = 'location' | 'product-tag' | 'name'
 

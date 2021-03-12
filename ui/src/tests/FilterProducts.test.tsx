@@ -24,6 +24,7 @@ import ProductTagClient from '../ProductTag/ProductTagClient';
 import selectEvent from 'react-select-event';
 import {createBrowserHistory, History} from 'history';
 import {Router} from 'react-router-dom';
+
 describe('Filter products', () => {
     let app: RenderResult;
     const addProductButtonText = 'Add Product';

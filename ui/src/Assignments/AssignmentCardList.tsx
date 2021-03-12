@@ -33,9 +33,9 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import AssignmentClient from './AssignmentClient';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/ProductFilter';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import {Space} from '../Space/Space';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
 
 interface AssignmentCardListProps {
     product: Product;

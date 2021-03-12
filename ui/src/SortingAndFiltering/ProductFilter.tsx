@@ -18,38 +18,20 @@
 import React, {CSSProperties, ReactChild, ReactElement, ReactNode, useEffect, useState} from 'react';
 import Select, {components, ControlProps, OptionProps, OptionTypeBase, Props} from 'react-select';
 import {connect} from 'react-redux';
-import {AxiosResponse} from 'axios';
 import {Dispatch} from 'redux';
 import {
     CustomIndicator,
     isUserTabbingAndFocusedOnElement,
     reactSelectStyles,
 } from '../ModalFormComponents/ReactSelectStyles';
-import ProductTagClient from '../ProductTag/ProductTagClient';
-import LocationClient from '../Locations/LocationClient';
-import RoleClient from '../Roles/RoleClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {TagClient} from '../Tags/TagClient.interface';
-import {Tag} from '../Tags/Tag.interface';
 import {FilterOption} from '../CommonTypes/Option';
 import {Space} from '../Space/Space';
 
 import './ProductFilterOrSortBy.scss';
 import MatomoEvents from '../Matomo/MatomoEvents';
-
-export type LocalStorageFilters = {
-    locationTagsFilters: Array<string>;
-    productTagsFilters: Array<string>;
-    roleTagsFilters: Array<string>;
-}
-
-export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
-
-export interface AllGroupedTagFilterOptions {
-    label: LabelType;
-    options: Array<FilterOption>;
-}
+import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from './FilterConstants';
 
 interface ProductFilterProps {
     currentSpace: Space;
@@ -184,37 +166,17 @@ function ProductFilter({
     setAllGroupedTagFilterOptions,
     allGroupedTagFilterOptions,
 }: ProductFilterProps): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!;
     const [checkBoxFilterValues, setCheckBoxFilterValues] = useState<Array<FilterOption>>([]);
 
-    /* eslint-disable */
     useEffect(() => {
         async function initializeGroupedTagOptions(): Promise<void> {
-            const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();
-            const productTagOptions: Array<FilterOption> = await buildTagOptions(ProductTagClient, localStorageFilter.productTagsFilters);
-            const locationTagOptions: Array<FilterOption> = await buildTagOptions(LocationClient, localStorageFilter.locationTagsFilters);
-            const roleTagOptions: Array<FilterOption> = await buildTagOptions(RoleClient, localStorageFilter.roleTagsFilters);
-            const options: Array<AllGroupedTagFilterOptions>  = [
-                {
-                    label: 'Location Tags:',
-                    options: locationTagOptions,
-                },
-                {
-                    label: 'Product Tags:',
-                    options: productTagOptions,
-                },
-                {
-                    label: 'Role Tags:',
-                    options: roleTagOptions,
-                },
-            ];
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const options = await getFilterOptionsForSpace(currentSpace.uuid!);
             setAllGroupedTagFilterOptions(options);
         }
 
         initializeGroupedTagOptions().then();
     }, [currentSpace]);
-    /* eslint-enable */
 
     useEffect( () => {
         if (allGroupedTagFilterOptions.length > 0) {
@@ -224,26 +186,6 @@ function ProductFilter({
             setCheckBoxFilterValues([...selectedLocationFilters, ...selectedProductFilters, ...selectedRoleFilters]);
         }
     }, [allGroupedTagFilterOptions, currentSpace]);
-
-    async function buildTagOptions(tagClient: TagClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
-        const tagsResponse: AxiosResponse<Array<Tag>> = await tagClient.get(uuid);
-        const tags: Array<Tag> = tagsResponse.data;
-        return tags.map((tag: Tag): FilterOption => ({
-            label: tag.name,
-            value: tag.id + '_' + tag.name,
-            selected: tagFilters.includes(tag.name),
-        }));
-    }
-
-    function getLocalStorageFilters(): LocalStorageFilters {
-        const localStorageFilters: string | null = localStorage.getItem('filters');
-        if (localStorageFilters) return JSON.parse(localStorageFilters);
-        return {
-            locationTagsFilters: [],
-            productTagsFilters: [],
-            roleTagsFilters: [],
-        };
-    }
 
     function updateSelectedGroupedTagFilterOptions(
         selectedOptions: Array<FilterOption>,

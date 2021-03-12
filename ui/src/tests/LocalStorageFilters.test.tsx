@@ -19,11 +19,11 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {findByText, fireEvent} from '@testing-library/dom';
 import React from 'react';
-import {LocalStorageFilters} from '../SortingAndFiltering/ProductFilter';
 import selectEvent from 'react-select-event';
 import {RenderResult, wait} from '@testing-library/react';
 import {createBrowserHistory} from 'history';
 import {Router} from 'react-router-dom';
+import {LocalStorageFilters} from '../SortingAndFiltering/FilterConstants';
 
 describe('Filter products', () => {
     class MockLocalStorage {

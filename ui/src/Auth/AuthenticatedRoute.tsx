@@ -17,8 +17,8 @@
 
 import {Route, RouteProps} from 'react-router';
 import * as React from 'react';
-import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useState} from 'react';
+import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {getToken} from './TokenProvider';
 import {setOauthRedirect} from '../ReusableComponents/OAuthRedirect';

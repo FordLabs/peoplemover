@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {render, fireEvent, RenderResult} from '@testing-library/react';
+import {fireEvent, render, RenderResult} from '@testing-library/react';
 import Modal from '../Modal/Modal';
 
 describe('Modal', () => {

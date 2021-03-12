@@ -25,8 +25,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import NewCalendar from '../Calendar/NewCalendar';
 import {GlobalStateProps} from '../Redux/Reducers';
 import NewProductSortBy from '../SortingAndFiltering/NewProductSortBy';
-import NewFilter, {FilterTypeEnum} from '../SortingAndFiltering/NewFilter';
+import NewFilter from '../SortingAndFiltering/NewFilter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
+import {FilterTypeEnum} from '../SortingAndFiltering/FilterConstants';
 
 interface Props {
     isReadOnly: boolean;

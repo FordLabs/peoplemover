@@ -22,47 +22,8 @@ import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {FilterOption} from '../CommonTypes/Option';
 import './NewFilterOrSortBy.scss';
-import Dropdown from "../ReusableComponents/Dropdown";
-
-
-export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
-
-export enum FilterTypeEnum {
-    Location = 'Location',
-    Product = 'Product',
-    Role = 'Role'
-}
-
-export interface AllGroupedTagFilterOptions {
-    label: LabelType;
-    options: Array<FilterOption>;
-}
-
-function convertToIndex(labelType: FilterTypeEnum): number {
-    switch (labelType) {
-        case FilterTypeEnum.Location:
-            return 0;
-        case FilterTypeEnum.Product:
-            return 1;
-        case FilterTypeEnum.Role:
-            return 2;
-        default:
-            return -1;
-    }
-}
-
-function convertToLabel(labelType: FilterTypeEnum): string {
-    switch (labelType) {
-        case FilterTypeEnum.Location:
-            return 'Product Location';
-        case FilterTypeEnum.Product:
-            return 'Product Tags';
-        case FilterTypeEnum.Role:
-            return 'Role';
-        default:
-            return '';
-    }
-}
+import Dropdown from '../ReusableComponents/Dropdown';
+import {AllGroupedTagFilterOptions, convertToIndex, convertToLabel, FilterTypeEnum} from './FilterConstants';
 
 function toggleOption(option: FilterOption): FilterOption {
     return {...option, selected: !option.selected};
@@ -129,7 +90,7 @@ function NewFilter({
             </button>
         </>;
 
-    const dropdownButtonContent = 
+    const dropdownButtonContent =
         <>
             <span className="dropdown-label" id={`dropdown-label_${filterType}`}>
                 {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0

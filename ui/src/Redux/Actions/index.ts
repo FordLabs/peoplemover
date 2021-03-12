@@ -20,7 +20,6 @@ import {CurrentModalState} from '../Reducers/currentModalReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
-import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/ProductFilter';
 import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
@@ -29,6 +28,7 @@ import ProductTagClient from '../../ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
+import {AllGroupedTagFilterOptions} from "../../SortingAndFiltering/FilterConstants";
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,

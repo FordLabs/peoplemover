@@ -38,8 +38,8 @@ import {LocationTag} from '../Locations/LocationTag.interface';
 import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import {Space} from '../Space/Space';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/ProductFilter';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
