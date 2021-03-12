@@ -103,16 +103,19 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         }
     };
 
-    const addUser = (user: string, shortCircuit?: boolean, inputActionMeta?: InputActionMeta): void => {
-        if (shortCircuit || nameSplitPattern.test(user)) {
-            const inputUsers = validate(user);
-            setInvitedUserIds([...invitedUserIds, ...inputUsers.options]);
-            setInputValue(inputUsers.notValid);
-            const enable: boolean =
-                (inputUsers.options.length > 0
-            || invitedUserIds.length > 0) && inputUsers.notValid.length === 0;
-            setEnableInviteButton(enable);
+    const addUser = (user: string): void => {
+        const inputUsers = validate(user);
+        setInvitedUserIds([...invitedUserIds, ...inputUsers.options]);
+        setInputValue(inputUsers.notValid);
+        const enable: boolean =
+            (inputUsers.options.length > 0
+                || invitedUserIds.length > 0) && inputUsers.notValid.length === 0;
+        setEnableInviteButton(enable);
+    };
 
+    const onInputChange = (user: string, inputActionMeta: InputActionMeta): void => {
+        if (nameSplitPattern.test(user)) {
+            addUser(user);
         } else if (inputActionMeta?.action === 'input-change')  {
             setInputValue(user);
             const enable: boolean =
@@ -135,7 +138,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
     function handleKeyDownEvent(key: React.KeyboardEvent<HTMLElement>): void {
         if (key.key === 'Enter') {
             key.preventDefault();
-            addUser(inputValue, true);
+            addUser(inputValue);
         }
     }
 
@@ -187,10 +190,10 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
                             value={invitedUserIds}
                             options={invitedUserIds}
                             onChange={onChange}
-                            onInputChange={(input: string, inputActionMeta: InputActionMeta): void => addUser(input, false, inputActionMeta)}
+                            onInputChange={onInputChange}
                             inputValue={inputValue}
-                            onKeyDown={(key: React.KeyboardEvent<HTMLElement>): void => handleKeyDownEvent(key as React.KeyboardEvent<HTMLElement>)}
-                            onBlur={(): void => {addUser(inputValue, true);}}
+                            onKeyDown={handleKeyDownEvent}
+                            onBlur={(): void => {addUser(inputValue);}}
                         /> :
                         <input
                             id="emailTextarea"
