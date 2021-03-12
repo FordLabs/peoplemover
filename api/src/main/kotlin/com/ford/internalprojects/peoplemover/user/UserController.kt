@@ -1,11 +1,9 @@
 package com.ford.internalprojects.peoplemover.user
 
-import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.user.exceptions.InvalidUserModification
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -13,11 +11,7 @@ import javax.validation.Valid
 
 @RequestMapping("/api/spaces")
 @RestController
-class UserController(
-        private val logger: BasicLogger,
-        private val userSpaceMappingRepository: UserSpaceMappingRepository,
-        private val userService: UserService
-) {
+class UserController(private val userService: UserService) {
 
     @PreAuthorize("hasPermission(#uuid, 'modify')")
     @GetMapping("/{uuid}/users")
@@ -43,15 +37,15 @@ class UserController(
     fun oldInviteUsersToSpace(
             @RequestBody request: OldAuthInviteUsersToSpaceRequest,
             @PathVariable uuid: String
-    ): ResponseEntity<ArrayList<String>> {
-        val filteredEmails = AuthInviteUsersToSpaceRequest(
-                request.emails
-                        .map { it.substringBefore("@") }
-                        .filter { it.isNotBlank() })
-        if (filteredEmails.userIds.isEmpty())
-            throw InvalidUserModification()
-        return inviteUsersToSpace(filteredEmails, uuid)
-    }
+    ): ResponseEntity<List<String>> = ResponseEntity.ok(
+            userService.addUsersToSpace(request.emails
+                    .map { it.substringBefore("@") }
+                    .filter { it.isNotBlank() }
+                    .apply {
+                        if (isEmpty())
+                            throw InvalidUserModification()
+
+                    }, uuid))
 
 
     @PreAuthorize("hasPermission(#uuid, 'modify')")
@@ -59,19 +53,7 @@ class UserController(
     fun inviteUsersToSpace(
             @Valid @RequestBody request: AuthInviteUsersToSpaceRequest,
             @PathVariable uuid: String
-    ): ResponseEntity<ArrayList<String>> {
-        val failures = arrayListOf<String>()
-        request.userIds.forEach { email ->
-            val userId = email.toUpperCase().trim()
-            try {
-                userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceUuid = uuid, permission = PERMISSION_EDITOR))
-            } catch (e: DataIntegrityViolationException) {
-                logger.logInfoMessage("$userId already has access to this space.")
-            } catch (e: Exception) {
-                failures.add(email)
-                logger.logException(e)
-            }
-        }
-        return ResponseEntity.ok(failures)
-    }
+    ): ResponseEntity<List<String>> = ResponseEntity.ok(
+            userService.addUsersToSpace(request.userIds, uuid))
+
 }
