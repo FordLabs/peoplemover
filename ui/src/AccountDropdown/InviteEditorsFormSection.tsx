@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, CSSProperties, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
@@ -28,8 +28,33 @@ import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import './InviteEditorsFormSection.scss';
 import UserAccessList from '../ReusableComponents/UserAccessList';
+import Creatable from 'react-select/creatable';
+import {reactSelectStyles} from '../ModalFormComponents/ReactSelectStyles';
+import {InputActionMeta, Props} from 'react-select';
+import {Option} from '../CommonTypes/Option';
+import {validate, nameSplitPattern, userIdPattern} from '../Utils/userIdValidator';
 
-interface Props {
+const inviteEditorsStyle = {
+    ...reactSelectStyles,
+    control: (provided: CSSProperties, {isFocused}: Props): CSSProperties => ({
+        ...provided,
+        minHeight: '32px',
+        borderRadius: '2px',
+        padding: '0',
+        // These lines disable the blue border
+        boxShadow: isFocused ? '0 0 0 2px #4C8EF5' : 'none',
+        border: 'none',
+        width: '100%',
+        backgroundColor: 'transparent',
+        // @ts-ignore
+        '&:hover': {
+            cursor: 'pointer',
+        },
+    }),
+};
+
+
+interface InviteEditorsFormProps {
     collapsed?: boolean;
     currentSpace: Space;
     currentUser: string;
@@ -43,11 +68,19 @@ const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMappin
     }
 };
 
-function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: Props): JSX.Element {
+function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: InviteEditorsFormProps): JSX.Element {
     const isExpanded = !collapsed;
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
+    const [invitedUserIds, setInvitedUserIds] = useState<Option[]>([]);
+    const [inputValue, setInputValue] = useState<string>('');
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const components: any = {
+        DropdownIndicator: null,
+    };
+
+    const FEATURE_TOGGLE = window.location.hash === '#perm';
 
     useEffect(() => {
         getUsers(currentSpace, setUsersList);
@@ -55,13 +88,57 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
-
-        await SpaceClient.inviteUsersToSpace(currentSpace, invitedUserEmails)
-            .catch(console.error)
-            .finally(() => {
-                setCurrentModal({modal: AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION});
-            });
+        if (FEATURE_TOGGLE ) {
+            await SpaceClient.inviteUsersToSpace(currentSpace, invitedUserIds.map(userId => userId.value))
+                .catch(console.error)
+                .finally(() => {
+                    setCurrentModal({modal: AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION});
+                });
+        } else {
+            await SpaceClient.oldInviteUsersToSpace(currentSpace, invitedUserEmails)
+                .catch(console.error)
+                .finally(() => {
+                    setCurrentModal({modal: AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION});
+                });
+        }
     };
+
+    const addUser = (user: string, shortCircuit?: boolean, inputActionMeta?: InputActionMeta): void => {
+        if (shortCircuit || nameSplitPattern.test(user)) {
+            const inputUsers = validate(user);
+            setInvitedUserIds([...invitedUserIds, ...inputUsers.options]);
+            setInputValue(inputUsers.notValid);
+            const enable: boolean =
+                (inputUsers.options.length > 0
+            || invitedUserIds.length > 0) && inputUsers.notValid.length === 0;
+            setEnableInviteButton(enable);
+
+        } else if (inputActionMeta?.action === 'input-change')  {
+            setInputValue(user);
+            const enable: boolean =
+                (invitedUserIds.length > 0 && user.trim().length === 0) || !!user.match(userIdPattern);
+            setEnableInviteButton(enable);
+        } else {
+            const enable: boolean =
+                (invitedUserIds.length > 0 && user.trim().length === 0) || !!user.match(userIdPattern);
+            setEnableInviteButton(enable);
+        }
+    };
+    const onChange = (input: unknown): void => {
+        if (input) {
+            const options = input as Option[];
+            setInvitedUserIds([...options]);
+        }
+    };
+
+    function handleKeyDownEvent(key: React.KeyboardEvent<HTMLElement>): void {
+        if (key.key === 'Enter') {
+            key.preventDefault();
+            const user: Option = {value: inputValue, label: inputValue};
+            setInvitedUserIds([...invitedUserIds, user]);
+            setInputValue('');
+        }
+    }
 
     const parseEmails = (event: ChangeEvent<HTMLInputElement>): void => {
         const emails: string[] = event.target.value.split(',').map((email: string) => email.trim());
@@ -89,7 +166,6 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         }
     }
 
-
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
             <label htmlFor="emailTextarea" className="inviteEditorsLabel">
@@ -97,14 +173,34 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
             </label>
             {isExpanded && (
                 <>
-                    <input
-                        id="emailTextarea"
-                        className="emailTextarea"
-                        placeholder="cdsid@ford.com, cdsid@ford.com"
-                        onChange={parseEmails}
-                        data-testid="inviteEditorsFormEmailTextarea"
-                        hidden={collapsed}
-                    />
+                    {FEATURE_TOGGLE ?
+                        <Creatable
+                            className="emailTextarea"
+                            inputId="emailTextarea"
+                            styles={inviteEditorsStyle}
+                            placeholder="Enter CDSID of your editors"
+                            menuIsOpen={false}
+                            isMulti={true}
+                            hideSelectedOptions={true}
+                            isClearable={false}
+                            components={components}
+                            hidden={collapsed}
+                            value={invitedUserIds}
+                            options={invitedUserIds}
+                            onChange={onChange}
+                            onInputChange={(input: string, inputActionMeta: InputActionMeta): void => addUser(input, false, inputActionMeta)}
+                            inputValue={inputValue}
+                            onKeyDown={(key: React.KeyboardEvent<HTMLElement>): void => handleKeyDownEvent(key as React.KeyboardEvent<HTMLElement>)}
+                            onBlur={(): void => {addUser(inputValue, true);}}
+                        /> :
+                        <input
+                            id="emailTextarea"
+                            className="emailTextarea legacyEmailTextarea"
+                            placeholder="cdsid@ford.com, cdsid@ford.com"
+                            onChange={parseEmails}
+                            data-testid="inviteEditorsFormEmailTextarea"
+                            hidden={collapsed}
+                        />}
                     <div>
                         <ul className="userList">
                             {usersList.map((user, index) => {
@@ -129,7 +225,8 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
                             type="submit"
                             buttonStyle="primary"
                             testId="inviteEditorsFormSubmitButton"
-                            disabled={!enableInviteButton}>
+                            disabled={!enableInviteButton}
+                        >
                             Invite
                         </FormButton>
                     </div>

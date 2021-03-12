@@ -38,6 +38,11 @@
     color: $gray-1;
   }
 
+  // Todo: Remove legacyEmailTextarea when email input field is removed
+  .legacyEmailTextarea {
+    padding: 0 8px;
+  }
+
   .emailTextarea {
     font-family: inherit;
     font-weight: inherit;
@@ -48,7 +53,6 @@
     width: 100%;
     box-sizing: border-box;
     resize: vertical;
-    padding: 8px;
     margin: 12px 0 32px;
     background: $gray-6;
     color: $gray-1;

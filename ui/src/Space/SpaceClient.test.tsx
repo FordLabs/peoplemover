@@ -127,7 +127,7 @@ describe('Space Client', function() {
             emails: ['email1@mail.com', 'email2@mail.com'],
         };
 
-        SpaceClient.inviteUsersToSpace(TestUtils.space, ['email1@mail.com', 'email2@mail.com'])
+        SpaceClient.oldInviteUsersToSpace(TestUtils.space, ['email1@mail.com', 'email2@mail.com'])
             .then(() => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'inviteUser', expectedData.emails.join(', ')]);
