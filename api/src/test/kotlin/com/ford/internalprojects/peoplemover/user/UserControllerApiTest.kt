@@ -103,6 +103,7 @@ internal class UserControllerApiTest {
                 MockMvcResultMatchers.status().isBadRequest
         )
     }
+
     @Test
     @Deprecated("Delete ME and OLD invite endpoint")
     fun `Invite Users Request should return 403 when trying to add user emails to space without write authorization`() {

@@ -23,17 +23,18 @@ class UserService(
     }
 
     fun addUsersToSpace(userIds: List<String>, uuid: String): List<String> =
-            userIds.mapNotNull { email ->
-                val userId = email.toUpperCase().trim()
+            userIds.mapNotNull { rawUserId ->
+                val userId = rawUserId.toUpperCase().trim()
                 try {
                     userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceUuid = uuid, permission = PERMISSION_EDITOR))
+                    null
                 } catch (e: DataIntegrityViolationException) {
                     logger.logInfoMessage("$userId already has access to this space.")
+                    null
                 } catch (e: Exception) {
                     logger.logException(e)
-                    email
+                    rawUserId
                 }
-                null
             }
 
     @Transactional

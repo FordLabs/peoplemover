@@ -44,7 +44,6 @@ class UserController(private val userService: UserService) {
                     .apply {
                         if (isEmpty())
                             throw InvalidUserModification()
-
                     }, uuid))
 
 
