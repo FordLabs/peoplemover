@@ -75,6 +75,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
     const [inputValue, setInputValue] = useState<string>('');
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const components: any = {
         DropdownIndicator: null,
@@ -103,14 +104,22 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         }
     };
 
+    const setEnableAndErrorFlags = (): void => {
+        const enable = (invitedUserIds.length > 0 && inputValue.trim().length === 0)
+            || !!inputValue.trim().match(userIdPattern);
+        const errMsg = inputValue.length > 1 && !inputValue.match(userIdPattern);
+        setEnableInviteButton(enable);
+        setShowErrorMessage(errMsg);
+    };
+
+    useEffect(() => {
+        setEnableAndErrorFlags();
+    });
+
     const addUser = (user: string): void => {
         const inputUsers = validate(user);
         setInvitedUserIds([...invitedUserIds, ...inputUsers.options]);
         setInputValue(inputUsers.notValid);
-        const enable: boolean =
-            (inputUsers.options.length > 0
-                || invitedUserIds.length > 0) && inputUsers.notValid.length === 0;
-        setEnableInviteButton(enable);
     };
 
     const onInputChange = (user: string, inputActionMeta: InputActionMeta): void => {
@@ -118,13 +127,6 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
             addUser(user);
         } else if (inputActionMeta?.action === 'input-change')  {
             setInputValue(user);
-            const enable: boolean =
-                (invitedUserIds.length > 0 && user.trim().length === 0) || !!user.match(userIdPattern);
-            setEnableInviteButton(enable);
-        } else {
-            const enable: boolean =
-                (invitedUserIds.length > 0 && user.trim().length === 0) || !!user.match(userIdPattern);
-            setEnableInviteButton(enable);
         }
     };
 
@@ -170,39 +172,48 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
 
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
-            <label htmlFor="emailTextarea" className="inviteEditorsLabel">
-                People with this permission can edit
-            </label>
+            {!isExpanded && <span className={'inviteEditorsLabel'}>People with this permission can edit</span>}
             {isExpanded && (
                 <>
-                    {FEATURE_TOGGLE ?
-                        <Creatable
-                            className="emailTextarea"
-                            inputId="emailTextarea"
-                            styles={inviteEditorsStyle}
-                            placeholder="Enter CDSID of your editors"
-                            menuIsOpen={false}
-                            isMulti={true}
-                            hideSelectedOptions={true}
-                            isClearable={false}
-                            components={components}
-                            hidden={collapsed}
-                            value={invitedUserIds}
-                            options={invitedUserIds}
-                            onChange={onChange}
-                            onInputChange={onInputChange}
-                            inputValue={inputValue}
-                            onKeyDown={handleKeyDownEvent}
-                            onBlur={(): void => {addUser(inputValue);}}
-                        /> :
-                        <input
-                            id="emailTextarea"
-                            className="emailTextarea legacyEmailTextarea"
-                            placeholder="cdsid@ford.com, cdsid@ford.com"
-                            onChange={parseEmails}
-                            data-testid="inviteEditorsFormEmailTextarea"
-                            hidden={collapsed}
-                        />}
+                    <label htmlFor="emailTextarea" className="inviteEditorsLabel">
+                    People with this permission can edit
+                        {FEATURE_TOGGLE ?
+                            <Creatable
+                                className="emailTextarea"
+                                inputId="emailTextarea"
+                                styles={inviteEditorsStyle}
+                                placeholder="Enter CDSID of your editors"
+                                menuIsOpen={false}
+                                isMulti={true}
+                                hideSelectedOptions={true}
+                                isClearable={false}
+                                components={components}
+                                hidden={collapsed}
+                                value={invitedUserIds}
+                                options={invitedUserIds}
+                                onChange={onChange}
+                                onInputChange={onInputChange}
+                                inputValue={inputValue}
+                                onKeyDown={handleKeyDownEvent}
+                                onBlur={(): void => {addUser(inputValue);}}
+                            /> :
+                            <input
+                                id="emailTextarea"
+                                className="emailTextarea legacyEmailTextarea"
+                                placeholder="cdsid@ford.com, cdsid@ford.com"
+                                onChange={parseEmails}
+                                data-testid="inviteEditorsFormEmailTextarea"
+                                hidden={collapsed}
+                            />}
+                        <div className="userIdErrorMessage">
+                            { showErrorMessage &&
+                                <>
+                                    <i className="material-icons userIdErrorMessageIcon" aria-hidden>report_problem</i>
+                                    <span data-testid="inviteEditorsFormErrorMessage">Please enter a valid CDSID</span>
+                                </>
+                            }
+                        </div>
+                    </label>
                     <div>
                         <ul className="userList">
                             {usersList.map((user, index) => {

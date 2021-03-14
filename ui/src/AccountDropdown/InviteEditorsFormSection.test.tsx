@@ -48,11 +48,11 @@ describe('Invite Editors Form', function() {
         afterEach(() => {
             window.location.hash = '';
         });
-
+        
         describe('add editors', () => {
             function renderComponent(): RenderResult {
                 return renderWithRedux(
-                    <InviteEditorsFormSection/>,
+                    <InviteEditorsFormSection collapsed={false}/>,
                     undefined,
                     {currentSpace: TestUtils.space} as GlobalStateProps);
             }
@@ -73,7 +73,7 @@ describe('Invite Editors Form', function() {
             it('should add users as editors', async function() {
                 const component = renderComponent();
                 await component.findByText('Enter CDSID of your editors');
-                const inputField = component.getByLabelText('People with this permission can edit');
+                const inputField = component.getByLabelText(/People with this permission can edit/);
                 fireEvent.change(inputField, {target: {value: 'hford1'}});
                 fireEvent.keyDown(inputField, {key: 'Enter', code: 'Enter'});
 
@@ -88,7 +88,7 @@ describe('Invite Editors Form', function() {
             it('should not add invalid cdsid user as editor', async function() {
                 const component = renderComponent();
                 await component.findByText('Enter CDSID of your editors');
-                fireEvent.change(component.getByLabelText('People with this permission can edit'),
+                fireEvent.change(component.getByLabelText(/People with this permission can edit/),
                     {target: {value: '#ford'}});
 
                 expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
@@ -96,15 +96,15 @@ describe('Invite Editors Form', function() {
 
                 const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
                 expect(submitButton).toHaveAttribute('disabled');
-                await fireEvent.click(submitButton);
 
+                await fireEvent.click(submitButton);
                 expect(Axios.post).not.toHaveBeenCalled();
             });
 
             it('should not add invalid cdsid user as editor (on Enter)', async function() {
                 const component = renderComponent();
                 await component.findByText('Enter CDSID of your editors');
-                const inputField = component.getByLabelText('People with this permission can edit');
+                const inputField = component.getByLabelText(/People with this permission can edit/);
                 fireEvent.change(inputField,
                     {target: {value: '#ford'}});
                 fireEvent.keyDown(inputField, {key: 'Enter'});
@@ -112,6 +112,8 @@ describe('Invite Editors Form', function() {
 
                 expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
                 component.getByText('#ford');
+
+                component.getByText(/Please enter a valid CDSID/);
 
                 const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
                 expect(submitButton).toHaveAttribute('disabled');
@@ -123,7 +125,7 @@ describe('Invite Editors Form', function() {
             it('should not add users as editors when one of them is invalid', async function() {
                 const component = renderComponent();
                 await component.findByText('Enter CDSID of your editors');
-                fireEvent.change(component.getByLabelText('People with this permission can edit'),
+                fireEvent.change(component.getByLabelText(/People with this permission can edit/),
                     {target: {value: 'hford1, #ford'}});
 
                 expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
@@ -140,7 +142,7 @@ describe('Invite Editors Form', function() {
             it('should add two users as editors when both are valid', async function() {
                 const component = renderComponent();
                 await component.findByText('Enter CDSID of your editors');
-                fireEvent.change(component.getByLabelText('People with this permission can edit'),
+                await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
                     {target: {value: 'hford1, bford'}});
 
                 expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
@@ -148,10 +150,21 @@ describe('Invite Editors Form', function() {
                 component.getByText('bford');
 
                 const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
-                expect(submitButton).not.toHaveAttribute('disabled');
+                expect(submitButton).not.toBeDisabled();
                 await fireEvent.click(submitButton);
 
                 validateApiCall(['hford1', 'bford']);
+            });
+
+            describe('Submit Button and Error Message', () => {
+                it('should be disabled/disabled when there is no input', async () => {
+                    await act( async () => {
+                        const component = renderComponent();
+                        expect(component.queryByText('Enter CDSID of your editors')).toBeInTheDocument();
+                        expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+                        expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                    });
+                });
             });
         });
 
