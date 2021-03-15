@@ -23,14 +23,14 @@ import {connect} from 'react-redux';
 import {FilterOption} from '../CommonTypes/Option';
 import './NewFilterOrSortBy.scss';
 import Dropdown from '../ReusableComponents/Dropdown';
-import {AllGroupedTagFilterOptions, convertToIndex, convertToLabel, FilterTypeEnum} from './FilterConstants';
+import {AllGroupedTagFilterOptions, FilterType} from './FilterConstants';
 
 function toggleOption(option: FilterOption): FilterOption {
     return {...option, selected: !option.selected};
 }
 
 interface NewFilterProps {
-    filterType: FilterTypeEnum;
+    filterType: FilterType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -42,7 +42,7 @@ function NewFilter({
     setAllGroupedTagFilterOptions,
 }: NewFilterProps): JSX.Element {
 
-    const index = convertToIndex(filterType);
+    const index = filterType.index;
 
     const updateFilters = (option: FilterOption, ourIndex: number): void => {
         setAllGroupedTagFilterOptions(
@@ -85,7 +85,7 @@ function NewFilter({
                     );
                 })}
             <button>
-                <span>{`Add/edit your ${convertToLabel(filterType)}`}</span>
+                <span>{`Add/edit your ${filterType.label}`}</span>
                 <i className="material-icons greyIcon">keyboard_arrow_right</i>
             </button>
         </>;
@@ -94,7 +94,7 @@ function NewFilter({
         <>
             <span className="dropdown-label" id={`dropdown-label_${filterType}`}>
                 {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
-                    && convertToLabel(filterType)}:
+                    && filterType.label}:
             </span>
         </>;
 

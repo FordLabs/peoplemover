@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import {AvailableModals} from '../Redux/Actions';
 import {FilterOption} from '../CommonTypes/Option';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
@@ -24,18 +23,21 @@ import {TagClient} from '../Tags/TagClient.interface';
 import {AxiosResponse} from 'axios';
 import {Tag} from '../Tags/Tag.interface';
 
-
-export interface FilterType {
-    name: string;
-    index: number;
-    modal: AvailableModals;
-    label: string;
-}
-
 export interface FilterTypeListing {
     Location: FilterType;
     Product: FilterType;
     Role: FilterType;
+}
+
+export const FilterTypeListings: FilterTypeListing = {
+    Location: {index: 0, label: 'Product Location' },
+    Product: {index: 1, label: 'Product Tags'},
+    Role: {index: 2, label: 'Role'},
+};
+
+export interface FilterType {
+    index: number;
+    label: string;
 }
 
 export interface AllGroupedTagFilterOptions {
@@ -51,38 +53,6 @@ export type LocalStorageFilters = {
 
 
 export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
-
-export enum FilterTypeEnum {
-    Location = 'Location',
-    Product = 'Product',
-    Role = 'Role'
-}
-
-export function convertToIndex(labelType: FilterTypeEnum): number {
-    switch (labelType) {
-        case FilterTypeEnum.Location:
-            return 0;
-        case FilterTypeEnum.Product:
-            return 1;
-        case FilterTypeEnum.Role:
-            return 2;
-        default:
-            return -1;
-    }
-}
-
-export function convertToLabel(labelType: FilterTypeEnum): string {
-    switch (labelType) {
-        case FilterTypeEnum.Location:
-            return 'Product Location';
-        case FilterTypeEnum.Product:
-            return 'Product Tags';
-        case FilterTypeEnum.Role:
-            return 'Role';
-        default:
-            return '';
-    }
-}
 
 export async function getFilterOptionsForSpace(uuid: string): Promise<Array<AllGroupedTagFilterOptions>> {
     const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();

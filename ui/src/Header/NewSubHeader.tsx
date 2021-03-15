@@ -27,7 +27,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import NewProductSortBy from '../SortingAndFiltering/NewProductSortBy';
 import NewFilter from '../SortingAndFiltering/NewFilter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
-import {FilterTypeEnum} from '../SortingAndFiltering/FilterConstants';
+import {FilterTypeListings} from "../SortingAndFiltering/FilterConstants";
 
 interface Props {
     isReadOnly: boolean;
@@ -63,9 +63,9 @@ function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
             </div>
             {isReadOnly ? <></> : <div className="rightContent">
                 <NavigationSection label="Filter by" icon="filter_list">
-                    <NewFilter filterType={FilterTypeEnum.Location}/>
-                    <NewFilter filterType={FilterTypeEnum.Product}/>
-                    <NewFilter filterType={FilterTypeEnum.Role}/>
+                    <NewFilter filterType={FilterTypeListings.Location}/>
+                    <NewFilter filterType={FilterTypeListings.Product}/>
+                    <NewFilter filterType={FilterTypeListings.Role}/>
                 </NavigationSection>
                 <button
                     className={`selectionTabButton tab`}
