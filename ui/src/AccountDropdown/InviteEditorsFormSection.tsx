@@ -106,7 +106,8 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
 
     const setEnableAndErrorFlags = (): void => {
         const enable = (invitedUserIds.length > 0 && inputValue.trim().length === 0)
-            || !!inputValue.trim().match(userIdPattern);
+            || (!!inputValue.trim().match(userIdPattern))
+            || (invitedUserEmails.length > 0);
         const errMsg = inputValue.length > 1 && !inputValue.match(userIdPattern);
         setEnableInviteButton(enable);
         setShowErrorMessage(errMsg);
@@ -114,7 +115,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
 
     useEffect(() => {
         setEnableAndErrorFlags();
-    });
+    }, [invitedUserIds, inputValue, invitedUserEmails]);
 
     const addUser = (user: string): void => {
         const inputUsers = validate(user);
@@ -131,10 +132,11 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
     };
 
     const onChange = (input: unknown): void => {
+        let options: Option[] = [];
         if (input) {
-            const options = input as Option[];
-            setInvitedUserIds([...options]);
+            options = input as Option[];
         }
+        setInvitedUserIds([...options]);
     };
 
     function handleKeyDownEvent(key: React.KeyboardEvent<HTMLElement>): void {
@@ -145,8 +147,9 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
     }
 
     const parseEmails = (event: ChangeEvent<HTMLInputElement>): void => {
-        const emails: string[] = event.target.value.split(',').map((email: string) => email.trim());
-        setEnableInviteButton(validateEmail(emails[0]));
+        const emails: string[] = event.target.value.split(',')
+            .map((email: string) => email.trim())
+            .filter((email: string) => validateEmail(email));
         setInvitedUserEmails(emails);
     };
 

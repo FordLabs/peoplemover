@@ -96,6 +96,7 @@ describe('Invite Editors Form', function() {
 
                 const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
                 expect(submitButton).toHaveAttribute('disabled');
+                expect(component.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
 
                 await fireEvent.click(submitButton);
                 expect(Axios.post).not.toHaveBeenCalled();
@@ -117,6 +118,7 @@ describe('Invite Editors Form', function() {
 
                 const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
                 expect(submitButton).toHaveAttribute('disabled');
+                expect(component.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
                 await fireEvent.click(submitButton);
 
                 expect(Axios.post).not.toHaveBeenCalled();
@@ -134,6 +136,7 @@ describe('Invite Editors Form', function() {
 
                 const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
                 expect(submitButton).toHaveAttribute('disabled');
+                expect(component.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
                 await fireEvent.click(submitButton);
 
                 expect(Axios.post).not.toHaveBeenCalled();
@@ -151,6 +154,7 @@ describe('Invite Editors Form', function() {
 
                 const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
                 expect(submitButton).not.toBeDisabled();
+                expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
                 await fireEvent.click(submitButton);
 
                 validateApiCall(['hford1', 'bford']);
@@ -164,6 +168,44 @@ describe('Invite Editors Form', function() {
                         expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
                         expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
                     });
+                });
+
+                it('should be enabled when there are entries, and disabled when there are none', async () => {
+                    const component = renderComponent();
+                    let inputField: HTMLElement;
+                    expect(component.queryByText('Enter CDSID of your editors')).toBeInTheDocument();
+                    expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+                    expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                    await component.findByText('Enter CDSID of your editors');
+                    await act( async () => {
+                        await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                            {target: {value: 'hford1, bford'}});
+                    });
+                    expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                    expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeEnabled();
+                    expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                    expect(component.queryByText('hford1')).toBeInTheDocument();
+                    expect(component.queryByText('bford')).toBeInTheDocument();
+                    // Delete bford
+                    inputField = component.getByLabelText(/People with this permission can edit/);
+                    await act( async () => {
+                        await fireEvent.keyDown(inputField, {key: 'Backspace' });
+                    });
+                    expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                    expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeEnabled();
+                    expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                    expect(component.queryByText('hford1')).toBeInTheDocument();
+                    expect(component.queryByText('bford')).not.toBeInTheDocument();
+                    // Delete hford1
+                    inputField = component.getByLabelText(/People with this permission can edit/);
+                    await act( async () => {
+                        await fireEvent.keyDown(inputField, {key: 'Backspace' });
+                    });
+                    expect(component.queryByText('hford1')).not.toBeInTheDocument();
+                    expect(component.queryByText('bford')).not.toBeInTheDocument();
+                    expect(component.queryByText('Enter CDSID of your editors')).toBeInTheDocument();
+                    expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+                    expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
                 });
             });
         });
@@ -293,8 +335,6 @@ describe('Invite Editors Form', function() {
     });
 
     describe('feature toggle disabled', () => {
-
-
         it('should show owners and editors for the space, but not their permissions', async function() {
             await act(async () => {
                 const component = renderWithRedux(
@@ -314,6 +354,42 @@ describe('Invite Editors Form', function() {
                 await wait(() => {
                     expect(component.queryByTestId('userAccess')).not.toBeInTheDocument();
                 });
+            });
+        });
+
+        it('should enable the Invite button if a valid email is added', async () => {
+            let component: RenderResult;
+            await act( async () => {
+                component = renderWithRedux(
+                    <InviteEditorsFormSection collapsed={false}/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+            });
+            await wait(() => {
+                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+            });
+            await act( async () => {
+                await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                    {target: {value: 'hford1@ford.com'}});
+            });
+            await wait(() => {
+                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeEnabled();
+            });
+        });
+
+        it('should not enable the Invite button if an invalid email is added', async () => {
+            let component: RenderResult;
+            await act( async () => {
+                component = renderWithRedux(
+                    <InviteEditorsFormSection collapsed={false}/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+            });
+            await wait(() => {
+                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+            });
+            await act( async () => {
+                await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                    {target: {value: 'invalid, email, '}});
+            });
+            await wait(() => {
+                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
             });
         });
     });
