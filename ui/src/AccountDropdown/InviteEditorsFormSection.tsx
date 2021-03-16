@@ -45,7 +45,8 @@ const inviteEditorsStyle = {
         boxShadow: isFocused ? '0 0 0 2px #4C8EF5' : 'none',
         border: 'none',
         width: '100%',
-        backgroundColor: 'transparent',
+        height: '100%',
+        backgroundColor: '#F2F2F2',
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
@@ -104,17 +105,13 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         }
     };
 
-    const setEnableAndErrorFlags = (): void => {
+    useEffect(() => {
         const enable = (invitedUserIds.length > 0 && inputValue.trim().length === 0)
-            || (!!inputValue.trim().match(userIdPattern))
-            || (invitedUserEmails.length > 0);
+                || (!!inputValue.trim().match(userIdPattern))
+                || (invitedUserEmails.length > 0);
         const errMsg = inputValue.length > 1 && !inputValue.match(userIdPattern);
         setEnableInviteButton(enable);
         setShowErrorMessage(errMsg);
-    };
-
-    useEffect(() => {
-        setEnableAndErrorFlags();
     }, [invitedUserIds, inputValue, invitedUserEmails]);
 
     const addUser = (user: string): void => {

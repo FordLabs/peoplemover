@@ -63,12 +63,12 @@
     font-size: 14px;
     line-height: 16px;
     min-height: 32px;
-    height: 36px;
+    height: 100%;
     width: 100%;
     box-sizing: border-box;
     resize: vertical;
     margin: 0.75rem 0 0.75rem;
-    background: $gray-6;
+    background-color: $gray-6;
     color: $gray-1;
     border: 1px solid transparent;
     border-radius: 6px;
