@@ -59,7 +59,7 @@ describe('Share Access Form', () => {
 
         it('Add people to a space should show link to space url', () => {
             cy.server();
-            cy.route('PUT', Cypress.env('API_INVITE_PEOPLE_PATH')).as('putAddPersonToSpace');
+            cy.route('PUT', Cypress.env('API_OLD_INVITE_PEOPLE_PATH')).as('putAddPersonToSpace');
             const spaceUuid = Cypress.env('SPACE_UUID');
             const baseUrl = Cypress.config().baseUrl;
 
