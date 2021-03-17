@@ -28,7 +28,7 @@ import ProductTagClient from '../../ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
-import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterConstants';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -223,3 +223,15 @@ export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, nul
                 dispatch(setLocationsAction(locations));
             });
     };
+
+export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (
+    space: Space
+) => (
+    dispatch: Dispatch,
+): Promise<void> => {
+    dispatch(setCurrentSpaceAction(space));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return getFilterOptionsForSpace(space.uuid!).then((filterOptions: Array<AllGroupedTagFilterOptions>) => {
+        dispatch(setAllGroupedTagFilterOptionsAction(filterOptions));
+    });
+};

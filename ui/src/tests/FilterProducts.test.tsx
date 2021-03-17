@@ -42,7 +42,6 @@ describe('Filter products', () => {
                     <PeopleMover/>
                 </Router>
             );
-
         });
     });
     describe('create tag from product modal', () => {
@@ -61,14 +60,10 @@ describe('Filter products', () => {
                 });
                 expect(productForm).toHaveFormValues({location: '11'});
             });
-
-            fireEvent.click(await app.findByTestId('modalCloseButton'));
-            const location = await app.findByLabelText('Filter:');
-            await selectEvent.openMenu(location);
             await app.findByText('Ahmedabad');
         });
 
-        it('should show filter option when new location tag is created from edit product modal', async () => {
+        it('should show filter option when new product tag is created from edit product modal', async () => {
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -81,9 +76,6 @@ describe('Filter products', () => {
                 const productForm = await app.findByTestId('productForm');
                 expect(productForm).toHaveFormValues({productTags: '9_Fin Tech'});
             });
-            fireEvent.click(await app.findByTestId('modalCloseButton'));
-            const productTag = await app.findByLabelText('Filter:');
-            await selectEvent.openMenu(productTag);
             await app.findByText('Fin Tech');
         });
     });
@@ -107,11 +99,7 @@ describe('Filter products', () => {
                 fireEvent.change(addLocationTagText, {target: {value: newLocation}});
                 fireEvent.click(saveButton);
                 await app.findByText(newLocation);
-                fireEvent.click(await app.findByTestId('modalCloseButton'));
-                const location = await app.findByLabelText('Filter:');
-                await selectEvent.openMenu(location);
                 await app.findByText('Ahmedabad');
-                await app.findByText(newLocation);
             });
 
             it('should show the edited location tag from my tags modal', async () => {
@@ -132,13 +120,12 @@ describe('Filter products', () => {
 
                 const modalContainer = await app.findByTestId('modalContainer');
                 expect(queryByText(modalContainer, 'Ann Arbor')).not.toBeInTheDocument();
-                fireEvent.click(await app.findByTestId('modalCloseButton'));
-                const location = await app.findByLabelText('Filter:');
-                await selectEvent.openMenu(location);
-                await app.findByText(updatedLocation);
             });
 
             it('should remove filter location when location is deleted from my tags modal', async () => {
+                const myTagsContainer = await app.findByTestId('modalContainer');
+                expect(queryByText(myTagsContainer, 'Ann Arbor')).toBeInTheDocument();
+
                 let locationTagDeleteIcon: HTMLElement;
                 const deleteLocationWarning = 'Deleting this location will remove it from any product that has been given this location.';
 
@@ -152,10 +139,6 @@ describe('Filter products', () => {
 
                 const modalContainer = await app.findByTestId('modalContainer');
                 expect(queryByText(modalContainer, 'Ann Arbor')).not.toBeInTheDocument();
-                fireEvent.click(await app.findByTestId('modalCloseButton'));
-                const location = await app.findByLabelText('Filter:');
-                await selectEvent.openMenu(location);
-                expect(queryByText(location, 'Ann Arbor')).not.toBeInTheDocument();
             });
         });
 
@@ -173,10 +156,6 @@ describe('Filter products', () => {
 
                 fireEvent.click(saveButton);
 
-                await app.findByText(newProductTag);
-                fireEvent.click(await app.findByTestId('modalCloseButton'));
-                const productTag = await app.findByLabelText('Filter:');
-                await selectEvent.openMenu(productTag);
                 await app.findByText(newProductTag);
             });
 
@@ -199,11 +178,6 @@ describe('Filter products', () => {
 
                 const modalContainer = await app.findByTestId('modalContainer');
                 expect(queryByText(modalContainer, 'AV')).not.toBeInTheDocument();
-
-                fireEvent.click(await app.findByTestId('modalCloseButton'));
-                const productTag = await app.findByLabelText('Filter:');
-                await selectEvent.openMenu(productTag);
-                await app.findByText(updatedProductTag);
             });
 
             it('should remove filter option when product tag is deleted from my tags modal', async () => {
@@ -219,11 +193,6 @@ describe('Filter products', () => {
 
                 const modalContainer = await app.findByTestId('modalContainer');
                 expect(queryByText(modalContainer, 'AV')).not.toBeInTheDocument();
-
-                fireEvent.click(await app.findByTestId('modalCloseButton'));
-                const productTag = await app.findByLabelText('Filter:');
-                await selectEvent.openMenu(productTag);
-                expect(queryByText(productTag, 'AV')).not.toBeInTheDocument();
             });
 
         });

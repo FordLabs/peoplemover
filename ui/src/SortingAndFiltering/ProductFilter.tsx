@@ -31,7 +31,7 @@ import {Space} from '../Space/Space';
 
 import './ProductFilterOrSortBy.scss';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from './FilterConstants';
+import {AllGroupedTagFilterOptions} from './FilterConstants';
 
 interface ProductFilterProps {
     currentSpace: Space;
@@ -167,16 +167,6 @@ function ProductFilter({
     allGroupedTagFilterOptions,
 }: ProductFilterProps): JSX.Element {
     const [checkBoxFilterValues, setCheckBoxFilterValues] = useState<Array<FilterOption>>([]);
-
-    useEffect(() => {
-        async function initializeGroupedTagOptions(): Promise<void> {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const options = await getFilterOptionsForSpace(currentSpace.uuid!);
-            setAllGroupedTagFilterOptions(options);
-        }
-
-        initializeGroupedTagOptions().then();
-    }, [currentSpace]);
 
     useEffect( () => {
         if (allGroupedTagFilterOptions.length > 0) {

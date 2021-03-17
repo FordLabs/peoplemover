@@ -27,7 +27,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import NewProductSortBy from '../SortingAndFiltering/NewProductSortBy';
 import NewFilter from '../SortingAndFiltering/NewFilter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
-import {FilterTypeListings} from "../SortingAndFiltering/FilterConstants";
+import {FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
 
 interface Props {
     isReadOnly: boolean;
