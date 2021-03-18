@@ -2,7 +2,7 @@ import ProductForm from '../Products/ProductForm';
 import React from 'react';
 import {fireEvent} from '@testing-library/dom';
 import configureStore from 'redux-mock-store';
-import {act} from '@testing-library/react';
+import {act, wait} from '@testing-library/react';
 import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
 import {Space} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
@@ -11,6 +11,9 @@ import ProductTagClient from '../ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';
 import selectEvent from 'react-select-event';
 import {Product} from './Product';
+import {createBrowserHistory, History} from 'history';
+import {GlobalStateProps} from '../Redux/Reducers';
+import moment from 'moment';
 
 describe('ProductForm', function() {
     const mockStore = configureStore([]);
@@ -119,4 +122,61 @@ describe('ProductForm', function() {
             expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeFalsy();
         });
     });
+
+    describe('tag dropdowns', () => {
+        let history: History;
+        let initialState = {
+            isReadOnly: false,
+            products: TestUtils.products,
+            currentSpace: TestUtils.space,
+            viewingDate: moment().toDate(),
+            productTags: TestUtils.productTags,
+            productSortBy: 'name',
+            allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+        } as GlobalStateProps;
+
+        beforeEach(() => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+            history = createBrowserHistory();
+            history.push('/uuid');
+        });
+        it('should show filter option when new location tag is created from edit product modal', async () => {
+            const app = renderWithRedux(<ProductForm editing={false} />, undefined, initialState);
+            await act(async () => {
+                const createOptionText = TestUtils.expectedCreateOptionText('Ahmedabad');
+                await createTag('Location', createOptionText, 'Ahmedabad', app);
+                const productForm = await app.findByTestId('productForm');
+
+                await wait(() => {
+                    expect(LocationClient.add).toBeCalledTimes(1);
+                });
+                expect(productForm).toHaveFormValues({location: '11'});
+            });
+            await app.findByText('Ahmedabad');
+        });
+
+        it('should show filter option when new product tag is created from edit product modal', async () => {
+            const app = renderWithRedux(<ProductForm editing={false} />, undefined, initialState);
+
+            await act(async () => {
+                const expectedCreateOptionText = TestUtils.expectedCreateOptionText('Fin Tech');
+                await createTag('Product Tags', expectedCreateOptionText, 'Fin Tech', app);
+                expect(ProductTagClient.add).toBeCalledTimes(1);
+
+                const productForm = await app.findByTestId('productForm');
+                expect(productForm).toHaveFormValues({productTags: '9_Fin Tech'});
+            });
+            await app.findByText('Fin Tech');
+        });
+    });
 });
+
+async function createTag(label: string, createOptionText: string, option: string, component: any): Promise<void> {
+    const productTagsLabelElement = await component.findByLabelText(label);
+    const containerToFindOptionsIn = {
+        container: await component.findByTestId('productForm'),
+        createOptionText,
+    };
+    await selectEvent.create(productTagsLabelElement, option, containerToFindOptionsIn);
+}
