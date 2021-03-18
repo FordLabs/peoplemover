@@ -32,7 +32,7 @@ import Creatable from 'react-select/creatable';
 import {reactSelectStyles} from '../ModalFormComponents/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';
 import {Option} from '../CommonTypes/Option';
-import {validate, nameSplitPattern, userIdPattern} from '../Utils/userIdValidator';
+import {validate, nameSplitPattern, userIdPattern} from '../Utils/UserIdValidator';
 
 const inviteEditorsStyle = {
     ...reactSelectStyles,
@@ -71,6 +71,7 @@ const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMappin
 
 function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: InviteEditorsFormProps): JSX.Element {
     const isExpanded = !collapsed;
+    // TODO: Remove as part of Card #180
     const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [invitedUserIds, setInvitedUserIds] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
@@ -82,6 +83,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         DropdownIndicator: null,
     };
 
+    // TODO: Remove as part of Card #180
     const FEATURE_TOGGLE = window.location.hash === '#perm';
 
     useEffect(() => {
@@ -108,11 +110,15 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
     useEffect(() => {
         const enable = (invitedUserIds.length > 0 && inputValue.trim().length === 0)
                 || (!!inputValue.trim().match(userIdPattern))
+                // TODO: Remove as part of Card #180
                 || (invitedUserEmails.length > 0);
         const errMsg = inputValue.length > 1 && !inputValue.match(userIdPattern);
         setEnableInviteButton(enable);
         setShowErrorMessage(errMsg);
-    }, [invitedUserIds, inputValue, invitedUserEmails]);
+    }, [invitedUserIds, inputValue,
+        // TODO: Remove as part of Card #180
+        invitedUserEmails,
+    ]);
 
     const addUser = (user: string): void => {
         const inputUsers = validate(user);
@@ -143,6 +149,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         }
     }
 
+    // TODO: Remove as part of Card #180
     const parseEmails = (event: ChangeEvent<HTMLInputElement>): void => {
         const emails: string[] = event.target.value.split(',')
             .map((email: string) => email.trim())
@@ -150,12 +157,14 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         setInvitedUserEmails(emails);
     };
 
+    // TODO: Remove as part of Card #180
     const validateEmail = (email: string): boolean => {
         // eslint-disable-next-line no-useless-escape
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
     };
 
+    // TODO: Update as part of Card #180 (remove #perm and else block)
     function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
         if (window.location.hash === '#perm') {
             if (user.permission !== 'owner') {
@@ -177,6 +186,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
                 <>
                     <label htmlFor="emailTextarea" className="inviteEditorsLabel">
                     People with this permission can edit
+                        {/* // TODO: Remove as part of Card #180*/ }
                         {FEATURE_TOGGLE ?
                             <Creatable
                                 className="emailTextarea"
@@ -196,8 +206,9 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
                                 inputValue={inputValue}
                                 onKeyDown={handleKeyDownEvent}
                                 onBlur={(): void => {addUser(inputValue);}}
-                            /> :
-                            <input
+                            />
+                            // TODO: Remove as part of Card #180
+                            : <input
                                 id="emailTextarea"
                                 className="emailTextarea legacyEmailTextarea"
                                 placeholder="cdsid@ford.com, cdsid@ford.com"

@@ -122,6 +122,21 @@ describe('Space Client', function() {
     });
 
     it('should invite users to a space and send event to matomo', function(done) {
+        const expectedUrl = `/api/spaces/${TestUtils.space.uuid}/users`;
+        const expectedData = {
+            userIds: ['cdsid1', 'cdsid2'],
+        };
+
+        SpaceClient.inviteUsersToSpace(TestUtils.space, expectedData.userIds)
+            .then(() => {
+                expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'inviteUser', expectedData.userIds.join(', ')]);
+                done();
+            });
+    });
+
+    // TODO: Remove as part of Card #180
+    it('(old) should invite users to a space and send event to matomo', function(done) {
         const expectedUrl = `/api/spaces/${TestUtils.space.uuid}:invite`;
         const expectedData = {
             emails: ['email1@mail.com', 'email2@mail.com'],

@@ -26,6 +26,7 @@ data class AuthInviteUsersToSpaceRequest(
         val userIds: List<String>
 )
 
+// TODO: Remove as part of Card #180
 @Deprecated("Delete ME and OLD invite endpoint")
 data class OldAuthInviteUsersToSpaceRequest(
         @field:NotEmpty(message = "emails cannot be empty")

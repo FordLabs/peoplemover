@@ -334,6 +334,7 @@ describe('Invite Editors Form', function() {
         });
     });
 
+    // TODO: Remove as part of Card #180
     describe('feature toggle disabled', () => {
         it('should show owners and editors for the space, but not their permissions', async function() {
             await act(async () => {
