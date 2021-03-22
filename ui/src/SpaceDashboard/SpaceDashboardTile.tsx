@@ -20,11 +20,12 @@ import * as React from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
 import {useState} from 'react';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
 import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface SpaceDashboardTileProps {
     space: Space;

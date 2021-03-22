@@ -22,20 +22,22 @@ import RoleClient from '../Roles/RoleClient';
 import {TagClient} from '../Tags/TagClient.interface';
 import {AxiosResponse} from 'axios';
 import {Tag} from '../Tags/Tag.interface';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 export interface FilterTypeListing {
     Location: FilterType;
-    Product: FilterType;
+    ProductTag: FilterType;
     Role: FilterType;
 }
 
 export const FilterTypeListings: FilterTypeListing = {
-    Location: {index: 0, label: 'Product Location' },
-    Product: {index: 1, label: 'Product Tags'},
-    Role: {index: 2, label: 'Role'},
+    Location: {index: 0, label: 'Product Location', modal: AvailableModals.MY_LOCATION_TAGS },
+    ProductTag: {index: 1, label: 'Product Tags', modal: AvailableModals.MY_PRODUCT_TAGS},
+    Role: {index: 2, label: 'Role', modal: AvailableModals.MY_ROLES_MODAL},
 };
 
 export interface FilterType {
+    modal: AvailableModals;
     index: number;
     label: string;
 }

@@ -25,7 +25,6 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
-    AvailableModals,
     fetchLocationsAction,
     fetchProductsAction,
     fetchProductTagsAction,
@@ -51,6 +50,7 @@ import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;

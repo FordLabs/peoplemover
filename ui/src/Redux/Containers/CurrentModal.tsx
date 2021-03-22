@@ -16,7 +16,7 @@
  */
 
 import {connect} from 'react-redux';
-import {AvailableModals, closeModalAction} from '../Actions';
+import {closeModalAction} from '../Actions';
 import Modal from '../../Modal/Modal';
 import {Dispatch} from 'redux';
 import React from 'react';
@@ -35,6 +35,8 @@ import SpaceForm from '../../SpaceDashboard/SpaceForm';
 import GrantEditAccessConfirmationForm from '../../AccountDropdown/GrantEditAccessConfirmationForm';
 import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSection';
 import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
+import {FilterTypeListings} from '../../SortingAndFiltering/FilterConstants';
+import {AvailableModals} from '../../Modal/AvailableModals';
 
 export interface ModalMetadataItem {
     title: string;
@@ -108,6 +110,12 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             return [{title: 'Uh-oh', form: <AssignmentExistsWarning/>}];
         case AvailableModals.MY_TAGS:
             return [{title: 'My Tags', form: <MyTagsForm/>}];
+        case AvailableModals.MY_LOCATION_TAGS:
+            let location = FilterTypeListings.Location;
+            return [{title: location.label, form: <MyTagsForm filterType={location}/> }];
+        case AvailableModals.MY_PRODUCT_TAGS:
+            let productTags = FilterTypeListings.ProductTag;
+            return [{title: productTags.label, form: <MyTagsForm filterType={productTags}/> }];
         case AvailableModals.MY_ROLES_MODAL:
             return [{title: 'My Roles', form: <MyRolesForm/>}];
         case AvailableModals.CREATE_SPACE:

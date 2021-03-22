@@ -29,7 +29,7 @@ import LocationTags from './LocationTags';
 import ProductTags from './ProductTags';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
 
 // @Todo consolidate (also in MyRolesForm)
 export const INACTIVE_EDIT_STATE_INDEX = -1;
@@ -42,13 +42,30 @@ export enum TagAction {
 }
 
 interface Props {
+    filterType?: FilterType;
     locations: Array<LocationTag>;
     productTags: Array<ProductTag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
+/* eslint-disable */
+const mapStateToProps = (state: GlobalStateProps) => ({
+    locations: state.locations,
+    productTags: state.productTags,
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
+        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyTagsForm);
+
+/* eslint-enable */
 function MyTagsForm({
+    filterType,
     locations,
     productTags,
     allGroupedTagFilterOptions,
@@ -96,38 +113,50 @@ function MyTagsForm({
 
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
-            <LocationTags
-                locations={locationTagsList}
-                updateLocations={setLocationTagsList}
-                updateFilterOptions={updateFilterOptions}
-            />
-            <div className="lineSeparator"/>
-            <ProductTags
-                productTags={productTagsList}
-                updateProductTags={setProductTagsList}
-                updateFilterOptions={updateFilterOptions}
-            />
+            {filterType === undefined &&
+                <>
+                    <div className="title">Location Tags</div>
+                    <LocationTags
+                        locations={locationTagsList}
+                        updateLocations={setLocationTagsList}
+                        updateFilterOptions={updateFilterOptions}
+                    />
+                    <div className="lineSeparator"/>
+                    <div className="title">Product Tags</div>
+                    <ProductTags
+                        productTags={productTagsList}
+                        updateProductTags={setProductTagsList}
+                        updateFilterOptions={updateFilterOptions}
+                    />
+                </>
+            }
+            {filterType === FilterTypeListings.Location &&
+                <div data-testid="myTagsModal" className="myTraitsContainer">
+                    <div className="title">{filterType.label}</div>
+                    <LocationTags
+                        locations={locationTagsList}
+                        updateLocations={setLocationTagsList}
+                        updateFilterOptions={updateFilterOptions}
+                    />
+                </div>
+            }
+            {filterType === FilterTypeListings.ProductTag &&
+                <div data-testid="myTagsModal" className="myTraitsContainer">
+                    <div className="title">{filterType.label}</div>
+                    <ProductTags
+                        productTags={productTagsList}
+                        updateProductTags={setProductTagsList}
+                        updateFilterOptions={updateFilterOptions}
+                    />
+                </div>
+            }
+
             <div className="traitWarning">
                 <i className="material-icons warningIcon">error</i>
                 <p className="warningText">
-                    Editing or deleting a tag will affect any product currently tagged with it.
+                        Editing or deleting a tag will affect any product currently tagged with it.
                 </p>
             </div>
         </div>
     );
 }
-
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    locations: state.locations,
-    productTags: state.productTags,
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyTagsForm);
-/* eslint-enable */

@@ -18,12 +18,13 @@
 import React from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
-import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {setAllGroupedTagFilterOptionsAction, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {FilterOption} from '../CommonTypes/Option';
 import './NewFilterOrSortBy.scss';
 import Dropdown from '../ReusableComponents/Dropdown';
 import {AllGroupedTagFilterOptions, FilterType} from './FilterConstants';
+import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 
 function toggleOption(option: FilterOption): FilterOption {
     return {...option, selected: !option.selected};
@@ -32,14 +33,15 @@ function toggleOption(option: FilterOption): FilterOption {
 interface NewFilterProps {
     filterType: FilterType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function NewFilter({
     filterType,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
+    setCurrentModal,
 }: NewFilterProps): JSX.Element {
 
     const index = filterType.index;
@@ -84,7 +86,7 @@ function NewFilter({
                         </div>
                     );
                 })}
-            <button>
+            <button onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}>
                 <span>{`Add/edit your ${filterType.label}`}</span>
                 <i className="material-icons greyIcon">keyboard_arrow_right</i>
             </button>
@@ -100,10 +102,12 @@ function NewFilter({
 
     return (
         <Dropdown
-            buttonId={`NewFilter-button_${filterType}`}
+            buttonId={`NewFilter-button_${filterType.label}`}
             dropdownButtonContent={dropdownButtonContent}
             dropdownContent={dropdownContent}
-            dropdownOptionIds={[`NewFilter-button_${filterType}`, `dropdown-label_${filterType}`, `dropdown-button-arrow-up_${filterType}`]}
+            dropdownOptionIds={[`NewFilter-button_${filterType.label}`, `dropdown-label_${filterType.label}`, `dropdown-button-arrow-up_${filterType.label}`]}
+            dropdownTestId={`dropdown_${filterType.label}`}
+            buttonTestId={`dropdown_button_${filterType.label}`}
         />
     );
 }
@@ -114,6 +118,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
+    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });

@@ -17,13 +17,14 @@
 
 import React from 'react';
 import './SpaceSelectionTabs.scss';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface Props {
     isReadOnly: boolean;

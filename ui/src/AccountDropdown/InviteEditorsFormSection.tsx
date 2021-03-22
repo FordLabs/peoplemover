@@ -19,7 +19,7 @@ import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {AvailableModals, closeModalAction, setCurrentModalAction} from '../Redux/Actions';
+import {closeModalAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -28,6 +28,7 @@ import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import './InviteEditorsFormSection.scss';
 import UserAccessList from '../ReusableComponents/UserAccessList';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface Props {
     collapsed?: boolean;

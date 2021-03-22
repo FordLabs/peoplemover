@@ -17,7 +17,7 @@
 
 import React from 'react';
 import './NewSubHeader.scss';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
@@ -28,6 +28,7 @@ import NewProductSortBy from '../SortingAndFiltering/NewProductSortBy';
 import NewFilter from '../SortingAndFiltering/NewFilter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface Props {
     isReadOnly: boolean;
@@ -64,7 +65,7 @@ function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
             {isReadOnly ? <></> : <div className="rightContent">
                 <NavigationSection label="Filter by" icon="filter_list">
                     <NewFilter filterType={FilterTypeListings.Location}/>
-                    <NewFilter filterType={FilterTypeListings.Product}/>
+                    <NewFilter filterType={FilterTypeListings.ProductTag}/>
                     <NewFilter filterType={FilterTypeListings.Role}/>
                 </NavigationSection>
                 <button
