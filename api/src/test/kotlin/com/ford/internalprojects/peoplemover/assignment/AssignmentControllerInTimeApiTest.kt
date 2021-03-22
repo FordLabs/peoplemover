@@ -180,7 +180,7 @@ class AssignmentControllerInTimeApiTest {
         val readOnlyAssignment: Assignment = assignmentRepository.save(Assignment(
                 person = personInReadOnlySpace,
                 productId = productFour.id!!,
-                effectiveDate = LocalDate.parse(today),
+                effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
 
@@ -199,7 +199,55 @@ class AssignmentControllerInTimeApiTest {
     }
 
     @Test
-    fun `GET should return FORBIDDEN when a read only user tries to access assignments from a date that is not today`() {
+    fun `GET should return all assignments for a read only space when requested date is tomorrow`() {
+        val tomorrow = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ISO_DATE)
+        val readOnlyAssignment: Assignment = assignmentRepository.save(Assignment(
+                person = personInReadOnlySpace,
+                productId = productFour.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceUuid = editableSpace.uuid
+        ))
+
+        val result = mockMvc.perform(get(getBaseAssignmentForPersonInSpaceOnDateUrl(readOnlySpace.uuid, personInReadOnlySpace.id!!, tomorrow))
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
+        val actualAssignments: List<Assignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
+        )
+
+        assertThat(assignmentRepository.count()).isEqualTo(1)
+        assertThat(actualAssignments.size).isOne()
+        assertThat(actualAssignments).contains(readOnlyAssignment)
+    }
+
+    @Test
+    fun `GET should return all assignments for a read only space when requested date is yesterday`() {
+        val yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ISO_DATE)
+        val readOnlyAssignment: Assignment = assignmentRepository.save(Assignment(
+                person = personInReadOnlySpace,
+                productId = productFour.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceUuid = editableSpace.uuid
+        ))
+
+        val result = mockMvc.perform(get(getBaseAssignmentForPersonInSpaceOnDateUrl(readOnlySpace.uuid, personInReadOnlySpace.id!!, yesterday))
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
+        val actualAssignments: List<Assignment> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
+        )
+
+        assertThat(assignmentRepository.count()).isEqualTo(1)
+        assertThat(actualAssignments.size).isOne()
+        assertThat(actualAssignments).contains(readOnlyAssignment)
+    }
+
+    @Test
+    fun `GET should return FORBIDDEN when a read only user tries to access assignments from a date that is not valid`() {
         mockMvc.perform(get(getBaseAssignmentForPersonInSpaceOnDateUrl(readOnlySpace.uuid, personInReadOnlySpace.id!!, apr1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)

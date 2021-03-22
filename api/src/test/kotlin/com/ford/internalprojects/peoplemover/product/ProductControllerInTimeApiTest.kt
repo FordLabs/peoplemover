@@ -157,6 +157,24 @@ class ProductControllerInTimeApiTest {
     }
 
     @Test
+    fun `GET should return OK when accessing products without edit permission for tomorrow`() {
+        val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
+        val tomorrow = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ISO_DATE)
+        mockMvc.perform(get("$baseUrl?requestedDate=$tomorrow")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `GET should return OK when accessing products without edit permission for yesterday`() {
+        val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
+        val yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ISO_DATE)
+        mockMvc.perform(get("$baseUrl?requestedDate=$yesterday")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+    }
+
+    @Test
     fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
         mockMvc.perform(get("$baseProductsUrl?requestedDate=$today")
             .header("Authorization", "Bearer ANONYMOUS_TOKEN"))

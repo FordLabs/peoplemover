@@ -634,7 +634,25 @@ class AssignmentControllerReassignmentsApiTest {
     }
 
     @Test
-    fun `GET should return FORBIDDEN when requested date is not today for read only space`() {
+    fun `GET should return all reassignments when requested date is tomorrow for read only space`() {
+        val tomorrow = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ISO_DATE)
+        mockMvc.perform(get(baseReassignmentUrl(readOnlySpace.uuid,tomorrow))
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
+    }
+
+    @Test
+    fun `GET should return all reassignments when requested date is yesterday for read only space`() {
+        val yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ISO_DATE)
+        mockMvc.perform(get(baseReassignmentUrl(readOnlySpace.uuid,yesterday))
+            .header("Authorization", "Bearer GOOD_TOKEN"))
+            .andExpect(status().isOk)
+            .andReturn()
+    }
+
+    @Test
+    fun `GET should return FORBIDDEN when requested date is not valid for read only space`() {
         mockMvc.perform(get(baseReassignmentUrl(readOnlySpace.uuid,mar1))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
