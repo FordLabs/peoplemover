@@ -17,15 +17,12 @@
 
 package com.ford.internalprojects.peoplemover.assignment
 
-import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.space.SpaceService
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @RestController
 class AssignmentController(
@@ -33,15 +30,11 @@ class AssignmentController(
         private val spaceService: SpaceService,
         private val logger: BasicLogger
 ) {
+
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/spaces/{spaceUuid}/person/{personId}/assignments/date/{requestedDate}")
     fun getAssignmentsByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
-        val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val isRequestedDateNotToday = requestedDate != today
-
-        if(!spaceService.userHasEditAccessToSpace(spaceUuid) && isRequestedDateNotToday){
-            throw SpaceIsReadOnlyException()
-        }
+        spaceService.checkReadOnlyAccessByDate(requestedDate, spaceUuid)
 
         val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(requestedDate))
         logger.logInfoMessage("All assignments retrieved for person with id: [$personId] on date: [$requestedDate].")
@@ -58,13 +51,8 @@ class AssignmentController(
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping(path = ["/api/spaces/{spaceUuid}/reassignment/{requestedDate}"])
-    fun getReassignmentsByExactDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
-        val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val isRequestedDateNotToday = requestedDate != today
-
-        if(!spaceService.userHasEditAccessToSpace(spaceUuid) && isRequestedDateNotToday){
-            throw SpaceIsReadOnlyException()
-        }
+    fun getReassignmentsByDate(@PathVariable spaceUuid: String, @PathVariable requestedDate: String): ResponseEntity<List<Reassignment>> {
+        spaceService.checkReadOnlyAccessByDate(requestedDate, spaceUuid)
 
         val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceUuid, LocalDate.parse(requestedDate))
         logger.logInfoMessage("All reassignments retrieved for space with uuid: [$spaceUuid] on date: [$requestedDate].")

@@ -20,15 +20,14 @@ package com.ford.internalprojects.peoplemover.space
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
 import com.ford.internalprojects.peoplemover.product.ProductService
-import com.ford.internalprojects.peoplemover.user.exceptions.CannotDeleteOwnerException
-import com.ford.internalprojects.peoplemover.user.exceptions.InvalidUserModification
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Service
@@ -93,7 +92,18 @@ class SpaceService(
         return spaceRepository.save(spaceToEdit.update(editSpaceRequest))
     }
 
-    fun userHasEditAccessToSpace(spaceUuid: String): Boolean {
+    fun checkReadOnlyAccessByDate(requestedDate: String?, spaceUuid: String) {
+        val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val tomorrow = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ISO_DATE)
+        val yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ISO_DATE)
+        val isDateValid = requestedDate == today || requestedDate == tomorrow || requestedDate == yesterday
+
+        if (!userHasEditAccessToSpace(spaceUuid) && !isDateValid) {
+            throw SpaceIsReadOnlyException()
+        }
+    }
+
+    private fun userHasEditAccessToSpace(spaceUuid: String): Boolean {
         val spacesForUser = getSpacesForUser(SecurityContextHolder.getContext().authentication.name).map { it.uuid }
         return spacesForUser.contains(spaceUuid)
     }
