@@ -17,13 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.space
 
-import com.ford.internalprojects.peoplemover.auth.AuthInviteUsersToSpaceRequest
-import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
-import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
-import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -32,15 +26,8 @@ import javax.validation.Valid
 @RestController
 class SpaceController(
         private val logger: BasicLogger,
-        private val userSpaceMappingRepository: UserSpaceMappingRepository,
         private val spaceService: SpaceService
 ) {
-    @GetMapping("")
-    fun allSpaces(): List<Space> {
-        val spaces: List<Space> = spaceService.findAll()
-        logger.logInfoMessage("All space retrieved.")
-        return spaces
-    }
 
     @PreAuthorize("hasPermission(#uuid, 'read')")
     @GetMapping("/{uuid}")
@@ -50,7 +37,7 @@ class SpaceController(
 
     @PreAuthorize("hasPermission(#uuid, 'write')")
     @PutMapping("/{uuid}")
-    fun editSpace(@PathVariable uuid: String, @RequestBody @Valid editSpaceRequest: EditSpaceRequest):Space {
+    fun editSpace(@PathVariable uuid: String, @RequestBody @Valid editSpaceRequest: EditSpaceRequest): Space {
         return spaceService.editSpace(uuid, editSpaceRequest)
     }
 
@@ -66,51 +53,5 @@ class SpaceController(
     fun getAllSpacesForUser(@RequestHeader(name = "Authorization") accessToken: String): List<Space> {
         return spaceService.getSpacesForUser(accessToken.replace("Bearer ", ""))
     }
-
-    // todo: Remove this endpoint
-    @Deprecated("No longer used. Use /{uuid}/users instead")
-    @PreAuthorize("hasPermission(#uuid, 'modify')")
-    @GetMapping("/{uuid}/editors")
-    fun getAllEditors(@PathVariable uuid: String): List<String> {
-        return spaceService.getEditorsForSpace(uuid)
-    }
-
-    @PreAuthorize("hasPermission(#uuid, 'modify')")
-    @GetMapping("/{uuid}/users")
-    fun getAllUsers(@PathVariable uuid: String): List<UserSpaceMapping> {
-        return spaceService.getUsersForSpace(uuid)
-    }
-
-    @PreAuthorize("hasPermission(#uuid, 'modify')")
-    @DeleteMapping("/{uuid}/users/{userId}")
-    fun deleteUserFromSpace(@PathVariable uuid: String, @PathVariable userId: String) {
-        spaceService.deleteUserFromSpace(uuid, userId)
-    }
-
-    @PreAuthorize("hasPermission(#uuid, 'owner')")
-    @PutMapping("/{uuid}/users/{userId}")
-    fun updateUserForSpace(@PathVariable uuid: String, @PathVariable userId: String) {
-        spaceService.modifyUserPermission(uuid, userId)
-    }
-
-    @PreAuthorize("hasPermission(#uuid, 'modify')")
-    @PutMapping("/{uuid}:invite")
-    fun inviteUsersToSpace(
-            @Valid @RequestBody request: AuthInviteUsersToSpaceRequest,
-            @PathVariable uuid: String
-    ): ResponseEntity<ArrayList<String>> {
-        val failures = arrayListOf<String>()
-        request.emails.forEach { email ->
-            val userId = email.substringBefore('@').toUpperCase().trim()
-            try {
-                userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceUuid = uuid, permission = PERMISSION_EDITOR))
-            } catch (e: DataIntegrityViolationException) {
-                logger.logInfoMessage("$userId already has access to this space.")
-            } catch (e: Exception) {
-                failures.add(email)
-                logger.logException(e)
-            }
-        }
-        return ResponseEntity.ok(failures)
-    }
 }
+

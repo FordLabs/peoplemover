@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,23 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.auth
+package com.ford.internalprojects.peoplemover.user
 
+import com.ford.internalprojects.peoplemover.utilities.ListPattern
 import javax.validation.constraints.NotEmpty
 
 data class AuthInviteUsersToSpaceRequest(
+        @field:NotEmpty(message = "user ids cannot be empty")
+        @field:ListPattern(value = "^[a-zA-Z][a-zA-Z0-9]{1,8}$", message = "must be valid cdsid")
+        val userIds: List<String>
+)
+
+// TODO: Remove as part of Card #180
+@Deprecated("Delete ME and OLD invite endpoint")
+data class OldAuthInviteUsersToSpaceRequest(
         @field:NotEmpty(message = "emails cannot be empty")
         val emails: List<String>
 )
+
+
+
