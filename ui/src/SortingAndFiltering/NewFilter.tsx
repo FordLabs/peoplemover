@@ -78,6 +78,7 @@ function NewFilter({
                                 type="checkbox"
                                 id={option.value}
                                 value={option.value}
+                                checked={option.selected}
                                 onChange={(event): void => {
                                     updateFilters(toggleOption(option), index);
                                 }}

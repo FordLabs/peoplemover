@@ -41,5 +41,28 @@ describe('Filter Dropdown', () => {
             addLocationButton.click();
             expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.SET_CURRENT_MODAL, modal: AvailableModals.MY_LOCATION_TAGS });
         });
-    }); 
+    });
+
+    describe('Listeners', () => {
+        it('should show the correct checkbox state for selected filters', async () => {
+            store = createStore(rootReducer, {
+                allGroupedTagFilterOptions: [
+                    { label: 'Location Tags:', options: [
+                        {label: 'foo', value: 'foo', selected: true},
+                        {label: 'bar', value: 'bar', selected: false},
+                    ]},
+                    { label: 'Product Tags:', options: []},
+                    { label: 'Role Tags:', options: []},
+                ],
+            });
+
+            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
+            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label}`);
+            dropdownButton.click();
+            const secondCheckbox = await app.findByLabelText('bar');
+            expect(secondCheckbox).not.toBeChecked();
+            const firstCheckbox = await app.findByLabelText('foo');
+            expect(firstCheckbox).toBeChecked();
+        });
+    });
 });
