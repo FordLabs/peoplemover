@@ -87,7 +87,7 @@ function NewFilter({
                         </div>
                     );
                 })}
-            <button onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}>
+            <button className="add-edit-tags-dropdown-button" onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}>
                 <span>{`Add/edit your ${filterType.label}`}</span>
                 <i className="material-icons greyIcon">keyboard_arrow_right</i>
             </button>

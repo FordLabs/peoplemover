@@ -34,18 +34,20 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
                 }
             </button>
             {dropdownToggle &&
-            <AccessibleDropdownContainer
-                testId={dropdownTestId}
-                className="sortby-dropdown"
-                handleClose={(): void => {
-                    setDropdownToggle(false);
-                }}
-                dropdownOptionIds={dropdownOptionIds}
-                closeOnSelect={closeOnSelect}
-            >
-                {dropdownContent}
+                <div className="dropdown-contents-container">
+                    <AccessibleDropdownContainer
+                        testId={dropdownTestId}
+                        className="sortby-dropdown"
+                        handleClose={(): void => {
+                            setDropdownToggle(false);
+                        }}
+                        dropdownOptionIds={dropdownOptionIds}
+                        closeOnSelect={closeOnSelect}
+                    >
+                        {dropdownContent}
 
-            </AccessibleDropdownContainer>}
+                    </AccessibleDropdownContainer>
+                </div>}
         </div>
     );
 }

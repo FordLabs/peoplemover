@@ -131,24 +131,22 @@ function MyTagsForm({
                 </>
             }
             {filterType === FilterTypeListings.Location &&
-                <div data-testid="myTagsModal" className="myTraitsContainer">
-                    <div className="title">{filterType.label}</div>
+                <>
                     <LocationTags
                         locations={locationTagsList}
                         updateLocations={setLocationTagsList}
                         updateFilterOptions={updateFilterOptions}
                     />
-                </div>
+                </>
             }
             {filterType === FilterTypeListings.ProductTag &&
-                <div data-testid="myTagsModal" className="myTraitsContainer">
-                    <div className="title">{filterType.label}</div>
+                <>
                     <ProductTags
                         productTags={productTagsList}
                         updateProductTags={setProductTagsList}
                         updateFilterOptions={updateFilterOptions}
                     />
-                </div>
+                </>
             }
 
             <div className="traitWarning">

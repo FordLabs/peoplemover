@@ -34,7 +34,6 @@ describe('My Tags Form', () => {
 
     it('should only display location tags when the passed-in filter type is location tags', async () => {
         const app = renderWithRedux(<MyTagsForm filterType={FilterTypeListings.Location}/>, undefined, initialState);
-        await app.findByText(FilterTypeListings.Location.label);
         await  TestUtils.locations.forEach(location => {
             app.findByText(location.name);
         });
@@ -42,7 +41,6 @@ describe('My Tags Form', () => {
 
     it('should only display product tags when the passed-in filter type is product tags', async () => {
         const app = renderWithRedux(<MyTagsForm filterType={FilterTypeListings.ProductTag}/>, undefined, initialState);
-        await app.findByText(FilterTypeListings.ProductTag.label);
         await  TestUtils.productTags.forEach(productTag => {
             app.findByText(productTag.name);
         });

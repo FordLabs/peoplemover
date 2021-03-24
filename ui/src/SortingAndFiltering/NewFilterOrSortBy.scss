@@ -41,9 +41,11 @@
     .dropdown-button {
       border: 1px solid transparent;
       color: $gray-1;
+
       &:hover {
         cursor: pointer;
-      };
+      }
+
       flex-wrap: unset;
       background-color: white;
       width: fit-content;
@@ -66,52 +68,53 @@
       margin: auto;
     }
 
-    .sortby-dropdown {
-      min-width: 145px;
+    .dropdown-contents-container {
       position: relative;
-      background-color: white;
-      width: 150px;
-      border-radius: 6px;
-      border: 1px solid $gray-5;
-      left: 4px;
-      top: -4px;
-      box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
-      padding: 16px 15px;
-      box-sizing: border-box;
-      font-family: Helvetica, sans-serif;
-      font-size: 12px;
 
-      .sortby-option {
-        height: 22px;
-        font-size: 12px;
-        padding: 0 4px;
+      .sortby-dropdown {
+        position: absolute;
+        width: max-content;
         display: flex;
-        align-items:center;
-        cursor: pointer;
+        flex-direction: column;
+        background-color: white;
+        border-radius: 6px;
+        border: 1px solid $gray-5;
+        left: 4px;
+        top: -4px;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
+        padding: 16px 15px;
+        box-sizing: border-box;
+        font-family: Helvetica, sans-serif;
+        font-size: 12px;
 
-        &:hover {
-          background-color: $gray-6;
-          color: $purple;
-          border-radius: 2px;
+        .sortby-option {
+          height: 22px;
+          font-size: 12px;
+          padding: 0 4px;
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+
+          &:hover {
+            background-color: $gray-6;
+            color: $purple;
+            border-radius: 2px;
+          }
         }
       }
     }
   }
 }
 
-.sortDropdown {
-  position: relative;
-  background-color: white;
-  width: 150px;
-  border-radius: 6px;
-  border: 1px solid #EDEBEB;
-  right: 12px;
-  top: 50px;
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
-  padding: 16px 15px;
-  box-sizing: border-box;
-  font-family: Helvetica, sans-serif;
-  font-size: 12px;
+  .add-edit-tags-dropdown-button {
+    display: flex;
+    font-style: normal;
+    font-weight: normal;
+    font-size: inherit;
+    color: #5463B0;
+    background: transparent;
+    line-height: 20px;
+  }
 
   .sortDropdownOption {
     list-style-type: none;
@@ -140,7 +143,6 @@
       margin-left: auto;
     }
   }
-}
 
 .filter-option {
   margin-top: 6px;
