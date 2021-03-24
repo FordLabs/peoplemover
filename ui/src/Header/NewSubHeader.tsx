@@ -28,7 +28,6 @@ import NewProductSortBy from '../SortingAndFiltering/NewProductSortBy';
 import NewFilter from '../SortingAndFiltering/NewFilter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
-import {AvailableModals} from '../Modal/AvailableModals';
 
 interface Props {
     isReadOnly: boolean;
@@ -68,20 +67,6 @@ function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
                     <NewFilter filterType={FilterTypeListings.ProductTag}/>
                     <NewFilter filterType={FilterTypeListings.Role}/>
                 </NavigationSection>
-                <button
-                    className={`selectionTabButton tab`}
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
-                    data-testid="myTagsButton">
-                    <i className="material-icons myTagsIcon" aria-hidden data-testid="myTagsIcon">local_offer</i>
-                    My Tags
-                </button>
-                <button
-                    className={`selectionTabButton tab`}
-                    data-testid="myRolesButton"
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
-                    <i className="material-icons myRolesIcon" aria-hidden data-testid="myRolesIcon">assignment_ind</i>
-                    My Roles
-                </button>
                 <NewProductSortBy/>
             </div>}
         </div>

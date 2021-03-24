@@ -51,10 +51,10 @@ function Header({
             </div>
             {!hideAllButtons &&
                 <div className="headerRightContainer">
-                    {!hideSpaceButtons &&
+                    {!hideSpaceButtons && !NEW_UI &&
                         <>
                             <ProductFilter/>
-                            {NEW_UI || <ProductSortBy/>}
+                            <ProductSortBy/>
                         </>
                     }
                     <AccountDropdown hideSpaceButtons={hideSpaceButtons}/>
