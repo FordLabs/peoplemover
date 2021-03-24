@@ -40,11 +40,7 @@ class ProductController(
         @RequestParam(name = "requestedDate", required = false) requestedDate: String?
     ): Set<Product> {
         val products: Set<Product>;
-        val isRequestDateNotToday = requestedDate != LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-
-        if (!spaceService.userHasEditAccessToSpace(spaceUuid) && isRequestDateNotToday) {
-            throw SpaceIsReadOnlyException()
-        }
+        spaceService.checkReadOnlyAccessByDate(requestedDate,spaceUuid)
 
         if (requestedDate != null) {
             val date = LocalDate.parse(requestedDate)

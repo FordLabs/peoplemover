@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.space.exceptions
+package com.ford.internalprojects.peoplemover.user.exceptions
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus

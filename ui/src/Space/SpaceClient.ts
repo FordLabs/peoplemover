@@ -122,7 +122,25 @@ class SpaceClient {
         return Axios.put(url, data, config);
     }
 
-    static async inviteUsersToSpace(space: Space, emails: string[]): Promise<AxiosResponse<void>> {
+    static async inviteUsersToSpace(space: Space, userIds: string[]): Promise<AxiosResponse<void>> {
+        const url = `${baseSpaceUrl}/${space.uuid}/users`;
+        const data = { userIds };
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
+            },
+        };
+        return Axios.post(url, data, config).then((result) => {
+            MatomoEvents.pushEvent(space.name, 'inviteUser', userIds.join(', '));
+            return result;
+        }).catch((error) => {
+            MatomoEvents.pushEvent(space.name, 'inviteUserError', userIds.join(', '), error.code);
+            return Promise.reject(error);
+        });
+    }
+
+    static async oldInviteUsersToSpace(space: Space, emails: string[]): Promise<AxiosResponse<void>> {
         const url = `${baseSpaceUrl}/${space.uuid}:invite`;
         const data = { emails };
         const config = {

@@ -23,28 +23,191 @@ import {fireEvent, wait} from '@testing-library/dom';
 import {act} from 'react-dom/test-utils';
 import Axios, {AxiosResponse} from 'axios';
 import Cookies from 'universal-cookie';
-import {within} from '@testing-library/react';
+import {RenderResult, within} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();
-    beforeEach( () => {
+    beforeEach(() => {
         TestUtils.mockClientCalls();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        Axios.delete = jest.fn( x => Promise.resolve({} as AxiosResponse)) as any;
+        Axios.delete = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        Axios.put = jest.fn( x => Promise.resolve({} as AxiosResponse)) as any;
+        Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
         cookies.set('accessToken', '123456');
     });
 
     describe('feature toggle enabled', () => {
-        beforeEach( () => {
+        beforeEach(() => {
             window.location.hash = '#perm';
         });
 
         afterEach(() => {
             window.location.hash = '';
+        });
+        
+        describe('add editors', () => {
+            function renderComponent(): RenderResult {
+                return renderWithRedux(
+                    <InviteEditorsFormSection collapsed={false}/>,
+                    undefined,
+                    {currentSpace: TestUtils.space} as GlobalStateProps);
+            }
+
+            function validateApiCall(userIds: string[]): void {
+                expect(Axios.post).toHaveBeenCalledWith(
+                    `/api/spaces/${TestUtils.space.uuid}/users`,
+                    {userIds: userIds},
+                    {
+                        headers: {
+                            Authorization: 'Bearer 123456',
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+            }
+
+            it('should add users as editors', async function() {
+                const component = renderComponent();
+                await component.findByText('Enter CDSID of your editors');
+                const inputField = component.getByLabelText(/People with this permission can edit/);
+                fireEvent.change(inputField, {target: {value: 'hford1'}});
+                fireEvent.keyDown(inputField, {key: 'Enter', code: 'Enter'});
+
+                expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                component.getByText('hford1');
+
+                await fireEvent.click(component.getByTestId('inviteEditorsFormSubmitButton'));
+
+                validateApiCall(['hford1']);
+            });
+
+            it('should not add invalid cdsid user as editor', async function() {
+                const component = renderComponent();
+                await component.findByText('Enter CDSID of your editors');
+                fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                    {target: {value: '#ford'}});
+
+                expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                component.getByText('#ford');
+
+                const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
+                expect(submitButton).toHaveAttribute('disabled');
+                expect(component.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
+
+                await fireEvent.click(submitButton);
+                expect(Axios.post).not.toHaveBeenCalled();
+            });
+
+            it('should not add invalid cdsid user as editor (on Enter)', async function() {
+                const component = renderComponent();
+                await component.findByText('Enter CDSID of your editors');
+                const inputField = component.getByLabelText(/People with this permission can edit/);
+                fireEvent.change(inputField,
+                    {target: {value: '#ford'}});
+                fireEvent.keyDown(inputField, {key: 'Enter'});
+                fireEvent.blur(inputField);
+
+                expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                component.getByText('#ford');
+
+                component.getByText(/Please enter a valid CDSID/);
+
+                const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
+                expect(submitButton).toHaveAttribute('disabled');
+                expect(component.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
+                await fireEvent.click(submitButton);
+
+                expect(Axios.post).not.toHaveBeenCalled();
+            });
+
+            it('should not add users as editors when one of them is invalid', async function() {
+                const component = renderComponent();
+                await component.findByText('Enter CDSID of your editors');
+                fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                    {target: {value: 'hford1, #ford'}});
+
+                expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                component.getByText('hford1');
+                component.getByText('#ford');
+
+                const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
+                expect(submitButton).toHaveAttribute('disabled');
+                expect(component.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
+                await fireEvent.click(submitButton);
+
+                expect(Axios.post).not.toHaveBeenCalled();
+            });
+
+            it('should add two users as editors when both are valid', async function() {
+                const component = renderComponent();
+                await component.findByText('Enter CDSID of your editors');
+                await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                    {target: {value: 'hford1, bford'}});
+
+                expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                component.getByText('hford1');
+                component.getByText('bford');
+
+                const submitButton = component.getByTestId('inviteEditorsFormSubmitButton');
+                expect(submitButton).not.toBeDisabled();
+                expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                await fireEvent.click(submitButton);
+
+                validateApiCall(['hford1', 'bford']);
+            });
+
+            describe('Submit Button and Error Message', () => {
+                it('should be disabled/disabled when there is no input', async () => {
+                    await act( async () => {
+                        const component = renderComponent();
+                        expect(component.queryByText('Enter CDSID of your editors')).toBeInTheDocument();
+                        expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+                        expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                    });
+                });
+
+                it('should be enabled when there are entries, and disabled when there are none', async () => {
+                    const component = renderComponent();
+                    let inputField: HTMLElement;
+                    expect(component.queryByText('Enter CDSID of your editors')).toBeInTheDocument();
+                    expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+                    expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                    await component.findByText('Enter CDSID of your editors');
+                    await act( async () => {
+                        await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                            {target: {value: 'hford1, bford'}});
+                    });
+                    expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                    expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeEnabled();
+                    expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                    expect(component.queryByText('hford1')).toBeInTheDocument();
+                    expect(component.queryByText('bford')).toBeInTheDocument();
+                    // Delete bford
+                    inputField = component.getByLabelText(/People with this permission can edit/);
+                    await act( async () => {
+                        await fireEvent.keyDown(inputField, {key: 'Backspace' });
+                    });
+                    expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                    expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeEnabled();
+                    expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                    expect(component.queryByText('hford1')).toBeInTheDocument();
+                    expect(component.queryByText('bford')).not.toBeInTheDocument();
+                    // Delete hford1
+                    inputField = component.getByLabelText(/People with this permission can edit/);
+                    await act( async () => {
+                        await fireEvent.keyDown(inputField, {key: 'Backspace' });
+                    });
+                    expect(component.queryByText('hford1')).not.toBeInTheDocument();
+                    expect(component.queryByText('bford')).not.toBeInTheDocument();
+                    expect(component.queryByText('Enter CDSID of your editors')).toBeInTheDocument();
+                    expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+                    expect(component.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
+                });
+            });
         });
 
         it('should show owners and editors for the space', async () => {
@@ -78,11 +241,11 @@ describe('Invite Editors Form', function() {
                 await fireEvent.click(removeButton);
                 expect(Axios.delete).toHaveBeenCalledWith(
                     `/api/spaces/${TestUtils.space.uuid}/users/user_id_2`,
-                    {headers: {Authorization: 'Bearer 123456'}}
+                    {headers: {Authorization: 'Bearer 123456'}},
                 );
                 await wait(() => {
                     expect(component.queryByText('user_id_2')).not.toBeInTheDocument();
-                    expect(component.queryByText(/editor/i)).not.toBeInTheDocument();
+                    expect(component.queryByText(/^Editor$/)).not.toBeInTheDocument();
                 });
             });
         });
@@ -90,21 +253,27 @@ describe('Invite Editors Form', function() {
         it('should change owner', async () => {
             await act(async () => {
                 const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser: 'user_id'} as GlobalStateProps);
+                    <InviteEditorsFormSection/>, undefined, {
+                        currentSpace: TestUtils.space,
+                        currentUser: 'user_id',
+                    } as GlobalStateProps);
                 const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
                 const editor = editorRow.getByText(/editor/i);
                 fireEvent.keyDown(editor, {key: 'ArrowDown'});
                 const permissionButton = await editorRow.findByText(/owner/i);
 
                 SpaceClient.getUsersForSpace = jest.fn().mockReturnValueOnce(Promise.resolve(
-                    [{'userId': 'user_id', 'permission': 'editor'}, {'userId': 'user_id_2', 'permission': 'owner'}] as UserSpaceMapping[]));
+                    [{'userId': 'user_id', 'permission': 'editor'}, {
+                        'userId': 'user_id_2',
+                        'permission': 'owner',
+                    }] as UserSpaceMapping[]));
 
                 await fireEvent.click(permissionButton);
                 await fireEvent.click(await component.findByText(/yes/i));
                 expect(Axios.put).toHaveBeenCalledWith(
                     `/api/spaces/${TestUtils.space.uuid}/users/user_id_2`,
                     null,
-                    {headers: {Authorization: 'Bearer 123456'}}
+                    {headers: {Authorization: 'Bearer 123456'}},
                 );
 
                 await wait(async () => {
@@ -122,7 +291,10 @@ describe('Invite Editors Form', function() {
         it('should not change owner after cancelling', async () => {
             await act(async () => {
                 const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser: 'user_id'} as GlobalStateProps);
+                    <InviteEditorsFormSection/>, undefined, {
+                        currentSpace: TestUtils.space,
+                        currentUser: 'user_id',
+                    } as GlobalStateProps);
                 const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
                 const editor = editorRow.getByText(/editor/i);
                 fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -148,7 +320,10 @@ describe('Invite Editors Form', function() {
         it('should not be able to change owner', async () => {
             await act(async () => {
                 const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser: 'user_id_2'} as GlobalStateProps);
+                    <InviteEditorsFormSection/>, undefined, {
+                        currentSpace: TestUtils.space,
+                        currentUser: 'user_id_2',
+                    } as GlobalStateProps);
                 const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
                 const editor = editorRow.getByText(/editor/i);
                 fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -159,9 +334,8 @@ describe('Invite Editors Form', function() {
         });
     });
 
+    // TODO: Remove as part of Card #180
     describe('feature toggle disabled', () => {
-
-
         it('should show owners and editors for the space, but not their permissions', async function() {
             await act(async () => {
                 const component = renderWithRedux(
@@ -181,6 +355,42 @@ describe('Invite Editors Form', function() {
                 await wait(() => {
                     expect(component.queryByTestId('userAccess')).not.toBeInTheDocument();
                 });
+            });
+        });
+
+        it('should enable the Invite button if a valid email is added', async () => {
+            let component: RenderResult;
+            await act( async () => {
+                component = renderWithRedux(
+                    <InviteEditorsFormSection collapsed={false}/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+            });
+            await wait(() => {
+                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+            });
+            await act( async () => {
+                await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                    {target: {value: 'hford1@ford.com'}});
+            });
+            await wait(() => {
+                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeEnabled();
+            });
+        });
+
+        it('should not enable the Invite button if an invalid email is added', async () => {
+            let component: RenderResult;
+            await act( async () => {
+                component = renderWithRedux(
+                    <InviteEditorsFormSection collapsed={false}/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+            });
+            await wait(() => {
+                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
+            });
+            await act( async () => {
+                await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
+                    {target: {value: 'invalid, email, '}});
+            });
+            await wait(() => {
+                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
             });
         });
     });
