@@ -66,6 +66,8 @@ function NewFilter({
         );
     };
 
+    const formattedFilterTypeValue = filterType.label.replace(' ', '_');
+
     const dropdownContent =
         <>
             {allGroupedTagFilterOptions
@@ -87,7 +89,10 @@ function NewFilter({
                         </div>
                     );
                 })}
-            <button className="add-edit-tags-dropdown-button" onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}>
+            <button className="add-edit-tags-dropdown-button"
+                data-testid={`open_${formattedFilterTypeValue}_modal_button`}
+                onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}
+            >
                 <span>{`Add/edit your ${filterType.label}`}</span>
                 <i className="material-icons greyIcon">keyboard_arrow_right</i>
             </button>
@@ -103,12 +108,12 @@ function NewFilter({
 
     return (
         <Dropdown
-            buttonId={`NewFilter-button_${filterType.label}`}
+            buttonId={`NewFilter-button_${formattedFilterTypeValue}`}
             dropdownButtonContent={dropdownButtonContent}
             dropdownContent={dropdownContent}
-            dropdownOptionIds={[`NewFilter-button_${filterType.label}`, `dropdown-label_${filterType.label}`, `dropdown-button-arrow-up_${filterType.label}`]}
-            dropdownTestId={`dropdown_${filterType.label}`}
-            buttonTestId={`dropdown_button_${filterType.label}`}
+            dropdownOptionIds={[`NewFilter-button_${formattedFilterTypeValue}`, `dropdown-label_${formattedFilterTypeValue}`, `dropdown-button-arrow-up_${formattedFilterTypeValue}`]}
+            dropdownTestId={`dropdown_${formattedFilterTypeValue}`}
+            buttonTestId={`dropdown_button_${formattedFilterTypeValue}`}
         />
     );
 }

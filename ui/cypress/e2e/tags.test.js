@@ -17,7 +17,7 @@
 
 /// <reference types="Cypress" />
 
-describe('Tags',  () => {
+describe('Tags old UI',  () => {
     const locationTag = 'Middle Earth ' + Date.now();
     const productTag = 'Flippin Sweet ' + Date.now();
 
@@ -37,7 +37,7 @@ describe('Tags',  () => {
                 .should('contain', 'Product Tags');
         });
 
-        it('location tag',  () => {
+        it('location tag for old UI',  () => {
             cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postLocation');
             cy.get('[data-testid=tagsModalContainer__location]')
                 .find('[data-testid=viewTagRow]')
@@ -62,7 +62,7 @@ describe('Tags',  () => {
             });
         });
 
-        it('product tag',  () => {
+        it('product tag for Old UI',  () => {
             cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postProductTag');
             cy.get('[data-testid=tagsModalContainer__product_tag]')
                 .find('[data-testid=viewTagRow]').should('have.length', 1);
@@ -82,6 +82,87 @@ describe('Tags',  () => {
                 cy.closeModal();
 
                 cy.selectOptionFromReactSelect('[data-testid=filters]', productTag);
+            });
+        });
+    });
+});
+
+describe('Tags',  () => {
+    const locationTag = 'Middle Earth ' + Date.now();
+    const productTag = 'Flippin Sweet ' + Date.now();
+
+    beforeEach(() => {
+        cy.visitSpace({}, '#newui');
+    });
+
+    context('Add new', () => {
+        beforeEach(() => {
+            cy.server();
+
+
+
+            // cy.getModal()
+            //     .should('contain', 'My Tags')
+            //     .should('contain', 'Location Tags')
+            //     .should('contain', 'Product Tags');
+        });
+
+        it('location tag',  () => {
+            cy.get('[data-testid=dropdown_button_Product_Location]').click();
+            cy.get('[data-testid=open_Product_Location_modal_button]').click();
+            cy.getModal().should('contain', 'Product Location');
+
+            cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postLocation');
+            cy.get('[data-testid=tagsModalContainer__location]')
+                .find('[data-testid=viewTagRow]')
+                .should('have.length', 1);
+
+            cy.get('[data-testid=addNewButton__location]').click();
+
+            cy.get('[data-testid=tagNameInput]').focus().type(locationTag).should('have.value', locationTag);
+            cy.get('[data-testid=saveTagButton]').click();
+
+            cy.wait('@postLocation').then(() => {
+                cy.get('[data-testid=tagsModalContainer__location]')
+                    .find('[data-testid=viewTagRow]')
+                    .should(($row) => {
+                        expect($row).to.contain(locationTag);
+                        expect($row).to.have.descendants('[data-testid=editIcon__location]');
+                        expect($row).to.have.descendants('[data-testid=deleteIcon__location]');
+                    });
+
+                cy.closeModal();
+
+                cy.get('[data-testid=dropdown_button_Product_Location]').click();
+                cy.contains(locationTag);
+            });
+        });
+
+        it('product tag',  () => {
+            cy.get('[data-testid=dropdown_button_Product_Tags]').click();
+            cy.get('[data-testid=open_Product_Tags_modal_button]').click();
+            cy.getModal().should('contain', 'Product Tags');
+
+            cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postProductTag');
+            cy.get('[data-testid=tagsModalContainer__product_tag]')
+                .find('[data-testid=viewTagRow]').should('have.length', 1);
+
+            cy.get('[data-testid=addNewButton__product_tag]').click();
+            cy.get('[data-testid=tagNameInput]').focus().type(productTag).should('have.value', productTag);
+            cy.get('[data-testid=saveTagButton]').click();
+
+            cy.wait('@postProductTag').then(() => {
+                cy.get('[data-testid=tagsModalContainer__product_tag]').find('[data-testid=viewTagRow]')
+                    .should(($row) => {
+                        expect($row).to.contain(productTag);
+                        expect($row).to.have.descendants('[data-testid=editIcon__product_tag]');
+                        expect($row).to.have.descendants('[data-testid=deleteIcon__product_tag]');
+                    });
+
+                cy.closeModal();
+
+                cy.get('[data-testid=dropdown_button_Product_Tags]').click();
+                cy.contains(productTag);
             });
         });
     });
