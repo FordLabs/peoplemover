@@ -171,7 +171,7 @@ describe('ProductForm', function() {
         });
     });
 });
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createTag(label: string, createOptionText: string, option: string, component: any): Promise<void> {
     const productTagsLabelElement = await component.findByLabelText(label);
     const containerToFindOptionsIn = {

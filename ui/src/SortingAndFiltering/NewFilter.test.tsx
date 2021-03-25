@@ -35,7 +35,7 @@ describe('Filter Dropdown', () => {
     describe('Add new filter button', () => {
         it('opens the location modal when handling location tags and the add/edit tags button is clicked', async () => {
             const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
-            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label}`);
+            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
             dropdownButton.click();
             const addLocationButton = await app.findByText('Add/edit your Product Location');
             addLocationButton.click();
@@ -57,7 +57,7 @@ describe('Filter Dropdown', () => {
             });
 
             const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
-            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label}`);
+            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
             dropdownButton.click();
             const secondCheckbox = await app.findByLabelText('bar');
             expect(secondCheckbox).not.toBeChecked();
