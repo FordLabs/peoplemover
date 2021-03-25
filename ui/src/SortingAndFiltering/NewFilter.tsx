@@ -100,7 +100,7 @@ function NewFilter({
 
     const dropdownButtonContent =
         <>
-            <span className="dropdown-label" id={`dropdown-label_${filterType}`}>
+            <span className="dropdown-label" id={`dropdown-label_${formattedFilterTypeValue}`}>
                 {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
                     && filterType.label}:
             </span>
