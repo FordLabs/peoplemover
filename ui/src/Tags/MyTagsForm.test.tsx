@@ -34,16 +34,22 @@ describe('My Tags Form', () => {
 
     it('should only display location tags when the passed-in filter type is location tags', async () => {
         const app = renderWithRedux(<MyTagsForm filterType={FilterTypeListings.Location}/>, undefined, initialState);
-        await  TestUtils.locations.forEach(location => {
-            app.findByText(location.name);
-        });
+
+        // location included in TestUtils.locations
+        await app.findByText( TestUtils.annarbor.name);
+        await app.findByText( TestUtils.detroit.name);
+        await app.findByText( TestUtils.dearborn.name);
+        await app.findByText( TestUtils.southfield.name);
     });
 
     it('should only display product tags when the passed-in filter type is product tags', async () => {
         const app = renderWithRedux(<MyTagsForm filterType={FilterTypeListings.ProductTag}/>, undefined, initialState);
-        await  TestUtils.productTags.forEach(productTag => {
-            app.findByText(productTag.name);
-        });
+
+        // product tags included in TestUtils.productTags
+        await app.findByText(TestUtils.productTag1.name);
+        await app.findByText(TestUtils.productTag2.name);
+        await app.findByText(TestUtils.productTag3.name);
+        await app.findByText(TestUtils.productTag4.name);
     });
 
     it('should default the titles if no index is passed in', async () => {
