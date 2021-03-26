@@ -19,6 +19,8 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
         setDropdownToggle(!dropdownToggle);
     };
 
+    const idArrowUp = buttonId + 'up-arrow';
+
     return (
         <div className="dropdown-group">
             <button
@@ -29,8 +31,8 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
             >
                 {dropdownButtonContent}
                 {dropdownToggle
-                    ? <i className="material-icons greyIcon">keyboard_arrow_up</i>
-                    : <i className="material-icons greyIcon">keyboard_arrow_down</i>
+                    ? <i className="material-icons greyIcon" id={idArrowUp}>keyboard_arrow_up</i>
+                    : <i className="material-icons greyIcon" >keyboard_arrow_down</i>
                 }
             </button>
             {dropdownToggle &&
@@ -41,7 +43,7 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
                         handleClose={(): void => {
                             setDropdownToggle(false);
                         }}
-                        dropdownOptionIds={dropdownOptionIds}
+                        dropdownOptionIds={dropdownOptionIds.concat([idArrowUp])}
                         closeOnSelect={closeOnSelect}
                     >
                         {dropdownContent}
