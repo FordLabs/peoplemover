@@ -19,6 +19,7 @@
 
 .newDropdownContainer {
   display: flex;
+  padding-left: 46px;
 
   .indicator-icon {
     align-self: center;
@@ -88,9 +89,9 @@
         font-size: 12px;
 
         .sortby-option {
+          padding: 5px 4px 5px 4px;
           height: 22px;
           font-size: 12px;
-          padding: 0 4px;
           display: flex;
           align-items: center;
           cursor: pointer;
@@ -99,6 +100,10 @@
             background-color: $gray-6;
             color: $purple;
             border-radius: 2px;
+          }
+
+          .sortby-option-label {
+            padding-left: 14px;
           }
         }
       }

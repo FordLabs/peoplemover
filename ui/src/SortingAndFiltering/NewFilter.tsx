@@ -85,7 +85,7 @@ function NewFilter({
                                     updateFilters(toggleOption(option), index);
                                 }}
                             />
-                            <label htmlFor={option.value}>{option.label}</label>
+                            <label className="sortby-option-label" htmlFor={option.value}>{option.label}</label>
                         </div>
                     );
                 })}
@@ -94,7 +94,7 @@ function NewFilter({
                 onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}
             >
                 <span>{`Add/edit your ${filterType.label}`}</span>
-                <i className="material-icons greyIcon">keyboard_arrow_right</i>
+                <i className="material-icons">keyboard_arrow_right</i>
             </button>
         </>;
 
