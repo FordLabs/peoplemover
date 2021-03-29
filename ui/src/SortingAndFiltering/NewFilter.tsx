@@ -70,36 +70,38 @@ function NewFilter({
 
     const dropdownContent =
         <>
-            {allGroupedTagFilterOptions
-            && allGroupedTagFilterOptions.length > 0
-            && allGroupedTagFilterOptions[index].options.map(
-                (option) => {
-                    return (
+            <div className="sortby-option-container">
+                {allGroupedTagFilterOptions
+                && allGroupedTagFilterOptions.length > 0
+                && allGroupedTagFilterOptions[index].options.map(
+                    (option) => {
+                        return (
                         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-                        <div key={option.value} onClick={(event): void => {
-                            updateFilters(toggleOption(option), index);
-                        }} className="sortby-option">
-                            <input
-                                className="sortby-option-input"
-                                type="checkbox"
-                                id={option.value}
-                                value={option.value}
-                                checked={option.selected}
-                                onChange={(event): void => {
-                                    updateFilters(toggleOption(option), index);
-                                }}
-                            />
-                            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
-                            <label className="sortby-option-label"
-                                htmlFor={option.value}
-                                onClick={(event): void => {
-                                    event.stopPropagation();
-                                }}
-                            >{option.label
-                                }</label>
-                        </div>
-                    );
-                })}
+                            <div key={option.value} onClick={(event): void => {
+                                updateFilters(toggleOption(option), index);
+                            }} className="sortby-option">
+                                <input
+                                    className="sortby-option-input"
+                                    type="checkbox"
+                                    id={option.value}
+                                    value={option.value}
+                                    checked={option.selected}
+                                    onChange={(event): void => {
+                                        updateFilters(toggleOption(option), index);
+                                    }}
+                                />
+                                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */}
+                                <label className="sortby-option-label"
+                                    htmlFor={option.value}
+                                    onClick={(event): void => {
+                                        event.stopPropagation();
+                                    }}
+                                >{option.label
+                                    }</label>
+                            </div>
+                        );
+                    })}
+            </div>
             <button className="add-edit-tags-dropdown-button"
                 data-testid={`open_${formattedFilterTypeValue}_modal_button`}
                 onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}
