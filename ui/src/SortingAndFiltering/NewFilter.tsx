@@ -96,8 +96,8 @@ function NewFilter({
                                     onClick={(event): void => {
                                         event.stopPropagation();
                                     }}
-                                >{option.label
-                                    }</label>
+                                >{option.label}
+                                </label>
                             </div>
                         );
                     })}

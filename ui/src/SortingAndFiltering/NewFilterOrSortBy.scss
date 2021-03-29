@@ -91,10 +91,11 @@
         .sortby-option-container {
           max-height: 250px;
           overflow-y: auto;
+          max-width: 250px;
 
           .sortby-option {
+            height: unset;
             padding: 5px 4px 5px 14px;
-            height: 22px;
             font-size: 12px;
             display: flex;
             align-items: center;
@@ -111,8 +112,9 @@
             }
 
             .sortby-option-label {
-              padding-left: 14px;
+              padding: 0 10px;
               cursor: pointer;
+              word-break: break-all;
             }
           }
         }
