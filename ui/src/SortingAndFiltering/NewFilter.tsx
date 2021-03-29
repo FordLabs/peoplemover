@@ -75,8 +75,12 @@ function NewFilter({
             && allGroupedTagFilterOptions[index].options.map(
                 (option) => {
                     return (
-                        <div key={option.value} className="sortby-option">
+                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+                        <div key={option.value} onClick={(event): void => {
+                            updateFilters(toggleOption(option), index);
+                        }} className="sortby-option">
                             <input
+                                className="sortby-option-input"
                                 type="checkbox"
                                 id={option.value}
                                 value={option.value}
@@ -85,7 +89,14 @@ function NewFilter({
                                     updateFilters(toggleOption(option), index);
                                 }}
                             />
-                            <label className="sortby-option-label" htmlFor={option.value}>{option.label}</label>
+                            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+                            <label className="sortby-option-label"
+                                htmlFor={option.value}
+                                onClick={(event): void => {
+                                    event.stopPropagation();
+                                }}
+                            >{option.label
+                                }</label>
                         </div>
                     );
                 })}
