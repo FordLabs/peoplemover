@@ -18,7 +18,6 @@
 import React from 'react';
 import {Product} from './Product';
 import NewProductButton from './NewProductButton';
-import {AvailableModals} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Tag} from '../Tags/Tag.interface';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
@@ -28,6 +27,7 @@ import {LocationTag} from '../Locations/LocationTag.interface';
 
 import './ProductListGrouped.scss';
 import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface GroupedByListProps {
     products: Array<Product>;

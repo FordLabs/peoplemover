@@ -20,7 +20,7 @@ import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
-import {AvailableModals, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
+import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -33,6 +33,7 @@ import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from '../tests/TestUtils';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface AssignmentCardProps {
     currentSpace: Space;

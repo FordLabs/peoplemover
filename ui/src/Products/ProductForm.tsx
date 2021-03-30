@@ -27,7 +27,6 @@ import {emptyProduct, Product} from './Product';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {ProductTag} from '../ProductTag/ProductTag';
 import {FilterOption} from '../CommonTypes/Option';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Tag} from '../Tags/Tag.interface';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormProductTagsField from './ProductFormProductTagsField';
@@ -39,6 +38,7 @@ import FormButton from '../ModalFormComponents/FormButton';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
 
 interface ProductFormProps {
     editing: boolean;

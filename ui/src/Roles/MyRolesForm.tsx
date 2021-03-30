@@ -22,7 +22,6 @@ import {Dispatch} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {FilterOption} from '../CommonTypes/Option';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {Color, RoleTag} from './RoleTag.interface';
 import RoleClient from './RoleClient';
 import {Tag} from '../Tags/Tag.interface';
@@ -32,6 +31,7 @@ import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
 import RoleTags from './RoleTags';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
 
 // @Todo consolidate (also in MyTagsForm)
 export const INACTIVE_EDIT_STATE_INDEX = -1;

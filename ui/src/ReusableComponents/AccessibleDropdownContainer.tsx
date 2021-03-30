@@ -29,10 +29,11 @@ interface DropdownProps {
     className?: string;
     children?: ReactNode;
     testId?: string;
-    dontCloseForTheseIds?: string[];
+    dropdownOptionIds?: string[];
+    closeOnSelect?: boolean;
 }
 
-export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dontCloseForTheseIds}: DropdownProps): JSX.Element {
+export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dropdownOptionIds, closeOnSelect}: DropdownProps): JSX.Element {
 
     const dropdownContainer = createRef<HTMLDivElement>();
 
@@ -81,7 +82,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
             React.Children.toArray(children)[index].ref.current.focus();
         };
 
-        if (!dropdownContainer.current?.contains(e.target as HTMLElement) && !dontCloseForTheseIds?.includes((e.target as HTMLElement).id)) {
+        if (!dropdownContainer.current?.contains(e.target as HTMLElement) && !dropdownOptionIds?.includes((e.target as HTMLElement).id)) {
             handleClose();
         }
 
@@ -92,7 +93,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             setFocusOnExpectedElementWhenUsingUpOrDownKey(e);
         }
-    }, [dropdownContainer, handleClose, children, dontCloseForTheseIds]);
+    }, [dropdownContainer, handleClose, children, dropdownOptionIds]);
 
     useEffect(() => {
         document.addEventListener('mouseup', leaveFocusListener);
@@ -103,12 +104,20 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         };
     }, [leaveFocusListener]);
     return (
+        // The button presses (enter or space) on the child element buttons
+        // propogate down to trigger the onClick events down to this component.
+        // As such, the keyboard functionality is handled, just not in this component
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <div
             ref={dropdownContainer}
-            role="menu"
             className={className}
             aria-labelledby={ariaLabelledBy}
             data-testid={testId}
+            onClick={(): void => {
+                if (closeOnSelect) {
+                    handleClose();
+                }
+            }}
         >
             {children}
         </div>

@@ -20,7 +20,6 @@ import {useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {
-    AvailableModals,
     fetchUserSpacesAction,
     setCurrentModalAction,
     setCurrentSpaceAction,
@@ -35,6 +34,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 
 import './SpaceDashboard.scss';
 import Branding from '../ReusableComponents/Branding';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;

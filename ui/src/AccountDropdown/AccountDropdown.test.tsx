@@ -26,8 +26,9 @@ import {RunConfig} from '../index';
 import {GlobalStateProps} from '../Redux/Reducers';
 import AccountDropdown from './AccountDropdown';
 import configureStore from 'redux-mock-store';
-import {AvailableActions, AvailableModals} from '../Redux/Actions';
+import {AvailableActions} from '../Redux/Actions';
 import ReportClient from '../Reports/ReportClient';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 jest.mock('axios');
 

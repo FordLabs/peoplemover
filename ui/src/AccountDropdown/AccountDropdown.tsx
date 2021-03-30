@@ -59,7 +59,7 @@ function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentU
             <AccessibleDropdownContainer
                 handleClose={(): void => {setDropdownToggle(false);}}
                 className="accountDropdown"
-                dontCloseForTheseIds={[
+                dropdownOptionIds={[
                     'accountDropdownToggle',
                     'accountDropdownToggle-arrow',
                     'accountDropdownToggle-name',

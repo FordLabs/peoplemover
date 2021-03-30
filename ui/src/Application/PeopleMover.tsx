@@ -25,12 +25,12 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
-    AvailableModals,
     fetchLocationsAction,
     fetchProductsAction,
-    fetchProductTagsAction, setCurrentModalAction,
-    setCurrentSpaceAction,
+    fetchProductTagsAction,
+    setCurrentModalAction,
     setPeopleAction,
+    setupSpaceAction,
 } from '../Redux/Actions';
 import SpaceSelectionTabs from '../Header/SpaceSelectionTabs';
 import SubHeader from '../Header/NewSubHeader';
@@ -50,6 +50,7 @@ import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -64,9 +65,10 @@ export interface PeopleMoverProps {
     fetchProducts(): Array<Product>;
     fetchProductTags(): Array<ProductTag>;
     fetchLocations(): Array<LocationTag>;
-    setCurrentSpace(space: Space): Space;
     setPeople(people: Array<Person>): Array<Person>;
     setCurrentModal(modalState: CurrentModalState): void;
+    setSpace(space: Space): void;
+
 }
 
 function PeopleMover({
@@ -78,7 +80,7 @@ function PeopleMover({
     fetchProducts,
     fetchProductTags,
     fetchLocations,
-    setCurrentSpace,
+    setSpace,
     setPeople,
     setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
@@ -118,11 +120,11 @@ function PeopleMover({
             SpaceClient.getSpaceFromUuid(uuid)
                 .then((response) => {
                     const space = response.data;
-                    setCurrentSpace(space);
+                    setSpace(space);
                 })
                 .catch(handleErrors);
         }
-    }, [currentModal, setCurrentSpace, handleErrors]);
+    }, [currentModal, setSpace, handleErrors]);
 
     useEffect(() => {
         if (currentSpace && currentSpace.uuid) {
@@ -207,8 +209,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchProducts: () => dispatch(fetchProductsAction()),
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
     fetchLocations: () => dispatch(fetchLocationsAction()),
-    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
+    setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 

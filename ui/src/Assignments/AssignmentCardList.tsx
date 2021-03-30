@@ -18,7 +18,7 @@
 import React, {RefObject, useEffect, useState} from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
-import {AvailableModals, fetchProductsAction, setCurrentModalAction, setIsDragging} from '../Redux/Actions';
+import {fetchProductsAction, setCurrentModalAction, setIsDragging} from '../Redux/Actions';
 import {
     AssignmentCardRefAndAssignmentPair,
     getProductUserDroppedAssignmentOn,
@@ -33,9 +33,10 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import AssignmentClient from './AssignmentClient';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import {Space} from '../Space/Space';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface AssignmentCardListProps {
     product: Product;

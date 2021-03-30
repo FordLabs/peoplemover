@@ -17,10 +17,11 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {Product} from './Product';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface ArchiveProductProps{
     product: Product;

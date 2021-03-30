@@ -18,7 +18,6 @@
 import React, {RefObject, useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {
-    AvailableModals,
     fetchProductsAction,
     registerProductRefAction,
     setCurrentModalAction,
@@ -37,6 +36,7 @@ import {Space} from '../Space/Space';
 import {createDataTestId} from '../tests/TestUtils';
 
 import './Product.scss';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface ProductCardProps {
     product: Product;

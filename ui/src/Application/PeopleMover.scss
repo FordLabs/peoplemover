@@ -127,7 +127,8 @@ textarea:focus {
 body:not(.user-is-tabbing) {
   button:focus,
   a:focus,
-  div:focus {
+  div:focus,
+  input:focus, {
     box-shadow: none;
   }
 }

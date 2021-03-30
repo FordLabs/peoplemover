@@ -17,14 +17,17 @@
 
 import React from 'react';
 import './NewSubHeader.scss';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import NewCalendar from '../Calendar/NewCalendar';
 import {GlobalStateProps} from '../Redux/Reducers';
-import NewProductSortBy from '../ReusableComponents/NewProductSortBy';
+import NewProductSortBy from '../SortingAndFiltering/NewProductSortBy';
+import NewFilter from '../SortingAndFiltering/NewFilter';
+import NavigationSection from '../ReusableComponents/NavigationSection';
+import {FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
 
 interface Props {
     isReadOnly: boolean;
@@ -59,20 +62,11 @@ function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
                 )}
             </div>
             {isReadOnly ? <></> : <div className="rightContent">
-                <button
-                    className={`selectionTabButton tab`}
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
-                    data-testid="myTagsButton">
-                    <i className="material-icons myTagsIcon" aria-hidden data-testid="myTagsIcon">local_offer</i>
-                    My Tags
-                </button>
-                <button
-                    className={`selectionTabButton tab`}
-                    data-testid="myRolesButton"
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
-                    <i className="material-icons myRolesIcon" aria-hidden data-testid="myRolesIcon">assignment_ind</i>
-                    My Roles
-                </button>
+                <NavigationSection label="Filter by" icon="filter_list">
+                    <NewFilter filterType={FilterTypeListings.Location}/>
+                    <NewFilter filterType={FilterTypeListings.ProductTag}/>
+                    <NewFilter filterType={FilterTypeListings.Role}/>
+                </NavigationSection>
                 <NewProductSortBy/>
             </div>}
         </div>

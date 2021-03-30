@@ -29,6 +29,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {createEmptySpace} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
 import thunk from 'redux-thunk';
+
 declare let window: MatomoWindow;
 
 jest.mock('axios');
@@ -172,23 +173,13 @@ describe('PeopleMover', () => {
             await app.findByText(/Nov 14, 2020/);
         });
 
-        it('Should contains My Tags on initial load of People Mover', async () => {
-            await app.findByText('My Tags');
-            await app.findByTestId('myTagsIcon');
-        });
-
-        it('should display My Roles button on startup', async () => {
-            await app.findByText('My Roles');
-            await app.findByTestId('myRolesIcon');
-        });
-
         it('should display Sort By dropdown on startup', async () => {
             await app.findByText('Sort By:');
             await app.findByText('Alphabetical');
         });
 
         it('should display Filter option on startup', async () => {
-            await app.findByText('Filter:');
+            await app.findByText('Filter by:');
         });
 
         it('should show the Flabs branding on load', async () => {

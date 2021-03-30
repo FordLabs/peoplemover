@@ -18,7 +18,7 @@
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import MaskedInput from 'react-text-mask';
-import React, {PropsWithChildren, useState} from 'react';
+import React, {useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Product} from './Product';

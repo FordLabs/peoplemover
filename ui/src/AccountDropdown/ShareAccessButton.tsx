@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import React from 'react';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface Props {
     setCurrentModal(modalState: CurrentModalState): void;

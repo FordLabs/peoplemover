@@ -23,8 +23,9 @@ import SpaceDashboardTile from './SpaceDashboardTile';
 import TestUtils from '../tests/TestUtils';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {act} from 'react-dom/test-utils';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 describe('SpaceDashboardTile tests', () => {
     let component: RenderResult;

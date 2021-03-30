@@ -20,7 +20,6 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import {connect} from 'react-redux';
 import {
-    AvailableModals,
     closeModalAction,
     setCurrentModalAction,
 } from '../Redux/Actions';
@@ -37,6 +36,7 @@ import moment from 'moment';
 import FormButton from '../ModalFormComponents/FormButton';
 import {Space} from '../Space/Space';
 import SelectWithCreateOption, { MetadataReactSelectProps } from '../ModalFormComponents/SelectWithCreateOption';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 interface AssignmentFormProps {
     products: Array<Product>;

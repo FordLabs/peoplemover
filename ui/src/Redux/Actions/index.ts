@@ -20,7 +20,6 @@ import {CurrentModalState} from '../Reducers/currentModalReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
-import {AllGroupedTagFilterOptions} from '../../ReusableComponents/ProductFilter';
 import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
@@ -29,6 +28,7 @@ import ProductTagClient from '../../ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
+import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterConstants';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -50,23 +50,6 @@ export enum AvailableActions {
     SET_IS_READ_ONLY,
     SET_IS_DRAGGING,
     SET_CURRENT_USER
-}
-
-export enum AvailableModals {
-    CREATE_PRODUCT,
-    CREATE_PRODUCT_OF_PRODUCT_TAG,
-    CREATE_PRODUCT_OF_LOCATION,
-    EDIT_PRODUCT,
-    CREATE_PERSON,
-    EDIT_PERSON,
-    CREATE_ASSIGNMENT,
-    ASSIGNMENT_EXISTS_WARNING,
-    MY_TAGS,
-    MY_ROLES_MODAL,
-    CREATE_SPACE,
-    EDIT_SPACE,
-    SHARE_SPACE_ACCESS,
-    GRANT_EDIT_ACCESS_CONFIRMATION,
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({
@@ -223,3 +206,15 @@ export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, nul
                 dispatch(setLocationsAction(locations));
             });
     };
+
+export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (
+    space: Space
+) => (
+    dispatch: Dispatch,
+): Promise<void> => {
+    dispatch(setCurrentSpaceAction(space));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return getFilterOptionsForSpace(space.uuid!).then((filterOptions: Array<AllGroupedTagFilterOptions>) => {
+        dispatch(setAllGroupedTagFilterOptionsAction(filterOptions));
+    });
+};

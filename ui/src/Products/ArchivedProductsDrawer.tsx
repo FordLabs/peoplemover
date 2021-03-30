@@ -24,7 +24,6 @@ import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
-import '../Application/Styleguide/Main.scss';
 
 interface ArchivedProductsDrawerProps{
     products: Array<Product>;

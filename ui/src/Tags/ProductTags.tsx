@@ -119,7 +119,6 @@ const ProductTags = ({
     return (
         <div data-testid={createDataTestId('tagsModalContainer', tagType)}
             className="myTraitsModalContainer">
-            <div className="title">Product Tags</div>
             {productTags.map((productTag: Tag, index: number) => {
                 return (
                     <React.Fragment key={index}>

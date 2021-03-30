@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-import {AvailableActions, AvailableModals} from '../Actions';
+import {AvailableActions} from '../Actions';
+import {AvailableModals} from '../../Modal/AvailableModals';
 
 export interface CurrentModalState {
     modal: AvailableModals | null;

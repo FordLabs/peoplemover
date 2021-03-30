@@ -19,11 +19,11 @@ import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {connect} from 'react-redux';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
-import {AllGroupedTagFilterOptions} from '../ReusableComponents/ProductFilter';
 import moment from 'moment';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
 
 interface ProductListProps {
     products: Array<Product>;

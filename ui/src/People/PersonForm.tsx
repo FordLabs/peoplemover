@@ -39,8 +39,7 @@ import moment from 'moment';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
-import SelectWithCreateOption from '../ModalFormComponents/SelectWithCreateOption';
-import { MetadataReactSelectProps } from '../ModalFormComponents/SelectWithCreateOption';
+import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 
 import './PersonForm.scss';
 

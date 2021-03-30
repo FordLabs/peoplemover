@@ -19,12 +19,13 @@ import React, {ChangeEvent, CSSProperties, FormEvent, useEffect, useState} from 
 import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {AvailableModals, closeModalAction, setCurrentModalAction} from '../Redux/Actions';
+import {closeModalAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 import './InviteEditorsFormSection.scss';
 import UserAccessList from '../ReusableComponents/UserAccessList';

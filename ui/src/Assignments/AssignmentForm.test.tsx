@@ -24,7 +24,8 @@ import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUt
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
-import {AvailableModals, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 describe('AssignmentForm', () => {
     beforeEach(() => {

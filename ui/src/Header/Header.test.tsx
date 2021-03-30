@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'jest-axe';
+import {axe, toHaveNoViolations} from 'jest-axe';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {PreloadedState} from 'redux';
