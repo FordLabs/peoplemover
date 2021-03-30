@@ -37,7 +37,7 @@ describe('Filter Dropdown', () => {
             const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
             const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
             dropdownButton.click();
-            const addLocationButton = await app.findByText('Add/edit your Product Location');
+            const addLocationButton = await app.findByText('Add/Edit your Product Location');
             addLocationButton.click();
             expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.SET_CURRENT_MODAL, modal: AvailableModals.MY_LOCATION_TAGS });
         });
