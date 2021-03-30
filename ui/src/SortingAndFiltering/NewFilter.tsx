@@ -106,7 +106,7 @@ function NewFilter({
                 data-testid={`open_${formattedFilterTypeValue}_modal_button`}
                 onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}
             >
-                <span>{`Add/edit your ${filterType.label}`}</span>
+                <span>{`Add/Edit your ${filterType.label}`}</span>
                 <i className="material-icons">keyboard_arrow_right</i>
             </button>
         </>;
