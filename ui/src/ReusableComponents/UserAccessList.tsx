@@ -50,6 +50,7 @@ const getPermissionOption = (isUserOwner: boolean): Array<PermissionType> => {
 
 interface UserAccessListProps {
     currentSpace: Space;
+    currentUser: string;
     user: UserSpaceMapping;
     onChange: () => void;
     owner: UserSpaceMapping;
@@ -68,6 +69,84 @@ const UserAccessListOption = ({label, innerProps, isSelected, isFocused}: Option
         </div>
     );
 
+function UserAccessList({
+    currentSpace,
+    currentUser,
+    user,
+    onChange,
+    owner,
+    isUserOwner,
+}: UserAccessListProps): JSX.Element {
+    const [displayOwnerChangeConfirmationModal, setDisplayOwnerChangeConfirmationModal] = useState(false);
+    const [displayRevokeSelfEditorStatusConfirmationModal, setDisplayRevokeSelfEditorStatusConfirmationModal] = useState(false);
+
+    // @ts-ignore
+    const onChangeEvent = (value): void => {
+        switch ((value as PermissionType).value) {
+            case 'remove':
+                if (currentUser === user.userId) {
+                    setDisplayRevokeSelfEditorStatusConfirmationModal(true);
+                } else {
+                    SpaceClient.removeUser(currentSpace, user).then(onChange);
+                }
+                break;
+            case 'owner':
+                setDisplayOwnerChangeConfirmationModal(true);
+        }
+    };
+
+    const onSubmitOwnerChange = (): void => {
+        SpaceClient.changeOwner(currentSpace, owner, user).then(onChange);
+    };
+
+    return (
+        <>
+            {displayOwnerChangeConfirmationModal &&
+                <ConfirmationModal
+                    submit={onSubmitOwnerChange}
+                    close={(): void => setDisplayOwnerChangeConfirmationModal(false)}
+                    submitButtonLabel="Yes"
+                    closeButtonLabel="No"
+                    title="Make this person the owner?"
+                    content={<div>By making this person the owner, you will only have editor privileges for this space and will lose the ability to delete the space.</div>} />
+            }
+            {displayRevokeSelfEditorStatusConfirmationModal &&
+                <ConfirmationModal
+                    submit={
+                        (): void => {
+                            SpaceClient.removeUser(currentSpace, user).then(() => {
+                                setDisplayRevokeSelfEditorStatusConfirmationModal(false);
+                            });
+                        }
+                    }
+                    close={(): void => setDisplayRevokeSelfEditorStatusConfirmationModal(false)}
+                    submitButtonLabel="Yes"
+                    closeButtonLabel="No"
+                    title="Are you sure?"
+                    content={
+                        <p>Removing yourself as editor will immediately revoke your access to this space.<br/>
+                            <br/>
+                            Do you still want to remove yourself as editor?
+                        </p>
+                    } />
+            }
+            <Select
+                styles={userAccessStyle}
+                id="userAccess-dropdown"
+                className="userAccess-dropdown"
+                classNamePrefix="userAccess"
+                inputId="userAccess-dropdown-input"
+                aria-label={user.permission}
+                options={getPermissionOption(isUserOwner)}
+                value={permissionOption[0]}
+                onChange={onChangeEvent}
+                isSearchable={false}
+                components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
+        </>
+    );
+}
+
+export default UserAccessList;
 
 const userAccessStyle = {
     ...reactSelectStyles,
@@ -103,56 +182,3 @@ const userAccessStyle = {
         padding: '0px',
     }),
 };
-
-function UserAccessList({
-    currentSpace,
-    user,
-    onChange,
-    owner,
-    isUserOwner,
-}: UserAccessListProps): JSX.Element {
-    const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
-
-    // @ts-ignore
-    const onChangeEvent = (value): void => {
-        switch ((value as PermissionType).value) {
-            case 'remove':
-                SpaceClient.removeUser(currentSpace, user).then(onChange);
-                break;
-            case 'owner':
-                setDisplayConfirmationModal(true);
-        }
-    };
-
-    const onSubmitOwnerChange = (): void => {
-        SpaceClient.changeOwner(currentSpace, owner, user).then(onChange);
-    };
-
-    return (
-        <>
-            {displayConfirmationModal &&
-                <ConfirmationModal
-                    submit={onSubmitOwnerChange}
-                    close={(): void => setDisplayConfirmationModal(false)}
-                    submitButtonLabel="Yes"
-                    closeButtonLabel="No"
-                    title="Make this person the owner?"
-                    content={<div>By making this person the owner, you will only have editor privileges for this space and will lose the ability to delete the space.</div>} />
-            }
-            <Select
-                styles={userAccessStyle}
-                id="userAccess-dropdown"
-                className="userAccess-dropdown"
-                classNamePrefix="userAccess"
-                inputId="userAccess-dropdown-input"
-                aria-label={user.permission}
-                options={getPermissionOption(isUserOwner)}
-                value={permissionOption[0]}
-                onChange={onChangeEvent}
-                isSearchable={false}
-                components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
-        </>
-    );
-}
-
-export default UserAccessList;
