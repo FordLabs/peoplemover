@@ -184,8 +184,7 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=confirmDeleteButton]').click();
 
             cy.get('[data-testid=userListItem__USER_ID]')
-                .find(':contains("Editor")').eq(0)
-                .click();
+                .find('#userAccess-dropdown').click();
 
             cy.get('[data-testid=userAccessOptionLabel]').eq(1).click();
 
