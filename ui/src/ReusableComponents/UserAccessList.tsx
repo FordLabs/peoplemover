@@ -126,10 +126,10 @@ function UserAccessList({
                     closeButtonLabel="No"
                     title="Are you sure?"
                     content={
-                        <p>Removing yourself as editor will immediately revoke your access to this space.<br/>
+                        <div>Removing yourself as editor will immediately revoke your access to this space.<br/>
                             <br/>
                             Do you still want to remove yourself as editor?
-                        </p>
+                        </div>
                     } />
             }
             <Select
