@@ -191,26 +191,26 @@ describe('Share Access Form', () => {
             cy.wait('@getAllUsers')
                 .should((xhrs) => {
                     expect(xhrs.status).to.equal(200);
+                }).then(() => {
+                    cy.get('[data-testid=userListItem__USER_ID]')
+                        .find(':contains("Editor")').eq(0)
+                        .click();
+
+                    cy.get('[data-testid=userAccessOptionLabel]').eq(1).click();
+
+                    cy.get('[data-testid=confirmDeleteButton]').click();
+
+                    cy.wait('@removeUserFromSpace')
+                        .should((xhrs) => {
+                            expect(xhrs.status).to.equal(200);
+                        });
+
+                    cy.window().then((win) => {
+                        expect(win.location.pathname).to.equal('/user/dashboard');
+                    });
+
+                    cy.get('[data-testid=spaceDashboardTile]').should('not.exist');
                 });
-
-            cy.get('[data-testid=userListItem__USER_ID]')
-                .find(':contains("Editor")').eq(0)
-                .click();
-
-            cy.get('[data-testid=userAccessOptionLabel]').eq(1).click();
-
-            cy.get('[data-testid=confirmDeleteButton]').click();
-
-            cy.wait('@removeUserFromSpace')
-                .should((xhrs) => {
-                    expect(xhrs.status).to.equal(200);
-                });
-
-            cy.window().then((win) => {
-                expect(win.location.pathname).to.equal('/user/dashboard');
-            });
-
-            cy.get('[data-testid=spaceDashboardTile]').should('not.exist');
         });
     });
 });
