@@ -68,6 +68,17 @@ function NewFilter({
 
     const formattedFilterTypeValue = filterType.label.replace(' ', '_');
 
+    const getNumberOfSelectedFiltersAsString = (): string => {
+        let numberOfSelectedFilters = 0;
+        if (allGroupedTagFilterOptions[index] && allGroupedTagFilterOptions[index].options)
+            numberOfSelectedFilters = allGroupedTagFilterOptions[index].options.filter(item => item.selected).length;
+        return (numberOfSelectedFilters === 0 ? 'All' : numberOfSelectedFilters.toString());
+    };
+
+    const getNumberOfSelectedFiltersStyle = (): string => {
+        return (getNumberOfSelectedFiltersAsString() === 'All' ? 'dropdown_filter_count_style_default' : 'dropdown_filter_count_style_badge');
+    };
+
     const dropdownContent =
         <>
             <div className="sortby-option-container">
@@ -116,6 +127,11 @@ function NewFilter({
             <span className="dropdown-label" id={`dropdown-label_${formattedFilterTypeValue}`}>
                 {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
                     && filterType.label}:
+            </span>
+            <span
+                data-testid={`filter_count_${formattedFilterTypeValue}`}
+                className={getNumberOfSelectedFiltersStyle()}>
+                {getNumberOfSelectedFiltersAsString()}
             </span>
         </>;
 

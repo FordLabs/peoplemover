@@ -65,4 +65,50 @@ describe('Filter Dropdown', () => {
             expect(firstCheckbox).toBeChecked();
         });
     });
+
+    describe('Filter Count', () => {
+        it('should show the right number of filters that are selected', async () => {
+            store = createStore(rootReducer, {
+                allGroupedTagFilterOptions: [
+                    {
+                        label: 'Location Tags:', options: [
+                            {label: 'foo', value: 'foo', selected: true},
+                            {label: 'bar', value: 'bar', selected: false},
+                            {label: 'goo', value: 'goo', selected: false},
+                        ],
+                    },
+                    {label: 'Product Tags:', options: []},
+                    {label: 'Role Tags:', options: []},
+                ],
+            });
+            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
+            const locationCounter = await app.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            expect(locationCounter).toContainHTML('1');
+            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            dropdownButton.click();
+            const secondCheckbox = await app.findByLabelText('bar');
+            secondCheckbox.click();
+            dropdownButton.click();
+            expect(locationCounter).toContainHTML('2');
+        });
+
+        it('should show the right number of filters that are selected', async () => {
+            store = createStore(rootReducer, {
+                allGroupedTagFilterOptions: [
+                    {
+                        label: 'Location Tags:', options: [
+                            {label: 'foo', value: 'foo', selected: false},
+                            {label: 'bar', value: 'bar', selected: false},
+                            {label: 'goo', value: 'goo', selected: false},
+                        ],
+                    },
+                    {label: 'Product Tags:', options: []},
+                    {label: 'Role Tags:', options: []},
+                ],
+            });
+            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
+            const locationCounter = await app.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            expect(locationCounter).toContainHTML('All');
+        });
+    });
 });

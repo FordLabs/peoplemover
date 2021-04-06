@@ -34,7 +34,22 @@
     font-size: 0.875rem;
     color: $gray-1 !important;
     min-width: 50px;
-    font-weight: 400;;
+    font-weight: 400;
+  }
+
+  .dropdown_filter_count_style_default, .dropdown_filter_count_style_badge {
+    width: 22px;
+    font-weight: bold;
+  }
+
+  .dropdown_filter_count_style_badge {
+    height: 22px;
+    border-radius: 50%;
+    background-color: $purple-title;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .dropdown-group {
