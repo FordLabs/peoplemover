@@ -159,6 +159,59 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=userListItem__ELISE]')
                 .should('contain.text', 'owner');
         });
+
+        it('Revoking your own editor access should show a confirmation modal and redirect you to the dashboard on accept', () => {
+            cy.server();
+            cy.route('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
+            cy.route('PUT', `${Cypress.env('API_USERS_PATH')}/ELISE`).as('putChangeOwner');
+            cy.route('GET', Cypress.env('API_USERS_PATH')).as('getAllUsers');
+            cy.route('DELETE', `${Cypress.env('API_USERS_PATH')}/USER_ID`).as('removeUserFromSpace');
+
+
+            cy.get('[id=emailTextarea]').focus().clear().type('Elise');
+            cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
+
+            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
+
+            openShareAccessForm();
+            expandInviteToEditModalCard();
+            cy.get('[data-testid=userListItem__ELISE]')
+                .find(':contains("Editor")').eq(0)
+                .click();
+
+            cy.get('[data-testid=userAccessOptionLabel]').eq(1).click();
+
+            cy.get('[data-testid=confirmDeleteButton]').click();
+
+            cy.wait('@putChangeOwner')
+                .should((xhrs) => {
+                    expect(xhrs.status).to.equal(200);
+                });
+
+            cy.wait('@getAllUsers')
+                .should((xhrs) => {
+                    expect(xhrs.status).to.equal(200);
+                }).then(() => {
+                    cy.get('[data-testid=userListItem__USER_ID]')
+                        .find(':contains("Editor")').eq(0)
+                        .click();
+
+                    cy.get('[data-testid=userAccessOptionLabel]').eq(1).click();
+
+                    cy.get('[data-testid=confirmDeleteButton]').click();
+
+                    cy.wait('@removeUserFromSpace')
+                        .should((xhrs) => {
+                            expect(xhrs.status).to.equal(200);
+                        });
+
+                    cy.window().then((win) => {
+                        expect(win.location.pathname).to.equal('/user/dashboard');
+                    });
+
+                    cy.get('[data-testid=spaceDashboardTile]').should('not.exist');
+                });
+        });
     });
 });
 

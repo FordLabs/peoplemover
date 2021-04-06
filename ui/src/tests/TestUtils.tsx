@@ -116,6 +116,7 @@ export function mockCreateRange(): () => void {
 }
 
 class TestUtils {
+
     static mockClientCalls(): void {
         const emptyAxiosResponse = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
@@ -128,12 +129,14 @@ class TestUtils {
         PeopleClient.updatePerson = emptyAxiosResponse;
         PeopleClient.removePerson = emptyAxiosResponse;
 
+        SpaceClient.removeUser = emptyAxiosResponse;
+
         SpaceClient.getSpaceFromUuid = jest.fn(() => Promise.resolve({
             data: TestUtils.space,
         } as AxiosResponse));
 
         SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
-            [{'userId': 'user_id', 'permission': 'owner'}, {'userId': 'user_id_2', 'permission': 'editor'}] as UserSpaceMapping[]));
+            TestUtils.spaceMappingsArray as UserSpaceMapping[]));
 
         AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({
             data: [TestUtils.assignmentForPerson1],
@@ -433,6 +436,14 @@ class TestUtils {
         lastModifiedDate: TestUtils.originDateString,
         todayViewIsPublic: true,
     }
+
+    static spaceMappingsArray: UserSpaceMapping[] = [
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        {id: '1', spaceUuid: TestUtils.space.uuid!!, userId: 'user_id', permission: 'owner'},
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        {id: '2', spaceUuid: TestUtils.space.uuid!!, userId: 'user_id_2', permission: 'editor'},
+    ];
+
 
     static allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
         {
