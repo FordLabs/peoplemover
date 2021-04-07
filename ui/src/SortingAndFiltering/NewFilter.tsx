@@ -109,7 +109,7 @@ function NewFilter({
 
     const getClearFilterButton = (): ReactNode => {
         if (areFiltersSelected) {
-            return <button className="material-icons"
+            return <button className="material-icons clear-filter-button"
                 data-testid={`clear_selected_filter_${formattedFilterTypeValue}`}
                 onClick={clearFilter}
             >

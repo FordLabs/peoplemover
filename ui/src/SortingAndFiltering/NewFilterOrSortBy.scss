@@ -40,6 +40,7 @@
   .dropdown_filter_count_style_default, .dropdown_filter_count_style_badge {
     width: 22px;
     font-weight: bold;
+    margin-right: 30px
   }
 
   .dropdown_filter_count_style_badge {
@@ -53,6 +54,17 @@
   }
 
   .dropdown-group {
+
+    .testttt {
+      display: flex;
+      position: relative;
+
+      .clear-filter-button {
+        left: -65px;
+        position: absolute;
+        background-color: white;
+      }
+    }
 
     .dropdown-button {
       border: 1px solid transparent;
