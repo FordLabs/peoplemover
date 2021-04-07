@@ -171,7 +171,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
             if (user.permission !== 'owner') {
                 const spaceOwner = usersList.filter(user => user.permission === 'owner')[0];
                 const isUserOwner = spaceOwner.userId === currentUser;
-                return <UserAccessList currentSpace={currentSpace} user={user} onChange={(): void => {getUsers(currentSpace, setUsersList);}} owner={spaceOwner} isUserOwner={isUserOwner}/>;
+                return <UserAccessList currentSpace={currentSpace} user={user} currentUser={currentUser} onChange={(): void => {getUsers(currentSpace, setUsersList);}} owner={spaceOwner} isUserOwner={isUserOwner}/>;
             } else {
                 return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
             }
