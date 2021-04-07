@@ -28,6 +28,7 @@ import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import configureStore from 'redux-mock-store';
 import PeopleClient from '../People/PeopleClient';
+import RedirectClient from '../Utils/RedirectClient';
 
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();
@@ -38,6 +39,7 @@ describe('Invite Editors Form', function() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
         cookies.set('accessToken', '123456');
+        RedirectClient.redirect = jest.fn();
     });
 
     describe('feature toggle enabled', () => {
@@ -353,6 +355,8 @@ describe('Invite Editors Form', function() {
                 await wait(() => {
                     expect(PeopleClient.removePerson).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]);
                     expect(component.queryByText('Are you sure?')).not.toBeInTheDocument();
+                    expect(RedirectClient.redirect).toHaveBeenCalledWith('/user/dashboard');
+
                 });
             });
         });
