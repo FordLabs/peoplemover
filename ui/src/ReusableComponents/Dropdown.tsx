@@ -9,9 +9,10 @@ interface DropdownProps {
     dropdownTestId?: string;
     buttonTestId?: string;
     closeOnSelect?: boolean;
+    clearFilterButton?: ReactNode;
 }
 
-export default function Dropdown({buttonId, dropdownButtonContent, dropdownContent, dropdownOptionIds, dropdownTestId, buttonTestId, closeOnSelect = false}: DropdownProps): JSX.Element {
+export default function Dropdown({buttonId, dropdownButtonContent, dropdownContent, dropdownOptionIds, dropdownTestId, buttonTestId, closeOnSelect = false, clearFilterButton}: DropdownProps): JSX.Element {
 
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
@@ -35,6 +36,8 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
                     : <i className="material-icons greyIcon" >keyboard_arrow_down</i>
                 }
             </button>
+            {clearFilterButton}
+
             {dropdownToggle &&
                 <div className="dropdown-contents-container">
                     <AccessibleDropdownContainer

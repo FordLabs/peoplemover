@@ -23,6 +23,7 @@ import {FilterTypeListings} from './FilterConstants';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {RenderResult} from '@testing-library/react';
 
 describe('Filter Dropdown', () => {
     let store: import('redux').Store<import('redux').AnyAction>;
@@ -67,48 +68,67 @@ describe('Filter Dropdown', () => {
     });
 
     describe('Filter Count', () => {
-        it('should show the right number of filters that are selected', async () => {
+        let appLocation: RenderResult;
+        let appRole: RenderResult;
+
+        beforeEach(() => {
             store = createStore(rootReducer, {
                 allGroupedTagFilterOptions: [
                     {
                         label: 'Location Tags:', options: [
                             {label: 'foo', value: 'foo', selected: true},
-                            {label: 'bar', value: 'bar', selected: false},
+                            {label: 'bar', value: 'bar', selected: true},
                             {label: 'goo', value: 'goo', selected: false},
                         ],
                     },
-                    {label: 'Product Tags:', options: []},
+                    {
+                        label: 'Product Tags:', options: [
+                            {label: 'pt1', value: 'pt1', selected: true},
+                        ],
+                    },
                     {label: 'Role Tags:', options: []},
                 ],
             });
-            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
-            const locationCounter = await app.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            expect(locationCounter).toContainHTML('1');
-            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            dropdownButton.click();
-            const secondCheckbox = await app.findByLabelText('bar');
-            secondCheckbox.click();
-            dropdownButton.click();
-            expect(locationCounter).toContainHTML('2');
+            appLocation = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
+            appRole = renderWithRedux(<NewFilter filterType={FilterTypeListings.Role}/>, store, undefined);
         });
 
         it('should show the right number of filters that are selected', async () => {
-            store = createStore(rootReducer, {
-                allGroupedTagFilterOptions: [
-                    {
-                        label: 'Location Tags:', options: [
-                            {label: 'foo', value: 'foo', selected: false},
-                            {label: 'bar', value: 'bar', selected: false},
-                            {label: 'goo', value: 'goo', selected: false},
-                        ],
-                    },
-                    {label: 'Product Tags:', options: []},
-                    {label: 'Role Tags:', options: []},
-                ],
-            });
-            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
-            const locationCounter = await app.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            const locationCounter = await appLocation.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            expect(locationCounter).toContainHTML('2');
+            const dropdownButton = await appLocation.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            dropdownButton.click();
+            const thirdCheckbox = await appLocation.findByLabelText('goo');
+            thirdCheckbox.click();
+            dropdownButton.click();
+            expect(locationCounter).toContainHTML('3');
+        });
+
+        it('should show \'All\' when no filters are selected', async () => {
+            const locationCounter = await appRole.findByTestId(`filter_count_${FilterTypeListings.Role.label.replace(' ', '_')}`);
             expect(locationCounter).toContainHTML('All');
+        });
+
+        it('should show the clear filter button when there are filters selected', async () => {
+            const locationCounter = await appLocation.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            await appLocation.findByTestId(`clear_selected_filter_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            expect(locationCounter).toContainHTML('2');
+        });
+
+        it('should clear the selected filters when clicking the clear filter button', async () => {
+            const locationCounter = await appLocation.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            const clearSelectedFiltersIcon = await appLocation.findByTestId(`clear_selected_filter_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            expect(locationCounter).toContainHTML('2');
+            clearSelectedFiltersIcon.click();
+            expect(store.getState().allGroupedTagFilterOptions[0].options.filter((item: { selected: boolean}) => item.selected).length).toEqual(0);
+            expect(store.getState().allGroupedTagFilterOptions[1].options.filter((item: { selected: boolean}) => item.selected).length).toEqual(1);
+        });
+
+        it('should not show the x to clear the selected filters when there are no filters selected', async () => {
+            const locationCounter = await appRole.findByTestId(`filter_count_${FilterTypeListings.Role.label.replace(' ', '_')}`);
+            const clearSelectedFiltersIcon = appRole.queryByTestId(`clear_selected_filter_${FilterTypeListings.Role.label.replace(' ', '_')}`);
+            expect(locationCounter).toContainHTML('All');
+            expect(clearSelectedFiltersIcon).toBeNull();
         });
     });
 });
