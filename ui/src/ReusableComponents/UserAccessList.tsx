@@ -29,6 +29,7 @@ import './UserAccessList.scss';
 import SpaceClient from '../Space/SpaceClient';
 import ConfirmationModal from '../Modal/ConfirmationModal';
 import {dashboardUrl} from '../Routes';
+import RedirectClient from '../Utils/RedirectClient';
 
 interface PermissionType {
     label: string;
@@ -117,7 +118,7 @@ function UserAccessList({
                         (): void => {
                             SpaceClient.removeUser(currentSpace, user).then(() => {
                                 setDisplayRevokeSelfEditorStatusConfirmationModal(false);
-                                window.location.href = `${window.location.origin}${dashboardUrl}`;
+                                RedirectClient.redirect(dashboardUrl);
                             });
                         }
                     }
