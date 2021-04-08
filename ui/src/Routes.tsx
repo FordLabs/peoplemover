@@ -29,7 +29,7 @@ import ErrorPageTemplate from './Application/ErrorPageTemplate';
 import AnimatedImageSrc from './Application/Assets/404.gif';
 import errorImageSrc from './Application/Assets/403.png';
 
-const dashboardUrl = '/user/dashboard';
+export const dashboardUrl = '/user/dashboard';
 const notFoundUrl = '/error/404';
 const forbiddenUrl = '/error/403';
 

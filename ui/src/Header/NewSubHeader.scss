@@ -21,11 +21,11 @@
     display: flex;
     justify-content: space-between;
     background-color: $gray-5;
-    max-height: 3.625rem;
     min-height: 3.625rem;
     z-index: 1;
     position: sticky;
-    top: 68px;
+    top: 61px;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
 
     .tab {
         background-color: $gray-5;
