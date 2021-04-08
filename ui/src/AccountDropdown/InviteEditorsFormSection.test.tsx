@@ -43,14 +43,6 @@ describe('Invite Editors Form', function() {
     });
 
     describe('feature toggle enabled', () => {
-        beforeEach(() => {
-            window.location.hash = '#perm';
-        });
-
-        afterEach(() => {
-            window.location.hash = '';
-        });
-        
         describe('add editors', () => {
             function renderComponent(): RenderResult {
                 return renderWithRedux(
@@ -360,20 +352,6 @@ describe('Invite Editors Form', function() {
                 });
             });
         });
-    });
-
-    // TODO: Remove as part of Card #180
-    describe('feature toggle disabled', () => {
-        it('should show owners and editors for the space, but not their permissions', async function() {
-            await act(async () => {
-                const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
-                await component.findByText('user_id');
-                expect(component.queryByText('owner')).not.toBeInTheDocument();
-                await component.findByText('user_id_2');
-                expect(component.queryByText(/editor/i)).not.toBeInTheDocument();
-            });
-        });
 
         it('should not open UserAccessList popup', async () => {
             await act(async () => {
@@ -383,42 +361,6 @@ describe('Invite Editors Form', function() {
                 await wait(() => {
                     expect(component.queryByTestId('userAccess')).not.toBeInTheDocument();
                 });
-            });
-        });
-
-        it('should enable the Invite button if a valid email is added', async () => {
-            let component: RenderResult;
-            await act( async () => {
-                component = renderWithRedux(
-                    <InviteEditorsFormSection collapsed={false}/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
-            });
-            await wait(() => {
-                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
-            });
-            await act( async () => {
-                await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
-                    {target: {value: 'hford1@ford.com'}});
-            });
-            await wait(() => {
-                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeEnabled();
-            });
-        });
-
-        it('should not enable the Invite button if an invalid email is added', async () => {
-            let component: RenderResult;
-            await act( async () => {
-                component = renderWithRedux(
-                    <InviteEditorsFormSection collapsed={false}/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
-            });
-            await wait(() => {
-                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
-            });
-            await act( async () => {
-                await fireEvent.change(component.getByLabelText(/People with this permission can edit/),
-                    {target: {value: 'invalid, email, '}});
-            });
-            await wait(() => {
-                expect(component.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
             });
         });
     });

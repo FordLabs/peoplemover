@@ -72,8 +72,6 @@ const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMappin
 
 function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: InviteEditorsFormProps): JSX.Element {
     const isExpanded = !collapsed;
-    // TODO: Remove as part of Card #180
-    const [invitedUserEmails, setInvitedUserEmails] = useState<string[]>([]);
     const [invitedUserIds, setInvitedUserIds] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
@@ -84,42 +82,26 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         DropdownIndicator: null,
     };
 
-    // TODO: Remove as part of Card #180
-    const FEATURE_TOGGLE = window.location.hash === '#perm';
-
     useEffect(() => {
         getUsers(currentSpace, setUsersList);
     }, [currentSpace, setUsersList]);
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
-        if (FEATURE_TOGGLE ) {
-            await SpaceClient.inviteUsersToSpace(currentSpace, invitedUserIds.map(userId => userId.value))
-                .catch(console.error)
-                .finally(() => {
-                    setCurrentModal({modal: AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION});
-                });
-        } else {
-            await SpaceClient.oldInviteUsersToSpace(currentSpace, invitedUserEmails)
-                .catch(console.error)
-                .finally(() => {
-                    setCurrentModal({modal: AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION});
-                });
-        }
+        await SpaceClient.inviteUsersToSpace(currentSpace, invitedUserIds.map(userId => userId.value))
+            .catch(console.error)
+            .finally(() => {
+                setCurrentModal({modal: AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION});
+            });
     };
 
     useEffect(() => {
         const enable = (invitedUserIds.length > 0 && inputValue.trim().length === 0)
-                || (!!inputValue.trim().match(userIdPattern))
-                // TODO: Remove as part of Card #180
-                || (invitedUserEmails.length > 0);
+                || (!!inputValue.trim().match(userIdPattern));
         const errMsg = inputValue.length > 1 && !inputValue.match(userIdPattern);
         setEnableInviteButton(enable);
         setShowErrorMessage(errMsg);
-    }, [invitedUserIds, inputValue,
-        // TODO: Remove as part of Card #180
-        invitedUserEmails,
-    ]);
+    }, [invitedUserIds, inputValue]);
 
     const addUser = (user: string): void => {
         const inputUsers = validate(user);
@@ -150,33 +132,13 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
         }
     }
 
-    // TODO: Remove as part of Card #180
-    const parseEmails = (event: ChangeEvent<HTMLInputElement>): void => {
-        const emails: string[] = event.target.value.split(',')
-            .map((email: string) => email.trim())
-            .filter((email: string) => validateEmail(email));
-        setInvitedUserEmails(emails);
-    };
-
-    // TODO: Remove as part of Card #180
-    const validateEmail = (email: string): boolean => {
-        // eslint-disable-next-line no-useless-escape
-        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-    };
-
-    // TODO: Update as part of Card #180 (remove #perm and else block)
     function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
-        if (window.location.hash === '#perm') {
-            if (user.permission !== 'owner') {
-                const spaceOwner = usersList.filter(user => user.permission === 'owner')[0];
-                const isUserOwner = spaceOwner.userId === currentUser;
-                return <UserAccessList currentSpace={currentSpace} user={user} currentUser={currentUser} onChange={(): void => {getUsers(currentSpace, setUsersList);}} owner={spaceOwner} isUserOwner={isUserOwner}/>;
-            } else {
-                return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
-            }
+        if (user.permission !== 'owner') {
+            const spaceOwner = usersList.filter(user => user.permission === 'owner')[0];
+            const isUserOwner = spaceOwner.userId === currentUser;
+            return <UserAccessList currentSpace={currentSpace} user={user} currentUser={currentUser} onChange={(): void => {getUsers(currentSpace, setUsersList);}} owner={spaceOwner} isUserOwner={isUserOwner}/>;
         } else {
-            return <></>;
+            return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
         }
     }
 
@@ -187,36 +149,25 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
                 <>
                     <label htmlFor="emailTextarea" className="inviteEditorsLabel">
                     People with this permission can edit
-                        {/* // TODO: Remove as part of Card #180*/ }
-                        {FEATURE_TOGGLE ?
-                            <Creatable
-                                className="emailTextarea"
-                                inputId="emailTextarea"
-                                styles={inviteEditorsStyle}
-                                placeholder="Enter CDSID of your editors"
-                                menuIsOpen={false}
-                                isMulti={true}
-                                hideSelectedOptions={true}
-                                isClearable={false}
-                                components={components}
-                                hidden={collapsed}
-                                value={invitedUserIds}
-                                options={invitedUserIds}
-                                onChange={onChange}
-                                onInputChange={onInputChange}
-                                inputValue={inputValue}
-                                onKeyDown={handleKeyDownEvent}
-                                onBlur={(): void => {addUser(inputValue);}}
-                            />
-                            // TODO: Remove as part of Card #180
-                            : <input
-                                id="emailTextarea"
-                                className="emailTextarea legacyEmailTextarea"
-                                placeholder="cdsid@ford.com, cdsid@ford.com"
-                                onChange={parseEmails}
-                                data-testid="inviteEditorsFormEmailTextarea"
-                                hidden={collapsed}
-                            />}
+                        <Creatable
+                            className="emailTextarea"
+                            inputId="emailTextarea"
+                            styles={inviteEditorsStyle}
+                            placeholder="Enter CDSID of your editors"
+                            menuIsOpen={false}
+                            isMulti={true}
+                            hideSelectedOptions={true}
+                            isClearable={false}
+                            components={components}
+                            hidden={collapsed}
+                            value={invitedUserIds}
+                            options={invitedUserIds}
+                            onChange={onChange}
+                            onInputChange={onInputChange}
+                            inputValue={inputValue}
+                            onKeyDown={handleKeyDownEvent}
+                            onBlur={(): void => {addUser(inputValue);}}
+                        />
                         <div className="userIdErrorMessage">
                             { showErrorMessage &&
                                 <>
@@ -233,7 +184,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
                                     <li className="userListItem" key={index} data-testid={`userListItem__${user.userId}`}>
                                         <i className="material-icons editorIcon" aria-hidden>account_circle</i>
                                         <span className="userName" data-testid="userIdName">{user.userId}</span>
-                                        <UserPermission user={user}></UserPermission>
+                                        <UserPermission user={user}/>
                                     </li>
                                 );
                             })}
