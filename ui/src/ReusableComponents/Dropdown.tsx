@@ -41,21 +41,18 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
 
     return (
         <div className="dropdown-group">
-            <div className={'testttt'}>
-                <button
-                    onClick={(): void => {toggleDropdownMenu();}}
-                    id={buttonId}
-                    data-testid={buttonTestId}
-                    className="dropdown-button"
-                >
-                    {dropdownButtonContent}
-                    {dropdownToggle
-                        ? <i className="material-icons greyIcon" id={idArrowUp}>keyboard_arrow_up</i>
-                        : <i className="material-icons greyIcon" >keyboard_arrow_down</i>
-                    }
-                </button>
-                {clearFilterButton}
-            </div>
+            <button
+                onClick={(): void => {toggleDropdownMenu();}}
+                id={buttonId}
+                data-testid={buttonTestId}
+                className="dropdown-button"
+            >
+                {dropdownButtonContent}
+                {dropdownToggle
+                    ? <i className="material-icons greyIcon" id={idArrowUp}>keyboard_arrow_up</i>
+                    : <i className="material-icons greyIcon" >keyboard_arrow_down</i>
+                }
+            </button>
             {dropdownToggle &&
                 <div className="dropdown-contents-container">
                     <AccessibleDropdownContainer
@@ -71,6 +68,7 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
 
                     </AccessibleDropdownContainer>
                 </div>}
+            {clearFilterButton}
         </div>
     );
 }

@@ -38,9 +38,9 @@
   }
 
   .dropdown_filter_count_style_default, .dropdown_filter_count_style_badge {
-    width: 22px;
     font-weight: bold;
-    margin-right: 30px
+    margin-right: 30px;
+    min-width: 22px;
   }
 
   .dropdown_filter_count_style_badge {
@@ -54,29 +54,23 @@
   }
 
   .dropdown-group {
+    position: relative;
 
-    .testttt {
-      display: flex;
-      position: relative;
-
-      .clear-filter-button {
-        left: -65px;
-        position: absolute;
-        background-color: white;
-      }
+    .clear-filter-button {
+      position: absolute;
+      background-color: white;
+      height: 20px;
+      padding: 0 2px;
+      right: 38px;
+      top: 19px;
     }
 
     .dropdown-button {
       border: 1px solid transparent;
       color: $gray-1;
-
-      &:hover {
-        cursor: pointer;
-      }
-
+      width: fit-content;
       flex-wrap: unset;
       background-color: white;
-      width: fit-content;
       margin: .6875rem .3125rem;
       height: 2.25rem;
       display: flex;
@@ -85,6 +79,10 @@
       font-weight: 700;
       font-size: 14px;
       padding: 0 .75rem;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .dropdown {

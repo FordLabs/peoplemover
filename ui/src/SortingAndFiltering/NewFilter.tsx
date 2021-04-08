@@ -182,7 +182,10 @@ function NewFilter({
             buttonId={`NewFilter-button_${formattedFilterTypeValue}`}
             dropdownButtonContent={dropdownButtonContent}
             dropdownContent={dropdownContent}
-            dropdownOptionIds={[`NewFilter-button_${formattedFilterTypeValue}`, `dropdown-label_${formattedFilterTypeValue}`, `dropdown-button-arrow-up_${formattedFilterTypeValue}`, `filter_count_${formattedFilterTypeValue}`]}
+            dropdownOptionIds={[`NewFilter-button_${formattedFilterTypeValue}`,
+                `dropdown-label_${formattedFilterTypeValue}`,
+                `dropdown-button-arrow-up_${formattedFilterTypeValue}`,
+                `filter_count_${formattedFilterTypeValue}`]}
             dropdownTestId={`dropdown_${formattedFilterTypeValue}`}
             buttonTestId={`dropdown_button_${formattedFilterTypeValue}`}
             clearFilterButton={getClearFilterButton()}
