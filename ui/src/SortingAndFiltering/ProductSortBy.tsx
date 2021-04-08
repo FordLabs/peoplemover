@@ -127,7 +127,7 @@ function ProductSortBy({
             <Select
                 styles={sortByStyle}
                 id="sortby-dropdown"
-                className="dropdown sortby-dropdown"
+                className="dropdown old-sortby-dropdown"
                 classNamePrefix="product-sort-by"
                 inputId="sortby-dropdown-input"
                 aria-labelledby="sortby-dropdown-label"
