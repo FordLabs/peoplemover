@@ -51,6 +51,7 @@ import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
+import Counter from '../ReusableComponents/Counter';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -167,6 +168,7 @@ function PeopleMover({
                 <main>
                     {NEW_UI ? <SubHeader/> : <SpaceSelectionTabs/>}
                     <div className="headerSpacer" id="main-content-landing-target"/>
+                    <Counter products={products}/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
                         {!isReadOnly && (
