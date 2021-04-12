@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {setAllGroupedTagFilterOptionsAction, setCurrentModalAction} from '../Redux/Actions';
@@ -44,12 +44,12 @@ function NewFilter({
     setCurrentModal,
 }: NewFilterProps): JSX.Element {
 
-    const index = filterType.index;
+    const filterIndex = filterType.index;
 
-    const updateFilters = (option: FilterOption, ourIndex: number): void => {
+    const updateFilters = (option: FilterOption): void => {
         setAllGroupedTagFilterOptions(
             allGroupedTagFilterOptions.map((aGroupOfTagFilterOptions, index) => {
-                if (index === ourIndex) {
+                if (index === filterIndex) {
                     return {
                         ...aGroupOfTagFilterOptions, options: aGroupOfTagFilterOptions.options.map(anOption => {
                             if (anOption.value === option.value) {
@@ -68,17 +68,69 @@ function NewFilter({
 
     const formattedFilterTypeValue = filterType.label.replace(' ', '_');
 
+    const getNumberOfSelectedFilters = (): number => {
+        let numberOfSelectedFilters = 0;
+        if (allGroupedTagFilterOptions[filterIndex] && allGroupedTagFilterOptions[filterIndex].options) {
+            numberOfSelectedFilters = allGroupedTagFilterOptions[filterIndex].options.filter(item => item.selected).length;
+        }
+        return numberOfSelectedFilters;
+    };
+
+    const getNumberOfSelectedFiltersAsString = (): string => {
+        const numberOfSelectedFilters = getNumberOfSelectedFilters();
+        return (numberOfSelectedFilters === 0 ? 'All' : numberOfSelectedFilters.toString());
+    };
+
+    const areFiltersSelected = (getNumberOfSelectedFilters() > 0);
+
+    const getNumberOfSelectedFiltersStyle = (): string => {
+        return (areFiltersSelected ? 'dropdown_filter_count_style_badge' : 'dropdown_filter_count_style_default');
+    };
+
+    const clearFilter = (): void => {
+        setAllGroupedTagFilterOptions(allGroupedTagFilterOptions.map((aGroupOfTagFilterOptions, index) => {
+            if (index === filterIndex) {
+                return {
+                    ...aGroupOfTagFilterOptions, options: aGroupOfTagFilterOptions.options.map(anOption => {
+                        if (anOption.selected) {
+                            let option = anOption;
+                            option.selected = false;
+                            return option;
+                        } else {
+                            return anOption;
+                        }
+                    }),
+                };
+            } else {
+                return {...aGroupOfTagFilterOptions};
+            }
+        }),);
+    };
+
+    const getClearFilterButton = (): ReactNode => {
+        if (areFiltersSelected) {
+            return <button className="material-icons clear-filter-button"
+                data-testid={`clear_selected_filter_${formattedFilterTypeValue}`}
+                onClick={clearFilter}
+            >
+                close
+            </button>;
+        }
+        return <></>;
+
+    };
+
     const dropdownContent =
         <>
             <div className="sortby-option-container">
                 {allGroupedTagFilterOptions
                 && allGroupedTagFilterOptions.length > 0
-                && allGroupedTagFilterOptions[index].options.map(
+                && allGroupedTagFilterOptions[filterIndex].options.map(
                     (option) => {
                         return (
                         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                             <div key={option.value} onClick={(event): void => {
-                                updateFilters(toggleOption(option), index);
+                                updateFilters(toggleOption(option));
                             }} className="sortby-option">
                                 <input
                                     className="sortby-option-input"
@@ -87,7 +139,7 @@ function NewFilter({
                                     value={option.value}
                                     checked={option.selected}
                                     onChange={(event): void => {
-                                        updateFilters(toggleOption(option), index);
+                                        updateFilters(toggleOption(option));
                                     }}
                                 />
                                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */}
@@ -117,6 +169,12 @@ function NewFilter({
                 {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
                     && filterType.label}:
             </span>
+            <span
+                id={`filter_count_${formattedFilterTypeValue}`}
+                data-testid={`filter_count_${formattedFilterTypeValue}`}
+                className={getNumberOfSelectedFiltersStyle()}>
+                {getNumberOfSelectedFiltersAsString()}
+            </span>
         </>;
 
     return (
@@ -124,9 +182,13 @@ function NewFilter({
             buttonId={`NewFilter-button_${formattedFilterTypeValue}`}
             dropdownButtonContent={dropdownButtonContent}
             dropdownContent={dropdownContent}
-            dropdownOptionIds={[`NewFilter-button_${formattedFilterTypeValue}`, `dropdown-label_${formattedFilterTypeValue}`, `dropdown-button-arrow-up_${formattedFilterTypeValue}`]}
+            dropdownOptionIds={[`NewFilter-button_${formattedFilterTypeValue}`,
+                `dropdown-label_${formattedFilterTypeValue}`,
+                `dropdown-button-arrow-up_${formattedFilterTypeValue}`,
+                `filter_count_${formattedFilterTypeValue}`]}
             dropdownTestId={`dropdown_${formattedFilterTypeValue}`}
             buttonTestId={`dropdown_button_${formattedFilterTypeValue}`}
+            clearFilterButton={getClearFilterButton()}
         />
     );
 }
