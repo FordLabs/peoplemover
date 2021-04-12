@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-// TODO: Rename this file as part of Card #180
 describe('Share Access Form', () => {
     beforeEach(() => {
+        cy.visitSpace();
         openShareAccessForm();
 
         cy.get('[data-testid=modalCard]').eq(0)
@@ -65,10 +65,10 @@ describe('Share Access Form', () => {
 
             cy.get('[data-testid=userIdName]').eq(0).should('contain.text', 'USER_ID');
 
-            cy.get('[id=emailTextarea]').focus().clear().type('aaaaaa#');
+            cy.get('[id=employeeIdTextArea]').focus().clear().type('aaaaaa#');
             cy.get('.primaryButton').should('be.disabled');
 
-            cy.get('[id=emailTextarea]').focus().clear().type('Elise');
+            cy.get('[id=employeeIdTextArea]').focus().clear().type('Elise');
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@postAddPersonToSpace')
@@ -112,7 +112,7 @@ describe('Share Access Form', () => {
             cy.route('PUT', `${Cypress.env('API_USERS_PATH')}/ELISE`).as('putChangeOwner');
             cy.route('GET', Cypress.env('API_USERS_PATH')).as('getAllUsers');
 
-            cy.get('[id=emailTextarea]').focus().clear().type('Elise');
+            cy.get('[id=employeeIdTextArea]').focus().clear().type('Elise');
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@postAddPersonToSpace')

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, CSSProperties, FormEvent, useEffect, useState} from 'react';
+import React, {CSSProperties, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
@@ -147,11 +147,11 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
             {!isExpanded && <span className={'inviteEditorsLabel'}>People with this permission can edit</span>}
             {isExpanded && (
                 <>
-                    <label htmlFor="emailTextarea" className="inviteEditorsLabel">
+                    <label htmlFor="employeeIdTextArea" className="inviteEditorsLabel">
                     People with this permission can edit
                         <Creatable
-                            className="emailTextarea"
-                            inputId="emailTextarea"
+                            className="employeeIdTextArea"
+                            inputId="employeeIdTextArea"
                             styles={inviteEditorsStyle}
                             placeholder="Enter CDSID of your editors"
                             menuIsOpen={false}
