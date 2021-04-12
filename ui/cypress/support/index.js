@@ -52,8 +52,6 @@ before(() => {
     Cypress.env('API_PRODUCT_TAG_PATH', API_PRODUCT_TAG_PATH);
     Cypress.env('API_LOCATION_PATH', API_LOCATION_PATH);
     Cypress.env('API_ASSIGNMENT_PATH', API_ASSIGNMENT_PATH);
-    // TODO: Remove as part of Card #180
-    Cypress.env('API_OLD_INVITE_PEOPLE_PATH', API_OLD_INVITE_PEOPLE_PATH);
     Cypress.env('API_USERS_PATH', API_USERS_PATH);
 });
 

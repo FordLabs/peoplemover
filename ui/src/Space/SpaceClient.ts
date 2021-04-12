@@ -140,24 +140,6 @@ class SpaceClient {
         });
     }
 
-    static async oldInviteUsersToSpace(space: Space, emails: string[]): Promise<AxiosResponse<void>> {
-        const url = `${baseSpaceUrl}/${space.uuid}:invite`;
-        const data = { emails };
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-        return Axios.put(url, data, config).then((result) => {
-            MatomoEvents.pushEvent(space.name, 'inviteUser', emails.join(', '));
-            return result;
-        }).catch((error) => {
-            MatomoEvents.pushEvent(space.name, 'inviteUserError', emails.join(', '), error.code);
-            return Promise.reject(error);
-        });
-    }
-
     static removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
         const url = `${baseSpaceUrl}/${space.uuid}/users/${user.userId}`;
         const config = {

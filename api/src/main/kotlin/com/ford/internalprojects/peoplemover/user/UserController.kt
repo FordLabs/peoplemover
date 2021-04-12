@@ -48,23 +48,6 @@ class UserController(private val userService: UserService) {
         userService.modifyUserPermission(uuid, userId)
     }
 
-    // TODO: Remove as part of Card #180
-    @PreAuthorize("hasPermission(#uuid, 'modify')")
-    @Deprecated("Delete ME use new POST /users endpoint")
-    @PutMapping("/{uuid}:invite")
-    fun oldInviteUsersToSpace(
-            @RequestBody request: OldAuthInviteUsersToSpaceRequest,
-            @PathVariable uuid: String
-    ): ResponseEntity<List<String>> = ResponseEntity.ok(
-            userService.addUsersToSpace(request.emails
-                    .map { it.substringBefore("@") }
-                    .filter { it.isNotBlank() }
-                    .apply {
-                        if (isEmpty())
-                            throw InvalidUserModification()
-                    }, uuid))
-
-
     @PreAuthorize("hasPermission(#uuid, 'modify')")
     @PostMapping("/{uuid}/users")
     fun inviteUsersToSpace(
