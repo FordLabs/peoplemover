@@ -61,14 +61,14 @@ function NewSubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
                     </span>
                 )}
             </div>
-            {isReadOnly ? <></> : <div className="rightContent">
+            <div className="rightContent">
                 <NavigationSection label="Filter by" icon="filter_list">
                     <NewFilter filterType={FilterTypeListings.Location}/>
                     <NewFilter filterType={FilterTypeListings.ProductTag}/>
                     <NewFilter filterType={FilterTypeListings.Role}/>
                 </NavigationSection>
                 <NewProductSortBy/>
-            </div>}
+            </div>
         </div>
     );
 }
