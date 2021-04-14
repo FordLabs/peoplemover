@@ -52,6 +52,8 @@ import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -62,6 +64,7 @@ export interface PeopleMoverProps {
     viewingDate: Date;
     products: Array<Product>;
     isReadOnly: boolean;
+    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     fetchProducts(): Array<Product>;
     fetchProductTags(): Array<ProductTag>;
@@ -78,6 +81,7 @@ function PeopleMover({
     viewingDate,
     products,
     isReadOnly,
+    allGroupedTagFilterOptions,
     fetchProducts,
     fetchProductTags,
     fetchLocations,
@@ -87,8 +91,8 @@ function PeopleMover({
 }: PeopleMoverProps): JSX.Element {
     const [redirect, setRedirect] = useState<JSX.Element>();
 
-    function hasProducts(): boolean {
-        return Boolean(products && products.length > 0 && currentSpace);
+    function hasProductsAndFilters(): boolean {
+        return Boolean(products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0);
     }
 
     const handleErrors = useCallback((error: AxiosError): Error | null => {
@@ -150,7 +154,7 @@ function PeopleMover({
 
     /* eslint-disable */
     useEffect(() => {
-        if (currentSpace && hasProducts()) fetchProducts();
+        if (currentSpace && hasProductsAndFilters()) fetchProducts();
     }, [viewingDate, currentSpace]);
     /* eslint-enable */
 
@@ -159,8 +163,9 @@ function PeopleMover({
     if (redirect) {
         return redirect;
     }
+
     return (
-        !hasProducts()
+        !hasProductsAndFilters()
             ? <></>
             : <div className="App">
                 <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to main content</a>
@@ -168,7 +173,7 @@ function PeopleMover({
                 <main>
                     {NEW_UI ? <SubHeader/> : <SpaceSelectionTabs/>}
                     <div className="headerSpacer" id="main-content-landing-target"/>
-                    <Counter products={products}/>
+                    <Counter products={products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
                         {!isReadOnly && (
@@ -205,6 +210,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: state.viewingDate,
     products: state.products,
     isReadOnly: state.isReadOnly,
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

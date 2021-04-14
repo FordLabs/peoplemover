@@ -15,44 +15,79 @@
  * limitations under the License.
  */
 
-import {Product} from '../Products/Product';
 import React from 'react';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {isActiveProduct, isProductMatchingSelectedFilters, Product} from '../Products/Product';
+import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 interface CounterProps {
     products: Array<Product>;
+    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    viewingDate: Date;
 }
 
 function Counter(props: CounterProps): JSX.Element {
+    let locationFilter = getSelectedFilterLabels(props.allGroupedTagFilterOptions[0].options);
+    let productTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[1].options);
 
     const productCount = (): number => {
-        return props.products.length - 1;
+        let counter = 0;
+        props.products.forEach(product => {
+            if (isActiveProduct(product, props.viewingDate) && isProductMatchingSelectedFilters(product, locationFilter, productTagFilters)) {
+                counter++;
+            }
+        });
+        return counter;
     };
 
     const peopleCount = (): number => {
-        let peopleCount = new Set();
-        props.products.forEach( product => {
-            product.assignments.forEach( assignment => {
-                peopleCount.add(assignment.person.id);
-            });
+        let selectedRoleFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[2].options);
+        let filteredProducts: Array<Product> = [];
+
+        props.products.forEach(product => {
+            if (isActiveProduct(product, props.viewingDate) && isProductMatchingSelectedFilters(product, locationFilter, productTagFilters)) {
+                filteredProducts.push(product);
+            }
         });
 
-        return peopleCount.size;
+        let peopleCount = new Set();
+        filteredProducts.forEach( product => {
+            product.assignments.forEach( assignment => {
+                if (selectedRoleFilters.length > 0) {
+                    if (assignment.person.spaceRole && selectedRoleFilters.includes(assignment.person.spaceRole.name)) {
+                        peopleCount.add(assignment.person.id);
+                    }
+                } else {
+                    peopleCount.add(assignment.person.id);
+                }
+            });
+        });
+        return peopleCount.size + unassignedPeopleCount();
     };
 
     const unassignedPeopleCount = (): number => {
+        let selectedRoleFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[2].options);
 
         let count = 0;
-        props.products.forEach( product => {
+        props.products.forEach(product => {
             if (product.name === 'unassigned') {
-                count = product.assignments.length;
-            }        
+                product.assignments.forEach(assignment => {
+                    if (selectedRoleFilters.length > 0) {
+                        if (assignment.person.spaceRole && selectedRoleFilters.includes(assignment.person.spaceRole.name)) {
+                            count++;
+                        }
+                    } else {
+                        count++;
+                    }
+                });
+            }
         });
         return count;
     };
 
-
     return (
-        <span data-testid="counter">Results: {productCount()} Products, {peopleCount()} People ({unassignedPeopleCount()} Unassigned)</span>
+        <span
+            data-testid="counter">Results: {productCount()} Products, {peopleCount()} People ({unassignedPeopleCount()} Unassigned)</span>
     );
 }
 

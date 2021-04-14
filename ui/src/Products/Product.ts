@@ -18,6 +18,8 @@
 import {ProductTag} from '../ProductTag/ProductTag';
 import {Assignment} from '../Assignments/Assignment';
 import {LocationTag} from '../Locations/LocationTag.interface';
+import moment from 'moment';
+import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 export interface Product {
     id: number;
@@ -52,4 +54,33 @@ const unassignedProductName = 'unassigned';
 
 export function isUnassignedProduct(product: Product): boolean {
     return product.name === unassignedProductName;
+}
+
+export function isActiveProduct(product: Product, viewingDate: Date): boolean {
+    return product.name.toLowerCase() !== 'unassigned'
+        && !product.archived
+        && (product.endDate == null || product.endDate >= moment(viewingDate).format('YYYY-MM-DD'));
+}
+
+export  function isProductMatchingSelectedFilters(product: Product, locationTagFilters: Array<string>, productTagFilters: Array<string>): boolean {
+    let isMatchingLocationFilter = false;
+    let isMatchingProductTagFilter = false;
+
+    if ((product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name))
+        || locationTagFilters.length === 0) {
+        isMatchingLocationFilter = true;
+    }
+
+    if (product.productTags) {
+        const productTagNames: Array<string> = product.productTags.map(productTag => productTag.name);
+        productTagFilters.forEach(productTagFilter => {
+            if (productTagNames.includes(productTagFilter)) {
+                isMatchingProductTagFilter = true;
+            }
+        });
+    }
+    if (productTagFilters.length === 0) {
+        isMatchingProductTagFilter = true;
+    }
+    return isMatchingProductTagFilter && isMatchingLocationFilter;
 }
