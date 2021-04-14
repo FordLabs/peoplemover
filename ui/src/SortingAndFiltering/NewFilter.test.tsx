@@ -21,7 +21,7 @@ import {AvailableActions} from '../Redux/Actions';
 import NewFilter from './NewFilter';
 import {FilterTypeListings} from './FilterConstants';
 import {createStore} from 'redux';
-import rootReducer from '../Redux/Reducers';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {RenderResult} from '@testing-library/react';
 
@@ -41,6 +41,21 @@ describe('Filter Dropdown', () => {
             const addLocationButton = await app.findByText('Add/Edit your Product Location');
             addLocationButton.click();
             expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.SET_CURRENT_MODAL, modal: AvailableModals.MY_LOCATION_TAGS });
+        });
+    });
+
+    describe('Read-only', () => {
+        it('should not display the add new filter button', async () => {
+            const initialState = {
+                isReadOnly: true,
+                allGroupedTagFilterOptions: [],
+            };
+
+            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, undefined, initialState as GlobalStateProps);
+            let locationFilterTestId = FilterTypeListings.Location.label.replace(' ', '_');
+            const dropdownButton = await app.findByTestId(`dropdown_button_${locationFilterTestId}`);
+            dropdownButton.click();
+            expect(app.queryByTestId(`open_${locationFilterTestId}_modal_button`)).toBeNull();
         });
     });
 
