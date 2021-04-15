@@ -27,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -42,7 +43,12 @@ class SpaceService(
             throw SpaceNotExistsException(spaceName)
         } else {
             val savedSpace = spaceRepository.save(
-                Space(name = spaceName, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
+                Space(
+                    name = spaceName,
+                    lastModifiedDate = Timestamp(Date().time),
+                    createdBy = createdBy,
+                    createdDate = LocalDateTime.now()
+                )
             )
             productService.createDefaultProducts(savedSpace);
             return savedSpace
