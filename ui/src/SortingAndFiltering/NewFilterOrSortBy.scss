@@ -114,8 +114,9 @@
         font-size: 12px;
 
         .sortby-option-container {
-          max-height: 250px;
           overflow-y: auto;
+          max-height: 250px;
+          min-width: 150px;
           max-width: 250px;
 
           .sortby-option {
