@@ -63,9 +63,9 @@ describe('counter', () => {
             productTags: [],
         };
 
-        app = renderWithRedux(<Counter products={[finishedProduct]} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
+        app = renderWithRedux(<Counter products={[finishedProduct, TestUtils.unassignedProduct]} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
-        expect(counter).toContainHTML('Results: 0 Products, 0 People (0 Unassigned)');
+        expect(counter).toContainHTML('Results: 0 Products, 1 People (1 Unassigned)');
     });
 
     it('should display the number of products and people when role filters are applied', async () => {

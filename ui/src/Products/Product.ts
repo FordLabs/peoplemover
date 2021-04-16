@@ -19,7 +19,6 @@ import {ProductTag} from '../ProductTag/ProductTag';
 import {Assignment} from '../Assignments/Assignment';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import moment from 'moment';
-import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 
 export interface Product {
     id: number;

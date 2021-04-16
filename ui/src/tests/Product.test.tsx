@@ -23,9 +23,8 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from '../Products/ProductClient';
 import TestUtils, {createDataTestId, renderWithRedux} from './TestUtils';
 import {wait} from '@testing-library/dom';
-import {applyMiddleware, compose, createStore, PreloadedState, Store} from 'redux';
-import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
-import thunk from 'redux-thunk';
+import {PreloadedState, Store} from 'redux';
+import {GlobalStateProps} from '../Redux/Reducers';
 import ProductTagClient from '../ProductTag/ProductTagClient';
 import {Product} from '../Products/Product';
 import {Person} from '../People/Person';
@@ -34,6 +33,7 @@ import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {createBrowserHistory} from 'history';
 import {Router} from 'react-router-dom';
+import ProductCard from '../Products/ProductCard';
 
 jest.mock('axios');
 
@@ -60,55 +60,87 @@ describe('Products', () => {
     });
 
     describe('Home page', () => {
+
         it('displays the product names', async () => {
-            const app = applicationSetup();
-            await app.findByText('Product 1');
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: false,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            } as GlobalStateProps;
+
+            let app = await renderWithRedux(
+                <ProductCard product={TestUtils.productWithoutAssignments}/>,
+                undefined,
+                initialState);
+
             await app.findByText('Product 3');
-            expect(app.queryByText('unassigned')).toBeNull();
         });
 
         it('displays the product location', async () => {
-            const app = applicationSetup();
-            await app.findByText('Southfield');
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: false,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            } as GlobalStateProps;
+
+            let app = await renderWithRedux(
+                <ProductCard product={TestUtils.productWithoutAssignments}/>,
+                undefined,
+                initialState);
+
             await app.findByText('Dearborn');
-            expect(app.queryByText('Detroit')).not.toBeInTheDocument();
         });
 
         it('displays the product tags', async () => {
-            const app = applicationSetup();
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: false,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            } as GlobalStateProps;
+
+            let app = await renderWithRedux(
+                <ProductCard product={TestUtils.productWithoutAssignments}/>,
+                undefined,
+                initialState);
+
             await app.findByText('AV');
-            await app.findByText('FordX');
-            expect(app.queryByText('Fin Tech')).not.toBeInTheDocument();
+            expect(app.queryByText('FordX')).not.toBeInTheDocument();
         });
 
         it('displays the empty product text', async () => {
-            const app = applicationSetup();
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: false,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            } as GlobalStateProps;
+
+            let app = await renderWithRedux(
+                <ProductCard product={TestUtils.productWithoutAssignments}/>,
+                undefined,
+                initialState);
+
             await app.findAllByText('Add a person by clicking');
-        });
-
-        it('does not display the empty product text for a product with people', async () => {
-            ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
-                data: TestUtils.notEmptyProducts,
-            } as AxiosResponse));
-
-            const app = applicationSetup();
-            await TestUtils.waitForHomePageToLoad(app);
-
-            expect(app.queryByText('Add a person by clicking')).not.toBeInTheDocument();
         });
 
         it('should not make an update assignment call when dragging assignment card to same product', async () => {
             await act(async () => {
-                const state = {
-                    currentModal: {modal: null},
-                };
-                const store: Store = createStore(rootReducer,
-                    state,
-                    compose(applyMiddleware(thunk)),
-                );
 
-                const app = applicationSetup(store);
-                await TestUtils.waitForHomePageToLoad(app);
+                let initialState = {
+                    currentSpace: TestUtils.space,
+                    viewingDate: new Date(2020, 4, 14),
+                    isReadOnly: false,
+                    allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+                    currentModal: {modal: null},
+                } as GlobalStateProps;
+
+                let app = await renderWithRedux(
+                    <ProductCard product={TestUtils.productWithAssignments}/>,
+                    undefined,
+                    initialState);
 
                 AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({} as AxiosResponse));
 
@@ -116,6 +148,21 @@ describe('Products', () => {
                 fireEvent.click(person1AssignmentCard);
                 expect(AssignmentClient.createAssignmentForDate).not.toHaveBeenCalled();
             });
+        });
+
+        it('does not display the empty product text for a product with people', async () => {
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: false,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            } as GlobalStateProps;
+            let app = await renderWithRedux(
+                <ProductCard product={TestUtils.productWithAssignments}/>,
+                undefined,
+                initialState);
+
+            expect(app.queryByText('Add a person by clicking')).not.toBeInTheDocument();
         });
 
         it('orders the AssignmentCards on the product by role, then name, then id', async () => {
@@ -135,7 +182,12 @@ describe('Products', () => {
                             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                             id: 1,
                             name: 'Person 1',
-                            spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                            spaceRole: {
+                                name: 'herp',
+                                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                                id: 2,
+                                color: {color: '1', id: 2},
+                            },
                         },
                         placeholder: false,
                     },
@@ -148,7 +200,12 @@ describe('Products', () => {
                             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                             id: 900,
                             name: 'Bobby',
-                            spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                            spaceRole: {
+                                name: 'herp',
+                                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                                id: 2,
+                                color: {color: '1', id: 2},
+                            },
                         },
                         placeholder: false,
                     },
@@ -161,7 +218,12 @@ describe('Products', () => {
                             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                             id: 4,
                             name: 'Hank 2',
-                            spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                            spaceRole: {
+                                name: 'herp',
+                                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                                id: 2,
+                                color: {color: '1', id: 2},
+                            },
                         },
                         placeholder: false,
                     },
@@ -174,7 +236,12 @@ describe('Products', () => {
                             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                             id: 3,
                             name: 'Hank 1',
-                            spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                            spaceRole: {
+                                name: 'herp',
+                                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                                id: 2,
+                                color: {color: '1', id: 2},
+                            },
                         },
                         placeholder: false,
                     },
@@ -187,12 +254,17 @@ describe('Products', () => {
                 archived: false,
                 productTags: [],
             };
-            ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
-                data: [productWithManyAssignments],
-            } as AxiosResponse,
-            ));
-            const app = applicationSetup();
-            await TestUtils.waitForHomePageToLoad(app);
+
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: false,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            } as GlobalStateProps;
+            let app = await renderWithRedux(
+                <ProductCard product={productWithManyAssignments}/>,
+                undefined,
+                initialState);
 
             const expectedPersonsInOrder: Array<Person> = [
                 {
@@ -200,28 +272,48 @@ describe('Products', () => {
                     id: 900,
                     newPerson: false,
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                    spaceRole: {
+                        name: 'herp',
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        id: 2,
+                        color: {color: '1', id: 2},
+                    },
                 },
                 {
                     name: 'Hank 1',
                     id: 3,
                     newPerson: false,
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                    spaceRole: {
+                        name: 'herp',
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        id: 2,
+                        color: {color: '1', id: 2},
+                    },
                 },
                 {
                     name: 'Hank 2',
                     id: 4,
                     newPerson: false,
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',  id: 2, color: {color: '1', id: 2}},
+                    spaceRole: {
+                        name: 'herp',
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        id: 2,
+                        color: {color: '1', id: 2},
+                    },
                 },
                 {
                     name: 'Person 1',
                     id: 1,
                     newPerson: false,
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',  id: 2, color: {color: '1', id: 2}},
+                    spaceRole: {
+                        name: 'herp',
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        id: 2,
+                        color: {color: '1', id: 2},
+                    },
                 },
             ];
 
@@ -235,20 +327,41 @@ describe('Products', () => {
         });
 
         it('displays the add person icon', async () => {
-            const app = applicationSetup();
-            await app.findByTestId('addPersonToProductIcon__product_1');
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: false,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            } as GlobalStateProps;
+
+            let app = await renderWithRedux(
+                <ProductCard product={TestUtils.productWithoutAssignments}/>,
+                undefined,
+                initialState);
+
             await app.findByTestId('addPersonToProductIcon__product_3');
         });
 
         it('does not display the add person icon on the unassigned product', async () => {
-            const app = applicationSetup();
-            await TestUtils.waitForHomePageToLoad(app);
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: false,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            } as GlobalStateProps;
 
-            expect(app.queryByTestId('addPersonToProductIcon-999')).not.toBeInTheDocument();
+            let app = await renderWithRedux(
+                <ProductCard product={TestUtils.unassignedProduct}/>,
+                undefined,
+                initialState);
+
+            expect(app.queryByTestId('addPersonToProductIcon__unassigned')).not.toBeInTheDocument();
         });
 
         it('opens AssignmentForm component when button clicked with product populated', async () => {
             const app = applicationSetup();
+
+
             const addPersonButton = await app.findByTestId('addPersonToProductIcon__product_1');
             fireEvent.click(addPersonButton);
 
@@ -261,6 +374,7 @@ describe('Products', () => {
 
         it('ProductForm allows choices of locations provided by the API', async () => {
             const app = applicationSetup();
+
             const newProductButton = await app.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -492,7 +606,7 @@ describe('Products', () => {
                 ProductClient.editProduct = jest.fn().mockResolvedValue({});
 
                 const viewingDate = new Date(2020, 6, 17);
-                const initialState: PreloadedState<GlobalStateProps> = { viewingDate: viewingDate } as GlobalStateProps;
+                const initialState: PreloadedState<GlobalStateProps> = {viewingDate: viewingDate} as GlobalStateProps;
                 await act(async () => {
                     const app = applicationSetup(undefined, initialState);
 
@@ -542,6 +656,7 @@ describe('Products', () => {
                 };
                 const updatedProducts = [
                     updatedProduct,
+                    TestUtils.unassignedProduct,
                 ];
                 ProductClient.getProductsForDate = jest.fn(() => Promise.resolve(
                     {
@@ -575,12 +690,22 @@ describe('Products', () => {
         let app: RenderResult;
         beforeEach(async () => {
             await wait(() => {
-                app = applicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+                let initialState = {
+                    currentSpace: TestUtils.space,
+                    viewingDate: new Date(2020, 4, 14),
+                    isReadOnly: true,
+                    allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+                } as GlobalStateProps;
+
+                app = renderWithRedux(
+                    <ProductCard product={TestUtils.productWithAssignments}/>,
+                    undefined,
+                    initialState);
             });
         });
 
         it('should not show edit product icon', async () => {
-            expect(app.queryByTestId(/editProductIcon/i)).not.toBeInTheDocument();
+            expect(app.queryByTestId('/editProductIcon/i')).not.toBeInTheDocument();
         });
 
         it('should not show add assignment icon', async () => {
