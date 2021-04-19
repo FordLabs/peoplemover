@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-// TODO: Remove this file as part of Card #180
 describe('Share Access Form', () => {
     beforeEach(() => {
-        cy.visitSpace({});
+        cy.visitSpace();
         openShareAccessForm();
 
         cy.get('[data-testid=modalCard]').eq(0)
@@ -60,19 +59,19 @@ describe('Share Access Form', () => {
 
         it('Add people to a space should show link to space url', () => {
             cy.server();
-            cy.route('PUT', Cypress.env('API_OLD_INVITE_PEOPLE_PATH')).as('putAddPersonToSpace');
+            cy.route('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
             const spaceUuid = Cypress.env('SPACE_UUID');
             const baseUrl = Cypress.config().baseUrl;
 
             cy.get('[data-testid=userIdName]').eq(0).should('contain.text', 'USER_ID');
 
-            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().clear().type('aaaaaa');
+            cy.get('[id=employeeIdTextArea]').focus().clear().type('aaaaaa#');
             cy.get('.primaryButton').should('be.disabled');
 
-            cy.get('[data-testid=inviteEditorsFormEmailTextarea]').focus().clear().type('Elise@grif.com');
+            cy.get('[id=employeeIdTextArea]').focus().clear().type('Elise');
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
-            cy.wait('@putAddPersonToSpace')
+            cy.wait('@postAddPersonToSpace')
                 .should((xhrs) => {
                     expect(xhrs.status).to.equal(200);
                 });
@@ -95,9 +94,69 @@ describe('Share Access Form', () => {
             expandInviteToEditModalCard();
 
             cy.get('[data-testid=userListItem__USER_ID]')
+                .should('contain.text', 'USER_ID')
+                .should('contain.text', 'owner');
+            cy.get('[data-testid=userListItem__ELISE]')
+                .should('contain.text', 'ELISE')
+                .find(':contains("Editor")').eq(0)
+                .click();
+            cy.get('[data-testid=userAccessOptionLabel]').eq(2).should('contain.text', 'Remove')
+                .click();
+            cy.get('[data-testid=userIdName]').eq(1).should('not.exist');
+            cy.get('[data-testid=userListItem__ELISE]').should('not.exist');
+        });
+
+        it('Transferring ownership to an editor should change current owner to editor', () => {
+            cy.server();
+            cy.route('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
+            cy.route('PUT', `${Cypress.env('API_USERS_PATH')}/ELISE`).as('putChangeOwner');
+            cy.route('GET', Cypress.env('API_USERS_PATH')).as('getAllUsers');
+
+            cy.get('[id=employeeIdTextArea]').focus().clear().type('Elise');
+            cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
+
+            cy.wait('@postAddPersonToSpace')
+                .should((xhrs) => {
+                    expect(xhrs.status).to.equal(200);
+                });
+
+            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
+            cy.get('[data-testid=modalPopupContainer]').should('not.exist');
+
+            openShareAccessForm();
+            expandInviteToEditModalCard();
+
+            cy.get('[data-testid=userListItem__USER_ID]')
+                .should('contain.text', 'USER_ID')
+                .should('contain.text', 'owner');
+            cy.get('[data-testid=userListItem__ELISE]')
+                .should('contain.text', 'ELISE')
+                .find(':contains("Editor")').eq(0)
+                .click();
+
+            cy.get('[data-testid=userAccessOptionLabel]').eq(1).should('contain.text', 'Owner')
+                .click();
+
+            cy.get('[data-testid=confirmDeleteButton]').should('contain.text', 'Yes').click();
+
+            cy.wait('@putChangeOwner')
+                .should((xhrs) => {
+                    expect(xhrs.status).to.equal(200);
+                });
+
+            cy.wait('@getAllUsers')
+                .should((xhrs) => {
+                    expect(xhrs.status).to.equal(200);
+                });
+
+            cy.get('[data-testid=userListItem__USER_ID]')
                 .should('contain.text', 'USER_ID');
+            cy.get('[data-testid=userListItem__USER_ID]')
+                .should('contain.text', 'Editor');
             cy.get('[data-testid=userListItem__ELISE]')
                 .should('contain.text', 'ELISE');
+            cy.get('[data-testid=userListItem__ELISE]')
+                .should('contain.text', 'owner');
         });
     });
 });

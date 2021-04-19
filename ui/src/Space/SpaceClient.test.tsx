@@ -135,21 +135,6 @@ describe('Space Client', function() {
             });
     });
 
-    // TODO: Remove as part of Card #180
-    it('(old) should invite users to a space and send event to matomo', function(done) {
-        const expectedUrl = `/api/spaces/${TestUtils.space.uuid}:invite`;
-        const expectedData = {
-            emails: ['email1@mail.com', 'email2@mail.com'],
-        };
-
-        SpaceClient.oldInviteUsersToSpace(TestUtils.space, ['email1@mail.com', 'email2@mail.com'])
-            .then(() => {
-                expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'inviteUser', expectedData.emails.join(', ')]);
-                done();
-            });
-    });
-
     it('should remove users from space', (done) => {
         const user: UserSpaceMapping = {id: 'blah', userId: 'user1', spaceUuid: `${TestUtils.space.uuid}`, permission: 'fakePermission'};
         SpaceClient.removeUser(TestUtils.space, user)
