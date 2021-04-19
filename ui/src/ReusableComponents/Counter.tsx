@@ -19,6 +19,7 @@ import React from 'react';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
 import {isActiveProduct, isProductMatchingSelectedFilters, Product} from '../Products/Product';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
+import './Counter.scss';
 
 interface CounterProps {
     products: Array<Product>;
@@ -102,8 +103,11 @@ function Counter(props: CounterProps): JSX.Element {
     getPeopleCount();
 
     return (
-        <span
-            data-testid="counter">Results: {productAndPeopleCount.productCount} Products, {productAndPeopleCount.totalPeopleCount} People ({productAndPeopleCount.unassignedPeopleCount} Unassigned)</span>
+        <div className="counter-container">
+            <span className="counter" data-testid="counter">
+            Results: {productAndPeopleCount.productCount} Products, {productAndPeopleCount.totalPeopleCount} People ({productAndPeopleCount.unassignedPeopleCount} Unassigned)
+            </span>
+        </div>
     );
 }
 
