@@ -46,12 +46,14 @@ describe('counter', () => {
 
 
     it('should display the number of products and people when no filter are applied and ignore archived products', async () => {
+        let expectedString = 'Results - Products: 4, People: 3 (Unassigned: 1)';
         app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
-        expect(counter).toContainHTML('Results: 4 Products, 3 People (1 Unassigned)');
+        expect(counter).toContainHTML(expectedString);
     });
 
     it('should not count product that are ended before today', async () => {
+        let expectedString = 'Results - Products: 0, People: 1 (Unassigned: 1)';
         let finishedProduct = {
             id: 5,
             name: 'Awesome Product',
@@ -65,10 +67,11 @@ describe('counter', () => {
 
         app = renderWithRedux(<Counter products={[finishedProduct, TestUtils.unassignedProduct]} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
-        expect(counter).toContainHTML('Results: 0 Products, 1 People (1 Unassigned)');
+        expect(counter).toContainHTML(expectedString);
     });
 
     it('should display the number of products and people when role filters are applied', async () => {
+        let expectedString = 'Results - Products: 4, People: 2 (Unassigned: 1)';
         let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
@@ -95,16 +98,18 @@ describe('counter', () => {
 
         app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
-        expect(counter).toContainHTML('Results: 4 Products, 2 People (1 Unassigned)');
+        expect(counter).toContainHTML(expectedString);
     });
 
     it('should display the number of products and people when location filters are applied', async () => {
+        let expectedString = 'Results - Products: 1, People: 2 (Unassigned: 1)';
         app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={TestUtils.allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
-        expect(counter).toContainHTML('Results: 1 Products, 2 People (1 Unassigned)');
+        expect(counter).toContainHTML(expectedString);
     });
 
     it('should display the number of products and people when product filters are applied', async () => {
+        let expectedString = 'Results - Products: 1, People: 2 (Unassigned: 1)';
         let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
@@ -144,6 +149,6 @@ describe('counter', () => {
         
         app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
-        expect(counter).toContainHTML('Results: 1 Products, 2 People (1 Unassigned)');
+        expect(counter).toContainHTML(expectedString);
     });
 });

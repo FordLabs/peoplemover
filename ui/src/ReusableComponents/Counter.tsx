@@ -105,7 +105,7 @@ function Counter(props: CounterProps): JSX.Element {
     return (
         <div className="counter-container">
             <span className="counter" data-testid="counter">
-            Results: {productAndPeopleCount.productCount} Products, {productAndPeopleCount.totalPeopleCount} People ({productAndPeopleCount.unassignedPeopleCount} Unassigned)
+            Results - Products: {productAndPeopleCount.productCount}, People: {productAndPeopleCount.totalPeopleCount} (Unassigned: {productAndPeopleCount.unassignedPeopleCount})
             </span>
         </div>
     );
