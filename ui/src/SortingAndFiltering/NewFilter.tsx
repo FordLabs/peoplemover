@@ -33,6 +33,7 @@ function toggleOption(option: FilterOption): FilterOption {
 interface NewFilterProps {
     filterType: FilterType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    isReadOnly: boolean;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
@@ -40,6 +41,7 @@ interface NewFilterProps {
 function NewFilter({
     filterType,
     allGroupedTagFilterOptions,
+    isReadOnly,
     setAllGroupedTagFilterOptions,
     setCurrentModal,
 }: NewFilterProps): JSX.Element {
@@ -154,13 +156,13 @@ function NewFilter({
                         );
                     })}
             </div>
-            <button className="add-edit-tags-dropdown-button"
+            {!isReadOnly && <button className="add-edit-tags-dropdown-button"
                 data-testid={`open_${formattedFilterTypeValue}_modal_button`}
                 onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}
             >
                 <span>{`Add/Edit your ${filterType.label}`}</span>
                 <i className="material-icons">keyboard_arrow_right</i>
-            </button>
+            </button>}
         </>;
 
     const dropdownButtonContent =
@@ -196,6 +198,7 @@ function NewFilter({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
+    isReadOnly: state.isReadOnly
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
