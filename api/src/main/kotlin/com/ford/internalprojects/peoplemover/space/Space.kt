@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.space
 
 import java.sql.Timestamp
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -35,7 +36,10 @@ data class Space (
 
     var lastModifiedDate: Timestamp? = null,
 
-    var createdBy: String? = null
+    var createdBy: String? = null,
+
+    @Column(name="created_date")
+    var createdDate: LocalDateTime? = null
 )
 
 fun Space.update(editSpaceRequest: EditSpaceRequest): Space {

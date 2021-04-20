@@ -4,7 +4,8 @@ create table space
     name varchar(255) not null unique,
     last_modified_date datetime,
     created_by varchar(40),
-    today_view_is_public bit default false
+    today_view_is_public bit default false,
+    created_date datetime,
 );
 
 create table color

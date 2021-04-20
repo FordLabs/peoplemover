@@ -46,6 +46,8 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -96,8 +98,8 @@ class ReportGeneratorControllerTest {
 
     @Before
     fun setup() {
-        space1 = spaceRepository.save(Space(name = "Undersea Pineapple"))
-        space2 = spaceRepository.save(Space(name = "Krusty Krabb"))
+        space1 = spaceRepository.save(Space(name = "Undersea Pineapple", createdDate = LocalDateTime.of(2020, Month.FEBRUARY, 22, 0,0,0)))
+        space2 = spaceRepository.save(Space(name = "Krusty Krabb", createdDate = LocalDateTime.now()))
         productA = productRepository.save(Product(name = "product a", spaceUuid = space1.uuid))
         productB = productRepository.save(Product(name = "Product b", spaceUuid = space1.uuid))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceUuid = space1.uuid))
@@ -179,7 +181,7 @@ class ReportGeneratorControllerTest {
     }
 
     @Test
-    fun `GET should return all space names, who created the space, and all users related to that space if users is authorized`() {
+    fun `GET should return all space names, who created the space, when it was created, and all users related to that space if users is authorized`() {
         val request = get(baseSpaceReportsUrl).header("Authorization", "Bearer GOOD_TOKEN")
         val result = mockMvc.perform(request)
                 .andExpect(status().isOk)
@@ -190,12 +192,14 @@ class ReportGeneratorControllerTest {
 
         val expectedUsers1 = listOf("USER_ID", "SSQUAREP", "PSTAR")
         val expectedUsers2 = listOf("PSTAR")
-        val expectedSpace1 = SpaceReportItem(space1.name, space1.createdBy, expectedUsers1)
-        val expectedSpace2 = SpaceReportItem(space2.name, space2.createdBy, expectedUsers2)
+        val expectedSpace1 = SpaceReportItem(space1.name, space1.createdBy, space1.createdDate, expectedUsers1)
+        val expectedSpace2 = SpaceReportItem(space2.name, space2.createdBy, space2.createdDate, expectedUsers2)
         val expectedSpaceReport = listOf(expectedSpace1, expectedSpace2)
 
         assertThat(actualSpaceReport.size).isEqualTo(2)
         assertThat(actualSpaceReport).containsAll(expectedSpaceReport)
+        assertThat(actualSpaceReport[0]).isEqualTo(expectedSpace2)
+        assertThat(actualSpaceReport[1]).isEqualTo(expectedSpace1)
     }
 
     @Test
@@ -209,7 +213,5 @@ class ReportGeneratorControllerTest {
         val actualUserReport = objectMapper.readValue<List<String>>(result.response.contentAsString, constructCollectionType)
 
         assertThat(actualUserReport).containsExactlyInAnyOrder("USER_ID","SSQUAREP", "PSTAR")
-
     }
-
 }
