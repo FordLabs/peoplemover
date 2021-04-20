@@ -66,10 +66,12 @@ describe('Filter products', () => {
         localStorage.setItem('filters', JSON.stringify(filters));
         const app = applicationSetup();
 
-        const filterContainer = await app.findByTestId('filters');
-        await findByText(filterContainer, TestUtils.annarbor.name);
-        await findByText(filterContainer, TestUtils.productTag1.name);
-        await findByText(filterContainer, TestUtils.roles[0].name);
+        const locationCount = await app.findByTestId('filter_count_Product_Location');
+        await findByText(locationCount, '1');
+        const productTagCount = await app.findByTestId('filter_count_Product_Tags');
+        await findByText(productTagCount, '1');
+        const roleCount = await app.findByTestId('filter_count_Role');
+        await findByText(roleCount, '1');
     });
 
     it('should show unedited location tags in the filter as checked from local storage', async () => {
@@ -78,8 +80,11 @@ describe('Filter products', () => {
 
         const app = applicationSetup();
 
-        const myTagsButton = await app.findByText('My Tags');
-        fireEvent.click(myTagsButton);
+        const locationFilterButton = await app.findByTestId('dropdown_button_Product_Location');
+        fireEvent.click(locationFilterButton);
+        const editButton = await app.findByTestId('open_Product_Location_modal_button');
+        fireEvent.click(editButton);
+
         const editIcons = await app.findAllByTestId('editIcon__location');
         const locationTagIcon: HTMLElement = editIcons[0];
         fireEvent.click(locationTagIcon);
@@ -100,27 +105,5 @@ describe('Filter products', () => {
         expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(TestUtils.detroit.name);
         expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(updatedLocation);
         expect(tagFiltersAfterUpdate.locationTagsFilters).not.toContain(TestUtils.annarbor.name);
-    });
-
-
-    it('should put and x more... option pill when more than 3 options selected', async () => {
-        const longFilters: LocalStorageFilters = {
-            locationTagsFilters: [TestUtils.annarbor.name, TestUtils.detroit.name],
-            productTagsFilters: [TestUtils.productTag1.name, TestUtils.productTag2.name],
-            roleTagsFilters: [],
-        };
-        localStorage.setItem('filters', JSON.stringify(longFilters));
-        const app = applicationSetup();
-
-        await app.findByText('and 1 more...');
-
-        const filterDropDown = await app.findByLabelText('Filter:');
-        await selectEvent.select(filterDropDown, TestUtils.productTag3.name);
-        await app.findByText('and 2 more...');
-
-        await selectEvent.clearAll(filterDropDown);
-        await wait(() => {
-            expect(app.queryByText('more...')).not.toBeInTheDocument();
-        });
     });
 });
