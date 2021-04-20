@@ -26,6 +26,7 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.ZoneOffset
 import kotlin.streams.toList
 
 @Service
@@ -59,7 +60,7 @@ class ReportGeneratorService(
         val spaceReport = allSpaces.stream().map { space ->
             val users: List<String?> = mapUsersToSpace(userSpaceMappings, space)
             SpaceReportItem(space.name, space.createdBy, space.createdDate, users)
-        }.toList()
+        }.toList().sortedWith(compareByDescending {it.createdDate?.toEpochSecond(ZoneOffset.UTC)})
 
         return spaceReport
     }
