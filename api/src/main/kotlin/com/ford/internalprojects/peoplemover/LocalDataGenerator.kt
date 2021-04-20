@@ -76,7 +76,7 @@ class LocalDataGenerator(
         }
 
         val spaceName = "Flipping Sweet"
-        val createdBy = "SSQUAREP"
+        val createdBy = "USER_ID"
         val createdSpace: Space = spaceRepository.save(
             Space(name = spaceName, uuid = uuid, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
         )

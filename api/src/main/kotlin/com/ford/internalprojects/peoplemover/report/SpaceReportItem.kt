@@ -17,8 +17,11 @@
 
 package com.ford.internalprojects.peoplemover.report
 
+import java.time.LocalDateTime
+
 data class SpaceReportItem (
     val spaceName: String,
     val createdBy: String?,
+    val createdDate: LocalDateTime?,
     val users: List<String?>
 )
