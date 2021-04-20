@@ -19,8 +19,7 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {findByText, fireEvent} from '@testing-library/dom';
 import React from 'react';
-import selectEvent from 'react-select-event';
-import {RenderResult, wait} from '@testing-library/react';
+import {RenderResult} from '@testing-library/react';
 import {createBrowserHistory} from 'history';
 import {Router} from 'react-router-dom';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterConstants';
@@ -29,10 +28,6 @@ describe('Filter products', () => {
     class MockLocalStorage {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         store: any = {};
-
-        getItem(key: string): string | null {
-            return this.store[key];
-        }
 
         setItem(key: string, value: string): void {
             this.store[key] = value;
@@ -51,14 +46,14 @@ describe('Filter products', () => {
         (localStorage as unknown) = new MockLocalStorage();
     });
 
-    function applicationSetup(): RenderResult  {
+    function applicationSetup(): RenderResult {
         let history = createBrowserHistory();
         history.push('/uuid');
 
         return renderWithRedux(
             <Router history={history}>
                 <PeopleMover/>
-            </Router>
+            </Router>,
         );
     }
 
