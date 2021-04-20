@@ -58,7 +58,7 @@ class ReportGeneratorService(
 
         val spaceReport = allSpaces.stream().map { space ->
             val users: List<String?> = mapUsersToSpace(userSpaceMappings, space)
-            SpaceReportItem(space.name, space.createdBy, users)
+            SpaceReportItem(space.name, space.createdBy, space.createdDate, users)
         }.toList()
 
         return spaceReport
