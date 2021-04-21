@@ -705,7 +705,7 @@ describe('Products', () => {
         });
 
         it('should not show edit product icon', async () => {
-            expect(app.queryByTestId('/editProductIcon/i')).not.toBeInTheDocument();
+            expect(app.queryByTestId(/editProductIcon/i)).not.toBeInTheDocument();
         });
 
         it('should not show add assignment icon', async () => {
