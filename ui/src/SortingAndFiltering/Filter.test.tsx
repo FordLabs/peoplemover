@@ -18,7 +18,7 @@
 import React from 'react';
 import {renderWithRedux} from '../tests/TestUtils';
 import {AvailableActions} from '../Redux/Actions';
-import NewFilter from './NewFilter';
+import Filter from './Filter';
 import {FilterTypeListings} from './FilterConstants';
 import {createStore} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
@@ -35,12 +35,15 @@ describe('Filter Dropdown', () => {
 
     describe('Add new filter button', () => {
         it('opens the location modal when handling location tags and the add/edit tags button is clicked', async () => {
-            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
+            const app = renderWithRedux(<Filter filterType={FilterTypeListings.Location}/>, store, undefined);
             const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
             dropdownButton.click();
             const addLocationButton = await app.findByText('Add/Edit your Product Location');
             addLocationButton.click();
-            expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.SET_CURRENT_MODAL, modal: AvailableModals.MY_LOCATION_TAGS });
+            expect(store.dispatch).toHaveBeenCalledWith({
+                type: AvailableActions.SET_CURRENT_MODAL,
+                modal: AvailableModals.MY_LOCATION_TAGS,
+            });
         });
     });
 
@@ -51,7 +54,8 @@ describe('Filter Dropdown', () => {
                 allGroupedTagFilterOptions: [],
             };
 
-            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, undefined, initialState as GlobalStateProps);
+            const app = renderWithRedux(<Filter
+                filterType={FilterTypeListings.Location}/>, undefined, initialState as unknown as GlobalStateProps);
             let locationFilterTestId = FilterTypeListings.Location.label.replace(' ', '_');
             const dropdownButton = await app.findByTestId(`dropdown_button_${locationFilterTestId}`);
             dropdownButton.click();
@@ -63,16 +67,18 @@ describe('Filter Dropdown', () => {
         it('should show the correct checkbox state for selected filters', async () => {
             store = createStore(rootReducer, {
                 allGroupedTagFilterOptions: [
-                    { label: 'Location Tags:', options: [
-                        {label: 'foo', value: 'foo', selected: true},
-                        {label: 'bar', value: 'bar', selected: false},
-                    ]},
-                    { label: 'Product Tags:', options: []},
-                    { label: 'Role Tags:', options: []},
+                    {
+                        label: 'Location Tags:', options: [
+                            {label: 'foo', value: 'foo', selected: true},
+                            {label: 'bar', value: 'bar', selected: false},
+                        ],
+                    },
+                    {label: 'Product Tags:', options: []},
+                    {label: 'Role Tags:', options: []},
                 ],
             });
 
-            const app = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
+            const app = renderWithRedux(<Filter filterType={FilterTypeListings.Location}/>, store, undefined);
             const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
             dropdownButton.click();
             const secondCheckbox = await app.findByLabelText('bar');
@@ -104,8 +110,8 @@ describe('Filter Dropdown', () => {
                     {label: 'Role Tags:', options: []},
                 ],
             });
-            appLocation = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);
-            appRole = renderWithRedux(<NewFilter filterType={FilterTypeListings.Role}/>, store, undefined);
+            appLocation = renderWithRedux(<Filter filterType={FilterTypeListings.Location}/>, store, undefined);
+            appRole = renderWithRedux(<Filter filterType={FilterTypeListings.Role}/>, store, undefined);
         });
 
         it('should show the right number of filters that are selected', async () => {
@@ -135,8 +141,8 @@ describe('Filter Dropdown', () => {
             const clearSelectedFiltersIcon = await appLocation.findByTestId(`clear_selected_filter_${FilterTypeListings.Location.label.replace(' ', '_')}`);
             expect(locationCounter).toContainHTML('2');
             clearSelectedFiltersIcon.click();
-            expect(store.getState().allGroupedTagFilterOptions[0].options.filter((item: { selected: boolean}) => item.selected).length).toEqual(0);
-            expect(store.getState().allGroupedTagFilterOptions[1].options.filter((item: { selected: boolean}) => item.selected).length).toEqual(1);
+            expect(store.getState().allGroupedTagFilterOptions[0].options.filter((item: { selected: boolean }) => item.selected).length).toEqual(0);
+            expect(store.getState().allGroupedTagFilterOptions[1].options.filter((item: { selected: boolean }) => item.selected).length).toEqual(1);
         });
 
         it('should not show the x to clear the selected filters when there are no filters selected', async () => {

@@ -21,7 +21,6 @@ import PeopleMover from '../Application/PeopleMover';
 import {queryByAttribute, RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createBrowserHistory, History, Location} from 'history';
-import selectEvent from 'react-select-event';
 import SpaceClient from '../Space/SpaceClient';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
@@ -123,45 +122,7 @@ describe('PeopleMover', () => {
 
     describe('Header and Footer Content', () => {
         beforeEach(async () => {
-            await wait(() => {
-                app = applicationSetup(undefined, {viewingDate: new Date(2020, 10, 14),
-                } as GlobalStateProps);
-            });
-        });
-
-        it('Should contain calendar button', async () => {
-            await app.findByText(/viewing:/i);
-            await app.findByText(/November 14, 2020/);
-        });
-
-        it('Should contains My Tags on initial load of People Mover', async () => {
-            await app.findByText('My Tags');
-            await app.findByTestId('myTagsIcon');
-        });
-
-        it('should display My Roles button on startup', async () => {
-            await app.findByText('My Roles');
-            await app.findByTestId('myRolesIcon');
-        });
-
-        it('should display Sort By dropdown on startup', async () => {
-            await app.findByText('Sort By:');
-            await app.findByText('Alphabetical');
-        });
-
-        it('should display Filter option on startup', async () => {
-            await app.findByText('Filter:');
-        });
-
-        it('should show the Flabs branding on load', async () => {
-            await app.findByText('Powered by');
-            await app.findByText('FordLabs');
-        });
-    });
-
-    describe('New Header and Footer Content', () => {
-        beforeEach(async () => {
-            let location: Location = {hash: '#newui', pathname: '/uuid', search: '', state: undefined};
+            let location: Location = {hash: '', pathname: '/uuid', search: '', state: undefined};
             let initialState = {viewingDate: new Date(2020, 10, 14)} as GlobalStateProps;
             await wait(() => {
                 app = applicationSetup(undefined, initialState, location);
@@ -212,7 +173,7 @@ describe('PeopleMover', () => {
         });
 
         it('should display Filter option on startup', async () => {
-            await app.findByText('Filter:');
+            await app.findByText('Filter by:');
         });
 
         it('should show the Flabs branding on load', async () => {
@@ -270,9 +231,11 @@ describe('PeopleMover', () => {
         });
 
         it('should group products by location',  async () => {
-            await wait(() => {
-                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Location']);
-            });
+            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            sortByDropdownButton.click();
+
+            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_location');
+            sortByDropdownLocation.click();
 
             const productGroups = await app.findAllByTestId('productGroup');
 
@@ -299,21 +262,24 @@ describe('PeopleMover', () => {
         });
 
         it('should include a properly formatted ID on the product cards containing the value for the current groups sorted field', async () => {
-            const sortByOption = 'Location';
             const expectedLocationId = 'ann-arbor';
 
-            await wait(() => {
-                selectEvent.select(app.getAllByLabelText('Sort By:')[0], [sortByOption]);
-            });
+            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            sortByDropdownButton.click();
+
+            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_location');
+            sortByDropdownLocation.click();
 
             const getById = queryByAttribute.bind(null, 'id');
             expect(getById(app.container, `product-card-${expectedLocationId}-0`)).toBeTruthy();
         });
 
         it('should group products by product tag',  async () => {
-            await wait(() => {
-                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Product Tag']);
-            });
+            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            sortByDropdownButton.click();
+
+            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_product-tag');
+            sortByDropdownLocation.click();
 
             const productGroups = await app.findAllByTestId('productGroup');
 
@@ -343,9 +309,11 @@ describe('PeopleMover', () => {
         });
 
         it('should group products by location without add product buttons',  async () => {
-            await wait(() => {
-                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Location']);
-            });
+            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            sortByDropdownButton.click();
+
+            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_location');
+            sortByDropdownLocation.click();
 
             const productGroups = await app.findAllByTestId('productGroup');
 
@@ -372,9 +340,11 @@ describe('PeopleMover', () => {
         });
 
         it('should group products by product tag without add product buttons',  async () => {
-            await wait(() => {
-                selectEvent.select(app.getAllByLabelText('Sort By:')[0], ['Product Tag']);
-            });
+            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            sortByDropdownButton.click();
+
+            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_product-tag');
+            sortByDropdownLocation.click();
 
             const productGroups = await app.findAllByTestId('productGroup');
 

@@ -31,38 +31,39 @@ function CalendarCustomInput(
     const viewingDate: Date = !value ? new Date() : new Date(value);
     const dateFormatOptions = {
         year: 'numeric',
-        month: 'long',
+        month: 'short',
         day: 'numeric',
     };
 
     function calendarClicked(): void {
-        if (!isReadOnly) {
-            setIsOpen(!isOpen);
-        }
+        setIsOpen(!isOpen);
     }
 
     return (
-        <button className={`calendarCustomInput ${isReadOnly ? 'readOnly' : ''}`}
-            onClick={calendarClicked}
-            disabled={isReadOnly}
-            data-testid="calendarToggle"
-        >
-            Viewing:
-            <span className="calendarViewingDate">
-                {viewingDate.toLocaleString('en-us', dateFormatOptions)}
-            </ span>
-            {   !isReadOnly &&
-                (
+        <div className="calendarSubHeader">
+            <div className="calendarLabel">
+                <i className="material-icons calendarIcon" aria-hidden>calendar_today
+                </i>
+                <span>
+                    Viewing:
+                </span>
+            </div>
+            <button className={`calendarCustomInput ${isReadOnly ? 'readOnly' : ''}`}
+                onClick={calendarClicked}
+                disabled={isReadOnly}
+                data-testid="calendarToggle"
+            >
+                <span className="calendarViewingDate">
+                    {viewingDate.toLocaleString('en-us', dateFormatOptions)}
+                </ span>
+                {   !isReadOnly && (
                     isOpen
                         ? <i className="material-icons greyIcon" data-testid="calendar_up-arrow">arrow_drop_up</i>
                         : <i className="material-icons greyIcon" data-testid="calendar_down-arrow">arrow_drop_down</i>
-                )
-
-            }
-        </button>
+                )}
+            </button>
+        </div>
     );
 }
 
-const CalendarInputLabel = forwardRef<HTMLDivElement, CustomInputProps>(CalendarCustomInput);
-
-export default CalendarInputLabel;
+export default forwardRef<HTMLDivElement, CustomInputProps>(CalendarCustomInput);

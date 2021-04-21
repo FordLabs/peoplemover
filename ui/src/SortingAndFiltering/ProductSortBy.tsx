@@ -15,19 +15,15 @@
  * limitations under the License.
  */
 
-import Select, {OptionProps, OptionTypeBase, Props} from 'react-select';
-import {
-    CustomIndicator,
-    isUserTabbingAndFocusedOnElement,
-    reactSelectStyles,
-} from '../ModalFormComponents/ReactSelectStyles';
-import React, {CSSProperties, useEffect, useState} from 'react';
+import React, {createRef, useEffect, useState} from 'react';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import './ProductFilterOrSortBy.scss';
+import './FilterOrSortBy.scss';
 import {setProductSortByAction} from '../Redux/Actions';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import Dropdown from '../ReusableComponents/Dropdown';
+import NavigationSection from '../ReusableComponents/NavigationSection';
 
 interface SortByOption {
     label: string;
@@ -40,71 +36,12 @@ interface ProductSortByProps {
     setProductSortBy(productSortBy: SortByType): void;
 }
 
-const SortByOption = (props: OptionProps<OptionTypeBase>): JSX.Element => {
-    const {label, innerProps, isSelected} = props;
-    return (
-        <div className="sortby-option" {...innerProps}>
-            <span className="sortby-label-name">{label}</span>
-            {isSelected && <i className="material-icons sortby-option-check">check</i>}
-        </div>
-    );
-};
-
-const sortByStyle = {
-    ...reactSelectStyles,
-    control: (provided: CSSProperties, props: Props): CSSProperties => ({
-        ...provided,
-        border: '1px solid transparent',
-        backgroundColor: 'transparent',
-        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
-        // @ts-ignore
-        '&:hover': {
-            boxShadow: 'none !important',
-            borderColor: '#EDEBEB',
-            cursor: 'pointer',
-        },
-        flexWrap: 'unset',
-    }),
-    singleValue: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        backgroundColor: '#F2E7F3',
-        borderRadius: '6px',
-        padding: '6px',
-        color: '#403D3D',
-        float: 'right',
-    }),
-    menu: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        maxWidth: '150px',
-        minWidth: '150px',
-        right: '0',
-        padding: '16px 15px',
-        margin: '0',
-    }),
-    option: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        fontFamily: 'Helvetica, sans-serif',
-        fontSize: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0px 10px',
-        height: '30px',
-        margin: '3px 0px',
-        cursor: 'pointer',
-    }),
-    dropdownIndicator: (provided: CSSProperties): CSSProperties => ({
-        ...provided,
-        padding: '0px',
-    }),
-};
-
 function ProductSortBy({
     productSortBy,
     currentSpace,
     setProductSortBy,
 }: ProductSortByProps): JSX.Element {
-    const [originalSortOption, setOriginalSortOption] = useState<SortByOption>();
+    const [selectedSortOption, setSelectedSortOption] = useState<SortByOption>();
     const sortByOptions: Array<SortByOption> = [
         {label:'Alphabetical', value:'name'},
         {label:'Location', value:'location'},
@@ -117,29 +54,41 @@ function ProductSortBy({
             return sortByOptions.filter(option => option.value === value)[0];
         }
 
-        setOriginalSortOption(stringToOption(productSortBy));
+        setSelectedSortOption(stringToOption(productSortBy));
     }, [productSortBy]);
     /* eslint-enable */
 
+    const dropdownContent = 
+        <>
+            {sortByOptions.map((option, index) => {
+                return <button
+                    key={option.value}
+                    id={`sortDropdownOption_${option.value}`}
+                    className="sortDropdownOption"
+                    data-testid={`sortDropdownOption_${option.value}`}
+                    ref={createRef<HTMLButtonElement>()}
+                    onClick={(): void => {
+                        setProductSortBy(option.value);
+                        MatomoEvents.pushEvent(currentSpace.name, 'sort', option.label);
+                    }}>
+                    {option.label}
+                    {option.value === selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}
+                </button>;
+            })}
+        </>;
+
     return (
-        <div className="sortByDropdownContainer" data-testid="sortBy">
-            <label id="sortby-dropdown-label" htmlFor="sortby-dropdown" className="dropdown-label">Sort By:</label>
-            <Select
-                styles={sortByStyle}
-                id="sortby-dropdown"
-                className="dropdown old-sortby-dropdown"
-                classNamePrefix="product-sort-by"
-                inputId="sortby-dropdown-input"
-                aria-labelledby="sortby-dropdown-label"
-                options={sortByOptions}
-                value={originalSortOption}
-                onChange={(value): void => {
-                    const sortByOption = (value as SortByOption).value;
-                    setProductSortBy(sortByOption);
-                    MatomoEvents.pushEvent(currentSpace.name, 'sort', sortByOption);
-                }}
-                components={{Option: SortByOption, DropdownIndicator: CustomIndicator}}/>
-        </div>
+        <NavigationSection label="Sort By" icon="sort">
+            <Dropdown
+                buttonId="sortby-dropdown-button"
+                dropdownButtonContent={selectedSortOption?.label}
+                dropdownContent={dropdownContent}
+                dropdownOptionIds={['sortby-dropdown-button']}
+                buttonTestId="sortByDropdownButton"
+                dropdownTestId="sortByDropdownMenu"
+                closeOnSelect
+            />
+        </NavigationSection>
     );
 }
 

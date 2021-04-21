@@ -9,7 +9,7 @@ interface NavigationSectionProps {
 export default function NavigationSection(
     {label, icon, children}: NavigationSectionProps): JSX.Element {
     return (
-        <div className="newDropdownContainer">
+        <div className="dropdownContainer">
             <i className="material-icons indicator-icon" aria-hidden>{icon}</i>
             <span className="dropdown-label">{label}:</span>
             {children}

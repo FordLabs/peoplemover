@@ -32,8 +32,8 @@ import {
     setPeopleAction,
     setupSpaceAction,
 } from '../Redux/Actions';
-import SpaceSelectionTabs from '../Header/SpaceSelectionTabs';
-import SubHeader from '../Header/NewSubHeader';
+
+import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
@@ -157,8 +157,6 @@ function PeopleMover({
     }, [viewingDate, currentSpace]);
     /* eslint-enable */
 
-    const NEW_UI = window.location.hash === '#newui';
-
     if (redirect) {
         return redirect;
     }
@@ -170,7 +168,7 @@ function PeopleMover({
                 <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to main content</a>
                 <Header/>
                 <main>
-                    {NEW_UI ? <SubHeader/> : <SpaceSelectionTabs/>}
+                    <SubHeader/>
                     <div className="headerSpacer" id="main-content-landing-target"/>
                     <Counter products={products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>
                     <div className="productAndAccordionContainer">

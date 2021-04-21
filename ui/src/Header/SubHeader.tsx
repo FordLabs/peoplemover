@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import './SpaceSelectionTabs.scss';
+import './SubHeader.scss';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -24,16 +24,19 @@ import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {AvailableModals} from '../Modal/AvailableModals';
+import ProductSortBy from '../SortingAndFiltering/ProductSortBy';
+import Filter from '../SortingAndFiltering/Filter';
+import NavigationSection from '../ReusableComponents/NavigationSection';
+import {FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
 
 interface Props {
     isReadOnly: boolean;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element {
+function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
     return (
-        <div className="spaceSelectionContainer">
+        <div className="newSpaceSelectionContainer">
             <div className="leftContent">
                 <Calendar/>
                 {isReadOnly && (
@@ -43,22 +46,14 @@ function SpaceSelectionTabs({ isReadOnly, setCurrentModal }: Props): JSX.Element
                     </span>
                 )}
             </div>
-            {isReadOnly ? <></> : <div className="rightContent">
-                <button
-                    className={`selectionTabButton tab`}
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_TAGS})}
-                    data-testid="myTagsButton">
-                    <i className="material-icons myTagsIcon" aria-hidden data-testid="myTagsIcon">local_offer</i>
-                    <span>My Tags</span>
-                </button>
-                <button
-                    className={`selectionTabButton tab`}
-                    data-testid="myRolesButton"
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.MY_ROLES_MODAL})}>
-                    <i className="material-icons myRolesIcon" aria-hidden data-testid="myRolesIcon">assignment_ind</i>
-                    <span>My Roles</span>
-                </button>
-            </div>}
+            <div className="rightContent">
+                <NavigationSection label="Filter by" icon="filter_list">
+                    <Filter filterType={FilterTypeListings.Location}/>
+                    <Filter filterType={FilterTypeListings.ProductTag}/>
+                    <Filter filterType={FilterTypeListings.Role}/>
+                </NavigationSection>
+                <ProductSortBy/>
+            </div>
         </div>
     );
 }
@@ -72,5 +67,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SpaceSelectionTabs);
+export default connect(mapStateToProps, mapDispatchToProps)(SubHeader);
 /* eslint-enable */
