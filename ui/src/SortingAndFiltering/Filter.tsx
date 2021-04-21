@@ -21,7 +21,7 @@ import {Dispatch} from 'redux';
 import {setAllGroupedTagFilterOptionsAction, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {FilterOption} from '../CommonTypes/Option';
-import './NewFilterOrSortBy.scss';
+import './FilterOrSortBy.scss';
 import Dropdown from '../ReusableComponents/Dropdown';
 import {AllGroupedTagFilterOptions, FilterType} from './FilterConstants';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -30,7 +30,7 @@ function toggleOption(option: FilterOption): FilterOption {
     return {...option, selected: !option.selected};
 }
 
-interface NewFilterProps {
+interface FilterProps {
     filterType: FilterType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     isReadOnly: boolean;
@@ -38,13 +38,13 @@ interface NewFilterProps {
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function NewFilter({
+function Filter({
     filterType,
     allGroupedTagFilterOptions,
     isReadOnly,
     setAllGroupedTagFilterOptions,
     setCurrentModal,
-}: NewFilterProps): JSX.Element {
+}: FilterProps): JSX.Element {
 
     const filterIndex = filterType.index;
 
@@ -181,10 +181,10 @@ function NewFilter({
 
     return (
         <Dropdown
-            buttonId={`NewFilter-button_${formattedFilterTypeValue}`}
+            buttonId={`Filter-button_${formattedFilterTypeValue}`}
             dropdownButtonContent={dropdownButtonContent}
             dropdownContent={dropdownContent}
-            dropdownOptionIds={[`NewFilter-button_${formattedFilterTypeValue}`,
+            dropdownOptionIds={[`Filter-button_${formattedFilterTypeValue}`,
                 `dropdown-label_${formattedFilterTypeValue}`,
                 `dropdown-button-arrow-up_${formattedFilterTypeValue}`,
                 `filter_count_${formattedFilterTypeValue}`]}
@@ -207,5 +207,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewFilter);
+export default connect(mapStateToProps, mapDispatchToProps)(Filter);
 /* eslint-enable */

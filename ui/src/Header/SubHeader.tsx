@@ -24,8 +24,8 @@ import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import NewCalendar from '../Calendar/NewCalendar';
 import {GlobalStateProps} from '../Redux/Reducers';
-import NewProductSortBy from '../SortingAndFiltering/NewProductSortBy';
-import NewFilter from '../SortingAndFiltering/NewFilter';
+import ProductSortBy from '../SortingAndFiltering/ProductSortBy';
+import Filter from '../SortingAndFiltering/Filter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
 
@@ -48,11 +48,11 @@ function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
             </div>
             <div className="rightContent">
                 <NavigationSection label="Filter by" icon="filter_list">
-                    <NewFilter filterType={FilterTypeListings.Location}/>
-                    <NewFilter filterType={FilterTypeListings.ProductTag}/>
-                    <NewFilter filterType={FilterTypeListings.Role}/>
+                    <Filter filterType={FilterTypeListings.Location}/>
+                    <Filter filterType={FilterTypeListings.ProductTag}/>
+                    <Filter filterType={FilterTypeListings.Role}/>
                 </NavigationSection>
-                <NewProductSortBy/>
+                <ProductSortBy/>
             </div>
         </div>
     );
