@@ -47,6 +47,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Month
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -97,7 +98,7 @@ class ReportGeneratorControllerTest {
 
     @Before
     fun setup() {
-        space1 = spaceRepository.save(Space(name = "Undersea Pineapple", createdDate = LocalDateTime.now()))
+        space1 = spaceRepository.save(Space(name = "Undersea Pineapple", createdDate = LocalDateTime.of(2020, Month.FEBRUARY, 22, 0,0,0)))
         space2 = spaceRepository.save(Space(name = "Krusty Krabb", createdDate = LocalDateTime.now()))
         productA = productRepository.save(Product(name = "product a", spaceUuid = space1.uuid))
         productB = productRepository.save(Product(name = "Product b", spaceUuid = space1.uuid))
@@ -197,6 +198,8 @@ class ReportGeneratorControllerTest {
 
         assertThat(actualSpaceReport.size).isEqualTo(2)
         assertThat(actualSpaceReport).containsAll(expectedSpaceReport)
+        assertThat(actualSpaceReport[0]).isEqualTo(expectedSpace2)
+        assertThat(actualSpaceReport[1]).isEqualTo(expectedSpace1)
     }
 
     @Test
@@ -210,7 +213,5 @@ class ReportGeneratorControllerTest {
         val actualUserReport = objectMapper.readValue<List<String>>(result.response.contentAsString, constructCollectionType)
 
         assertThat(actualUserReport).containsExactlyInAnyOrder("USER_ID","SSQUAREP", "PSTAR")
-
     }
-
 }
