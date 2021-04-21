@@ -42,8 +42,9 @@ describe('Calendar', () => {
 
     it('should display current date on initial load', async () => {
         const app = renderWithRedux(<Calendar/>, undefined, initialState);
+        const viewingLabel = await app.findByText('Viewing:');
+        expect(viewingLabel.innerHTML).toContain('Viewing:');
         const dateViewElement = await app.findByTestId('calendarToggle');
-        expect(dateViewElement.innerHTML).toContain('Viewing:');
         expect(dateViewElement.innerHTML).toContain('May 14, 2020');
     });
 

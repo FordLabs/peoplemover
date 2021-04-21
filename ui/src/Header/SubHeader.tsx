@@ -22,7 +22,7 @@ import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
-import NewCalendar from '../Calendar/NewCalendar';
+import Calendar from '../Calendar/Calendar';
 import {GlobalStateProps} from '../Redux/Reducers';
 import ProductSortBy from '../SortingAndFiltering/ProductSortBy';
 import Filter from '../SortingAndFiltering/Filter';
@@ -38,7 +38,7 @@ function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
     return (
         <div className="newSpaceSelectionContainer">
             <div className="leftContent">
-                <NewCalendar/>
+                <Calendar/>
                 {isReadOnly && (
                     <span className="viewState">
                         <i className="material-icons">visibility</i>

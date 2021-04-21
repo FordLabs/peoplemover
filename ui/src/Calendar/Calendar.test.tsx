@@ -20,9 +20,9 @@ import React from 'react';
 import {fireEvent, queryByText, wait} from '@testing-library/react';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import NewCalendar from './NewCalendar';
+import Calendar from './Calendar';
 
-describe('NewCalendar', () => {
+describe('Calendar', () => {
     let resetCreateRange: () => void;
 
     const initialState: PreloadedState<GlobalStateProps> = {
@@ -41,19 +41,19 @@ describe('NewCalendar', () => {
     });
 
     it('should have Viewing label and calendar icon',  () => {
-        const app = renderWithRedux(<NewCalendar/>, undefined, initialState);
+        const app = renderWithRedux(<Calendar/>, undefined, initialState);
         app.getByText(/viewing:/i);
         app.getByText(/calendar_today/i);
     });
 
     it('should display current date on initial load', async () => {
-        const app = renderWithRedux(<NewCalendar/>, undefined, initialState);
+        const app = renderWithRedux(<Calendar/>, undefined, initialState);
         const dateViewElement = await app.findByTestId('calendarToggle');
         expect(dateViewElement.innerHTML).toContain('Nov 14, 2020');
     });
 
     it('should have down caret when closed and up arrow when open', async () => {
-        const app = renderWithRedux(<NewCalendar/>, undefined, initialState);
+        const app = renderWithRedux(<Calendar/>, undefined, initialState);
         const datePickerOpener = await app.findByTestId('calendarToggle');
 
         await app.findByTestId('calendar_down-arrow');
