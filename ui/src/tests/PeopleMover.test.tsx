@@ -80,6 +80,7 @@ describe('PeopleMover', () => {
                     isReadOnly: true,
                     products: TestUtils.products,
                     currentSpace: TestUtils.space,
+                    allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 } as GlobalStateProps;
                 store = createStore(rootReducer, initialState, applyMiddleware(thunk));
                 app = applicationSetup(store, initialState);
