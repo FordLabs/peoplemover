@@ -27,6 +27,7 @@
   font-size: 12px;
   color: $gray-2;
   margin: 0;
+  text-decoration: none;
 }
 
 .brandingContainer {
@@ -36,3 +37,7 @@
   margin-top: auto;
   padding: 16px 0;
 }
+
+.brandingLeftPadSmall {
+  padding-left: 6px;
+};
