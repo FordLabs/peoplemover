@@ -17,8 +17,8 @@
 
 package com.ford.internalprojects.peoplemover.product
 
-import com.ford.internalprojects.peoplemover.location.SpaceLocation
-import com.ford.internalprojects.peoplemover.producttag.ProductTag
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size

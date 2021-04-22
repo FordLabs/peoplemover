@@ -18,7 +18,7 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.ford.internalprojects.peoplemover.role.SpaceRole
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import javax.persistence.*
 

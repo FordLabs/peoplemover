@@ -23,11 +23,11 @@ import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.location.SpaceLocationRepository
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.role.SpaceRole
-import com.ford.internalprojects.peoplemover.role.SpaceRolesRepository
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.assertj.core.api.Assertions.assertThat

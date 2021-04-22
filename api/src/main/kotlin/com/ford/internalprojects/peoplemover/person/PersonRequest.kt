@@ -18,10 +18,8 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.ford.internalprojects.peoplemover.role.SpaceRole
-import javax.validation.constraints.Max
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Size
 
 data class PersonRequest(

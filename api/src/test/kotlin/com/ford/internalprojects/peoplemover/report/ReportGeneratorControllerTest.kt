@@ -28,8 +28,8 @@ import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.role.SpaceRole
-import com.ford.internalprojects.peoplemover.role.SpaceRolesRepository
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.assertj.core.api.Assertions.assertThat

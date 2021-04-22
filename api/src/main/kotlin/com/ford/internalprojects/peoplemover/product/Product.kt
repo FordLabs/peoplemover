@@ -18,8 +18,8 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.ford.internalprojects.peoplemover.assignment.Assignment
-import com.ford.internalprojects.peoplemover.location.SpaceLocation
-import com.ford.internalprojects.peoplemover.producttag.ProductTag
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import java.time.LocalDate
 import javax.persistence.*
