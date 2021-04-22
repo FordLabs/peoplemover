@@ -94,7 +94,7 @@ class ProductTagControllerTest {
     @Test
     fun `GET should return 403 if unauthorized`() {
         mockMvc.perform(get(basePersonTagsUrl)
-            .header("Authorization", "Bearer BAD_TOKEN"))
+            .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
             .andExpect(status().isForbidden)
             .andReturn()
     }
