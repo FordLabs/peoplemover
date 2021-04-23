@@ -23,6 +23,7 @@ import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.tag.TagRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -30,6 +31,7 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -60,6 +62,7 @@ class ProductTagControllerTest {
     var basePersonTagsUrl: String = ""
     private lateinit var space: Space
     private fun getBasePersonTagsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/person-tags"
+
     @Before
     fun setUp() {
         personTagRepository.deleteAll()
@@ -67,7 +70,13 @@ class ProductTagControllerTest {
 
         space = spaceRepository.save(Space(name = "anotherSpaceName"))
         basePersonTagsUrl = getBasePersonTagsUrl(space.uuid)
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+        userSpaceMappingRepository.save(
+            UserSpaceMapping(
+                userId = "USER_ID",
+                spaceUuid = space.uuid,
+                permission = PERMISSION_OWNER
+            )
+        )
     }
 
     @Test
@@ -76,8 +85,10 @@ class ProductTagControllerTest {
         val personTag2: PersonTag = personTagRepository.save(PersonTag(name = "Agency", spaceUuid = space.uuid))
         val personTag3: PersonTag = personTagRepository.save(PersonTag(name = "Salaried", spaceUuid = space.uuid))
 
-        val result = mockMvc.perform(get(basePersonTagsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN"))
+        val result = mockMvc.perform(
+            get(basePersonTagsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+        )
             .andExpect(status().isOk)
             .andReturn()
 
@@ -93,8 +104,44 @@ class ProductTagControllerTest {
 
     @Test
     fun `GET should return 403 if unauthorized`() {
-        mockMvc.perform(get(basePersonTagsUrl)
-            .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+        mockMvc.perform(
+            get(basePersonTagsUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        )
+            .andExpect(status().isForbidden)
+            .andReturn()
+    }
+
+    @Test
+    fun `POST should create person tag`() {
+        val tagToCreate = TagRequest(name = "Low Achiever")
+
+        val result = mockMvc.perform(
+            post(basePersonTagsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tagToCreate))
+        )
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val actualTag: PersonTag = objectMapper.readValue(
+            result.response.contentAsString,
+            PersonTag::class.java
+        )
+        assertThat(actualTag.name).isEqualTo(tagToCreate.name)
+    }
+
+    @Test
+    fun `Post should return 403 if unauthorized`() {
+        val tagToCreate = TagRequest(name = "Low Achiever")
+
+        mockMvc.perform(
+            post(basePersonTagsUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tagToCreate))
+        )
             .andExpect(status().isForbidden)
             .andReturn()
     }

@@ -17,14 +17,13 @@
 
 package com.ford.internalprojects.peoplemover.tag.person
 
+import com.ford.internalprojects.peoplemover.tag.TagRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/spaces/{spaceUuid}/person-tags")
@@ -41,5 +40,12 @@ class PersonTagController {
                 Sort.by(Sort.Order.asc("name").ignoreCase())
             )
         )
+    }
+
+    @PostMapping
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
+    fun createPersonTag(@PathVariable spaceUuid: String, @Valid @RequestBody request: TagRequest): ResponseEntity<PersonTag>{
+        val createdPersonTag: PersonTag = personTagRepository.createEntityAndUpdateSpaceLastModified(PersonTag(name = request.name, spaceUuid = spaceUuid))
+        return ResponseEntity.ok(createdPersonTag)
     }
 }
