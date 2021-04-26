@@ -17,7 +17,13 @@
 
 package com.ford.internalprojects.peoplemover.tag.role
 
+import com.ford.internalprojects.peoplemover.tag.TagRequestInterface
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
+
 data class RoleRequest (
-    val name: String,
+    @field:NotBlank(message = "Did you forget to provide a name for the tag?")
+    @field:Size(max = 255, message = "Name must be less than 255 characters.")
+    override var name: String,
     val colorId: Int? = null
-)
+): TagRequestInterface

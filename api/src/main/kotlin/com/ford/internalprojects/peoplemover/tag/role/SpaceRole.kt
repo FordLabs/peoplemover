@@ -18,7 +18,7 @@
 package com.ford.internalprojects.peoplemover.tag.role
 
 import com.ford.internalprojects.peoplemover.color.Color
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
+import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
 import javax.persistence.*
 
 @Entity
@@ -29,11 +29,11 @@ data class SpaceRole (
     override val id: Int? = null,
 
     @Column(name = "roles")
-    var name: String,
+    override var name: String,
 
     @Column(name = "space_uuid")
     override val spaceUuid: String,
 
     @ManyToOne
     var color: Color? = null
-): SpaceComponent
+): NamedSpaceComponent

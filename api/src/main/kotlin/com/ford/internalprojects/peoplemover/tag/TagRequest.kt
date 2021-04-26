@@ -20,8 +20,12 @@ package com.ford.internalprojects.peoplemover.tag
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
+interface TagRequestInterface {
+    val name: String
+}
+
 data class TagRequest (
     @field:NotBlank(message = "Did you forget to provide a name for the tag?")
     @field:Size(max = 255, message = "Name must be less than 255 characters.")
-    val name: String
-)
+    override val name: String
+): TagRequestInterface

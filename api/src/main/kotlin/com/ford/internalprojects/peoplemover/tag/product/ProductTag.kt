@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.tag.product
 
+import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
 import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import javax.persistence.*
 
@@ -30,5 +31,5 @@ data class ProductTag (
     @Column(name = "space_uuid")
     override val spaceUuid: String,
 
-    val name: String
-): SpaceComponent
+    override val name: String
+): NamedSpaceComponent

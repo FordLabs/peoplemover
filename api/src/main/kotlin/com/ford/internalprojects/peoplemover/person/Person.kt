@@ -18,8 +18,8 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import javax.persistence.*
 
 @Entity
@@ -28,7 +28,7 @@ data class Person(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         override val id: Int? = null,
 
-        val name: String,
+        override val name: String,
 
         @ManyToOne
         @JoinColumn(name = "space_role_id")
@@ -42,7 +42,7 @@ data class Person(
 
         @Column(name = "space_uuid")
         override val spaceUuid: String
-): SpaceComponent {
+): NamedSpaceComponent {
     constructor(name: String, spaceUuid: String) :
             this(null, name, null, "", false, spaceUuid)
 }

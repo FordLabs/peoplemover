@@ -18,9 +18,9 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.ford.internalprojects.peoplemover.assignment.Assignment
+import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
 import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.tag.product.ProductTag
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import java.time.LocalDate
 import javax.persistence.*
 
@@ -31,7 +31,7 @@ data class Product (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Int? = null,
 
-    var name: String,
+    override var name: String,
 
     @OneToMany(mappedBy = "productId", fetch = FetchType.EAGER)
     val assignments: Set<Assignment> = HashSet(),
@@ -57,7 +57,7 @@ data class Product (
     @Column(name = "space_uuid")
     override val spaceUuid: String
 
-): SpaceComponent {
+): NamedSpaceComponent {
 
     constructor(id: Int?, name: String, spaceUuid: String):
         this(id, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceUuid)

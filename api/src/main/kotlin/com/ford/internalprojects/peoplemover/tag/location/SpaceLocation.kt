@@ -17,7 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.tag.location
 
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
+import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
 import javax.persistence.*
 
 @Entity
@@ -30,5 +30,5 @@ data class SpaceLocation (
     @Column(name = "space_uuid")
     override val spaceUuid: String,
 
-    val name: String
-): SpaceComponent
+    override val name: String
+): NamedSpaceComponent

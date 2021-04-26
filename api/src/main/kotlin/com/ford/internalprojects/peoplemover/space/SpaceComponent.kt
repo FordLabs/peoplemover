@@ -21,3 +21,7 @@ interface SpaceComponent{
     val id: Int?
     val spaceUuid: String
 }
+
+interface NamedSpaceComponent : SpaceComponent {
+    val name: String
+}
