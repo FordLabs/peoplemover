@@ -17,7 +17,6 @@
 
 package com.ford.internalprojects.peoplemover.person
 
-import com.ford.internalprojects.peoplemover.assignment.AssignmentService
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -27,8 +26,7 @@ import javax.validation.Valid
 @RestController
 class PersonController(
         private val logger: BasicLogger,
-        private val personService: PersonService,
-        private val assignmentService: AssignmentService
+        private val personService: PersonService
 ) {
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")

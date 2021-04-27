@@ -48,4 +48,31 @@ class PersonTagController {
         val createdPersonTag: PersonTag = personTagRepository.createEntityAndUpdateSpaceLastModified(PersonTag(name = request.name, spaceUuid = spaceUuid))
         return ResponseEntity.ok(createdPersonTag)
     }
+
+    @PutMapping(path = ["/{personTagId}"])
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
+    fun editPersonTag(
+        @PathVariable spaceUuid: String,
+        @PathVariable personTagId: Int,
+        @RequestBody tagRequest: TagRequest
+    ): ResponseEntity<PersonTag> {
+        val editedPersonTag: PersonTag = personTagRepository.updateEntityAndUpdateSpaceLastModified(
+            PersonTag(
+                id = personTagId,
+                name = tagRequest.name,
+                spaceUuid = spaceUuid
+            )
+        )
+        return ResponseEntity.ok(editedPersonTag)
+    }
+
+    @DeleteMapping(path = ["/{personTagId}"])
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
+    fun deletePersonTag(
+        @PathVariable spaceUuid: String,
+        @PathVariable personTagId: Int
+    ): ResponseEntity<Unit> {
+        personTagRepository.deleteEntityAndUpdateSpaceLastModified(personTagId, spaceUuid)
+        return ResponseEntity.ok().build()
+    }
 }
