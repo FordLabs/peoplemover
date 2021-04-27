@@ -24,40 +24,40 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
 data class ProductRequest(
-        @field:NotBlank(message = "Invalid Product in Request. Did you forget to provide a name for the product?")
-        @field:Size(max = 255, message = "Name cannot be longer than 255 characters")
-        var name: String,
+    @field:NotBlank(message = "Invalid Product in Request. Did you forget to provide a name for the product?")
+    @field:Size(max = 255, message = "Name cannot be longer than 255 characters")
+    var name: String,
 
-        val productTags: Set<ProductTag> = HashSet(),
+    val tags: Set<ProductTag> = HashSet(),
 
-        val startDate: LocalDate? = null,
+    val startDate: LocalDate? = null,
 
-        val endDate: LocalDate? = null,
+    val endDate: LocalDate? = null,
 
-        @field:Size(max = 255, message = "dorf cannot be longer than 255 characters")
-        val dorf: String = "",
+    @field:Size(max = 255, message = "dorf cannot be longer than 255 characters")
+    val dorf: String = "",
 
-        val spaceLocation: SpaceLocation? = null,
+    val spaceLocation: SpaceLocation? = null,
 
-        val archived: Boolean = false,
+    val archived: Boolean = false,
 
-        @field:Size(max = 500, message = "notes cannot be longer than 500 characters")
-        var notes: String = ""
+    @field:Size(max = 500, message = "notes cannot be longer than 500 characters")
+    var notes: String = ""
 )
 
 fun ProductRequest.toProduct(productId: Int? = null, spaceUuid: String): Product =
-         Product(
-                id = productId,
-                name = name,
-                productTags = productTags,
-                startDate = startDate,
-                endDate = endDate,
-                dorf = dorf,
-                spaceLocation = spaceLocation,
-                archived = archived,
-                notes = notes,
-                spaceUuid = spaceUuid
-        )
+    Product(
+        id = productId,
+        name = name,
+        tags = tags,
+        startDate = startDate,
+        endDate = endDate,
+        dorf = dorf,
+        spaceLocation = spaceLocation,
+        archived = archived,
+        notes = notes,
+        spaceUuid = spaceUuid
+    )
 
 
 

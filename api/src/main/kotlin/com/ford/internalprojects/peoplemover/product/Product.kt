@@ -38,7 +38,7 @@ data class Product (
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.REFRESH])
     @JoinTable(name = "product_tag_mapping", joinColumns = [JoinColumn(name = "product_id", referencedColumnName = "id")], inverseJoinColumns = [JoinColumn(name = "product_tag_id", referencedColumnName = "id")])
-    val productTags: Set<ProductTag> = HashSet(),
+    val tags: Set<ProductTag> = HashSet(),
 
     val startDate: LocalDate? = null,
 

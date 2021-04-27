@@ -23,13 +23,15 @@ import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
-import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -73,6 +75,9 @@ class PersonControllerApiTest {
     private lateinit var spaceLocationRepository: SpaceLocationRepository
 
     @Autowired
+    private lateinit var personTagRepository: PersonTagRepository
+
+    @Autowired
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
@@ -80,6 +85,8 @@ class PersonControllerApiTest {
 
     private lateinit var space: Space
     private lateinit var spaceTwo: Space
+
+    private lateinit var tag: PersonTag
 
     var basePeopleUrl: String = ""
 
@@ -90,9 +97,12 @@ class PersonControllerApiTest {
         space = spaceRepository.save(Space(name = "spaceWithThisName"))
         spaceTwo = spaceRepository.save(Space(name = "spaceThatUserDoesNotHaveAccessTo"))
 
+        tag = personTagRepository.save(PersonTag(spaceUuid = space.uuid, name = "Agency Employee" ))
+
         basePeopleUrl = getBasePeopleUrl(space.uuid)
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
     }
 
     @After
@@ -103,6 +113,7 @@ class PersonControllerApiTest {
         productRepository.deleteAll()
         spaceLocationRepository.deleteAll()
         spaceRepository.deleteAll()
+        personTagRepository.deleteAll()
     }
 
     @Test
@@ -119,7 +130,8 @@ class PersonControllerApiTest {
                 spaceRole = spaceRole,
                 notes = "Some Notes",
                 newPerson = true,
-                spaceUuid = space.uuid
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
         )
         assertThat(personRepository.count()).isZero()
         val result = mockMvc.perform(post(basePeopleUrl)
@@ -140,6 +152,7 @@ class PersonControllerApiTest {
         assertThat(actualPerson.newPerson).isEqualTo(personToCreate.newPerson)
         assertThat(actualPerson.spaceUuid).isEqualTo(personToCreate.spaceUuid)
         assertThat(actualPerson).isEqualTo(personInDb)
+        assertThat(actualPerson.tags).containsOnly(tag)
     }
 
     @Test

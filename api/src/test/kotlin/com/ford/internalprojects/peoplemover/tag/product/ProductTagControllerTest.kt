@@ -180,7 +180,7 @@ class ProductTagControllerTest {
         )
         val product: Product = productRepository.save(Product(
                 name = "P1",
-                productTags = hashSetOf(productTag),
+                tags = hashSetOf(productTag),
                 spaceUuid = space.uuid
         ))
 
@@ -193,7 +193,7 @@ class ProductTagControllerTest {
         assertThat(productTagRepository.count()).isZero()
 
         val productInRepo: Product = productRepository.findByIdOrNull(product.id!!)!!
-        assertThat(productInRepo.productTags).isEmpty()
+        assertThat(productInRepo.tags).isEmpty()
     }
 
     @Test

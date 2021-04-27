@@ -23,11 +23,14 @@ import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -43,7 +46,6 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -64,6 +66,9 @@ class ProductControllerApiTest {
     private lateinit var spaceRepository: SpaceRepository
 
     @Autowired
+    private lateinit var productTagRepository: ProductTagRepository
+
+    @Autowired
     private lateinit var spaceLocationRepository: SpaceLocationRepository
 
     @Autowired
@@ -76,6 +81,8 @@ class ProductControllerApiTest {
     private lateinit var mockMvc: MockMvc
     private lateinit var space: Space
     private lateinit var spaceWithoutAccess: Space
+    private lateinit var tag: ProductTag
+    private lateinit var location: SpaceLocation
 
     var baseProductsUrl: String = ""
 
@@ -88,6 +95,8 @@ class ProductControllerApiTest {
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
         baseProductsUrl = getBaseProductUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+        tag = productTagRepository.save(ProductTag(spaceUuid = space.uuid, name = "AV Product"))
+        location = spaceLocationRepository.save(SpaceLocation(spaceUuid = space.uuid, name = "Mars"))
     }
 
     @After
@@ -97,11 +106,16 @@ class ProductControllerApiTest {
         personRepository.deleteAll()
         spaceLocationRepository.deleteAll()
         spaceRepository.deleteAll()
+        productTagRepository.deleteAll()
     }
 
     @Test
     fun `POST should create new Product`() {
-        val productAddRequest = ProductRequest(name = "product one")
+        val productAddRequest = ProductRequest(
+            name = "product one",
+            tags = setOf(tag),
+            spaceLocation = location
+        )
 
         val result = mockMvc.perform(post(baseProductsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -119,6 +133,8 @@ class ProductControllerApiTest {
         assertThat(actualProduct.name).isEqualTo(productAddRequest.name)
         assertThat(actualProduct.spaceUuid).isEqualTo(space.uuid)
         assertThat(actualProduct).isEqualTo(productInDB)
+        assertThat(actualProduct.tags).containsOnly(tag)
+        assertThat(actualProduct.spaceLocation).isEqualTo(location)
     }
 
     @Test
