@@ -24,6 +24,7 @@ import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -42,7 +43,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-class ProductTagControllerTest {
+class PersonTagControllerTest {
 
     @Autowired
     private lateinit var spaceRepository: SpaceRepository
@@ -147,6 +148,16 @@ class ProductTagControllerTest {
     }
 
     @Test
+    fun `POST should return 409 when creating person tag with already existing name`() {
+        val actualTag: PersonTag = personTagRepository.save(PersonTag(name = "Agency", spaceUuid = space.uuid))
+        mockMvc.perform(post(basePersonTagsUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(actualTag)))
+            .andExpect(status().isConflict)
+    }
+
+    @Test
     fun `PUT should update person tag`() {
         val expectedInitialState = "Top Achiever"
         val tagToCreate = TagRequest(name = expectedInitialState)
@@ -218,6 +229,21 @@ class ProductTagControllerTest {
     }
 
     @Test
+    fun `PUT should return 409 when editing person tag to an already existing name`() {
+        val conflictingTagName = "Cool Guy"
+        personTagRepository.save(PersonTag(name = conflictingTagName, spaceUuid = space.uuid))
+
+        val initialTag: PersonTag = personTagRepository.save(PersonTag(name = "Fun Guy", spaceUuid = space.uuid))
+
+        val attemptedEditRequest = TagRequest(name = conflictingTagName)
+        mockMvc.perform(put("$basePersonTagsUrl/${initialTag.id}")
+            .header("Authorization", "Bearer GOOD_TOKEN")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(attemptedEditRequest)))
+            .andExpect(status().isConflict)
+    }
+
+    @Test
     fun `DELETE should delete person tag`() {
         val expectedInitialState = "Top Achiever"
         val tagToCreate = TagRequest(name = expectedInitialState)
@@ -275,7 +301,7 @@ class ProductTagControllerTest {
     }
 
     @Test
-    fun `DELETE should return 400 when product tag is not associated with the space provided`() {
+    fun `DELETE should return 400 when person tag is not associated with the space provided`() {
         val spaceNotAssociatedWithUser = spaceRepository.save(Space(name = "spaceNotAssociatedWithUser"))
 
         val personTag: PersonTag = personTagRepository.save(
@@ -288,7 +314,7 @@ class ProductTagControllerTest {
     }
 
     @Test
-    fun `DELETE should return 400 when product tag does not exist`() {
+    fun `DELETE should return 400 when person tag does not exist`() {
         mockMvc.perform(delete("$basePersonTagsUrl/700")
             .header("Authorization", "Bearer GOOD_TOKEN"))
             .andExpect(status().isBadRequest)

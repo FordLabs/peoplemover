@@ -29,23 +29,20 @@ import javax.validation.Valid
 @RequestMapping("/api/spaces/{spaceUuid}/person-tags")
 class PersonTagController {
     @Autowired
-    private lateinit var personTagRepository: PersonTagRepository
+    private lateinit var personTagService: PersonTagService
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getAllPersonTags(@PathVariable spaceUuid: String): ResponseEntity<List<PersonTag>> {
         return ResponseEntity.ok(
-            personTagRepository.findAllBySpaceUuid(
-                spaceUuid,
-                Sort.by(Sort.Order.asc("name").ignoreCase())
-            )
+            personTagService.getAllPersonTags(spaceUuid)
         )
     }
 
     @PostMapping
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     fun createPersonTag(@PathVariable spaceUuid: String, @Valid @RequestBody request: TagRequest): ResponseEntity<PersonTag>{
-        val createdPersonTag: PersonTag = personTagRepository.createEntityAndUpdateSpaceLastModified(PersonTag(name = request.name, spaceUuid = spaceUuid))
+        val createdPersonTag: PersonTag = personTagService.createPersonTagForSpace(request, spaceUuid)
         return ResponseEntity.ok(createdPersonTag)
     }
 
@@ -56,12 +53,10 @@ class PersonTagController {
         @PathVariable personTagId: Int,
         @RequestBody tagRequest: TagRequest
     ): ResponseEntity<PersonTag> {
-        val editedPersonTag: PersonTag = personTagRepository.updateEntityAndUpdateSpaceLastModified(
-            PersonTag(
-                id = personTagId,
-                name = tagRequest.name,
-                spaceUuid = spaceUuid
-            )
+        val editedPersonTag: PersonTag = personTagService.editPersonTag(
+            spaceUuid = spaceUuid,
+            personTagId = personTagId,
+            tagEditRequest = tagRequest
         )
         return ResponseEntity.ok(editedPersonTag)
     }
@@ -72,7 +67,7 @@ class PersonTagController {
         @PathVariable spaceUuid: String,
         @PathVariable personTagId: Int
     ): ResponseEntity<Unit> {
-        personTagRepository.deleteEntityAndUpdateSpaceLastModified(personTagId, spaceUuid)
+        personTagService.deletePersonTag(personTagId, spaceUuid)
         return ResponseEntity.ok().build()
     }
 }
