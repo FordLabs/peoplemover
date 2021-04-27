@@ -31,5 +31,14 @@ describe('Space Form', () => {
         // @ts-ignore
         expect(spaceInput.maxLength).toBe(40);
     });
+
+    it('should show an error message if space name is only empty space', () => {
+        const form = renderWithRedux(<SpaceForm/>);
+        const spaceInput = form.getByTestId('createSpaceInputField');
+        const createSpaceButton = form.getByTestId('createSpaceButton');
+        fireEvent.change(spaceInput, {target: {value: '   '}});
+        fireEvent.click(createSpaceButton);
+        expect(form.getByTestId('createSpaceErrorMessage')).toBeVisible();
+    });
 });
 

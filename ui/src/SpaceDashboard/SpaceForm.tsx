@@ -23,6 +23,7 @@ import {createEmptySpace, Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
 
 import './SpaceForm.scss';
+import {colors} from 'react-select/src/theme';
 
 interface SpaceFormProps {
     space?: Space;
@@ -38,6 +39,7 @@ function SpaceForm({
     const maxLength = 40;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
     const spaceNameInputRef = createRef<HTMLInputElement>();
+    const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
 
     useEffect(() => {
         spaceNameInputRef.current?.focus();
@@ -49,6 +51,10 @@ function SpaceForm({
 
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
+
+        if(formSpace.name.trim().length === 0){
+            setShowWarningMessage(true);
+        }
 
         if (!!space && formSpace.uuid) {
             SpaceClient.editSpaceName(formSpace.uuid, formSpace, space.name)
@@ -87,6 +93,11 @@ function SpaceForm({
                 data-testid="createSpaceFieldText">
                 {spaceNameLength} ({maxLength} characters max)
             </span>
+            <div className="createSpaceErrorMessageContainer">
+                {showWarningMessage && <span data-testid="createSpaceErrorMessage" className="createSpaceErrorMessage">
+                      To create a space, enter an alpha-numeric name.
+                </span>}
+            </div>
             <div className="createSpaceButtonContainer">
                 <FormButton
                     buttonStyle="secondary"
@@ -98,7 +109,8 @@ function SpaceForm({
                     className="createSpaceSubmitButton"
                     buttonStyle="primary"
                     type="submit"
-                    disabled={spaceNameLength <= 0}>
+                    disabled={spaceNameLength <= 0}
+                    testId="createSpaceButton">
                     {space ? 'Save' : 'Create'}
                 </FormButton>
             </div>
