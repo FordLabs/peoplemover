@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
+import com.ford.internalprojects.peoplemover.person.Person
+import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.TagRequest
@@ -56,6 +58,9 @@ class PersonTagControllerTest {
 
     @Autowired
     private lateinit var personTagRepository: PersonTagRepository
+
+    @Autowired
+    private lateinit var personRepository: PersonRepository
 
     @Autowired
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
@@ -244,33 +249,27 @@ class PersonTagControllerTest {
     }
 
     @Test
-    fun `DELETE should delete person tag`() {
-        val expectedInitialState = "Top Achiever"
-        val tagToCreate = TagRequest(name = expectedInitialState)
-
-        val creationResponse = mockMvc.perform(
-            post(basePersonTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tagToCreate))
-        )
-            .andExpect(status().isOk)
-            .andReturn()
-        val createdTag = objectMapper.readValue(
-            creationResponse.response.contentAsString,
-            PersonTag::class.java
+    fun `DELETE should delete person tag and all associations to people`() {
+        val personTag: PersonTag = personTagRepository.save(
+            PersonTag(name = "Agency", spaceUuid = space.uuid)
         )
 
-        assertThat(createdTag.name).isEqualTo(expectedInitialState);
+        val personId: Int? = personRepository.save(
+            Person(name = "Bob", spaceUuid = space.uuid, tags = hashSetOf(personTag))
+        ).id
+
+        assertThat(personTagRepository.count()).isOne()
 
         mockMvc.perform(
-            delete("$basePersonTagsUrl/${createdTag.id}")
+            delete("$basePersonTagsUrl/${personTag.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createdTag))
         )
             .andExpect(status().isOk)
             .andReturn()
+
+        assertThat(personTagRepository.count()).isZero()
+        val person = personRepository.findByIdAndSpaceUuid(personId!!, space.uuid)
+        assertThat(person!!.tags).isEmpty()
     }
 
     @Test
