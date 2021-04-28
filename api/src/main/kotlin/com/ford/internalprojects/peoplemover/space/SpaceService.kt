@@ -22,6 +22,7 @@ import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -33,22 +34,22 @@ import java.util.*
 
 @Service
 class SpaceService(
-    private val spaceRepository: SpaceRepository,
-    private val productService: ProductService,
-    private val userSpaceMappingRepository: UserSpaceMappingRepository
+        private val spaceRepository: SpaceRepository,
+        private val productService: ProductService,
+        private val userSpaceMappingRepository: UserSpaceMappingRepository
 ) {
 
     fun createSpaceWithName(spaceName: String, createdBy: String): Space {
-        if (spaceName.isEmpty()) {
+        if (spaceName.trim().isEmpty()) {
             throw SpaceNotExistsException(spaceName)
         } else {
             val savedSpace = spaceRepository.save(
-                Space(
-                    name = spaceName,
-                    lastModifiedDate = Timestamp(Date().time),
-                    createdBy = createdBy,
-                    createdDate = LocalDateTime.now()
-                )
+                    Space(
+                            name = spaceName,
+                            lastModifiedDate = Timestamp(Date().time),
+                            createdBy = createdBy,
+                            createdDate = LocalDateTime.now()
+                    )
             )
             productService.createDefaultProducts(savedSpace);
             return savedSpace
@@ -63,11 +64,11 @@ class SpaceService(
         val userId: String = SecurityContextHolder.getContext().authentication.name
         createSpaceWithName(spaceName, userId).let { createdSpace ->
             userSpaceMappingRepository.save(
-                UserSpaceMapping(
-                    userId = userId,
-                    spaceUuid = createdSpace.uuid,
-                    permission = PERMISSION_OWNER
-                )
+                    UserSpaceMapping(
+                            userId = userId,
+                            spaceUuid = createdSpace.uuid,
+                            permission = PERMISSION_OWNER
+                    )
             )
             return SpaceResponse(createdSpace)
         }
@@ -76,7 +77,7 @@ class SpaceService(
     fun getSpacesForUser(accessToken: String): List<Space> {
         val principal: String = SecurityContextHolder.getContext().authentication.name
         val spaceUuids: List<String> =
-            userSpaceMappingRepository.findAllByUserId(principal).map { mapping -> mapping.spaceUuid }.toList()
+                userSpaceMappingRepository.findAllByUserId(principal).map { mapping -> mapping.spaceUuid }.toList()
         return spaceRepository.findAllByUuidIn(spaceUuids)
     }
 
@@ -91,6 +92,9 @@ class SpaceService(
     fun editSpace(uuid: String, editSpaceRequest: EditSpaceRequest): Space {
         val spaceToEdit = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
 
+        if (editSpaceRequest.name != null && editSpaceRequest.name.trim().isEmpty()) {
+            throw SpaceNameInvalidException()
+        }
         if (editSpaceRequest.isInValid()) {
             return spaceToEdit
         }
