@@ -100,6 +100,25 @@ class SpaceControllerApiTest {
     }
 
     @Test
+    fun `POST should throw exception when name is just ' '`() {
+        val request = SpaceCreationRequest(spaceName = " ")
+        val accessToken = "TOKEN"
+
+        mockMvc.perform(
+            post("$baseSpaceUrl/user")
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer $accessToken")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().is4xxClientError)
+            .andReturn()
+
+        assertThat(spaceRepository.findAll()).isEmpty()
+        val userSpaceMappings: List<UserSpaceMapping> = userSpaceMappingRepository.findAll()
+        assertThat(userSpaceMappings).hasSize(0)
+    }
+
+    @Test
     fun `POST should return 401 when token is not valid`() {
         val request = SpaceCreationRequest(spaceName = "New Space")
         val token = "INVALID_TOKEN"
@@ -273,6 +292,27 @@ class SpaceControllerApiTest {
         val actualSpace = spaceRepository.findByUuid(space.uuid)
         assertThat(actualSpace!!.todayViewIsPublic).isEqualTo(expectedReadOnlyFlag)
         assertThat(actualSpace.name).isEqualTo(expectedName)
+    }
+
+    @Test
+    fun `Edit Space Request should throw an exception if the new name consists only of space characters`() {
+        val oldName = "old name"
+        val space = spaceRepository.save(Space(name = oldName, todayViewIsPublic = false))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+        val newName = " "
+        val spaceRequest = EditSpaceRequest(name = newName)
+
+        mockMvc.perform(
+            put("$baseSpaceUrl/${space.uuid}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(spaceRequest))
+        )
+            .andExpect(status().is4xxClientError)
+            .andReturn()
+
+        val actualSpace = spaceRepository.findByUuid(space.uuid)
+            assertThat(actualSpace!!.name).isEqualTo(oldName)
     }
 
     @Test

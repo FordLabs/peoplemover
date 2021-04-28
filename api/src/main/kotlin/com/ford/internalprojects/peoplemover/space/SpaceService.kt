@@ -22,6 +22,7 @@ import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
+import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -39,7 +40,7 @@ class SpaceService(
 ) {
 
     fun createSpaceWithName(spaceName: String, createdBy: String): Space {
-        if (spaceName.isEmpty()) {
+        if (spaceName.trim().isEmpty()) {
             throw SpaceNotExistsException(spaceName)
         } else {
             val savedSpace = spaceRepository.save(
@@ -91,6 +92,9 @@ class SpaceService(
     fun editSpace(uuid: String, editSpaceRequest: EditSpaceRequest): Space {
         val spaceToEdit = spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
 
+        if (editSpaceRequest.name != null && editSpaceRequest.name.trim().isEmpty()) {
+            throw SpaceNameInvalidException()
+        }
         if (editSpaceRequest.isInValid()) {
             return spaceToEdit
         }

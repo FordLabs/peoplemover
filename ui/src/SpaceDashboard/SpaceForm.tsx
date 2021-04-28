@@ -95,7 +95,7 @@ function SpaceForm({
             </span>
             <div className="createSpaceErrorMessageContainer">
                 {showWarningMessage && <span data-testid="createSpaceErrorMessage" className="createSpaceErrorMessage">
-                      To create a space, enter an alpha-numeric name.
+                      To create or rename a space, please enter an alpha-numeric name.
                 </span>}
             </div>
             <div className="createSpaceButtonContainer">
