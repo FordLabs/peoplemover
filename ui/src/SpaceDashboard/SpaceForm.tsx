@@ -23,7 +23,6 @@ import {createEmptySpace, Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
 
 import './SpaceForm.scss';
-import {colors} from 'react-select/src/theme';
 
 interface SpaceFormProps {
     space?: Space;
