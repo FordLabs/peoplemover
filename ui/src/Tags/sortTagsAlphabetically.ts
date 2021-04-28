@@ -1,7 +1,7 @@
-import {Tag} from './Tag.interface';
+import {TagInterface} from './Tag.interface';
 
-const sortTagsAlphabetically = (tagsList: Array<Tag>): void => {
-    tagsList.sort((tag1: Tag, tag2: Tag) => {
+const sortTagsAlphabetically = (tagsList: Array<TagInterface>): void => {
+    tagsList.sort((tag1: TagInterface, tag2: TagInterface) => {
         return tag1.name.toLowerCase().localeCompare(tag2.name.toLowerCase());
     });
 };

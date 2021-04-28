@@ -16,10 +16,10 @@
  */
 
 import {AvailableActions} from '../Actions';
-import {ProductTag} from '../../ProductTag/ProductTag';
+import {Tag} from '../../Tags/Tag';
 import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 
-const productTagsReducer = (state: Array<ProductTag> = [], action: {type: AvailableActions; productTags: Array<ProductTag>} ): Array<ProductTag> => {
+const productTagsReducer = (state: Array<Tag> = [], action: {type: AvailableActions; productTags: Array<Tag>} ): Array<Tag> => {
     if (action.type === AvailableActions.SET_PRODUCT_TAGS) {
         const productTags = [...action.productTags];
         sortTagsAlphabetically(productTags);

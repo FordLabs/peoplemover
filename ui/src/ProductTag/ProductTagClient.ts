@@ -16,7 +16,7 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {ProductTag} from './ProductTag';
+import {Tag} from '../Tags/Tag';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
@@ -28,7 +28,7 @@ class ProductTagClient implements TagClient {
         return '/api/spaces/' + spaceUuid + '/product-tags';
     }
 
-    async get(spaceUuid: string): Promise<AxiosResponse<Array<ProductTag>>> {
+    async get(spaceUuid: string): Promise<AxiosResponse<Array<Tag>>> {
         const url = this.getBaseProductTagsUrl(spaceUuid);
         const config = {
             headers: {
@@ -59,7 +59,7 @@ class ProductTagClient implements TagClient {
         });
     }
 
-    async edit(productTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<ProductTag>> {
+    async edit(productTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = `${this.getBaseProductTagsUrl(space.uuid!!)}/${productTagEditRequest.id}`;
         const config = {

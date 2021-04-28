@@ -20,11 +20,11 @@ import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {Tag} from './Tag.interface';
+import {TagInterface} from './Tag.interface';
 import {JSX} from '@babel/types';
 import {FilterOption} from '../CommonTypes/Option';
 import {LocationTag} from '../Locations/LocationTag.interface';
-import {ProductTag} from '../ProductTag/ProductTag';
+import {Tag} from './Tag';
 import LocationTags from './LocationTags';
 import ProductTags from './ProductTags';
 
@@ -44,7 +44,7 @@ export enum TagAction {
 interface Props {
     filterType?: FilterType;
     locations: Array<LocationTag>;
-    productTags: Array<ProductTag>;
+    productTags: Array<Tag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
@@ -71,10 +71,10 @@ function MyTagsForm({
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: Props): JSX.Element {
-    const [locationTagsList, setLocationTagsList] = useState<Array<Tag>>(locations);
-    const [productTagsList, setProductTagsList] = useState<Array<Tag>>(productTags);
+    const [locationTagsList, setLocationTagsList] = useState<Array<TagInterface>>(locations);
+    const [productTagsList, setProductTagsList] = useState<Array<TagInterface>>(productTags);
     // @todo abstract filter methods away to redux please
-    const getUpdatedFilterOptions = (index: number, tag: Tag, action: TagAction): Array<FilterOption> => {
+    const getUpdatedFilterOptions = (index: number, tag: TagInterface, action: TagAction): Array<FilterOption> => {
         let options: Array<FilterOption>;
         switch (action) {
             case TagAction.ADD:
@@ -104,7 +104,7 @@ function MyTagsForm({
     };
 
 
-    function updateFilterOptions(optionIndex: number, tag: Tag, action: TagAction): void {
+    function updateFilterOptions(optionIndex: number, tag: TagInterface, action: TagAction): void {
         const groupedFilterOptions = [...allGroupedTagFilterOptions];
         groupedFilterOptions[optionIndex]
             .options = getUpdatedFilterOptions(optionIndex, tag, action);

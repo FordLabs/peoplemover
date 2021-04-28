@@ -21,7 +21,7 @@ import LocationClient from '../Locations/LocationClient';
 import RoleClient from '../Roles/RoleClient';
 import {TagClient} from '../Tags/TagClient.interface';
 import {AxiosResponse} from 'axios';
-import {Tag} from '../Tags/Tag.interface';
+import {TagInterface} from '../Tags/Tag.interface';
 import {AvailableModals} from '../Modal/AvailableModals';
 
 export interface FilterTypeListing {
@@ -78,9 +78,9 @@ export async function getFilterOptionsForSpace(uuid: string): Promise<Array<AllG
 }
 
 async function buildTagOptions(uuid: string, tagClient: TagClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
-    const tagsResponse: AxiosResponse<Array<Tag>> = await tagClient.get(uuid);
-    const tags: Array<Tag> = tagsResponse.data;
-    return tags.map((tag: Tag): FilterOption => ({
+    const tagsResponse: AxiosResponse<Array<TagInterface>> = await tagClient.get(uuid);
+    const tags: Array<TagInterface> = tagsResponse.data;
+    return tags.map((tag: TagInterface): FilterOption => ({
         label: tag.name,
         value: tag.id + '_' + tag.name,
         selected: tagFilters.includes(tag.name),

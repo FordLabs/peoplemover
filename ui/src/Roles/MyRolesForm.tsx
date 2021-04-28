@@ -24,7 +24,7 @@ import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {FilterOption} from '../CommonTypes/Option';
 import {Color, RoleTag} from './RoleTag.interface';
 import RoleClient from './RoleClient';
-import {Tag} from '../Tags/Tag.interface';
+import {TagInterface} from '../Tags/Tag.interface';
 import {Space} from '../Space/Space';
 import ColorClient from './ColorClient';
 import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
@@ -74,7 +74,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
     }, [uuid, roles.length, colors.length]);
 
     // @todo abstract filter methods away to redux please
-    const getUpdatedFilterOptions = (index: number, trait: Tag, action: TagAction): Array<FilterOption> => {
+    const getUpdatedFilterOptions = (index: number, trait: TagInterface, action: TagAction): Array<FilterOption> => {
         let options: Array<FilterOption>;
         switch (action) {
             case TagAction.ADD:
@@ -103,7 +103,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
         return options;
     };
 
-    function updateFilterOptions(optionIndex: number, tag: Tag, action: TagAction): void {
+    function updateFilterOptions(optionIndex: number, tag: TagInterface, action: TagAction): void {
         const groupedFilterOptions = [...allGroupedTagFilterOptions];
         groupedFilterOptions[optionIndex]
             .options = getUpdatedFilterOptions(optionIndex, tag, action);

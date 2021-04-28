@@ -44,7 +44,7 @@ import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
 import {Product} from '../Products/Product';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
-import {ProductTag} from '../ProductTag/ProductTag';
+import {Tag} from '../Tags/Tag';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
@@ -63,7 +63,7 @@ export interface PeopleMoverProps {
     isReadOnly: boolean;
 
     fetchProducts(): Array<Product>;
-    fetchProductTags(): Array<ProductTag>;
+    fetchProductTags(): Array<Tag>;
     fetchLocations(): Array<LocationTag>;
     setPeople(people: Array<Person>): Array<Person>;
     setCurrentModal(modalState: CurrentModalState): void;

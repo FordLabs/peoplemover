@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {Tag} from '../Tags/Tag.interface';
+import {TagInterface} from '../Tags/Tag.interface';
 
-export interface RoleTag extends Tag {
+export interface RoleTag extends TagInterface {
     color?: Color;
 }
 

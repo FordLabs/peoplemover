@@ -21,7 +21,7 @@ import {Option} from '../CommonTypes/Option';
 import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
 import {LocationTag} from '../Locations/LocationTag.interface';
-import {Tag} from '../Tags/Tag.interface';
+import {TagInterface} from '../Tags/Tag.interface';
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {Space} from '../Space/Space';
@@ -32,7 +32,7 @@ import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComp
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
     currentProductState: { currentProduct: Product; setCurrentProduct: (updatedProduct: Product) => void };
-    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: Tag) => void;
+    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: TagInterface) => void;
     currentSpace: Space;
 }
 
@@ -96,7 +96,7 @@ function ProductFormLocationField({
         LocationClient.add(location, currentSpace).then((result: AxiosResponse) => {
             const newLocation: LocationTag = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
-            addGroupedTagFilterOptions(0, newLocation as Tag);
+            addGroupedTagFilterOptions(0, newLocation as TagInterface);
             setCurrentProduct({
                 ...currentProduct,
                 spaceLocation: newLocation,

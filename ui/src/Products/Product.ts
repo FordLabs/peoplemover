@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {ProductTag} from '../ProductTag/ProductTag';
+import {Tag} from '../Tags/Tag';
 import {Assignment} from '../Assignments/Assignment';
 import {LocationTag} from '../Locations/LocationTag.interface';
 
@@ -27,7 +27,7 @@ export interface Product {
     endDate?: string;
     dorf?: string;
     spaceLocation?: LocationTag;
-    tags: Array<ProductTag>;
+    tags: Array<Tag>;
     archived: boolean;
     notes?: string;
     assignments: Array<Assignment>;

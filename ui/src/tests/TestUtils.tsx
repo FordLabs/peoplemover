@@ -31,7 +31,7 @@ import {mount, ReactWrapper} from 'enzyme';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
 import ProductTagClient from '../ProductTag/ProductTagClient';
-import {ProductTag} from '../ProductTag/ProductTag';
+import {Tag} from '../Tags/Tag';
 import ColorClient from '../Roles/ColorClient';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import {LocationTag} from '../Locations/LocationTag.interface';
@@ -230,12 +230,12 @@ class TestUtils {
         TestUtils.southfield,
     ];
 
-    static productTag1: ProductTag = {id: 5, name: 'AV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static productTag2: ProductTag = {id: 6, name: 'FordX', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
-    static productTag3: ProductTag = {id: 7, name: 'EV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static productTag4: ProductTag = {id: 8, name: 'Mache', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static productTag1: Tag = {id: 5, name: 'AV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static productTag2: Tag = {id: 6, name: 'FordX', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
+    static productTag3: Tag = {id: 7, name: 'EV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static productTag4: Tag = {id: 8, name: 'Mache', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
 
-    static productTags: Array<ProductTag> = [
+    static productTags: Array<Tag> = [
         TestUtils.productTag1,
         TestUtils.productTag2,
         TestUtils.productTag3,

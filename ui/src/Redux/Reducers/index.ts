@@ -31,7 +31,7 @@ import productTagsReducer from './productTagsReducer';
 import locationsReducer from './locationsReducer';
 import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
-import {ProductTag} from '../../ProductTag/ProductTag';
+import {Tag} from '../../Tags/Tag';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import userSpacesReducer from './userSpacesReducer';
 import isReadOnlyReducer from './isReadOnlyReducer';
@@ -69,7 +69,7 @@ export interface GlobalStateProps {
     currentSpace: Space;
     viewingDate: Date;
     products: Array<Product>;
-    productTags: Array<ProductTag>;
+    productTags: Array<Tag>;
     locations: Array<LocationTag>;
     userSpaces: Array<Space>;
     isReadOnly: boolean;
