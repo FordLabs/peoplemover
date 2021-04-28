@@ -110,7 +110,7 @@ class SpaceControllerApiTest {
                 .header("Authorization", "Bearer $accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
         )
-            .andExpect(status().is4xxClientError)
+            .andExpect(status().isBadRequest)
             .andReturn()
 
         assertThat(spaceRepository.findAll()).isEmpty()
@@ -308,7 +308,7 @@ class SpaceControllerApiTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(spaceRequest))
         )
-            .andExpect(status().is4xxClientError)
+            .andExpect(status().isBadRequest)
             .andReturn()
 
         val actualSpace = spaceRepository.findByUuid(space.uuid)

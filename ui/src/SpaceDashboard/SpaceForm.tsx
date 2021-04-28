@@ -26,7 +26,9 @@ import './SpaceForm.scss';
 
 interface SpaceFormProps {
     space?: Space;
+
     closeModal(): void;
+
     fetchUserSpaces(): void;
 }
 
@@ -51,7 +53,7 @@ function SpaceForm({
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
 
-        if(formSpace.name.trim().length === 0){
+        if (formSpace.name.trim().length === 0) {
             setShowWarningMessage(true);
         }
 
@@ -88,7 +90,8 @@ function SpaceForm({
                 onChange={onSpaceNameFieldChanged}
                 ref={spaceNameInputRef}
             />
-            <span id="createSpaceFieldText" className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
+            <span id="createSpaceFieldText"
+                className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
                 data-testid="createSpaceFieldText">
                 {spaceNameLength} ({maxLength} characters max)
             </span>
