@@ -27,7 +27,7 @@ export interface Product {
     endDate?: string;
     dorf?: string;
     spaceLocation?: LocationTag;
-    productTags: Array<ProductTag>;
+    tags: Array<ProductTag>;
     archived: boolean;
     notes?: string;
     assignments: Array<Assignment>;
@@ -41,7 +41,7 @@ export function emptyProduct(spaceUuid?: string): Product {
         startDate: '',
         endDate: '',
         dorf: '',
-        productTags: [],
+        tags: [],
         archived: false,
         notes: '',
         assignments: [],

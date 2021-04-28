@@ -64,7 +64,7 @@ function ProductFormProductTagsField({
     useOnLoad(() => {
         ProductTagClient.get(uuid).then(result => setAvailableProductTags(result.data));
 
-        setSelectedProductTags(currentProduct.productTags);
+        setSelectedProductTags(currentProduct.tags);
     });
 
     function createTagOption(label: string, id: number): Option {

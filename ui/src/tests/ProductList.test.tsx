@@ -46,7 +46,7 @@ describe('Product List tests', () => {
                 spaceLocation: TestUtils.annarbor,
                 assignments: [],
                 archived: false,
-                productTags: [TestUtils.productTag2],
+                tags: [TestUtils.productTag2],
                 notes: '',
             };
             let products: Array<Product> = Object.assign([], TestUtils.products);
@@ -77,7 +77,7 @@ describe('Product List tests', () => {
                 spaceLocation: TestUtils.annarbor,
                 assignments: [],
                 archived: false,
-                productTags: [TestUtils.productTag2],
+                tags: [TestUtils.productTag2],
                 notes: '',
             };
             let products: Array<Product> = Object.assign([], TestUtils.products);

@@ -80,11 +80,11 @@ function GroupedByList({
     }
 
     function filterByProductTag(product: Product, tagName: string): boolean {
-        return product.productTags.map(t => t.name).includes(tagName);
+        return product.tags.map(t => t.name).includes(tagName);
     }
 
     function filterByNoProductTag(product: Product): boolean {
-        return (product.productTags || []).length === 0;
+        return (product.tags || []).length === 0;
     }
 
     function filterByLocation(product: Product, tagName: string): boolean {

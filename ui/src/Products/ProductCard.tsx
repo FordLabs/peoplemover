@@ -143,14 +143,14 @@ function ProductCard({
     const TagList = (): JSX.Element => {
         const locationTag = product.spaceLocation?.name;
         const locationTagExists = !!locationTag;
-        const productTagExists = product.productTags.length > 0;
+        const productTagExists = product.tags.length > 0;
 
         return locationTagExists || productTagExists ?
             <p className="productTagContainer">
                 <span>{locationTag}</span>
                 {locationTagExists && productTagExists && <span>, </span>}
-                {product.productTags.map((tag, index) => {
-                    if (index < product.productTags.length - 1) {
+                {product.tags.map((tag, index) => {
+                    if (index < product.tags.length - 1) {
                         return <span key={tag.id}>{tag.name}, </span>;
                     }
                     return <span key={tag.id}>{tag.name}</span>;

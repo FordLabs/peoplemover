@@ -337,7 +337,7 @@ class TestUtils {
         startDate: '',
         endDate: '',
         archived: false,
-        productTags: [],
+        tags: [],
     };
 
     static productWithAssignments: Product = {
@@ -349,7 +349,7 @@ class TestUtils {
         spaceLocation: TestUtils.southfield,
         assignments: [TestUtils.assignmentForPerson1],
         archived: false,
-        productTags: [TestUtils.productTag2],
+        tags: [TestUtils.productTag2],
         notes: 'note',
     };
 
@@ -362,7 +362,7 @@ class TestUtils {
         spaceLocation: TestUtils.dearborn,
         assignments: [],
         archived: false,
-        productTags: [TestUtils.productTag1],
+        tags: [TestUtils.productTag1],
     };
 
     static productForHank: Product = {
@@ -374,7 +374,7 @@ class TestUtils {
         spaceLocation: TestUtils.annarbor,
         assignments: [TestUtils.assignmentForHank],
         archived: false,
-        productTags: [],
+        tags: [],
     };
 
     static productWithoutLocation: Product = {
@@ -385,7 +385,7 @@ class TestUtils {
         endDate: '2022-02-02',
         assignments: [],
         archived: false,
-        productTags: [],
+        tags: [],
     };
 
     static archivedProduct: Product = {
@@ -397,7 +397,7 @@ class TestUtils {
         spaceLocation: TestUtils.detroit,
         assignments: [],
         archived: true,
-        productTags: [],
+        tags: [],
     };
 
     static products: Array<Product> = [
@@ -423,7 +423,7 @@ class TestUtils {
             spaceLocation: TestUtils.detroit,
             assignments: [],
             archived: false,
-            productTags: [],
+            tags: [],
         },
     ];
 

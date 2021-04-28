@@ -81,7 +81,7 @@ function ProductForm({
 
         setNameWarningMessage('');
 
-        currentProduct.productTags = selectedProductTags;
+        currentProduct.tags = selectedProductTags;
         if (!currentSpace.uuid) {
             console.error('No current space uuid');
             return;

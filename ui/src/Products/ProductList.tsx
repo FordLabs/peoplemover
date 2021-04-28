@@ -66,8 +66,8 @@ function ProductList({
             || locationTagFilters.length === 0) {
             isPermittedByLocationFilter = true;
         }
-        if (product.productTags) {
-            const productTagNames: Array<string> = product.productTags.map(productTag => productTag.name);
+        if (product.tags) {
+            const productTagNames: Array<string> = product.tags.map(productTag => productTag.name);
             productTagFilters.forEach(productTagFilter => {
                 if (productTagNames.includes(productTagFilter)) {
                     isPermittedByProductTagFilter = true;

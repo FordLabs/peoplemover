@@ -185,7 +185,7 @@ describe('Products', () => {
                     id: 3,
                 },
                 archived: false,
-                productTags: [],
+                tags: [],
             };
             ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
                 data: [productWithManyAssignments],
