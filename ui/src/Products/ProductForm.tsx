@@ -26,7 +26,6 @@ import ProductClient from './ProductClient';
 import {emptyProduct, Product} from './Product';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Tag} from '../Tags/Tag';
-import {FilterOption} from '../CommonTypes/Option';
 import {TagInterface} from '../Tags/Tag.interface';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormStartDateField from './ProductFormStartDateField';
@@ -34,13 +33,13 @@ import ProductFormEndDateField from './ProductFormEndDateField';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import {Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
-
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
 import {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import FormTagsField from '../ReusableComponents/FormTagsField';
+import {addGroupedTagFilterOptions} from '../Tags/GroupedTagFilterOptions';
 
 interface ProductFormProps {
     editing: boolean;
@@ -168,25 +167,6 @@ function ProductForm({
         setCurrentProduct(updatedProduct);
     }
 
-    function addGroupedTagFilterOptions(tagFilterIndex: number, trait: TagInterface): void {
-        const addedFilterOption: FilterOption = {
-            label: trait.name,
-            value: trait.id.toString() + '_' + trait.name,
-            selected: false,
-        };
-        const updatedTagFilterOptions: AllGroupedTagFilterOptions = {
-            ...allGroupedTagFilterOptions[tagFilterIndex],
-            options: [
-                ...allGroupedTagFilterOptions[tagFilterIndex].options,
-                addedFilterOption,
-            ],
-        };
-
-        let groupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [...allGroupedTagFilterOptions];
-        groupedTagFilterOptions[tagFilterIndex] = updatedTagFilterOptions;
-        setAllGroupedTagFilterOptions(groupedTagFilterOptions);
-    }
-
     function notesChanged(notes: string): void {
         updateProductField('notes', notes);
     }
@@ -215,13 +195,13 @@ function ProductForm({
                 <ProductFormLocationField
                     currentProductState={{currentProduct, setCurrentProduct}}
                     loadingState={{isLoading, setIsLoading}}
-                    addGroupedTagFilterOptions={addGroupedTagFilterOptions}
+                    addGroupedTagFilterOptions={(tagFilterIndex: number, trait: TagInterface): void => {addGroupedTagFilterOptions(tagFilterIndex, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                 />
                 <FormTagsField
                     currentTagsState={{currentTags: currentProduct.tags}}
                     loadingState={{isLoading, setIsLoading}}
                     selectedTagsState={{selectedTags: selectedProductTags, setSelectedTags: setSelectedProductTags}}
-                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(1, trait);}}
+                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.ProductTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                     tagClient={ProductTagClient}
                     tagsMetadata={MetadataReactSelectProps.PRODUCT_TAGS}
                 />
