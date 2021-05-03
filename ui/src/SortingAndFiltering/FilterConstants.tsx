@@ -16,7 +16,7 @@
  */
 
 import {FilterOption} from '../CommonTypes/Option';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
 import RoleClient from '../Roles/RoleClient';
 import {TagClient} from '../Tags/TagClient.interface';

@@ -19,7 +19,7 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import MyTagsForm from '../Tags/MyTagsForm';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';

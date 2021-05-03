@@ -30,7 +30,7 @@ import {Person} from '../People/Person';
 import {mount, ReactWrapper} from 'enzyme';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import {Tag} from '../Tags/Tag';
 import ColorClient from '../Roles/ColorClient';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';

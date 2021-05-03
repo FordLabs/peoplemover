@@ -39,7 +39,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
 import {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import FormTagsField from '../ReusableComponents/FormTagsField';
 
 interface ProductFormProps {

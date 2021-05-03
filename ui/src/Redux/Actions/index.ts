@@ -24,7 +24,7 @@ import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
 import {Tag} from '../../Tags/Tag';
-import ProductTagClient from '../../ProductTag/ProductTagClient';
+import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';

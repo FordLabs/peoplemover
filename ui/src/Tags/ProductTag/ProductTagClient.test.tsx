@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import ProductTag from './ProductTagClient';
-import TestUtils from '../tests/TestUtils';
+import TestUtils from '../../tests/TestUtils';
 import Cookies from 'universal-cookie';
 
 describe('Product Tags Client', function() {
@@ -34,15 +34,19 @@ describe('Product Tags Client', function() {
     beforeEach(() => {
         cookies.set('accessToken', '123456');
 
+        // @ts-ignore
         Axios.post = jest.fn(x => Promise.resolve({
             data: 'Created Product Tag',
         } as AxiosResponse));
+        // @ts-ignore
         Axios.put = jest.fn(x => Promise.resolve({
             data: 'Updated Product Tag',
         } as AxiosResponse));
+        // @ts-ignore
         Axios.delete = jest.fn(x => Promise.resolve({
             data: 'Deleted Product Tag',
         } as AxiosResponse));
+        // @ts-ignore
         Axios.get = jest.fn(x => Promise.resolve({
             data: 'Get Product Tags',
         } as AxiosResponse));

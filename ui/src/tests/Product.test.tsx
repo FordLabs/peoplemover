@@ -26,7 +26,7 @@ import {wait} from '@testing-library/dom';
 import {applyMiddleware, compose, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import thunk from 'redux-thunk';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import {Product} from '../Products/Product';
 import {Person} from '../People/Person';
 import LocationClient from '../Locations/LocationClient';

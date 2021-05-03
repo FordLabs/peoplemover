@@ -16,12 +16,12 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {Tag} from '../Tags/Tag';
-import {TagRequest} from '../Tags/TagRequest.interface';
-import {TagClient} from '../Tags/TagClient.interface';
-import {getToken} from '../Auth/TokenProvider';
-import {Space} from '../Space/Space';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import {Tag} from '../Tag';
+import {TagRequest} from '../TagRequest.interface';
+import {TagClient} from '../TagClient.interface';
+import {getToken} from '../../Auth/TokenProvider';
+import {Space} from '../../Space/Space';
+import MatomoEvents from '../../Matomo/MatomoEvents';
 
 class ProductTagClient implements TagClient {
     private getBaseProductTagsUrl(spaceUuid: string): string {

@@ -20,7 +20,7 @@ import React, {useState} from 'react';
 import {TagInterface} from './Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {TagRequest} from './TagRequest.interface';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from './ProductTag/ProductTagClient';
 import sortTagsAlphabetically from './sortTagsAlphabetically';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {createDataTestId} from '../tests/TestUtils';
