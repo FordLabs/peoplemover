@@ -136,6 +136,7 @@ describe('Products', () => {
                             id: 1,
                             name: 'Person 1',
                             spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                            tags: [],
                         },
                         placeholder: false,
                     },
@@ -149,6 +150,7 @@ describe('Products', () => {
                             id: 900,
                             name: 'Bobby',
                             spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                            tags: [],
                         },
                         placeholder: false,
                     },
@@ -162,6 +164,7 @@ describe('Products', () => {
                             id: 4,
                             name: 'Hank 2',
                             spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                            tags: [],
                         },
                         placeholder: false,
                     },
@@ -175,6 +178,7 @@ describe('Products', () => {
                             id: 3,
                             name: 'Hank 1',
                             spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                            tags: [],
                         },
                         placeholder: false,
                     },
@@ -201,6 +205,7 @@ describe('Products', () => {
                     newPerson: false,
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                     spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                    tags: [],
                 },
                 {
                     name: 'Hank 1',
@@ -208,6 +213,7 @@ describe('Products', () => {
                     newPerson: false,
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                     spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', id: 2, color: {color: '1', id: 2}},
+                    tags: [],
                 },
                 {
                     name: 'Hank 2',
@@ -215,6 +221,7 @@ describe('Products', () => {
                     newPerson: false,
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                     spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',  id: 2, color: {color: '1', id: 2}},
+                    tags: [],
                 },
                 {
                     name: 'Person 1',
@@ -222,6 +229,7 @@ describe('Products', () => {
                     newPerson: false,
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                     spaceRole: {name: 'herp', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',  id: 2, color: {color: '1', id: 2}},
+                    tags: [],
                 },
             ];
 

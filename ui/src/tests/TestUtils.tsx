@@ -242,6 +242,14 @@ class TestUtils {
         TestUtils.productTag4,
     ];
 
+    static personTag1: Tag = {id: 5, name: 'The lil boss', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static personTag2: Tag = {id: 6, name: 'The big boss', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
+
+    static personTags: Array<Tag> = [
+        TestUtils.personTag1,
+        TestUtils.personTag2,
+    ];
+
     static color1: Color = {color: '#EFEFEF', id: 1};
     static color2: Color = {color: '#ABABAB', id: 2};
     static color3: Color = {color: '#CDCDCD', id: 3};
@@ -271,6 +279,7 @@ class TestUtils {
         spaceRole: TestUtils.softwareEngineer,
         notes: 'I love the theater',
         newPerson: false,
+        tags: [],
     };
 
     static hank: Person = {
@@ -280,6 +289,7 @@ class TestUtils {
         spaceRole: TestUtils.productManager,
         notes: "Don't forget the WD-40!",
         newPerson: false,
+        tags: [TestUtils.personTag1],
     };
 
     static unassignedPerson: Person = {
@@ -288,6 +298,7 @@ class TestUtils {
         name: 'Unassigned Person 7',
         spaceRole: TestUtils.softwareEngineer,
         newPerson: false,
+        tags: [],
     };
 
     static people: Array<Person> = [
