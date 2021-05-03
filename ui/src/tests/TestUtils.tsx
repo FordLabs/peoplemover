@@ -40,6 +40,7 @@ import SpaceClient from '../Space/SpaceClient';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
@@ -208,6 +209,17 @@ class TestUtils {
             data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
         } as AxiosResponse));
         ProductTagClient.delete = emptyAxiosResponse;
+
+        PersonTagClient.get = jest.fn(() => Promise.resolve({
+            data: TestUtils.personTags,
+        } as AxiosResponse));
+        PersonTagClient.add = jest.fn(() => Promise.resolve({
+            data: {id: 1337, name: 'Low Achiever'},
+        } as AxiosResponse));
+        PersonTagClient.edit = jest.fn(() => Promise.resolve({
+            data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+        } as AxiosResponse));
+        PersonTagClient.delete = emptyAxiosResponse;
     }
 
     static async waitForHomePageToLoad(app: RenderResult): Promise<void> {
@@ -471,6 +483,10 @@ class TestUtils {
         },
         {
             label:'Role Tags:',
+            options: [],
+        },
+        {
+            label:'Person Tags:',
             options: [],
         },
     ]

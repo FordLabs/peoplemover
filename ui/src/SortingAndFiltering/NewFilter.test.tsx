@@ -69,6 +69,7 @@ describe('Filter Dropdown', () => {
                     ]},
                     { label: 'Product Tags:', options: []},
                     { label: 'Role Tags:', options: []},
+                    { label: 'Person Tags:', options: []},
                 ],
             });
 
@@ -102,6 +103,7 @@ describe('Filter Dropdown', () => {
                         ],
                     },
                     {label: 'Role Tags:', options: []},
+                    {label: 'Person Tags:', options: []},
                 ],
             });
             appLocation = renderWithRedux(<NewFilter filterType={FilterTypeListings.Location}/>, store, undefined);

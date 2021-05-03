@@ -43,6 +43,7 @@ describe('Filter products', () => {
         locationTagsFilters: [TestUtils.annarbor.name],
         productTagsFilters: [TestUtils.productTag1.name],
         roleTagsFilters: [TestUtils.roles[0].name],
+        personTagsFilters: [TestUtils.personTag1.name],
     };
 
     beforeEach(() => {
@@ -108,6 +109,7 @@ describe('Filter products', () => {
             locationTagsFilters: [TestUtils.annarbor.name, TestUtils.detroit.name],
             productTagsFilters: [TestUtils.productTag1.name, TestUtils.productTag2.name],
             roleTagsFilters: [],
+            personTagsFilters: [],
         };
         localStorage.setItem('filters', JSON.stringify(longFilters));
         const app = applicationSetup();

@@ -213,10 +213,15 @@ function ProductFilter({
             selectedOptions,
             allGroupedTagFilterOptions[2]
         );
+        const updatedPersonTags: Array<FilterOption> = updateSelectedGroupedTagFilterOptions(
+            selectedOptions,
+            allGroupedTagFilterOptions[3]
+        );
         setAllGroupedTagFilterOptions([
             {...allGroupedTagFilterOptions[0], options: updatedLocationTags},
             {...allGroupedTagFilterOptions[1], options: updatedProductTags},
             {...allGroupedTagFilterOptions[2], options: updatedRoleTags},
+            {...allGroupedTagFilterOptions[3], options: updatedPersonTags},
         ]);
 
         sendMatomoEvent(selectedOptions);

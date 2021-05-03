@@ -23,17 +23,20 @@ import {TagClient} from '../Tags/TagClient.interface';
 import {AxiosResponse} from 'axios';
 import {TagInterface} from '../Tags/Tag.interface';
 import {AvailableModals} from '../Modal/AvailableModals';
+import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 
 export interface FilterTypeListing {
     Location: FilterType;
     ProductTag: FilterType;
     Role: FilterType;
+    PersonTag: FilterType;
 }
 
 export const FilterTypeListings: FilterTypeListing = {
     Location: {index: 0, label: 'Product Location', modal: AvailableModals.MY_LOCATION_TAGS },
     ProductTag: {index: 1, label: 'Product Tags', modal: AvailableModals.MY_PRODUCT_TAGS},
     Role: {index: 2, label: 'Role', modal: AvailableModals.MY_ROLES_MODAL},
+    PersonTag: {index: 3, label: 'Person Tags', modal: AvailableModals.EDIT_PERSON},
 };
 
 export interface FilterType {
@@ -51,16 +54,19 @@ export type LocalStorageFilters = {
     locationTagsFilters: Array<string>;
     productTagsFilters: Array<string>;
     roleTagsFilters: Array<string>;
+    personTagsFilters: Array<string>;
 }
 
 
-export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:';
+export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:' | 'Person Tags:';
 
 export async function getFilterOptionsForSpace(uuid: string): Promise<Array<AllGroupedTagFilterOptions>> {
     const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();
     const productTagOptions: Array<FilterOption> = await buildTagOptions(uuid, ProductTagClient, localStorageFilter.productTagsFilters);
     const locationTagOptions: Array<FilterOption> = await buildTagOptions(uuid, LocationClient, localStorageFilter.locationTagsFilters);
     const roleTagOptions: Array<FilterOption> = await buildTagOptions(uuid, RoleClient, localStorageFilter.roleTagsFilters);
+    const personTagOptions: Array<FilterOption> = await buildTagOptions(uuid, PersonTagClient, localStorageFilter.personTagsFilters);
+
     return [
         {
             label: 'Location Tags:',
@@ -73,6 +79,10 @@ export async function getFilterOptionsForSpace(uuid: string): Promise<Array<AllG
         {
             label: 'Role Tags:',
             options: roleTagOptions,
+        },
+        {
+            label: 'Person Tags:',
+            options: personTagOptions,
         },
     ];
 }
@@ -94,5 +104,6 @@ function getLocalStorageFilters(): LocalStorageFilters {
         locationTagsFilters: [],
         productTagsFilters: [],
         roleTagsFilters: [],
+        personTagsFilters: [],
     };
 }

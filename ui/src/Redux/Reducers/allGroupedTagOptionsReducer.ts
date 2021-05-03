@@ -35,6 +35,7 @@ function updateLocalStorage(tagOptions: Array<AllGroupedTagFilterOptions>): void
         locationTagsFilters: getSelectedFilterLabels(tagOptions[0].options),
         productTagsFilters: getSelectedFilterLabels(tagOptions[1].options),
         roleTagsFilters: getSelectedFilterLabels(tagOptions[2].options),
+        personTagsFilters: getSelectedFilterLabels(tagOptions[3].options),
     };
     localStorage.setItem('filters', JSON.stringify(selectedFilterOptions));
 }
@@ -49,6 +50,7 @@ const allGroupedTagFilterOptionsReducer = (
         const sortedLocations: Array<FilterOption> = sortTags(copiedFilters[0].options);
         const sortedProductTags: Array<FilterOption> = sortTags(copiedFilters[1].options);
         const sortedRoleTags: Array<FilterOption> = sortTags(copiedFilters[2].options);
+        const sortedPersonTags: Array<FilterOption> = sortTags(copiedFilters[3].options);
 
         updateLocalStorage(action.allGroupedTagFilterOptions);
 
@@ -56,6 +58,7 @@ const allGroupedTagFilterOptionsReducer = (
             { label: 'Location Tags:', options: sortedLocations},
             { label: 'Product Tags:', options: sortedProductTags},
             { label: 'Role Tags:', options: sortedRoleTags},
+            { label: 'Person Tags:', options: sortedPersonTags},
         ];
     }
     return state;
