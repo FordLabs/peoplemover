@@ -80,6 +80,11 @@ export const MetadataReactSelectProps = {
         id: 'person',
         placeholder: 'Add a Person',
     },
+    PERSON_TAGS: {
+        title: 'Person Tags',
+        id: 'personTags',
+        placeholder: 'Add person tags',
+    },
 };
 
 export interface Metadata {
