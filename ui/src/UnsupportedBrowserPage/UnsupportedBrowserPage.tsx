@@ -23,7 +23,11 @@ import FireFox from './firefox.png';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import Branding from '../ReusableComponents/Branding';
 
-function UnsupportedBrowserPage(): JSX.Element {
+interface UnsupportedBrowserProps {
+    browserName: string;
+}
+
+function UnsupportedBrowserPage({browserName}: UnsupportedBrowserProps): JSX.Element {
 
     return (
         <div className="unsupported-browser-container">
@@ -31,7 +35,7 @@ function UnsupportedBrowserPage(): JSX.Element {
                 <PeopleMoverLogo />
             </div>
             <div className="unsupported-browser-text">
-                For the best PeopleMover experience, <br/> please use Chrome
+                We&apos;re sorry, but PeopleMover is not currently optimized for {browserName}. <br/><br/>Please use Chrome
                 <img className="unsupported-browser-img" src={Chrome} alt="Chrome Logo"/> or Firefox
                 <img className="unsupported-browser-img" src={FireFox} alt="FireFox Logo"/>
             </div>
