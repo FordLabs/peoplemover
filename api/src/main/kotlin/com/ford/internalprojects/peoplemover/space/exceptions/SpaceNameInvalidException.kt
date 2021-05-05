@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2020 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-export interface AssignmentDTO {
-    id: number;
-    personId: number;
-    productId: number;
-    placeholder: boolean;
-}
+package com.ford.internalprojects.peoplemover.space.exceptions
+
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class SpaceNameInvalidException : RuntimeException("Space name must be alpha-numeric, and cannot be just ' ' characters")

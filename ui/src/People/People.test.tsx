@@ -66,6 +66,7 @@ describe('People actions', () => {
             people: TestUtils.people,
             viewingDate: new Date(2020, 5, 5),
             currentSpace: TestUtils.space,
+            allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
         } as GlobalStateProps;
 
         beforeEach(async () => {
@@ -397,6 +398,7 @@ describe('People actions', () => {
             const initialState: PreloadedState<GlobalStateProps> = {
                 viewingDate: new Date(2019, 0, 1),
                 currentSpace: TestUtils.space,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             } as GlobalStateProps;
             app = renderWithRedux(<PeopleMover/>, undefined, initialState);
 

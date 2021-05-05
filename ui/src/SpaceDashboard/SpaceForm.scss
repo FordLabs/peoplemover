@@ -33,7 +33,7 @@
   border-radius: 2px;
 }
 
-.createSpaceContainer{
+.createSpaceContainer {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -44,10 +44,21 @@
   color: $error-message;
 }
 
+.createSpaceErrorMessageContainer {
+  height: 40px;
+  text-align: left;
+  padding-top: 6px;
+
+  .createSpaceErrorMessage {
+    color: $error-message;
+    font-size: 12px;
+    font-style: italic;
+  }
+}
+
 .createSpaceFieldText {
   font-size: 12px;
   padding-top: 6px;
-  margin-bottom: 32px;
 }
 
 .createSpaceButtonContainer {

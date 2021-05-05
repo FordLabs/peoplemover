@@ -17,7 +17,6 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-
 .viewing-calendar  {
     width: 364px;
     min-height: 326px;
@@ -65,6 +64,10 @@
             right: 0;
             margin: 0 auto;
           }
+        }
+
+        .react-datepicker__day--outside-month {
+          visibility: hidden;
         }
 
         .react-datepicker__day--selected,
@@ -134,32 +137,56 @@
     }
 }
 
-.calendar {
+.calendarSubHeader {
   display: flex;
   align-items: center;
 
-  .calendarCustomInput {
-    background-color: transparent;
+  .calendarLabel {
+    margin: 1.4rem 0.75rem 1.4rem 1.4rem;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.875rem;
+    line-height: 1rem;
     display: flex;
-    align-items: flex-end;
-    font-size: 14px;
-    line-height: 16px;
-    color: $gray-1;
-    max-width: 227px;
-    margin-left: 20px;
-    cursor: pointer;
-    padding: .3rem;
+    align-items: center;
 
-    .calendarViewingDate {
-      font-weight: bold;
-      padding-left: 4px;
+    .calendarIcon {
+      font-size: 1rem;
+      margin-right: 0.4rem;
     }
+  }
+}
 
-    &.readOnly {
-      cursor: initial;
-      opacity: 1;
-      background-color: transparent;
-    }
+.calendar {
+  display: flex;
+  align-items: center;
+}
+
+.calendarCustomInput {
+  background-color: white;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: flex-end;
+  font-size: 14px;
+  line-height: 16px;
+  color: $gray-1;
+  max-width: 227px;
+  cursor: pointer;
+  padding: 0.6rem 1rem;
+
+  .calendarViewingDate {
+    font-weight: bold;
+    padding-left: 4px;
+  }
+
+  .greyIcon {
+    font-size: initial;
+    margin-left: 0.5rem;
+  }
+
+  &.readOnly {
+    cursor: initial;
+    opacity: 1;
+    background-color: transparent;
   }
 }
 

@@ -118,6 +118,10 @@ describe('Product List tests', () => {
                     label:'Role Tags:',
                     options: [],
                 },
+                {
+                    label: 'Person Tags:',
+                    options: [],
+                },
             ];
 
             const initialState = {
@@ -150,6 +154,10 @@ describe('Product List tests', () => {
                 },
                 {
                     label:'Role Tags:',
+                    options: [],
+                },
+                {
+                    label: 'Person Tags:',
                     options: [],
                 },
             ];

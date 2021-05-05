@@ -26,7 +26,9 @@ import './SpaceForm.scss';
 
 interface SpaceFormProps {
     space?: Space;
+
     closeModal(): void;
+
     fetchUserSpaces(): void;
 }
 
@@ -38,6 +40,7 @@ function SpaceForm({
     const maxLength = 40;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
     const spaceNameInputRef = createRef<HTMLInputElement>();
+    const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
 
     useEffect(() => {
         spaceNameInputRef.current?.focus();
@@ -49,6 +52,10 @@ function SpaceForm({
 
     function handleSubmit(event: FormEvent): void {
         event.preventDefault();
+
+        if (formSpace.name.trim().length === 0) {
+            setShowWarningMessage(true);
+        }
 
         if (!!space && formSpace.uuid) {
             SpaceClient.editSpaceName(formSpace.uuid, formSpace, space.name)
@@ -83,10 +90,16 @@ function SpaceForm({
                 onChange={onSpaceNameFieldChanged}
                 ref={spaceNameInputRef}
             />
-            <span id="createSpaceFieldText" className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
+            <span id="createSpaceFieldText"
+                className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
                 data-testid="createSpaceFieldText">
                 {spaceNameLength} ({maxLength} characters max)
             </span>
+            <div className="createSpaceErrorMessageContainer">
+                {showWarningMessage && <span data-testid="createSpaceErrorMessage" className="createSpaceErrorMessage">
+                      To create or rename a space, please enter an alpha-numeric name.
+                </span>}
+            </div>
             <div className="createSpaceButtonContainer">
                 <FormButton
                     buttonStyle="secondary"
@@ -98,7 +111,8 @@ function SpaceForm({
                     className="createSpaceSubmitButton"
                     buttonStyle="primary"
                     type="submit"
-                    disabled={spaceNameLength <= 0}>
+                    disabled={spaceNameLength <= 0}
+                    testId="createSpaceButton">
                     {space ? 'Save' : 'Create'}
                 </FormButton>
             </div>

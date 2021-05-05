@@ -17,27 +17,11 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.brandingImage {
-  vertical-align: middle;
-  margin: 0 3px;
+.counter-container {
+  padding: 23px 0 10px 8px;
 }
 
-.brandingMessage {
-  display: inline;
-  font-size: 12px;
-  color: $gray-2;
-  margin: 0;
-  text-decoration: none;
+.counter {
+  font-size: 14px;
+  line-height: 16px;
 }
-
-.brandingContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: auto;
-  padding: 16px 0;
-}
-
-.brandingLeftPadSmall {
-  padding-left: 6px;
-};

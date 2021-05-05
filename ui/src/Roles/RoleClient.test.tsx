@@ -38,18 +38,20 @@ describe('Role Client', function() {
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         Axios.post = jest.fn(x => Promise.resolve({
             data: 'Created Role',
-        } as AxiosResponse));
+        } as AxiosResponse)) as any;
         Axios.put = jest.fn(x => Promise.resolve({
             data: 'Updated Role',
-        } as AxiosResponse));
+        } as AxiosResponse)) as any;
         Axios.delete = jest.fn(x => Promise.resolve({
             data: 'Deleted Role',
-        } as AxiosResponse));
+        } as AxiosResponse)) as any;
         Axios.get = jest.fn(x => Promise.resolve({
             data: 'Get Roles',
-        } as AxiosResponse));
+        } as AxiosResponse)) as any;
+        /* eslint-enable */
     });
 
     afterEach(function() {

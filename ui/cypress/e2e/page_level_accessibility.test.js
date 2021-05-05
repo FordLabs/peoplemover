@@ -38,12 +38,6 @@ describe('Page Level Accessibility', () => {
         cy.checkA11y();
     });
 
-    it('New Space Page', () => {
-        cy.visitSpace({}, '#newui');
-        cy.injectAxe();
-        cy.checkA11y();
-    });
-
     // @todo figure out how to be able to visit this page in Cypress
     xit('Dashboard Page', () => {
         cy.visit('/user/dashboard');

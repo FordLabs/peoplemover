@@ -16,10 +16,9 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {Product} from './Product';
+import {isActiveProduct, isProductMatchingSelectedFilters, Product} from './Product';
 import {connect} from 'react-redux';
 import {GlobalStateProps, SortByType} from '../Redux/Reducers';
-import moment from 'moment';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
@@ -51,40 +50,13 @@ function ProductList({
         }
     }, [allGroupedTagFilterOptions]);
 
-    function isActiveProduct(product: Product): boolean {
-        return product.name.toLowerCase() !== 'unassigned'
-            && !product.archived
-            && (product.endDate == null || product.endDate >= moment(viewingDate).format('YYYY-MM-DD'));
-    }
-
-    function permittedByFilters(product: Product): boolean {
-        let isPermittedByLocationFilter = false;
-        let isPermittedByProductTagFilter = false;
-        const locationTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options);
-        const productTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options);
-        if ((product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name))
-            || locationTagFilters.length === 0) {
-            isPermittedByLocationFilter = true;
-        }
-        if (product.tags) {
-            const productTagNames: Array<string> = product.tags.map(productTag => productTag.name);
-            productTagFilters.forEach(productTagFilter => {
-                if (productTagNames.includes(productTagFilter)) {
-                    isPermittedByProductTagFilter = true;
-                }
-            });
-        }
-        if (productTagFilters.length === 0) {
-            isPermittedByProductTagFilter = true;
-        }
-        return isPermittedByProductTagFilter && isPermittedByLocationFilter;
-    }
-
     function ListOfProducts(): JSX.Element {
         if (filteredProductsLoaded) {
+            const locationTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options);
+            const productTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options);
             const filteredAndActiveProduct = products
-                .filter(product => noFiltersApplied || permittedByFilters(product))
-                .filter(isActiveProduct);
+                .filter(product => noFiltersApplied || isProductMatchingSelectedFilters(product, locationTagFilters, productTagFilters))
+                .filter(prod => isActiveProduct(prod, viewingDate));
 
             switch (productSortBy) {
                 case 'name' : {
