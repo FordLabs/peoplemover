@@ -52,7 +52,7 @@ import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;

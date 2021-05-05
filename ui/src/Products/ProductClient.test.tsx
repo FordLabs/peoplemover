@@ -105,7 +105,7 @@ describe('Product Client', function() {
             assignments: [],
             id: 0,
             name: expectedName,
-            productTags: [],
+            tags: [],
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         };
 

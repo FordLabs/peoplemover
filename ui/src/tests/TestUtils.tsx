@@ -39,7 +39,7 @@ import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 
 export function createDataTestId(prefix: string, name: string): string {

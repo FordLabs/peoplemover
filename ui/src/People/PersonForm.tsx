@@ -51,8 +51,11 @@ import FormTagsField from '../ReusableComponents/FormTagsField';
 import {TagInterface} from '../Tags/Tag.interface';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {Tag} from '../Tags/Tag';
-import {addGroupedTagFilterOptions} from '../Tags/GroupedTagFilterOptions';
-import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
+import {
+    addGroupedTagFilterOptions,
+    AllGroupedTagFilterOptions,
+    FilterTypeListings,
+} from '../SortingAndFiltering/FilterLibraries';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;

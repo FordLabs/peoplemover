@@ -31,7 +31,7 @@ import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
 import RoleTags from './RoleTags';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 
 // @Todo consolidate (also in MyTagsForm)
 export const INACTIVE_EDIT_STATE_INDEX = -1;

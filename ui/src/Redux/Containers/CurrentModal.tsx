@@ -35,7 +35,7 @@ import SpaceForm from '../../SpaceDashboard/SpaceForm';
 import GrantEditAccessConfirmationForm from '../../AccountDropdown/GrantEditAccessConfirmationForm';
 import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSection';
 import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
-import {FilterTypeListings} from '../../SortingAndFiltering/FilterConstants';
+import {FilterTypeListings} from '../../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../../Modal/AvailableModals';
 
 export interface ModalMetadataItem {

@@ -22,7 +22,7 @@ import {GlobalStateProps, SortByType} from '../Redux/Reducers';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 
 interface ProductListProps {
     products: Array<Product>;

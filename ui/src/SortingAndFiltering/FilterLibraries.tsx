@@ -87,6 +87,30 @@ export async function getFilterOptionsForSpace(uuid: string): Promise<Array<AllG
     ];
 }
 
+export function addGroupedTagFilterOptions(
+    tagFilterIndex: number,
+    trait: TagInterface,
+    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>,
+    setAllGroupedTagFilterOptions: (groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => void
+): void {
+    const addedFilterOption: FilterOption = {
+        label: trait.name,
+        value: trait.id.toString() + '_' + trait.name,
+        selected: false,
+    };
+    const updatedTagFilterOptions: AllGroupedTagFilterOptions = {
+        ...allGroupedTagFilterOptions[tagFilterIndex],
+        options: [
+            ...allGroupedTagFilterOptions[tagFilterIndex].options,
+            addedFilterOption,
+        ],
+    };
+
+    let groupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [...allGroupedTagFilterOptions];
+    groupedTagFilterOptions[tagFilterIndex] = updatedTagFilterOptions;
+    setAllGroupedTagFilterOptions(groupedTagFilterOptions);
+}
+
 async function buildTagOptions(uuid: string, tagClient: TagClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
     const tagsResponse: AxiosResponse<Array<TagInterface>> = await tagClient.get(uuid);
     const tags: Array<TagInterface> = tagsResponse.data;

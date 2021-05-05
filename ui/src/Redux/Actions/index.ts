@@ -28,7 +28,7 @@ import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
-import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,

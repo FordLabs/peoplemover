@@ -19,7 +19,7 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import Counter from './Counter';
 import {RenderResult} from '@testing-library/react';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 
 describe('counter', () => {
     let app: RenderResult;
@@ -62,7 +62,7 @@ describe('counter', () => {
             endDate: '2020-02-02',
             assignments: [],
             archived: false,
-            productTags: [],
+            tags: [],
         };
 
         app = renderWithRedux(<Counter products={[finishedProduct, TestUtils.unassignedProduct]} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);

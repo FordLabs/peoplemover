@@ -29,7 +29,7 @@ import LocationTags from './LocationTags';
 import ProductTags from './ProductTags';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
-import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 
 // @Todo consolidate (also in MyRolesForm)
 export const INACTIVE_EDIT_STATE_INDEX = -1;

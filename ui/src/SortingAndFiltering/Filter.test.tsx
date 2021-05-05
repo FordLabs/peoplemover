@@ -19,7 +19,7 @@ import React from 'react';
 import {renderWithRedux} from '../tests/TestUtils';
 import {AvailableActions} from '../Redux/Actions';
 import Filter from './Filter';
-import {FilterTypeListings} from './FilterConstants';
+import {FilterTypeListings} from './FilterLibraries';
 import {createStore} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {AvailableModals} from '../Modal/AvailableModals';

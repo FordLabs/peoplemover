@@ -37,7 +37,7 @@ import userSpacesReducer from './userSpacesReducer';
 import isReadOnlyReducer from './isReadOnlyReducer';
 import isDraggingReducer from './isDraggingReducer';
 import currentUserReducer from './currentUserReducer';
-import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
 
 export type SortByType = 'location' | 'product-tag' | 'name'
 

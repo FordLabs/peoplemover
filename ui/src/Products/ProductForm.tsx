@@ -35,11 +35,14 @@ import {Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
-import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
+import {
+    addGroupedTagFilterOptions,
+    AllGroupedTagFilterOptions,
+    FilterTypeListings,
+} from '../SortingAndFiltering/FilterLibraries';
 import {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import FormTagsField from '../ReusableComponents/FormTagsField';
-import {addGroupedTagFilterOptions} from '../Tags/GroupedTagFilterOptions';
 
 interface ProductFormProps {
     editing: boolean;

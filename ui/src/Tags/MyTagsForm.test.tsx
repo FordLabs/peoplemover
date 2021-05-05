@@ -17,7 +17,7 @@
 
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import MyTagsForm from './MyTagsForm';
-import {FilterTypeListings} from '../SortingAndFiltering/FilterConstants';
+import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import React from 'react';
 import moment from 'moment';
 import {GlobalStateProps} from '../Redux/Reducers';
