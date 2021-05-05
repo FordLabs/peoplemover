@@ -94,19 +94,23 @@ Axios.interceptors.response.use(
     }
 );
 
+let browserName = '';
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
     /* eslint-disable */
     // @ts-ignore
     var isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean { return p.toString() === '[object SafariRemoteNotification]'; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+    if(isSafari) browserName = 'Safari';
     /* eslint-enable */
 
     // Internet Explorer 6-11
     // @ts-ignore
     var isIE = /*@cc_on!@*/!!document.documentMode;
+    if (isIE) browserName = 'Internet Explorer';
 
     // Edge 20+
     var isEdge = !isIE && !!window.StyleMedia;
+    if (isEdge) browserName = 'Edge';
 
     return isSafari || isIE || isEdge;
 }
@@ -119,7 +123,7 @@ interface CacheBusterProps {
 
 if (isUnsupportedBrowser()) {
     ReactDOM.render(
-        <UnsupportedBrowserPage/>,
+        <UnsupportedBrowserPage browserName={browserName}/>,
         document.getElementById('root')
     );
 } else {
