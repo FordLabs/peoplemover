@@ -143,9 +143,6 @@ describe('People actions', () => {
 
             fireEvent.click(app.getByLabelText('Mark as New'));
 
-            let personTagDropdown = app.getByLabelText('Person Tags');
-            await selectEvent.select(personTagDropdown, TestUtils.personTag2.name);
-
             fireEvent.click(app.getByText(submitFormButtonText));
 
             await wait(() => {
@@ -154,7 +151,7 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'New Bobby',
                     newPerson: true,
-                    tags: [TestUtils.personTag2],
+                    tags: [],
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
                 expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);

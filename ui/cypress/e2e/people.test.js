@@ -25,7 +25,7 @@ describe('People', () => {
     let calendarDateClass;
 
     beforeEach(() => {
-        cy.visitSpace();
+        cy.visitSpace({}, '#person-tags');
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
 

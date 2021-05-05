@@ -318,6 +318,7 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
+                {window.location.hash === '#person-tags' &&
                 <FormTagsField
                     tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
                     tagClient={PersonTagClient}
@@ -326,6 +327,7 @@ function PersonForm({
                     loadingState={{isLoading, setIsLoading}}
                     addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                 />
+                }
                 <div className="formItem">
                     <FormNotesTextArea
                         notes={person.notes}
