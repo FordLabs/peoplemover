@@ -20,7 +20,13 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import {connect} from 'react-redux';
-import {addPersonAction, closeModalAction, editPersonAction, setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
+import {
+    addPersonAction,
+    closeModalAction,
+    editPersonAction,
+    setAllGroupedTagFilterOptionsAction,
+    setIsUnassignedDrawerOpenAction,
+} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
@@ -40,8 +46,16 @@ import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
-
 import './PersonForm.scss';
+import FormTagsField from '../ReusableComponents/FormTagsField';
+import {TagInterface} from '../Tags/Tag.interface';
+import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
+import {Tag} from '../Tags/Tag';
+import {
+    addGroupedTagFilterOptions,
+    AllGroupedTagFilterOptions,
+    FilterTypeListings,
+} from '../SortingAndFiltering/FilterLibraries';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -51,11 +65,13 @@ interface PersonFormProps {
     assignment?: Assignment;
     currentSpace: Space;
     viewingDate: Date;
+    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     closeModal(): void;
     addPerson(person: Person): void;
     editPerson(person: Person): void;
     setIsUnassignedDrawerOpen(isUnassignedDrawerOpen: boolean): void;
+    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
 function PersonForm({
@@ -70,6 +86,8 @@ function PersonForm({
     addPerson,
     editPerson,
     setIsUnassignedDrawerOpen,
+    allGroupedTagFilterOptions,
+    setAllGroupedTagFilterOptions,
 }: PersonFormProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
@@ -79,6 +97,7 @@ function PersonForm({
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
+    const [selectedPersonTags, setSelectedPersonTags] = useState<Array<Tag>>([]);
     const [roles, setRoles] = useState<Array<RoleTag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -92,6 +111,7 @@ function PersonForm({
 
     const populatedEntirePersonForm = (assignment: Assignment): void => {
         setPerson({...assignment.person});
+        setSelectedPersonTags(assignment.person.tags);
 
         AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, assignment.person.id, viewingDate)
             .then((response) => {
@@ -150,6 +170,8 @@ function PersonForm({
             setIsPersonNameInvalid(true);
         } else {
             setIsPersonNameInvalid(false);
+            person.tags = selectedPersonTags;
+
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
             }
@@ -296,6 +318,16 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
+                {window.location.hash === '#person-tags' &&
+                <FormTagsField
+                    tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
+                    tagClient={PersonTagClient}
+                    currentTagsState={{currentTags: person.tags}}
+                    selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
+                    loadingState={{isLoading, setIsLoading}}
+                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
+                />
+                }
                 <div className="formItem">
                     <FormNotesTextArea
                         notes={person.notes}
@@ -340,6 +372,7 @@ function PersonForm({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -347,6 +380,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     addPerson: (person: Person) => dispatch(addPersonAction(person)),
     editPerson: (person: Person) => dispatch(editPersonAction(person)),
     setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
+    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
+        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PersonForm);

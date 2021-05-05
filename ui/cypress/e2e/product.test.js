@@ -49,7 +49,7 @@ describe('Product', () => {
             expect(body.startDate).to.equal(product.startDate.format('yyyy-MM-DD'));
             expect(body.endDate).to.equal(product.nextPhaseDate.format('yyyy-MM-DD'));
             expect(body.notes).to.equal(product.notes);
-            body.productTags.forEach(tag => {
+            body.tags.forEach(tag => {
                 expect(product.tags).to.contain(tag.name);
             });
         });
@@ -91,7 +91,7 @@ describe('Product', () => {
             expect(body.startDate).to.equal(updateProduct.startDate.format('yyyy-MM-DD'));
             expect(body.endDate).to.equal(updateProduct.nextPhaseDate.format('yyyy-MM-DD'));
             expect(body.notes).to.equal(updateProduct.notes);
-            body.productTags.forEach(tag => {
+            body.tags.forEach(tag => {
                 expect(updateProduct.tags).to.contain(tag.name);
             });
         });

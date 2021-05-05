@@ -18,8 +18,9 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.ford.internalprojects.peoplemover.role.SpaceRole
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
+import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import javax.persistence.*
 
 @Entity
@@ -28,11 +29,15 @@ data class Person(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         override val id: Int? = null,
 
-        val name: String,
+        override val name: String,
 
         @ManyToOne
         @JoinColumn(name = "space_role_id")
         val spaceRole: SpaceRole? = null,
+
+        @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.REFRESH])
+        @JoinTable(name = "person_tag_mapping", joinColumns = [JoinColumn(name = "person_id", referencedColumnName = "id")], inverseJoinColumns = [JoinColumn(name = "person_tag_id", referencedColumnName = "id")])
+        val tags: Set<PersonTag> = HashSet(),
 
         val notes: String? = "",
 
@@ -42,7 +47,7 @@ data class Person(
 
         @Column(name = "space_uuid")
         override val spaceUuid: String
-): SpaceComponent {
+): NamedSpaceComponent {
     constructor(name: String, spaceUuid: String) :
-            this(null, name, null, "", false, spaceUuid)
+            this(null, name, null, HashSet(), "", false, spaceUuid)
 }

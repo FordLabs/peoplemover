@@ -19,7 +19,7 @@ import React from 'react';
 import {renderWithRedux} from '../tests/TestUtils';
 import {AvailableActions} from '../Redux/Actions';
 import Filter from './Filter';
-import {FilterTypeListings} from './FilterConstants';
+import {FilterTypeListings} from './FilterLibraries';
 import {createStore} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {AvailableModals} from '../Modal/AvailableModals';
@@ -67,14 +67,13 @@ describe('Filter Dropdown', () => {
         it('should show the correct checkbox state for selected filters', async () => {
             store = createStore(rootReducer, {
                 allGroupedTagFilterOptions: [
-                    {
-                        label: 'Location Tags:', options: [
-                            {label: 'foo', value: 'foo', selected: true},
-                            {label: 'bar', value: 'bar', selected: false},
-                        ],
-                    },
-                    {label: 'Product Tags:', options: []},
-                    {label: 'Role Tags:', options: []},
+                    { label: 'Location Tags:', options: [
+                        {label: 'foo', value: 'foo', selected: true},
+                        {label: 'bar', value: 'bar', selected: false},
+                    ]},
+                    { label: 'Product Tags:', options: []},
+                    { label: 'Role Tags:', options: []},
+                    { label: 'Person Tags:', options: []},
                 ],
             });
 
@@ -108,6 +107,7 @@ describe('Filter Dropdown', () => {
                         ],
                     },
                     {label: 'Role Tags:', options: []},
+                    {label: 'Person Tags:', options: []},
                 ],
             });
             appLocation = renderWithRedux(<Filter filterType={FilterTypeListings.Location}/>, store, undefined);

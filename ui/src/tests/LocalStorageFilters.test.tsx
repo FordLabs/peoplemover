@@ -22,7 +22,7 @@ import React from 'react';
 import {RenderResult} from '@testing-library/react';
 import {createBrowserHistory} from 'history';
 import {Router} from 'react-router-dom';
-import {LocalStorageFilters} from '../SortingAndFiltering/FilterConstants';
+import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 
 describe('Filter products', () => {
     class MockLocalStorage {
@@ -38,6 +38,7 @@ describe('Filter products', () => {
         locationTagsFilters: [TestUtils.annarbor.name],
         productTagsFilters: [TestUtils.productTag1.name],
         roleTagsFilters: [TestUtils.roles[0].name],
+        personTagsFilters: [TestUtils.personTag1.name],
     };
 
     beforeEach(() => {

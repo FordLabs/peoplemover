@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-export interface Tag {
+export interface TagInterface {
     id: number;
     name: string;
     spaceUuid: string;

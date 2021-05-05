@@ -25,7 +25,7 @@ import TestUtils, {createDataTestId, renderWithRedux} from './TestUtils';
 import {wait} from '@testing-library/dom';
 import {PreloadedState, Store} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import {Product} from '../Products/Product';
 import {Person} from '../People/Person';
 import LocationClient from '../Locations/LocationClient';
@@ -188,6 +188,7 @@ describe('Products', () => {
                                 id: 2,
                                 color: {color: '1', id: 2},
                             },
+                            tags: [],
                         },
                         placeholder: false,
                     },
@@ -206,6 +207,7 @@ describe('Products', () => {
                                 id: 2,
                                 color: {color: '1', id: 2},
                             },
+                            tags: [],
                         },
                         placeholder: false,
                     },
@@ -224,6 +226,7 @@ describe('Products', () => {
                                 id: 2,
                                 color: {color: '1', id: 2},
                             },
+                            tags: [],
                         },
                         placeholder: false,
                     },
@@ -242,6 +245,7 @@ describe('Products', () => {
                                 id: 2,
                                 color: {color: '1', id: 2},
                             },
+                            tags: [],
                         },
                         placeholder: false,
                     },
@@ -252,7 +256,7 @@ describe('Products', () => {
                     id: 3,
                 },
                 archived: false,
-                productTags: [],
+                tags: [],
             };
 
             let initialState = {
@@ -278,6 +282,7 @@ describe('Products', () => {
                         id: 2,
                         color: {color: '1', id: 2},
                     },
+                    tags: [],
                 },
                 {
                     name: 'Hank 1',
@@ -290,6 +295,7 @@ describe('Products', () => {
                         id: 2,
                         color: {color: '1', id: 2},
                     },
+                    tags: [],
                 },
                 {
                     name: 'Hank 2',
@@ -302,6 +308,7 @@ describe('Products', () => {
                         id: 2,
                         color: {color: '1', id: 2},
                     },
+                    tags: [],
                 },
                 {
                     name: 'Person 1',
@@ -314,6 +321,7 @@ describe('Products', () => {
                         id: 2,
                         color: {color: '1', id: 2},
                     },
+                    tags: [],
                 },
             ];
 

@@ -25,7 +25,7 @@ describe('People', () => {
     let calendarDateClass;
 
     beforeEach(() => {
-        cy.visitSpace();
+        cy.visitSpace({}, '#person-tags');
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
 
@@ -107,6 +107,7 @@ describe('People', () => {
             assignTo: '',
             notes: '',
             isNew: false,
+            tags: ['Tag 1'],
         };
 
         cy.contains(unassignedPerson.name).should('not.exist');
@@ -133,6 +134,9 @@ describe('People', () => {
                 expect(personData.newPerson).to.equal(unassignedPerson.isNew);
                 expect(personData.notes).to.equal(unassignedPerson.notes);
                 expect(personData.spaceRole.name).to.equal(unassignedPerson.role);
+                personData.tags.forEach(tag => {
+                    expect(unassignedPerson.tags).to.contain(tag.name);
+                });
             }).then(() => {
                 cy.get(`[data-testid=assignmentCard__person_name]`)
                     .should('contain', unassignedPerson.name)
@@ -161,6 +165,7 @@ describe('People', () => {
             role: 'The medium',
             assignTo: 'My Product',
             notes: 'BOB',
+            tags: ['Tag 1'],
         };
         cy.get('[data-testid=editPersonIconContainer__jane_smith]').click();
         cy.get('[data-testid=editMenuOption__edit_person]').click();
@@ -175,6 +180,9 @@ describe('People', () => {
                 expect(personData.newPerson).to.equal(editedPerson.isNew);
                 expect(personData.notes).to.equal(editedPerson.notes);
                 expect(personData.spaceRole.name).to.equal(editedPerson.role);
+                personData.tags.forEach(tag => {
+                    expect(editedPerson.tags).to.contain(tag.name);
+                });
             });
 
         cy.get(`[data-testid=assignmentCard__jane_bob]`)
@@ -316,7 +324,7 @@ function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth() {
     return closestWorkdayToMiddleOfMonthThatIsntToday;
 }
 
-const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
+const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags = [] }) => {
     cy.get('[data-testid=personForm]').as('personForm');
     cy.get('@personForm').should('be.visible');
 
@@ -345,6 +353,13 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes }) => {
             .focus()
             .type(assignTo + '{enter}');
     }
+
+    tags.forEach((tag) => {
+        cy.get('@personForm')
+            .find('[id=personTags]')
+            .focus()
+            .type(tag + '{enter}', {force: true});
+    });
 
     if (notes) {
         cy.get('[data-testid=formNotesToField]').focus().type(notes).should('have.value', notes);

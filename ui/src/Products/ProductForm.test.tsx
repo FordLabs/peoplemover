@@ -7,7 +7,7 @@ import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
 import {Space} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
 import LocationClient from '../Locations/LocationClient';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';
 import selectEvent from 'react-select-event';
 import {Product} from './Product';
@@ -75,7 +75,7 @@ describe('ProductForm', function() {
                 archived: false,
                 dorf: '',
                 notes: '',
-                productTags: [TestUtils.productTag2],
+                tags: [TestUtils.productTag2],
                 assignments: [],
             } as Product);
 

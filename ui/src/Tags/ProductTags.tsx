@@ -17,10 +17,10 @@
 
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
-import {Tag} from './Tag.interface';
+import {TagInterface} from './Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {TagRequest} from './TagRequest.interface';
-import ProductTagClient from '../ProductTag/ProductTagClient';
+import ProductTagClient from './ProductTag/ProductTagClient';
 import sortTagsAlphabetically from './sortTagsAlphabetically';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {createDataTestId} from '../tests/TestUtils';
@@ -33,9 +33,9 @@ import {connect} from 'react-redux';
 import {Space} from '../Space/Space';
 
 interface Props {
-    productTags: Array<Tag>;
-    updateProductTags(Function: (productTags: Array<Tag>) => Tag[]): void;
-    updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
+    productTags: Array<TagInterface>;
+    updateProductTags(Function: (productTags: Array<TagInterface>) => TagInterface[]): void;
+    updateFilterOptions(index: number, tag: TagInterface, action: TagAction): void;
     currentSpace: Space;
 }
 
@@ -51,7 +51,7 @@ const ProductTags = ({
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
-    const showDeleteConfirmationModal = (productTagToDelete: Tag): void => {
+    const showDeleteConfirmationModal = (productTagToDelete: TagInterface): void => {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteProductTag(productTagToDelete),
             close: () => setConfirmDeleteModal(null),
@@ -68,10 +68,10 @@ const ProductTags = ({
     const editProductTag = async (productTag: TagRequest): Promise<unknown> => {
         return await ProductTagClient.edit(productTag, currentSpace)
             .then((response) => {
-                const newProductTag: Tag = response.data;
+                const newProductTag: TagInterface = response.data;
                 updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.EDIT);
-                updateProductTags((prevProductTag: Array<Tag>) => {
-                    const productTags = prevProductTag.map((tag: Tag) => tag.id !== productTag.id ? tag : newProductTag);
+                updateProductTags((prevProductTag: Array<TagInterface>) => {
+                    const productTags = prevProductTag.map((tag: TagInterface) => tag.id !== productTag.id ? tag : newProductTag);
                     sortTagsAlphabetically(productTags);
                     return productTags;
                 });
@@ -83,9 +83,9 @@ const ProductTags = ({
     const addProductTag = async (productTag: TagRequest): Promise<unknown> => {
         return await ProductTagClient.add(productTag, currentSpace)
             .then((response) => {
-                const newProductTag: Tag = response.data;
+                const newProductTag: TagInterface = response.data;
                 updateFilterOptions(productTagFilterIndex, newProductTag, TagAction.ADD);
-                updateProductTags((prevProductTag: Array<Tag>) => {
+                updateProductTags((prevProductTag: Array<TagInterface>) => {
                     const productTags = [...prevProductTag, newProductTag];
                     sortTagsAlphabetically(productTags);
                     return productTags;
@@ -95,13 +95,13 @@ const ProductTags = ({
             });
     };
 
-    const deleteProductTag = async (productTagToDelete: Tag): Promise<void> => {
+    const deleteProductTag = async (productTagToDelete: TagInterface): Promise<void> => {
         try {
             if (currentSpace.uuid) {
                 await ProductTagClient.delete(productTagToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
                 updateFilterOptions(productTagFilterIndex, productTagToDelete, TagAction.DELETE);
-                updateProductTags((prevProductTags: Array<Tag>) =>
+                updateProductTags((prevProductTags: Array<TagInterface>) =>
                     prevProductTags.filter((productTag: RoleTag) => productTag.id !== productTagToDelete.id)
                 );
             }
@@ -119,7 +119,7 @@ const ProductTags = ({
     return (
         <div data-testid={createDataTestId('tagsModalContainer', tagType)}
             className="myTraitsModalContainer">
-            {productTags.map((productTag: Tag, index: number) => {
+            {productTags.map((productTag: TagInterface, index: number) => {
                 return (
                     <React.Fragment key={index}>
                         {showViewState(index) &&

@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-import {Tag} from '../Tags/Tag.interface';
+import {TagInterface} from '../Tags/Tag.interface';
 
-export type LocationTag = Tag;
+export type LocationTag = TagInterface;

@@ -1,7 +1,7 @@
 import {JSX} from '@babel/types';
 import {Color, RoleTag} from './RoleTag.interface';
 import React, {useState} from 'react';
-import {Tag} from '../Tags/Tag.interface';
+import {TagInterface} from '../Tags/Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import RoleClient from './RoleClient';
 import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
@@ -19,8 +19,8 @@ import {RoleEditRequest} from './RoleEditRequest.interface';
 interface Props {
     colors: Array<Color>;
     roles: Array<RoleTag>;
-    setRoles(Function: (roles: Array<Tag>) => Tag[]): void;
-    updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
+    setRoles(Function: (roles: Array<TagInterface>) => TagInterface[]): void;
+    updateFilterOptions(index: number, tag: TagInterface, action: TagAction): void;
     currentSpace: Space;
 }
 
@@ -31,7 +31,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
-    const showDeleteConfirmationModal = (roleToDelete: Tag): void => {
+    const showDeleteConfirmationModal = (roleToDelete: TagInterface): void => {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteRole(roleToDelete),
             close: () => setConfirmDeleteModal(null),
@@ -77,7 +77,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
             });
     };
 
-    const deleteRole = async (roleToDelete: Tag): Promise<void> => {
+    const deleteRole = async (roleToDelete: TagInterface): Promise<void> => {
         try {
             if (currentSpace.uuid) {
                 await RoleClient.delete(roleToDelete.id, currentSpace);

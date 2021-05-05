@@ -19,7 +19,7 @@ import {AvailableActions, setupSpaceAction} from '../Redux/Actions';
 import configureStore from 'redux-mock-store';
 import TestUtils from './TestUtils';
 import thunk from 'redux-thunk';
-import * as filterConstants from '../SortingAndFiltering/FilterConstants';
+import * as filterConstants from '../SortingAndFiltering/FilterLibraries';
 
 describe('Actions', () => {
     const mockStore = configureStore([thunk]);

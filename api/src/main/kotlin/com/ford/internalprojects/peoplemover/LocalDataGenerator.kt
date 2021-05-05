@@ -24,19 +24,18 @@ import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.ColorService
-import com.ford.internalprojects.peoplemover.location.LocationRequest
-import com.ford.internalprojects.peoplemover.location.LocationService
-import com.ford.internalprojects.peoplemover.location.SpaceLocation
+import com.ford.internalprojects.peoplemover.tag.location.LocationService
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonService
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
-import com.ford.internalprojects.peoplemover.producttag.ProductTag
-import com.ford.internalprojects.peoplemover.producttag.ProductTagRequest
-import com.ford.internalprojects.peoplemover.producttag.ProductTagService
-import com.ford.internalprojects.peoplemover.role.RoleService
-import com.ford.internalprojects.peoplemover.role.SpaceRole
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
+import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagService
+import com.ford.internalprojects.peoplemover.tag.role.RoleService
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.google.common.collect.Sets
@@ -126,11 +125,11 @@ class LocalDataGenerator(
             )
         )
 
-        val productTagAddRequest = ProductTagRequest(
+        val productTagAddRequest = TagRequest(
             name = "productTag1"
         )
 
-        val locationAddRequest = LocationRequest(
+        val locationAddRequest = TagRequest(
             name = "location1"
         )
 
@@ -141,7 +140,7 @@ class LocalDataGenerator(
 
         productRepository.save(Product(
             name = "My Product",
-            productTags = productTags,
+            tags = productTags,
             startDate = LocalDate.parse("2019-01-01"),
             spaceUuid =  createdSpace.uuid
         ))

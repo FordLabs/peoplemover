@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import {isActiveProduct, isProductMatchingSelectedFilters, Product} from '../Products/Product';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import './Counter.scss';

@@ -16,6 +16,7 @@
  */
 
 import {RoleTag} from '../Roles/RoleTag.interface';
+import {Tag} from '../Tags/Tag';
 
 export interface Person {
     id: number;
@@ -24,6 +25,7 @@ export interface Person {
     notes?: string;
     newPerson: boolean;
     spaceUuid: string;
+    tags: Array<Tag>;
 }
 
 export function emptyPerson(): Person {
@@ -32,5 +34,6 @@ export function emptyPerson(): Person {
         name: '',
         newPerson: false,
         spaceUuid: '',
+        tags: [],
     };
 }

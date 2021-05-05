@@ -44,7 +44,7 @@ import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
 import {Product} from '../Products/Product';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
-import {ProductTag} from '../ProductTag/ProductTag';
+import {Tag} from '../Tags/Tag';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
@@ -52,7 +52,7 @@ import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -66,7 +66,7 @@ export interface PeopleMoverProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     fetchProducts(): Array<Product>;
-    fetchProductTags(): Array<ProductTag>;
+    fetchProductTags(): Array<Tag>;
     fetchLocations(): Array<LocationTag>;
     setPeople(people: Array<Person>): Array<Person>;
     setCurrentModal(modalState: CurrentModalState): void;

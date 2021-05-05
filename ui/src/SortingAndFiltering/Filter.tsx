@@ -23,7 +23,7 @@ import {connect} from 'react-redux';
 import {FilterOption} from '../CommonTypes/Option';
 import './FilterOrSortBy.scss';
 import Dropdown from '../ReusableComponents/Dropdown';
-import {AllGroupedTagFilterOptions, FilterType} from './FilterConstants';
+import {AllGroupedTagFilterOptions, FilterType} from './FilterLibraries';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 
 function toggleOption(option: FilterOption): FilterOption {

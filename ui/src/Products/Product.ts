@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {ProductTag} from '../ProductTag/ProductTag';
+import {Tag} from '../Tags/Tag';
 import {Assignment} from '../Assignments/Assignment';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import moment from 'moment';
@@ -28,7 +28,7 @@ export interface Product {
     endDate?: string;
     dorf?: string;
     spaceLocation?: LocationTag;
-    productTags: Array<ProductTag>;
+    tags: Array<Tag>;
     archived: boolean;
     notes?: string;
     assignments: Array<Assignment>;
@@ -42,7 +42,7 @@ export function emptyProduct(spaceUuid?: string): Product {
         startDate: '',
         endDate: '',
         dorf: '',
-        productTags: [],
+        tags: [],
         archived: false,
         notes: '',
         assignments: [],
@@ -70,8 +70,8 @@ export  function isProductMatchingSelectedFilters(product: Product, locationTagF
         isMatchingLocationFilter = true;
     }
 
-    if (product.productTags) {
-        const productTagNames: Array<string> = product.productTags.map(productTag => productTag.name);
+    if (product.tags) {
+        const productTagNames: Array<string> = product.tags.map(tag => tag.name);
         productTagFilters.forEach(productTagFilter => {
             if (productTagNames.includes(productTagFilter)) {
                 isMatchingProductTagFilter = true;

@@ -23,12 +23,12 @@ import {ThunkAction} from 'redux-thunk';
 import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import ProductClient from '../../Products/ProductClient';
-import {ProductTag} from '../../ProductTag/ProductTag';
-import ProductTagClient from '../../ProductTag/ProductTagClient';
+import {Tag} from '../../Tags/Tag';
+import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
-import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -117,7 +117,7 @@ export const setProductsAction = (products: Array<Product>) => ({
     products,
 });
 
-export const setProductTagsAction = (productTags: Array<ProductTag>) => ({
+export const setProductTagsAction = (productTags: Array<Tag>) => ({
     type: AvailableActions.SET_PRODUCT_TAGS,
     productTags,
 });
@@ -175,7 +175,7 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return ProductTagClient.get(getState().currentSpace.uuid!,)
             .then(result => {
-                let productTags: Array<ProductTag> = result.data || [];
+                let productTags: Array<Tag> = result.data || [];
                 productTags = productTags.sort((a, b) => {
                     if (a.name.toLowerCase() < b.name.toLowerCase()) {
                         return -1;

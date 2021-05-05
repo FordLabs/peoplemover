@@ -17,7 +17,7 @@
 
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
-import {Tag} from './Tag.interface';
+import {TagInterface} from './Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {TagRequest} from './TagRequest.interface';
 import LocationClient from '../Locations/LocationClient';
@@ -33,9 +33,9 @@ import {connect} from 'react-redux';
 import {Space} from '../Space/Space';
 
 interface Props {
-    locations: Array<Tag>;
-    updateLocations(Function: (prevProductTag: Array<Tag>) => Tag[]): void;
-    updateFilterOptions(index: number, tag: Tag, action: TagAction): void;
+    locations: Array<TagInterface>;
+    updateLocations(Function: (prevProductTag: Array<TagInterface>) => TagInterface[]): void;
+    updateFilterOptions(index: number, tag: TagInterface, action: TagAction): void;
     currentSpace: Space;
 }
 
@@ -51,7 +51,7 @@ const LocationTags = ({
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
-    const showDeleteConfirmationModal = (locationToDelete: Tag): void => {
+    const showDeleteConfirmationModal = (locationToDelete: TagInterface): void => {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteLocation(locationToDelete),
             close: () => setConfirmDeleteModal(null),
@@ -68,9 +68,9 @@ const LocationTags = ({
     const editLocation = async (location: TagRequest): Promise<unknown> => {
         return await LocationClient.edit(location, currentSpace)
             .then((response) => {
-                const newLocation: Tag = response.data;
+                const newLocation: TagInterface = response.data;
                 updateFilterOptions(locationFilterIndex, newLocation, TagAction.EDIT);
-                updateLocations((prevLocations: Array<Tag>) => {
+                updateLocations((prevLocations: Array<TagInterface>) => {
                     const locations = prevLocations.map(tag => tag.id !== location.id ? tag : newLocation);
                     sortTagsAlphabetically(locations);
                     return locations;
@@ -82,9 +82,9 @@ const LocationTags = ({
     const addLocation = async (location: TagRequest): Promise<unknown> => {
         return await LocationClient.add(location, currentSpace)
             .then((response) => {
-                const newLocation: Tag = response.data;
+                const newLocation: TagInterface = response.data;
                 updateFilterOptions(locationFilterIndex, newLocation, TagAction.ADD);
-                updateLocations((prevLocations: Array<Tag>) => {
+                updateLocations((prevLocations: Array<TagInterface>) => {
                     const locations = [...prevLocations, newLocation];
                     sortTagsAlphabetically(locations);
                     return locations;
@@ -93,13 +93,13 @@ const LocationTags = ({
             });
     };
 
-    const deleteLocation = async (locationToDelete: Tag): Promise<void> => {
+    const deleteLocation = async (locationToDelete: TagInterface): Promise<void> => {
         try {
             if (currentSpace.uuid) {
                 await LocationClient.delete(locationToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
                 updateFilterOptions(locationFilterIndex, locationToDelete, TagAction.DELETE);
-                updateLocations((prevLocations: Array<Tag>) => prevLocations.filter((location: RoleTag) => location.id !== locationToDelete.id));
+                updateLocations((prevLocations: Array<TagInterface>) => prevLocations.filter((location: RoleTag) => location.id !== locationToDelete.id));
             }
         } catch {
             return;
@@ -115,7 +115,7 @@ const LocationTags = ({
     return (
         <div data-testid={createDataTestId('tagsModalContainer', tagType)}
             className="myTraitsModalContainer">
-            {locations.map((location: Tag, index: number) => {
+            {locations.map((location: TagInterface, index: number) => {
                 return (
                     <React.Fragment key={index}>
                         {showViewState(index) &&

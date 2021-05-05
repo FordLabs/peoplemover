@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Tag} from '../Tags/Tag.interface';
+import {TagInterface} from '../Tags/Tag.interface';
 import {JSX} from '@babel/types';
 import React, {ReactNode} from 'react';
 import {TagType} from './TagForms.types';
@@ -27,7 +27,7 @@ interface Props {
     showEditButtons: boolean;
     setConfirmDeleteModal: Function;
     tagType: TagType;
-    tag: Tag;
+    tag: TagInterface;
 }
 
 function ViewTagRow({

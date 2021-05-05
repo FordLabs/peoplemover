@@ -151,6 +151,7 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'New Bobby',
                     newPerson: true,
+                    tags: [],
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
                 expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
@@ -170,7 +171,6 @@ describe('People actions', () => {
 
             expect(await app.findByText('Please enter a person name.')).toBeInTheDocument();
         });
-
     });
 
     describe('Roles', () => {

@@ -18,10 +18,9 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.ford.internalprojects.peoplemover.role.SpaceRole
-import javax.validation.constraints.Max
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Size
 
 data class PersonRequest(
@@ -29,6 +28,8 @@ data class PersonRequest(
         @field:NotBlank(message = "Name cannot be blank.")
         @field:Size(max = 255, message = "Name cannot exceed 255 characters.")
         val name: String,
+
+        val tags: Set<PersonTag> = HashSet(),
 
         val spaceRole: SpaceRole? = null,
 
@@ -45,5 +46,6 @@ fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
         spaceRole = this.spaceRole,
         notes = this.notes,
         newPerson = this.newPerson,
-        spaceUuid = spaceUuid
+        spaceUuid = spaceUuid,
+        tags = this.tags
 )

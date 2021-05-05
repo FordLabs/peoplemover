@@ -102,6 +102,27 @@ create table product_tag_mapping
     constraint UQ_Product_Tag_Mapping unique (product_id, product_tag_id)
 );
 
+create table person_tag
+(
+    id           int not null identity primary key,
+    name         varchar(255),
+    space_uuid        varchar (36) not null,
+
+    FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
+    constraint UQ_Person_Tag unique (space_uuid, name)
+);
+
+create table person_tag_mapping
+(
+    id             int not null identity primary key,
+    person_id     int,
+    person_tag_id int,
+
+    FOREIGN KEY (person_id) REFERENCES person (id) on delete cascade,
+    FOREIGN KEY (person_tag_id) REFERENCES person_tag (id) on delete cascade,
+    constraint UQ_Person_Tag_Mapping unique (person_id, person_tag_id)
+);
+
 create table user_space_mapping
 (
     id          int not null identity primary key,

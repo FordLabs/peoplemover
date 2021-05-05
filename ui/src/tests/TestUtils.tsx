@@ -30,8 +30,8 @@ import {Person} from '../People/Person';
 import {mount, ReactWrapper} from 'enzyme';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
-import ProductTagClient from '../ProductTag/ProductTagClient';
-import {ProductTag} from '../ProductTag/ProductTag';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
+import {Tag} from '../Tags/Tag';
 import ColorClient from '../Roles/ColorClient';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import {LocationTag} from '../Locations/LocationTag.interface';
@@ -39,7 +39,8 @@ import {AxiosResponse} from 'axios';
 import SpaceClient from '../Space/SpaceClient';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterConstants';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
@@ -208,6 +209,17 @@ class TestUtils {
             data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
         } as AxiosResponse));
         ProductTagClient.delete = emptyAxiosResponse;
+
+        PersonTagClient.get = jest.fn(() => Promise.resolve({
+            data: TestUtils.personTags,
+        } as AxiosResponse));
+        PersonTagClient.add = jest.fn(() => Promise.resolve({
+            data: {id: 1337, name: 'Low Achiever'},
+        } as AxiosResponse));
+        PersonTagClient.edit = jest.fn(() => Promise.resolve({
+            data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+        } as AxiosResponse));
+        PersonTagClient.delete = emptyAxiosResponse;
     }
 
     static async waitForHomePageToLoad(app: RenderResult): Promise<void> {
@@ -230,16 +242,24 @@ class TestUtils {
         TestUtils.southfield,
     ];
 
-    static productTag1: ProductTag = {id: 5, name: 'AV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static productTag2: ProductTag = {id: 6, name: 'FordX', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
-    static productTag3: ProductTag = {id: 7, name: 'EV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static productTag4: ProductTag = {id: 8, name: 'Mache', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static productTag1: Tag = {id: 5, name: 'AV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static productTag2: Tag = {id: 6, name: 'FordX', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
+    static productTag3: Tag = {id: 7, name: 'EV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static productTag4: Tag = {id: 8, name: 'Mache', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
 
-    static productTags: Array<ProductTag> = [
+    static productTags: Array<Tag> = [
         TestUtils.productTag1,
         TestUtils.productTag2,
         TestUtils.productTag3,
         TestUtils.productTag4,
+    ];
+
+    static personTag1: Tag = {id: 5, name: 'The lil boss', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+    static personTag2: Tag = {id: 6, name: 'The big boss', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
+
+    static personTags: Array<Tag> = [
+        TestUtils.personTag1,
+        TestUtils.personTag2,
     ];
 
     static color1: Color = {color: '#EFEFEF', id: 1};
@@ -271,6 +291,7 @@ class TestUtils {
         spaceRole: TestUtils.softwareEngineer,
         notes: 'I love the theater',
         newPerson: false,
+        tags: [],
     };
 
     static hank: Person = {
@@ -280,6 +301,7 @@ class TestUtils {
         spaceRole: TestUtils.productManager,
         notes: "Don't forget the WD-40!",
         newPerson: false,
+        tags: [TestUtils.personTag1],
     };
 
     static unassignedPerson: Person = {
@@ -288,6 +310,7 @@ class TestUtils {
         name: 'Unassigned Person 7',
         spaceRole: TestUtils.softwareEngineer,
         newPerson: false,
+        tags: [],
     };
 
     static people: Array<Person> = [
@@ -337,7 +360,7 @@ class TestUtils {
         startDate: '',
         endDate: '',
         archived: false,
-        productTags: [],
+        tags: [],
     };
 
     static productWithAssignments: Product = {
@@ -349,7 +372,7 @@ class TestUtils {
         spaceLocation: TestUtils.southfield,
         assignments: [TestUtils.assignmentForPerson1],
         archived: false,
-        productTags: [TestUtils.productTag2],
+        tags: [TestUtils.productTag2],
         notes: 'note',
     };
 
@@ -362,7 +385,7 @@ class TestUtils {
         spaceLocation: TestUtils.dearborn,
         assignments: [],
         archived: false,
-        productTags: [TestUtils.productTag1],
+        tags: [TestUtils.productTag1],
     };
 
     static productForHank: Product = {
@@ -374,7 +397,7 @@ class TestUtils {
         spaceLocation: TestUtils.annarbor,
         assignments: [TestUtils.assignmentForHank],
         archived: false,
-        productTags: [],
+        tags: [],
     };
 
     static productWithoutLocation: Product = {
@@ -385,7 +408,7 @@ class TestUtils {
         endDate: '2022-02-02',
         assignments: [],
         archived: false,
-        productTags: [],
+        tags: [],
     };
 
     static archivedProduct: Product = {
@@ -397,7 +420,7 @@ class TestUtils {
         spaceLocation: TestUtils.detroit,
         assignments: [],
         archived: true,
-        productTags: [],
+        tags: [],
     };
 
     static products: Array<Product> = [
@@ -423,7 +446,7 @@ class TestUtils {
             spaceLocation: TestUtils.detroit,
             assignments: [],
             archived: false,
-            productTags: [],
+            tags: [],
         },
     ];
 
@@ -460,6 +483,10 @@ class TestUtils {
         },
         {
             label:'Role Tags:',
+            options: [],
+        },
+        {
+            label:'Person Tags:',
             options: [],
         },
     ]
