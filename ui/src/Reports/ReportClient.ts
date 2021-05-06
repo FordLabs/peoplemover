@@ -64,6 +64,10 @@ class ReportClient {
                 label: 'Person Note',
                 value: 'personNote',
             },
+            {
+                label: 'Person Tags',
+                value: 'personTags',
+            },
         ];
 
         const json2csvParser = new Parser({ fields });

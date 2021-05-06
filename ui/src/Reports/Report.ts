@@ -21,4 +21,5 @@ export interface Report
     productName: string;
     personName: string;
     personRole: string;
+    personTags: Array<string>;
 }
