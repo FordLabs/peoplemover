@@ -47,7 +47,7 @@ class ReportGeneratorService(
                 personName = assignment.person.name,
                 personRole = assignment.person.spaceRole?.name ?: "",
                 personNote = assignment.person.notes ?: "",
-                personTags = assignment.person.tags.joinToString(",")
+                personTags = assignment.person.tags.joinToString(",") { tag -> tag.name }
             ))
         }
         return peopleReport.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.personName })

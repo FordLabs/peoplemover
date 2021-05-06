@@ -151,7 +151,7 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, personNote = "Notes", personTags = hashSetOf(personTag1, personTag2).joinToString(","))
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, personNote = "Notes", personTags = hashSetOf(personTag1.name, personTag2.name).joinToString(","))
 
         assertThat(actualPeopleReport.size).isOne()
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)
@@ -172,7 +172,7 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, "Notes", hashSetOf(personTag1, personTag2).joinToString(","))
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, "Notes", hashSetOf(personTag1.name, personTag2.name).joinToString(","))
         val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, spaceRole2.name, "", "")
         val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "", "", "")
 
