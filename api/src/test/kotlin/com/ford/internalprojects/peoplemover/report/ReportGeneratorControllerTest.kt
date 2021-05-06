@@ -32,6 +32,8 @@ import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -73,6 +75,9 @@ class ReportGeneratorControllerTest {
     private lateinit var spaceRolesRepository: SpaceRolesRepository
 
     @Autowired
+    private lateinit var personTagRepository: PersonTagRepository
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
@@ -82,6 +87,8 @@ class ReportGeneratorControllerTest {
     private lateinit var productB: Product
     private lateinit var spaceRole: SpaceRole
     private lateinit var spaceRole2: SpaceRole
+    private lateinit var personTag1: PersonTag
+    private lateinit var personTag2: PersonTag
     private lateinit var person1: Person
     private lateinit var person2: Person
     private lateinit var person3: Person
@@ -104,7 +111,9 @@ class ReportGeneratorControllerTest {
         productB = productRepository.save(Product(name = "Product b", spaceUuid = space1.uuid))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceUuid = space1.uuid))
         spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceUuid = space1.uuid))
-        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, notes = "Notes", spaceUuid = space1.uuid))
+        personTag1 = personTagRepository.save(PersonTag(spaceUuid = space1.uuid, name = "Java"))
+        personTag2 = personTagRepository.save(PersonTag(spaceUuid = space1.uuid, name = "Agency"))
+        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, notes = "Notes", spaceUuid = space1.uuid, tags = hashSetOf(personTag1, personTag2)))
         person2 = personRepository.save(Person(name = "Person 2", spaceUuid = space1.uuid))
         person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceUuid = space1.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = PERMISSION_EDITOR))
@@ -124,10 +133,11 @@ class ReportGeneratorControllerTest {
         productRepository.deleteAll()
         spaceRepository.deleteAll()
         userSpaceMappingRepository.deleteAll()
+        personTagRepository.deleteAll()
     }
 
     @Test
-    fun `GET should return people, products, and roles for a space and omit future assignments given a date`() {
+    fun `GET should return people, products, roles, and tags for a space and omit future assignments given a date`() {
         val result = mockMvc
                 .perform(get("$basePeopleReportsUrl?spaceUuid=${space1.uuid}&requestedDate=${mar1}")
                         .header("Authorization", "Bearer GOOD_TOKEN"))
@@ -141,7 +151,7 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, personNote = "Notes")
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, personNote = "Notes", personTags = hashSetOf(personTag1, personTag2).joinToString(","))
 
         assertThat(actualPeopleReport.size).isOne()
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)
@@ -162,9 +172,9 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, "Notes")
-        val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, spaceRole2.name, "")
-        val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "", "")
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, "Notes", hashSetOf(personTag1, personTag2).joinToString(","))
+        val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, spaceRole2.name, "", "")
+        val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "", "", "")
 
         assertThat(actualPeopleReport.size).isEqualTo(3)
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)

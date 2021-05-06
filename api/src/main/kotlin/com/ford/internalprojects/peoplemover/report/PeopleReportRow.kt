@@ -21,5 +21,6 @@ data class PeopleReportRow (
     val productName: String,
     val personName: String,
     val personRole: String,
-    val personNote: String
+    val personNote: String,
+    val personTags: String
 )
