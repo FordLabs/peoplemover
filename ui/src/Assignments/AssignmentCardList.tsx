@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useEffect, useState} from 'react';
+import React, {RefObject} from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
 import {fetchProductsAction, setCurrentModalAction, setIsDragging} from '../Redux/Actions';
