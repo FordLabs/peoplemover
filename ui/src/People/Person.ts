@@ -37,3 +37,28 @@ export function emptyPerson(): Person {
         tags: [],
     };
 }
+
+export function isPersonMatchingSelectedFilters(person: Person, selectedRoleFilters: Array<string>, selectedPersonTagFilters: Array<string>): boolean {
+    let isMatchingRole = false;
+    let isMatchingPersonTag = false;
+
+    if (selectedRoleFilters.length === 0) {
+        isMatchingRole = true;
+    } else {
+        if (person.spaceRole && selectedRoleFilters.includes(person.spaceRole.name)) {
+            isMatchingRole = true;
+        }
+    }
+
+    if (selectedPersonTagFilters.length === 0) {
+        isMatchingPersonTag = true;
+    } else {
+        person.tags.forEach(personTag => {
+            if (selectedPersonTagFilters.includes(personTag.name)) {
+                isMatchingPersonTag = true;
+            }
+        });
+    }
+
+    return isMatchingRole && isMatchingPersonTag;
+}

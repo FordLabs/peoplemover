@@ -35,8 +35,9 @@ import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import {Space} from '../Space/Space';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {isPersonMatchingSelectedFilters} from '../People/Person';
 
 interface AssignmentCardListProps {
     product: Product;
@@ -64,8 +65,8 @@ function AssignmentCardList({
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
-    const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[2].options);
-    const getSelectedPersonTagFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[3].options);
+    const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
+    const getSelectedPersonTagFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
 
     function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
         const assignments: Array<Assignment> = product.assignments;
@@ -80,30 +81,9 @@ function AssignmentCardList({
             return 0;
         });
     }
-    
+
     function filterAssignmentByRoleAndProductTag(assignment: Assignment): boolean {
-        let isMatchingRole = false;
-        let isMatchingPersonTag = false;
-
-        if (getSelectedRoleFilters().length === 0) {
-            isMatchingRole = true;
-        } else {
-            if (assignment.person.spaceRole && getSelectedRoleFilters().includes(assignment.person.spaceRole.name)) {
-                isMatchingRole = true;
-            }
-        }
-
-        if (getSelectedPersonTagFilters().length === 0) {
-            isMatchingPersonTag = true;
-        } else {
-            assignment.person.tags.forEach(personTag => {
-                if (getSelectedPersonTagFilters().includes(personTag.name)) {
-                    isMatchingPersonTag = true;
-                }
-            });
-        }
-
-        return isMatchingRole && isMatchingPersonTag;
+        return isPersonMatchingSelectedFilters(assignment.person, getSelectedRoleFilters(), getSelectedPersonTagFilters());
     }
 
     function startDraggingAssignment(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void {
