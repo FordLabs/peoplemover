@@ -50,6 +50,7 @@ function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
                 <NavigationSection label="Filter by" icon="filter_list">
                     <Filter filterType={FilterTypeListings.Location}/>
                     <Filter filterType={FilterTypeListings.ProductTag}/>
+                    {window.location.hash === '#person-tags' &&  <Filter filterType={FilterTypeListings.PersonTag}/>}
                     <Filter filterType={FilterTypeListings.Role}/>
                 </NavigationSection>
                 <ProductSortBy/>

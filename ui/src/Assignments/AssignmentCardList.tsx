@@ -65,13 +65,7 @@ function AssignmentCardList({
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
     const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[2].options);
-    const [roleFilters, setRoleFilters] = useState<Array<string>>(getSelectedRoleFilters());
-
-    /* eslint-disable */
-    useEffect(() => {
-        setRoleFilters(getSelectedRoleFilters());
-    }, [allGroupedTagFilterOptions]);
-    /* eslint-enable */
+    const getSelectedPersonTagFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[3].options);
 
     function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
         const assignments: Array<Assignment> = product.assignments;
@@ -86,11 +80,30 @@ function AssignmentCardList({
             return 0;
         });
     }
+    
+    function filterAssignmentByRoleAndProductTag(assignment: Assignment): boolean {
+        let isMatchingRole = false;
+        let isMatchingPersonTag = false;
 
-    function filterAssignmentByRole(assignment: Assignment): boolean {
-        if (roleFilters.length === 0) return true;
+        if (getSelectedRoleFilters().length === 0) {
+            isMatchingRole = true;
+        } else {
+            if (assignment.person.spaceRole && getSelectedRoleFilters().includes(assignment.person.spaceRole.name)) {
+                isMatchingRole = true;
+            }
+        }
 
-        return !!(assignment.person.spaceRole && roleFilters.includes(assignment.person.spaceRole.name));
+        if (getSelectedPersonTagFilters().length === 0) {
+            isMatchingPersonTag = true;
+        } else {
+            assignment.person.tags.forEach(personTag => {
+                if (getSelectedPersonTagFilters().includes(personTag.name)) {
+                    isMatchingPersonTag = true;
+                }
+            });
+        }
+
+        return isMatchingRole && isMatchingPersonTag;
     }
 
     function startDraggingAssignment(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void {
@@ -229,7 +242,7 @@ function AssignmentCardList({
                 className={classNameAndDataTestId}
                 data-testid={classNameAndDataTestId}>
                 {assignmentsSortedByPersonRoleStably()
-                    .filter(filterAssignmentByRole)
+                    .filter(filterAssignmentByRoleAndProductTag)
                     .map((assignment: Assignment) =>
                         <AssignmentCard assignment={assignment}
                             isUnassignedProduct={isUnassignedProduct(product)}
