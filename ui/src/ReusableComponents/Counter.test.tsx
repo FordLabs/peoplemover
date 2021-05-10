@@ -20,6 +20,7 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import Counter from './Counter';
 import {RenderResult} from '@testing-library/react';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {Product} from '../Products/Product';
 
 describe('counter', () => {
     let app: RenderResult;
@@ -41,6 +42,10 @@ describe('counter', () => {
                 value:'2_Product Manager',
                 selected:  false,
             }],
+        },
+        {
+            label:'Person Tags:',
+            options: [],
         },
     ];
 
@@ -94,6 +99,10 @@ describe('counter', () => {
                     selected:  false,
                 }],
             },
+            {
+                label: 'Person Tags:',
+                options: [],
+            },
         ];
 
         app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
@@ -108,8 +117,8 @@ describe('counter', () => {
         expect(counter).toContainHTML(expectedString);
     });
 
-    it('should display the number of products and people when product filters are applied', async () => {
-        let expectedString = 'Results - Products: 1, People: 2 (Unassigned: 1)';
+    it('should display the number of products and people when all filters are applied', async () => {
+        let expectedString = 'Results - Products: 1, People: 1 (Unassigned: 0)';
         let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
@@ -145,9 +154,86 @@ describe('counter', () => {
                     selected:  false,
                 }],
             },
+            {
+                label:'Person Tags:',
+                options: [
+                    {label: 'The lil boss', value: '5_The_lil_boss', selected: true},
+                ],
+            },
         ];
         
         app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
+        const counter = await app.findByTestId('counter');
+        expect(counter).toContainHTML(expectedString);
+    });
+
+    it('should display the number of products and people when one person tag filter is applied', async () => {
+        let expectedString = 'Results - Products: 1, People: 2 (Unassigned: 1)';
+        let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
+            {
+                label:'Location Tags:',
+                options: [],
+            },
+            {
+                label:'Product Tags:',
+                options: [],
+            },
+            {
+                label:'Role Tags:',
+                options: [],
+            },
+            {
+                label: 'Person Tags:',
+                options: [
+                    {label: 'The lil boss', value: '5_The_lil_boss', selected: false},
+                    {label: 'The big boss', value: '6_The_big_boss', selected: true},
+                ],
+            },
+        ];
+
+        app = renderWithRedux(<Counter products={[TestUtils.unassignedProductForBigBossSE, TestUtils.productWithTags]} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
+        const counter = await app.findByTestId('counter');
+        expect(counter).toContainHTML(expectedString);
+    });
+
+    it('should display the number of products and people when people are in multiple products', async () => {
+        let expectedString = 'Results - Products: 2, People: 4 (Unassigned: 1)';
+        let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
+            {
+                label:'Location Tags:',
+                options: [],
+            },
+            {
+                label:'Product Tags:',
+                options: [],
+            },
+            {
+                label:'Role Tags:',
+                options: [],
+            },
+            {
+                label: 'Person Tags:',
+                options: [
+                    {label: 'The lil boss', value: '5_The_lil_boss', selected: true},
+                    {label: 'The big boss', value: '6_The_big_boss', selected: true},
+                ],
+            },
+        ];
+
+        const productWithPersonAlreadyAssignedInProduct1: Product = {
+            id: 2,
+            name: 'Product 2',
+            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+            startDate: '2011-01-01',
+            endDate: '2022-02-02',
+            spaceLocation: TestUtils.southfield,
+            assignments: TestUtils.assignmentsFilterTest,
+            archived: false,
+            tags: [TestUtils.productTag2],
+            notes: 'note',
+        };
+
+        app = renderWithRedux(<Counter products={[TestUtils.unassignedProductForBigBossSE, TestUtils.productWithTags, productWithPersonAlreadyAssignedInProduct1]} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });

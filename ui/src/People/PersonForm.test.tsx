@@ -66,14 +66,16 @@ describe('Person Form', () => {
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
-            personForm = await renderWithRedux(
-                <PersonForm
-                    isEditPersonForm={true}
-                    products={TestUtils.products}
-                    initiallySelectedProduct={TestUtils.productForHank}
-                    initialPersonName={TestUtils.hank.name}
-                    assignment={TestUtils.assignmentForHank}
-                />, store, undefined);
+            await act(async () => {
+                personForm = await renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={true}
+                        products={TestUtils.products}
+                        initiallySelectedProduct={TestUtils.productForHank}
+                        initialPersonName={TestUtils.hank.name}
+                        assignment={TestUtils.assignmentForHank}
+                    />, store, undefined);
+            });
         });
         it('display the person\'s existing tags when editing a person', async () => {
             await act(async () => {

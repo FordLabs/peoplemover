@@ -291,7 +291,7 @@ class TestUtils {
         spaceRole: TestUtils.softwareEngineer,
         notes: 'I love the theater',
         newPerson: false,
-        tags: [],
+        tags: [TestUtils.personTag1],
     };
 
     static hank: Person = {
@@ -309,6 +309,41 @@ class TestUtils {
         id: 101,
         name: 'Unassigned Person 7',
         spaceRole: TestUtils.softwareEngineer,
+        newPerson: false,
+        tags: [],
+    };
+
+    static unassignedBigBossSE: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 102,
+        name: 'Unassigned Big Boss SE',
+        spaceRole: TestUtils.softwareEngineer,
+        newPerson: false,
+        tags: [TestUtils.personTag2],
+    };
+
+    static person2: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 103,
+        name: 'bob se',
+        spaceRole: TestUtils.softwareEngineer,
+        newPerson: false,
+        tags: TestUtils.personTags,
+    };
+
+    static person3: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 104,
+        name: 'bob pm',
+        spaceRole: TestUtils.productManager,
+        newPerson: false,
+        tags: [TestUtils.personTag1],
+    };
+
+    static personNoRoleNoTag: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 105,
+        name: 'bob norole notag',
         newPerson: false,
         tags: [],
     };
@@ -346,10 +381,53 @@ class TestUtils {
         effectiveDate: new Date(2020, 4, 15),
     };
 
+    static assignmentForUnassignedBigBossSE: Assignment = {
+        id: 12,
+        productId: 999,
+        person: TestUtils.unassignedBigBossSE,
+        placeholder: false,
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        effectiveDate: new Date(2020, 4, 15),
+    };
+
+    static assignmentForPerson2: Assignment = {
+        id: 15,
+        productId: 1,
+        person: TestUtils.person2,
+        placeholder: false,
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        effectiveDate: new Date(2020, 4, 15),
+    };
+
+    static assignmentForPerson3: Assignment = {
+        id: 17,
+        productId: 1,
+        person: TestUtils.person3,
+        placeholder: false,
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        effectiveDate: new Date(2020, 4, 15),
+    };
+
+    static assignmentForPersonNoRoleNoTag: Assignment = {
+        id: 19,
+        productId: 1,
+        person: TestUtils.personNoRoleNoTag,
+        placeholder: false,
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        effectiveDate: new Date(2020, 4, 15),
+    };
+
     static assignments: Array<Assignment> = [
         TestUtils.assignmentForPerson1,
         TestUtils.assignmentForHank,
         TestUtils.assignmentForUnassigned,
+    ];
+
+    static assignmentsFilterTest: Array<Assignment> = [
+        TestUtils.assignmentForPerson1,
+        TestUtils.assignmentForPerson2,
+        TestUtils.assignmentForPerson3,
+        TestUtils.assignmentForPersonNoRoleNoTag,
     ];
 
     static unassignedProduct: Product = {
@@ -357,6 +435,18 @@ class TestUtils {
         name: 'unassigned',
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         assignments: [TestUtils.assignmentForUnassigned],
+        startDate: '',
+        endDate: '',
+        archived: false,
+        tags: [],
+    };
+
+
+    static unassignedProductForBigBossSE: Product = {
+        id: 998,
+        name: 'unassigned',
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        assignments: [TestUtils.assignmentForUnassignedBigBossSE],
         startDate: '',
         endDate: '',
         archived: false,
@@ -421,6 +511,19 @@ class TestUtils {
         assignments: [],
         archived: true,
         tags: [],
+    };
+
+    static productWithTags: Product = {
+        id: 1,
+        name: 'Product 1',
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        startDate: '2011-01-01',
+        endDate: '2022-02-02',
+        spaceLocation: TestUtils.southfield,
+        assignments: TestUtils.assignmentsFilterTest,
+        archived: false,
+        tags: [TestUtils.productTag2],
+        notes: 'note',
     };
 
     static products: Array<Product> = [

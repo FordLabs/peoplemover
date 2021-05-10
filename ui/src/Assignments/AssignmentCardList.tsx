@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useEffect, useState} from 'react';
+import React, {RefObject} from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
 import {fetchProductsAction, setCurrentModalAction, setIsDragging} from '../Redux/Actions';
@@ -35,8 +35,9 @@ import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import {Space} from '../Space/Space';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {isPersonMatchingSelectedFilters} from '../People/Person';
 
 interface AssignmentCardListProps {
     product: Product;
@@ -64,14 +65,8 @@ function AssignmentCardList({
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
-    const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[2].options);
-    const [roleFilters, setRoleFilters] = useState<Array<string>>(getSelectedRoleFilters());
-
-    /* eslint-disable */
-    useEffect(() => {
-        setRoleFilters(getSelectedRoleFilters());
-    }, [allGroupedTagFilterOptions]);
-    /* eslint-enable */
+    const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
+    const getSelectedPersonTagFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
 
     function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
         const assignments: Array<Assignment> = product.assignments;
@@ -87,10 +82,8 @@ function AssignmentCardList({
         });
     }
 
-    function filterAssignmentByRole(assignment: Assignment): boolean {
-        if (roleFilters.length === 0) return true;
-
-        return !!(assignment.person.spaceRole && roleFilters.includes(assignment.person.spaceRole.name));
+    function filterAssignmentByRoleAndProductTag(assignment: Assignment): boolean {
+        return isPersonMatchingSelectedFilters(assignment.person, getSelectedRoleFilters(), getSelectedPersonTagFilters());
     }
 
     function startDraggingAssignment(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void {
@@ -229,7 +222,7 @@ function AssignmentCardList({
                 className={classNameAndDataTestId}
                 data-testid={classNameAndDataTestId}>
                 {assignmentsSortedByPersonRoleStably()
-                    .filter(filterAssignmentByRole)
+                    .filter(filterAssignmentByRoleAndProductTag)
                     .map((assignment: Assignment) =>
                         <AssignmentCard assignment={assignment}
                             isUnassignedProduct={isUnassignedProduct(product)}

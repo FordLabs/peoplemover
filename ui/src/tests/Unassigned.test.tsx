@@ -76,26 +76,26 @@ describe('Unassigned Products', () => {
         });
 
         it('hides the number of unassigned people when there are less than 1', async () => {
-            const initialState: PreloadedState<GlobalStateProps> = {
-                allGroupedTagFilterOptions: [
-                    { label: 'Location Tags:', options: []},
-                    { label: 'Product Tags:', options: [{}]},
-                    { label: 'Role Tags:', options: []},
-                ],
-            } as GlobalStateProps;
-
             const emptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
                 assignments: [],
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
             };
 
+            const initialState: PreloadedState<GlobalStateProps> = {
+                allGroupedTagFilterOptions: [
+                    { label: 'Location Tags:', options: []},
+                    { label: 'Product Tags:', options: [{}]},
+                    { label: 'Role Tags:', options: []},
+                    { label: 'Person Tags:', options: []},
+                ],
+                isUnassignedDrawerOpen: true,
+                products: [emptyUnassignedProduct],
+                currentSpace: TestUtils.space,
+            } as GlobalStateProps;
+
             const app2 = renderWithRedux(
-                <UnassignedDrawer
-                    product={emptyUnassignedProduct}
-                    isUnassignedDrawerOpen={true}
-                    setIsUnassignedDrawerOpen={jest.fn()}
-                />,
+                <UnassignedDrawer/>,
                 undefined,
                 initialState
             );
