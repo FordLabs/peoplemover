@@ -57,7 +57,8 @@ const TagsModalContent = ({
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteTag(tagToDelete),
             close: () => setConfirmDeleteModal(null),
-            content: <div>Deleting this {filterType.tagType} will remove it from anything that has been given this {filterType.tagType}.</div>,
+            content: <div>Deleting this {filterType.tagType} will remove it from anything that has been given
+                this {filterType.tagType}.</div>,
         };
         const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
         setConfirmDeleteModal(deleteConfirmationModal);
@@ -104,7 +105,7 @@ const TagsModalContent = ({
                 setConfirmDeleteModal(null);
                 updateFilterOptions(filterType.index, tagToDelete, TagAction.DELETE);
                 updateTags((previousTags: Array<TagInterface>) =>
-                    previousTags.filter((currentTag: Tag) => currentTag.id !== tagToDelete.id)
+                    previousTags.filter((currentTag: Tag) => currentTag.id !== tagToDelete.id),
                 );
             }
         } catch {
@@ -119,28 +120,27 @@ const TagsModalContent = ({
     const showEditState = (index: number): boolean => editTagIndex === index;
 
     return (
-        <div data-testid={createDataTestId('tagsModalContainer', filterType.tagType)}
-            className="myTraitsModalContainer">
+        <div data-testid={createDataTestId('tagsModalContainer', filterType.tagType)} className="myTraitsModalContainer">
             {tags.map((currentTag: TagInterface, index: number) => {
                 return (
                     <React.Fragment key={index}>
                         {showViewState(index) &&
-                            <ViewTagRow
-                                tagType={filterType.tagType}
-                                tag={currentTag}
-                                setConfirmDeleteModal={(): void => showDeleteConfirmationModal(currentTag)}
-                                showEditButtons={showEditButtons()}
-                                editTagCallback={(): void => setEditTagIndex(index)}
-                            />
+                        <ViewTagRow
+                            tagType={filterType.tagType}
+                            tag={currentTag}
+                            setConfirmDeleteModal={(): void => showDeleteConfirmationModal(currentTag)}
+                            showEditButtons={showEditButtons()}
+                            editTagCallback={(): void => setEditTagIndex(index)}
+                        />
                         }
                         {showEditState(index) &&
-                            <EditTagRow
-                                initialValue={currentTag}
-                                onSave={editTag}
-                                onCancel={returnToViewState}
-                                tagType={filterType.tagType}
-                                existingTags={tags}
-                            />
+                        <EditTagRow
+                            initialValue={currentTag}
+                            onSave={editTag}
+                            onCancel={returnToViewState}
+                            tagType={filterType.tagType}
+                            existingTags={tags}
+                        />
                         }
                     </React.Fragment>
                 );

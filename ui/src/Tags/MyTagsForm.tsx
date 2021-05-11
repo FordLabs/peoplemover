@@ -25,12 +25,12 @@ import {JSX} from '@babel/types';
 import {FilterOption} from '../CommonTypes/Option';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import {Tag} from './Tag';
-import LocationTags from './LocationTags';
 import ProductTags from './TagsModalContent';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
 import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import ProductTagClient from './ProductTag/ProductTagClient';
+import LocationClient from '../Locations/LocationClient';
 
 // @Todo consolidate (also in MyRolesForm)
 export const INACTIVE_EDIT_STATE_INDEX = -1;
@@ -117,10 +117,12 @@ function MyTagsForm({
             {filterType === undefined &&
                 <>
                     <div className="title">Location Tags</div>
-                    <LocationTags
-                        locations={locationTagsList}
-                        updateLocations={setLocationTagsList}
+                    <ProductTags
+                        tags={locationTagsList}
+                        updateTags={setLocationTagsList}
                         updateFilterOptions={updateFilterOptions}
+                        tagClient={LocationClient}
+                        filterType={FilterTypeListings.Location}
                     />
                     <div className="lineSeparator"/>
                     <div className="title">Product Tags</div>
@@ -135,10 +137,12 @@ function MyTagsForm({
             }
             {filterType === FilterTypeListings.Location &&
                 <>
-                    <LocationTags
-                        locations={locationTagsList}
-                        updateLocations={setLocationTagsList}
+                    <ProductTags
+                        tags={locationTagsList}
+                        updateTags={setLocationTagsList}
                         updateFilterOptions={updateFilterOptions}
+                        tagClient={LocationClient}
+                        filterType={FilterTypeListings.Location}
                     />
                 </>
             }
