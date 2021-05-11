@@ -290,7 +290,6 @@ describe('People', () => {
         });
     });
 
-
     context('Edit Menu', () => {
         it('Only allow one person\'s edit menu to be open at a time', () => {
             cy.get('[data-testid=editMenu__jane_smith]').should('not.exist');

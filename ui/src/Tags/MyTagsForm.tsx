@@ -26,10 +26,11 @@ import {FilterOption} from '../CommonTypes/Option';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import {Tag} from './Tag';
 import LocationTags from './LocationTags';
-import ProductTags from './ProductTags';
+import ProductTags from './TagsModalContent';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
 import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import ProductTagClient from './ProductTag/ProductTagClient';
 
 // @Todo consolidate (also in MyRolesForm)
 export const INACTIVE_EDIT_STATE_INDEX = -1;
@@ -124,9 +125,11 @@ function MyTagsForm({
                     <div className="lineSeparator"/>
                     <div className="title">Product Tags</div>
                     <ProductTags
-                        productTags={productTagsList}
-                        updateProductTags={setProductTagsList}
+                        tags={productTagsList}
+                        updateTags={setProductTagsList}
                         updateFilterOptions={updateFilterOptions}
+                        tagClient={ProductTagClient}
+                        filterType={FilterTypeListings.ProductTag}
                     />
                 </>
             }
@@ -142,9 +145,11 @@ function MyTagsForm({
             {filterType === FilterTypeListings.ProductTag &&
                 <>
                     <ProductTags
-                        productTags={productTagsList}
-                        updateProductTags={setProductTagsList}
+                        tags={productTagsList}
+                        updateTags={setProductTagsList}
                         updateFilterOptions={updateFilterOptions}
+                        tagClient={ProductTagClient}
+                        filterType={filterType}
                     />
                 </>
             }

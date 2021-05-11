@@ -199,7 +199,7 @@ describe('My Tags Form', () => {
 
         describe('Delete a product tag', () => {
             let productTagDeleteIcon: HTMLElement;
-            const deleteProductTagWarning = 'Deleting this product tag will remove it from any product that has been given this product tag.';
+            const deleteProductTagWarning = 'Deleting this product tag will remove it from anything that has been given this product tag.';
 
             beforeEach(async () => {
                 const deleteIcons = await app.findAllByTestId('deleteIcon__product_tag');
