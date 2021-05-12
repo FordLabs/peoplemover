@@ -162,7 +162,7 @@ describe('Assignment card list', () => {
 
             let component = await renderWithRedux(<AssignmentCardList product={product}/>, undefined, initialState);
 
-            await expect(component.queryByTestId('assignmentCard__person_1')).toBeNull();
+            await expect(component.queryByTestId('assignmentCard__person_1')).toBeTruthy();
             await expect(component.queryByTestId('assignmentCard__bob_se')).toBeTruthy();
             await expect(component.queryByTestId('assignmentCard__bob_pm')).toBeTruthy();
             await expect(component.queryByTestId('assignmentCard__bob_norole_notag')).toBeNull();
@@ -204,7 +204,7 @@ describe('Assignment card list', () => {
 
             let component = await renderWithRedux(<AssignmentCardList product={product}/>, undefined, initialState);
 
-            await expect(component.queryByTestId('assignmentCard__person_1')).toBeNull();
+            await expect(component.queryByTestId('assignmentCard__person_1')).toBeTruthy();
             await expect(component.queryByTestId('assignmentCard__bob_se')).toBeTruthy();
             await expect(component.queryByTestId('assignmentCard__bob_pm')).toBeNull();
             await expect(component.queryByTestId('assignmentCard__bob_norole_notag')).toBeNull();

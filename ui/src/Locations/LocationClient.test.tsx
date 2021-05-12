@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import LocationClient from './LocationClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
@@ -34,18 +34,10 @@ describe('Location Client', function() {
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
-        Axios.post = jest.fn(x => Promise.resolve({
-            data: 'Created Location',
-        } as AxiosResponse));
-        Axios.put = jest.fn(x => Promise.resolve({
-            data: 'Updated Location',
-        } as AxiosResponse));
-        Axios.delete = jest.fn(x => Promise.resolve({
-            data: 'Deleted Location',
-        } as AxiosResponse));
-        Axios.get = jest.fn(x => Promise.resolve({
-            data: 'Get Locations',
-        } as AxiosResponse));
+        Axios.post = jest.fn().mockResolvedValue({ data: 'Created Location'});
+        Axios.put = jest.fn().mockResolvedValue({ data: 'Updated Location'});
+        Axios.delete = jest.fn().mockResolvedValue({ data: 'Deleted Location'});
+        Axios.get = jest.fn().mockResolvedValue({data: 'Get Locations'});
     });
 
     afterEach(function() {
