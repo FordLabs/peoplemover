@@ -20,7 +20,6 @@ import SaveIcon from '../Application/Assets/saveIcon.png';
 import CloseIcon from '../Application/Assets/closeIcon.png';
 import {JSX} from '@babel/types';
 import {createDataTestId} from '../tests/TestUtils';
-import {TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
 
 import './TagRowsContainer.scss';
@@ -28,6 +27,7 @@ import {Color} from '../Roles/RoleTag.interface';
 import {OptionType} from './SelectWithHTMLOptions';
 import ColorDropdown from '../Roles/ColorDropdown';
 import {RoleEditRequest} from '../Roles/RoleEditRequest.interface';
+import {TagType} from '../SortingAndFiltering/FilterLibraries';
 
 interface Props {
     colors?: Array<Color>;

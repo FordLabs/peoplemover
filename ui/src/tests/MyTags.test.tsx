@@ -170,14 +170,14 @@ describe('My Tags Form', () => {
 
         describe('delete a location tag', () => {
             let locationTagDeleteIcon: HTMLElement;
-            const deleteLocationWarning = 'Deleting this location will remove it from any product that has been given this location.';
+            const expectedDeleteLocationWarning = 'Deleting this location will remove it from anything that has been given this location.';
 
             beforeEach(async () => {
                 const deleteIcons = await app.findAllByTestId('deleteIcon__location');
                 locationTagDeleteIcon = deleteIcons[0];
                 fireEvent.click(locationTagDeleteIcon);
 
-                await app.findByText(deleteLocationWarning);
+                await app.findByText(expectedDeleteLocationWarning);
             });
 
             it('should not remove location tag when clicking cancel button in confirmation modal', async () => {
@@ -199,7 +199,7 @@ describe('My Tags Form', () => {
 
         describe('Delete a product tag', () => {
             let productTagDeleteIcon: HTMLElement;
-            const deleteProductTagWarning = 'Deleting this product tag will remove it from any product that has been given this product tag.';
+            const deleteProductTagWarning = 'Deleting this product tag will remove it from anything that has been given this product tag.';
 
             beforeEach(async () => {
                 const deleteIcons = await app.findAllByTestId('deleteIcon__product_tag');

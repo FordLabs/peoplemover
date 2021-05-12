@@ -33,16 +33,18 @@ export interface FilterTypeListing {
 }
 
 export const FilterTypeListings: FilterTypeListing = {
-    Location: {index: 0, label: 'Product Location', modal: AvailableModals.MY_LOCATION_TAGS },
-    ProductTag: {index: 1, label: 'Product Tags', modal: AvailableModals.MY_PRODUCT_TAGS},
-    Role: {index: 2, label: 'Role', modal: AvailableModals.MY_ROLES_MODAL},
-    PersonTag: {index: 3, label: 'Person Tags', modal: AvailableModals.EDIT_PERSON},
+    Location: {index: 0, label: 'Product Location', modal: AvailableModals.MY_LOCATION_TAGS, tagType: 'location', tagNameType: 'Location' },
+    ProductTag: {index: 1, label: 'Product Tags', modal: AvailableModals.MY_PRODUCT_TAGS, tagType: 'product tag', tagNameType: 'Product Tag'},
+    Role: {index: 2, label: 'Role', modal: AvailableModals.MY_ROLES_MODAL, tagType: 'role', tagNameType: 'Role'},
+    PersonTag: {index: 3, label: 'Person Tags', modal: AvailableModals.MY_PERSON_TAGS, tagType: 'person tag', tagNameType: 'Person Tag'},
 };
 
 export interface FilterType {
     modal: AvailableModals;
     index: number;
     label: string;
+    tagType: TagType;
+    tagNameType: TagNameType;
 }
 
 export interface AllGroupedTagFilterOptions {
@@ -59,6 +61,8 @@ export type LocalStorageFilters = {
 
 
 export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:' | 'Person Tags:';
+export type TagType = 'role' | 'product tag' | 'location' | 'person tag';
+export type TagNameType = 'Role' | 'Product Tag' | 'Location' | 'Person Tag';
 
 export async function getFilterOptionsForSpace(uuid: string): Promise<Array<AllGroupedTagFilterOptions>> {
     const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();

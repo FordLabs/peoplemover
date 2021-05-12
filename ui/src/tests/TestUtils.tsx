@@ -439,7 +439,6 @@ class TestUtils {
         tags: [],
     };
 
-
     static unassignedProductForBigBossSE: Product = {
         id: 998,
         name: 'unassigned',

@@ -38,6 +38,8 @@ import com.ford.internalprojects.peoplemover.tag.role.RoleService
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
 import com.google.common.collect.Sets
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -57,6 +59,7 @@ class LocalDataGenerator(
     private val productRepository: ProductRepository,
     private val assignmentService: AssignmentService,
     private val productTagService: ProductTagService,
+    private val personTagService: PersonTagService,
     private val locationService: LocationService
 ) {
 
@@ -117,16 +120,13 @@ class LocalDataGenerator(
                 spaceRole = role2
             )
         )
-        val adam: Person = personService.createPerson(
-            Person(
-                name = "Adam Sandler",
-                spaceUuid = createdSpace.uuid,
-                spaceRole = role3
-            )
-        )
 
         val productTagAddRequest = TagRequest(
             name = "productTag1"
+        )
+
+        val personTagAddRequest = TagRequest(
+            name = "personTag1"
         )
 
         val locationAddRequest = TagRequest(
@@ -134,9 +134,11 @@ class LocalDataGenerator(
         )
 
         val productTag: ProductTag = productTagService.createProductTagForSpace(productTagAddRequest, uuid)
+        val personTag: PersonTag = personTagService.createPersonTagForSpace(personTagAddRequest, uuid)
         val location: SpaceLocation = locationService.addLocationToSpace(uuid, locationAddRequest)
 
         val productTags: Set<ProductTag> = HashSet(listOf(productTag))
+        val personTags: Set<PersonTag> = HashSet(listOf(personTag))
 
         productRepository.save(Product(
             name = "My Product",
@@ -152,7 +154,14 @@ class LocalDataGenerator(
         ))
 
         val savedProducts: List<Product> = productRepository.findAllBySpaceUuid(createdSpace.uuid)
-
+        val adam: Person = personService.createPerson(
+            Person(
+                name = "Adam Sandler",
+                spaceUuid = createdSpace.uuid,
+                spaceRole = role3,
+                tags = personTags
+            )
+        )
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2019-01-01"),
             products = Sets.newHashSet(ProductPlaceholderPair(
