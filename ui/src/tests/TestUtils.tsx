@@ -119,18 +119,16 @@ export function mockCreateRange(): () => void {
 class TestUtils {
 
     static mockClientCalls(): void {
-        const emptyAxiosResponse = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-
         PeopleClient.createPersonForSpace = jest.fn((space, person) => Promise.resolve({
             data: person,
         } as AxiosResponse));
         PeopleClient.getAllPeopleInSpace = jest.fn(() => Promise.resolve({
             data: TestUtils.people,
         } as AxiosResponse));
-        PeopleClient.updatePerson = emptyAxiosResponse;
-        PeopleClient.removePerson = emptyAxiosResponse;
+        PeopleClient.updatePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
+        PeopleClient.removePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
-        SpaceClient.removeUser = emptyAxiosResponse;
+        SpaceClient.removeUser = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
         SpaceClient.getSpaceFromUuid = jest.fn(() => Promise.resolve({
             data: TestUtils.space,
@@ -169,7 +167,7 @@ class TestUtils {
         RoleClient.edit = jest.fn(() => Promise.resolve({
             data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color3},
         } as AxiosResponse));
-        RoleClient.delete = emptyAxiosResponse;
+        RoleClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
         ColorClient.getAllColors = jest.fn(() => Promise.resolve({
             data: TestUtils.colors,
@@ -190,11 +188,11 @@ class TestUtils {
                 name: 'Saline',
             },
         } as AxiosResponse));
-        LocationClient.delete = emptyAxiosResponse;
+        LocationClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
-        ProductClient.createProduct = emptyAxiosResponse;
-        ProductClient.deleteProduct = emptyAxiosResponse;
-        ProductClient.editProduct = emptyAxiosResponse;
+        ProductClient.createProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
+        ProductClient.deleteProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
+        ProductClient.editProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
         ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
             data: TestUtils.products,
         } as AxiosResponse));
@@ -208,7 +206,7 @@ class TestUtils {
         ProductTagClient.edit = jest.fn(() => Promise.resolve({
             data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
         } as AxiosResponse));
-        ProductTagClient.delete = emptyAxiosResponse;
+        ProductTagClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
         PersonTagClient.get = jest.fn(() => Promise.resolve({
             data: TestUtils.personTags,
@@ -219,7 +217,7 @@ class TestUtils {
         PersonTagClient.edit = jest.fn(() => Promise.resolve({
             data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
         } as AxiosResponse));
-        PersonTagClient.delete = emptyAxiosResponse;
+        PersonTagClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
     }
 
     static async waitForHomePageToLoad(app: RenderResult): Promise<void> {
@@ -291,7 +289,7 @@ class TestUtils {
         spaceRole: TestUtils.softwareEngineer,
         notes: 'I love the theater',
         newPerson: false,
-        tags: [],
+        tags: [TestUtils.personTag1],
     };
 
     static hank: Person = {
@@ -311,6 +309,15 @@ class TestUtils {
         spaceRole: TestUtils.softwareEngineer,
         newPerson: false,
         tags: [],
+    };
+
+    static unassignedBigBossSE: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 102,
+        name: 'Unassigned Big Boss SE',
+        spaceRole: TestUtils.softwareEngineer,
+        newPerson: false,
+        tags: [TestUtils.personTag2],
     };
 
     static person2: Person = {
@@ -372,6 +379,15 @@ class TestUtils {
         effectiveDate: new Date(2020, 4, 15),
     };
 
+    static assignmentForUnassignedBigBossSE: Assignment = {
+        id: 12,
+        productId: 999,
+        person: TestUtils.unassignedBigBossSE,
+        placeholder: false,
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        effectiveDate: new Date(2020, 4, 15),
+    };
+
     static assignmentForPerson2: Assignment = {
         id: 15,
         productId: 1,
@@ -417,6 +433,17 @@ class TestUtils {
         name: 'unassigned',
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         assignments: [TestUtils.assignmentForUnassigned],
+        startDate: '',
+        endDate: '',
+        archived: false,
+        tags: [],
+    };
+
+    static unassignedProductForBigBossSE: Product = {
+        id: 998,
+        name: 'unassigned',
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        assignments: [TestUtils.assignmentForUnassignedBigBossSE],
         startDate: '',
         endDate: '',
         archived: false,
@@ -481,6 +508,19 @@ class TestUtils {
         assignments: [],
         archived: true,
         tags: [],
+    };
+
+    static productWithTags: Product = {
+        id: 1,
+        name: 'Product 1',
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        startDate: '2011-01-01',
+        endDate: '2022-02-02',
+        spaceLocation: TestUtils.southfield,
+        assignments: TestUtils.assignmentsFilterTest,
+        archived: false,
+        tags: [TestUtils.productTag2],
+        notes: 'note',
     };
 
     static products: Array<Product> = [

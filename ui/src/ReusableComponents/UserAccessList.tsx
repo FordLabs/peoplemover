@@ -86,7 +86,7 @@ function UserAccessList({
     const onChangeEvent = (value): void => {
         switch ((value as PermissionType).value) {
             case 'remove':
-                if (currentUser === user.userId) {
+                if (currentUser.toUpperCase() === user.userId.toUpperCase()) {
                     setDisplayRevokeSelfEditorStatusConfirmationModal(true);
                 } else {
                     SpaceClient.removeUser(currentSpace, user).then(onChange);

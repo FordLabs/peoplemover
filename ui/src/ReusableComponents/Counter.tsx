@@ -16,10 +16,11 @@
  */
 
 import React from 'react';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {isActiveProduct, isProductMatchingSelectedFilters, Product} from '../Products/Product';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import './Counter.scss';
+import {isPersonMatchingSelectedFilters} from '../People/Person';
 
 interface CounterProps {
     products: Array<Product>;
@@ -46,8 +47,8 @@ function Counter(props: CounterProps): JSX.Element {
     let unassignedProduct: Product;
 
     const filterProductsAndFindUnassignedProduct = (): void => {
-        let locationFilter = getSelectedFilterLabels(props.allGroupedTagFilterOptions[0].options);
-        let productTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[1].options);
+        let locationFilter = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.Location.index].options);
+        let productTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.ProductTag.index].options);
 
         props.products.forEach(product => {
             if (product.name === 'unassigned') {
@@ -64,38 +65,35 @@ function Counter(props: CounterProps): JSX.Element {
     };
 
     const getPeopleCount = (): void => {
-        let peopleCount = new Set<number>();
-        let unassignedPeopleCount = new Set<number>();
+        let peopleSet = new Set<number>();
+        let unassignedPeopleSet = new Set<number>();
 
-        unassignedPeopleCount = getCountOfAssignmentForAProductBasedOnRoleFilter(unassignedProduct);
-        productAndPeopleCount.unassignedPeopleCount = unassignedPeopleCount.size;
+        unassignedPeopleSet = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(unassignedProduct);
+        productAndPeopleCount.unassignedPeopleCount = unassignedPeopleSet.size;
 
         filteredProducts.forEach(product => {
-            let productPeopleCount = getCountOfAssignmentForAProductBasedOnRoleFilter(product);
+            let productPeopleCount = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(product);
             productPeopleCount.forEach(entry => {
-                peopleCount.add(entry);
+                peopleSet.add(entry);
             });
         });
 
-        productAndPeopleCount.assignedPeopleCount = peopleCount.size;
-        productAndPeopleCount.totalPeopleCount = peopleCount.size + unassignedPeopleCount.size;
+        productAndPeopleCount.assignedPeopleCount = peopleSet.size;
+        productAndPeopleCount.totalPeopleCount = peopleSet.size + unassignedPeopleSet.size;
     };
 
-    const getCountOfAssignmentForAProductBasedOnRoleFilter = (product: Product): Set<number> => {
-        let selectedRoleFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[2].options);
-        let peopleCount = new Set<number>();
+    const getSetOfPersonIdsForAProductByRoleAndPersonTagFilters = (product: Product): Set<number> => {
+        let selectedRoleFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
+        let selectedPersonTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
+        let peopleSet = new Set<number>();
 
         product.assignments.forEach(assignment => {
-            if (selectedRoleFilters.length > 0) {
-                if (assignment.person.spaceRole && selectedRoleFilters.includes(assignment.person.spaceRole.name)) {
-                    peopleCount.add(assignment.person.id);
-                }
-            } else {
-                peopleCount.add(assignment.person.id);
+            if (isPersonMatchingSelectedFilters(assignment.person, selectedRoleFilters, selectedPersonTagFilters)) {
+                peopleSet.add(assignment.person.id);
             }
         });
 
-        return peopleCount;
+        return peopleSet;
     };
 
     filterProductsAndFindUnassignedProduct();
