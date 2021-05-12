@@ -135,7 +135,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
     function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
         if (user.permission !== 'owner') {
             const spaceOwner = usersList.filter(user => user.permission === 'owner')[0];
-            const isUserOwner = spaceOwner.userId === currentUser;
+            const isUserOwner = spaceOwner.userId.toUpperCase() === currentUser.toUpperCase();
             return <UserAccessList currentSpace={currentSpace} user={user} currentUser={currentUser} onChange={(): void => {getUsers(currentSpace, setUsersList);}} owner={spaceOwner} isUserOwner={isUserOwner}/>;
         } else {
             return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
