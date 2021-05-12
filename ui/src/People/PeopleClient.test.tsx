@@ -105,6 +105,7 @@ describe('People Client', function() {
             name: expectedName,
             spaceRole: TestUtils.softwareEngineer,
             newPerson: false,
+            tags: [],
         };
 
         beforeEach(() => {
