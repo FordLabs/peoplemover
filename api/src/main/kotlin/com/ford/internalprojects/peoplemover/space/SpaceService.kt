@@ -65,7 +65,7 @@ class SpaceService(
         createSpaceWithName(spaceName, userId).let { createdSpace ->
             userSpaceMappingRepository.save(
                     UserSpaceMapping(
-                            userId = userId,
+                            userId = userId.toUpperCase().trim(),
                             spaceUuid = createdSpace.uuid,
                             permission = PERMISSION_OWNER
                     )

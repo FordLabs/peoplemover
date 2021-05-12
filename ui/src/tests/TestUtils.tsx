@@ -119,18 +119,16 @@ export function mockCreateRange(): () => void {
 class TestUtils {
 
     static mockClientCalls(): void {
-        const emptyAxiosResponse = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-
         PeopleClient.createPersonForSpace = jest.fn((space, person) => Promise.resolve({
             data: person,
         } as AxiosResponse));
         PeopleClient.getAllPeopleInSpace = jest.fn(() => Promise.resolve({
             data: TestUtils.people,
         } as AxiosResponse));
-        PeopleClient.updatePerson = emptyAxiosResponse;
-        PeopleClient.removePerson = emptyAxiosResponse;
+        PeopleClient.updatePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
+        PeopleClient.removePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
-        SpaceClient.removeUser = emptyAxiosResponse;
+        SpaceClient.removeUser = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
         SpaceClient.getSpaceFromUuid = jest.fn(() => Promise.resolve({
             data: TestUtils.space,
@@ -169,7 +167,7 @@ class TestUtils {
         RoleClient.edit = jest.fn(() => Promise.resolve({
             data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color3},
         } as AxiosResponse));
-        RoleClient.delete = emptyAxiosResponse;
+        RoleClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
         ColorClient.getAllColors = jest.fn(() => Promise.resolve({
             data: TestUtils.colors,
@@ -190,11 +188,11 @@ class TestUtils {
                 name: 'Saline',
             },
         } as AxiosResponse));
-        LocationClient.delete = emptyAxiosResponse;
+        LocationClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
-        ProductClient.createProduct = emptyAxiosResponse;
-        ProductClient.deleteProduct = emptyAxiosResponse;
-        ProductClient.editProduct = emptyAxiosResponse;
+        ProductClient.createProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
+        ProductClient.deleteProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
+        ProductClient.editProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
         ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
             data: TestUtils.products,
         } as AxiosResponse));
@@ -208,7 +206,7 @@ class TestUtils {
         ProductTagClient.edit = jest.fn(() => Promise.resolve({
             data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
         } as AxiosResponse));
-        ProductTagClient.delete = emptyAxiosResponse;
+        ProductTagClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
 
         PersonTagClient.get = jest.fn(() => Promise.resolve({
             data: TestUtils.personTags,
@@ -219,7 +217,7 @@ class TestUtils {
         PersonTagClient.edit = jest.fn(() => Promise.resolve({
             data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
         } as AxiosResponse));
-        PersonTagClient.delete = emptyAxiosResponse;
+        PersonTagClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
     }
 
     static async waitForHomePageToLoad(app: RenderResult): Promise<void> {
