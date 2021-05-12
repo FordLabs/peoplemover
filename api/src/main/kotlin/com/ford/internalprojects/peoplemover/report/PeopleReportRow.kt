@@ -21,5 +21,22 @@ data class PeopleReportRow (
     val productName: String,
     val personName: String,
     val personRole: String,
-    val personNote: String
-)
+    val personNote: String,
+    val personTags: String
+) {
+    override fun equals(other: Any?): Boolean {
+        return when (other) {
+            is PeopleReportRow -> {
+                val otherTags = other.personTags.split(",").toHashSet()
+                val thisTags = this.personTags.split(",").toHashSet()
+
+                (this.productName == other.productName
+                        && this.personName == other.personName
+                        && this.personRole == other.personRole
+                        && this.personNote == other.personNote
+                        && thisTags == otherTags)
+            }
+            else -> false
+        }
+    }
+}

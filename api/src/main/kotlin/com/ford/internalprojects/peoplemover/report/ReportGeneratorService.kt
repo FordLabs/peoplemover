@@ -46,7 +46,8 @@ class ReportGeneratorService(
                 productName = products.find { it.id == assignment.productId }?.name ?: "Product doesn't exist for id: ${assignment.productId}",
                 personName = assignment.person.name,
                 personRole = assignment.person.spaceRole?.name ?: "",
-                personNote = assignment.person.notes ?: ""
+                personNote = assignment.person.notes ?: "",
+                personTags = assignment.person.tags.joinToString(",") { tag -> tag.name }
             ))
         }
         return peopleReport.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.personName })
