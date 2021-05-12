@@ -28,6 +28,7 @@ import {
     fetchLocationsAction,
     fetchProductsAction,
     fetchProductTagsAction,
+    fetchPersonTagsAction,
     setCurrentModalAction,
     setPeopleAction,
     setupSpaceAction,
@@ -67,6 +68,7 @@ export interface PeopleMoverProps {
 
     fetchProducts(): Array<Product>;
     fetchProductTags(): Array<Tag>;
+    fetchPersonTags(): Array<Tag>;
     fetchLocations(): Array<LocationTag>;
     setPeople(people: Array<Person>): Array<Person>;
     setCurrentModal(modalState: CurrentModalState): void;
@@ -83,6 +85,7 @@ function PeopleMover({
     allGroupedTagFilterOptions,
     fetchProducts,
     fetchProductTags,
+    fetchPersonTags,
     fetchLocations,
     setSpace,
     setPeople,
@@ -134,6 +137,7 @@ function PeopleMover({
         if (currentSpace && currentSpace.uuid) {
             fetchProducts();
             fetchProductTags();
+            fetchPersonTags();
             fetchLocations();
             PeopleClient.getAllPeopleInSpace(currentSpace.uuid)
                 .then((response) => {
@@ -147,6 +151,7 @@ function PeopleMover({
         setPeople,
         fetchProducts,
         fetchProductTags,
+        fetchPersonTags,
         fetchLocations,
         handleErrors,
     ]);
@@ -213,6 +218,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     fetchProducts: () => dispatch(fetchProductsAction()),
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
+    fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
     fetchLocations: () => dispatch(fetchLocationsAction()),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),

@@ -25,12 +25,13 @@ import {JSX} from '@babel/types';
 import {FilterOption} from '../CommonTypes/Option';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import {Tag} from './Tag';
-import ProductTags from './TagsModalContent';
+import TagsModalContent from './TagsModalContent';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
 import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import ProductTagClient from './ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
+import PersonTagClient from './PersonTag/PersonTagClient';
 
 // @Todo consolidate (also in MyRolesForm)
 export const INACTIVE_EDIT_STATE_INDEX = -1;
@@ -46,6 +47,7 @@ interface Props {
     filterType?: FilterType;
     locations: Array<LocationTag>;
     productTags: Array<Tag>;
+    personTags: Array<Tag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
@@ -54,6 +56,7 @@ interface Props {
 const mapStateToProps = (state: GlobalStateProps) => ({
     locations: state.locations,
     productTags: state.productTags,
+    personTags: state.personTags,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
@@ -69,11 +72,13 @@ function MyTagsForm({
     filterType,
     locations,
     productTags,
+    personTags,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: Props): JSX.Element {
     const [locationTagsList, setLocationTagsList] = useState<Array<TagInterface>>(locations);
     const [productTagsList, setProductTagsList] = useState<Array<TagInterface>>(productTags);
+    const [personTagsList, setPersonTagsList] = useState<Array<TagInterface>>(personTags);
     // @todo abstract filter methods away to redux please
     const getUpdatedFilterOptions = (index: number, tag: TagInterface, action: TagAction): Array<FilterOption> => {
         let options: Array<FilterOption>;
@@ -117,7 +122,7 @@ function MyTagsForm({
             {filterType === undefined &&
                 <>
                     <div className="title">Location Tags</div>
-                    <ProductTags
+                    <TagsModalContent
                         tags={locationTagsList}
                         updateTags={setLocationTagsList}
                         updateFilterOptions={updateFilterOptions}
@@ -126,7 +131,7 @@ function MyTagsForm({
                     />
                     <div className="lineSeparator"/>
                     <div className="title">Product Tags</div>
-                    <ProductTags
+                    <TagsModalContent
                         tags={productTagsList}
                         updateTags={setProductTagsList}
                         updateFilterOptions={updateFilterOptions}
@@ -137,7 +142,7 @@ function MyTagsForm({
             }
             {filterType === FilterTypeListings.Location &&
                 <>
-                    <ProductTags
+                    <TagsModalContent
                         tags={locationTagsList}
                         updateTags={setLocationTagsList}
                         updateFilterOptions={updateFilterOptions}
@@ -148,7 +153,7 @@ function MyTagsForm({
             }
             {filterType === FilterTypeListings.ProductTag &&
                 <>
-                    <ProductTags
+                    <TagsModalContent
                         tags={productTagsList}
                         updateTags={setProductTagsList}
                         updateFilterOptions={updateFilterOptions}
@@ -156,6 +161,17 @@ function MyTagsForm({
                         filterType={filterType}
                     />
                 </>
+            }
+            {filterType === FilterTypeListings.PersonTag &&
+            <>
+                <TagsModalContent
+                    tags={personTagsList}
+                    updateTags={setPersonTagsList}
+                    updateFilterOptions={updateFilterOptions}
+                    tagClient={PersonTagClient}
+                    filterType={filterType}
+                />
+            </>
             }
 
             <div className="traitWarning">

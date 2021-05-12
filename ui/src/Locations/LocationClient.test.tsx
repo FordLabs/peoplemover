@@ -34,18 +34,11 @@ describe('Location Client', function() {
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
-        Axios.post = jest.fn(x => Promise.resolve({
-            data: 'Created Location',
-        } as AxiosResponse));
-        Axios.put = jest.fn(x => Promise.resolve({
-            data: 'Updated Location',
-        } as AxiosResponse));
-        Axios.delete = jest.fn(x => Promise.resolve({
-            data: 'Deleted Location',
-        } as AxiosResponse));
-        Axios.get = jest.fn(x => Promise.resolve({
-            data: 'Get Locations',
-        } as AxiosResponse));
+
+        Axios.post = jest.fn().mockReturnValue(Promise.resolve({data: 'Created Location'} as AxiosResponse));
+        Axios.put = jest.fn().mockReturnValue(Promise.resolve({data: 'Updated Location'} as AxiosResponse));
+        Axios.delete = jest.fn().mockReturnValue(Promise.resolve({data: 'Deleted Location'} as AxiosResponse));
+        Axios.get = jest.fn().mockReturnValue(Promise.resolve({data: 'Get Locations'} as AxiosResponse));
     });
 
     afterEach(function() {

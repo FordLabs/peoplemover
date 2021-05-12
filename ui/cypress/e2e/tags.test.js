@@ -95,7 +95,7 @@ describe('Tags',  () => {
             cy.get('[data-testid=open_Person_Tags_modal_button]').click();
             cy.getModal().should('contain', 'Person Tags');
 
-            cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postPersonTag');
+            cy.route('POST', Cypress.env('API_PERSON_TAG_PATH')).as('postPersonTag');
             cy.get('[data-testid=tagsModalContainer__person_tag]')
                 .find('[data-testid=viewTagRow]').should('have.length', 1);
 

@@ -36,7 +36,7 @@ export const FilterTypeListings: FilterTypeListing = {
     Location: {index: 0, label: 'Product Location', modal: AvailableModals.MY_LOCATION_TAGS, tagType: 'location', tagNameType: 'Location' },
     ProductTag: {index: 1, label: 'Product Tags', modal: AvailableModals.MY_PRODUCT_TAGS, tagType: 'product tag', tagNameType: 'Product Tag'},
     Role: {index: 2, label: 'Role', modal: AvailableModals.MY_ROLES_MODAL, tagType: 'role', tagNameType: 'Role'},
-    PersonTag: {index: 3, label: 'Person Tags', modal: AvailableModals.EDIT_PERSON, tagType: 'person tag', tagNameType: 'Person Tag'},
+    PersonTag: {index: 3, label: 'Person Tags', modal: AvailableModals.MY_PERSON_TAGS, tagType: 'person tag', tagNameType: 'Person Tag'},
 };
 
 export interface FilterType {

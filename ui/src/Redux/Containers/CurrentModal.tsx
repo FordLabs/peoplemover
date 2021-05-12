@@ -111,11 +111,14 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
         case AvailableModals.MY_TAGS:
             return [{title: 'My Tags', form: <MyTagsForm/>}];
         case AvailableModals.MY_LOCATION_TAGS:
-            let location = FilterTypeListings.Location;
+            const location = FilterTypeListings.Location;
             return [{title: location.label, form: <MyTagsForm filterType={location}/> }];
         case AvailableModals.MY_PRODUCT_TAGS:
-            let productTags = FilterTypeListings.ProductTag;
+            const productTags = FilterTypeListings.ProductTag;
             return [{title: productTags.label, form: <MyTagsForm filterType={productTags}/> }];
+        case AvailableModals.MY_PERSON_TAGS:
+            const personTags = FilterTypeListings.PersonTag;
+            return [{title: personTags.label, form: <MyTagsForm filterType={personTags}/> }];
         case AvailableModals.MY_ROLES_MODAL:
             return [{title: 'My Roles', form: <MyRolesForm/>}];
         case AvailableModals.CREATE_SPACE:

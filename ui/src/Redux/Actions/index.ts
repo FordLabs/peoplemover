@@ -29,6 +29,7 @@ import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
 import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
+import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -44,6 +45,7 @@ export enum AvailableActions {
     SET_VIEWING_DATE,
     SET_PRODUCTS,
     SET_PRODUCT_TAGS,
+    SET_PERSON_TAGS,
     SET_LOCATIONS,
     SET_PRODUCT_SORT_BY,
     SET_USER_SPACES,
@@ -122,6 +124,11 @@ export const setProductTagsAction = (productTags: Array<Tag>) => ({
     productTags,
 });
 
+export const setPersonTagsAction = (personTags: Array<Tag>) => ({
+    type: AvailableActions.SET_PERSON_TAGS,
+    personTags,
+});
+
 export const setLocationsAction = (locations: Array<LocationTag>) => ({
     type: AvailableActions.SET_LOCATIONS,
     locations,
@@ -186,6 +193,25 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
                     return 0;
                 });
                 dispatch(setProductTagsAction(productTags));
+            });
+    };
+
+
+export const fetchPersonTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
+    (dispatch: Dispatch, getState: Function): Promise<void> => {
+        return PersonTagClient.get(getState().currentSpace.uuid!,)
+            .then(result => {
+                let personTags: Array<Tag> = result.data || [];
+                personTags = personTags.sort((a, b) => {
+                    if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                        return -1;
+                    }
+                    if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                dispatch(setPersonTagsAction(personTags));
             });
     };
 
