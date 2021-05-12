@@ -348,6 +348,32 @@ class TestUtils {
         tags: [],
     };
 
+    static person2: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 103,
+        name: 'bob se',
+        spaceRole: TestUtils.softwareEngineer,
+        newPerson: false,
+        tags: TestUtils.personTags,
+    };
+
+    static person3: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 104,
+        name: 'bob pm',
+        spaceRole: TestUtils.productManager,
+        newPerson: false,
+        tags: [TestUtils.personTag1],
+    };
+
+    static personNoRoleNoTag: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 105,
+        name: 'bob norole notag',
+        newPerson: false,
+        tags: [],
+    };
+
     static people: Array<Person> = [
         TestUtils.person1,
         TestUtils.hank,
