@@ -25,25 +25,32 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
+import {getFilteredCounter} from '../CommonTypes/Counter';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 
 interface UnassignedDrawerProps {
     isUnassignedDrawerOpen: boolean;
     setIsUnassignedDrawerOpen(isOpen: boolean): void;
     product: Product;
+    viewingDate: Date;
+    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 }
 
 function UnassignedDrawer({
     isUnassignedDrawerOpen,
     setIsUnassignedDrawerOpen,
     product,
+    viewingDate,
+    allGroupedTagFilterOptions,
 }: UnassignedDrawerProps): JSX.Element {
     const containee =
         <ProductCard product={product} />;
+    const filteredProductAndPeopleCount = getFilteredCounter([product], viewingDate, allGroupedTagFilterOptions);
     return (
         <DrawerContainer
             drawerIcon="supervisor_account"
             testId="unassignedDrawer"
-            numberForCountBadge={product.assignments ? product.assignments.length : 0}
+            numberForCountBadge={filteredProductAndPeopleCount.unassignedPeopleCount}
             containerTitle="Unassigned"
             containee={containee}
             isDrawerOpen={isUnassignedDrawerOpen}
@@ -63,6 +70,8 @@ const getUnassignedProduct = (products: Array<Product>): Product => {
 const mapStateToProps = (state: GlobalStateProps) => ({
     isUnassignedDrawerOpen: state.isUnassignedDrawerOpen,
     product: getUnassignedProduct(state.products ? state.products : []),
+    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

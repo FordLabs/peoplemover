@@ -17,7 +17,7 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import Counter from './Counter';
+import CounterElement from './CounterElement';
 import {RenderResult} from '@testing-library/react';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import {Product} from '../Products/Product';
@@ -52,7 +52,7 @@ describe('counter', () => {
 
     it('should display the number of products and people when no filter are applied and ignore archived products', async () => {
         let expectedString = 'Results - Products: 4, People: 3 (Unassigned: 1)';
-        app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
+        app = renderWithRedux(<CounterElement products={TestUtils.products} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });
@@ -70,7 +70,7 @@ describe('counter', () => {
             tags: [],
         };
 
-        app = renderWithRedux(<Counter products={[finishedProduct, TestUtils.unassignedProduct]} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
+        app = renderWithRedux(<CounterElement products={[finishedProduct, TestUtils.unassignedProduct]} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });
@@ -105,14 +105,14 @@ describe('counter', () => {
             },
         ];
 
-        app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
+        app = renderWithRedux(<CounterElement products={TestUtils.products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });
 
     it('should display the number of products and people when location filters are applied', async () => {
         let expectedString = 'Results - Products: 1, People: 2 (Unassigned: 1)';
-        app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={TestUtils.allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
+        app = renderWithRedux(<CounterElement products={TestUtils.products} allGroupedTagFilterOptions={TestUtils.allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });
@@ -162,7 +162,7 @@ describe('counter', () => {
             },
         ];
         
-        app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
+        app = renderWithRedux(<CounterElement products={TestUtils.products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });
@@ -191,7 +191,7 @@ describe('counter', () => {
             },
         ];
 
-        app = renderWithRedux(<Counter products={[TestUtils.unassignedProductForBigBossSE, TestUtils.productWithTags]} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
+        app = renderWithRedux(<CounterElement products={[TestUtils.unassignedProductForBigBossSE, TestUtils.productWithTags]} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });
@@ -233,7 +233,7 @@ describe('counter', () => {
             notes: 'note',
         };
 
-        app = renderWithRedux(<Counter products={[TestUtils.unassignedProductForBigBossSE, TestUtils.productWithTags, productWithPersonAlreadyAssignedInProduct1]} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
+        app = renderWithRedux(<CounterElement products={[TestUtils.unassignedProductForBigBossSE, TestUtils.productWithTags, productWithPersonAlreadyAssignedInProduct1]} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });

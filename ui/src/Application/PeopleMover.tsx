@@ -51,7 +51,7 @@ import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
-import Counter from '../ReusableComponents/Counter';
+import CounterElement from '../ReusableComponents/CounterElement';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 
 const BAD_REQUEST = 400;
@@ -170,7 +170,7 @@ function PeopleMover({
                 <main>
                     <SubHeader/>
                     <div className="headerSpacer" id="main-content-landing-target"/>
-                    <Counter products={products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>
+                    <CounterElement products={products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
                         {!isReadOnly && (
