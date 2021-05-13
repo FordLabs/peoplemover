@@ -28,6 +28,7 @@ import currentSpaceReducer from './currentSpaceReducer';
 import {viewingDateReducer} from './viewingDateReducer';
 import productsReducer from './productsReducer';
 import productTagsReducer from './productTagsReducer';
+import personTagsReducer from './personTagsReducer';
 import locationsReducer from './locationsReducer';
 import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
@@ -52,6 +53,7 @@ export default combineReducers({
     viewingDate: viewingDateReducer,
     products: productsReducer,
     productTags: productTagsReducer,
+    personTags: personTagsReducer,
     locations: locationsReducer,
     userSpaces: userSpacesReducer,
     isReadOnly: isReadOnlyReducer,
@@ -70,6 +72,7 @@ export interface GlobalStateProps {
     viewingDate: Date;
     products: Array<Product>;
     productTags: Array<Tag>;
+    personTags: Array<Tag>;
     locations: Array<LocationTag>;
     userSpaces: Array<Space>;
     isReadOnly: boolean;

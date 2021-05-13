@@ -20,21 +20,15 @@
 describe('Tags',  () => {
     const locationTag = 'Middle Earth ' + Date.now();
     const productTag = 'Flippin Sweet ' + Date.now();
+    const personTag = 'Rally Deity ' + Date.now();
 
     beforeEach(() => {
-        cy.visitSpace();
+        cy.visitSpace({}, '#person-tags');
     });
 
     context('Add new', () => {
         beforeEach(() => {
             cy.server();
-
-
-
-            // cy.getModal()
-            //     .should('contain', 'My Tags')
-            //     .should('contain', 'Location Tags')
-            //     .should('contain', 'Product Tags');
         });
 
         it('location tag',  () => {
@@ -93,6 +87,34 @@ describe('Tags',  () => {
 
                 cy.get('[data-testid=dropdown_button_Product_Tags]').click();
                 cy.contains(productTag);
+            });
+        });
+
+        it('person tag', () => {
+            cy.get('[data-testid=dropdown_button_Person_Tags]').click();
+            cy.get('[data-testid=open_Person_Tags_modal_button]').click();
+            cy.getModal().should('contain', 'Person Tags');
+
+            cy.route('POST', Cypress.env('API_PERSON_TAG_PATH')).as('postPersonTag');
+            cy.get('[data-testid=tagsModalContainer__person_tag]')
+                .find('[data-testid=viewTagRow]').should('have.length', 1);
+
+            cy.get('[data-testid=addNewButton__person_tag]').click();
+            cy.get('[data-testid=tagNameInput]').focus().type(personTag).should('have.value', personTag);
+            cy.get('[data-testid=saveTagButton]').click();
+
+            cy.wait('@postPersonTag').then(() => {
+                cy.get('[data-testid=tagsModalContainer__person_tag]').find('[data-testid=viewTagRow]')
+                    .should(($row) => {
+                        expect($row).to.contain(personTag);
+                        expect($row).to.have.descendants('[data-testid=editIcon__person_tag]');
+                        expect($row).to.have.descendants('[data-testid=deleteIcon__person_tag]');
+                    });
+
+                cy.closeModal();
+
+                cy.get('[data-testid=dropdown_button_Person_Tags]').click();
+                cy.contains(personTag);
             });
         });
     });

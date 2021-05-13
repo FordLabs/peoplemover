@@ -15,4 +15,5 @@ export enum AvailableModals {
     GRANT_EDIT_ACCESS_CONFIRMATION,
     MY_LOCATION_TAGS,
     MY_PRODUCT_TAGS,
+    MY_PERSON_TAGS,
 }

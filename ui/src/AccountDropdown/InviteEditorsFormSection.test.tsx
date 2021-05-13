@@ -27,12 +27,12 @@ import {RenderResult, within} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import configureStore from 'redux-mock-store';
-import PeopleClient from '../People/PeopleClient';
 import RedirectClient from '../Utils/RedirectClient';
 
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();
     beforeEach(() => {
+        jest.clearAllMocks();
         TestUtils.mockClientCalls();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
@@ -48,7 +48,7 @@ describe('Invite Editors Form', function() {
                 return renderWithRedux(
                     <InviteEditorsFormSection collapsed={false}/>,
                     undefined,
-                    {currentSpace: TestUtils.space} as GlobalStateProps);
+                    {currentSpace: TestUtils.space, currentUser: 'User_id'} as GlobalStateProps);
             }
 
             function validateApiCall(userIds: string[]): void {
@@ -207,7 +207,7 @@ describe('Invite Editors Form', function() {
         it('should show owners and editors for the space', async () => {
             await act(async () => {
                 const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser: 'User_id'} as GlobalStateProps);
 
 
                 const ownerRow = within(await component.findByTestId('userListItem__user_id'));
@@ -223,7 +223,7 @@ describe('Invite Editors Form', function() {
         it('should remove user', async () => {
             await act(async () => {
                 const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser:'user_id_1'} as GlobalStateProps);
                 const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
                 const editor = editorRow.getByText(/editor/i);
                 fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -233,7 +233,7 @@ describe('Invite Editors Form', function() {
                     [{'userId': 'user_id', 'permission': 'owner'}] as UserSpaceMapping[]));
 
                 await fireEvent.click(removeButton);
-                expect(PeopleClient.removePerson).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]);
+                expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]);
                 await wait(() => {
                     expect(component.queryByText('user_id_2')).not.toBeInTheDocument();
                     expect(component.queryByText(/^Editor$/)).not.toBeInTheDocument();
@@ -246,7 +246,7 @@ describe('Invite Editors Form', function() {
                 const component = renderWithRedux(
                     <InviteEditorsFormSection/>, undefined, {
                         currentSpace: TestUtils.space,
-                        currentUser: 'user_id',
+                        currentUser: 'USER_ID',
                     } as GlobalStateProps);
                 const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
                 const editor = editorRow.getByText(/editor/i);
@@ -254,10 +254,7 @@ describe('Invite Editors Form', function() {
                 const permissionButton = await editorRow.findByText(/owner/i);
 
                 SpaceClient.getUsersForSpace = jest.fn().mockReturnValueOnce(Promise.resolve(
-                    [{'userId': 'user_id', 'permission': 'editor'}, {
-                        'userId': 'user_id_2',
-                        'permission': 'owner',
-                    }] as UserSpaceMapping[]));
+                    [{'userId': 'user_id', 'permission': 'editor'}, {'userId': 'user_id_2', 'permission': 'owner'}] as UserSpaceMapping[]));
 
                 await fireEvent.click(permissionButton);
                 await fireEvent.click(await component.findByText(/yes/i));
@@ -326,7 +323,7 @@ describe('Invite Editors Form', function() {
 
         it('should show a confirmation modal when removing self', async () => {
             await act(async () => {
-                let currentUser = 'user_id_2';
+                let currentUser = 'USER_ID_2';
                 const mockStore = configureStore([]);
                 const store = mockStore({
                     currentSpace: TestUtils.space,
@@ -335,7 +332,7 @@ describe('Invite Editors Form', function() {
                 });
                 const component = renderWithRedux(
                     <InviteEditorsFormSection/>, store, undefined);
-                const editorRow = within(await component.findByTestId(`userListItem__${currentUser}`));
+                const editorRow = within(await component.findByTestId(`userListItem__user_id_2`));
                 const editor = editorRow.getByText(/editor/i);
                 fireEvent.keyDown(editor, {key: 'ArrowDown'});
                 const removeEditorButton = await editorRow.findByText(/remove/i);
@@ -345,7 +342,7 @@ describe('Invite Editors Form', function() {
                 const confirmDeleteButton = await component.findByTestId('confirmDeleteButton');
                 fireEvent.click(confirmDeleteButton);
                 await wait(() => {
-                    expect(PeopleClient.removePerson).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]);
+                    expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]);
                     expect(component.queryByText('Are you sure?')).not.toBeInTheDocument();
                     expect(RedirectClient.redirect).toHaveBeenCalledWith('/user/dashboard');
 
@@ -356,7 +353,7 @@ describe('Invite Editors Form', function() {
         it('should not open UserAccessList popup', async () => {
             await act(async () => {
                 const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space} as GlobalStateProps);
+                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser: 'User_id'} as GlobalStateProps);
 
                 await wait(() => {
                     expect(component.queryByTestId('userAccess')).not.toBeInTheDocument();

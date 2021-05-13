@@ -18,8 +18,8 @@
 import {TagInterface} from '../Tags/Tag.interface';
 import {JSX} from '@babel/types';
 import React, {ReactNode} from 'react';
-import {TagType} from './TagForms.types';
 import {createDataTestId} from '../tests/TestUtils';
+import {TagType} from '../SortingAndFiltering/FilterLibraries';
 
 interface Props {
     children?: ReactNode;

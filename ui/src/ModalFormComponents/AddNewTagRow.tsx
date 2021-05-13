@@ -19,9 +19,9 @@ import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {createDataTestId} from '../tests/TestUtils';
 import EditTagRow from './EditTagRow';
-import {TagNameType, TagType} from './TagForms.types';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import {Color} from '../Roles/RoleTag.interface';
+import {TagNameType, TagType} from '../SortingAndFiltering/FilterLibraries';
 
 interface Props {
     colors?: Array<Color>;
