@@ -19,6 +19,9 @@ import Axios, {AxiosResponse} from 'axios';
 import PersonTag from './PersonTagClient';
 import TestUtils from '../../tests/TestUtils';
 import Cookies from 'universal-cookie';
+import {MatomoWindow} from '../../CommonTypes/MatomoWindow';
+
+declare let window: MatomoWindow;
 
 describe('Person Tags Client', function() {
     const spaceUuid = TestUtils.space.uuid;
@@ -30,6 +33,8 @@ describe('Person Tags Client', function() {
         },
     };
     const cookies = new Cookies();
+
+    let originalWindow: Window;
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
@@ -50,6 +55,9 @@ describe('Person Tags Client', function() {
         Axios.get = jest.fn(x => Promise.resolve({
             data: 'Get Person Tags',
         } as AxiosResponse));
+
+        originalWindow = window;
+        window._paq = [];
     });
 
     afterEach(() => {
@@ -67,11 +75,12 @@ describe('Person Tags Client', function() {
 
     });
 
-    it('should create a person tag and return that person tag', function(done) {
+    it('should create a person tag, return that person tag, and send a `person tag created` event to Matomo', function(done) {
         const expectedPersonAddRequest = { name: TestUtils.personTag1.name };
         PersonTag.add(expectedPersonAddRequest, TestUtils.space)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(basePersonTagsUrl, expectedPersonAddRequest, expectedConfig);
+                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addPersonTag', TestUtils.personTag1.name]);
                 expect(response.data).toBe('Created Person Tag');
                 done();
             });
