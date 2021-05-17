@@ -56,6 +56,7 @@ import {
     AllGroupedTagFilterOptions,
     FilterTypeListings,
 } from '../SortingAndFiltering/FilterLibraries';
+import NewBadge from '../ReusableComponents/NewBadge';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -319,14 +320,16 @@ function PersonForm({
                     onChange={changeProductName}
                 />
                 {window.location.hash === '#person-tags' &&
-                <FormTagsField
-                    tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
-                    tagClient={PersonTagClient}
-                    currentTagsState={{currentTags: person.tags}}
-                    selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
-                    loadingState={{isLoading, setIsLoading}}
-                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
-                />
+                <>
+                    <NewBadge/>
+                    <FormTagsField
+                        tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
+                        tagClient={PersonTagClient}
+                        currentTagsState={{currentTags: person.tags}}
+                        selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
+                        loadingState={{isLoading, setIsLoading}}
+                        addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
+                    /></>
                 }
                 <div className="formItem">
                     <FormNotesTextArea
