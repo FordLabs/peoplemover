@@ -321,7 +321,9 @@ function PersonForm({
                 />
                 {window.location.hash === '#person-tags' &&
                 <>
-                    <NewBadge/>
+                    <div className="newBadgeContainer">
+                        <NewBadge/>
+                    </div>
                     <FormTagsField
                         tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
                         tagClient={PersonTagClient}
