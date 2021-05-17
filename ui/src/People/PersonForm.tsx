@@ -57,6 +57,7 @@ import {
     FilterTypeListings,
 } from '../SortingAndFiltering/FilterLibraries';
 import NewBadge from '../ReusableComponents/NewBadge';
+import ToolTip from '../ReusableComponents/ToolTip';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -331,6 +332,7 @@ function PersonForm({
                         selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
                         loadingState={{isLoading, setIsLoading}}
                         addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
+                        toolTip={<ToolTip contentText="blah blah blah"/>}
                     /></>
                 }
                 <div className="formItem">
