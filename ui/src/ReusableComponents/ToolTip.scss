@@ -17,23 +17,57 @@
 
 @import '../Application/Styleguide/Main.scss';
 
-.whatIsThisLabel {
-  font-size: 12px;
-  line-height: 14px;
-  text-decoration-line: underline;
-  color: $prime-1;
+.whatIsThisContainer {
+  position: relative;
+  padding-left: 10px;
+
+  .whatIsThisLabel {
+    font-size: 12px;
+    line-height: 14px;
+    text-decoration-line: underline;
+    color: $prime-1;
+    font-weight: normal;
+  }
+
+  .whatIsThisHover{
+    display: none;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 16px;
+    color: $gray-1;
+    border-radius: 7px;
+    background-color: white;
+    z-index: 2;
+    width: 160px;
+    padding: 0 8px;
+    border: 1px solid $prime-1;
+
+  }
+
+  .whatIsThisHoverNotch {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    margin: 0;
+    border-top: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid white;
+    padding: 0;
+    width: 0;
+    height: 0;
+  }
+
+
+  .whatIsThisHover .whatIsThisHoverNotchBorder-notch { border-bottom-color: $prime-1;
+    top: -11px;
+  }
+
+}
+.whatIsThisContainer:hover .whatIsThisHover {
+  display: block;
+  position: absolute;
+  top: 32px;
 }
 
-.whatIsThisHover{
-  display: none;
-  font-size: 12px;
-  line-height: 14px;
-  color: $gray-1;
-  text-decoration-line: none;
-  border: $prime-1 1px;
-}
 
-.whatIsThisLabel:hover .whatIsThisHover {
-  display: block;;
-
-}

@@ -196,7 +196,10 @@ function SelectWithCreateOption({
 
     return (
         <div className={`formItem ${className}`}>
-            <label className="formItemLabel" htmlFor={id}>{title} {toolTip}</label>
+            <div className="formItemLabelContainer">
+                <label className="formItemLabel" htmlFor={id}>{title}</label>
+                {toolTip}
+            </div>
             <Creatable
                 name={id}
                 inputId={id}

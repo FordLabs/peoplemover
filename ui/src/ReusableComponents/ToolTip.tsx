@@ -19,14 +19,18 @@ import React from 'react';
 import './ToolTip.scss';
 
 interface ToolTipProps {
-    contentText: string;
+    contentText: JSX.Element;
 }
 
 const ToolTip = (props: ToolTipProps): JSX.Element => {
     return (
-        <div className="whatIsThisLabel">
-            <span>What&apos;s This?</span>
-            <div className="whatIsThisHover"><p>{props.contentText}</p></div>
+        <div className="whatIsThisContainer">
+            <span className="whatIsThisLabel">What&apos;s This?</span>
+            <div className="whatIsThisHover">
+                {props.contentText}
+                <b className="whatIsThisHoverNotchBorder-notch whatIsThisHoverNotch"/>
+                <b className="whatIsThisHoverNotch"/>
+            </div>
         </div>
     );
 };
