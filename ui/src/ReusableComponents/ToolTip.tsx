@@ -31,6 +31,7 @@ const ToolTip = (props: ToolTipProps): JSX.Element => {
             onMouseLeave={(): void => setIsHovering(false)}
             onFocus={(): void => setIsHovering(true)}
             onBlur={(): void => setIsHovering(false)}
+            onClick={ (event): void => event.preventDefault()}
             className="whatIsThisContainer">
             <span className="whatIsThisLabel">What&apos;s this?</span>
             <div data-testid="whatIsThisTip" className={ isHovering ? 'whatIsThisHover whatIsThisHoverShow' : 'whatIsThisHover whatIsThisHoverNotShow'}>
