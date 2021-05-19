@@ -272,8 +272,8 @@ function PersonForm({
         return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
     };
 
-    const hoverBoxContent = (): JSX.Element => {
-        return <p>Create tags based on your people. Example, skills, education, employee status, etc. Anything you would like to see it filter</p>;
+    const toolTipContent = (): JSX.Element => {
+        return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
     return (
@@ -336,7 +336,7 @@ function PersonForm({
                         selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
                         loadingState={{isLoading, setIsLoading}}
                         addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
-                        toolTip={<ToolTip contentText={hoverBoxContent()}/>}
+                        toolTip={<ToolTip contentText={toolTipContent()}/>}
                     /></>
                 }
                 <div className="formItem">
