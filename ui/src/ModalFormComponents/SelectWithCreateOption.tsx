@@ -91,6 +91,7 @@ export interface Metadata {
     title: string;
     id: string;
     placeholder: string;
+    tooltip?: string;
 }
 
 export interface ReactSelectProps {
@@ -105,6 +106,7 @@ export interface ReactSelectProps {
     isMulti?: boolean;
     useColorBadge?: boolean;
     isLoading?: boolean;
+    toolTip?: JSX.Element;
 }
 
 const CreateNewText = (text: string): JSX.Element => (
@@ -156,6 +158,7 @@ function SelectWithCreateOption({
     isMulti = false,
     useColorBadge = false,
     isLoading,
+    toolTip,
 }: ReactSelectProps): JSX.Element {
     const [typedInValue, setTypedInValue] = useState<string>('');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -193,7 +196,10 @@ function SelectWithCreateOption({
 
     return (
         <div className={`formItem ${className}`}>
-            <label className="formItemLabel" htmlFor={id}>{title}</label>
+            <div className="formItemLabelContainer">
+                <label className="formItemLabel" htmlFor={id}>{title}</label>
+                {toolTip}
+            </div>
             <Creatable
                 name={id}
                 inputId={id}

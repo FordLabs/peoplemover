@@ -47,15 +47,24 @@ select.formInput {
     padding-left:4px;
 }
 
-.formItemLabel {
-    display: block;
+.formItemLabelContainer {
+    display: flex;
+    align-items: center;
     margin-bottom: 12px;
 
+    .formItemLabel {
+        margin-bottom: 0px;
+    }
+}
+
+.formItemLabel {
     font-size: 14px;
     line-height: 14px;
     font-weight: bold;
     color: $gray-1;
+    margin-bottom: 12px;
 }
+
 
 .formInputLabel {
     display: block;
