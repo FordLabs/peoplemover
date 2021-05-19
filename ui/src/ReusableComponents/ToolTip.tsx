@@ -15,7 +15,7 @@
  *   limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import './ToolTip.scss';
 
 interface ToolTipProps {
@@ -23,15 +23,22 @@ interface ToolTipProps {
 }
 
 const ToolTip = (props: ToolTipProps): JSX.Element => {
+    const [isHovering, setIsHovering] = useState<boolean>(false);
+
+
     return (
-        <div className="whatIsThisContainer">
-            <span className="whatIsThisLabel">What&apos;s This?</span>
-            <div className="whatIsThisHover">
+        <button onMouseOver={(): void => setIsHovering(true)}
+            onMouseLeave={(): void => setIsHovering(false)}
+            onFocus={(): void => setIsHovering(true)}
+            onBlur={(): void => setIsHovering(false)}
+            className="whatIsThisContainer">
+            <span className="whatIsThisLabel">What&apos;s this?</span>
+            <div data-testid="whatIsThisTip" className={ isHovering ? 'whatIsThisHover whatIsThisHoverShow' : 'whatIsThisHover whatIsThisHoverNotShow'}>
                 {props.contentText}
                 <b className="whatIsThisHoverNotchBorder-notch whatIsThisHoverNotch"/>
                 <b className="whatIsThisHoverNotch"/>
             </div>
-        </div>
+        </button>
     );
 };
 
