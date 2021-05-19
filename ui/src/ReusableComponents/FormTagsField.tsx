@@ -40,6 +40,7 @@ interface Props {
     currentSpace: Space;
     tagClient: TagClient;
     tagsMetadata: Metadata;
+    toolTip?: JSX.Element;
 }
 
 function FormTagsField({
@@ -58,6 +59,7 @@ function FormTagsField({
     addGroupedTagFilterOptions,
     tagClient,
     tagsMetadata,
+    toolTip,
 }: Props): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const uuid = currentSpace.uuid!;
@@ -127,6 +129,7 @@ function FormTagsField({
             onChange={onChange}
             onSave={handleCreateTag}
             isLoading={isLoading}
+            toolTip={toolTip}
         />
     );
 }

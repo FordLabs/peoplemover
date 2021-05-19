@@ -17,24 +17,18 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.newBadgeContainer {
+.newBadge {
     display: flex;
     flex-direction: column;
     text-align: center;
     justify-content: center;
     background: $logo-gradient;
     border-radius: 8px;
-    position: absolute;
     margin-top: -5px;
     margin-left: -4px;
     width: 26px;
     height: 12px;
     font-size: 0.5rem;
-}
-
-.newBadgeText {
-    font-size: 8px;
     color: $white;
     font-weight: normal;
-    padding-top: 2px;
 }

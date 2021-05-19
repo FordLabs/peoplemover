@@ -56,6 +56,8 @@ import {
     AllGroupedTagFilterOptions,
     FilterTypeListings,
 } from '../SortingAndFiltering/FilterLibraries';
+import NewBadge from '../ReusableComponents/NewBadge';
+import ToolTip from '../ReusableComponents/ToolTip';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -270,6 +272,10 @@ function PersonForm({
         return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
     };
 
+    const toolTipContent = (): JSX.Element => {
+        return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
+    };
+
     return (
         <div className="formContainer">
             <form className="form"
@@ -318,6 +324,9 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
+                <div className="newBadgeContainer">
+                    <NewBadge/>
+                </div>
                 <FormTagsField
                     tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
                     tagClient={PersonTagClient}
@@ -325,6 +334,7 @@ function PersonForm({
                     selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
                     loadingState={{isLoading, setIsLoading}}
                     addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
+                    toolTip={<ToolTip contentText={toolTipContent()}/>}
                 />
                 <div className="formItem">
                     <FormNotesTextArea
