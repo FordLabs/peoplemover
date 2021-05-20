@@ -19,7 +19,7 @@ import React from 'react';
 import './NewBadge.scss';
 
 function NewBadge(): JSX.Element {
-    return <span className="newBadgeContainer" data-testid="newBadge"><span className="newBadgeText">NEW</span></span>;
+    return <span className="newBadge" data-testid="newBadge">NEW</span>;
 }
 
 export default NewBadge;

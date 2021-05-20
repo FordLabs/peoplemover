@@ -26,7 +26,6 @@ import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {TagRequest} from '../Tags/TagRequest.interface';
 
 describe('Person Form', () => {
-    window.location.hash = '#person-tags';
 
     const mockStore = configureStore([]);
     const store = mockStore({

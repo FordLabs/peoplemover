@@ -23,7 +23,7 @@ describe('Tags',  () => {
     const personTag = 'Rally Deity ' + Date.now();
 
     beforeEach(() => {
-        cy.visitSpace({}, '#person-tags');
+        cy.visitSpace();
     });
 
     context('Add new', () => {
