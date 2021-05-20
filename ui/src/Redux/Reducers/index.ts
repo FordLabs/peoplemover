@@ -78,4 +78,10 @@ export interface GlobalStateProps {
     isReadOnly: boolean;
     isDragging: boolean;
     currentUser: string;
+    flags: Flags;
+}
+
+export interface Flags {
+    showMessageBanner: boolean;
+    bannerMessage: string;
 }
