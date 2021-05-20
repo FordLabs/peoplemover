@@ -27,10 +27,8 @@
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
   align-items: center;
   z-index: 2;
-  position: fixed;
   box-sizing: border-box;
   width: 100%;
-  top: 0;
 
   @include phone {
     padding: 20px 16px;

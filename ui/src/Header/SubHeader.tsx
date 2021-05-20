@@ -36,7 +36,7 @@ interface Props {
 
 function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
     return (
-        <div className="newSpaceSelectionContainer">
+        <section className="newSpaceSelectionContainer" aria-label="Filters">
             <div className="leftContent">
                 <Calendar/>
                 {isReadOnly && (
@@ -55,7 +55,7 @@ function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
                 </NavigationSection>
                 <ProductSortBy/>
             </div>
-        </div>
+        </section>
     );
 }
 

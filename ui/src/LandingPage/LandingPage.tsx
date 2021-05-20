@@ -32,6 +32,7 @@ function LandingPage(): JSX.Element {
 
     return (
         <>
+
             <main className="landingPageContainer" data-testid="landingPage">
                 <div className="landingPageInfoContainer">
                     <PeopleMoverLogo/>
