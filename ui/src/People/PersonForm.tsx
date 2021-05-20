@@ -324,21 +324,18 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
-                {window.location.hash === '#person-tags' &&
-                <>
-                    <div className="newBadgeContainer">
-                        <NewBadge/>
-                    </div>
-                    <FormTagsField
-                        tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
-                        tagClient={PersonTagClient}
-                        currentTagsState={{currentTags: person.tags}}
-                        selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
-                        loadingState={{isLoading, setIsLoading}}
-                        addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
-                        toolTip={<ToolTip contentText={toolTipContent()}/>}
-                    /></>
-                }
+                <div className="newBadgeContainer">
+                    <NewBadge/>
+                </div>
+                <FormTagsField
+                    tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
+                    tagClient={PersonTagClient}
+                    currentTagsState={{currentTags: person.tags}}
+                    selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
+                    loadingState={{isLoading, setIsLoading}}
+                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
+                    toolTip={<ToolTip contentText={toolTipContent()}/>}
+                />
                 <div className="formItem">
                     <FormNotesTextArea
                         notes={person.notes}
