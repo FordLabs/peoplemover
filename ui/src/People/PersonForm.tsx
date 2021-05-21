@@ -165,6 +165,18 @@ function PersonForm({
 
     };
 
+    const getAddedPersonTag = (): string[] => {
+        let result: string[] = [];
+        if (person.tags !== selectedPersonTags) {
+            result = selectedPersonTags.filter(tag => {
+                return !person.tags.includes(tag);
+            }).map(tag => {
+                return tag.name;
+            });
+        }
+        return result;
+    };
+
     const handleSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
 
@@ -172,13 +184,15 @@ function PersonForm({
             setIsPersonNameInvalid(true);
         } else {
             setIsPersonNameInvalid(false);
+
+            let personTagModified = getAddedPersonTag();
             person.tags = selectedPersonTags;
 
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
             }
             if (isEditPersonForm && assignment) {
-                const response = await PeopleClient.updatePerson(currentSpace, person);
+                const response = await PeopleClient.updatePerson(currentSpace, person, personTagModified);
                 await AssignmentClient.createAssignmentForDate(
                     moment(viewingDate).format('YYYY-MM-DD'),
                     getSelectedProductPairs(),
@@ -188,7 +202,7 @@ function PersonForm({
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
             } else {
-                const response = await PeopleClient.createPersonForSpace(currentSpace, person);
+                const response = await PeopleClient.createPersonForSpace(currentSpace, person, personTagModified);
                 const newPerson: Person = response.data;
                 addPerson(newPerson);
                 await AssignmentClient.createAssignmentForDate(

@@ -67,7 +67,7 @@ describe('People Client', function() {
 
     it('should create a person and return that person', function(done) {
         const newPerson = TestUtils.person1;
-        PeopleClient.createPersonForSpace(TestUtils.space, newPerson)
+        PeopleClient.createPersonForSpace(TestUtils.space, newPerson, [])
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(basePeopleUrl, newPerson, expectedConfig);
                 expect(response.data).toBe('Created Person');
@@ -78,7 +78,7 @@ describe('People Client', function() {
     it('should edit a person and return that person', function(done) {
         const updatedPerson = TestUtils.person1;
         const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
-        PeopleClient.updatePerson(TestUtils.space, updatedPerson)
+        PeopleClient.updatePerson(TestUtils.space, updatedPerson, [])
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson, expectedConfig);
                 expect(response.data).toBe('Updated Person');
@@ -117,9 +117,10 @@ describe('People Client', function() {
         });
 
         it('should send an event to matomo when a person is created', async () => {
-            await PeopleClient.createPersonForSpace(TestUtils.space, person);
+            await PeopleClient.createPersonForSpace(TestUtils.space, person, ['bob']);
             // @ts-ignore
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addPerson', expectedName]);
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonTagToANewPerson', 'bob']);
         });
     });
 });

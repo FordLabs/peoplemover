@@ -212,7 +212,7 @@ class TestUtils {
             data: TestUtils.personTags,
         } as AxiosResponse));
         PersonTagClient.add = jest.fn(() => Promise.resolve({
-            data: {id: 1337, name: 'Low Achiever'},
+            data: {id: 1337, name: 'Low Achiever', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
         } as AxiosResponse));
         PersonTagClient.edit = jest.fn(() => Promise.resolve({
             data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},

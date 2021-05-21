@@ -143,6 +143,9 @@ describe('People actions', () => {
 
             fireEvent.click(app.getByLabelText('Mark as New'));
 
+            const personTagsLabel = await app.findByLabelText('Person Tags');
+            await selectEvent.create(personTagsLabel, 'Low Achiever');
+
             fireEvent.click(app.getByText(submitFormButtonText));
 
             await wait(() => {
@@ -151,10 +154,13 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'New Bobby',
                     newPerson: true,
-                    tags: [],
+                    tags: [{id: 1337,
+                        spaceUuid:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                        name: 'Low Achiever'}],
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
+
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson, ['Low Achiever']]);
             });
         });
 
@@ -206,7 +212,7 @@ describe('People actions', () => {
                     spaceRole: {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color2},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson, []]);
             });
         });
 
@@ -232,7 +238,7 @@ describe('People actions', () => {
                     spaceRole: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: {color: '1', id: 2}},
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson]);
+                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson, []]);
             });
         });
 
@@ -278,7 +284,7 @@ describe('People actions', () => {
 
         const checkForCreatedPerson = async (): Promise<void> => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-            expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestUtils.space, expectedPerson);
+            expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestUtils.space, expectedPerson, []);
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
