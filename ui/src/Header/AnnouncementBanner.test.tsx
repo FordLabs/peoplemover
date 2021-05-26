@@ -24,4 +24,19 @@ describe('announcement header', () => {
         header.getByText('close').click();
         expect(header.queryByText('hello i am a banner')).not.toBeInTheDocument();
     });
+
+    it('should not display if announcement banner enabled flag is disabled',  () => {
+        const store = createStore(rootReducer, {flags:{
+            announcementBannerMessage: 'hello i am a banner',
+            announcementBannerEnabled: false,
+        }});
+
+        const header = render(
+            <Provider store={store}>
+                <AnnouncementHeader/>,
+            </Provider>
+        );
+
+        expect(header.queryByText('hello i am a banner')).not.toBeInTheDocument();
+    });
 });
