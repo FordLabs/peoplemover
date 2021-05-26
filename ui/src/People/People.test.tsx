@@ -135,16 +135,17 @@ describe('People actions', () => {
         });
 
         it('creates the person specified by the PersonForm', async () => {
-            const createPersonButton = await app.findByText(addPersonButtonText);
-            fireEvent.click(createPersonButton);
+            await act(async () => {
+                fireEvent.click(await app.findByText(addPersonButtonText));
+            });
 
-            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'New Bobby'}});
-            fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
+            fireEvent.change(await app.getByLabelText('Name'), {target: {value: 'New Bobby'}});
+            fireEvent.change(await app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
+            fireEvent.click(await app.getByLabelText('Mark as New'));
 
-            fireEvent.click(app.getByLabelText('Mark as New'));
-
-            const personTagsLabel = await app.findByLabelText('Person Tags');
-            await selectEvent.create(personTagsLabel, 'Low Achiever');
+            await act(async () => {
+                await selectEvent.create(await app.findByLabelText('Person Tags'), 'Low Achiever');
+            });
 
             fireEvent.click(app.getByText(submitFormButtonText));
 
@@ -154,9 +155,11 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'New Bobby',
                     newPerson: true,
-                    tags: [{id: 1337,
-                        spaceUuid:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-                        name: 'Low Achiever'}],
+                    tags: [{
+                        id: 1337,
+                        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                        name: 'Low Achiever',
+                    }],
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
 
@@ -209,7 +212,12 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'Some Name',
                     newPerson: true,
-                    spaceRole: {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color2},
+                    spaceRole: {
+                        name: 'Product Manager',
+                        id: 2,
+                        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                        color: TestUtils.color2,
+                    },
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
                 expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson, []]);
@@ -219,7 +227,10 @@ describe('People actions', () => {
         it('allows user to create a new role when creating a person', async () => {
             const personForm = await app.findByTestId('personForm');
             const labelElement = await app.findByLabelText('Role');
-            const containerToFindOptionsIn = {container: personForm, createOptionText: TestUtils.expectedCreateOptionText('Product Owner')};
+            const containerToFindOptionsIn = {
+                container: personForm,
+                createOptionText: TestUtils.expectedCreateOptionText('Product Owner'),
+            };
 
             await wait(() => {
                 selectEvent.create(labelElement, 'Product Owner', containerToFindOptionsIn);
@@ -235,7 +246,12 @@ describe('People actions', () => {
                 const expectedPerson: Person = {
                     ...emptyPerson(),
                     name: 'Some Name',
-                    spaceRole: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: {color: '1', id: 2}},
+                    spaceRole: {
+                        name: 'Product Owner',
+                        id: 1,
+                        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                        color: {color: '1', id: 2},
+                    },
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
                 expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson, []]);
@@ -272,7 +288,12 @@ describe('People actions', () => {
         const expectedPerson: Person = {
             ...emptyPerson(),
             name: 'Some Name',
-            spaceRole: {name: 'Software Engineer', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color1},
+            spaceRole: {
+                name: 'Software Engineer',
+                id: 1,
+                spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                color: TestUtils.color1,
+            },
             newPerson: true,
         };
 
