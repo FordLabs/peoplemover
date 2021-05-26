@@ -32,6 +32,9 @@ import MatomoEvents from './Matomo/MatomoEvents';
 import CacheBuster from './CacheBuster';
 import {removeToken} from './Auth/TokenProvider';
 import Routes from './Routes';
+import flagsmith from 'flagsmith';
+import {AvailableActions} from './Redux/Actions';
+import {simplifyFlags} from './Flags/Flags';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -130,8 +133,17 @@ if (isUnsupportedBrowser()) {
     const url = '/api/config';
     const config = {headers: {'Content-Type': 'application/json'}};
     Axios.get(url, config)
-        .then((response) => {
+        .then(async (response) => {
             window.runConfig = Object.freeze(response.data);
+            const flagsmithDevEnvironmentId = 'UWS4dyPFvtJDN9ngsdsQs3';
+            const flagsmithApi = 'https://flagsmith-api.apps.pd01e.edc1.cf.ford.com/api/v1/';
+            await flagsmith.init(
+                {
+                    environmentID : flagsmithDevEnvironmentId,
+                    api: flagsmithApi,
+                }
+            );
+            store.dispatch({type:AvailableActions.GOT_FLAGS, flags : simplifyFlags(flagsmith.getAllFlags())});
 
             ReactDOM.render(
                 <CacheBuster>
