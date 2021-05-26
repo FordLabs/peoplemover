@@ -38,7 +38,7 @@ class PeopleClient {
         return Axios.get(url, config);
     }
 
-    static async createPersonForSpace(space: Space, person: Person): Promise<AxiosResponse> {
+    static async createPersonForSpace(space: Space, person: Person, personTagModified: string[]): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBasePeopleUrl(space.uuid!);
         let config = {
@@ -50,6 +50,7 @@ class PeopleClient {
 
         return Axios.post(url, person, config).then(result => {
             MatomoEvents.pushEvent(space.name, 'addPerson', person.name);
+            if (personTagModified.length > 0 ) MatomoEvents.pushEvent(space.name, 'assignPersonTagToANewPerson', personTagModified.toString());
             return result;
         }).catch( err => {
             MatomoEvents.pushEvent(space.name, 'addPersonError', person.name, err.code);
@@ -57,7 +58,7 @@ class PeopleClient {
         });
     }
 
-    static async updatePerson(space: Space, person: Person): Promise<AxiosResponse> {
+    static async updatePerson(space: Space, person: Person, personTagModified: string[]): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBasePeopleUrl(space.uuid!!) + `/${person.id}`;
         let config = {
@@ -69,6 +70,7 @@ class PeopleClient {
 
         return Axios.put(url, person, config).then(result => {
             MatomoEvents.pushEvent(space.name, 'editPerson', person.name);
+            if (personTagModified.length > 0 ) MatomoEvents.pushEvent(space.name, 'assignPersonTagToAnAlreadyExistingPerson', personTagModified.toString());
             return result;
         }).catch( err => {
             MatomoEvents.pushEvent(space.name, 'editPersonError', person.name, err.code);
