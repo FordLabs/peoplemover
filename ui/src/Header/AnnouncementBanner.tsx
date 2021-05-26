@@ -5,8 +5,10 @@ import {GlobalStateProps} from '../Redux/Reducers';
 
 export default (): ReactElement => {
 
-    const [closedByUser, setClosedByUser] = useState(false);
+
+    const [closedByUser, setClosedByUser] = useState<string|null>(window.localStorage.getItem('bannerHasBeenClosedByUser'));
     const flags = useSelector((state: GlobalStateProps) => state.flags);
+
     return !closedByUser && flags.announcementBannerEnabled ? <div
         style={{
             width: '100%',
@@ -14,7 +16,10 @@ export default (): ReactElement => {
             backgroundColor: 'blue',
         }}>{flags ? flags.announcementBannerMessage : ''}
         <button
-            onClick={(): void => setClosedByUser(true)}
+            onClick={(): void => {
+                setClosedByUser('true');
+                window.localStorage.setItem('bannerHasBeenClosedByUser', 'true');
+            }}
             className="material-icons closeButton"
             aria-label="Close Announcement Banner"
         >close</button>
