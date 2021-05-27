@@ -54,7 +54,7 @@ import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
-import AnnouncementHeader from '../Header/AnnouncementBanner';
+import AnnouncementBanner from '../Header/AnnouncementBanner';
 import HeaderContainer from '../Header/HeaderContainer';
 
 const BAD_REQUEST = 400;
@@ -181,7 +181,7 @@ function PeopleMover({
                 <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
                     main content</a>
                 <HeaderContainer>
-                    <AnnouncementHeader/>
+                    <AnnouncementBanner/>
                     <Header/>
                     <SubHeader/>
                 </HeaderContainer>

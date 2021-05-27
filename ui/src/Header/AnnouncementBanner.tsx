@@ -1,6 +1,8 @@
 import React, {ReactElement, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
+import './AnnouncementBanner.scss';
+
 
 
 export default (): ReactElement => {
@@ -20,18 +22,13 @@ export default (): ReactElement => {
         localStorage.setItem(PREVIOUS_BANNER_MESSAGE_KEY, flags.announcementBannerMessage);
     }
 
-    return !closedByUser  && flags.announcementBannerEnabled ? <div
-        style={{
-            width: '100%',
-            zIndex: 2,
-            backgroundColor: 'blue',
-        }}>{flags ? flags.announcementBannerMessage : ''}
+    return !closedByUser  && flags.announcementBannerEnabled ? <div className="announcementBanner"><div className="bannerSpacing">{flags ? flags.announcementBannerMessage : ''}</div>
         <button
             onClick={(): void => {
                 setClosedByUser('true');
                 localStorage.setItem(BANNER_CLOSED_BY_USER_KEY, 'true');
             }}
-            className="material-icons closeButton"
+            className="material-icons closeButton bannerSpacing"
             aria-label="Close Announcement Banner"
         >close</button>
     </div> : <></>;
