@@ -68,4 +68,23 @@ describe('announcement header', () => {
         expect(newBanner.queryByText('hello i am a banner')).not.toBeInTheDocument();
 
     });
+
+    it('should display if banner has been closed by user and the message has changed', () => {
+
+        localStorage.setItem('previousBannerMessage', 'hello i am a banner');
+        localStorage.setItem('bannerHasBeenClosedByUser', 'true');
+
+        const store = createStore(rootReducer, {flags:{
+            announcementBannerMessage: 'hello i am a different banner',
+            announcementBannerEnabled: true,
+        }});
+
+        const banner = render(
+            <Provider store={store}>
+                <AnnouncementHeader/>,
+            </Provider>
+        );
+        expect(banner.queryByText('hello i am a different banner')).toBeInTheDocument();
+
+    });
 });
