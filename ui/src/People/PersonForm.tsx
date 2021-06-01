@@ -61,9 +61,11 @@ import ToolTip from '../ReusableComponents/ToolTip';
 
 interface AssignmentHistory {
     productName: string;
-    effectiveDate: string;
     id: number;
+    effectiveDate: Date | undefined;
 }
+
+type AssignmentHistoryType = AssignmentHistory | undefined;
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -296,8 +298,27 @@ function PersonForm({
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
-    const getAssignmentHistory = (): AssignmentHistory[] => {
-        return [{productName: 'Hanky Product', id: 3, effectiveDate: '2020-06-01'}];
+    const getAssignmentHistory = (): AssignmentHistoryType[] => {
+        const returnValue = products.map((product) => {
+            const personsAssignment = product.assignments.find(
+                (assignment) => assignment.person.id === person.id
+            );
+            if (personsAssignment) {
+                return {
+                    productName: product.name,
+                    id: personsAssignment.id,
+                    effectiveDate: personsAssignment.effectiveDate,
+                };
+            } else {
+                return undefined;
+            }
+        }).filter((assignmentHistory) => (assignmentHistory !== undefined));
+        return returnValue;
+        // return [{productName: 'Hanky Product', id: 3, effectiveDate: '2020-06-01'}];
+    };
+
+    const capitalize = (s: string): string => {
+        return s.charAt(0).toUpperCase() + s.slice(1);
     };
 
     const getAssignmentHistoryContent = (): JSX.Element => {
@@ -306,8 +327,20 @@ function PersonForm({
             <>
                 {assignmentHistories.map(
                     assignmentHistory => {
-                        return (
-                            <div key={assignmentHistory.id}>Moved to {assignmentHistory.productName} on {assignmentHistory.effectiveDate}</div>);
+                        if (assignmentHistory) {
+                            let productName = assignmentHistory.productName;
+                            if (productName === 'unassigned') {
+                                productName = capitalize(productName);
+                            }
+                            let effectiveDate = (assignmentHistory.effectiveDate ? moment(assignmentHistory.effectiveDate).format('YYYY-MM-DD') : 'undefined date');
+                            return (
+                                <div key={assignmentHistory.id}>Moved to {productName} on {effectiveDate}</div>
+                            );
+                        } else {
+                            return (
+                                <div>No Assignment History</div>
+                            );
+                        }
                     }
                 )}
             </>

@@ -88,7 +88,7 @@ describe('Person Form', () => {
                 await personForm.findByText('View Assignment History');
             });
             await act(async () => {
-                await personForm.findByText('Moved to Hanky Product on 2020-06-01');
+                await personForm.findByText('Moved to Hanky Product on 2020-07-01');
             });
         });
     });
