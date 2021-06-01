@@ -117,50 +117,62 @@ function MyTagsForm({
         setAllGroupedTagFilterOptions(groupedFilterOptions);
     }
 
+    const getWarningMessageElement = (message: string): JSX.Element => {
+        return <div className="traitWarning">
+            <i className="material-icons warningIcon">error</i>
+            <p className="warningText">
+                {message}
+                {/*Editing or deleting a tag will affect any product currently tagged with it.*/}
+            </p>
+        </div>;
+    };
+
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
             {filterType === undefined &&
-                <>
-                    <div className="title">Location Tags</div>
-                    <TagsModalContent
-                        tags={locationTagsList}
-                        updateTags={setLocationTagsList}
-                        updateFilterOptions={updateFilterOptions}
-                        tagClient={LocationClient}
-                        filterType={FilterTypeListings.Location}
-                    />
-                    <div className="lineSeparator"/>
-                    <div className="title">Product Tags</div>
-                    <TagsModalContent
-                        tags={productTagsList}
-                        updateTags={setProductTagsList}
-                        updateFilterOptions={updateFilterOptions}
-                        tagClient={ProductTagClient}
-                        filterType={FilterTypeListings.ProductTag}
-                    />
-                </>
+            <>
+                <div className="title">Location Tags</div>
+                <TagsModalContent
+                    tags={locationTagsList}
+                    updateTags={setLocationTagsList}
+                    updateFilterOptions={updateFilterOptions}
+                    tagClient={LocationClient}
+                    filterType={FilterTypeListings.Location}
+                />
+                <div className="lineSeparator"/>
+                <div className="title">Product Tags</div>
+                <TagsModalContent
+                    tags={productTagsList}
+                    updateTags={setProductTagsList}
+                    updateFilterOptions={updateFilterOptions}
+                    tagClient={ProductTagClient}
+                    filterType={FilterTypeListings.ProductTag}
+                />
+            </>
             }
             {filterType === FilterTypeListings.Location &&
-                <>
-                    <TagsModalContent
-                        tags={locationTagsList}
-                        updateTags={setLocationTagsList}
-                        updateFilterOptions={updateFilterOptions}
-                        tagClient={LocationClient}
-                        filterType={FilterTypeListings.Location}
-                    />
-                </>
+            <>
+                <TagsModalContent
+                    tags={locationTagsList}
+                    updateTags={setLocationTagsList}
+                    updateFilterOptions={updateFilterOptions}
+                    tagClient={LocationClient}
+                    filterType={FilterTypeListings.Location}
+                />
+                {getWarningMessageElement('Editing or deleting a tag will affect any product currently tagged with it.')}
+            </>
             }
             {filterType === FilterTypeListings.ProductTag &&
-                <>
-                    <TagsModalContent
-                        tags={productTagsList}
-                        updateTags={setProductTagsList}
-                        updateFilterOptions={updateFilterOptions}
-                        tagClient={ProductTagClient}
-                        filterType={filterType}
-                    />
-                </>
+            <>
+                <TagsModalContent
+                    tags={productTagsList}
+                    updateTags={setProductTagsList}
+                    updateFilterOptions={updateFilterOptions}
+                    tagClient={ProductTagClient}
+                    filterType={filterType}
+                />
+                {getWarningMessageElement('Editing or deleting a tag will affect any product currently tagged with it.')}
+            </>
             }
             {filterType === FilterTypeListings.PersonTag &&
             <>
@@ -171,15 +183,9 @@ function MyTagsForm({
                     tagClient={PersonTagClient}
                     filterType={filterType}
                 />
+                {getWarningMessageElement('Editing or deleting a tag will affect any person currently tagged with it.')}
             </>
             }
-
-            <div className="traitWarning">
-                <i className="material-icons warningIcon">error</i>
-                <p className="warningText">
-                        Editing or deleting a tag will affect any product currently tagged with it.
-                </p>
-            </div>
         </div>
     );
 }
