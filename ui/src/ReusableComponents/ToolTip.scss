@@ -17,13 +17,13 @@
 
 @import '../Application/Styleguide/Main.scss';
 
-.whatIsThisContainer {
+.toolTipContainer {
   position: relative;
   padding-left: 6px;
   background-color: white;
   margin-left: 6px;
 
-  .whatIsThisLabel {
+  .toolTipLabel {
     font-size: 12px;
     line-height: 14px;
     text-decoration-line: underline;
@@ -32,7 +32,7 @@
     letter-spacing: normal;
   }
 
-  .whatIsThisHover{
+  .toolTipHover{
     font-size: 12px;
     color: $gray-1;
     border-radius: 7px;
@@ -46,7 +46,7 @@
     text-align: left;
   }
 
-  .whatIsThisHoverNotch {
+  .toolTipHoverNotch {
     position: absolute;
     top: -10px;
     left: 20px;
@@ -58,17 +58,16 @@
     height: 0;
   }
 
-  .whatIsThisHover .whatIsThisHoverNotchBorder-notch { border-bottom-color: $prime-1;
+  .toolTipHover .toolTipHoverNotchBorder-notch { border-bottom-color: $prime-1;
     top: -11px;
   }
 }
 
-.whatIsThisHoverShow {
+.toolTipHoverShow {
   display: block;
-
 }
 
-.whatIsThisHoverNotShow {
+.toolTipHoverNotShow {
   display: none;
 }
 

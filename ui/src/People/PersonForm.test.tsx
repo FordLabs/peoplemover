@@ -76,9 +76,19 @@ describe('Person Form', () => {
                     />, store, undefined);
             });
         });
+
         it('display the person\'s existing tags when editing a person', async () => {
             await act(async () => {
                 await personForm.findByText('The lil boss');
+            });
+        });
+
+        it('should display assignment history text', async () => {
+            await act(async () => {
+                await personForm.findByText('View Assignment History');
+            });
+            await act(async () => {
+                await personForm.findByText('Moved to Hanky Product on 2020-06-01');
             });
         });
     });

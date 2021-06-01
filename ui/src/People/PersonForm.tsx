@@ -59,6 +59,12 @@ import {
 import NewBadge from '../ReusableComponents/NewBadge';
 import ToolTip from '../ReusableComponents/ToolTip';
 
+interface AssignmentHistory {
+    productName: string;
+    effectiveDate: string;
+    id: number;
+}
+
 interface PersonFormProps {
     isEditPersonForm: boolean;
     products: Array<Product>;
@@ -290,6 +296,24 @@ function PersonForm({
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
+    const getAssignmentHistory = (): AssignmentHistory[] => {
+        return [{productName: 'Hanky Product', id: 3, effectiveDate: '2020-06-01'}];
+    };
+
+    const getAssignmentHistoryContent = (): JSX.Element => {
+        const assignmentHistories = getAssignmentHistory();
+        return (
+            <>
+                {assignmentHistories.map(
+                    assignmentHistory => {
+                        return (
+                            <div key={assignmentHistory.id}>Moved to {assignmentHistory.productName} on {assignmentHistory.effectiveDate}</div>);
+                    }
+                )}
+            </>
+        );
+    };
+
     return (
         <div className="formContainer">
             <form className="form"
@@ -338,6 +362,9 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
+                <div className="assignmentHistoryContainer">
+                    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()}/>
+                </div>
                 <div className="newBadgeContainer">
                     <NewBadge/>
                 </div>
@@ -348,7 +375,7 @@ function PersonForm({
                     selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
                     loadingState={{isLoading, setIsLoading}}
                     addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
-                    toolTip={<ToolTip contentText={toolTipContent()}/>}
+                    toolTip={<ToolTip toolTipLabel="What's this?" contentElement={toolTipContent()}/>}
                 />
                 <div className="formItem">
                     <FormNotesTextArea
