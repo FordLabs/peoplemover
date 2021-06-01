@@ -186,7 +186,7 @@ function PeopleMover({
                     <SubHeader/>
                 </HeaderContainer>
                 <main>
-                    <div className="headerSpacer" id="main-content-landing-target"/>
+                    <div id="main-content-landing-target"/>
                     <Counter products={products} allGroupedTagFilterOptions={allGroupedTagFilterOptions}
                         viewingDate={viewingDate}/>
                     <div className="productAndAccordionContainer">

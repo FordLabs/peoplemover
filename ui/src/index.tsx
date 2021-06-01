@@ -137,14 +137,15 @@ if (isUnsupportedBrowser()) {
     Axios.get(url, config)
         .then(async (response) => {
             window.runConfig = Object.freeze(response.data);
-            await flagsmith.init(
+            flagsmith.init(
                 {
                     environmentID : window.runConfig.flagsmith_environment_id,
                     api: window.runConfig.flagsmith_url,
                 }
+            ).then(() =>
+                store.dispatch({type:AvailableActions.GOT_FLAGS, flags : simplifyFlags(flagsmith.getAllFlags())})
+            , () => console.log('Flagsmith client failed to initialize')
             );
-            store.dispatch({type:AvailableActions.GOT_FLAGS, flags : simplifyFlags(flagsmith.getAllFlags())});
-
             ReactDOM.render(
                 <CacheBuster>
                     {({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {

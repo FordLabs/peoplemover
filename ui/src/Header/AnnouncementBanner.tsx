@@ -22,7 +22,7 @@ export default (): ReactElement => {
         localStorage.setItem(PREVIOUS_BANNER_MESSAGE_KEY, flags.announcementBannerMessage);
     }
 
-    return !closedByUser  && flags.announcementBannerEnabled ? <div className="announcementBanner"><div className="bannerSpacing">{flags ? flags.announcementBannerMessage : ''}</div>
+    return !closedByUser  && flags.announcementBannerEnabled ? <aside className="announcementBanner"><div className="bannerSpacing">{flags ? flags.announcementBannerMessage : ''}</div>
         <button
             onClick={(): void => {
                 setClosedByUser('true');
@@ -31,5 +31,5 @@ export default (): ReactElement => {
             className="material-icons closeButton bannerSpacing"
             aria-label="Close Announcement Banner"
         >close</button>
-    </div> : <></>;
+    </aside> : <></>;
 };
