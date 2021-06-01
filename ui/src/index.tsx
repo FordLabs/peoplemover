@@ -76,6 +76,8 @@ export interface RunConfig {
     adfs_url_template: string;
     adfs_client_id: string;
     adfs_resource: string;
+    flagsmith_environment_id: string;
+    flagsmith_url: string;
 }
 
 window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
@@ -135,12 +137,10 @@ if (isUnsupportedBrowser()) {
     Axios.get(url, config)
         .then(async (response) => {
             window.runConfig = Object.freeze(response.data);
-            const flagsmithDevEnvironmentId = 'UWS4dyPFvtJDN9ngsdsQs3';
-            const flagsmithApi = 'https://flagsmith-api.apps.pd01e.edc1.cf.ford.com/api/v1/';
             await flagsmith.init(
                 {
-                    environmentID : flagsmithDevEnvironmentId,
-                    api: flagsmithApi,
+                    environmentID : window.runConfig.flagsmith_environment_id,
+                    api: window.runConfig.flagsmith_url,
                 }
             );
             store.dispatch({type:AvailableActions.GOT_FLAGS, flags : simplifyFlags(flagsmith.getAllFlags())});
