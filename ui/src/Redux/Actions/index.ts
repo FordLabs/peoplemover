@@ -51,7 +51,8 @@ export enum AvailableActions {
     SET_USER_SPACES,
     SET_IS_READ_ONLY,
     SET_IS_DRAGGING,
-    SET_CURRENT_USER
+    SET_CURRENT_USER,
+    GOT_FLAGS
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({

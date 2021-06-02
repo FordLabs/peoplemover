@@ -39,8 +39,11 @@ import isReadOnlyReducer from './isReadOnlyReducer';
 import isDraggingReducer from './isDraggingReducer';
 import currentUserReducer from './currentUserReducer';
 import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
+import {Flags, flagsReducer} from '../../Flags/Flags';
 
 export type SortByType = 'location' | 'product-tag' | 'name'
+
+
 
 export default combineReducers({
     currentModal: currentModalReducer,
@@ -59,7 +62,9 @@ export default combineReducers({
     isReadOnly: isReadOnlyReducer,
     isDragging: isDraggingReducer,
     currentUser: currentUserReducer,
+    flags: flagsReducer,
 });
+
 
 export interface GlobalStateProps {
     currentModal: CurrentModalState;
@@ -78,4 +83,7 @@ export interface GlobalStateProps {
     isReadOnly: boolean;
     isDragging: boolean;
     currentUser: string;
+    flags: Flags;
 }
+
+

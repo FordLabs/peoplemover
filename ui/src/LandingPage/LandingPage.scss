@@ -18,12 +18,15 @@
 @import '../Application/Styleguide/Colors.scss';
 @import '../Application/Styleguide/Breakpoints.scss';
 
-.landingPageContainer {
-  display: flex;
-  align-items: center;
+.mainContainer {
   height: 100%;
   width: 100%;
   position: absolute;
+}
+
+.landingPageContainer {
+  display: flex;
+  align-items: center;
 
   @include phone {
     height: auto;

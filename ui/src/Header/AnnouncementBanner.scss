@@ -1,0 +1,23 @@
+@import '../Application/Styleguide/Colors.scss';
+
+.announcementBanner {
+  background-color: $gray-5;
+  width: 100%;
+  z-index: 2;
+  color: $purple-title;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  div:first-child{
+    padding-left: 3rem;
+    margin-right: auto;
+  }
+  button:last-child{
+    margin-right: 3rem;
+  }
+}
+
+

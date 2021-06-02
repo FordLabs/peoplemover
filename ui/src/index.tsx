@@ -32,6 +32,9 @@ import MatomoEvents from './Matomo/MatomoEvents';
 import CacheBuster from './CacheBuster';
 import {removeToken} from './Auth/TokenProvider';
 import Routes from './Routes';
+import flagsmith from 'flagsmith';
+import {AvailableActions} from './Redux/Actions';
+import {simplifyFlags} from './Flags/Flags';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -73,6 +76,8 @@ export interface RunConfig {
     adfs_url_template: string;
     adfs_client_id: string;
     adfs_resource: string;
+    flagsmith_environment_id: string;
+    flagsmith_url: string;
 }
 
 window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
@@ -130,9 +135,17 @@ if (isUnsupportedBrowser()) {
     const url = '/api/config';
     const config = {headers: {'Content-Type': 'application/json'}};
     Axios.get(url, config)
-        .then((response) => {
+        .then(async (response) => {
             window.runConfig = Object.freeze(response.data);
-
+            flagsmith.init(
+                {
+                    environmentID : window.runConfig.flagsmith_environment_id,
+                    api: window.runConfig.flagsmith_url,
+                }
+            ).then(() =>
+                store.dispatch({type:AvailableActions.GOT_FLAGS, flags : simplifyFlags(flagsmith.getAllFlags())})
+            , () => console.log('Flagsmith client failed to initialize')
+            );
             ReactDOM.render(
                 <CacheBuster>
                     {({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {

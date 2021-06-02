@@ -42,7 +42,6 @@
   min-width: 204px;
   max-height: 82vh;
   margin-top: 2px;
-
   font-size: 14px;
   color: $gray-1;
 }
@@ -212,9 +211,4 @@ button.addPersonButton {
   @include phone {
     width: 100%;
   }
-}
-
-.headerSpacer {
-  height: 60px;
-  width: 100%;
 }

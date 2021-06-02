@@ -12,4 +12,6 @@ class EnvironmentConfiguration {
     var adfs_url_template: String = ""
     var adfs_client_id: String = ""
     var adfs_resource: String = ""
+    var flagsmith_url: String = ""
+    var flagsmith_environment_id : String = ""
 }
