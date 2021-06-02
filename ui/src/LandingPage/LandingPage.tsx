@@ -22,6 +22,7 @@ import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import Branding from '../ReusableComponents/Branding';
 
 import './LandingPage.scss';
+import AnnouncementBanner from '../Header/AnnouncementBanner';
 
 function LandingPage(): JSX.Element {
     const LoginButton = (): JSX.Element => (
@@ -32,24 +33,27 @@ function LandingPage(): JSX.Element {
 
     return (
         <>
-            <main className="landingPageContainer" data-testid="landingPage">
-                <div className="landingPageInfoContainer">
-                    <PeopleMoverLogo/>
-                    <h1 className="landingPageInfoHeading">It’s about the people. Your people.</h1>
-                    <h2 className="landingPageInfoSubHeading">And helping them be extraordinary.</h2>
-                    <p className="landingPageInfoText">
+            <main className="mainContainer"  data-testid="landingPage">
+                <AnnouncementBanner/>
+                <div className="landingPageContainer">
+                    <div className="landingPageInfoContainer">
+                        <PeopleMoverLogo/>
+                        <h1 className="landingPageInfoHeading">It’s about the people. Your people.</h1>
+                        <h2 className="landingPageInfoSubHeading">And helping them be extraordinary.</h2>
+                        <p className="landingPageInfoText">
                         Most allocation applications focus solely on projects and schedules, and seem
                         to forget that a product is only as successful as its team. PeopleMover focuses on the people,
                         helping you create and fluidly maintain balanced teams well suited for the product at hand –
                         because we understand that a great team sets the stage for incredible results.
-                    </p>
-                    <LoginButton/>
-                </div>
-                <div className="landingPageImageContainer">
-                    <img className="landingPageImage"
-                        src={LandingPageImage}
-                        alt="Preview of People Mover Space after logging in"/>
-                    <Branding />
+                        </p>
+                        <LoginButton/>
+                    </div>
+                    <div className="landingPageImageContainer">
+                        <img className="landingPageImage"
+                            src={LandingPageImage}
+                            alt="Preview of People Mover Space after logging in"/>
+                        <Branding />
+                    </div>
                 </div>
             </main>
             <img className="landingPageBackground" src={LandingPageBackground} alt="" role="presentation"/>

@@ -54,6 +54,8 @@ import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import AnnouncementBanner from '../Header/AnnouncementBanner';
+import HeaderContainer from '../Header/HeaderContainer';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -67,11 +69,17 @@ export interface PeopleMoverProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     fetchProducts(): Array<Product>;
+
     fetchProductTags(): Array<Tag>;
+
     fetchPersonTags(): Array<Tag>;
+
     fetchLocations(): Array<LocationTag>;
+
     setPeople(people: Array<Person>): Array<Person>;
+
     setCurrentModal(modalState: CurrentModalState): void;
+
     setSpace(space: Space): void;
 
 }
@@ -170,12 +178,17 @@ function PeopleMover({
         !hasProductsAndFilters()
             ? <></>
             : <div className="App">
-                <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to main content</a>
-                <Header/>
-                <main>
+                <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
+                    main content</a>
+                <HeaderContainer>
+                    <AnnouncementBanner/>
+                    <Header/>
                     <SubHeader/>
-                    <div className="headerSpacer" id="main-content-landing-target"/>
-                    <Counter products={products} allGroupedTagFilterOptions={allGroupedTagFilterOptions} viewingDate={viewingDate}/>
+                </HeaderContainer>
+                <main>
+                    <div id="main-content-landing-target"/>
+                    <Counter products={products} allGroupedTagFilterOptions={allGroupedTagFilterOptions}
+                        viewingDate={viewingDate}/>
                     <div className="productAndAccordionContainer">
                         <ProductList/>
                         {!isReadOnly && (
@@ -199,7 +212,7 @@ function PeopleMover({
                     <CurrentModal/>
                 </main>
                 <footer>
-                    <Branding />
+                    <Branding/>
                 </footer>
             </div>
     );
