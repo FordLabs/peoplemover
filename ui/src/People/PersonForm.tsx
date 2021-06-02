@@ -58,6 +58,7 @@ import {
 } from '../SortingAndFiltering/FilterLibraries';
 import NewBadge from '../ReusableComponents/NewBadge';
 import ToolTip from '../ReusableComponents/ToolTip';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface AssignmentHistory {
     productName: string;
@@ -76,6 +77,7 @@ interface PersonFormProps {
     currentSpace: Space;
     viewingDate: Date;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    currentUser: string;
 
     closeModal(): void;
     addPerson(person: Person): void;
@@ -98,6 +100,7 @@ function PersonForm({
     setIsUnassignedDrawerOpen,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
+    currentUser,
 }: PersonFormProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
@@ -347,6 +350,10 @@ function PersonForm({
         );
     };
 
+    const fireMatomoHoverEvent = (): void =>  {
+        MatomoEvents.pushEvent(currentSpace.name, 'assignmentHistoryClick', currentUser);
+    };
+
     return (
         <div className="formContainer">
             <form className="form"
@@ -395,9 +402,9 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
-                <div className="assignmentHistoryContainer">
-                    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()}/>
-                </div>
+                {isEditPersonForm && <div className="assignmentHistoryContainer">
+                    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()} onHover={fireMatomoHoverEvent}/>
+                </div>}
                 <div className="newBadgeContainer">
                     <NewBadge/>
                 </div>
@@ -455,6 +462,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
+    currentUser: state.currentUser,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

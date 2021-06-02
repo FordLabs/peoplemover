@@ -21,9 +21,11 @@ import ToolTip from './ToolTip';
 
 describe('ToolTip', () => {
     let app: RenderResult;
+    let testMethod: () => void;
 
     beforeEach(() => {
-        app = render(<ToolTip toolTipLabel="What's this?" contentElement={<p>something </p>}/>);
+        testMethod = jest.fn();
+        app = render(<ToolTip toolTipLabel="What's this?" contentElement={<p>something </p>} onHover={testMethod}/>);
     });
     
     it('should show the tip on mouse hover',  async () => {
@@ -40,6 +42,7 @@ describe('ToolTip', () => {
         fireEvent.mouseLeave(button);
         expect(tip.classList.contains('toolTipHoverNotShow')).toBe(true);
         expect(tip.classList.contains('toolTipHoverShow')).toBe(false);
+        expect(testMethod).toHaveBeenCalledTimes(1);
     });
 
     it('should show the tip on focus',  async () => {
@@ -56,5 +59,6 @@ describe('ToolTip', () => {
         fireEvent.blur(button);
         expect(tip.classList.contains('toolTipHoverNotShow')).toBe(true);
         expect(tip.classList.contains('toolTipHoverShow')).toBe(false);
+        expect(testMethod).toHaveBeenCalledTimes(1);
     });
 });
