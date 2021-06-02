@@ -1,4 +1,4 @@
-import AnnouncementHeader from './AnnouncementBanner';
+import AnnouncementHeader, {PREVIOUS_BANNER_MESSAGE_KEY} from './AnnouncementBanner';
 import React from 'react';
 
 import {render} from '@testing-library/react';
@@ -26,6 +26,31 @@ describe('announcement header', () => {
         expect(banner.getByText('hello i am a banner')).toBeInTheDocument();
         banner.getByText('close').click();
         expect(banner.queryByText('hello i am a banner')).not.toBeInTheDocument();
+    });
+
+    it('does not render if redux returns default value', () => {
+        const store = createStore(rootReducer);
+
+        const banner = render(
+            <Provider store={store}>
+                <AnnouncementHeader/>,
+            </Provider>
+        );
+
+        expect(banner.queryByText('close')).not.toBeInTheDocument();
+    });
+
+    it('does not overwrite localstorage with default redux state', () => {
+        localStorage.setItem(PREVIOUS_BANNER_MESSAGE_KEY, 'hello i am a banner');
+        const store = createStore(rootReducer);
+
+        render(
+            <Provider store={store}>
+                <AnnouncementHeader/>,
+            </Provider>
+        );
+
+        expect(localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY)).toEqual('hello i am a banner');
     });
 
     it('should not display if announcement banner enabled flag is disabled',  () => {
@@ -60,13 +85,14 @@ describe('announcement header', () => {
         expect(banner.queryByText('hello i am a banner')).toBeInTheDocument();
         banner.getByText('close').click();
         expect(banner.queryByText('hello i am a banner')).not.toBeInTheDocument();
+
         const newBanner = render(
             <Provider store={store}>
                 <AnnouncementHeader/>,
             </Provider>
         );
-        expect(newBanner.queryByText('hello i am a banner')).not.toBeInTheDocument();
 
+        expect(newBanner.queryByText('hello i am a banner')).not.toBeInTheDocument();
     });
 
     it('should display if banner has been closed by user and the message has changed', () => {
@@ -84,7 +110,7 @@ describe('announcement header', () => {
                 <AnnouncementHeader/>,
             </Provider>
         );
-        expect(banner.queryByText('hello i am a different banner')).toBeInTheDocument();
 
+        expect(banner.queryByText('hello i am a different banner')).toBeInTheDocument();
     });
 });
