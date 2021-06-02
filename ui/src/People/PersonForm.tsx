@@ -202,16 +202,17 @@ function PersonForm({
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
             }
-            if (isEditPersonForm && assignment) {
+            if (isEditPersonForm) {
                 const response = await PeopleClient.updatePerson(currentSpace, person, personTagModified);
+                const updatedPerson: Person = response.data;
+                editPerson(updatedPerson);
                 await AssignmentClient.createAssignmentForDate(
                     moment(viewingDate).format('YYYY-MM-DD'),
                     getSelectedProductPairs(),
                     currentSpace,
-                    assignment.person
+                    updatedPerson
                 );
-                const updatedPerson: Person = response.data;
-                editPerson(updatedPerson);
+
             } else {
                 const response = await PeopleClient.createPersonForSpace(currentSpace, person, personTagModified);
                 const newPerson: Person = response.data;

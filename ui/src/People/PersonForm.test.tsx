@@ -19,11 +19,12 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import PersonForm from './PersonForm';
 import configureStore from 'redux-mock-store';
 import React from 'react';
-import {RenderResult} from '@testing-library/react';
+import {RenderResult, fireEvent} from '@testing-library/react';
 import {act} from 'react-dom/test-utils';
 import selectEvent from 'react-select-event';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {TagRequest} from '../Tags/TagRequest.interface';
+import AssignmentClient from "../Assignments/AssignmentClient";
 
 describe('Person Form', () => {
 
@@ -90,6 +91,30 @@ describe('Person Form', () => {
             await act(async () => {
                 await personForm.findByText('Moved to Hanky Product on 2020-07-01');
             });
+        });
+    });
+
+    xdescribe('handleSubmit()', () => {
+        it('should not call createAssignmentForDate when assignment not changed to a different product', async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+            await act( async () => {
+                personForm = renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={true}
+                        products={TestUtils.products}
+                        initiallySelectedProduct={TestUtils.productForHank}
+                        initialPersonName={TestUtils.hank.name}
+                    />, store, undefined);
+            });
+
+            await act( async () => {
+                fireEvent.click(await personForm.findByText('Save'));
+            });
+
+
+            expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(0);
+
         });
     });
 });
