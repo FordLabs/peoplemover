@@ -29,7 +29,7 @@ const ToolTip = (props: ToolTipProps): JSX.Element => {
 
     const setHovering = (hoverState: boolean): void => {
         setIsHovering(hoverState);
-        if(hoverState && props.onHover) {
+        if (hoverState && props.onHover) {
             props.onHover();
         }
     };

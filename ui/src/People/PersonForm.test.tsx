@@ -24,7 +24,7 @@ import {act} from 'react-dom/test-utils';
 import selectEvent from 'react-select-event';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {TagRequest} from '../Tags/TagRequest.interface';
-import AssignmentClient from "../Assignments/AssignmentClient";
+import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
 
@@ -91,7 +91,7 @@ describe('Person Form', () => {
                 await personForm.findByText('View Assignment History');
             });
             await act(async () => {
-                await personForm.findByText('Moved to Hanky Product on 2020-07-01');
+                await personForm.findByText('Moved to Hanky Product on 07/01/2020');
             });
         });
     });

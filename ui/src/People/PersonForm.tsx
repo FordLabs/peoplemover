@@ -322,7 +322,6 @@ function PersonForm({
             }
         }).filter((assignmentHistory) => (assignmentHistory !== undefined));
         return returnValue;
-        // return [{productName: 'Hanky Product', id: 3, effectiveDate: '2020-06-01'}];
     };
 
     const capitalize = (s: string): string => {
@@ -340,7 +339,7 @@ function PersonForm({
                             if (productName === 'unassigned') {
                                 productName = capitalize(productName);
                             }
-                            let effectiveDate = (assignmentHistory.effectiveDate ? moment(assignmentHistory.effectiveDate).format('YYYY-MM-DD') : 'undefined date');
+                            let effectiveDate = (assignmentHistory.effectiveDate ? moment(assignmentHistory.effectiveDate).format('MM/DD/YYYY') : 'undefined date');
                             return (
                                 <div key={assignmentHistory.id}>Moved to {productName} on {effectiveDate}</div>
                             );
