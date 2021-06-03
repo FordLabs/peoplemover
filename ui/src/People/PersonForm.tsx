@@ -113,6 +113,7 @@ function PersonForm({
     const [selectedPersonTags, setSelectedPersonTags] = useState<Array<Tag>>([]);
     const [roles, setRoles] = useState<Array<RoleTag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
 
     const alphabetize = (roles: Array<RoleTag | Product>): Array<RoleTag | Product> => {
         return roles.sort((a, b) => {
@@ -206,12 +207,14 @@ function PersonForm({
                 const response = await PeopleClient.updatePerson(currentSpace, person, personTagModified);
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
-                await AssignmentClient.createAssignmentForDate(
-                    moment(viewingDate).format('YYYY-MM-DD'),
-                    getSelectedProductPairs(),
-                    currentSpace,
-                    updatedPerson
-                );
+                if (hasAssignmentChanged) {
+                    await AssignmentClient.createAssignmentForDate(
+                        moment(viewingDate).format('YYYY-MM-DD'),
+                        getSelectedProductPairs(),
+                        currentSpace,
+                        updatedPerson
+                    );
+                }
 
             } else {
                 const response = await PeopleClient.createPersonForSpace(currentSpace, person, personTagModified);
@@ -248,6 +251,7 @@ function PersonForm({
                 if (product) updatedProducts.push(product);
             }
         });
+        setHasAssignmentChanged(true);
         setSelectedProducts(updatedProducts.filter(product => product != null));
     };
 

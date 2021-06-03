@@ -25,6 +25,8 @@ import selectEvent from 'react-select-event';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import AssignmentClient from "../Assignments/AssignmentClient";
+import PeopleClient from './PeopleClient';
+import {AxiosResponse} from 'axios';
 
 describe('Person Form', () => {
 
@@ -94,7 +96,7 @@ describe('Person Form', () => {
         });
     });
 
-    xdescribe('handleSubmit()', () => {
+    describe('handleSubmit()', () => {
         it('should not call createAssignmentForDate when assignment not changed to a different product', async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
@@ -112,8 +114,34 @@ describe('Person Form', () => {
                 fireEvent.click(await personForm.findByText('Save'));
             });
 
-
             expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(0);
+
+        });
+
+        it('should call createAssignmentForDate when assignment has been deliberately changed to unassigned', async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+            PeopleClient.updatePerson = jest.fn(() => Promise.resolve({data: TestUtils.hank} as AxiosResponse));
+            await act( async () => {
+                personForm = renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={true}
+                        products={TestUtils.products}
+                        initiallySelectedProduct={TestUtils.productForHank}
+                        initialPersonName={TestUtils.hank.name}
+                        assignment={TestUtils.assignmentForHank}
+                    />, store, undefined);
+            });
+
+            const removeProductButton = personForm.baseElement.getElementsByClassName('product__multi-value__remove');
+            expect(removeProductButton.length).toEqual(1);
+            fireEvent.click(removeProductButton[0]);
+
+            await act( async () => {
+                fireEvent.click(await personForm.findByText('Save'));
+            });
+
+            expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(1);
 
         });
     });
