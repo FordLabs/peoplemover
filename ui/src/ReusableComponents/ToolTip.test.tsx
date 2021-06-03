@@ -21,36 +21,44 @@ import ToolTip from './ToolTip';
 
 describe('ToolTip', () => {
     let app: RenderResult;
+    let testMethod: () => void;
 
     beforeEach(() => {
-        app = render(<ToolTip contentText={<p>something </p>}/>);
+        testMethod = jest.fn();
+        app = render(<ToolTip toolTipLabel="What's this?" contentElement={<p>something </p>} onHover={testMethod}/>);
     });
     
     it('should show the tip on mouse hover',  async () => {
         let button = await app.findByText('What\'s this?');
-        let tip = await app.findByTestId('whatIsThisTip');
+        let tip = await app.findByTestId('toolTipText');
 
-        expect(tip.classList.contains('whatIsThisHoverNotShow')).toBe(true);
-        expect(tip.classList.contains('whatIsThisHoverShow')).toBe(false);
+        app.findByText('something ');
+
+        expect(tip.classList.contains('toolTipHoverNotShow')).toBe(true);
+        expect(tip.classList.contains('toolTipHoverShow')).toBe(false);
         fireEvent.mouseOver(button);
-        expect(tip.classList.contains('whatIsThisHoverNotShow')).toBe(false);
-        expect(tip.classList.contains('whatIsThisHoverShow')).toBe(true);
+        expect(tip.classList.contains('toolTipHoverNotShow')).toBe(false);
+        expect(tip.classList.contains('toolTipHoverShow')).toBe(true);
         fireEvent.mouseLeave(button);
-        expect(tip.classList.contains('whatIsThisHoverNotShow')).toBe(true);
-        expect(tip.classList.contains('whatIsThisHoverShow')).toBe(false);
+        expect(tip.classList.contains('toolTipHoverNotShow')).toBe(true);
+        expect(tip.classList.contains('toolTipHoverShow')).toBe(false);
+        expect(testMethod).toHaveBeenCalledTimes(1);
     });
 
     it('should show the tip on focus',  async () => {
         let button = await app.findByText('What\'s this?');
-        let tip = await app.findByTestId('whatIsThisTip');
+        let tip = await app.findByTestId('toolTipText');
 
-        expect(tip.classList.contains('whatIsThisHoverNotShow')).toBe(true);
-        expect(tip.classList.contains('whatIsThisHoverShow')).toBe(false);
+        app.findByText('something ');
+
+        expect(tip.classList.contains('toolTipHoverNotShow')).toBe(true);
+        expect(tip.classList.contains('toolTipHoverShow')).toBe(false);
         fireEvent.focus(button);
-        expect(tip.classList.contains('whatIsThisHoverNotShow')).toBe(false);
-        expect(tip.classList.contains('whatIsThisHoverShow')).toBe(true);
+        expect(tip.classList.contains('toolTipHoverNotShow')).toBe(false);
+        expect(tip.classList.contains('toolTipHoverShow')).toBe(true);
         fireEvent.blur(button);
-        expect(tip.classList.contains('whatIsThisHoverNotShow')).toBe(true);
-        expect(tip.classList.contains('whatIsThisHoverShow')).toBe(false);
+        expect(tip.classList.contains('toolTipHoverNotShow')).toBe(true);
+        expect(tip.classList.contains('toolTipHoverShow')).toBe(false);
+        expect(testMethod).toHaveBeenCalledTimes(1);
     });
 });
