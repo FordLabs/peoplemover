@@ -73,7 +73,7 @@ interface PersonFormProps {
     products: Array<Product>;
     initiallySelectedProduct?: Product;
     initialPersonName?: string;
-    assignment?: Assignment;
+    personEdited?: Person;
     currentSpace: Space;
     viewingDate: Date;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
@@ -93,7 +93,7 @@ function PersonForm({
     initialPersonName,
     currentSpace,
     viewingDate,
-    assignment,
+    personEdited,
     closeModal,
     addPerson,
     editPerson,
@@ -123,11 +123,11 @@ function PersonForm({
         });
     };
 
-    const populatedEntirePersonForm = (assignment: Assignment): void => {
-        setPerson({...assignment.person});
-        setSelectedPersonTags(assignment.person.tags);
+    const populatedEntirePersonForm = (personToPopulate: Person): void => {
+        setPerson({...personToPopulate});
+        setSelectedPersonTags(personToPopulate.tags);
 
-        AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, assignment.person.id, viewingDate)
+        AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, personToPopulate.id, viewingDate)
             .then((response) => {
                 const assignments: Array<Assignment> = response.data;
                 setSelectedProducts(createProductsFromAssignments(assignments));
@@ -140,8 +140,8 @@ function PersonForm({
                 setRoles(alphabetize(response.data));
             });
 
-        if (isEditPersonForm && assignment) {
-            populatedEntirePersonForm(assignment);
+        if (isEditPersonForm && personEdited) {
+            populatedEntirePersonForm(personEdited);
         } else {
             if (initialPersonName) {
                 setPerson(
@@ -232,7 +232,7 @@ function PersonForm({
     };
 
     const removePerson = (): void => {
-        const assignmentId = assignment && assignment.person.id;
+        const assignmentId = personEdited && personEdited.id;
         if (assignmentId) {
             PeopleClient.removePerson(spaceUuid, assignmentId).then(closeModal);
         }
