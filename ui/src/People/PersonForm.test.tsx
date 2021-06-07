@@ -75,7 +75,7 @@ describe('Person Form', () => {
                         products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         initialPersonName={TestUtils.hank.name}
-                        assignment={TestUtils.assignmentForHank}
+                        personEdited={TestUtils.hank}
                     />, store, undefined);
             });
         });
@@ -129,7 +129,7 @@ describe('Person Form', () => {
                         products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         initialPersonName={TestUtils.hank.name}
-                        assignment={TestUtils.assignmentForHank}
+                        personEdited={TestUtils.hank}
                     />, store, undefined);
             });
 

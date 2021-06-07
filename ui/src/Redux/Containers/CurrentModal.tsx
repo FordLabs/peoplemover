@@ -96,7 +96,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
                 title: 'Edit Person',
                 form: <PersonForm
                     isEditPersonForm
-                    assignment={item}
+                    personEdited={item.person}
                     products={products}/>,
             }];
         case AvailableModals.CREATE_ASSIGNMENT:
