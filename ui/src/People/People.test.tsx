@@ -394,7 +394,7 @@ describe('People actions', () => {
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments];
         const component = <PersonForm isEditPersonForm={true}
             products={products}
-            assignment={TestUtils.assignmentForPerson1}
+            personEdited={TestUtils.person1}
         />;
 
         await act(async () => {
