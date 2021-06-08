@@ -73,7 +73,7 @@ class ProductTagControllerTest {
 
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "anotherSpaceName"))
+        space = spaceRepository.save(Space(name = "anotherSpaceName1"))
         baseProductTagsUrl = getBaseProductTagsUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
