@@ -61,6 +61,7 @@ create table person
     new_person    bit default 0 not null,
     space_role_id int,
     space_uuid    varchar (36) not null,
+    customField1  varchar(255),
 
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (space_role_id) REFERENCES space_roles (id) ON DELETE SET NULL
@@ -136,5 +137,16 @@ create table user_space_mapping
 
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     constraint UQ_User_Space_Mapping unique (user_id, space_uuid)
+);
+
+create table custom_field_mapping
+(
+    id int not null identity primary key,
+    reference_name varchar(255),
+    vanity_name varchar(255),
+    space_uuid varchar (36) not null,
+
+    FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
+    constraint UQ_Custom_Field_Mapping unique (space_uuid, reference_name)
 );
 
