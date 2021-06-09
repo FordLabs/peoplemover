@@ -406,9 +406,9 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
-                {isEditPersonForm && <div className="assignmentHistoryContainer">
-                    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()} onHover={fireMatomoHoverEvent}/>
-                </div>}
+                {/*{isEditPersonForm && <div className="assignmentHistoryContainer">*/}
+                {/*    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()} onHover={fireMatomoHoverEvent}/>*/}
+                {/*</div>}*/}
                 <div className="newBadgeContainer">
                     <NewBadge/>
                 </div>
