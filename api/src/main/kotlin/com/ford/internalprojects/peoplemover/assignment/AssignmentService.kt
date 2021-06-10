@@ -43,10 +43,15 @@ class AssignmentService(
         val allAssignments: MutableList<Assignment> = mutableListOf()
         people.forEach { person ->
             val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
-            allAssignments.addAll(getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson))
+            val lastAssignments: List<Assignment> = getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson)
+            allAssignments.addAll(updateAssignmentsStartDate(lastAssignments, assignmentsForPerson))
         }
 
         return allAssignments
+    }
+
+    fun updateAssignmentsStartDate(assignmentsToUpdate: List<Assignment>, allAssignmentsSorted: List<Assignment>): List<Assignment> {
+        return assignmentsToUpdate
     }
 
     fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
