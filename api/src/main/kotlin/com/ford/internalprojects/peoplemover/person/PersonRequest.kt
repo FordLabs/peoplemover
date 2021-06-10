@@ -37,7 +37,9 @@ data class PersonRequest(
         val notes: String? = "",
 
         @JsonProperty
-        var newPerson: Boolean = false
+        var newPerson: Boolean = false,
+
+        val customField1: String
 )
 
 fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
@@ -47,5 +49,6 @@ fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
         notes = this.notes,
         newPerson = this.newPerson,
         spaceUuid = spaceUuid,
-        tags = this.tags
+        tags = this.tags,
+        customField1 = this.customField1
 )

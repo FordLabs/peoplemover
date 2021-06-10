@@ -110,14 +110,16 @@ class LocalDataGenerator(
             Person(
                 name = "Jane Smith",
                 spaceUuid = createdSpace.uuid,
-                spaceRole = role1
+                spaceRole = role1,
+                customField1 = "JSMITH"
             )
         )
         val bob: Person = personService.createPerson(
             Person(
                 name = "Bob Barker",
                 spaceUuid = createdSpace.uuid,
-                spaceRole = role2
+                spaceRole = role2,
+                customField1 = "BBARKER"
             )
         )
 
@@ -159,7 +161,8 @@ class LocalDataGenerator(
                 name = "Adam Sandler",
                 spaceUuid = createdSpace.uuid,
                 spaceRole = role3,
-                tags = personTags
+                tags = personTags,
+                customField1 = "ASANDLER"
             )
         )
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(

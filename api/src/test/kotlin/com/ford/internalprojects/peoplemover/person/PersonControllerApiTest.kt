@@ -131,7 +131,8 @@ class PersonControllerApiTest {
                 notes = "Some Notes",
                 newPerson = true,
                 spaceUuid = space.uuid,
-                tags = setOf(tag)
+                tags = setOf(tag),
+                customField1 = "John35"
         )
         assertThat(personRepository.count()).isZero()
         val result = mockMvc.perform(post(basePeopleUrl)
@@ -153,6 +154,7 @@ class PersonControllerApiTest {
         assertThat(actualPerson.spaceUuid).isEqualTo(personToCreate.spaceUuid)
         assertThat(actualPerson).isEqualTo(personInDb)
         assertThat(actualPerson.tags).containsOnly(tag)
+        assertThat(actualPerson.customField1).isEqualTo(personToCreate.customField1)
     }
 
     @Test

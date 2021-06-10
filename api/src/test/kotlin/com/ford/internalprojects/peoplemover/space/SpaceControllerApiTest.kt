@@ -20,6 +20,8 @@ package com.ford.internalprojects.peoplemover.space
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.*
+import com.ford.internalprojects.peoplemover.customfield.CustomFieldMapping
+import com.ford.internalprojects.peoplemover.customfield.CustomFieldMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
@@ -34,6 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
 import java.time.Instant
 
@@ -58,6 +61,9 @@ class SpaceControllerApiTest {
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
     @Autowired
+    private lateinit var customFieldMappingRepository: CustomFieldMappingRepository
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
 
     var baseSpaceUrl: String = "/api/spaces"
@@ -68,6 +74,7 @@ class SpaceControllerApiTest {
         productRepository.deleteAll()
         spaceRepository.deleteAll()
         userSpaceMappingRepository.deleteAll()
+        customFieldMappingRepository.deleteAll()
     }
 
     @Test
@@ -163,9 +170,15 @@ class SpaceControllerApiTest {
     }
 
     @Test
+//    @Transactional
     fun `GET should return correct space for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
+
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = PERMISSION_OWNER))
+
+        customFieldMappingRepository.save(CustomFieldMapping(referenceName = "field1", vanityName = "cdsid", spaceUuid = space1.uuid))
+
+        val cust: List<CustomFieldMapping> = customFieldMappingRepository.findAll() as List<CustomFieldMapping>;
 
         val result = mockMvc.perform(
             get(baseSpaceUrl + "/" + space1.uuid)
@@ -174,12 +187,15 @@ class SpaceControllerApiTest {
             .andExpect(status().isOk)
             .andReturn()
 
-        val actualSpace: Space = objectMapper.readValue(
-            result.response.contentAsString,
-            Space::class.java
-        )
+//        val actualSpace: Space = objectMapper.readValue(
+//            result.response.contentAsString,
+//            Space::class.java
+//        )
+//
+        val expectedSpace = space1
+        expectedSpace.customFieldLabels = listOf(cust[0])
 
-        assertThat(actualSpace).isEqualTo(space1)
+        assertThat(result.response.contentAsString).isEqualTo(space1)
     }
 
     @Test
@@ -228,6 +244,7 @@ class SpaceControllerApiTest {
 
 
     @Test
+    @Transactional
     fun `Edit Space Request should return 200 if space is edited correctly`() {
         val space = spaceRepository.save(Space(name = "test"))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
@@ -316,6 +333,7 @@ class SpaceControllerApiTest {
     }
 
     @Test
+    @Transactional
     fun `Edit Space Request should not save if no fields populated`() {
         val expectedTimeStamp = Timestamp.from(Instant.EPOCH)
         val space = spaceRepository.save(
