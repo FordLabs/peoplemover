@@ -61,7 +61,7 @@ create table person
     new_person    bit default 0 not null,
     space_role_id int,
     space_uuid    varchar (36) not null,
-    customField1  varchar(255),
+    custom_field1  varchar(255),
 
     FOREIGN KEY (space_uuid) REFERENCES space (uuid) on delete cascade,
     FOREIGN KEY (space_role_id) REFERENCES space_roles (id) ON DELETE SET NULL

@@ -48,9 +48,9 @@ data class Person(
         @Column(name = "space_uuid")
         override val spaceUuid: String,
 
-        val customField1: String? = ""
+        val customField1: String? = null
 
 ): NamedSpaceComponent {
     constructor(name: String, spaceUuid: String) :
-            this(null, name, null, HashSet(), "", false, spaceUuid, "")
+            this(null, name, null, HashSet(), "", false, spaceUuid, null)
 }

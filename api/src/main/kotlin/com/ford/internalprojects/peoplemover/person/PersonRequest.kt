@@ -39,7 +39,7 @@ data class PersonRequest(
         @JsonProperty
         var newPerson: Boolean = false,
 
-        val customField1: String
+        val customField1: String? = null
 )
 
 fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(

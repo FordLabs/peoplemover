@@ -72,9 +72,9 @@ class SpaceControllerApiTest {
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()
+        customFieldMappingRepository.deleteAll()
         spaceRepository.deleteAll()
         userSpaceMappingRepository.deleteAll()
-        customFieldMappingRepository.deleteAll()
     }
 
     @Test
@@ -170,15 +170,26 @@ class SpaceControllerApiTest {
     }
 
     @Test
-//    @Transactional
     fun `GET should return correct space for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = PERMISSION_OWNER))
+        userSpaceMappingRepository.save(
+            UserSpaceMapping(
+                userId = "USER_ID",
+                spaceUuid = space1.uuid,
+                permission = PERMISSION_OWNER
+            )
+        )
 
-        customFieldMappingRepository.save(CustomFieldMapping(referenceName = "field1", vanityName = "cdsid", spaceUuid = space1.uuid))
+        customFieldMappingRepository.save(
+            CustomFieldMapping(
+                referenceName = "field1",
+                vanityName = "cdsid",
+                spaceUuid = space1.uuid
+            )
+        )
 
-        val cust: List<CustomFieldMapping> = customFieldMappingRepository.findAll() as List<CustomFieldMapping>;
+        val customFieldMapping = customFieldMappingRepository.findAll().first()
 
         val result = mockMvc.perform(
             get(baseSpaceUrl + "/" + space1.uuid)
@@ -187,15 +198,14 @@ class SpaceControllerApiTest {
             .andExpect(status().isOk)
             .andReturn()
 
-//        val actualSpace: Space = objectMapper.readValue(
-//            result.response.contentAsString,
-//            Space::class.java
-//        )
-//
-        val expectedSpace = space1
-        expectedSpace.customFieldLabels = listOf(cust[0])
+        val actualSpace: Space = objectMapper.readValue(
+            result.response.contentAsByteArray,
+            Space::class.java
+        )
 
-        assertThat(result.response.contentAsString).isEqualTo(space1)
+        space1.customFieldLabels = listOf(customFieldMapping)
+
+        assertThat(actualSpace).isEqualTo(space1)
     }
 
     @Test
