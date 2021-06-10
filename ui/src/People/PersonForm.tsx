@@ -63,7 +63,7 @@ import MatomoEvents from '../Matomo/MatomoEvents';
 interface AssignmentHistory {
     productName: string;
     id: number;
-    effectiveDate: Date | undefined;
+    startDate: Date | undefined;
 }
 
 type AssignmentHistoryType = AssignmentHistory | undefined;
@@ -315,7 +315,7 @@ function PersonForm({
                 return {
                     productName: product.name,
                     id: personsAssignment.id,
-                    effectiveDate: personsAssignment.effectiveDate,
+                    startDate: personsAssignment.startDate,
                 };
             } else {
                 return undefined;
@@ -339,7 +339,7 @@ function PersonForm({
                             if (productName === 'unassigned') {
                                 productName = capitalize(productName);
                             }
-                            let effectiveDate = (assignmentHistory.effectiveDate ? moment(assignmentHistory.effectiveDate).format('MM/DD/YYYY') : 'undefined date');
+                            let effectiveDate = (assignmentHistory.startDate ? moment(assignmentHistory.startDate).format('MM/DD/YYYY') : 'undefined date');
                             return (
                                 <div key={assignmentHistory.id}>Moved to {productName} on {effectiveDate}</div>
                             );

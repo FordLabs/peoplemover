@@ -24,4 +24,5 @@ export interface Assignment {
     productId: number;
     spaceUuid: string;
     effectiveDate?: Date;
+    startDate?: Date;
 }
