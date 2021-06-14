@@ -51,7 +51,17 @@ class AssignmentService(
     }
 
     fun updateAssignmentsStartDate(assignmentsToUpdate: List<Assignment>, allAssignmentsSorted: List<Assignment>): List<Assignment> {
-        return assignmentsToUpdate
+        val returnValue: MutableList<Assignment> = mutableListOf()
+        assignmentsToUpdate.forEach{assignment -> returnValue.add(
+                Assignment(
+                        id = assignment.id,
+                        placeholder = assignment.placeholder,
+                        person = assignment.person,
+                        effectiveDate = assignment.effectiveDate,
+                        productId = assignment.productId,
+                        spaceUuid = assignment.spaceUuid,
+                        startDate = assignment.effectiveDate))}
+        return returnValue
     }
 
     fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
