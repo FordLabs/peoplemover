@@ -20,6 +20,7 @@ package com.ford.internalprojects.peoplemover.report
 data class PeopleReportRow (
     val productName: String,
     val personName: String,
+    val customField1: String?,
     val personRole: String,
     val personNote: String,
     val personTags: String
@@ -32,6 +33,7 @@ data class PeopleReportRow (
 
                 (this.productName == other.productName
                         && this.personName == other.personName
+                        && this.customField1 == other.customField1
                         && this.personRole == other.personRole
                         && this.personNote == other.personNote
                         && thisTags == otherTags)

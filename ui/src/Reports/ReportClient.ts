@@ -57,6 +57,10 @@ class ReportClient {
                 value: 'personName',
             },
             {
+                label: 'CDSID',
+                value: 'customField1',
+            },
+            {
                 label: 'Person Role',
                 value: 'personRole',
             },
