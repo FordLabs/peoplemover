@@ -398,7 +398,7 @@ function PersonForm({
                         type="text"
                         name="cdsid"
                         id="cdsid"
-                        value={person.customField1}
+                        value={person.customField1 || ""}
                         onChange={(event): void => {
                             updatePersonField('customField1', event.target.value);
                         }}
