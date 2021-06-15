@@ -44,15 +44,39 @@ class AssignmentService(
         people.forEach { person ->
             val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
             val lastAssignments: List<Assignment> = getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson)
-            allAssignments.addAll(updateAssignmentsStartDate(lastAssignments, assignmentsForPerson))
+            allAssignments.addAll(calculateStartDatesForAssignments(lastAssignments, assignmentsForPerson))
         }
 
         return allAssignments
     }
 
-    fun updateAssignmentsStartDate(assignmentsToUpdate: List<Assignment>, allAssignmentsSorted: List<Assignment>): List<Assignment> {
+    fun calculateStartDatesForAssignments(assignments: List<Assignment>, allAssignmentsSorted: List<Assignment>): List<Assignment> {
+        //get unique dates for allAssignmentsSorted
+        //allImportantDates = uniqueDatesInDescendingOrder(List<Assignments): List<Dates>
+
+        //var updatedAssignmentList
+
+        //loop over assignments
+        //for each assignment: get unique dates for assignment
+        // importantDatesForProduct = uniqueDatesInDescendingOrder(allAssignmentsSorted.filter(productId))
+        //findStartDate(uniqueDatesForAssignments, uniqueDatesForAllAssignmentsSorted): Date
+            // var lastKnownGoodDate
+            // if allImportantDates = importantDatesForProduct, lastKnownGoodDate = allImportantDates.last()
+                //else
+                // foreach date in uniqueDatesForAllAssignmentsSorted
+                //   if importantDatesForProduct.contains(date)
+                //     lastKnownGoodDate = date
+                //   else
+                //     break
+            // return lastKnownGoodDate
+        //assignment.startDate = findStartDate(....)
+
+    //return updatedAssginmentList
+
+
+
         val returnValue: MutableList<Assignment> = mutableListOf()
-        assignmentsToUpdate.forEach{assignment -> returnValue.add(
+        assignments.forEach{ assignment -> returnValue.add(
                 Assignment(
                         id = assignment.id,
                         placeholder = assignment.placeholder,
