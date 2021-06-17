@@ -89,15 +89,24 @@ class LocalDataGenerator(
         var colors = colorService.getColors()
         if (colors.isEmpty() && addColors) {
             colorService.addColors(listOf(
-                "#81C0FA",
                 "#83DDC2",
+                "#81C0FA",
                 "#A7E9F2",
-                "#C9E9B0",
                 "#DBB5FF",
-                "#FFD7B3",
                 "#FCBAE9",
+                "#FFD7B3",
                 "#FFEAAA",
-                "#FFFFFF"
+                "#C9E9B0",
+                "#FFFFFF",
+                "#3A9B7E",
+                "#387DBC",
+                "#44AEBC",
+                "#9161BE",
+                "#BF62A5",
+                "#D6843B",
+                "#EAC040",
+                "#78BA43",
+                "#333333"
             ))
             colors = colorService.getColors()
         }

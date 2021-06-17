@@ -44,18 +44,22 @@
 
 .selectDropdownToggle,
 .selectDropdownOptions {
-  width: 62px;
   background: #FFFFFF;
   border: $gray-4 1px solid;
   box-sizing: border-box;
   border-radius: 4px;
   text-align: center;
+  width: 82px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-height: 330px;
 }
 
 .selectDropdownOptions {
   position: absolute;
   z-index: 2;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0.4rem;
   margin: 0;
 
   &:focus {
