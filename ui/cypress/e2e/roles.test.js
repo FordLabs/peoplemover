@@ -20,9 +20,8 @@ import person from '../fixtures/person';
 
 describe('Roles', () => {
     const mockRole = person.role;
-    const mockColor = { id: 7, color: '#FCBAE9' };
+    const mockColor = { id: 5, color: '#FCBAE9' };
     const pink = 'rgb(252, 186, 233)';
-    const defaultColor = 'rgb(255, 255, 255)';
 
     it('Add a new role', () => {
         cy.visitSpace();
@@ -42,13 +41,9 @@ describe('Roles', () => {
         cy.get('[data-testid=editTagRow__role]').as('colorDropdownToggle');
 
         cy.get('@colorDropdownToggle')
-            .find('[data-testid=selectRoleCircle]')
-            .should('have.css', 'background-color', defaultColor);
-
-        cy.get('@colorDropdownToggle')
             .find('[data-testid=selectDropdownToggle]').click();
 
-        cy.get('[data-testid=selectOption__6]').as('colorOption');
+        cy.get('[data-testid=selectOption__4]').as('colorOption');
 
         cy.get('@colorOption')
             .find('[data-testid=selectRoleCircle]')
