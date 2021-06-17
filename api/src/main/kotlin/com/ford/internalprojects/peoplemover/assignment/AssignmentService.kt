@@ -52,13 +52,13 @@ class AssignmentService(
 
     fun calculateStartDatesForAssignments(assignments: List<Assignment>, allAssignmentsSorted: List<Assignment>): List<Assignment> {
         //get unique dates for allAssignmentsSorted
-        //allImportantDates = uniqueDatesInDescendingOrder(List<Assignments): List<Dates>
+        //allImportantDates = uniqueDates(List<Assignments): List<Dates>
 
         //var updatedAssignmentList
 
         //loop over assignments
         //for each assignment: get unique dates for assignment
-        // importantDatesForProduct = uniqueDatesInDescendingOrder(allAssignmentsSorted.filter(productId))
+        // importantDatesForProduct = uniqueDates(allAssignmentsSorted.filter(productId))
         //findStartDate(uniqueDatesForAssignments, uniqueDatesForAllAssignmentsSorted): Date
             // var lastKnownGoodDate
             // if allImportantDates = importantDatesForProduct, lastKnownGoodDate = allImportantDates.last()

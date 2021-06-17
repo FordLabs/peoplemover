@@ -2,6 +2,7 @@ package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.person.Person
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -27,7 +28,7 @@ class AssignmentDateHandlerTest {
 
         val actualDateList = assignmentDateHandler.findUniqueDates(assignmentList)
 
-        Assertions.assertThat(actualDateList).isEqualTo(expectedDateList)
+        assertThat(actualDateList).isEqualTo(expectedDateList)
     }
 
     @Test
@@ -42,7 +43,7 @@ class AssignmentDateHandlerTest {
 
         val actualDateList = assignmentDateHandler.findUniqueDates(assignmentList)
 
-        Assertions.assertThat(actualDateList).isEqualTo(expectedDateList)
+        assertThat(actualDateList).isEqualTo(expectedDateList)
     }
 
     @Test
@@ -58,7 +59,7 @@ class AssignmentDateHandlerTest {
 
         val actualDateList = assignmentDateHandler.findUniqueDates(assignmentList)
 
-        Assertions.assertThat(actualDateList).isEqualTo(expectedDateList)
+        assertThat(actualDateList).isEqualTo(expectedDateList)
     }
 
     @Test
@@ -76,7 +77,7 @@ class AssignmentDateHandlerTest {
 
         val actualDateList = assignmentDateHandler.findUniqueDates(assignmentList)
 
-        Assertions.assertThat(actualDateList).isEqualTo(expectedDateList)
+        assertThat(actualDateList).isEqualTo(expectedDateList)
     }
 
     @Test
@@ -89,7 +90,7 @@ class AssignmentDateHandlerTest {
 
         val actualDateList = assignmentDateHandler.findUniqueDates(assignmentList)
 
-        Assertions.assertThat(actualDateList).isEqualTo(expectedDateList)
+        assertThat(actualDateList).isEqualTo(expectedDateList)
     }
 
     @Test
@@ -115,6 +116,43 @@ class AssignmentDateHandlerTest {
 
         val actualDateList = assignmentDateHandler.findUniqueDates(assignmentList)
 
-        Assertions.assertThat(actualDateList).isEqualTo(expectedDateList)
+        assertThat(actualDateList).isEqualTo(expectedDateList)
     }
+
+    @Test
+    fun `findStartDate should return the last date in uniqueDatesForAllAssignments list as a default`() {
+        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jul1))
+        val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jul1))
+
+        val expected: LocalDate = LocalDate.parse(jul1)
+
+        val actual = assignmentDateHandler.findStartDate(uniqueDatesForAssignment, uniqueDatesForAllAssignment)
+
+        assertThat(actual).isEqualTo(expected)
+
+    }
+
+    @Test
+    fun `findStartDate should return the oldest of two dates in uniqueDatesForAllAssignments list`() {
+        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1))
+        val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
+
+        val expected: LocalDate = LocalDate.parse(jun1)
+
+        val actual = assignmentDateHandler.findStartDate(uniqueDatesForAssignment, uniqueDatesForAllAssignment)
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+//    @Test
+//    fun `findStartDate should return the oldest of two dates in uniqueDatesForAllAssignments list`() {
+//        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1))
+//        val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
+//
+//        val expected: LocalDate = LocalDate.parse(jun1)
+//
+//        val actual = assignmentDateHandler.findStartDate(uniqueDatesForAssignment, uniqueDatesForAllAssignment)
+//
+//        assertThat(actual).isEqualTo(expected)
+//    }
 }
