@@ -32,6 +32,6 @@ class ColorService(private val colorRepository: ColorRepository) {
     }
 
     fun getColors(): List<Color> {
-        return colorRepository.findAll().toList()
+        return colorRepository.findAllByOrderByIdAsc()
     }
 }
