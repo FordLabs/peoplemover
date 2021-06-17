@@ -31,7 +31,8 @@ import java.time.LocalDate
 class AssignmentService(
         private val assignmentRepository: AssignmentRepository,
         private val personRepository: PersonRepository,
-        private val productRepository: ProductRepository
+        private val productRepository: ProductRepository,
+        private val assignmentDateHandler: AssignmentDateHandler
 ) {
     fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<Assignment> {
         val allAssignmentsBeforeOrOnDate = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
@@ -51,8 +52,24 @@ class AssignmentService(
     }
 
     fun calculateStartDatesForAssignments(assignments: List<Assignment>, allAssignmentsSorted: List<Assignment>): List<Assignment> {
+        val returnValue: MutableList<Assignment> = mutableListOf()
+
+        val allImportantDates = assignmentDateHandler.findUniqueDates(allAssignmentsSorted)
+        for(assignment in assignments) {
+            val importantDatesforProduct = assignmentDateHandler.findUniqueDates(allAssignmentsSorted.filter{all -> all.productId == assignment.productId})
+                returnValue.add(
+                        Assignment(
+                                id = assignment.id,
+                                placeholder = assignment.placeholder,
+                                person = assignment.person,
+                                effectiveDate = assignment.effectiveDate,
+                                productId = assignment.productId,
+                                spaceUuid = assignment.spaceUuid,
+                                startDate = assignmentDateHandler.findStartDate(importantDatesforProduct, allImportantDates)))
+        }
+        return returnValue
         //get unique dates for allAssignmentsSorted
-        //allImportantDates = uniqueDates(List<Assignments): List<Dates>
+        //allImportantDates = uniqueDates(allAssignmentsSorted): List<Dates>
 
         //var updatedAssignmentList
 
@@ -60,32 +77,14 @@ class AssignmentService(
         //for each assignment: get unique dates for assignment
         // importantDatesForProduct = uniqueDates(allAssignmentsSorted.filter(productId))
         //findStartDate(uniqueDatesForAssignments, uniqueDatesForAllAssignmentsSorted): Date
-            // var lastKnownGoodDate
-            // if allImportantDates = importantDatesForProduct, lastKnownGoodDate = allImportantDates.last()
-                //else
-                // foreach date in uniqueDatesForAllAssignmentsSorted
-                //   if importantDatesForProduct.contains(date)
-                //     lastKnownGoodDate = date
-                //   else
-                //     break
-            // return lastKnownGoodDate
+
         //assignment.startDate = findStartDate(....)
 
     //return updatedAssginmentList
 
 
 
-        val returnValue: MutableList<Assignment> = mutableListOf()
-        assignments.forEach{ assignment -> returnValue.add(
-                Assignment(
-                        id = assignment.id,
-                        placeholder = assignment.placeholder,
-                        person = assignment.person,
-                        effectiveDate = assignment.effectiveDate,
-                        productId = assignment.productId,
-                        spaceUuid = assignment.spaceUuid,
-                        startDate = assignment.effectiveDate))}
-        return returnValue
+
     }
 
     fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
