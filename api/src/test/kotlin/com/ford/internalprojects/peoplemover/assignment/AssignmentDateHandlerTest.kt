@@ -3,6 +3,7 @@ package com.ford.internalprojects.peoplemover.assignment
 import com.ford.internalprojects.peoplemover.person.Person
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import java.time.LocalDate
 
@@ -133,8 +134,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findStartDate should return the oldest of two dates in uniqueDatesForAllAssignments list`() {
-        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1))
+    fun `findStartDate should return the oldest of two dates in uniqueDatesForAllAssignments list when both lists are equal`() {
+        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
         val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
 
         val expected: LocalDate = LocalDate.parse(jun1)
@@ -144,15 +145,15 @@ class AssignmentDateHandlerTest {
         assertThat(actual).isEqualTo(expected)
     }
 
-//    @Test
-//    fun `findStartDate should return the oldest of two dates in uniqueDatesForAllAssignments list`() {
-//        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1))
-//        val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
-//
-//        val expected: LocalDate = LocalDate.parse(jun1)
-//
-//        val actual = assignmentDateHandler.findStartDate(uniqueDatesForAssignment, uniqueDatesForAllAssignment)
-//
-//        assertThat(actual).isEqualTo(expected)
-//    }
+    @Test
+    fun `findStartDate should return`() {
+        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jul1))
+        val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
+
+        val expected: LocalDate = LocalDate.parse(jul1)
+
+        val actual = assignmentDateHandler.findStartDate(uniqueDatesForAssignment, uniqueDatesForAllAssignment)
+
+        assertThat(actual).isEqualTo(expected)
+    }
 }

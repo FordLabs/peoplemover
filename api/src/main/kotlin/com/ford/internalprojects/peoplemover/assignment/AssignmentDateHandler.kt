@@ -11,6 +11,11 @@ class AssignmentDateHandler {
     }
 
     fun findStartDate(uniqueDatesForAssignment: List<LocalDate>, uniqueDatesForAllAssignment: List<LocalDate>): LocalDate {
-        return uniqueDatesForAllAssignment.sortedByDescending { date -> date }.last()
+        return (
+                if(uniqueDatesForAssignment.equals(uniqueDatesForAllAssignment))
+                    uniqueDatesForAllAssignment.sortedByDescending { date -> date }.last()
+                else
+                    uniqueDatesForAllAssignment.sortedByDescending { date -> date }.first()
+                )
     }
 }
