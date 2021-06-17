@@ -11,11 +11,19 @@ class AssignmentDateHandler {
     }
 
     fun findStartDate(uniqueDatesForAssignment: List<LocalDate>, uniqueDatesForAllAssignment: List<LocalDate>): LocalDate {
-        return (
-                if(uniqueDatesForAssignment.equals(uniqueDatesForAllAssignment))
-                    uniqueDatesForAllAssignment.sortedByDescending { date -> date }.last()
-                else
-                    uniqueDatesForAllAssignment.sortedByDescending { date -> date }.first()
-                )
+        val uniqueDatesForAllAssignmentSorted = uniqueDatesForAllAssignment.sortedByDescending { date -> date }
+
+        var startDate = uniqueDatesForAllAssignmentSorted.last()
+
+        if(uniqueDatesForAssignment != uniqueDatesForAllAssignment) {
+            startDate = uniqueDatesForAllAssignmentSorted.first()
+            for(date in uniqueDatesForAllAssignmentSorted) {
+                if (uniqueDatesForAssignment.contains(date)) {
+                    startDate = date
+                } else
+                    break
+            }
+        }
+        return startDate
     }
 }

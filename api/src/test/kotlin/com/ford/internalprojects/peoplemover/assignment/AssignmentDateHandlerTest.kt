@@ -146,11 +146,23 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findStartDate should return`() {
+    fun `findStartDate should return newest of 2 dates when lists are not equal`() {
         val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jul1))
         val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
 
         val expected: LocalDate = LocalDate.parse(jul1)
+
+        val actual = assignmentDateHandler.findStartDate(uniqueDatesForAssignment, uniqueDatesForAllAssignment)
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `findStartDate should return first non missing date`() {
+        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(sep1), LocalDate.parse(aug1))
+        val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(sep1), LocalDate.parse(jul1), LocalDate.parse(aug1))
+
+        val expected: LocalDate = LocalDate.parse(aug1)
 
         val actual = assignmentDateHandler.findStartDate(uniqueDatesForAssignment, uniqueDatesForAllAssignment)
 
