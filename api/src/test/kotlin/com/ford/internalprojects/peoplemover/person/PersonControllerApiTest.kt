@@ -131,7 +131,8 @@ class PersonControllerApiTest {
                 notes = "Some Notes",
                 newPerson = true,
                 spaceUuid = space.uuid,
-                tags = setOf(tag)
+                tags = setOf(tag),
+                customField1 = "John35"
         )
         assertThat(personRepository.count()).isZero()
         val result = mockMvc.perform(post(basePeopleUrl)
@@ -153,6 +154,47 @@ class PersonControllerApiTest {
         assertThat(actualPerson.spaceUuid).isEqualTo(personToCreate.spaceUuid)
         assertThat(actualPerson).isEqualTo(personInDb)
         assertThat(actualPerson.tags).containsOnly(tag)
+        assertThat(actualPerson.customField1).isEqualTo(personToCreate.customField1)
+    }
+
+    @Test
+    fun `POST should not require custom field`() {
+        val spaceRole: SpaceRole = spaceRolesRepository.save(
+            SpaceRole(
+                name = "Software Engineer",
+                spaceUuid = space.uuid
+            )
+        )
+
+        val personToCreate = Person(
+            name = "John",
+            spaceRole = spaceRole,
+            notes = "Some Notes",
+            newPerson = true,
+            spaceUuid = space.uuid,
+            tags = setOf(tag)
+        )
+        assertThat(personRepository.count()).isZero()
+        val result = mockMvc.perform(post(basePeopleUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(personToCreate)))
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val actualPerson: Person = objectMapper.readValue(result.response.contentAsString, Person::class.java)
+
+        assertThat(personRepository.count()).isOne()
+        val personInDb: Person = personRepository.findAllBySpaceUuid(space.uuid).first()
+
+        assertThat(actualPerson.name).isEqualTo(personToCreate.name)
+        assertThat(actualPerson.spaceRole).isEqualTo(personToCreate.spaceRole)
+        assertThat(actualPerson.notes).isEqualTo(personToCreate.notes)
+        assertThat(actualPerson.newPerson).isEqualTo(personToCreate.newPerson)
+        assertThat(actualPerson.spaceUuid).isEqualTo(personToCreate.spaceUuid)
+        assertThat(actualPerson).isEqualTo(personInDb)
+        assertThat(actualPerson.tags).containsOnly(tag)
+        assertThat(actualPerson.customField1).isEqualTo(null)
     }
 
     @Test

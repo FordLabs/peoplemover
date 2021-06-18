@@ -123,6 +123,13 @@ describe('People actions', () => {
             await app.findByPlaceholderText('e.g. Jane Smith');
         });
 
+        it('should show placeholder text for the person cdsid', async () => {
+            const createPersonButton = await app.findByText(addPersonButtonText);
+            fireEvent.click(createPersonButton);
+
+            await app.findByPlaceholderText('e.g. jsmith12');
+        });
+
         it('should not submit assignment when nothing changed', async () => {
             const createPersonButton = await app.findByText(addPersonButtonText);
             fireEvent.click(createPersonButton);
@@ -141,6 +148,7 @@ describe('People actions', () => {
 
             fireEvent.change(await app.getByLabelText('Name'), {target: {value: 'New Bobby'}});
             fireEvent.change(await app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
+            fireEvent.change(await app.getByLabelText('CDSID'), {target: {value: 'btables1'}});
             fireEvent.click(await app.getByLabelText('Mark as New'));
 
             await act(async () => {
@@ -154,6 +162,7 @@ describe('People actions', () => {
                 const expectedPerson: Person = {
                     ...emptyPerson(),
                     name: 'New Bobby',
+                    customField1: 'btables1',
                     newPerson: true,
                     tags: [{
                         id: 1337,

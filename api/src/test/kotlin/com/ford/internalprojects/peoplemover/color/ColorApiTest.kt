@@ -77,7 +77,7 @@ class ColorApiTest {
     }
 
     @Test
-    fun `GET should return all the colors in the repository`() {
+    fun `GET should return all the colors in the repository in ascending ID order`() {
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
         assertThat(colorRepository.count()).isNotZero()
         val result = mockMvc.perform(get("/api/color")
@@ -91,6 +91,6 @@ class ColorApiTest {
                 objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Color::class.java)
         )
         actualColors.forEach{ color: Color -> assertThat(colors).contains(color.color) }
-
+        assertThat(colors[0]).isEqualTo(actualColors[0].color)
     }
 }

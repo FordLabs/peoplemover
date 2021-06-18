@@ -113,7 +113,7 @@ class ReportGeneratorControllerTest {
         spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceUuid = space1.uuid))
         personTag1 = personTagRepository.save(PersonTag(spaceUuid = space1.uuid, name = "Java"))
         personTag2 = personTagRepository.save(PersonTag(spaceUuid = space1.uuid, name = "Agency"))
-        person1 = personRepository.save(Person(name = "person 1", spaceRole = spaceRole, notes = "Notes", spaceUuid = space1.uuid, tags = hashSetOf(personTag1, personTag2)))
+        person1 = personRepository.save(Person(name = "person 1", customField1="pone1", spaceRole = spaceRole, notes = "Notes", spaceUuid = space1.uuid, tags = hashSetOf(personTag1, personTag2)))
         person2 = personRepository.save(Person(name = "Person 2", spaceUuid = space1.uuid))
         person3 = personRepository.save(Person(name = "Person 3", spaceRole = spaceRole2, spaceUuid = space1.uuid))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = PERMISSION_EDITOR))
@@ -151,7 +151,7 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, personNote = "Notes", personTags = hashSetOf(personTag1.name, personTag2.name).joinToString(","))
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, person1.customField1, spaceRole.name, personNote = "Notes", personTags = hashSetOf(personTag1.name, personTag2.name).joinToString(","))
 
         assertThat(actualPeopleReport.size).isOne()
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)
@@ -172,9 +172,9 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, spaceRole.name, "Notes", hashSetOf(personTag1.name, personTag2.name).joinToString(","))
-        val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, spaceRole2.name, "", "")
-        val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "", "", "")
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, person1.customField1, spaceRole.name, "Notes", hashSetOf(personTag1.name, personTag2.name).joinToString(","))
+        val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, "", spaceRole2.name, "", "")
+        val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "", "", "", "")
 
         assertThat(actualPeopleReport.size).isEqualTo(3)
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)

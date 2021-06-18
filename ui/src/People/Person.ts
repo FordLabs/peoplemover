@@ -26,6 +26,7 @@ export interface Person {
     newPerson: boolean;
     spaceUuid: string;
     tags: Array<Tag>;
+    customField1?: string;
 }
 
 export function emptyPerson(): Person {
@@ -35,6 +36,7 @@ export function emptyPerson(): Person {
         newPerson: false,
         spaceUuid: '',
         tags: [],
+        customField1: '',
     };
 }
 

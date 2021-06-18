@@ -89,15 +89,24 @@ class LocalDataGenerator(
         var colors = colorService.getColors()
         if (colors.isEmpty() && addColors) {
             colorService.addColors(listOf(
-                "#81C0FA",
                 "#83DDC2",
+                "#81C0FA",
                 "#A7E9F2",
-                "#C9E9B0",
                 "#DBB5FF",
-                "#FFD7B3",
                 "#FCBAE9",
+                "#FFD7B3",
                 "#FFEAAA",
-                "#FFFFFF"
+                "#C9E9B0",
+                "#FFFFFF",
+                "#3A9B7E",
+                "#387DBC",
+                "#44AEBC",
+                "#9161BE",
+                "#BF62A5",
+                "#D6843B",
+                "#EAC040",
+                "#78BA43",
+                "#333333"
             ))
             colors = colorService.getColors()
         }
@@ -110,14 +119,16 @@ class LocalDataGenerator(
             Person(
                 name = "Jane Smith",
                 spaceUuid = createdSpace.uuid,
-                spaceRole = role1
+                spaceRole = role1,
+                customField1 = "JSMITH"
             )
         )
         val bob: Person = personService.createPerson(
             Person(
                 name = "Bob Barker",
                 spaceUuid = createdSpace.uuid,
-                spaceRole = role2
+                spaceRole = role2,
+                customField1 = "BBARKER"
             )
         )
 
@@ -159,7 +170,8 @@ class LocalDataGenerator(
                 name = "Adam Sandler",
                 spaceUuid = createdSpace.uuid,
                 spaceRole = role3,
-                tags = personTags
+                tags = personTags,
+                customField1 = "ASANDLER"
             )
         )
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
