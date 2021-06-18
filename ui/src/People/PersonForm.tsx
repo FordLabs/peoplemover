@@ -58,12 +58,12 @@ import {
 } from '../SortingAndFiltering/FilterLibraries';
 import NewBadge from '../ReusableComponents/NewBadge';
 import ToolTip from '../ReusableComponents/ToolTip';
-// import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface AssignmentHistory {
     productName: string;
     id: number;
-    effectiveDate: Date | undefined;
+    startDate: Date | undefined;
 }
 
 type AssignmentHistoryType = AssignmentHistory | undefined;
@@ -306,57 +306,57 @@ function PersonForm({
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
-    // const getAssignmentHistory = (): AssignmentHistoryType[] => {
-    //     const returnValue = products.map((product) => {
-    //         const personsAssignment = product.assignments.find(
-    //             (assignment) => assignment.person.id === person.id
-    //         );
-    //         if (personsAssignment) {
-    //             return {
-    //                 productName: product.name,
-    //                 id: personsAssignment.id,
-    //                 effectiveDate: personsAssignment.effectiveDate,
-    //             };
-    //         } else {
-    //             return undefined;
-    //         }
-    //     }).filter((assignmentHistory) => (assignmentHistory !== undefined));
-    //     return returnValue;
-    // };
-    //
-    // const capitalize = (s: string): string => {
-    //     return s.charAt(0).toUpperCase() + s.slice(1);
-    // };
-    //
-    // const getAssignmentHistoryContent = (): JSX.Element => {
-    //     const assignmentHistories = getAssignmentHistory();
-    //     return (
-    //         <>
-    //             {assignmentHistories.map(
-    //                 assignmentHistory => {
-    //                     if (assignmentHistory) {
-    //                         let productName = assignmentHistory.productName;
-    //                         if (productName === 'unassigned') {
-    //                             productName = capitalize(productName);
-    //                         }
-    //                         let effectiveDate = (assignmentHistory.effectiveDate ? moment(assignmentHistory.effectiveDate).format('MM/DD/YYYY') : 'undefined date');
-    //                         return (
-    //                             <div key={assignmentHistory.id}>Moved to {productName} on {effectiveDate}</div>
-    //                         );
-    //                     } else {
-    //                         return (
-    //                             <div>No Assignment History</div>
-    //                         );
-    //                     }
-    //                 }
-    //             )}
-    //         </>
-    //     );
-    // };
-    //
-    // const fireMatomoHoverEvent = (): void =>  {
-    //     MatomoEvents.pushEvent(currentSpace.name, 'assignmentHistoryClick', currentUser);
-    // };
+    const getAssignmentHistory = (): AssignmentHistoryType[] => {
+        const returnValue = products.map((product) => {
+            const personsAssignment = product.assignments.find(
+                (assignment) => assignment.person.id === person.id
+            );
+            if (personsAssignment) {
+                return {
+                    productName: product.name,
+                    id: personsAssignment.id,
+                    startDate: personsAssignment.startDate,
+                };
+            } else {
+                return undefined;
+            }
+        }).filter((assignmentHistory) => (assignmentHistory !== undefined));
+        return returnValue;
+    };
+
+    const capitalize = (s: string): string => {
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    };
+
+    const getAssignmentHistoryContent = (): JSX.Element => {
+        const assignmentHistories = getAssignmentHistory();
+        return (
+            <>
+                {assignmentHistories.map(
+                    assignmentHistory => {
+                        if (assignmentHistory) {
+                            let productName = assignmentHistory.productName;
+                            if (productName === 'unassigned') {
+                                productName = capitalize(productName);
+                            }
+                            let effectiveDate = (assignmentHistory.startDate ? moment(assignmentHistory.startDate).format('MM/DD/YYYY') : 'undefined date');
+                            return (
+                                <div key={assignmentHistory.id}>Moved to {productName} on {effectiveDate}</div>
+                            );
+                        } else {
+                            return (
+                                <div>No Assignment History</div>
+                            );
+                        }
+                    }
+                )}
+            </>
+        );
+    };
+
+    const fireMatomoHoverEvent = (): void =>  {
+        MatomoEvents.pushEvent(currentSpace.name, 'assignmentHistoryClick', currentUser);
+    };
 
     return (
         <div className="formContainer">
@@ -421,9 +421,9 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
-                {/*{isEditPersonForm && <div className="assignmentHistoryContainer">*/}
-                {/*    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()} onHover={fireMatomoHoverEvent}/>*/}
-                {/*</div>}*/}
+                {isEditPersonForm && <div className="assignmentHistoryContainer">
+                    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()} onHover={fireMatomoHoverEvent}/>
+                </div>}
                 <div className="newBadgeContainer">
                     <NewBadge/>
                 </div>

@@ -5,6 +5,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
     }
 }
 
@@ -66,6 +67,8 @@ dependencies {
 
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    testImplementation "io.mockk:mockk:1.11.0"
 }
 
 // DEPLOYMENT CONFIGURATION

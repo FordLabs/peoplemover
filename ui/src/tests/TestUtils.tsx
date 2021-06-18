@@ -368,6 +368,7 @@ class TestUtils {
         person: TestUtils.hank,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         effectiveDate: new Date(2020, 6, 1),
+        startDate: new Date(2020, 0, 1),
     };
 
     static assignmentForUnassigned: Assignment = {

@@ -246,6 +246,7 @@ class ProductControllerInTimeApiTest {
                 person = person,
                 productId = product1.id!!,
                 effectiveDate = LocalDate.parse(apr2),
+                startDate = LocalDate.parse(apr1),
                 spaceUuid = spaceWithEditAccess.uuid
         ))
         val futureAssignment: Assignment = assignmentRepository.save(Assignment(

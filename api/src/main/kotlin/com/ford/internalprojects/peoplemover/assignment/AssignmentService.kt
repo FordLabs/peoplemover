@@ -31,7 +31,8 @@ import java.time.LocalDate
 class AssignmentService(
         private val assignmentRepository: AssignmentRepository,
         private val personRepository: PersonRepository,
-        private val productRepository: ProductRepository
+        private val productRepository: ProductRepository,
+        private val assignmentDateHandler: AssignmentDateHandler
 ) {
     fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<Assignment> {
         val allAssignmentsBeforeOrOnDate = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
@@ -43,10 +44,30 @@ class AssignmentService(
         val allAssignments: MutableList<Assignment> = mutableListOf()
         people.forEach { person ->
             val assignmentsForPerson: List<Assignment> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
-            allAssignments.addAll(getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson))
+            val lastAssignments: List<Assignment> = getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson)
+            allAssignments.addAll(calculateStartDatesForAssignments(lastAssignments, assignmentsForPerson))
         }
 
         return allAssignments
+    }
+
+    fun calculateStartDatesForAssignments(assignments: List<Assignment>, allAssignmentsSorted: List<Assignment>): List<Assignment> {
+        val returnValue: MutableList<Assignment> = mutableListOf()
+
+        val allImportantDates = assignmentDateHandler.findUniqueDates(allAssignmentsSorted)
+        assignments.forEach { assignment ->
+            val importantDatesforProduct = assignmentDateHandler.findUniqueDates(allAssignmentsSorted.filter{all -> all.productId == assignment.productId})
+                returnValue.add(
+                        Assignment(
+                                id = assignment.id,
+                                placeholder = assignment.placeholder,
+                                person = assignment.person,
+                                effectiveDate = assignment.effectiveDate,
+                                productId = assignment.productId,
+                                spaceUuid = assignment.spaceUuid,
+                                startDate = assignmentDateHandler.findStartDate(importantDatesforProduct, allImportantDates)))
+        }
+        return returnValue
     }
 
     fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
