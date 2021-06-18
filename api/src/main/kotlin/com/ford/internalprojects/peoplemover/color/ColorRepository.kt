@@ -21,4 +21,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ColorRepository : CrudRepository<Color, Int>
+interface ColorRepository : CrudRepository<Color, Int>{
+    fun findAllByOrderByIdAsc(): List<Color>
+}
