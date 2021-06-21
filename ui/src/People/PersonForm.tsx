@@ -56,7 +56,6 @@ import {
     AllGroupedTagFilterOptions,
     FilterTypeListings,
 } from '../SortingAndFiltering/FilterLibraries';
-import NewBadge from '../ReusableComponents/NewBadge';
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
 
@@ -424,9 +423,6 @@ function PersonForm({
                 {isEditPersonForm && <div className="assignmentHistoryContainer">
                     <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()} onHover={fireMatomoHoverEvent}/>
                 </div>}
-                <div className="newBadgeContainer">
-                    <NewBadge/>
-                </div>
                 <FormTagsField
                     tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
                     tagClient={PersonTagClient}
