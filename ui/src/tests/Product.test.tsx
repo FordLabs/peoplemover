@@ -123,7 +123,7 @@ describe('Products', () => {
                 undefined,
                 initialState);
 
-            await app.findAllByText('Add a person by clicking');
+            await app.findAllByText('Add a person by clicking Add Person icon above or drag them in.');
         });
 
         it('should not make an update assignment call when dragging assignment card to same product', async () => {

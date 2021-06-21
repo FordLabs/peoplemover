@@ -202,10 +202,8 @@ function ProductCard({
                         {!isReadOnly && product.assignments.length === 0 && (
                             <div className="emptyProductText">
                                 <div className="emptyProductTextHint">
-                                    <p>Add a person by clicking</p>
-                                    <i className="material-icons greyIcon addPersonIcon" aria-hidden>person_add</i>
+                                    <p>Add a person by clicking Add Person icon above or drag them in.</p>
                                 </div>
-                                <p>above, or drag them in.</p>
                             </div>
                         )}
                     </div>
