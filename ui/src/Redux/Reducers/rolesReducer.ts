@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-export interface Space {
-    id?: number;
-    uuid?: string;
-    name: string;
-    lastModifiedDate: string;
-    todayViewIsPublic: boolean;
-}
+import {AvailableActions} from '../Actions';
+import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
+import {RoleTag} from '../../Roles/RoleTag.interface';
 
-export function createEmptySpace(): Space {
-    return {
-        name: '',
-        lastModifiedDate: '',
-        todayViewIsPublic: false,
-    };
-}
+const rolesReducer = (state: Array<RoleTag> = [], action: {type: AvailableActions; roles: Array<RoleTag>} ): Array<RoleTag> => {
+    if (action.type === AvailableActions.SET_ROLES) {
+        const roles = [...action.roles];
+        sortTagsAlphabetically(roles);
+        return roles;
+    } else {
+        return state;
+    }
+};
+
+export default rolesReducer;

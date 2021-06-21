@@ -23,8 +23,6 @@ describe('current space reducer', () => {
     const space: Space = {
         id: 1,
         name: 'Space One',
-        roles: [],
-        locations: [],
         lastModifiedDate: '2019-01-01',
         todayViewIsPublic: false,
     };

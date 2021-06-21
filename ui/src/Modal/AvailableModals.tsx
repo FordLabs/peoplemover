@@ -7,7 +7,6 @@ export enum AvailableModals {
     EDIT_PERSON,
     CREATE_ASSIGNMENT,
     ASSIGNMENT_EXISTS_WARNING,
-    MY_TAGS,
     MY_ROLES_MODAL,
     CREATE_SPACE,
     EDIT_SPACE,

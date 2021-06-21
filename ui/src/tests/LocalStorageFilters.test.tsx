@@ -23,6 +23,8 @@ import {RenderResult} from '@testing-library/react';
 import {createBrowserHistory} from 'history';
 import {Router} from 'react-router-dom';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
+import LocationClient from '../Locations/LocationClient';
+import {AxiosResponse} from 'axios';
 
 describe('Filter products', () => {
     class MockLocalStorage {
@@ -85,7 +87,13 @@ describe('Filter products', () => {
         const locationTagIcon: HTMLElement = editIcons[0];
         fireEvent.click(locationTagIcon);
 
-        await app.findByTestId('saveTagButton');
+        LocationClient.get = jest.fn(
+            () => Promise.resolve({
+                data: [
+                    {id: 1, name: 'Saline', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'},
+                    TestUtils.detroit, TestUtils.dearborn, TestUtils.southfield,
+                ],
+            } as AxiosResponse));
 
         const editLocationTagText = await app.findByTestId('tagNameInput');
         const updatedLocation = 'Saline';
@@ -97,7 +105,7 @@ describe('Filter products', () => {
         const instancesOfSaline = await app.findAllByText(updatedLocation);
         expect(instancesOfSaline.length).toEqual(2);
 
-        const tagFiltersAfterUpdate: LocalStorageFilters = JSON.parse(localStorage.getItem('filters') || '');
+        const tagFiltersAfterUpdate = JSON.parse(localStorage.getItem('filters') || '');
         expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(TestUtils.detroit.name);
         expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(updatedLocation);
         expect(tagFiltersAfterUpdate.locationTagsFilters).not.toContain(TestUtils.annarbor.name);

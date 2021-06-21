@@ -24,6 +24,7 @@ import {
     addPersonAction,
     closeModalAction,
     editPersonAction,
+    fetchRolesAction,
     setAllGroupedTagFilterOptionsAction,
     setIsUnassignedDrawerOpenAction,
 } from '../Redux/Actions';
@@ -38,7 +39,6 @@ import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {JSX} from '@babel/types';
-import {Dispatch} from 'redux';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import {Space} from '../Space/Space';
 import moment from 'moment';
@@ -77,12 +77,14 @@ interface PersonFormProps {
     viewingDate: Date;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentUser: string;
+    roles: Array<RoleTag>;
 
     closeModal(): void;
     addPerson(person: Person): void;
     editPerson(person: Person): void;
     setIsUnassignedDrawerOpen(isUnassignedDrawerOpen: boolean): void;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
+    fetchRoles(): Array<RoleTag>;
 }
 
 function PersonForm({
@@ -100,6 +102,8 @@ function PersonForm({
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     currentUser,
+    roles,
+    fetchRoles,
 }: PersonFormProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
@@ -110,15 +114,12 @@ function PersonForm({
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
     const [selectedPersonTags, setSelectedPersonTags] = useState<Array<Tag>>([]);
-    const [roles, setRoles] = useState<Array<RoleTag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
 
-    const alphabetize = (roles: Array<RoleTag | Product>): Array<RoleTag | Product> => {
-        return roles.sort((a, b) => {
-            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-            return 0;
+    const alphabetize = (products: Array<Product>): void => {
+        products.sort((product1: Product, product2: Product) => {
+            return product1.name.toLowerCase().localeCompare(product2.name.toLowerCase());
         });
     };
 
@@ -134,11 +135,6 @@ function PersonForm({
     };
 
     useOnLoad(() => {
-        RoleClient.get(spaceUuid)
-            .then((response) => {
-                setRoles(alphabetize(response.data));
-            });
-
         if (isEditPersonForm && personEdited) {
             populatedEntirePersonForm(personEdited);
         } else {
@@ -276,7 +272,7 @@ function PersonForm({
         const roleAddRequest: RoleAddRequest = {name: inputValue};
         RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
             const newRole: RoleTag = response.data;
-            setRoles(roles => alphabetize([...roles, newRole]));
+            fetchRoles();
             updatePersonField('spaceRole', newRole);
             setIsLoading(false);
         });
@@ -478,16 +474,17 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: state.viewingDate,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
     currentUser: state.currentUser,
+    roles: state.roles,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
     addPerson: (person: Person) => dispatch(addPersonAction(person)),
     editPerson: (person: Person) => dispatch(editPersonAction(person)),
     setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-
+    fetchRoles: () => dispatch(fetchRolesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PersonForm);

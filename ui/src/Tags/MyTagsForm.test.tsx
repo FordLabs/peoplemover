@@ -51,11 +51,4 @@ describe('My Tags Form', () => {
         await app.findByText(TestUtils.productTag3.name);
         await app.findByText(TestUtils.productTag4.name);
     });
-
-    it('should default the titles if no index is passed in', async () => {
-        const app = renderWithRedux(<MyTagsForm />, undefined, initialState);
-
-        await  app.findByText('Location Tags');
-        await app.findByText('Product Tags');
-    });
 });

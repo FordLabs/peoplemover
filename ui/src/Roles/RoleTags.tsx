@@ -1,30 +1,46 @@
+/*
+ * Copyright (c) 2021 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {JSX} from '@babel/types';
 import {Color, RoleTag} from './RoleTag.interface';
 import React, {useState} from 'react';
 import {TagInterface} from '../Tags/Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import RoleClient from './RoleClient';
-import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
 import {createDataTestId} from '../tests/TestUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {INACTIVE_EDIT_STATE_INDEX} from './MyRolesForm';
 import {Space} from '../Space/Space';
-import {TagAction} from '../Tags/MyTagsForm';
+import {INACTIVE_EDIT_STATE_INDEX} from '../Tags/MyTagsForm';
 import {RoleEditRequest} from './RoleEditRequest.interface';
+import {fetchRolesAction, setupSpaceAction} from '../Redux/Actions';
 
 interface Props {
     colors: Array<Color>;
     roles: Array<RoleTag>;
-    setRoles(Function: (roles: Array<TagInterface>) => TagInterface[]): void;
-    updateFilterOptions(index: number, tag: TagInterface, action: TagAction): void;
+    fetchRoles(): Array<RoleTag>;
+    updateFilterOptions(index: number, tag: TagInterface): void;
     currentSpace: Space;
 }
 
-const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }: Props): JSX.Element => {
+const RoleTags = ({ colors, roles, fetchRoles, updateFilterOptions, currentSpace }: Props): JSX.Element => {
     const tagType = 'role';
     const roleFiltersIndex = 2;
     const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
@@ -49,12 +65,8 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
         return await RoleClient.edit(role, currentSpace)
             .then((response) => {
                 const newRole: RoleTag = response.data;
-                updateFilterOptions(roleFiltersIndex, newRole, TagAction.EDIT);
-                setRoles((prevRoles: Array<RoleTag>) => {
-                    const locations = prevRoles.map(prevTrait => prevTrait.id !== role.id ? prevTrait : newRole);
-                    sortTagsAlphabetically(locations);
-                    return locations;
-                });
+                updateFilterOptions(roleFiltersIndex, newRole);
+                fetchRoles();
                 returnToViewState();
             });
     };
@@ -66,13 +78,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
         };
         return await RoleClient.add(newRole, currentSpace)
             .then((response) => {
-                const newRole: RoleTag = response.data;
-                updateFilterOptions(roleFiltersIndex, newRole, TagAction.ADD);
-                setRoles((prevRoles: Array<RoleTag>) => {
-                    const roles = [...prevRoles, newRole];
-                    sortTagsAlphabetically(roles);
-                    return roles;
-                });
+                fetchRoles();
                 returnToViewState();
             });
     };
@@ -82,8 +88,7 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
             if (currentSpace.uuid) {
                 await RoleClient.delete(roleToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
-                updateFilterOptions(roleFiltersIndex, roleToDelete, TagAction.DELETE);
-                setRoles((prevRoles: Array<RoleTag>) => prevRoles.filter((role: RoleTag) => role.id !== roleToDelete.id));
+                fetchRoles();
             }
         } catch {
             return;
@@ -153,7 +158,13 @@ const RoleTags = ({ colors, roles, setRoles, updateFilterOptions, currentSpace }
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
+    roles: state.roles,
 });
 
-export default connect(mapStateToProps)(RoleTags);
+const mapDispatchToProps = (dispatch: any) => ({
+    fetchRoles: () => dispatch(fetchRolesAction()),
+    setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RoleTags);
 /* eslint-enable */

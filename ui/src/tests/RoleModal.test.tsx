@@ -17,16 +17,17 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult, wait} from '@testing-library/react';
+import {act, findByTestId, findByText, fireEvent, RenderResult, wait} from '@testing-library/react';
 import RoleClient from '../Roles/RoleClient';
 import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import MyRolesForm from '../Roles/MyRolesForm';
+import * as Actions from '../Redux/Actions';
 
 describe('My Roles Form', () => {
     let app: RenderResult;
-    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions} as GlobalStateProps;
+    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions, roles: TestUtils.roles} as GlobalStateProps;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -49,9 +50,9 @@ describe('My Roles Form', () => {
     });
 
     it('should show existing roles with color-circle', async () => {
-        expect(await app.findByTestId(`myRolesCircle__${TestUtils.roles[0].name}`)).toHaveStyle(`background-color: ${TestUtils.color1.color}`);
+        expect(await app.findByTestId(`myRolesCircle__${TestUtils.roles[0].name}`)).toHaveStyle(`background-color: ${TestUtils.color3.color}`);
         expect(await app.findByTestId(`myRolesCircle__${TestUtils.roles[1].name}`)).toHaveStyle(`background-color: ${TestUtils.color2.color}`);
-        expect(await app.findByTestId(`myRolesCircle__${TestUtils.roles[2].name}`)).toHaveStyle(`background-color: ${TestUtils.color3.color}`);
+        expect(await app.findByTestId(`myRolesCircle__${TestUtils.roles[2].name}`)).toHaveStyle(`background-color: ${TestUtils.color1.color}`);
     });
 
     describe('adding roles', () => {
@@ -92,6 +93,8 @@ describe('My Roles Form', () => {
         });
 
         it('should make role with white color if user never changed color option', async () => {
+            const fetchRolesActionFn = jest.spyOn(Actions, 'fetchRolesAction');
+
             const expectedNewRoleName = 'Architecture';
 
             const addNewRoleButton = await app.findByText('Add New Role');
@@ -111,7 +114,11 @@ describe('My Roles Form', () => {
                 name: expectedNewRoleName,
                 colorId: TestUtils.whiteColor.id,
             };
+            expect(RoleClient.add).toHaveBeenCalledTimes(1);
             expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace);
+            expect(RoleClient.get).toHaveBeenCalledTimes(1);
+            expect(RoleClient.get).toHaveBeenCalledWith(initialState.currentSpace.uuid);
+            expect(fetchRolesActionFn).toHaveBeenCalledTimes(1);
         });
 
         it('should not allow saving empty role', async () => {
@@ -223,9 +230,6 @@ describe('My Roles Form', () => {
             await wait(() => {
                 expect(app.queryByText(deleteWarning)).not.toBeInTheDocument();
             });
-
-            const myRolesModalContainer = await app.findByTestId('myRolesModalContainer');
-            expect(queryByText(myRolesModalContainer, 'Product Manager')).not.toBeInTheDocument();
         });
     });
 

@@ -26,6 +26,7 @@ import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
     fetchLocationsAction,
+    fetchRolesAction,
     fetchProductsAction,
     fetchProductTagsAction,
     fetchPersonTagsAction,
@@ -56,6 +57,7 @@ import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import AnnouncementBanner from '../Header/AnnouncementBanner';
 import HeaderContainer from '../Header/HeaderContainer';
+import {RoleTag} from '../Roles/RoleTag.interface';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -76,6 +78,8 @@ export interface PeopleMoverProps {
 
     fetchLocations(): Array<LocationTag>;
 
+    fetchRoles(): Array<RoleTag>;
+
     setPeople(people: Array<Person>): Array<Person>;
 
     setCurrentModal(modalState: CurrentModalState): void;
@@ -95,6 +99,7 @@ function PeopleMover({
     fetchProductTags,
     fetchPersonTags,
     fetchLocations,
+    fetchRoles,
     setSpace,
     setPeople,
     setCurrentModal,
@@ -147,6 +152,7 @@ function PeopleMover({
             fetchProductTags();
             fetchPersonTags();
             fetchLocations();
+            fetchRoles();
             PeopleClient.getAllPeopleInSpace(currentSpace.uuid)
                 .then((response) => {
                     const peopleInSpace = response.data;
@@ -161,6 +167,7 @@ function PeopleMover({
         fetchProductTags,
         fetchPersonTags,
         fetchLocations,
+        fetchRoles,
         handleErrors,
     ]);
 
@@ -233,6 +240,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
     fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
     fetchLocations: () => dispatch(fetchLocationsAction()),
+    fetchRoles: () => dispatch(fetchRolesAction()),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),

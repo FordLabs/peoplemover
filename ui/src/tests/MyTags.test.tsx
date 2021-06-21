@@ -17,12 +17,14 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import {act, findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
+import {findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import MyTagsForm from '../Tags/MyTagsForm';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {AxiosResponse} from 'axios';
 
 describe('My Tags Form', () => {
     let app: RenderResult;
@@ -33,34 +35,37 @@ describe('My Tags Form', () => {
         allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
     } as GlobalStateProps;
 
-    beforeEach(async () => {
+    beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
+    });
 
-        await act(async () => {
-            app = await renderWithRedux(<MyTagsForm/>, undefined, initialState);
+    const renderMyTagsForm = (filterType: FilterType): void => {
+        app = renderWithRedux(<MyTagsForm filterType={filterType} />, undefined, initialState);
+    };
+
+    describe('should contain expected contents', () => {
+        it('should contain all location tags available in the space in the order they are provided', async () => {
+            renderMyTagsForm(FilterTypeListings.Location);
+            await app.findByTestId('myTagsModal');
+            const locationTags: Array<HTMLSpanElement> = await app.findAllByTestId('tagName__location');
+            expect(locationTags.length).toEqual(4);
+
+            expect(locationTags[0].innerHTML).toEqual(TestUtils.annarbor.name);
+            expect(locationTags[1].innerHTML).toEqual(TestUtils.detroit.name);
+            expect(locationTags[2].innerHTML).toEqual(TestUtils.dearborn.name);
+            expect(locationTags[3].innerHTML).toEqual(TestUtils.southfield.name);
         });
-    });
 
-    it('Should open My Tags modal on click of text', async () => {
-        await app.findByTestId('myTagsModal');
-    });
-
-    it('should contain all location tags available in the space in the order they are provided', async () => {
-        const locationTags: Array<HTMLSpanElement> = await app.findAllByTestId('tagName__location');
-        expect(locationTags.length).toEqual(4);
-
-        expect(locationTags[0].innerHTML).toEqual(TestUtils.annarbor.name);
-        expect(locationTags[1].innerHTML).toEqual(TestUtils.detroit.name);
-        expect(locationTags[2].innerHTML).toEqual(TestUtils.dearborn.name);
-        expect(locationTags[3].innerHTML).toEqual(TestUtils.southfield.name);
-    });
-
-    it('Should contain all product tags available in the space', async () => {
-        const myTagsModal = await app.findByTestId('myTagsModal');
-        for (const productTag of TestUtils.productTags) {
-            await findByText(myTagsModal, productTag.name);
-        }
+        it('Should contain all product tags available in the space', async () => {
+            renderMyTagsForm(FilterTypeListings.ProductTag);
+            const myTagsModal = await app.findByTestId('myTagsModal');
+            const productTags: Array<HTMLSpanElement> = await app.findAllByTestId('tagName__product_tag');
+            expect(productTags.length).toEqual(4);
+            for (const productTag of TestUtils.productTags) {
+                await findByText(myTagsModal, productTag.name);
+            }
+        });
     });
 
     describe('Editing a tag', () => {
@@ -69,6 +74,13 @@ describe('My Tags Form', () => {
             let locationTagIcon: HTMLElement;
 
             beforeEach(async () => {
+                LocationClient.get = jest.fn(
+                    () => Promise.resolve({
+                        data: [
+                            {id: 1, name: 'Saline', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'},
+                            TestUtils.detroit, TestUtils.dearborn, TestUtils.southfield],
+                    } as AxiosResponse));
+                renderMyTagsForm(FilterTypeListings.Location);
                 const editIcons = await app.findAllByTestId('editIcon__location');
                 locationTagIcon = editIcons[0];
             });
@@ -130,6 +142,13 @@ describe('My Tags Form', () => {
             let editIcons: Array<HTMLElement>;
 
             beforeEach(async () => {
+                ProductTagClient.get = jest.fn(
+                    () => Promise.resolve({
+                        data: [
+                            {id: 5, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+                            TestUtils.productTag2, TestUtils.productTag3, TestUtils.productTag4],
+                    } as AxiosResponse));
+                renderMyTagsForm(FilterTypeListings.ProductTag);
                 editIcons = await app.findAllByTestId('editIcon__product_tag');
                 productTagIcon = editIcons[0];
                 fireEvent.click(productTagIcon);
@@ -173,6 +192,12 @@ describe('My Tags Form', () => {
             const expectedDeleteLocationWarning = 'Deleting this location will remove it from anything that has been given this location.';
 
             beforeEach(async () => {
+                LocationClient.get = jest.fn(
+                    () => Promise.resolve({
+                        data: [
+                            TestUtils.detroit, TestUtils.dearborn, TestUtils.southfield],
+                    } as AxiosResponse));
+                renderMyTagsForm(FilterTypeListings.Location);
                 const deleteIcons = await app.findAllByTestId('deleteIcon__location');
                 locationTagDeleteIcon = deleteIcons[0];
                 fireEvent.click(locationTagDeleteIcon);
@@ -202,6 +227,12 @@ describe('My Tags Form', () => {
             const deleteProductTagWarning = 'Deleting this product tag will remove it from anything that has been given this product tag.';
 
             beforeEach(async () => {
+                ProductTagClient.get = jest.fn(
+                    () => Promise.resolve({
+                        data: [
+                            TestUtils.productTag2, TestUtils.productTag3, TestUtils.productTag4],
+                    } as AxiosResponse));
+                renderMyTagsForm(FilterTypeListings.ProductTag);
                 const deleteIcons = await app.findAllByTestId('deleteIcon__product_tag');
                 productTagDeleteIcon = deleteIcons[0];
 
@@ -229,19 +260,18 @@ describe('My Tags Form', () => {
     });
 
     describe('Adding a new tag', () => {
-        it('should contain add new tag options in My Tags modal', async () => {
-            await app.findByText('Add New Product Tag');
-            await app.findByText('Add New Location');
-        });
 
         describe('adding a location tag', () => {
             beforeEach(async () => {
+                LocationClient.get = jest.fn(
+                    () => Promise.resolve({
+                        data: [
+                            ...TestUtils.locations,
+                            {id: 5, name: 'Ahmedabad', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'}],
+                    } as AxiosResponse));
+                renderMyTagsForm(FilterTypeListings.Location);
                 const addNewLocationButton = await app.findByText('Add New Location');
                 fireEvent.click(addNewLocationButton);
-            });
-
-            it('should open add tag section when add new tag option is clicked in Location Tags', async () => {
-                await app.findByTestId('saveTagButton');
             });
 
             it('should create new location tag and show it in a modal', async () => {
@@ -274,6 +304,9 @@ describe('My Tags Form', () => {
         });
 
         describe('Interaction between editing and creating location tag', () => {
+            beforeEach(async () => {
+                renderMyTagsForm(FilterTypeListings.Location);
+            });
 
             it('should not show pen and trash can when add new tag is clicked', async () => {
                 expect(app.queryAllByTestId('editIcon__location').length).toEqual(4);
@@ -305,12 +338,15 @@ describe('My Tags Form', () => {
 
         describe('Adding a product tag', () => {
             beforeEach(async () => {
+                ProductTagClient.get = jest.fn(
+                    () => Promise.resolve({
+                        data: [
+                            ...TestUtils.productTags,
+                            {id: 5, name: 'Fin Tech', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'}],
+                    } as AxiosResponse));
+                renderMyTagsForm(FilterTypeListings.ProductTag);
                 const addNewProductTagButton = await app.findByText('Add New Product Tag');
                 fireEvent.click(addNewProductTagButton);
-            });
-
-            it('should open add tag section when add new tag option is clicked in Product Tags', async () => {
-                await app.findByTestId('saveTagButton');
             });
 
             it('should create new product tag and show it in a modal', async () => {
@@ -343,6 +379,9 @@ describe('My Tags Form', () => {
         });
 
         describe('Interaction between editing and creating product tag', () => {
+            beforeEach(async () => {
+                renderMyTagsForm(FilterTypeListings.ProductTag);
+            });
 
             it('should not show pen and trash can when add new tag is clicked', async () => {
                 expect(app.queryAllByTestId('editIcon__product_tag').length).toEqual(4);

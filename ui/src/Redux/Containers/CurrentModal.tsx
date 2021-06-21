@@ -108,8 +108,6 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             }];
         case AvailableModals.ASSIGNMENT_EXISTS_WARNING:
             return [{title: 'Uh-oh', form: <AssignmentExistsWarning/>}];
-        case AvailableModals.MY_TAGS:
-            return [{title: 'My Tags', form: <MyTagsForm/>}];
         case AvailableModals.MY_LOCATION_TAGS:
             const location = FilterTypeListings.Location;
             return [{title: location.label, form: <MyTagsForm filterType={location}/> }];
