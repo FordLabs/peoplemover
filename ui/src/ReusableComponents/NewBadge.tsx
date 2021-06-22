@@ -22,4 +22,9 @@ function NewBadge(): JSX.Element {
     return <span className="newBadge" data-testid="newBadge">NEW</span>;
 }
 
+export function calculateGradient(date: Date | undefined): string {
+    return '';
+}
+
 export default NewBadge;
+

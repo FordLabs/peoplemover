@@ -24,6 +24,7 @@ export interface Person {
     spaceRole?: RoleTag;
     notes?: string;
     newPerson: boolean;
+    newPersonDate?: Date;
     spaceUuid: string;
     tags: Array<Tag>;
     customField1?: string;

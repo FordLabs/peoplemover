@@ -18,7 +18,7 @@
 import React, {RefObject, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
-import NewBadge from '../ReusableComponents/NewBadge';
+import NewBadge, {calculateGradient} from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
 import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';
@@ -204,7 +204,7 @@ function AssignmentCard({
                 }
             }}
         >
-            {assignment.person.newPerson && <div className="newPersonBadge"><NewBadge/></div>}
+            {assignment.person.newPerson && <div className={'newPersonBadge ' + calculateGradient(assignment.person.newPersonDate)}><NewBadge/></div>}
             <PersonAndRoleInfo
                 isReadOnly={isReadOnly}
                 assignment={assignment}
