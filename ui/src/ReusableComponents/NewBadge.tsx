@@ -17,12 +17,21 @@
 
 import React from 'react';
 import './NewBadge.scss';
+import moment from "moment";
 
 function NewBadge(): JSX.Element {
     return <span className="newBadge" data-testid="newBadge">NEW</span>;
 }
 
-export function calculateGradient(date: Date | undefined): string {
+export function calculateGradient(newPersonDate: Date | undefined): string {
+    const eightDaysAhead = moment(newPersonDate).add(8, 'days');
+    const fifteenDaysAhead = moment(newPersonDate).add(15, 'days');
+
+    if (moment().isBetween( eightDaysAhead, fifteenDaysAhead, 'day', '[]')){
+        return 'stage2';
+    } else if (moment().isAfter(fifteenDaysAhead)) {
+        return 'stage3';
+    }
     return '';
 }
 
