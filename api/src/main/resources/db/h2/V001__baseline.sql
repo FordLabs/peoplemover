@@ -59,6 +59,7 @@ create table person
     name          varchar(255),
     notes         varchar(255),
     new_person    bit default 0 not null,
+    new_person_date date,
     space_role_id int,
     space_uuid    varchar (36) not null,
     custom_field1  varchar(255),
