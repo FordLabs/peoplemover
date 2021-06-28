@@ -26,6 +26,7 @@ import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute';
 import PeopleMover from './Application/PeopleMover';
 import ErrorPageTemplate from './Application/ErrorPageTemplate';
+import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
 import AnimatedImageSrc from './Application/Assets/404.gif';
 import errorImageSrc from './Application/Assets/403.png';
 
@@ -58,7 +59,7 @@ function Routes(): JSX.Element {
                 </AuthorizedRoute>
 
                 <AuthorizedRoute exact path="/:teamName/timeonproduct">
-                    <div>ahahahahahahah</div>
+                    <TimeOnProduct/>
                 </AuthorizedRoute>
 
                 <Route path={notFoundUrl}>
