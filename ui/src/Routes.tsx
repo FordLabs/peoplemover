@@ -57,6 +57,10 @@ function Routes(): JSX.Element {
                     <PeopleMover/>
                 </AuthorizedRoute>
 
+                <AuthorizedRoute exact path="/:teamName/timeonproduct">
+                    <div>ahahahahahahah</div>
+                </AuthorizedRoute>
+
                 <Route path={notFoundUrl}>
                     <ErrorPageTemplate errorGraphic={AnimatedImageSrc} errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."/>
                 </Route>

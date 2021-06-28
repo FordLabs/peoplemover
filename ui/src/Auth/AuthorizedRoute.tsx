@@ -36,6 +36,10 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
     const {children, setIsReadOnly, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
+    function extractUuidFromUrl(): string {
+        return window.location.pathname.split('/')[1];
+    }
+
     useOnLoad(() => {
         setIsReadOnly(false);
 
@@ -45,7 +49,7 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
             const cookie = new Cookies();
             const accessToken = cookie.get('accessToken');
 
-            const uuid = window.location.pathname.replace('/', '');
+            const uuid = extractUuidFromUrl();
 
             AccessTokenClient.userCanAccessSpace(accessToken, uuid)
                 .then(() => {
