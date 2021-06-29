@@ -50,10 +50,13 @@ function TimeOnProduct({
     };
 
     const ListOfAssignments = ({assignments}: ListOfAssignmentsProps): JSX.Element => {
-        if (assignments.length === 0) {return (<div>+++ none</div>);}
+        if (assignments.length === 0) {
+            return (<div>+++ none</div>);
+        }
         return (<>
             {assignments.map(assignment => {
-                return (<div key={assignment.id}>+++ {assignment.person.name} - {calculateDuration(assignment)} day(s)</div>);
+                return (<div
+                    key={assignment.id}>+++ {assignment.person.name} - {calculateDuration(assignment)} day(s)</div>);
             })}
         </>);
     };
@@ -63,18 +66,22 @@ function TimeOnProduct({
             {products.map(product => {
                 return (
                     <div key={product.id}>+ Product Name: {product.name}
-                        <div>++ Assignments: </div>
+                        <div>++ Assignments:</div>
                         <ListOfAssignments assignments={product.assignments}/>
                     </div>);
             })}
         </>);
     };
 
-    return (<div>Time On Product
-        <div>- Current Space: {currentSpace.name}</div>
-        <div>- Current date: {viewingDate.toDateString()}</div>
-        <ListOfProducts/>
-    </div>);
+    return (
+        <div>Time On Product
+            <div>- Current date: {viewingDate.toDateString()}</div>
+            {currentSpace && currentSpace.name && <>
+                <div>- Current Space: {currentSpace.name}</div>
+                <ListOfProducts/>
+            </>}
+        </div>
+    );
 }
 
 /* eslint-disable */
