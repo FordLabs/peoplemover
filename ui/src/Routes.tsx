@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {BrowserRouter as Router, Redirect} from 'react-router-dom';
+import {BrowserRouter as Router, Redirect, Link} from 'react-router-dom';
 import {Route, Switch} from 'react-router';
 import LandingPage from './LandingPage/LandingPage';
 import {OAuthRedirect} from './ReusableComponents/OAuthRedirect';
@@ -58,9 +58,7 @@ function Routes(): JSX.Element {
                     <PeopleMover/>
                 </AuthorizedRoute>
 
-                <AuthorizedRoute exact path="/:teamName/timeonproduct">
-                    <TimeOnProduct/>
-                </AuthorizedRoute>
+                <Link to={"/:teamName/timeonproduct"} component={TimeOnProduct}/>
 
                 <Route path={notFoundUrl}>
                     <ErrorPageTemplate errorGraphic={AnimatedImageSrc} errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."/>

@@ -23,7 +23,7 @@ import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
 
 import './Headers.scss';
-import RedirectClient from '../Utils/RedirectClient';
+import {Link} from 'react-router-dom';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
@@ -40,17 +40,13 @@ function Header({
     const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
     const spaceName = currentSpace?.name;
 
-    const timeOnProductClick = (): void => {
-        RedirectClient.redirect(`/${currentSpace.uuid}/timeonproduct`);
-    };
-
     return (
         <header className="peopleMoverHeader">
             <div className="headerLeftContainer">
                 <PeopleMoverLogo href={logoHref}/>
                 {spaceName && <h1 className="spaceName">{spaceName}</h1>}
             </div>
-            <button onClick={timeOnProductClick}>Time on Product</button>
+            {currentSpace && currentSpace.uuid && <Link to={`/${currentSpace.uuid}/timeonproduct`}>Time on Product</Link>}
             {!hideAllButtons &&
             <div className="headerRightContainer">
                 <AccountDropdown hideSpaceButtons={hideSpaceButtons}/>

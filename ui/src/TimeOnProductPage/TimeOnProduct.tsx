@@ -16,9 +16,73 @@
  */
 
 import React from 'react';
+import {Product} from '../Products/Product';
+import {GlobalStateProps} from '../Redux/Reducers';
+import {connect} from 'react-redux';
+import {Assignment} from '../Assignments/Assignment';
+import moment from 'moment';
+import {Space} from '../Space/Space';
 
-function TimeOnProduct(): JSX.Element {
-
-    return <div> bla blagl </div>;
+export interface ListOfAssignmentsProps {
+    assignments: Array<Assignment>;
 }
-export default TimeOnProduct;
+
+export interface TimeOnProductProps {
+    currentSpace: Space;
+    viewingDate: Date;
+    products: Array<Product>;
+}
+
+function TimeOnProduct({
+    currentSpace,
+    viewingDate,
+    products,
+}: TimeOnProductProps): JSX.Element {
+
+    const calculateDuration = (assignment: Assignment): number => {
+        if (assignment.startDate) {
+            const viewingDateMoment = moment(viewingDate);
+            const startingDateMoment = moment(assignment.startDate);
+            return Math.floor(moment.duration(viewingDateMoment.diff(startingDateMoment)).asDays());
+        } else {
+            return -1;
+        }
+    };
+
+    const ListOfAssignments = ({assignments}: ListOfAssignmentsProps): JSX.Element => {
+        if (assignments.length === 0) {return (<div>+++ none</div>);}
+        return (<>
+            {assignments.map(assignment => {
+                return (<div key={assignment.id}>+++ {assignment.person.name} - {calculateDuration(assignment)} day(s)</div>);
+            })}
+        </>);
+    };
+
+    const ListOfProducts = (): JSX.Element => {
+        return (<>
+            {products.map(product => {
+                return (
+                    <div key={product.id}>+ Product Name: {product.name}
+                        <div>++ Assignments: </div>
+                        <ListOfAssignments assignments={product.assignments}/>
+                    </div>);
+            })}
+        </>);
+    };
+
+    return (<div>Time On Product
+        <div>- Current Space: {currentSpace.name}</div>
+        <div>- Current date: {viewingDate.toDateString()}</div>
+        <ListOfProducts/>
+    </div>);
+}
+
+/* eslint-disable */
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
+    viewingDate: state.viewingDate,
+    products: state.products,
+});
+
+export default connect(mapStateToProps)(TimeOnProduct);
+/* eslint-enable */
