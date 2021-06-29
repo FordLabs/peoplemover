@@ -6,4 +6,10 @@ export const useOnLoad = (callback: Function) => {
         callback();
     }, []);
 };
+
+export const useOnLoadTest = (callback: Function, dependency: any) => {
+    useEffect(() => {
+        callback();
+    }, [dependency]);
+};
 /* eslint-enable */

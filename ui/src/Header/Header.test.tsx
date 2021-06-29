@@ -23,6 +23,7 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {RunConfig} from '../index';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
@@ -31,20 +32,22 @@ describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
     let app: RenderResult;
 
-    beforeEach( async () => {
+    beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
     it('should have no axe violations', async () => {
-        const app = await renderWithRedux(<Header/>, undefined, initialState);
+        const app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
         const results = await axe(app.container);
         expect(results).toHaveNoViolations();
     });
 
     it('should hide space buttons', async () => {
         app = renderWithRedux(
-            <Header hideSpaceButtons={true}/>, undefined, initialState
+            <Router>
+                <Header hideSpaceButtons={true}/>
+            </Router>, undefined, initialState
         );
         expect(app.queryByTestId('filters')).toBeFalsy();
         expect(app.queryByTestId('sortBy')).toBeFalsy();
@@ -61,7 +64,7 @@ describe('Header', () => {
         let app: RenderResult;
         beforeEach(async () => {
             jest.useFakeTimers();
-            app = await renderWithRedux(<Header/>, undefined, initialState);
+            app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
         });
 
         it('should show username', async () => {

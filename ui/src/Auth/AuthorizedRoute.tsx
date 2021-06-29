@@ -16,10 +16,9 @@
  */
 
 import {Redirect, Route, RouteProps} from 'react-router';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
-import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {AxiosError} from 'axios';
 import {setIsReadOnlyAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
@@ -37,11 +36,14 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     function extractUuidFromUrl(): string {
+        console.log('window.location: ', JSON.stringify(window.location));
         return window.location.pathname.split('/')[1];
     }
 
-    useOnLoad(() => {
+    /* eslint-disable */
+    useEffect(() => {
         setIsReadOnly(false);
+        console.log('...in useOnLoad');
 
         if (!window.runConfig.auth_enabled) {
             setRenderedElement(<>{children}</>);
@@ -56,6 +58,7 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
                     setRenderedElement(<Route {...rest}>{children}</Route>);
                 })
                 .catch((error: AxiosError) => {
+                    console.log('...in useOnLoad CATCH BLOCK: error status: ', error.response?.status);
                     setIsReadOnly(true);
                     if (!error.response) return;
                     switch (error.response.status) {
@@ -74,7 +77,8 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
                     }
                 });
         }
-    });
+    }, [children, setIsReadOnly]);
+    /* eslint-enable */
 
     return <>{renderedElement}</>;
 }

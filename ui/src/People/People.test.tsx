@@ -326,7 +326,9 @@ describe('People actions', () => {
         };
 
         it('assigns the person created by the PersonForm', async () => {
-            const app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+            let history = createBrowserHistory();
+            history.push('/uuid');
+            const app = renderWithRedux(<Router history={history}><PeopleMover/></Router>, undefined, initialState);
             const createPersonButton = await app.findByText(addPersonButtonText);
             fireEvent.click(createPersonButton);
 
@@ -428,12 +430,14 @@ describe('People actions', () => {
         let originalWindow: Window;
 
         beforeEach(async () => {
+            let history = createBrowserHistory();
+            history.push('/uuid');
             const initialState: PreloadedState<GlobalStateProps> = {
                 viewingDate: new Date(2019, 0, 1),
                 currentSpace: TestUtils.space,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             } as GlobalStateProps;
-            app = renderWithRedux(<PeopleMover/>, undefined, initialState);
+            app = renderWithRedux(<Router history={history}><PeopleMover/></Router>, undefined, initialState);
 
             const editPersonButton = await app.findByTestId('editPersonIconContainer__person_1');
             fireEvent.click(editPersonButton);
