@@ -21,7 +21,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
-import {useHistory} from 'react-router-dom';
+import {BrowserRouter as Router, Link, useHistory} from 'react-router-dom';
 
 import './Headers.scss';
 
@@ -47,7 +47,9 @@ function Header({
                 <PeopleMoverLogo href={logoHref}/>
                 {spaceName && <h1 className="spaceName">{spaceName}</h1>}
             </div>
-            {currentSpace && currentSpace.uuid && <button onClick={() => {push(`/${currentSpace.uuid}/timeonproduct`);}}>Time on Product</button>}
+            {currentSpace && currentSpace.uuid && <Link to={`/${currentSpace.uuid}/timeonproduct`}>Test </Link>}
+
+            {/*{currentSpace && currentSpace.uuid && <button onClick={() => {push(`/${currentSpace.uuid}/timeonproduct`);}}>Time on Product</button>}*/}
             {!hideAllButtons &&
             <div className="headerRightContainer">
                 <AccountDropdown hideSpaceButtons={hideSpaceButtons}/>

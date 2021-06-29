@@ -29,6 +29,7 @@ import ErrorPageTemplate from './Application/ErrorPageTemplate';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
 import AnimatedImageSrc from './Application/Assets/404.gif';
 import errorImageSrc from './Application/Assets/403.png';
+import AuthorizedLink from './Auth/AuthorizedLink';
 
 export const dashboardUrl = '/user/dashboard';
 const notFoundUrl = '/error/404';
@@ -37,6 +38,7 @@ const forbiddenUrl = '/error/403';
 function Routes(): JSX.Element {
     return (
         <Router>
+
             <Switch>
                 <Route exact path="/">
                     <LandingPage/>
@@ -54,11 +56,16 @@ function Routes(): JSX.Element {
                     <SpaceDashboard/>
                 </AuthenticatedRoute>
 
-                <AuthorizedRoute exact path="/:teamName">
+                <AuthorizedLink link={false} exact path="/:teamName">
                     <PeopleMover/>
-                </AuthorizedRoute>
+                </AuthorizedLink>
 
-                <Link to={"/:teamName/timeonproduct"} component={TimeOnProduct}/>
+                {/*<Route path="/:teamName/timeonproduct">*/}
+                {/*    <TimeOnProduct/>*/}
+                {/*</Route>*/}
+                <AuthorizedLink link={true} path="/:teamName/timeonproduct">
+                    <TimeOnProduct/>
+                </AuthorizedLink>
 
                 <Route path={notFoundUrl}>
                     <ErrorPageTemplate errorGraphic={AnimatedImageSrc} errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."/>
