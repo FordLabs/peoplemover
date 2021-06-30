@@ -27,7 +27,6 @@ import rootReducer from '../Redux/Reducers';
 import {setIsReadOnlyAction} from '../Redux/Actions';
 import {Router} from 'react-router-dom';
 
-
 describe('Authorized Route', () => {
 
     let store: Store;
