@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Product} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Assignment} from '../Assignments/Assignment';
 import moment from 'moment';
 import {Space} from '../Space/Space';
+import RedirectClient from '../Utils/RedirectClient';
 
 export interface ListOfAssignmentsProps {
     assignments: Array<Assignment>;
@@ -38,6 +39,13 @@ function TimeOnProduct({
     viewingDate,
     products,
 }: TimeOnProductProps): JSX.Element {
+
+    useEffect( ()=> {
+        const uuid = window.location.pathname.split('/')[1];
+        if (!currentSpace) {
+            RedirectClient.redirect(`/${uuid}`);
+        }
+    }, [currentSpace]);
 
     const calculateDuration = (assignment: Assignment): number => {
         if (assignment.startDate) {
@@ -74,7 +82,7 @@ function TimeOnProduct({
     };
 
     return (
-        <div>Time On Product
+        currentSpace && <div>Time On Product
             <div>- Current date: {viewingDate.toDateString()}</div>
             {currentSpace && currentSpace.name && <>
                 <div>- Current Space: {currentSpace.name}</div>
