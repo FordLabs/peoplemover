@@ -36,14 +36,12 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     function extractUuidFromUrl(): string {
-        console.log('window.location: ', JSON.stringify(window.location));
         return window.location.pathname.split('/')[1];
     }
 
     /* eslint-disable */
     useEffect(() => {
         setIsReadOnly(false);
-        console.log('...in useOnLoad');
 
         if (!window.runConfig.auth_enabled) {
             setRenderedElement(<>{children}</>);
@@ -58,7 +56,6 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
                     setRenderedElement(<Route {...rest}>{children}</Route>);
                 })
                 .catch((error: AxiosError) => {
-                    console.log('...in useOnLoad CATCH BLOCK: error status: ', error.response?.status);
                     setIsReadOnly(true);
                     if (!error.response) return;
                     switch (error.response.status) {
@@ -77,7 +74,7 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
                     }
                 });
         }
-    }, [children, setIsReadOnly]);
+    }, [children, setIsReadOnly, rest.path]);
     /* eslint-enable */
 
     return <>{renderedElement}</>;

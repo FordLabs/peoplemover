@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {act, RenderResult, wait} from '@testing-library/react';
+import {RenderResult, wait} from '@testing-library/react';
 import AuthorizedRoute from '../Auth/AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosError} from 'axios';
@@ -26,49 +26,39 @@ import {createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setIsReadOnlyAction} from '../Redux/Actions';
 import {Router} from 'react-router-dom';
-import Cookies from 'universal-cookie';
 
 
 describe('Authorized Route', () => {
-    let originalWindow: Window;
-
-    // beforeEach(() => {
-    //     originalWindow = window;
-    //     delete window.location;
-    //     (window as Window) = Object.create(window);
-    //     // new Cookies().remove('accessToken');
-    // });
-
-    // afterEach(() => {
-    //     (window as Window) = originalWindow;
-    // });
 
     let store: Store;
 
     it('should redirect to login when security is enabled and you are not authenticated', async () => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {auth_enabled: true} as RunConfig;
         Axios.post = jest.fn().mockRejectedValue({response: {status: 401}});
-        let {history} = renderComponent(true);
-        console.log('AAAAAAAAA', history);
+        let {history} = await renderComponent(true);
         expect(history.location.pathname).toEqual('/user/login');
     });
 
     it('should show the child element when security is enabled and you are authenticated and authorized', async () => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {auth_enabled: true} as RunConfig;
         Axios.post = jest.fn().mockResolvedValue({});
-        let {result} = renderComponent(true);
+        let {result} = await renderComponent(true);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
         expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(false));
     });
 
     it('should show the child element when security is enabled and you are authenticated but not authorized (read only)', async () => {
         Axios.post = jest.fn(() => Promise.reject({response: {status: 403}} as AxiosError));
-        let {result} = renderComponent(true);
+        let {result} = await renderComponent(true);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
         expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(true));
     });
 
     it('should show 404 page when security is enabled and space uuid does not exist', async () => {
         Axios.post = jest.fn(() => Promise.reject({response: {status: 404}} as AxiosError));
-        let {history} = renderComponent(true);
+        let {history} = await renderComponent(true);
         expect(history.location.pathname).toEqual('/error/404');
         expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(true));
     });
@@ -83,10 +73,9 @@ describe('Authorized Route', () => {
         expect(Axios.post.mock.calls.length).toBe(0);
     });
 
-    function renderComponent(securityEnabled: boolean): { result: RenderResult; history: MemoryHistory } {
+    async function renderComponent(securityEnabled: boolean): Promise<{ result: RenderResult; history: MemoryHistory }> {
         // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {auth_enabled: securityEnabled} as RunConfig;
-        // window.location = {pathname: '/aaaaaaaa'} as Location;
         const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
 
         store = createStore(rootReducer, {});
@@ -94,14 +83,18 @@ describe('Authorized Route', () => {
 
         // @ts-ignore
         let result: RenderResult = null;
-        result = renderWithRedux(
-            <Router history={history}>
-                <AuthorizedRoute>
-                    <TestComponent/>
-                </AuthorizedRoute>
-            </Router>,
-            store,
-        );
+
+        await wait(() => {
+            result = renderWithRedux(
+                <Router history={history}>
+                    <AuthorizedRoute>
+                        <TestComponent/>
+                    </AuthorizedRoute>
+                </Router>,
+                store
+            );
+        });
+
         return {result, history};
     }
 

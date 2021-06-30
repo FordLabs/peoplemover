@@ -73,7 +73,6 @@ function TimeOnProduct({
         </>);
     };
 
-    console.log('TimeOnProduct: currentSpace: ', JSON.stringify(currentSpace));
     return (
         <div>Time On Product
             <div>- Current date: {viewingDate.toDateString()}</div>
