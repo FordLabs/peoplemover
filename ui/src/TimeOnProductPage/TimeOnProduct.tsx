@@ -34,15 +34,15 @@ export interface TimeOnProductProps {
     products: Array<Product>;
 }
 
-function TimeOnProduct({
-    currentSpace,
-    viewingDate,
-    products,
-}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, viewingDate, products}: TimeOnProductProps): JSX.Element {
 
-    useEffect( ()=> {
-        const uuid = window.location.pathname.split('/')[1];
+    const extractUuidFromUrl = (): string => {
+        return window.location.pathname.split('/')[1];
+    };
+
+    useEffect(() => {
         if (!currentSpace) {
+            const uuid = extractUuidFromUrl();
             RedirectClient.redirect(`/${uuid}`);
         }
     }, [currentSpace]);
@@ -51,20 +51,18 @@ function TimeOnProduct({
         if (assignment.startDate) {
             const viewingDateMoment = moment(viewingDate);
             const startingDateMoment = moment(assignment.startDate);
-            return Math.floor(moment.duration(viewingDateMoment.diff(startingDateMoment)).asDays());
+            return Math.floor(moment.duration(viewingDateMoment.diff(startingDateMoment)).asDays()) + 1;
         } else {
             return -1;
         }
     };
 
     const ListOfAssignments = ({assignments}: ListOfAssignmentsProps): JSX.Element => {
-        if (assignments.length === 0) {
-            return (<div>+++ none</div>);
-        }
         return (<>
             {assignments.map(assignment => {
-                return (<div
-                    key={assignment.id}>+++ {assignment.person.name} - {calculateDuration(assignment)} day(s)</div>);
+                return (<div data-testid={assignment.id.toString()} key={assignment.id}>
+                            +++ {assignment.person.name} - {calculateDuration(assignment)} day(s)
+                </div>);
             })}
         </>);
     };
@@ -73,7 +71,7 @@ function TimeOnProduct({
         return (<>
             {products.map(product => {
                 return (
-                    <div key={product.id}>+ Product Name: {product.name}
+                    <div data-testid={product.id} key={product.id}>+ Product Name: {product.name}
                         <div>++ Assignments:</div>
                         <ListOfAssignments assignments={product.assignments}/>
                     </div>);
