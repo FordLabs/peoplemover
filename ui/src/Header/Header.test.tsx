@@ -31,19 +31,29 @@ expect.extend(toHaveNoViolations);
 describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
     let app: RenderResult;
+    let originalWindow: Window;
 
     beforeEach(async () => {
+        originalWindow = window;
+        delete window.location;
+        (window as Window) = Object.create(window);
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
+    afterEach(() => {
+        (window as Window) = originalWindow;
+    });
+
     it('should have no axe violations', async () => {
+        window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
         const app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
         const results = await axe(app.container);
         expect(results).toHaveNoViolations();
     });
 
     it('should hide space buttons', async () => {
+        window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
         app = renderWithRedux(
             <Router>
                 <Header hideSpaceButtons={true}/>
@@ -63,6 +73,7 @@ describe('Header', () => {
     describe('Account Dropdown', () => {
         let app: RenderResult;
         beforeEach(async () => {
+            window.location = {origin: 'https://localhost', pathname: '/aaaaaaaaaaaaaa'} as Location;
             jest.useFakeTimers();
             app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
         });

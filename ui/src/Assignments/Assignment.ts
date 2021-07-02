@@ -16,6 +16,7 @@
  */
 
 import {Person} from '../People/Person';
+import moment from 'moment';
 
 export interface Assignment {
     id: number;
@@ -25,4 +26,14 @@ export interface Assignment {
     spaceUuid: string;
     effectiveDate?: Date;
     startDate?: Date;
+}
+
+export function calculateDuration(assignment: Assignment, viewingDate: Date): number {
+    if (assignment.startDate) {
+        const viewingDateMoment = moment(viewingDate).startOf('day');
+        const startingDateMoment = moment(assignment.startDate).startOf('day');
+        return Math.floor(moment.duration(viewingDateMoment.diff(startingDateMoment)).asDays());
+    } else {
+        return -1;
+    }
 }

@@ -19,10 +19,12 @@ import React, {useEffect} from 'react';
 import {Product} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Assignment} from '../Assignments/Assignment';
-import moment from 'moment';
+import {Assignment, calculateDuration} from '../Assignments/Assignment';
 import {Space} from '../Space/Space';
 import RedirectClient from '../Utils/RedirectClient';
+import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
+import HeaderContainer from '../Header/HeaderContainer';
+import './TimeOnProduct.scss';
 
 export interface ListOfAssignmentsProps {
     assignments: Array<Assignment>;
@@ -47,21 +49,20 @@ function TimeOnProduct({currentSpace, viewingDate, products}: TimeOnProductProps
         }
     }, [currentSpace]);
 
-    const calculateDuration = (assignment: Assignment): number => {
-        if (assignment.startDate) {
-            const viewingDateMoment = moment(viewingDate);
-            const startingDateMoment = moment(assignment.startDate);
-            return Math.floor(moment.duration(viewingDateMoment.diff(startingDateMoment)).asDays()) + 1;
+    const productNaming = (product: Product): string => {
+        if (product.name === 'unassigned') {
+            return 'unassigned persons:';
         } else {
-            return -1;
+            return product.name + ':';
         }
+
     };
 
     const ListOfAssignments = ({assignments}: ListOfAssignmentsProps): JSX.Element => {
         return (<>
             {assignments.map(assignment => {
                 return (<div data-testid={assignment.id.toString()} key={assignment.id}>
-                            +++ {assignment.person.name} - {calculateDuration(assignment)} day(s)
+                    <PersonAndRoleInfo assignment={assignment} isReadOnly={false} isUnassignedProduct={false} timeOnProject={calculateDuration(assignment, viewingDate)} />
                 </div>);
             })}
         </>);
@@ -71,8 +72,8 @@ function TimeOnProduct({currentSpace, viewingDate, products}: TimeOnProductProps
         return (<>
             {products.map(product => {
                 return (
-                    <div data-testid={product.id} key={product.id}>+ Product Name: {product.name}
-                        <div>++ Assignments:</div>
+                    <div data-testid={product.id} className="productContainer" key={product.id}>
+                        <h3 className="productName"> {productNaming(product)} </h3>
                         <ListOfAssignments assignments={product.assignments}/>
                     </div>);
             })}
@@ -80,13 +81,20 @@ function TimeOnProduct({currentSpace, viewingDate, products}: TimeOnProductProps
     };
 
     return (
-        currentSpace && <div>Time On Product
-            <div>- Current date: {viewingDate.toDateString()}</div>
-            {currentSpace && currentSpace.name && <>
-                <div>- Current Space: {currentSpace.name}</div>
-                <ListOfProducts/>
-            </>}
-        </div>
+
+        currentSpace && <>
+            <HeaderContainer>
+                {/*<AnnouncementBanner/>*/}
+                {/*<Header/>*/}
+            </HeaderContainer>
+            <div>
+                <h2 className="title">Time On Product by calendar days</h2>
+                <div className="date">As of: {viewingDate.toDateString()}</div>
+                {currentSpace && currentSpace.name && <>
+                    <ListOfProducts/>
+                </>}
+            </div>
+        </>
     );
 }
 

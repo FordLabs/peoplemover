@@ -536,8 +536,6 @@ describe('Deleting a Person', () => {
         await wait(() => {
             app = applicationSetup();
         });
-
-        await TestUtils.waitForHomePageToLoad(app);
     });
 
     it('does not show the confirmation modal when the page loads', async () => {
@@ -565,12 +563,12 @@ describe('Deleting a Person', () => {
         });
 
         it('does not show the confirmation modal after the delete button is clicked', async () => {
-            fireEvent.click(app.getByTestId('confirmDeleteButton'));
-
-            await TestUtils.waitForHomePageToLoad(app);
+            await wait(() => {
+                fireEvent.click(app.getByTestId('confirmDeleteButton'));
+            });
 
             expect(app.queryByText(/Are you sure you want to delete/i)).toBeNull();
-            expect(app.queryByText(/Delete/i)).toBeNull();
+            expect(app.queryByText(/Edit Person/i)).toBeNull();
         });
     });
 });

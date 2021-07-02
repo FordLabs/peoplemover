@@ -26,9 +26,10 @@ interface Props {
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
+    timeOnProject?: number;
 }
 
-const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging }: Props): ReactElement => {
+const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging, timeOnProject }: Props): ReactElement => {
     const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
@@ -55,6 +56,14 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
         } else {
             setHoverBoxIsOpened(boxIsHovered);
             if (hoverTimeout) clearTimeout(hoverTimeout);
+        }
+    };
+
+    const numberOfDaysString = (timeOnProject: number): string => {
+        if (timeOnProject === 1) {
+            return timeOnProject.toString().concat(' day');
+        } else {
+            return timeOnProject.toString().concat(' days');
         }
     };
 
@@ -87,6 +96,11 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                     {person.spaceRole.name}
                 </div>
             )}
+            {timeOnProject &&
+            <div className="timeOnProject">
+                {numberOfDaysString(timeOnProject)}
+            </div>
+            }
         </div>
     );
 };

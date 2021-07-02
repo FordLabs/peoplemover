@@ -62,7 +62,7 @@ describe('Account Dropdown', () => {
             store.dispatch = jest.fn();
             app = renderWithRedux(
                 <Router history={history}>
-                    <AccountDropdown/>
+                    <AccountDropdown showAllDropDownOptions={true}/>
                 </Router>,
                 store,
             );
@@ -121,7 +121,7 @@ describe('Account Dropdown', () => {
             await wait(async () => {
                 app = renderWithRedux(
                     <Router history={history}>
-                        <AccountDropdown/>
+                        <AccountDropdown showAllDropDownOptions={true}/>
                     </Router>,
                     undefined,
                     {currentSpace: TestUtils.space, isReadOnly: true} as GlobalStateProps

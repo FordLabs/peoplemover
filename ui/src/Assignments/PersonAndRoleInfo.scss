@@ -41,12 +41,14 @@
   }
 
   .personName,
+  .timeOnProject,
   .personRole {
     margin: 2px;
     max-width: 132px;
   }
 
-  .personRole {
+  .personRole,
+  .timeOnProject {
     font-size: 10px;
     line-height: 11px;
     font-weight: normal;

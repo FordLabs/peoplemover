@@ -29,6 +29,9 @@ import ErrorPageTemplate from './Application/ErrorPageTemplate';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
 import AnimatedImageSrc from './Application/Assets/404.gif';
 import errorImageSrc from './Application/Assets/403.png';
+import Header from './Header/Header';
+import AnnouncementBanner from './Header/AnnouncementBanner';
+import HeaderContainer from './Header/HeaderContainer';
 
 export const dashboardUrl = '/user/dashboard';
 const notFoundUrl = '/error/404';
@@ -37,7 +40,8 @@ const forbiddenUrl = '/error/403';
 function Routes(): JSX.Element {
     return (
         <Router>
-
+            <AnnouncementBanner/>
+            <Header/>
             <Switch>
                 <Route exact path="/">
                     <LandingPage/>
