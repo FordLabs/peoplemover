@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
@@ -39,6 +39,8 @@ function Header({
     const dashboardPathname = '/user/dashboard';
     const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
     const spaceName = currentSpace?.name;
+    const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
+
     const showAllDropDownOptions = (): boolean => {
         return (window.location.pathname !== dashboardPathname);
     };
@@ -55,8 +57,8 @@ function Header({
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
                     </div>
-                    {currentSpace && currentSpace.uuid && !window.location.pathname.includes('timeonproduct') && <Link to={`/${currentSpace.uuid}/timeonproduct`}>Time On Product</Link>}
-                    {currentSpace && currentSpace.uuid && window.location.pathname.includes('timeonproduct') && <Link to={`/${currentSpace.uuid}`}>Back to Space</Link>}
+                    {currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => setTimeOnProductClicked(true)}>Time On Product</Link>}
+                    {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link to={`/${currentSpace.uuid}`} onClick={(): void => setTimeOnProductClicked(false)}>Back to Space</Link>}
                     {!hideAllButtons &&
             <div className="headerRightContainer">
                 <AccountDropdown hideSpaceButtons={hideSpaceButtons} showAllDropDownOptions={showAllDropDownOptions()}/>
