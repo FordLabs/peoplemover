@@ -23,8 +23,8 @@ import {Assignment, calculateDuration} from '../Assignments/Assignment';
 import {Space} from '../Space/Space';
 import RedirectClient from '../Utils/RedirectClient';
 import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
-import HeaderContainer from '../Header/HeaderContainer';
 import './TimeOnProduct.scss';
+import CurrentModal from '../Redux/Containers/CurrentModal';
 
 export interface ListOfAssignmentsProps {
     assignments: Array<Assignment>;
@@ -62,7 +62,7 @@ function TimeOnProduct({currentSpace, viewingDate, products}: TimeOnProductProps
         return (<>
             {assignments.map(assignment => {
                 return (<div data-testid={assignment.id.toString()} key={assignment.id}>
-                    <PersonAndRoleInfo assignment={assignment} isReadOnly={false} isUnassignedProduct={false} timeOnProject={calculateDuration(assignment, viewingDate)} />
+                    <PersonAndRoleInfo assignment={assignment} isReadOnly={true} isUnassignedProduct={false} timeOnProject={calculateDuration(assignment, viewingDate)} />
                 </div>);
             })}
         </>);
@@ -83,10 +83,7 @@ function TimeOnProduct({currentSpace, viewingDate, products}: TimeOnProductProps
     return (
 
         currentSpace && <>
-            <HeaderContainer>
-                {/*<AnnouncementBanner/>*/}
-                {/*<Header/>*/}
-            </HeaderContainer>
+            <CurrentModal/>
             <div>
                 <h2 className="title">Time On Product by calendar days</h2>
                 <div className="date">As of: {viewingDate.toDateString()}</div>

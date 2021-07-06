@@ -20,6 +20,9 @@ import {Assignment} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
+import {AvailableModals} from '../Modal/AvailableModals';
+import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import {setCurrentModalAction} from '../Redux/Actions';
 
 interface Props {
     assignment: Assignment;
@@ -27,9 +30,11 @@ interface Props {
     isReadOnly: boolean;
     isDragging: boolean;
     timeOnProject?: number;
+
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging, timeOnProject }: Props): ReactElement => {
+const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging, timeOnProject, setCurrentModal }: Props): ReactElement => {
     const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
@@ -67,6 +72,11 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
         }
     };
 
+    const openModal = (): void => setCurrentModal({
+        modal: AvailableModals.EDIT_PERSON,
+        item: assignment,
+    });
+
     const NotesIcon = (): ReactElement => {
         if (isReadOnly || !person.notes?.trim().length) {
             return <></>;
@@ -97,9 +107,9 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                 </div>
             )}
             {timeOnProject &&
-            <div className="timeOnProject">
+            <button className="timeOnProject" onClick={(): void => {openModal()}}>
                 {numberOfDaysString(timeOnProject)}
-            </div>
+            </button>
             }
         </div>
     );
@@ -110,5 +120,9 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
 });
 
-export default connect(mapStateToProps)(PersonAndRoleInfo);
+const mapDispatchToProps = (dispatch: any) => ({
+    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps) (PersonAndRoleInfo);
 /* eslint-enable */
