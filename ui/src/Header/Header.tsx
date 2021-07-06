@@ -52,6 +52,8 @@ function Header({
     return (
         showHeader() ? <></>
             : <>
+                {currentSpace && currentSpace.uuid && !timeOnProductClicked && <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
+                    main content</a>}
                 <header className="peopleMoverHeader">
                     <div className="headerLeftContainer">
                         <PeopleMoverLogo href={logoHref}/>

@@ -183,8 +183,6 @@ function PeopleMover({
         !hasProductsAndFilters()
             ? <></>
             : <div className="App">
-                <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
-                    main content</a>
                 <HeaderContainer>
                     <SubHeader/>
                 </HeaderContainer>
