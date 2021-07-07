@@ -55,7 +55,7 @@ class ProductTagClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'addProductTagError', productTagAddRequest.name, err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 
@@ -74,7 +74,7 @@ class ProductTagClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'editProductTagError', productTagEditRequest.name, err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 
@@ -93,7 +93,7 @@ class ProductTagClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'deleteProductTagError', productTagId.toString(), err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 }
