@@ -25,6 +25,8 @@ import RedirectClient from '../Utils/RedirectClient';
 import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
 import './TimeOnProduct.scss';
 import CurrentModal from '../Redux/Containers/CurrentModal';
+import {fetchProductsAction} from '../Redux/Actions';
+import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 
 export interface ListOfAssignmentsProps {
     assignments: Array<Assignment>;
@@ -34,9 +36,12 @@ export interface TimeOnProductProps {
     currentSpace: Space;
     viewingDate: Date;
     products: Array<Product>;
+    currentModal: CurrentModalState;
+
+    fetchProducts(): Array<Product>;
 }
 
-function TimeOnProduct({currentSpace, viewingDate, products}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetchProducts}: TimeOnProductProps): JSX.Element {
 
     const extractUuidFromUrl = (): string => {
         return window.location.pathname.split('/')[1];
@@ -48,6 +53,12 @@ function TimeOnProduct({currentSpace, viewingDate, products}: TimeOnProductProps
             RedirectClient.redirect(`/${uuid}`);
         }
     }, [currentSpace]);
+
+    useEffect(() => {
+        if (currentSpace && currentModal.modal === null) {
+            fetchProducts();
+        }
+    }, [currentModal]);
 
     const productNaming = (product: Product): string => {
         if (product.name === 'unassigned') {
@@ -100,7 +111,12 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     products: state.products,
+    currentModal: state.currentModal,
 });
 
-export default connect(mapStateToProps)(TimeOnProduct);
+const mapDispatchToProps = (dispatch: any) => ({
+    fetchProducts: () => dispatch(fetchProductsAction()),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(TimeOnProduct);
 /* eslint-enable */

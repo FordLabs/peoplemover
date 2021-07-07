@@ -23,9 +23,13 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Product} from '../Products/Product';
 
 describe('TimeOnProduct', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        TestUtils.mockClientCalls();
+    });
 
     describe('calculation', () => {
-        xit('should show 1 day spend on the project when viewingDate equal start date', async () => {
+        it('should show 1 day spend on the project when viewingDate equal start date', async () => {
             let initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 1),
@@ -34,12 +38,13 @@ describe('TimeOnProduct', () => {
 
             let app = renderWithRedux(<TimeOnProduct/>, undefined, initialState);
 
-            const list = await app.findByTestId(TestUtils.productForHank.assignments[0].id.toString());
-            expect(list).toContainHTML('+++ Hank - 1 day');
+            const list = await app.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
+            expect(list).toContainHTML('Hank');
+            expect(list).toContainHTML('1 day');
 
         });
 
-        xit('should show the number of days on the project since selected viewingDate', async () => {
+        it('should show the number of days on the project since selected viewingDate', async () => {
             let initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 10),
@@ -48,8 +53,9 @@ describe('TimeOnProduct', () => {
 
             let app = renderWithRedux(<TimeOnProduct/>, undefined, initialState);
 
-            const list = await app.findByTestId(TestUtils.productForHank.assignments[0].id.toString());
-            expect(list).toContainHTML('+++ Hank - 10 days');
+            const list = await app.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
+            expect(list).toContainHTML('Hank');
+            expect(list).toContainHTML('10 days');
 
         });
 
@@ -75,7 +81,7 @@ describe('TimeOnProduct', () => {
 
             let app = renderWithRedux(<TimeOnProduct/>, undefined, initialState);
 
-            const product = await app.findByTestId(productForHankAs20190110.id.toString());
+            const product = await app.getByTestId(productForHankAs20190110.id.toString());
             expect(product).toBeVisible();
 
         });

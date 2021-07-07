@@ -107,7 +107,7 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                 </div>
             )}
             {timeOnProject &&
-            <button className="timeOnProject" onClick={(): void => {openModal()}}>
+            <button className="timeOnProject" onClick={(): void => {openModal();}}>
                 {numberOfDaysString(timeOnProject)}
             </button>
             }
