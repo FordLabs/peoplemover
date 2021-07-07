@@ -29,7 +29,8 @@ const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
-    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
+    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, currentUser: 'bob' } as GlobalStateProps;
+
     let app: RenderResult;
     let originalWindow: Window;
 
@@ -68,6 +69,17 @@ describe('Header', () => {
         });
         expect(await app.queryByTestId('shareAccess')).toBeNull();
         expect(await app.queryByTestId('downloadReport')).toBeNull();
+    });
+
+    it('should not show the account dropdown when user is on the error page', () => {
+        window.location = {origin: 'https://localhost', pathname: '/error/404'} as Location;
+        app = renderWithRedux(
+            <Router>
+                <Header hideSpaceButtons={true}/>
+            </Router>, undefined, initialState
+        );
+
+        expect(app.queryByText('bob')).toBeNull();
     });
 
     describe('Account Dropdown', () => {

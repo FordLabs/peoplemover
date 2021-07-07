@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
@@ -40,6 +40,7 @@ function Header({
     const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
     const spaceName = currentSpace?.name;
     const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
+    const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
 
     const showAllDropDownOptions = (): boolean => {
         return (window.location.pathname !== dashboardPathname);
@@ -48,6 +49,10 @@ function Header({
     const showHeader = (): boolean => {
         return (window.location.pathname === '/');
     };
+
+    useEffect( () => {
+        setShowDropDown(!window.location.pathname.includes('error'));
+    }, [window.location.pathname]);
 
     return (
         showHeader() ? <></>
@@ -62,9 +67,9 @@ function Header({
                     {currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => setTimeOnProductClicked(true)}>Time On Product</Link>}
                     {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link to={`/${currentSpace.uuid}`} onClick={(): void => setTimeOnProductClicked(false)}>Back to Space</Link>}
                     {!hideAllButtons &&
-            <div className="headerRightContainer">
-                <AccountDropdown hideSpaceButtons={hideSpaceButtons} showAllDropDownOptions={showAllDropDownOptions()}/>
-            </div>
+                    showDropDown && <div className="headerRightContainer">
+                        <AccountDropdown hideSpaceButtons={hideSpaceButtons} showAllDropDownOptions={showAllDropDownOptions()}/>
+                    </div>
                     }
                 </header>
             </>
