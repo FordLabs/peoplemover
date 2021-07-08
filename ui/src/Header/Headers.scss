@@ -49,6 +49,12 @@
     border-left: 2px solid $purple;
   }
 
+  .timeOnProductLink {
+    display: flex;
+    justify-content: space-between;
+    text-decoration: none;
+  }
+
   .spaceName {
     background: $logo-gradient;
     -webkit-background-clip: text;

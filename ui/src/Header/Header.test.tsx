@@ -98,12 +98,12 @@ describe('Header', () => {
         });
 
         it('should show time On Product Link when user is in a space', async () => {
-            expect(await app.getByText('Time On Product'));
+            expect(await app.getByText('Time On Product >'));
         });
 
         it('should show Back to Space Link when user is in time on product page', async () => {
-            fireEvent.click( await app.getByText('Time On Product'));
-            expect(await app.getByText('Back to Space'));
+            fireEvent.click( await app.getByText('Time On Product >'));
+            expect(await app.getByText('< Back'));
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {

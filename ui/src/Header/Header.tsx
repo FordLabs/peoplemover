@@ -77,7 +77,7 @@ function Header({
                     <div className="headerLeftContainer">
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {showTimeOnProductButton && currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}>Time On Product &#62;</Link>}
+                        {showTimeOnProductButton && currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}><span className="newBadge" data-testid="newBadge">Beta</span>Time On Product &#62;</Link>}
                         {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}`} onClick={(): void => sendEventTimeOnProductClick(false)}>&#60; Back</Link>}
                     </div>
                     {!hideAllButtons && showDropDown && <div className="headerRightContainer">
