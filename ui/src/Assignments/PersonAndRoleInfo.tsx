@@ -23,18 +23,21 @@ import {connect} from 'react-redux';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {setCurrentModalAction} from '../Redux/Actions';
+import MatomoEvents from '../Matomo/MatomoEvents';
+import {Space} from '../Space/Space';
 
 interface Props {
     assignment: Assignment;
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
-    timeOnProject?: number;
+    timeOnProduct?: number;
+    currentSpace: Space;
 
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging, timeOnProject, setCurrentModal }: Props): ReactElement => {
+const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging, timeOnProduct, setCurrentModal, currentSpace }: Props): ReactElement => {
     const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
@@ -72,10 +75,13 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
         }
     };
 
-    const openModal = (): void => setCurrentModal({
-        modal: AvailableModals.EDIT_PERSON,
-        item: assignment,
-    });
+    const openEditPersonModal = (): void => {
+        if (timeOnProduct) MatomoEvents.pushEvent(currentSpace.name, 'openEditPersonFromTimeOnProduct', timeOnProduct.toString());
+        setCurrentModal({
+            modal: AvailableModals.EDIT_PERSON,
+            item: assignment,
+        });
+    };
 
     const NotesIcon = (): ReactElement => {
         if (isReadOnly || !person.notes?.trim().length) {
@@ -106,9 +112,9 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                     {person.spaceRole.name}
                 </div>
             )}
-            {timeOnProject &&
-            <button className="timeOnProject" onClick={(): void => {openModal();}}>
-                {numberOfDaysString(timeOnProject)}
+            {timeOnProduct &&
+            <button className="timeOnProduct" onClick={(): void => {openEditPersonModal();}}>
+                {numberOfDaysString(timeOnProduct)}
             </button>
             }
         </div>
@@ -118,6 +124,7 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
+    currentSpace: state.currentSpace,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -33,7 +33,7 @@ describe('PersonAndRoleInfo component for TimeOnProduct', () => {
             assignment={TestUtils.assignmentForHank}
             isUnassignedProduct={false}
             isReadOnly={true}
-            timeOnProject={55}/>, store);
+            timeOnProduct={55}/>, store);
 
         const editPersonLink = app.getByText('55 days');
         expect(await editPersonLink).toBeVisible();

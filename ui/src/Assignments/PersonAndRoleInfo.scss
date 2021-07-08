@@ -37,18 +37,22 @@
 
   .personName {
     word-break: break-word;
+  }
 
+  .timeOnProduct{
+    background-color: white;
+    color: $prime-1;
   }
 
   .personName,
-  .timeOnProject,
+  .timeOnProduct,
   .personRole {
     margin: 2px;
     max-width: 132px;
   }
 
   .personRole,
-  .timeOnProject {
+  .timeOnProduct {
     font-size: 10px;
     line-height: 11px;
     font-weight: normal;

@@ -55,7 +55,7 @@ function Header({
         return (window.location.pathname === '/');
     };
     
-    const sendEventTimeOnProductClick = (clicked: boolean) => {
+    const sendEventTimeOnProductClick = (clicked: boolean): void => {
         setTimeOnProductClicked(clicked);
         if (clicked) {
             MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Go to Time On Product page');
