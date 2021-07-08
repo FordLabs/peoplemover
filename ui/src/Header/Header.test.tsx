@@ -26,9 +26,9 @@ import {RunConfig} from '../index';
 import {BrowserRouter as Router} from 'react-router-dom';
 import Flagsmith from 'flagsmith';
 
+jest.mock('Flagsmith');
 const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
-jest.mock('Flagsmith');
 
 describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, currentUser: 'bob' } as GlobalStateProps;
