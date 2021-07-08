@@ -39,11 +39,8 @@
   display: flex;
   align-items: center;
 
-  .spaceName {
+  .spaceName, .timeOnProductLink {
     margin: 0 0 0 18px;
-    background: $logo-gradient;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     font-size: 14px;
     line-height: 23px;
     font-style: normal;
@@ -51,6 +48,13 @@
     padding-left: 18px;
     border-left: 2px solid $purple;
   }
+
+  .spaceName {
+    background: $logo-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
 }
 
 .headerRightContainer {
