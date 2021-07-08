@@ -22,10 +22,9 @@ import {Space} from '../Space/Space';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link} from 'react-router-dom';
-import {useFeatureFlag} from '@fordlabs/react-flagsmith';
-
 import './Headers.scss';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import Flagsmith from 'flagsmith';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
@@ -43,12 +42,15 @@ function Header({
     const spaceName = currentSpace?.name;
     const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
     const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
-    const showTimeOnProductButton = useFeatureFlag('show_time_on_product_button');
+    const showTimeOnProductButton = Flagsmith.hasFeature('show_time_on_product_button');
 
+
+    /* eslint-disable */
     useEffect( () => {
         setShowDropDown(!window.location.pathname.includes('error'));
     }, [window.location.pathname]);
-    
+    /* eslint-enable */
+
     const showAllDropDownOptions = (): boolean => {
         return (window.location.pathname !== dashboardPathname);
     };

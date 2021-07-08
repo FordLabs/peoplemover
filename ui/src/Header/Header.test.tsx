@@ -24,11 +24,11 @@ import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {RunConfig} from '../index';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {useFeatureFlag} from '@fordlabs/react-flagsmith';
+import Flagsmith from 'flagsmith';
 
 const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
-jest.mock('@fordlabs/react-flagsmith');
+jest.mock('Flagsmith');
 
 describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, currentUser: 'bob' } as GlobalStateProps;
@@ -88,7 +88,7 @@ describe('Header', () => {
         let app: RenderResult;
         beforeEach(async () => {
             jest.useFakeTimers();
-            (useFeatureFlag as jest.Mock).mockReturnValue(true);
+            Flagsmith.hasFeature = jest.fn().mockReturnValue(true);
             window.location = {origin: 'https://localhost', pathname: '/aaaaaaaaaaaaaa'} as Location;
             app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
         });

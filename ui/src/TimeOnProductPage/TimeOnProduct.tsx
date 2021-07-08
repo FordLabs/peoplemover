@@ -58,7 +58,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         if (currentSpace && currentModal.modal === null) {
             fetchProducts();
         }
-    }, [currentModal]);
+    }, [currentModal, currentSpace, fetchProducts]);
 
     const productNaming = (product: Product): string => {
         if (product.name === 'unassigned') {

@@ -30,8 +30,6 @@ import {AvailableActions} from '../Redux/Actions';
 import ReportClient from '../Reports/ReportClient';
 import {AvailableModals} from '../Modal/AvailableModals';
 
-jest.mock('axios');
-
 describe('Account Dropdown', () => {
     let app: RenderResult;
     let history: MemoryHistory;
