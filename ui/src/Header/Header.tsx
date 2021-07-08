@@ -24,6 +24,7 @@ import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link} from 'react-router-dom';
 
 import './Headers.scss';
+import MatomoEvents from '../Matomo/MatomoEvents';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
@@ -42,6 +43,10 @@ function Header({
     const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
     const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
 
+    useEffect( () => {
+        setShowDropDown(!window.location.pathname.includes('error'));
+    }, [window.location.pathname]);
+    
     const showAllDropDownOptions = (): boolean => {
         return (window.location.pathname !== dashboardPathname);
     };
@@ -49,10 +54,16 @@ function Header({
     const showHeader = (): boolean => {
         return (window.location.pathname === '/');
     };
+    
+    const sendEventTimeOnProductClick = (clicked: boolean) => {
+        setTimeOnProductClicked(clicked);
+        if (clicked) {
+            MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Go to Time On Product page');
+        } else  {
+            MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
+        }
+    };
 
-    useEffect( () => {
-        setShowDropDown(!window.location.pathname.includes('error'));
-    }, [window.location.pathname]);
 
     return (
         showHeader() ? <></>
@@ -64,8 +75,8 @@ function Header({
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
                     </div>
-                    {currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => setTimeOnProductClicked(true)}>Time On Product</Link>}
-                    {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link to={`/${currentSpace.uuid}`} onClick={(): void => setTimeOnProductClicked(false)}>Back to Space</Link>}
+                    {currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}>Time On Product</Link>}
+                    {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link to={`/${currentSpace.uuid}`} onClick={(): void => sendEventTimeOnProductClick(false)}>Back to Space</Link>}
                     {!hideAllButtons &&
                     showDropDown && <div className="headerRightContainer">
                         <AccountDropdown hideSpaceButtons={hideSpaceButtons} showAllDropDownOptions={showAllDropDownOptions()}/>
