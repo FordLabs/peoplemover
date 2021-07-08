@@ -27,7 +27,7 @@ import {AvailableModals} from '../Modal/AvailableModals';
 describe('PersonAndRoleInfo component for TimeOnProduct', () => {
 
     it('should show number of days on project when timeOnProject is pass', async () => {
-        let store = createStore(rootReducer, {});
+        let store = createStore(rootReducer, {currentSpace:TestUtils.space});
         store.dispatch = jest.fn();
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={TestUtils.assignmentForHank}

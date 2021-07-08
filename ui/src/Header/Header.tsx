@@ -22,6 +22,7 @@ import {Space} from '../Space/Space';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link} from 'react-router-dom';
+import {useFeatureFlag} from '@fordlabs/react-flagsmith';
 
 import './Headers.scss';
 import MatomoEvents from '../Matomo/MatomoEvents';
@@ -42,6 +43,7 @@ function Header({
     const spaceName = currentSpace?.name;
     const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
     const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
+    const showTimeOnProductButton = useFeatureFlag('show_time_on_product_button');
 
     useEffect( () => {
         setShowDropDown(!window.location.pathname.includes('error'));
@@ -64,7 +66,6 @@ function Header({
         }
     };
 
-
     return (
         showHeader() ? <></>
             : <>
@@ -75,10 +76,9 @@ function Header({
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
                     </div>
-                    {currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}>Time On Product</Link>}
+                    {showTimeOnProductButton && currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}>Time On Product</Link>}
                     {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link to={`/${currentSpace.uuid}`} onClick={(): void => sendEventTimeOnProductClick(false)}>Back to Space</Link>}
-                    {!hideAllButtons &&
-                    showDropDown && <div className="headerRightContainer">
+                    {!hideAllButtons && showDropDown && <div className="headerRightContainer">
                         <AccountDropdown hideSpaceButtons={hideSpaceButtons} showAllDropDownOptions={showAllDropDownOptions()}/>
                     </div>
                     }
