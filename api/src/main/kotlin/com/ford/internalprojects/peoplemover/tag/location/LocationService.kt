@@ -30,6 +30,7 @@ class LocationService(
 
         val spaceLocationToSave = SpaceLocation(name = locationAddRequest.name, spaceUuid = spaceUuid)
         return try {
+            spaceLocationRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, locationAddRequest.name)?.let { throw EntityAlreadyExistsException() }
             spaceLocationRepository.createEntityAndUpdateSpaceLastModified(spaceLocationToSave)
         } catch (e: DataIntegrityViolationException ) {
             throw EntityAlreadyExistsException()
@@ -41,6 +42,7 @@ class LocationService(
 
     fun editLocation(spaceUuid: String, locationRequest: TagRequest, locationId: Int): SpaceLocation {
         return try {
+            spaceLocationRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, locationRequest.name)?.let { throw EntityAlreadyExistsException() }
             spaceLocationRepository.updateEntityAndUpdateSpaceLastModified(
                 SpaceLocation(id = locationId, name = locationRequest.name, spaceUuid = spaceUuid)
             )
@@ -52,5 +54,4 @@ class LocationService(
     fun deleteLocation(locationId: Int, spaceUuid: String) {
         spaceLocationRepository.deleteEntityAndUpdateSpaceLastModified(locationId, spaceUuid)
     }
-
 }

@@ -125,13 +125,13 @@ class ProductTagControllerTest {
     }
 
     @Test
-    fun `PUT should return 200 when editing product tag with already existing name in different case`() {
+    fun `PUT should return 409 when editing product tag with already existing name in different case (name check is case insensitive)`() {
         val actualTag: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech", spaceUuid = space.uuid))
         mockMvc.perform(put("$baseProductTagsUrl/${actualTag.id}")
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(actualTag.copy(name = actualTag.name.toLowerCase()))))
-            .andExpect(status().isOk)
+            .andExpect(status().isConflict)
     }
 
     @Throws(Exception::class)
