@@ -31,6 +31,8 @@ jobs:
       - name: Test
         run: ./gradlew clean test
         working-directory: ./api
+        env:
+          TZ: 'America/Detroit'
       - name: Build PR
         run: ./gradlew assemble
         env:
