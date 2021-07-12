@@ -33,11 +33,12 @@ interface Props {
     isDragging: boolean;
     timeOnProduct?: number;
     currentSpace: Space;
+    viewOnly: boolean;
 
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging, timeOnProduct, setCurrentModal, currentSpace }: Props): ReactElement => {
+const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging, timeOnProduct, setCurrentModal, currentSpace, viewOnly}: Props): ReactElement => {
     const { person } = assignment;
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
@@ -112,11 +113,12 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                     {person.spaceRole.name}
                 </div>
             )}
-            {timeOnProduct &&
-            <button className="timeOnProduct" onClick={(): void => {openEditPersonModal();}}>
+            {timeOnProduct && !viewOnly &&
+            <button className="timeOnProductButton timeOnProduct" onClick={(): void => {openEditPersonModal();}}>
                 {numberOfDaysString(timeOnProduct)}
             </button>
             }
+            {timeOnProduct && viewOnly && <span className="timeOnProduct">{numberOfDaysString(timeOnProduct)}</span>}
         </div>
     );
 };
@@ -125,6 +127,7 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
     currentSpace: state.currentSpace,
+    viewOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

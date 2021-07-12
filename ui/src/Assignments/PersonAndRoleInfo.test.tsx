@@ -26,8 +26,8 @@ import {AvailableModals} from '../Modal/AvailableModals';
 
 describe('PersonAndRoleInfo component for TimeOnProduct', () => {
 
-    it('should show number of days on project when timeOnProject is pass', async () => {
-        let store = createStore(rootReducer, {currentSpace:TestUtils.space});
+    it('should show a button that open the editPersonModal with number of days on project when timeOnProject is pass and is not viewOnly', async () => {
+        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly: false});
         store.dispatch = jest.fn();
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={TestUtils.assignmentForHank}
@@ -45,5 +45,18 @@ describe('PersonAndRoleInfo component for TimeOnProduct', () => {
                 modal: AvailableModals.EDIT_PERSON,
                 item: TestUtils.assignmentForHank,
             }));
+    });
+
+    it('should show the number of day on project as text when timeOnProject is pass and is viewOnly', async () => {
+        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly: false});
+        store.dispatch = jest.fn();
+        let app = renderWithRedux(<PersonAndRoleInfo
+            assignment={TestUtils.assignmentForHank}
+            isUnassignedProduct={false}
+            isReadOnly={true}
+            timeOnProduct={55}/>, store);
+
+        const editPersonLink = app.getByText('55 days');
+        expect(await editPersonLink).toBeVisible();
     });
 });
