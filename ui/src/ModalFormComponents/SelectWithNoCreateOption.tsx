@@ -90,6 +90,7 @@ function SelectWithNoCreateOption({
                 placeholder={placeholder}
                 value={values}
                 options={options}
+                // @ts-ignore
                 styles={multiSelectStyles}
                 components={{DropdownIndicator: CustomIndicator}}
                 onChange={onChange}

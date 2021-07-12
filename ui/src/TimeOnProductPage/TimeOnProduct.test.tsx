@@ -20,7 +20,6 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import TimeOnProduct from './TimeOnProduct';
 import {MemoryRouter} from 'react-router-dom';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {Product} from '../Products/Product';
 
 describe('TimeOnProduct', () => {
     beforeEach(() => {
@@ -56,33 +55,6 @@ describe('TimeOnProduct', () => {
             const list = await app.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
             expect(list).toContainHTML('Hank');
             expect(list).toContainHTML('10 days');
-
-        });
-
-        it('should show no assignments for a product that didnt have assignment at this date', async () => {
-
-            let productForHankAs20190110: Product = {
-                id: 102,
-                name: 'Hanky Product',
-                spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-                startDate: '2011-01-01',
-                endDate: '2022-02-02',
-                spaceLocation: TestUtils.annarbor,
-                assignments: [],
-                archived: false,
-                tags: [],
-            };
-
-            let initialState = {
-                currentSpace: TestUtils.space,
-                viewingDate: new Date(2019, 0, 10),
-                products: [productForHankAs20190110],
-            } as GlobalStateProps;
-
-            let app = renderWithRedux(<TimeOnProduct/>, undefined, initialState);
-
-            const product = await app.getByTestId(productForHankAs20190110.id.toString());
-            expect(product).toBeVisible();
 
         });
     });

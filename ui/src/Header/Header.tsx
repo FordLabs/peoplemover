@@ -24,7 +24,7 @@ import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link} from 'react-router-dom';
 import './Headers.scss';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import Flagsmith from 'flagsmith';
+import flagsmith from 'flagsmith';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
@@ -42,7 +42,7 @@ function Header({
     const spaceName = currentSpace?.name;
     const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
     const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
-    const showTimeOnProductButton = Flagsmith.hasFeature('show_time_on_product_button');
+    const showTimeOnProductButton = flagsmith.hasFeature('show_time_on_product_button');
 
 
     /* eslint-disable */

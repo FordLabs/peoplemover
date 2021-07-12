@@ -21,8 +21,10 @@ import Creatable from 'react-select/creatable';
 import {CustomIndicator, reactSelectStyles} from './ReactSelectStyles';
 import {Option} from '../CommonTypes/Option';
 import {components, ControlProps, OptionProps, OptionTypeBase, StylesConfig} from 'react-select';
+import {OptionType} from './SelectWithHTMLOptions';
 
-const ReactSelectDropdownStyles: StylesConfig = {
+// @ts-ignore
+const ReactSelectDropdownStyles: StylesConfig<OptionType, boolean> = {
     ...reactSelectStyles,
     valueContainer: (provided: CSSProperties) => ({
         ...provided,
@@ -115,13 +117,13 @@ const CreateNewText = (text: string): JSX.Element => (
     </span>
 );
 
-const CreateOption = (props: OptionProps<OptionTypeBase>): JSX.Element => (
+const CreateOption = (props: OptionProps<OptionTypeBase, boolean>): JSX.Element => (
     <components.Option {...props}>
         <div className="roleOptionLabel">{props.label}</div>
     </components.Option>
 );
 
-const SelectWithCreateControl = (props: ControlProps<OptionTypeBase>): JSX.Element => {
+const SelectWithCreateControl = (props: ControlProps<OptionTypeBase, boolean>): JSX.Element => {
     let color = 'transparent';
 
     if (props.hasValue) {
@@ -207,6 +209,7 @@ function SelectWithCreateOption({
                 placeholder={placeholder}
                 value={value || values}
                 options={options}
+                // @ts-ignore
                 styles={useColorBadge ? reactSelectStyles : ReactSelectDropdownStyles}
                 components={components}
                 formatCreateLabel={(): JSX.Element => CreateNewText(typedInValue)}
