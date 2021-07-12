@@ -26,6 +26,7 @@ jobs:
             mysql root password: 'PASSWORD' # ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
             mysql user: 'root' # 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
             mysql password: 'PASSWORD' # ${{ secrets.DatabasePassword }} # Required if "mysql user" exists. The password for the "mysql user"
+            mysql timezone: 'America/Detroit'
       - name: Test
         run: ./gradlew clean test
         working-directory: ./api
