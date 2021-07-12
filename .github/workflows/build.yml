@@ -110,6 +110,8 @@ jobs:
       - name: Test
         run: npm run test:e2e:ci
         working-directory: ./ui
+        env:
+          TZ: 'America/Detroit'
       - name: Upload Screenshots
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2
