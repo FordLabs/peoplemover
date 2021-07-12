@@ -22,6 +22,7 @@ jobs:
       - name: Set up MySQL
         uses: mirromutth/mysql-action@v1.1
         with:
+           character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
             mysql database: 'PEOPLEMOVER_DB' # Optional, default value is "test". The specified database which will be create
             mysql root password: 'PASSWORD' # ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
             mysql user: 'root' # 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
