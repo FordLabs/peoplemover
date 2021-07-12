@@ -24,8 +24,6 @@ jobs:
         with:
             mysql database: 'PEOPLEMOVER_DB' # Optional, default value is "test". The specified database which will be create
             mysql root password: 'PASSWORD' # ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
-              #mysql user: 'root' # 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-              #mysql password: 'PASSWORD' # ${{ secrets.DatabasePassword }} # Required if "mysql user" exists. The password for the "mysql user"
         env:
           TZ: 'America/Detroit'
       - name: Test
@@ -100,6 +98,15 @@ jobs:
         uses: actions/setup-java@v1.4.3
         with:
           java-version: '11.x'
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop
+      - name: Set up MySQL
+        uses: mirromutth/mysql-action@v1.1
+        with:
+            mysql database: 'PEOPLEMOVER_DB' # Optional, default value is "test". The specified database which will be create
+            mysql root password: 'PASSWORD' # ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
+        env:
+          TZ: 'America/Detroit'
       - name: Test
         run: npm run test:e2e:ci
         working-directory: ./ui
