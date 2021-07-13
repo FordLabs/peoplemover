@@ -30,8 +30,6 @@ import {AvailableActions} from '../Redux/Actions';
 import ReportClient from '../Reports/ReportClient';
 import {AvailableModals} from '../Modal/AvailableModals';
 
-jest.mock('axios');
-
 describe('Account Dropdown', () => {
     let app: RenderResult;
     let history: MemoryHistory;
@@ -62,7 +60,7 @@ describe('Account Dropdown', () => {
             store.dispatch = jest.fn();
             app = renderWithRedux(
                 <Router history={history}>
-                    <AccountDropdown/>
+                    <AccountDropdown showAllDropDownOptions={true}/>
                 </Router>,
                 store,
             );
@@ -121,7 +119,7 @@ describe('Account Dropdown', () => {
             await wait(async () => {
                 app = renderWithRedux(
                     <Router history={history}>
-                        <AccountDropdown/>
+                        <AccountDropdown showAllDropDownOptions={true}/>
                     </Router>,
                     undefined,
                     {currentSpace: TestUtils.space, isReadOnly: true} as GlobalStateProps

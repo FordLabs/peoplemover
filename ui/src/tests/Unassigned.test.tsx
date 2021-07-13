@@ -25,36 +25,34 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {createBrowserHistory, History} from 'history';
 import {Router} from 'react-router-dom';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
+import {act} from 'react-dom/test-utils';
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
     let app: RenderResult;
     let history: History;
 
-    function applicationSetup(): void {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
-        history = createBrowserHistory();
-        history.push('/uuid');
-
-        app = renderWithRedux(
-            <Router history={history}>
-                <PeopleMover/>
-            </Router>
-        );
-    }
-
     describe('Showing the unassigned product', () => {
-        it('has the unassigned product drawer closed by default', async () => {
-            await applicationSetup();
-            await TestUtils.waitForHomePageToLoad(app);
+        beforeEach(  () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
 
+            history = createBrowserHistory();
+            history.push('/uuid');
+
+
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
+
+        });
+        it('has the unassigned product drawer closed by default', async () => {
             expect(app.queryByText(/unassigned/)).toBeNull();
         });
 
         it('shows the unassigned product drawer when the handle is clicked', async () => {
-            await applicationSetup();
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawerCaret = drawerCarets[0];
             fireEvent.click(unassignedDrawerCaret);
@@ -63,7 +61,6 @@ describe('Unassigned Products', () => {
         });
 
         it('hides the unassigned product drawer when the handle is clicked again', async () => {
-            await applicationSetup();
             const drawerCarets = await app.findAllByTestId('drawerCaret');
             const unassignedDrawerCaret = drawerCarets[0];
 
@@ -105,16 +102,30 @@ describe('Unassigned Products', () => {
     });
 
     describe('Automated linkage between modals and drawers', () => {
+        beforeEach(  () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+
+            history = createBrowserHistory();
+            history.push('/uuid');
+
+
+            app = renderWithRedux(
+                <Router history={history}>
+                    <PeopleMover/>
+                </Router>
+            );
+
+        });
+
         it('opens the unassigned drawer when an unassigned person is created', async () => {
-            await applicationSetup();
-            await TestUtils.waitForHomePageToLoad(app);
-
+            const addPerson = await app.findByTestId('addPersonButton');
             expect(app.queryByTestId('unassignedPeopleContainer')).not.toBeInTheDocument();
-            fireEvent.click(app.getByText('Add Person'));
-            await TestUtils.waitForHomePageToLoad(app);
-
-            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Person Name'}});
-            fireEvent.change(app.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
+            await act(async () => {
+                fireEvent.click(addPerson);
+            });
+            const personNameField = await app.getByLabelText('Name');
+            fireEvent.change(personNameField, {target: {value: 'Some Person Name'}});
 
             fireEvent.click(app.getByText(submitFormButtonText));
 

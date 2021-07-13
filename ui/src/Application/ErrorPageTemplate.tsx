@@ -17,7 +17,6 @@
 
 import React from 'react';
 import './ErrorPageTemplate.scss';
-import Header from '../Header/Header';
 import Branding from '../ReusableComponents/Branding';
 import FormButton from '../ModalFormComponents/FormButton';
 
@@ -29,7 +28,6 @@ interface Props {
 function ErrorPageTemplate({errorGraphic, errorText}: Props): JSX.Element {
     return (
         <div className="ErrorPageContainer" data-testid="errorPageTemplate">
-            <Header hideAllButtons={true}/>
             <main className="ErrorImageAndTextContainer">
                 <h1 className="oopsText">Oops!</h1>
                 <img src={errorGraphic} alt="" className="errorGraphic"/>
