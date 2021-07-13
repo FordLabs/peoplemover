@@ -48,7 +48,7 @@ describe('PersonAndRoleInfo component for TimeOnProduct', () => {
     });
 
     it('should show the number of day on project as text when timeOnProject is pass and is viewOnly', async () => {
-        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly: false});
+        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly: true});
         store.dispatch = jest.fn();
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={TestUtils.assignmentForHank}
@@ -58,5 +58,8 @@ describe('PersonAndRoleInfo component for TimeOnProduct', () => {
 
         const editPersonLink = app.getByText('55 days');
         expect(await editPersonLink).toBeVisible();
+
+        await fireEvent.click(editPersonLink);
+        expect(store.dispatch).not.toBeCalled();
     });
 });
