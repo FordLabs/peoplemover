@@ -96,7 +96,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         currentSpace && <>
             <CurrentModal/>
             <div>
-                <h2 className="title">Time On Product by calendar days</h2>
+                <h2 className="title">Time On Product (in calendar days)</h2>
                 <div className="date">As of: {viewingDate.toDateString()}</div>
                 {currentSpace && currentSpace.name && <>
                     <ListOfProducts/>
