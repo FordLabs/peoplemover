@@ -44,11 +44,31 @@ function Header({
     const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
     const showTimeOnProductButton = flagsmith.hasFeature('show_time_on_product_button');
 
+    const useReactPath = (): string => {
+        const [path, setPath] = React.useState(window.location.pathname);
+        const listenToPopstate = (): void => {
+            setPath(window.location.pathname);
+        };
+        React.useEffect(() => {
+            window.addEventListener('popstate', listenToPopstate);
+            return (): void => {
+                window.removeEventListener('popstate', listenToPopstate);
+            };
+        }, []);
+        return path;
+    };
+
+    const path = useReactPath();
 
     /* eslint-disable */
     useEffect( () => {
         setShowDropDown(!window.location.pathname.includes('error'));
-    }, [window.location.pathname]);
+        if(window.location.pathname.includes('timeonproduct')) {
+            setTimeOnProductClicked(true);
+        } else {
+            setTimeOnProductClicked(false);
+        }
+    }, [window.location.pathname, path]);
     /* eslint-enable */
 
     const showAllDropDownOptions = (): boolean => {
@@ -77,7 +97,7 @@ function Header({
                     <div className="headerLeftContainer">
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {showTimeOnProductButton && currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}><span className="newBadge" data-testid="newBadge">Beta</span>Time On Product &#62;</Link>}
+                        {showTimeOnProductButton && currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}><span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;</Link>}
                         {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}`} onClick={(): void => sendEventTimeOnProductClick(false)}>&#60; Back</Link>}
                     </div>
                     {!hideAllButtons && showDropDown && <div className="headerRightContainer">
