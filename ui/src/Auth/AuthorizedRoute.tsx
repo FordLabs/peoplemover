@@ -16,10 +16,9 @@
  */
 
 import {Redirect, Route, RouteProps} from 'react-router';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
-import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {AxiosError} from 'axios';
 import {setIsReadOnlyAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
@@ -36,7 +35,12 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
     const {children, setIsReadOnly, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
-    useOnLoad(() => {
+    function extractUuidFromUrl(): string {
+        return window.location.pathname.split('/')[1];
+    }
+
+    /* eslint-disable */
+    useEffect(() => {
         setIsReadOnly(false);
 
         if (!window.runConfig.auth_enabled) {
@@ -45,7 +49,7 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
             const cookie = new Cookies();
             const accessToken = cookie.get('accessToken');
 
-            const uuid = window.location.pathname.replace('/', '');
+            const uuid = extractUuidFromUrl();
 
             AccessTokenClient.userCanAccessSpace(accessToken, uuid)
                 .then(() => {
@@ -70,7 +74,8 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
                     }
                 });
         }
-    });
+    }, [children, setIsReadOnly, rest.path]);
+    /* eslint-enable */
 
     return <>{renderedElement}</>;
 }

@@ -152,6 +152,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
                         <Creatable
                             className="employeeIdTextArea"
                             inputId="employeeIdTextArea"
+                            // @ts-ignore
                             styles={inviteEditorsStyle}
                             placeholder="Enter CDSID of your editors"
                             menuIsOpen={false}

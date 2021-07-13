@@ -43,7 +43,6 @@ describe('Archive Products', () => {
         });
 
         it('has the archived products drawer closed by default', async () => {
-            await TestUtils.waitForHomePageToLoad(app);
             expect(app.queryByText('I am archived')).not.toBeInTheDocument();
         });
     

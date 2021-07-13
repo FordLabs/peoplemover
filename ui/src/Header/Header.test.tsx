@@ -23,28 +23,44 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {RunConfig} from '../index';
+import {BrowserRouter as Router} from 'react-router-dom';
+import flagsmith from 'flagsmith';
 
 const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
-    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space} as GlobalStateProps;
-    let app: RenderResult;
+    // @ts-ignore
+    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, currentUser: 'bob' } as GlobalStateProps;
 
-    beforeEach( async () => {
+    let app: RenderResult;
+    let originalWindow: Window;
+
+    beforeEach(async () => {
+        originalWindow = window;
+        delete window.location;
+        (window as Window) = Object.create(window);
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
+    afterEach(() => {
+        (window as Window) = originalWindow;
+    });
+
     it('should have no axe violations', async () => {
-        const app = await renderWithRedux(<Header/>, undefined, initialState);
+        window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
+        const app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
         const results = await axe(app.container);
         expect(results).toHaveNoViolations();
     });
 
     it('should hide space buttons', async () => {
+        window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
         app = renderWithRedux(
-            <Header hideSpaceButtons={true}/>, undefined, initialState
+            <Router>
+                <Header hideSpaceButtons={true}/>
+            </Router>, undefined, initialState
         );
         expect(app.queryByTestId('filters')).toBeFalsy();
         expect(app.queryByTestId('sortBy')).toBeFalsy();
@@ -57,15 +73,37 @@ describe('Header', () => {
         expect(await app.queryByTestId('downloadReport')).toBeNull();
     });
 
+    it('should not show the account dropdown when user is on the error page', () => {
+        window.location = {origin: 'https://localhost', pathname: '/error/404'} as Location;
+        app = renderWithRedux(
+            <Router>
+                <Header hideSpaceButtons={true}/>
+            </Router>, undefined, initialState
+        );
+
+        expect(app.queryByText('bob')).toBeNull();
+    });
+
     describe('Account Dropdown', () => {
         let app: RenderResult;
         beforeEach(async () => {
             jest.useFakeTimers();
-            app = await renderWithRedux(<Header/>, undefined, initialState);
+            flagsmith.hasFeature = jest.fn().mockReturnValue(true);
+            window.location = {origin: 'https://localhost', pathname: '/aaaaaaaaaaaaaa'} as Location;
+            app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
         });
 
         it('should show username', async () => {
             expect(app.queryByText('USER_ID')).not.toBeNull();
+        });
+
+        it('should show time On Product Link when user is in a space', async () => {
+            expect(await app.getByText('Time On Product >'));
+        });
+
+        it('should show Back to Space Link when user is in time on product page', async () => {
+            fireEvent.click( await app.getByText('Time On Product >'));
+            expect(await app.getByText('< Back'));
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {

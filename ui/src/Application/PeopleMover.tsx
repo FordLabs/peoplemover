@@ -26,10 +26,10 @@ import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
     fetchLocationsAction,
-    fetchRolesAction,
+    fetchPersonTagsAction,
     fetchProductsAction,
     fetchProductTagsAction,
-    fetchPersonTagsAction,
+    fetchRolesAction,
     setCurrentModalAction,
     setPeopleAction,
     setupSpaceAction,
@@ -40,7 +40,6 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
 import PeopleClient from '../People/PeopleClient';
-import Header from '../Header/Header';
 import {Redirect} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
@@ -55,7 +54,6 @@ import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
-import AnnouncementBanner from '../Header/AnnouncementBanner';
 import HeaderContainer from '../Header/HeaderContainer';
 import {RoleTag} from '../Roles/RoleTag.interface';
 
@@ -185,11 +183,7 @@ function PeopleMover({
         !hasProductsAndFilters()
             ? <></>
             : <div className="App">
-                <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
-                    main content</a>
                 <HeaderContainer>
-                    <AnnouncementBanner/>
-                    <Header/>
                     <SubHeader/>
                 </HeaderContainer>
                 <main>

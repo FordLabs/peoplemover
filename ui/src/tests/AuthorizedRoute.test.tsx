@@ -19,24 +19,29 @@ import {RenderResult, wait} from '@testing-library/react';
 import AuthorizedRoute from '../Auth/AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosError} from 'axios';
-import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {RunConfig} from '../index';
 import {renderWithRedux} from './TestUtils';
 import {createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setIsReadOnlyAction} from '../Redux/Actions';
+import {Router} from 'react-router-dom';
 
 describe('Authorized Route', () => {
+
     let store: Store;
 
     it('should redirect to login when security is enabled and you are not authenticated', async () => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {auth_enabled: true} as RunConfig;
         Axios.post = jest.fn().mockRejectedValue({response: {status: 401}});
         let {history} = await renderComponent(true);
         expect(history.location.pathname).toEqual('/user/login');
     });
 
     it('should show the child element when security is enabled and you are authenticated and authorized', async () => {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        window.runConfig = {auth_enabled: true} as RunConfig;
         Axios.post = jest.fn().mockResolvedValue({});
         let {result} = await renderComponent(true);
         expect(result.getByText('I am so secure!')).toBeInTheDocument();
@@ -77,6 +82,7 @@ describe('Authorized Route', () => {
 
         // @ts-ignore
         let result: RenderResult = null;
+
         await wait(() => {
             result = renderWithRedux(
                 <Router history={history}>
@@ -87,6 +93,7 @@ describe('Authorized Route', () => {
                 store
             );
         });
+
         return {result, history};
     }
 

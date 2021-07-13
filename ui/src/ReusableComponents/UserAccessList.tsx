@@ -59,7 +59,7 @@ interface UserAccessListProps {
     isUserOwner: boolean;
 }
 
-const UserAccessListOption = ({label, innerProps, isSelected, isFocused}: OptionProps<OptionTypeBase>): JSX.Element =>
+const UserAccessListOption = ({label, innerProps, isSelected, isFocused}: OptionProps<OptionTypeBase, boolean>): JSX.Element =>
     (
         <div className="userAccess-option" {...innerProps} style={
             isFocused ?
@@ -134,6 +134,7 @@ function UserAccessList({
                     } />
             }
             <Select
+                // @ts-ignore
                 styles={userAccessStyle}
                 id="userAccess-dropdown"
                 className="userAccess-dropdown"

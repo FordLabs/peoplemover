@@ -258,8 +258,8 @@ describe('My Roles Form', () => {
         it('should have create role button disabled when editing role', async () => {
             fireEvent.click(app.queryAllByTestId('editIcon__role')[0]);
 
-            const addNewLocationButton = await app.findByText('Add New Role');
-            expect(addNewLocationButton).toBeDisabled();
+            const addNewRoleButton = await app.findByTestId('addNewButton__role');
+            expect(addNewRoleButton).toBeDisabled();
         });
     });
 });
