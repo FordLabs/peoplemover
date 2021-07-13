@@ -39,8 +39,6 @@ repositories {
 }
 
 dependencies {
-    runtime 'mysql:mysql-connector-java'
-
     compile 'com.google.guava:guava:28.2-jre'
     compile 'org.springframework.cloud:spring-cloud-spring-service-connector:2.0.7.RELEASE'
     compile 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.7.RELEASE'
@@ -59,7 +57,7 @@ dependencies {
     implementation 'com.auth0:java-jwt:3.10.0'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 
-    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.25'
     runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.2.41'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

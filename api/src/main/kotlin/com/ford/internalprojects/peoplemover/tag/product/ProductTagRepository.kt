@@ -23,9 +23,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ProductTagRepository : PeopleMoverRepository<ProductTag, Int> {
-    fun findAllByNameIgnoreCaseAndSpaceUuid(name: String, spaceUuid: String): ProductTag?
-    fun findAllByNameAndSpaceUuid(name: String, spaceUuid: String): ProductTag?
     fun findAllBySpaceUuid(spaceUuid: String, name: Sort): List<ProductTag>
-    fun findByIdAndSpaceUuid(id: Int, spaceUuid: String): ProductTag?
-
+    fun findAllBySpaceUuidAndNameIgnoreCase(spaceUuid: String, name: String): ProductTag?
 }
