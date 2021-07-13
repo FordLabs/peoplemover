@@ -55,7 +55,7 @@ class LocationClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'addLocationTagError', location.name, err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 
@@ -74,7 +74,7 @@ class LocationClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'editLocationTagError', location.name, err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 
@@ -93,7 +93,7 @@ class LocationClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'deleteLocationTagError', locationId.toString(), err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 }

@@ -55,7 +55,7 @@ class PersonTagClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'addPersonTagError', personTagAddRequest.name, err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 
@@ -74,7 +74,7 @@ class PersonTagClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'editPersonTagError', personTagEditRequest.name, err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 
@@ -93,7 +93,7 @@ class PersonTagClient implements TagClient {
             return result;
         }).catch(err => {
             MatomoEvents.pushEvent(space.name, 'deletePersonTagError', personTagId.toString(), err.code);
-            return Promise.reject(err.code);
+            return Promise.reject(err);
         });
     }
 }

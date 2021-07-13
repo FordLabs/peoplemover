@@ -29,6 +29,7 @@ class ProductTagService(
 ) {
     fun createProductTagForSpace(request: TagRequest, spaceUuid: String): ProductTag {
         return try {
+            productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, request.name)?.let { throw EntityAlreadyExistsException() }
             productTagRepository.createEntityAndUpdateSpaceLastModified(ProductTag(name = request.name, spaceUuid = spaceUuid))
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
@@ -52,10 +53,10 @@ class ProductTagService(
             tagEditRequest: TagRequest
     ): ProductTag {
         return try {
+            productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, tagEditRequest.name)?.let { throw EntityAlreadyExistsException() }
             productTagRepository.updateEntityAndUpdateSpaceLastModified(ProductTag(productTagId, spaceUuid, tagEditRequest.name))
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
         }
     }
-
 }

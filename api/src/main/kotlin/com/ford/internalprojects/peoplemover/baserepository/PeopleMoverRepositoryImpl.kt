@@ -30,7 +30,7 @@ import java.util.*
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
 
-class PeopleMoverRepositoryImpl<T : SpaceComponent, ID : Int>(
+class PeopleMoverRepositoryImpl<T : SpaceComponent, ID>(
         entityInformation: JpaEntityInformation<T, *>,
         entityManager: EntityManager,
         private val spaceRepository: SpaceRepository

@@ -188,10 +188,7 @@ class LocationControllerApiTest {
         assertThat(actualSpaceLocation.name).isEqualTo(locationAddRequest.name)
         assertThat(actualSpaceLocation.spaceUuid).isEqualTo(space.uuid)
 
-        assertThat(spaceLocationRepository.findBySpaceUuidAndNameIgnoreCase(
-                space.uuid,
-                locationAddRequest.name
-        )).isNotNull()
+        assertThat(spaceLocationRepository.findAllBySpaceUuid(space.uuid)).contains(actualSpaceLocation)
     }
 
     @Test
@@ -222,10 +219,7 @@ class LocationControllerApiTest {
         assertThat(actualSpaceLocation.id).isEqualTo(spaceLocation.id!!)
         assertThat(actualSpaceLocation.name).isEqualTo(locationEditRequest.name)
 
-        assertThat(spaceLocationRepository.findBySpaceUuidAndNameIgnoreCase(
-                actualSpaceLocation.spaceUuid,
-                actualSpaceLocation.name
-        )).isNotNull
+        assertThat(spaceLocationRepository.findAllBySpaceUuid(space.uuid)).contains(actualSpaceLocation)
     }
 
     @Test
@@ -258,7 +252,7 @@ class LocationControllerApiTest {
     }
 
     @Test
-    fun `PUT should return 200 when updating name to existing space location in space with different case`() {
+    fun `PUT should return 409 when updating name to existing space location in space with different case (name check is case insensitive)`() {
         val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "France", spaceUuid = space.uuid))
         val locationEditRequest = TagRequest(spaceLocation1.name.toLowerCase())
@@ -266,7 +260,7 @@ class LocationControllerApiTest {
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(locationEditRequest)))
-            .andExpect(status().isOk)
+            .andExpect(status().isConflict)
     }
 
     @Test

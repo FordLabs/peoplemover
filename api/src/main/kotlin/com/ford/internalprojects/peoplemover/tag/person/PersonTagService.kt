@@ -29,6 +29,7 @@ class PersonTagService(
 ) {
     fun createPersonTagForSpace(request: TagRequest, spaceUuid: String): PersonTag {
         return try {
+            personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, request.name)?.let { throw EntityAlreadyExistsException() }
             personTagRepository.createEntityAndUpdateSpaceLastModified(PersonTag(name = request.name, spaceUuid = spaceUuid))
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
@@ -52,10 +53,10 @@ class PersonTagService(
             tagEditRequest: TagRequest
     ): PersonTag {
         return try {
+            personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, tagEditRequest.name)?.let { throw EntityAlreadyExistsException() }
             personTagRepository.updateEntityAndUpdateSpaceLastModified(PersonTag(personTagId, spaceUuid, tagEditRequest.name))
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
         }
     }
-
 }
