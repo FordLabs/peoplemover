@@ -31,10 +31,11 @@ interface Props {
     hideSpaceButtons?: boolean;
     isReadOnly: boolean;
     currentUser: string;
+    showAllDropDownOptions: boolean;
     setCurrentUser(user: string): string;
 }
 
-function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentUser}: Props): JSX.Element {
+function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentUser, showAllDropDownOptions}: Props): JSX.Element {
     const [redirect, setRedirect] = useState<JSX.Element>();
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
@@ -68,8 +69,8 @@ function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentU
             >
                 {(!hideSpaceButtons && !isReadOnly) ? (
                     <>
-                        <ShareAccessButton focusOnRender={true} />
-                        <DownloadReportButton/>
+                        {(showAllDropDownOptions) && <ShareAccessButton focusOnRender={true} />}
+                        {(showAllDropDownOptions) && <DownloadReportButton/>}
                         <SignOutButton setRedirect={setRedirect}/>
                     </>
                 ) : (

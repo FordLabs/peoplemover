@@ -15,14 +15,16 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
-
+import {Link} from 'react-router-dom';
 import './Headers.scss';
+import MatomoEvents from '../Matomo/MatomoEvents';
+import flagsmith from 'flagsmith';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
@@ -38,19 +40,52 @@ function Header({
     const dashboardPathname = '/user/dashboard';
     const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
     const spaceName = currentSpace?.name;
+    const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
+    const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
+    const showTimeOnProductButton = flagsmith.hasFeature('show_time_on_product_button');
+
+
+    /* eslint-disable */
+    useEffect( () => {
+        setShowDropDown(!window.location.pathname.includes('error'));
+    }, [window.location.pathname]);
+    /* eslint-enable */
+
+    const showAllDropDownOptions = (): boolean => {
+        return (window.location.pathname !== dashboardPathname);
+    };
+
+    const showHeader = (): boolean => {
+        return (window.location.pathname === '/');
+    };
+    
+    const sendEventTimeOnProductClick = (clicked: boolean): void => {
+        setTimeOnProductClicked(clicked);
+        if (clicked) {
+            MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Go to Time On Product page');
+        } else  {
+            MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
+        }
+    };
 
     return (
-        <header className="peopleMoverHeader">
-            <div className="headerLeftContainer">
-                <PeopleMoverLogo href={logoHref}/>
-                {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-            </div>
-            {!hideAllButtons &&
-            <div className="headerRightContainer">
-                <AccountDropdown hideSpaceButtons={hideSpaceButtons}/>
-            </div>
-            }
-        </header>
+        showHeader() ? <></>
+            : <>
+                {currentSpace && currentSpace.uuid && !timeOnProductClicked && <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
+                    main content</a>}
+                <header className="peopleMoverHeader">
+                    <div className="headerLeftContainer">
+                        <PeopleMoverLogo href={logoHref}/>
+                        {spaceName && <h1 className="spaceName">{spaceName}</h1>}
+                        {showTimeOnProductButton && currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}><span className="newBadge" data-testid="newBadge">Beta</span>Time On Product &#62;</Link>}
+                        {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}`} onClick={(): void => sendEventTimeOnProductClick(false)}>&#60; Back</Link>}
+                    </div>
+                    {!hideAllButtons && showDropDown && <div className="headerRightContainer">
+                        <AccountDropdown hideSpaceButtons={hideSpaceButtons} showAllDropDownOptions={showAllDropDownOptions()}/>
+                    </div>
+                    }
+                </header>
+            </>
     );
 }
 
