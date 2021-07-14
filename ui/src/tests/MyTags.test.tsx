@@ -298,7 +298,7 @@ describe('My Tags Form', () => {
             it('should have create location button disabled when editing location tag', async () => {
                 fireEvent.click(app.queryAllByTestId('editIcon__location')[0]);
 
-                const addNewLocationButton = await app.findByText('Add New Location');
+                const addNewLocationButton = await app.findByTestId('addNewButton__location');
                 expect(addNewLocationButton).toBeDisabled();
             });
         });
@@ -367,7 +367,7 @@ describe('My Tags Form', () => {
             it('should have create product tag button disabled when editing product tag', async () => {
                 fireEvent.click(app.queryAllByTestId('editIcon__product_tag')[0]);
 
-                const addNewLocationButton = await app.findByText('Add New Product Tag');
+                const addNewLocationButton = await app.findByTestId('addNewButton__product_tag');
                 expect(addNewLocationButton).toBeDisabled();
             });
         });
