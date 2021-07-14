@@ -11,6 +11,7 @@ const BANNER_CLOSED_BY_USER_KEY = 'bannerHasBeenClosedByUser';
 export default (): ReactElement => {
 
     const [closedByUser, setClosedByUser] = useState<string|null>(localStorage.getItem(BANNER_CLOSED_BY_USER_KEY));
+    // eslint-disable-next-line react-redux/useSelector-prefer-selectors
     const flags = useSelector((state: GlobalStateProps) => state.flags);
 
     const flagsNotReceived = flags.announcementBannerMessage === DEFAULT_BANNER_MESSAGE;

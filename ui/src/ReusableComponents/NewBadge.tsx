@@ -17,7 +17,7 @@
 
 import React from 'react';
 import './NewBadge.scss';
-import moment from "moment";
+import moment from 'moment';
 
 function NewBadge(): JSX.Element {
     return <span className="newBadge" data-testid="newBadge">NEW</span>;
@@ -28,9 +28,7 @@ export function calculateGradient(newPersonDate: Date, viewingDate: Date): strin
     const eightDaysAhead = moment(newPersonDate).add(8, 'days');
     const fifteenDaysAhead = moment(newPersonDate).add(15, 'days');
 
-    // TODO: change moment to viewing date
-
-    if (viewingMoment.isBetween( eightDaysAhead, fifteenDaysAhead, 'day', '[]')){
+    if (viewingMoment.isBetween( eightDaysAhead, fifteenDaysAhead, 'day', '[]')) {
         return 'stage2';
     } else if (viewingMoment.isAfter(fifteenDaysAhead)) {
         return 'stage3';

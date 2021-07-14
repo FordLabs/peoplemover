@@ -1,12 +1,12 @@
-import {calculateGradient} from "./NewBadge";
-import moment, {Moment} from "moment";
+import {calculateGradient} from './NewBadge';
+import moment from 'moment';
 
 
 describe('NewBadge', () => {
     
     describe('calculateGradient()', () => {
 
-        const baseMoment = moment("2021-01-01");
+        const baseMoment = moment('2021-01-01');
 
         it('should return empty string if newPersonDate is same as viewingDate',  () =>  {
 

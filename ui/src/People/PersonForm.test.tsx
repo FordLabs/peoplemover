@@ -27,7 +27,7 @@ import {TagRequest} from '../Tags/TagRequest.interface';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
-import {emptyPerson, Person} from "./Person";
+import {emptyPerson, Person} from './Person';
 
 describe('Person Form', () => {
     const mayFourteen: Date = new Date(2020, 4, 14);
@@ -72,7 +72,7 @@ describe('Person Form', () => {
                 fireEvent.click(await personForm.findByText('Add'));
             });
 
-            const expectedPerson: Person =  {...emptyPerson(), name: 'person', newPerson: true, newPersonDate: mayFourteen} ;
+            const expectedPerson: Person =  {...emptyPerson(), name: 'person', newPerson: true, newPersonDate: mayFourteen};
             expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestUtils.space, expectedPerson, []);
         });
     });
@@ -177,7 +177,7 @@ describe('Person Form', () => {
                 fireEvent.click(await personForm.findByText('Save'));
             });
 
-            const expectedPerson: Person =  {...TestUtils.hank, newPerson: true, newPersonDate: mayFourteen} ;
+            const expectedPerson: Person =  {...TestUtils.hank, newPerson: true, newPersonDate: mayFourteen};
             expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, expectedPerson, []);
         });
     });
