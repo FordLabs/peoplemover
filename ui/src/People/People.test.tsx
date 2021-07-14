@@ -157,6 +157,7 @@ describe('People actions', () => {
 
             fireEvent.click(app.getByText(submitFormButtonText));
 
+
             await wait(() => {
                 expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
                 const expectedPerson: Person = {
@@ -164,6 +165,7 @@ describe('People actions', () => {
                     name: 'New Bobby',
                     customField1: 'btables1',
                     newPerson: true,
+                    newPersonDate: initialState.viewingDate,
                     tags: [{
                         id: 1337,
                         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
@@ -194,9 +196,15 @@ describe('People actions', () => {
     describe('Roles', () => {
         let app: RenderResult;
 
+        const viewingDate = new Date(2020, 5, 5);
+
+        const initialState: PreloadedState<GlobalStateProps> = {
+            viewingDate: viewingDate,
+        } as GlobalStateProps;
+
         beforeEach(async () => {
             await act(async () => {
-                app = applicationSetup();
+                app = applicationSetup(undefined, initialState);
 
                 const createPersonButton = await app.findByText(addPersonButtonText);
                 fireEvent.click(createPersonButton);
@@ -221,6 +229,7 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'Some Name',
                     newPerson: true,
+                    newPersonDate: initialState.viewingDate,
                     spaceRole: {
                         name: 'Product Manager',
                         id: 2,
@@ -294,6 +303,8 @@ describe('People actions', () => {
     });
 
     describe('Creating person and assignments', () => {
+        const viewingDate = new Date(2020, 5, 5);
+
         const expectedPerson: Person = {
             ...emptyPerson(),
             name: 'Some Name',
@@ -304,9 +315,8 @@ describe('People actions', () => {
                 color: TestUtils.color1,
             },
             newPerson: true,
+            newPersonDate: viewingDate,
         };
-
-        const viewingDate = new Date(2020, 5, 5);
 
         const initialState: PreloadedState<GlobalStateProps> = {
             viewingDate: viewingDate,

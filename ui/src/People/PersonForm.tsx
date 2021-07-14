@@ -254,7 +254,7 @@ function PersonForm({
         setSelectedProducts(updatedProducts.filter(product => product != null));
     };
 
-    const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | undefined): void => {
+    const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | Date | undefined): void => {
         setPerson((updatingPerson: Person) => ({...updatingPerson, [fieldName]: fieldValue}));
     };
 
@@ -385,6 +385,7 @@ function PersonForm({
                             checked={person.newPerson}
                             onChange={(): void => {
                                 updatePersonField('newPerson', !person.newPerson);
+                                updatePersonField('newPersonDate', viewingDate);
                             }}
                         />
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>

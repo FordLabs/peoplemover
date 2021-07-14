@@ -23,7 +23,7 @@ function NewBadge(): JSX.Element {
     return <span className="newBadge" data-testid="newBadge">NEW</span>;
 }
 
-export function calculateGradient(newPersonDate: Date | undefined, viewingDate: Date): string {
+export function calculateGradient(newPersonDate: Date, viewingDate: Date): string {
     const viewingMoment = moment(viewingDate);
     const eightDaysAhead = moment(newPersonDate).add(8, 'days');
     const fifteenDaysAhead = moment(newPersonDate).add(15, 'days');
