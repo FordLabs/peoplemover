@@ -24,6 +24,8 @@
   text-decoration: none;
 
   .peopleMoverImage {
+    width: 30px;
+    height: 30px;
     @include phone {
       max-width: 24px;
     }

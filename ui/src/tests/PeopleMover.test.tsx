@@ -87,7 +87,6 @@ describe('PeopleMover', () => {
         });
 
         it('should not show unassigned drawer', function() {
-            // expect(app.queryAllByTestId('unassignedDrawer')).toHaveLength(1);
             expect(app.queryByTestId('unassignedDrawer')).toBeNull();
             expect(app.queryByTestId('archivedProductsDrawer')).toBeNull();
             expect(app.queryByTestId('reassignmentDrawer')).toBeNull();

@@ -26,9 +26,10 @@ import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
     fetchLocationsAction,
+    fetchPersonTagsAction,
     fetchProductsAction,
     fetchProductTagsAction,
-    fetchPersonTagsAction,
+    fetchRolesAction,
     setCurrentModalAction,
     setPeopleAction,
     setupSpaceAction,
@@ -39,7 +40,6 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
 import PeopleClient from '../People/PeopleClient';
-import Header from '../Header/Header';
 import {Redirect} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
@@ -54,8 +54,8 @@ import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
-import AnnouncementBanner from '../Header/AnnouncementBanner';
 import HeaderContainer from '../Header/HeaderContainer';
+import {RoleTag} from '../Roles/RoleTag.interface';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -76,6 +76,8 @@ export interface PeopleMoverProps {
 
     fetchLocations(): Array<LocationTag>;
 
+    fetchRoles(): Array<RoleTag>;
+
     setPeople(people: Array<Person>): Array<Person>;
 
     setCurrentModal(modalState: CurrentModalState): void;
@@ -95,6 +97,7 @@ function PeopleMover({
     fetchProductTags,
     fetchPersonTags,
     fetchLocations,
+    fetchRoles,
     setSpace,
     setPeople,
     setCurrentModal,
@@ -147,6 +150,7 @@ function PeopleMover({
             fetchProductTags();
             fetchPersonTags();
             fetchLocations();
+            fetchRoles();
             PeopleClient.getAllPeopleInSpace(currentSpace.uuid)
                 .then((response) => {
                     const peopleInSpace = response.data;
@@ -161,6 +165,7 @@ function PeopleMover({
         fetchProductTags,
         fetchPersonTags,
         fetchLocations,
+        fetchRoles,
         handleErrors,
     ]);
 
@@ -178,11 +183,7 @@ function PeopleMover({
         !hasProductsAndFilters()
             ? <></>
             : <div className="App">
-                <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
-                    main content</a>
                 <HeaderContainer>
-                    <AnnouncementBanner/>
-                    <Header/>
                     <SubHeader/>
                 </HeaderContainer>
                 <main>
@@ -233,6 +234,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
     fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
     fetchLocations: () => dispatch(fetchLocationsAction()),
+    fetchRoles: () => dispatch(fetchRolesAction()),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),

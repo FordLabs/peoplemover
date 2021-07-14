@@ -277,9 +277,9 @@ class TestUtils {
     static productDesigner = {name: 'Product Designer', id: 3, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color3};
 
     static roles: RoleTag[] = [
-        TestUtils.softwareEngineer,
-        TestUtils.productManager,
         TestUtils.productDesigner,
+        TestUtils.productManager,
+        TestUtils.softwareEngineer,
     ];
 
     static person1: Person = {
@@ -555,8 +555,6 @@ class TestUtils {
         id: 1,
         uuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         name: 'testSpace',
-        roles: TestUtils.roles,
-        locations: TestUtils.locations,
         lastModifiedDate: TestUtils.originDateString,
         todayViewIsPublic: true,
     }

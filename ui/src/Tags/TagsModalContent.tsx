@@ -20,34 +20,33 @@ import React, {useState} from 'react';
 import {TagInterface} from './Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {TagRequest} from './TagRequest.interface';
-import sortTagsAlphabetically from './sortTagsAlphabetically';
 import {createDataTestId} from '../tests/TestUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
-import {INACTIVE_EDIT_STATE_INDEX, TagAction} from './MyTagsForm';
+import {INACTIVE_EDIT_STATE_INDEX} from './MyTagsForm';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Space} from '../Space/Space';
-import {Tag} from './Tag';
 import {TagClient} from './TagClient.interface';
 import {FilterType} from '../SortingAndFiltering/FilterLibraries';
+
 interface Props {
     tags: Array<TagInterface>;
-    updateTags(Function: (tags: Array<TagInterface>) => TagInterface[]): void;
-    updateFilterOptions(index: number, tag: TagInterface, action: TagAction): void;
+    updateFilterOptions(index: number, tag: TagInterface): void;
     currentSpace: Space;
     tagClient: TagClient;
     filterType: FilterType;
+    fetchCommand: () => {};
 }
 
 const TagsModalContent = ({
     tags,
-    updateTags,
     currentSpace,
     updateFilterOptions,
     tagClient,
     filterType,
+    fetchCommand,
 }: Props): JSX.Element => {
     const [editTagIndex, setEditTagIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
@@ -72,13 +71,8 @@ const TagsModalContent = ({
         return await tagClient.edit(tagToEdit, currentSpace)
             .then((response) => {
                 const newTag: TagInterface = response.data;
-                updateFilterOptions(filterType.index, newTag, TagAction.EDIT);
-                updateTags((previousTag: Array<TagInterface>) => {
-                    const tags = previousTag.map((currentTag: TagInterface) => currentTag.id !== tagToEdit.id ? currentTag : newTag);
-                    sortTagsAlphabetically(tags);
-                    return tags;
-                });
-
+                updateFilterOptions(filterType.index, newTag);
+                fetchCommand();
                 returnToViewState();
             });
     };
@@ -86,14 +80,7 @@ const TagsModalContent = ({
     const addTag = async (tagToAdd: TagRequest): Promise<unknown> => {
         return await tagClient.add(tagToAdd, currentSpace)
             .then((response) => {
-                const newTag: TagInterface = response.data;
-                updateFilterOptions(filterType.index, newTag, TagAction.ADD);
-                updateTags((previousTag: Array<TagInterface>) => {
-                    const tags = [...previousTag, newTag];
-                    sortTagsAlphabetically(tags);
-                    return tags;
-                });
-
+                fetchCommand();
                 returnToViewState();
             });
     };
@@ -103,10 +90,7 @@ const TagsModalContent = ({
             if (currentSpace.uuid) {
                 await tagClient.delete(tagToDelete.id, currentSpace);
                 setConfirmDeleteModal(null);
-                updateFilterOptions(filterType.index, tagToDelete, TagAction.DELETE);
-                updateTags((previousTags: Array<TagInterface>) =>
-                    previousTags.filter((currentTag: Tag) => currentTag.id !== tagToDelete.id),
-                );
+                fetchCommand();
             }
         } catch {
             return;

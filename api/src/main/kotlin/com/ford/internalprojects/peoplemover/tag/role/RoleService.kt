@@ -17,17 +17,15 @@
 
 package com.ford.internalprojects.peoplemover.tag.role
 
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityAlreadyExistsException
 import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.color.ColorRepository
 import com.ford.internalprojects.peoplemover.color.exceptions.ColorDoesNotExistException
-import com.ford.internalprojects.peoplemover.tag.role.exceptions.RoleAlreadyExistsException
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class RoleService(
-        private val spaceRepository: SpaceRepository,
         private val spaceRolesRepository: SpaceRolesRepository,
         private val colorRepository: ColorRepository
 ) {
@@ -36,10 +34,10 @@ class RoleService(
             role: String,
             colorId: Int?
     ): SpaceRole {
-        spaceRolesRepository.findBySpaceUuidAndNameAllIgnoreCase(
+        spaceRolesRepository.findAllBySpaceUuidAndNameIgnoreCase(
                 spaceUuid,
                 role
-        )?.let { throw RoleAlreadyExistsException(role) }
+        )?.let { throw EntityAlreadyExistsException() }
         val colorToAssign: Color? = getColorToAssign(spaceUuid, colorId)
         val spaceRole = SpaceRole(name = role, color = colorToAssign, spaceUuid = spaceUuid)
         return spaceRolesRepository.createEntityAndUpdateSpaceLastModified(spaceRole)
@@ -92,13 +90,12 @@ class RoleService(
     }
 
     private fun throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest: RoleRequest, roleId: Int, spaceUuid: String) {
-        spaceRolesRepository.findBySpaceUuidAndNameAllIgnoreCase(
+        spaceRolesRepository.findAllBySpaceUuidAndNameIgnoreCase(
                 spaceUuid,
                 roleEditRequest.name
         )?.let { spaceRole ->
-            val updatedRoleNameAlreadyUsedInOtherSpaceRole = spaceRole.id != roleId
-            if (updatedRoleNameAlreadyUsedInOtherSpaceRole) {
-                throw RoleAlreadyExistsException(roleEditRequest.name)
+            if (spaceRole.id != roleId) {
+                throw EntityAlreadyExistsException()
             }
         }
     }

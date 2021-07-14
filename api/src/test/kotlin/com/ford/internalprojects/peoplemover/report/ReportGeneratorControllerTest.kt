@@ -105,8 +105,8 @@ class ReportGeneratorControllerTest {
 
     @Before
     fun setup() {
-        space1 = spaceRepository.save(Space(name = "Undersea Pineapple", createdDate = LocalDateTime.of(2020, Month.FEBRUARY, 22, 0,0,0)))
-        space2 = spaceRepository.save(Space(name = "Krusty Krabb", createdDate = LocalDateTime.now()))
+        space1 = spaceRepository.save(Space(name = "Undersea Pineapple", createdDate = LocalDate.of(2020, Month.FEBRUARY, 22).atTime(0, 0)))
+        space2 = spaceRepository.save(Space(name = "Krusty Krabb", createdDate = LocalDate.now().atTime(0, 0)))
         productA = productRepository.save(Product(name = "product a", spaceUuid = space1.uuid))
         productB = productRepository.save(Product(name = "Product b", spaceUuid = space1.uuid))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceUuid = space1.uuid))

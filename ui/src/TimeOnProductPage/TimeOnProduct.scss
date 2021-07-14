@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +15,21 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.tag.role.exceptions
+@import '../Application/Styleguide/Colors.scss';
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
+.title{
+  padding-top: 10px;
+  padding-left: 5px;
+}
 
-@ResponseStatus(value = HttpStatus.CONFLICT)
-class RoleAlreadyExistsException(roleName: String) : RuntimeException(roleName)
+.date {
+  padding-left: 45px;
+}
+
+.productContainer{
+  margin-left: 50px;
+}
+.productName{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}

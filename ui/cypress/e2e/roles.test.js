@@ -62,7 +62,7 @@ describe('Roles', () => {
         cy.wait('@postNewRole').should(xhr => {
             expect(xhr?.status).to.equal(200);
             expect(xhr?.response?.body.name).to.equal(mockRole);
-            expect(xhr?.response?.body.color).to.deep.equal(mockColor);
+            expect(xhr?.response?.body.color.color).to.equal(mockColor.color);
         });
 
         cy.contains(mockRole).parent('[data-testid=viewTagRow]').should(($lis) => {

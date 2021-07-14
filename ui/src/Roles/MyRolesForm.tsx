@@ -21,92 +21,47 @@ import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {FilterOption} from '../CommonTypes/Option';
 import {Color, RoleTag} from './RoleTag.interface';
-import RoleClient from './RoleClient';
-import {TagInterface} from '../Tags/Tag.interface';
-import {Space} from '../Space/Space';
 import ColorClient from './ColorClient';
-import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
 import RoleTags from './RoleTags';
-
-import '../ModalFormComponents/TagRowsContainer.scss';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
-
-// @Todo consolidate (also in MyTagsForm)
-export const INACTIVE_EDIT_STATE_INDEX = -1;
-
-// @Todo consolidate (also in MyTagsForm)
-export enum TagAction {
-    ADD,
-    EDIT,
-    DELETE
-}
+import {TagInterface} from '../Tags/Tag.interface';
+import {FilterOption} from '../CommonTypes/Option';
+import '../ModalFormComponents/TagRowsContainer.scss';
 
 interface Props {
-    currentSpace: Space;
+    roles: Array<RoleTag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!;
+function MyRolesForm({ roles, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
-    const [roles, setRoles] = useState<Array<RoleTag>>([]);
 
     useEffect(() => {
-        const rolesPromise = RoleClient.get(uuid);
-        const colorsPromise = ColorClient.getAllColors();
+        ColorClient.getAllColors().then(response => {
+            setColors(response.data);
+        });
+    }, [colors.length]);
 
-        const fetchData = !roles.length && !colors.length;
-        if (fetchData) {
-            Promise.all([rolesPromise, colorsPromise])
-                .then(values => {
-                    const rolesData = values[0].data;
-                    sortTagsAlphabetically(rolesData);
-                    setRoles(rolesData);
-
-                    const colorsData = values[1].data;
-                    setColors(colorsData);
-                });
-        }
-    }, [uuid, roles.length, colors.length]);
-
-    // @todo abstract filter methods away to redux please
-    const getUpdatedFilterOptions = (index: number, trait: TagInterface, action: TagAction): Array<FilterOption> => {
+    const getUpdatedFilterOptions = (index: number, trait: TagInterface): Array<FilterOption> => {
         let options: Array<FilterOption>;
-        switch (action) {
-            case TagAction.ADD:
-                options = [
-                    ...allGroupedTagFilterOptions[index].options,
-                    {label: trait.name, value: trait.id.toString() + '_' + trait.name, selected: false},
-                ];
-                break;
-            case TagAction.EDIT:
-                options = allGroupedTagFilterOptions[index].options.map(val =>
-                    !val.value.includes(trait.id.toString() + '_') ?
-                        val :
-                        {
-                            label: trait.name,
-                            value: trait.id.toString() + '_' + trait.name,
-                            selected: val.selected,
-                        }
-                );
-                break;
-            case TagAction.DELETE:
-                options = allGroupedTagFilterOptions[index].options.filter(val => val.label !== trait.name);
-                break;
-            default:
-                options = [];
-        }
+        options = allGroupedTagFilterOptions[index].options.map(val =>
+            !val.value.includes(trait.id.toString() + '_') ?
+                val :
+                {
+                    label: trait.name,
+                    value: trait.id.toString() + '_' + trait.name,
+                    selected: val.selected,
+                }
+        );
         return options;
     };
 
-    function updateFilterOptions(optionIndex: number, tag: TagInterface, action: TagAction): void {
+    function updateFilterOptions(optionIndex: number, tag: TagInterface): void {
         const groupedFilterOptions = [...allGroupedTagFilterOptions];
         groupedFilterOptions[optionIndex]
-            .options = getUpdatedFilterOptions(optionIndex, tag, action);
+            .options = getUpdatedFilterOptions(optionIndex, tag);
         setAllGroupedTagFilterOptions(groupedFilterOptions);
     }
 
@@ -114,8 +69,6 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
             <RoleTags
                 colors={colors}
-                roles={roles}
-                setRoles={setRoles}
                 updateFilterOptions={updateFilterOptions}
             />
             <div className="traitWarning">
@@ -129,6 +82,7 @@ function MyRolesForm({ currentSpace, allGroupedTagFilterOptions, setAllGroupedTa
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
+    roles: state.roles,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

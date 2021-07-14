@@ -28,14 +28,12 @@ import {
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router';
-import Header from '../Header/Header';
 import SpaceDashboardTile from './SpaceDashboardTile';
 import {GlobalStateProps} from '../Redux/Reducers';
 
 import './SpaceDashboard.scss';
 import Branding from '../ReusableComponents/Branding';
 import {AvailableModals} from '../Modal/AvailableModals';
-import AnnouncementBanner from '../Header/AnnouncementBanner';
 
 interface SpaceDashboardProps {
     setCurrentModal(modalState: CurrentModalState): void;
@@ -123,8 +121,6 @@ function SpaceDashboard({
 
     return (
         <div className="spaceDashboard">
-            <AnnouncementBanner/>
-            <Header hideSpaceButtons={true}/>
             <CurrentModal/>
             {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
             <Branding />

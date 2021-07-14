@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +15,18 @@
  * limitations under the License.
  */
 
-package com.ford.internalprojects.peoplemover.tag.role.exceptions
+import {AvailableActions} from '../Actions';
+import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
+import {RoleTag} from '../../Roles/RoleTag.interface';
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
+const rolesReducer = (state: Array<RoleTag> = [], action: {type: AvailableActions; roles: Array<RoleTag>} ): Array<RoleTag> => {
+    if (action.type === AvailableActions.SET_ROLES) {
+        const roles = [...action.roles];
+        sortTagsAlphabetically(roles);
+        return roles;
+    } else {
+        return state;
+    }
+};
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-class RoleNotExistsException(roleName: String) : RuntimeException(roleName)
+export default rolesReducer;

@@ -30,6 +30,9 @@ import LocationClient from '../../Locations/LocationClient';
 import SpaceClient from '../../Space/SpaceClient';
 import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
 import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
+import {RoleTag} from '../../Roles/RoleTag.interface';
+import RoleClient from '../../Roles/RoleClient';
+import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -47,6 +50,7 @@ export enum AvailableActions {
     SET_PRODUCT_TAGS,
     SET_PERSON_TAGS,
     SET_LOCATIONS,
+    SET_ROLES,
     SET_PRODUCT_SORT_BY,
     SET_USER_SPACES,
     SET_IS_READ_ONLY,
@@ -135,6 +139,11 @@ export const setLocationsAction = (locations: Array<LocationTag>) => ({
     locations,
 });
 
+export const setRolesAction = (roles: Array<RoleTag>) => ({
+    type: AvailableActions.SET_ROLES,
+    roles,
+});
+
 export const setProductSortByAction = (productSortBy: string) => ({
     type: AvailableActions.SET_PRODUCT_SORT_BY,
     productSortBy,
@@ -184,15 +193,7 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
         return ProductTagClient.get(getState().currentSpace.uuid!,)
             .then(result => {
                 let productTags: Array<Tag> = result.data || [];
-                productTags = productTags.sort((a, b) => {
-                    if (a.name.toLowerCase() < b.name.toLowerCase()) {
-                        return -1;
-                    }
-                    if (a.name.toLowerCase() > b.name.toLowerCase()) {
-                        return 1;
-                    }
-                    return 0;
-                });
+                sortTagsAlphabetically(productTags);
                 dispatch(setProductTagsAction(productTags));
             });
     };
@@ -203,15 +204,7 @@ export const fetchPersonTagsAction: ActionCreator<ThunkAction<void, Function, nu
         return PersonTagClient.get(getState().currentSpace.uuid!,)
             .then(result => {
                 let personTags: Array<Tag> = result.data || [];
-                personTags = personTags.sort((a, b) => {
-                    if (a.name.toLowerCase() < b.name.toLowerCase()) {
-                        return -1;
-                    }
-                    if (a.name.toLowerCase() > b.name.toLowerCase()) {
-                        return 1;
-                    }
-                    return 0;
-                });
+                sortTagsAlphabetically(personTags);
                 dispatch(setPersonTagsAction(personTags));
             });
     };
@@ -221,27 +214,26 @@ export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, nul
         return LocationClient.get(getState().currentSpace.uuid,)
             .then(result => {
                 let locations: Array<LocationTag> = result.data || [];
-                locations = locations.sort((a, b) => {
-                    if (a.name.toLowerCase() < b.name.toLowerCase()) {
-                        return -1;
-                    }
-                    if (a.name.toLowerCase() > b.name.toLowerCase()) {
-                        return 1;
-                    }
-                    return 0;
-                });
+                sortTagsAlphabetically(locations);
                 dispatch(setLocationsAction(locations));
             });
     };
 
-export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (
-    space: Space
-) => (
-    dispatch: Dispatch,
-): Promise<void> => {
-    dispatch(setCurrentSpaceAction(space));
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return getFilterOptionsForSpace(space.uuid!).then((filterOptions: Array<AllGroupedTagFilterOptions>) => {
-        dispatch(setAllGroupedTagFilterOptionsAction(filterOptions));
-    });
-};
+export const fetchRolesAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
+    (dispatch: Dispatch, getState: Function): Promise<void> => {
+        return RoleClient.get(getState().currentSpace.uuid,)
+            .then(result => {
+                let roles: Array<RoleTag> = result.data || [];
+                sortTagsAlphabetically(roles);
+                dispatch(setRolesAction(roles));
+            });
+    };
+
+export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (space: Space) =>
+    (dispatch: Dispatch): Promise<void> => {
+        dispatch(setCurrentSpaceAction(space));
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return getFilterOptionsForSpace(space.uuid!).then((filterOptions: Array<AllGroupedTagFilterOptions>) => {
+            dispatch(setAllGroupedTagFilterOptionsAction(filterOptions));
+        });
+    };

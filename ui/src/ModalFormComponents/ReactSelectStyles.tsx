@@ -137,7 +137,7 @@ export const isUserTabbingAndFocusedOnElement = ({isFocused}: Props): boolean =>
     return isFocused && document.body.classList.contains('user-is-tabbing');
 };
 
-export const CustomIndicator = (props: IndicatorProps<OptionTypeBase>): JSX.Element => (
+export const CustomIndicator = (props: IndicatorProps<OptionTypeBase, boolean>): JSX.Element => (
     <components.DropdownIndicator {...props}>
         {
             props.options.length === 0

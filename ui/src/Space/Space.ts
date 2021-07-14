@@ -15,15 +15,10 @@
  * limitations under the License.
  */
 
-import {RoleTag} from '../Roles/RoleTag.interface';
-import {LocationTag} from '../Locations/LocationTag.interface';
-
 export interface Space {
     id?: number;
     uuid?: string;
     name: string;
-    roles: RoleTag[];
-    locations:    LocationTag[];
     lastModifiedDate: string;
     todayViewIsPublic: boolean;
 }
@@ -31,8 +26,6 @@ export interface Space {
 export function createEmptySpace(): Space {
     return {
         name: '',
-        roles: [],
-        locations: [],
         lastModifiedDate: '',
         todayViewIsPublic: false,
     };

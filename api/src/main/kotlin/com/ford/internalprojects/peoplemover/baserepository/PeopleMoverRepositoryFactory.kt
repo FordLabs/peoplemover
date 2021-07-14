@@ -22,7 +22,6 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation
 import org.springframework.data.repository.core.RepositoryInformation
-import java.io.Serializable
 import javax.persistence.EntityManager
 
 class PeopleMoverRepositoryFactory(
@@ -34,7 +33,7 @@ class PeopleMoverRepositoryFactory(
             information: RepositoryInformation,
             entityManager: EntityManager
     ): JpaRepositoryImplementation<*, *> {
-        val entityInformation = getEntityInformation<SpaceComponent, Any>(information.domainType as Class<SpaceComponent>)
+        @Suppress("UNCHECKED_CAST") val entityInformation = getEntityInformation<SpaceComponent, Any>(information.domainType as Class<SpaceComponent>)
         return PeopleMoverRepositoryImpl<SpaceComponent, Int>(
                 entityInformation,
                 entityManager,

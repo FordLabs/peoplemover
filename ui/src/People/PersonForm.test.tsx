@@ -37,6 +37,7 @@ describe('Person Form', () => {
         currentSpace: TestUtils.space,
         viewingDate: mayFourteen,
         allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+        roles: TestUtils.roles,
     });
     let personForm: RenderResult;
 

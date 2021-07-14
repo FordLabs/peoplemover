@@ -22,7 +22,6 @@ import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import Branding from '../ReusableComponents/Branding';
 
 import './LandingPage.scss';
-import AnnouncementBanner from '../Header/AnnouncementBanner';
 
 function LandingPage(): JSX.Element {
     const LoginButton = (): JSX.Element => (
@@ -34,7 +33,6 @@ function LandingPage(): JSX.Element {
     return (
         <>
             <main className="mainContainer"  data-testid="landingPage">
-                <AnnouncementBanner/>
                 <div className="landingPageContainer">
                     <div className="landingPageInfoContainer">
                         <PeopleMoverLogo/>
