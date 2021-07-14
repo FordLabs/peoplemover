@@ -39,6 +39,7 @@ describe('Assignment Card', () => {
                 name: 'Billiam Handy',
                 spaceRole: TestUtils.softwareEngineer,
                 notes: 'This is a note',
+                tags: TestUtils.personTags,
             },
             placeholder: false,
             productId: 0,
@@ -425,6 +426,50 @@ describe('Assignment Card', () => {
             });
 
             expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+        });
+    });
+
+    describe('Hoverable Person tag', () => {
+        beforeEach(() => {
+            initialState = {
+                currentSpace: TestUtils.space,
+                isDragging: false,
+            } as GlobalStateProps;
+        });
+
+        it('should display person tag Icon if person has valid notes', () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>,
+                undefined,
+                initialState,
+            );
+            expect(underTest.getByTestId('tagIcon')).toBeInTheDocument();
+        });
+
+        it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>,
+                undefined,
+                {...initialState, isReadOnly: true},
+            );
+            expect(underTest.queryByTestId('tagIcon')).toBeNull();
+        });
+
+        it('should not display person tag Icon if person has no person tags', () => {
+            delete assignmentToRender.person.tags;
+
+            const underTest = renderWithRedux(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}/>,
+                undefined,
+                initialState,
+            );
+            expect(underTest.queryByTestId('tagIcon')).toBeNull();
         });
     });
 });

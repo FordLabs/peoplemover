@@ -25,6 +25,7 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {setCurrentModalAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {Space} from '../Space/Space';
+import HoverableIcon from './HoverableIcon';
 
 interface Props {
     assignment: Assignment;
@@ -100,6 +101,15 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
 
     };
 
+
+    const listOfTagName = (): string[] => {
+        if (person.tags) {
+            return person.tags.map((tag) => {
+                return tag.name;
+            });
+        } else return [];
+    };
+
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer">
@@ -107,6 +117,7 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                 data-testid="personName">
                 {person.name}
                 <NotesIcon/>
+                <HoverableIcon iconeName={''} textToDisplay={listOfTagName()} isReadOnly={isReadOnly}/>
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
