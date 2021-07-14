@@ -70,9 +70,9 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
 
     const numberOfDaysString = (timeOnProject: number): string => {
         if (timeOnProject === 1) {
-            return timeOnProject.toString().concat(' day');
+            return timeOnProject.toFixed(0).concat(' day');
         } else {
-            return timeOnProject.toString().concat(' days');
+            return timeOnProject.toFixed(0).concat(' days');
         }
     };
 
