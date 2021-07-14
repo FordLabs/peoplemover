@@ -204,7 +204,7 @@ function AssignmentCard({
                 }
             }}
         >
-            {assignment.person.newPerson && <div className={'newPersonBadge ' + calculateGradient(assignment.person.newPersonDate)}><NewBadge/></div>}
+            {assignment.person.newPerson && <div className={'newPersonBadge ' + calculateGradient(assignment.person.newPersonDate, viewingDate)}><NewBadge/></div>}
             <PersonAndRoleInfo
                 isReadOnly={isReadOnly}
                 assignment={assignment}
