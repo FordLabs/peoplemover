@@ -49,7 +49,7 @@ data class Person(
         var newPerson: Boolean = false,
 
         @Column()
-        var newPersonDate: LocalDate = LocalDate.now(),
+        var newPersonDate: LocalDate?,
 
         @Column(name = "space_uuid")
         override val spaceUuid: String,
@@ -58,5 +58,5 @@ data class Person(
 
 ): NamedSpaceComponent {
     constructor(name: String, spaceUuid: String) :
-            this(id = null, name = name, spaceRole = null, tags = HashSet(), notes = "", newPerson = false, newPersonDate = LocalDate.now(), spaceUuid = spaceUuid, customField1 = null)
+            this(id = null, name = name, spaceRole = null, tags = HashSet(), notes = "", newPerson = false, newPersonDate = null, spaceUuid = spaceUuid, customField1 = null)
 }

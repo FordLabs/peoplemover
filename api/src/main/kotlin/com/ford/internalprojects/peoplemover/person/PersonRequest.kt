@@ -41,7 +41,7 @@ data class PersonRequest(
         @JsonProperty
         var newPerson: Boolean = false,
 
-        var newPersonDate: LocalDate = LocalDate.now(),
+        var newPersonDate: LocalDate?,
 
         val customField1: String? = null
 )
