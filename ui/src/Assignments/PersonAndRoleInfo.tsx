@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement} from 'react';
 import {Assignment} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -25,6 +25,7 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {setCurrentModalAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {Space} from '../Space/Space';
+import HoverableIcon from './HoverableIcon';
 
 interface Props {
     assignment: Assignment;
@@ -33,40 +34,20 @@ interface Props {
     isDragging: boolean;
     timeOnProduct?: number;
     currentSpace: Space;
-    viewOnly: boolean;
 
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isUnassignedProduct, isDragging, timeOnProduct, setCurrentModal, currentSpace, viewOnly}: Props): ReactElement => {
-    const { person } = assignment;
-    const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
-    const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
-    const HoverBox = ({notes}: {
-        notes: string;
-    }): JSX.Element  => {
-        return (
-            <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}
-                data-testid="hoverBoxContainer">
-                <p className="hoverBoxNotes">
-                    {notes}
-                </p>
-            </div>
-        );
-    };
-
-    const onNoteHover = (boxIsHovered = false): void => {
-        if (boxIsHovered) {
-            const timeout = setTimeout(() => {
-                setHoverBoxIsOpened(boxIsHovered);
-            }, 500);
-
-            setHoverTimeout(timeout);
-        } else {
-            setHoverBoxIsOpened(boxIsHovered);
-            if (hoverTimeout) clearTimeout(hoverTimeout);
-        }
-    };
+const PersonAndRoleInfo = ({
+    isReadOnly,
+    assignment = {id: 0} as Assignment,
+    isUnassignedProduct,
+    isDragging,
+    timeOnProduct,
+    setCurrentModal,
+    currentSpace,
+}: Props): ReactElement => {
+    const {person} = assignment;
 
     const numberOfDaysString = (timeOnProject: number): string => {
         if (timeOnProject === 1) {
@@ -77,48 +58,56 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
     };
 
     const openEditPersonModal = (): void => {
-        if (timeOnProduct) MatomoEvents.pushEvent(currentSpace.name, 'openEditPersonFromTimeOnProduct', timeOnProduct.toString());
+        if (timeOnProduct) {
+            MatomoEvents.pushEvent(currentSpace.name, 'openEditPersonFromTimeOnProduct', timeOnProduct.toString());
+        }
         setCurrentModal({
             modal: AvailableModals.EDIT_PERSON,
             item: assignment,
         });
     };
 
-    const NotesIcon = (): ReactElement => {
-        if (isReadOnly || !person.notes?.trim().length) {
-            return <></>;
-        }
-        return  <i
-            className={`material-icons notesIcon ${isUnassignedProduct ? 'unassignedNotesIcon' : ''}`}
-            data-testid="notesIcon"
-            onMouseEnter={(): void => onNoteHover(true)}
-            onMouseLeave={(): void => onNoteHover(false)}
-        >
-            note
-            {!isDragging && hoverBoxIsOpened && <HoverBox notes={person.notes}/>}
-        </i>;
+    const listOfTagName = (): string[] => {
+        if (person.tags) {
+            return person.tags.map((tag) => {
+                return tag.name;
+            });
+        } else return [];
+    };
 
+    const passNote = (): []|string[] => {
+        if (person.notes) {
+            return [person.notes];
+        } else {
+            return [];
+        }
     };
 
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer">
-            <div className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
+            <div
+                className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
                 {person.name}
-                <NotesIcon/>
+                <HoverableIcon iconName={'note'} textToDisplay={passNote()} viewOnly={isReadOnly}
+                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct}/>
+                <HoverableIcon iconName={'style'} textToDisplay={listOfTagName()} viewOnly={isReadOnly}
+                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct}/>
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
                     {person.spaceRole.name}
                 </div>
             )}
-            {timeOnProduct && !viewOnly &&
-            <button className="timeOnProductButton timeOnProduct" onClick={(): void => {openEditPersonModal();}}>
+            {timeOnProduct && !isReadOnly &&
+            <button className="timeOnProductButton timeOnProduct" onClick={(): void => {
+                openEditPersonModal();
+            }}>
                 {numberOfDaysString(timeOnProduct)}
             </button>
             }
-            {timeOnProduct && viewOnly && <span className="timeOnProduct">{numberOfDaysString(timeOnProduct)}</span>}
+            {timeOnProduct && isReadOnly && <span className="timeOnProduct">{numberOfDaysString(timeOnProduct)}</span>}
         </div>
     );
 };
@@ -127,12 +116,11 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
     currentSpace: state.currentSpace,
-    viewOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps) (PersonAndRoleInfo);
+export default connect(mapStateToProps, mapDispatchToProps)(PersonAndRoleInfo);
 /* eslint-enable */
