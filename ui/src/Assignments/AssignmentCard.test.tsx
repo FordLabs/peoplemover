@@ -444,7 +444,7 @@ describe('Assignment Card', () => {
                 undefined,
                 initialState,
             );
-            expect(underTest.getByText('style')).toBeInTheDocument();
+            expect(underTest.getByText('local_offer')).toBeInTheDocument();
         });
 
         it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
@@ -455,7 +455,7 @@ describe('Assignment Card', () => {
                 undefined,
                 {...initialState, isReadOnly: true},
             );
-            expect(underTest.queryByText('style')).toBeNull();
+            expect(underTest.queryByText('local_offer')).toBeNull();
         });
 
         it('should not display person tag Icon if person has no person tags', () => {
@@ -468,7 +468,7 @@ describe('Assignment Card', () => {
                 undefined,
                 initialState,
             );
-            expect(underTest.queryByText('style')).toBeNull();
+            expect(underTest.queryByText('local_offer')).toBeNull();
         });
 
         it('should display tags when hovered on tag icon and remove it when hover away', () => {
@@ -483,14 +483,14 @@ describe('Assignment Card', () => {
             expect(underTest.queryByText('The lil boss,The big boss')).toBeNull();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByText('style'));
+                fireEvent.mouseEnter(underTest.getByText('local_offer'));
                 jest.advanceTimersByTime(500);
             });
 
             expect(underTest.getByText('The lil boss,The big boss')).toBeVisible();
 
             act(() => {
-                fireEvent.mouseLeave(underTest.getByText('style'));
+                fireEvent.mouseLeave(underTest.getByText('local_offer'));
                 jest.advanceTimersByTime(500);
             });
 
@@ -507,10 +507,10 @@ describe('Assignment Card', () => {
             );
 
             expect(underTest.queryByText('The lil boss,The big boss')).toBeNull();
-            expect(underTest.getByText('style')).toBeInTheDocument();
+            expect(underTest.getByText('local_offer')).toBeInTheDocument();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByText('style'));
+                fireEvent.mouseEnter(underTest.getByText('local_offer'));
                 jest.advanceTimersByTime(500);
             });
 

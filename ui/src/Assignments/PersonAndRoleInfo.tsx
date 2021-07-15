@@ -90,10 +90,10 @@ const PersonAndRoleInfo = ({
                 className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
                 {person.name}
+                <HoverableIcon iconName={'local_offer'} textToDisplay={listOfTagName()} viewOnly={isReadOnly}
+                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Person Tags'}/>
                 <HoverableIcon iconName={'note'} textToDisplay={passNote()} viewOnly={isReadOnly}
-                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct}/>
-                <HoverableIcon iconName={'style'} textToDisplay={listOfTagName()} viewOnly={isReadOnly}
-                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct}/>
+                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Notes'}/>
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>

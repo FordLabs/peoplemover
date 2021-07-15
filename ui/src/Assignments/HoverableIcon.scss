@@ -51,8 +51,14 @@
     left: 0;
   }
 
+  .hoverBoxTitle {
+    margin: 16px 20px 0px 20px;
+    line-height: 18px;
+    font-weight: bold;
+  }
+
   .hoverBoxText {
-    margin: 16px 20px;
+    margin: 4px 20px 16px 20px;
     line-height: 18px;
     white-space: pre-wrap;
   }

@@ -23,6 +23,7 @@ interface HoverableIconProps {
     viewOnly: boolean;
     isDragging: boolean;
     isUnassignedProduct: boolean;
+    type: string;
 }
 
 const HoverableIcon = ({
@@ -31,28 +32,18 @@ const HoverableIcon = ({
     viewOnly,
     isDragging,
     isUnassignedProduct,
+    type,
 }: HoverableIconProps): JSX.Element => {
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
-    // const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
 
     const onHover = (boxIsHovered = false): void => {
         setHoverBoxIsOpened(boxIsHovered);
-        //
-        // if (boxIsHovered) {
-        //     const timeout = setTimeout(() => {
-        //         setHoverBoxIsOpened(boxIsHovered);
-        //     }, 500);
-        //
-        //     setHoverTimeout(timeout);
-        // } else {
-        //     setHoverBoxIsOpened(boxIsHovered);
-        //     if (hoverTimeout) clearTimeout(hoverTimeout);
-        // }
     };
 
     const HoverBox = (): JSX.Element => {
         return (
             <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
+                <p className="hoverBoxTitle">{type}:</p>
                 <p className="hoverBoxText">
                     {textToDisplay.toString()}
                 </p>
