@@ -34,7 +34,6 @@ interface Props {
     isDragging: boolean;
     timeOnProduct?: number;
     currentSpace: Space;
-    viewOnly: boolean;
 
     setCurrentModal(modalState: CurrentModalState): void;
 }
@@ -47,7 +46,6 @@ const PersonAndRoleInfo = ({
     timeOnProduct,
     setCurrentModal,
     currentSpace,
-    viewOnly,
 }: Props): ReactElement => {
     const {person} = assignment;
 
@@ -102,14 +100,14 @@ const PersonAndRoleInfo = ({
                     {person.spaceRole.name}
                 </div>
             )}
-            {timeOnProduct && !viewOnly &&
+            {timeOnProduct && !isReadOnly &&
             <button className="timeOnProductButton timeOnProduct" onClick={(): void => {
                 openEditPersonModal();
             }}>
                 {numberOfDaysString(timeOnProduct)}
             </button>
             }
-            {timeOnProduct && viewOnly && <span className="timeOnProduct">{numberOfDaysString(timeOnProduct)}</span>}
+            {timeOnProduct && isReadOnly && <span className="timeOnProduct">{numberOfDaysString(timeOnProduct)}</span>}
         </div>
     );
 };
@@ -118,7 +116,6 @@ const PersonAndRoleInfo = ({
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
     currentSpace: state.currentSpace,
-    viewOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
