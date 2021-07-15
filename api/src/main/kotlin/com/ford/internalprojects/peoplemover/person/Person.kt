@@ -21,7 +21,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
 import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
+import java.time.LocalDate
+import java.util.*
 import javax.persistence.*
+import kotlin.collections.HashSet
 
 @Entity
 data class Person(
@@ -45,6 +48,9 @@ data class Person(
         @Column(name = "new_person")
         var newPerson: Boolean = false,
 
+        @Column()
+        var newPersonDate: LocalDate = LocalDate.now(),
+
         @Column(name = "space_uuid")
         override val spaceUuid: String,
 
@@ -52,5 +58,5 @@ data class Person(
 
 ): NamedSpaceComponent {
     constructor(name: String, spaceUuid: String) :
-            this(null, name, null, HashSet(), "", false, spaceUuid, null)
+            this(id = null, name = name, spaceRole = null, tags = HashSet(), notes = "", newPerson = false, newPersonDate = LocalDate.now(), spaceUuid = spaceUuid, customField1 = null)
 }
