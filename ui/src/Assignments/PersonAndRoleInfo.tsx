@@ -119,7 +119,7 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                 data-testid="personName">
                 {person.name}
                 <NotesIcon/>
-                <HoverableIcon iconeName={''} textToDisplay={listOfTagName()} viewOnly={isReadOnly} isDragging={isDragging} isUnassignedProduct={isUnassignedProduct}/>
+                <HoverableIcon iconName={'style'} textToDisplay={listOfTagName()} viewOnly={isReadOnly} isDragging={isDragging} isUnassignedProduct={isUnassignedProduct}/>
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>

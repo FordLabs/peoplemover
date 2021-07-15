@@ -19,7 +19,7 @@ import './HoverableIcon.scss';
 
 interface HoverableIconProps {
     textToDisplay: string[];
-    iconeName: string;
+    iconName: string;
     viewOnly: boolean;
     isDragging: boolean;
     isUnassignedProduct: boolean;
@@ -27,7 +27,7 @@ interface HoverableIconProps {
 
 const HoverableIcon = ({
     textToDisplay,
-    iconeName,
+    iconName,
     viewOnly,
     isDragging,
     isUnassignedProduct,
@@ -52,8 +52,7 @@ const HoverableIcon = ({
 
     const HoverBox = (): JSX.Element => {
         return (
-            <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}
-                data-testid="hoverBoxContainer">
+            <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
                 <p className="hoverBoxText">
                     {textToDisplay.toString()}
                 </p>
@@ -62,13 +61,12 @@ const HoverableIcon = ({
     };
 
     return !viewOnly && textToDisplay.length !== 0 ? (
-            <i className={`material-icons hoverableIcon ${isUnassignedProduct ? 'unassignedHoverableIcon' : ''}`}
-                data-testid="tagIcon"
-                onMouseEnter={(): void => onHover(true)}
-                onMouseLeave={(): void => onHover(false)}
-            >style
-                {!isDragging && hoverBoxIsOpened && <HoverBox/>}
-            </i>
+        <i className={`material-icons hoverableIcon ${isUnassignedProduct ? 'unassignedHoverableIcon' : ''}`}
+            onMouseEnter={(): void => onHover(true)}
+            onMouseLeave={(): void => onHover(false)}
+        >{iconName}
+            {!isDragging && hoverBoxIsOpened && <HoverBox/>}
+        </i>
     ) : <></>;
 };
 
