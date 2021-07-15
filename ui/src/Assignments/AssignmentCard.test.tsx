@@ -314,7 +314,7 @@ describe('Assignment Card', () => {
                 undefined,
                 initialState,
             );
-            expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
+            expect(underTest.getByText('note')).toBeInTheDocument();
         });
 
         it('should not display hover notes icon if person has valid notes, but user is readOnly', () => {
@@ -350,14 +350,13 @@ describe('Assignment Card', () => {
                 initialState,
             );
 
-            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            expect(underTest.queryByText('This is a note')).toBeNull();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByTestId('notesIcon'));
+                fireEvent.mouseEnter(underTest.getByText('note'));
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
             expect(underTest.getByText('This is a note')).toBeVisible();
         });
 
@@ -370,22 +369,22 @@ describe('Assignment Card', () => {
                 initialState,
             );
 
-            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            expect(underTest.queryByText('This is a note')).toBeNull();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByTestId('notesIcon'));
+                fireEvent.mouseEnter(underTest.getByText('note'));
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.getByTestId('hoverBoxContainer')).toBeInTheDocument();
+            expect(underTest.getByText('This is a note')).toBeInTheDocument();
             expect(underTest.getByText('This is a note')).toBeVisible();
 
             act(() => {
-                fireEvent.mouseLeave(underTest.getByTestId('notesIcon'));
+                fireEvent.mouseLeave(underTest.getByText('note'));
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            expect(underTest.queryByText('This is a note')).toBeNull();
         });
 
         it('should show hover box when assignment card is unassigned', () => {
@@ -397,15 +396,15 @@ describe('Assignment Card', () => {
                 initialState,
             );
 
-            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
-            expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
+            expect(underTest.queryByText('This is a note')).toBeNull();
+            expect(underTest.getByText('note')).toBeInTheDocument();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByTestId('notesIcon'));
+                fireEvent.mouseEnter(underTest.getByText('note'));
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.queryByTestId('hoverBoxContainer')).not.toBeNull();
+            expect(underTest.queryByText('This is a note')).not.toBeNull();
         });
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {
@@ -417,15 +416,15 @@ describe('Assignment Card', () => {
                 {...initialState, isDragging: true},
             );
 
-            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
-            expect(underTest.getByTestId('notesIcon')).toBeInTheDocument();
+            expect(underTest.queryByText('This is a note')).toBeNull();
+            expect(underTest.getByText('note')).toBeInTheDocument();
 
             act(() => {
-                fireEvent.mouseEnter(underTest.getByTestId('notesIcon'));
+                fireEvent.mouseEnter(underTest.getByText('note'));
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.queryByTestId('hoverBoxContainer')).toBeNull();
+            expect(underTest.queryByText('This is a note')).toBeNull();
         });
     });
 
