@@ -16,6 +16,12 @@ describe('NewBadge', () => {
             expect(calculateGradient(newPersonDate, viewingDate)).toBe('');
         });
 
+        it('should return stage1 string if viewingDate is 7 days ahead of newPersonDate',  () =>  {
+            const newPersonDate: Date = baseMoment.toDate();
+            const viewingDate: Date = baseMoment.add(7, 'days').toDate();
+
+            expect(calculateGradient(newPersonDate, viewingDate)).toBe('');
+        });
 
         it('should return stage2 string if viewingDate is 8 days ahead of newPersonDate',  () =>  {
             const newPersonDate: Date = baseMoment.toDate();
@@ -43,8 +49,22 @@ describe('NewBadge', () => {
             const newPersonDate: Date = baseMoment.toDate();
             const viewingDate: Date = baseMoment.add(100, 'days').toDate();
 
-
             expect(calculateGradient(newPersonDate, viewingDate)).toBe('stage3');
+        });
+
+        it('should return empty string if newPersonDate is undefined', () => {
+            const viewingDate: Date = baseMoment.add(100, 'days').toDate();
+            expect(calculateGradient(undefined, viewingDate)).toBe('');
+        });
+
+        it('should return empty string if viewingDate is undefined', () => {
+            const newPersonDate: Date = baseMoment.toDate();
+            expect(calculateGradient(newPersonDate, undefined)).toBe('');
+        });
+        
+        it('should return empty string if both newPersonDate and viewingDate are undefined', () => {
+            const viewingDate: Date = baseMoment.add(100, 'days').toDate();
+            expect(calculateGradient(undefined, undefined)).toBe('');
         });
     });
 

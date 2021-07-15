@@ -19,21 +19,35 @@ import React from 'react';
 import './NewBadge.scss';
 import moment from 'moment';
 
-function NewBadge(): JSX.Element {
-    return <span className="newBadge" data-testid="newBadge">NEW</span>;
+interface NewBadgeProps {
+    viewingDate?: Date;
+    newPersonDate?: Date;
 }
 
-export function calculateGradient(newPersonDate: Date, viewingDate: Date): string {
-    const viewingMoment = moment(viewingDate);
-    const eightDaysAhead = moment(newPersonDate).add(8, 'days');
-    const fifteenDaysAhead = moment(newPersonDate).add(15, 'days');
+function NewBadge(
+    {viewingDate,
+        newPersonDate,
+    }: NewBadgeProps
+): JSX.Element {
 
-    if (viewingMoment.isBetween( eightDaysAhead, fifteenDaysAhead, 'day', '[]')) {
-        return 'stage2';
-    } else if (viewingMoment.isAfter(fifteenDaysAhead)) {
-        return 'stage3';
+    return <span className={'newBadge ' + calculateGradient(newPersonDate, viewingDate)} data-testid="newBadge">NEW</span>;
+}
+
+export function calculateGradient(newPersonDate: Date | undefined, viewingDate: Date | undefined): string {
+    let styleToReturn = '';
+    if(newPersonDate !== undefined && viewingDate !== undefined) {
+        const viewingMoment = moment(viewingDate);
+        const sevenDaysAhead = moment(newPersonDate).add(7, 'days');
+        const fifteenDaysAhead = moment(newPersonDate).add(15, 'days');
+
+        if (viewingMoment.isAfter(sevenDaysAhead)) {
+            styleToReturn = 'stage2';
+        }
+        if (viewingMoment.isAfter(fifteenDaysAhead)) {
+            styleToReturn = 'stage3';
+        }
     }
-    return '';
+    return styleToReturn;
 }
 
 export default NewBadge;
