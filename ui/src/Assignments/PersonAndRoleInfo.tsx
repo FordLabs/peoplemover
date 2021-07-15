@@ -78,7 +78,9 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
     };
 
     const openEditPersonModal = (): void => {
-        if (timeOnProduct) MatomoEvents.pushEvent(currentSpace.name, 'openEditPersonFromTimeOnProduct', timeOnProduct.toString());
+        if (timeOnProduct) {
+            MatomoEvents.pushEvent(currentSpace.name, 'openEditPersonFromTimeOnProduct', timeOnProduct.toString());
+        }
         setCurrentModal({
             modal: AvailableModals.EDIT_PERSON,
             item: assignment,
@@ -117,7 +119,7 @@ const PersonAndRoleInfo = ({ isReadOnly, assignment = {id: 0} as Assignment, isU
                 data-testid="personName">
                 {person.name}
                 <NotesIcon/>
-                <HoverableIcon iconeName={''} textToDisplay={listOfTagName()} viewOnly={isReadOnly} isDragging={isDragging}/>
+                <HoverableIcon iconeName={''} textToDisplay={listOfTagName()} viewOnly={isReadOnly} isDragging={isDragging} isUnassignedProduct={isUnassignedProduct}/>
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>

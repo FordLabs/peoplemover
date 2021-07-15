@@ -15,15 +15,23 @@
  * limitations under the License.
  */
 import React, {useState} from 'react';
+import './HoverableIcon.scss';
 
 interface HoverableIconProps {
     textToDisplay: string[];
     iconeName: string;
     viewOnly: boolean;
     isDragging: boolean;
+    isUnassignedProduct: boolean;
 }
 
-const HoverableIcon = ({textToDisplay, iconeName, viewOnly, isDragging}: HoverableIconProps): JSX.Element => {
+const HoverableIcon = ({
+    textToDisplay,
+    iconeName,
+    viewOnly,
+    isDragging,
+    isUnassignedProduct,
+}: HoverableIconProps): JSX.Element => {
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
 
@@ -42,11 +50,11 @@ const HoverableIcon = ({textToDisplay, iconeName, viewOnly, isDragging}: Hoverab
         // }
     };
 
-    const HoverBox = (): JSX.Element  => {
+    const HoverBox = (): JSX.Element => {
         return (
-            <div className={`hoverBoxContainer`}
+            <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}
                 data-testid="hoverBoxContainer">
-                <p className="hoverBoxNotes">
+                <p className="hoverBoxText">
                     {textToDisplay.toString()}
                 </p>
             </div>
@@ -54,13 +62,13 @@ const HoverableIcon = ({textToDisplay, iconeName, viewOnly, isDragging}: Hoverab
     };
 
     return !viewOnly && textToDisplay.length !== 0 ? (
-        <i className="material-icons"
-            data-testid="tagIcon"
-            onMouseEnter={(): void => onHover(true)}
-            onMouseLeave={(): void => onHover(false)}
-        >style
-            {!isDragging && hoverBoxIsOpened && <HoverBox/>}
-        </i>
+            <i className={`material-icons hoverableIcon ${isUnassignedProduct ? 'unassignedHoverableIcon' : ''}`}
+                data-testid="tagIcon"
+                onMouseEnter={(): void => onHover(true)}
+                onMouseLeave={(): void => onHover(false)}
+            >style
+                {!isDragging && hoverBoxIsOpened && <HoverBox/>}
+            </i>
     ) : <></>;
 };
 
