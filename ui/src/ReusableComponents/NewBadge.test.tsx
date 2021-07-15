@@ -63,7 +63,6 @@ describe('NewBadge', () => {
         });
         
         it('should return empty string if both newPersonDate and viewingDate are undefined', () => {
-            const viewingDate: Date = baseMoment.add(100, 'days').toDate();
             expect(calculateGradient(undefined, undefined)).toBe('');
         });
     });

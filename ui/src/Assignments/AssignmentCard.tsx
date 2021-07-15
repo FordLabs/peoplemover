@@ -18,7 +18,7 @@
 import React, {RefObject, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
-import NewBadge, {calculateGradient} from '../ReusableComponents/NewBadge';
+import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
 import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';

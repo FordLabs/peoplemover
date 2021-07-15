@@ -44,12 +44,11 @@ data class Person(
 
         val notes: String? = "",
 
-        @JsonProperty
         @Column(name = "new_person")
         var newPerson: Boolean = false,
 
         @Column()
-        var newPersonDate: LocalDate?,
+        var newPersonDate: LocalDate? = null,
 
         @Column(name = "space_uuid")
         override val spaceUuid: String,

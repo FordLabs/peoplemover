@@ -35,7 +35,7 @@ function NewBadge(
 
 export function calculateGradient(newPersonDate: Date | undefined, viewingDate: Date | undefined): string {
     let styleToReturn = '';
-    if(newPersonDate !== undefined && viewingDate !== undefined) {
+    if (newPersonDate !== undefined && viewingDate !== undefined) {
         const viewingMoment = moment(viewingDate);
         const sevenDaysAhead = moment(newPersonDate).add(7, 'days');
         const fifteenDaysAhead = moment(newPersonDate).add(15, 'days');
