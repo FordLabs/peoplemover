@@ -33,7 +33,7 @@ const HoverableIcon = ({
     isUnassignedProduct,
 }: HoverableIconProps): JSX.Element => {
     const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
-    const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
+    // const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout>();
 
     const onHover = (boxIsHovered = false): void => {
         setHoverBoxIsOpened(boxIsHovered);
