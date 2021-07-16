@@ -53,6 +53,14 @@ class ReportClient {
                 value: 'productName',
             },
             {
+                label: 'Product Location',
+                value: 'productLocation',
+            },
+            {
+                label: 'Product Tags',
+                value: 'productTags',
+            },
+            {
                 label: 'Person Name',
                 value: 'personName',
             },

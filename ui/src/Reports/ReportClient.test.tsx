@@ -19,6 +19,8 @@ describe('Report Client', function() {
         cookies.set('accessToken', '123456');
         const response = [{
             productName: 'product',
+            productLocation: 'location',
+            productTags: 'ProductTag1,ProductTag2',
             personName: 'person',
             customField1: 'cdsid',
             personRole: 'role',
@@ -37,7 +39,7 @@ describe('Report Client', function() {
         const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         const today = new Date(2020, 8, 21);
         const expectedFilename = `bob_2020-09-21.csv`;
-        const expectedJson = '"Product Name","Person Name","CDSID","Person Role","Person Note","Person Tags"\n"product","person","cdsid","role","note","Tag 1,Tag 2"';
+        const expectedJson = '"Product Name","Product Location","Product Tags","Person Name","CDSID","Person Role","Person Note","Person Tags"\n"product","location","ProductTag1,ProductTag2","person","cdsid","role","note","Tag 1,Tag 2"';
 
         const expectedUrl = `${baseReportsUrl}/people?spaceUuid=${spaceUuid}&requestedDate=2020-09-21`;
         await ReportClient.getReportsWithNames(spaceName, spaceUuid, today);

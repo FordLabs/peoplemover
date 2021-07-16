@@ -19,6 +19,8 @@ export interface Report
 {
     boardName: string;
     productName: string;
+    productLocation: string;
+    productTags: Array<string>;
     personName: string;
     personRole: string;
     personTags: Array<string>;
