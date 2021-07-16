@@ -1,7 +1,6 @@
 import {calculateGradient} from './NewBadge';
 import moment from 'moment';
 
-
 describe('NewBadge', () => {
     
     describe('calculateGradient()', () => {
@@ -41,7 +40,6 @@ describe('NewBadge', () => {
             const newPersonDate: Date = baseMoment.toDate();
             const viewingDate: Date = baseMoment.add(16, 'days').toDate();
 
-
             expect(calculateGradient(newPersonDate, viewingDate)).toBe('stage3');
         });
 
@@ -54,11 +52,13 @@ describe('NewBadge', () => {
 
         it('should return empty string if newPersonDate is undefined', () => {
             const viewingDate: Date = baseMoment.add(100, 'days').toDate();
+
             expect(calculateGradient(undefined, viewingDate)).toBe('');
         });
 
         it('should return empty string if viewingDate is undefined', () => {
             const newPersonDate: Date = baseMoment.toDate();
+
             expect(calculateGradient(newPersonDate, undefined)).toBe('');
         });
         
@@ -66,7 +66,4 @@ describe('NewBadge', () => {
             expect(calculateGradient(undefined, undefined)).toBe('');
         });
     });
-
-
-
 });
