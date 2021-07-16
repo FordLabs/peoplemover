@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,10 @@
 
 package com.ford.internalprojects.peoplemover.person
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
 import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import java.time.LocalDate
-import java.util.*
 import javax.persistence.*
 import kotlin.collections.HashSet
 
@@ -58,4 +56,9 @@ data class Person(
 ): NamedSpaceComponent {
     constructor(name: String, spaceUuid: String) :
             this(id = null, name = name, spaceRole = null, tags = HashSet(), notes = "", newPerson = false, newPersonDate = null, spaceUuid = spaceUuid, customField1 = null)
+
+    init {
+        if(newPerson && newPersonDate == null)
+            newPersonDate = LocalDate.now()
+    }
 }
