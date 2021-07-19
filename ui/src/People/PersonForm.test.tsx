@@ -28,6 +28,9 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
+import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+
+declare let window: MatomoWindow;
 
 describe('Person Form', () => {
     const mayFourteen: Date = new Date(2020, 4, 14);
@@ -180,6 +183,37 @@ describe('Person Form', () => {
 
             const expectedPerson: Person =  {...TestUtils.hank, newPerson: true, newPersonDate: mayFourteen};
             expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, expectedPerson, []);
+        });
+    });
+
+    describe('handleNewPersonCheckboxChange()', () => {
+
+        let originalWindow: Window;
+        afterEach(function() {
+            (window as Window) = originalWindow;
+        });
+
+        it('newPerson box goes from unchecked to checked, call matomo event for newPersonChecked action',  async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+            await act( async () => {
+                personForm = renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={false}
+                        products={TestUtils.products}
+                        initiallySelectedProduct={TestUtils.productForHank}
+                        initialPersonName={TestUtils.hank.name}
+                        personEdited={TestUtils.hank}
+                    />, store, undefined);
+            });
+
+            await act( async () => {
+                fireEvent.click(await personForm.findByTestId('personFormIsNewCheckbox'));
+                fireEvent.click(await personForm.findByText('Add'));
+            });
+
+            expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonChecked', TestUtils.hank.name])
+
         });
     });
 });

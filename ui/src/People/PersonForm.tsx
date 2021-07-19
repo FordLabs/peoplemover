@@ -184,6 +184,10 @@ function PersonForm({
         return result;
     };
 
+    function handleNewPersonCheckboxChange() {
+        MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
+    }
+
     const handleSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
 
@@ -222,6 +226,7 @@ function PersonForm({
                     newPerson
                 );
             }
+            handleNewPersonCheckboxChange();
             closeModal();
         }
     };
