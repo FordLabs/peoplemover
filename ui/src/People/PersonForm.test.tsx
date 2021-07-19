@@ -215,5 +215,30 @@ describe('Person Form', () => {
             expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonChecked', TestUtils.hank.name])
 
         });
+
+        it('newPerson box goes from checked to unchecked, call matomo event for newPersonUnchecked action',  async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+            let newHank: Person = {...TestUtils.hank, newPerson: true};
+
+            await act( async () => {
+                personForm = renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={false}
+                        products={TestUtils.products}
+                        initiallySelectedProduct={TestUtils.productForHank}
+                        initialPersonName={newHank.name}
+                        personEdited={newHank}
+                    />, store, undefined);
+            });
+
+            await act( async () => {
+                fireEvent.click(await personForm.findByTestId('personFormIsNewCheckbox'));
+                fireEvent.click(await personForm.findByText('Add'));
+            });
+
+            expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonUnchecked', TestUtils.hank.name])
+
+        });
     });
 });
