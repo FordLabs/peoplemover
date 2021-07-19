@@ -102,6 +102,8 @@ describe('Share Access Form', () => {
                 .click();
             cy.get('[data-testid=userAccessOptionLabel]').eq(2).should('contain.text', 'Remove')
                 .click();
+            cy.get('[data-testid=confirmDeleteButton]').should('contain.text', 'Yes').click();
+
             cy.get('[data-testid=userIdName]').eq(1).should('not.exist');
             cy.get('[data-testid=userListItem__ELISE]').should('not.exist');
         });
