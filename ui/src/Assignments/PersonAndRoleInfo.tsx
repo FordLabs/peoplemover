@@ -116,6 +116,7 @@ const PersonAndRoleInfo = ({
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
     currentSpace: state.currentSpace,
+    isReadOnly: state.isReadOnly
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
