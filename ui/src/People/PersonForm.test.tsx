@@ -28,7 +28,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
-import {MatomoWindow} from "../CommonTypes/MatomoWindow";
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 
@@ -189,7 +189,7 @@ describe('Person Form', () => {
     describe('handleNewPersonCheckboxChange()', () => {
 
         let originalWindow: Window;
-        afterEach(function() {
+        afterEach(() => {
             (window as Window) = originalWindow;
         });
 
@@ -199,45 +199,43 @@ describe('Person Form', () => {
             await act( async () => {
                 personForm = renderWithRedux(
                     <PersonForm
-                        isEditPersonForm={false}
+                        isEditPersonForm={true}
                         products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
-                        initialPersonName={TestUtils.hank.name}
                         personEdited={TestUtils.hank}
                     />, store, undefined);
             });
 
             await act( async () => {
                 fireEvent.click(await personForm.findByTestId('personFormIsNewCheckbox'));
-                fireEvent.click(await personForm.findByText('Add'));
+                fireEvent.click(await personForm.findByText('Save'));
             });
 
-            expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonChecked', TestUtils.hank.name + ' '])
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'newPersonChecked', TestUtils.hank.name]);
 
         });
 
         it('newPerson box goes from checked to unchecked, call matomo event for newPersonUnchecked action',  async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
-            let newHank: Person = {...TestUtils.hank, newPerson: true};
+            let newHank: Person = {...TestUtils.hank, newPerson: true, newPersonDate: new Date(2019, 4, 14)};
 
             await act( async () => {
                 personForm = renderWithRedux(
                     <PersonForm
-                        isEditPersonForm={false}
+                        isEditPersonForm={true}
                         products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
-                        initialPersonName={newHank.name}
                         personEdited={newHank}
                     />, store, undefined);
             });
 
             await act( async () => {
                 fireEvent.click(await personForm.findByTestId('personFormIsNewCheckbox'));
-                fireEvent.click(await personForm.findByText('Add'));
+                fireEvent.click(await personForm.findByText('Save'));
             });
 
-            expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonUnchecked', TestUtils.hank.name]);
+            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'newPersonUnchecked', newHank.name + ', 366 day(s)']);
         });
     });
 });

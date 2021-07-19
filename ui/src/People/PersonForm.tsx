@@ -116,7 +116,7 @@ function PersonForm({
     const [selectedPersonTags, setSelectedPersonTags] = useState<Array<Tag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
-    const [hasNewPersonCheckboxChanged, setHasNewPersonCheckboxChanged] = useState<boolean>(false);
+    const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -185,14 +185,17 @@ function PersonForm({
         return result;
     };
 
-    function handleNewPersonCheckboxChange() {
-        if(hasNewPersonCheckboxChanged){
-            if(person.newPerson == true) {
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', personEdited?.name + ' ' + viewingDate);
+    function handleNewPersonCheckboxChange(): void {
+        if (hasNewPersonChanged) {
+            if (person.newPerson) {
+                MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
+            } else {
+                const viewingDateMoment = moment(viewingDate).startOf('day');
+                const checkedDateMoment = moment(person.newPersonDate).startOf('day');
+                const daysChecked = moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays();
+                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + daysChecked + ' day(s)');
             }
-            if(person.newPerson == false) {
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', personEdited?.name + ' ' + viewingDate);
-            }
+            setHasNewPersonChanged(false);
         }
     }
 
@@ -393,9 +396,12 @@ function PersonForm({
                             type="checkbox"
                             checked={person.newPerson}
                             onChange={(): void => {
+                                if (person.newPerson === false) {
+                                    // Only set newPersonDate when going from unchecked to checked
+                                    updatePersonField('newPersonDate', viewingDate);
+                                }
                                 updatePersonField('newPerson', !person.newPerson);
-                                updatePersonField('newPersonDate', viewingDate);
-                                setHasNewPersonCheckboxChanged(!person.newPerson);
+                                setHasNewPersonChanged(true);
                             }}
                         />
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
