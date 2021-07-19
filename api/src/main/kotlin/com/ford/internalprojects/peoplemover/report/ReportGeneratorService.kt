@@ -42,12 +42,15 @@ class ReportGeneratorService(
 
         val peopleReport: MutableList<PeopleReportRow> = mutableListOf()
         assignments.forEach { assignment ->
+            val product = products.find { it.id == assignment.productId }
             peopleReport.add(PeopleReportRow(
-                productName = products.find { it.id == assignment.productId }?.name ?: "Product doesn't exist for id: ${assignment.productId}",
+                productName = product?.name ?: "Product doesn't exist for id: ${assignment.productId}",
                 personName = assignment.person.name,
                 customField1 = assignment.person.customField1 ?: "",
                 personRole = assignment.person.spaceRole?.name ?: "",
                 personNote = assignment.person.notes ?: "",
+                productLocation = product?.spaceLocation?.name ?: "",
+                productTags = product?.tags?.joinToString(",") { tag -> tag.name } ?: "",
                 personTags = assignment.person.tags.joinToString(",") { tag -> tag.name }
             ))
         }
