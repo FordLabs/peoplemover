@@ -81,6 +81,7 @@ function UserAccessList({
 }: UserAccessListProps): JSX.Element {
     const [displayOwnerChangeConfirmationModal, setDisplayOwnerChangeConfirmationModal] = useState(false);
     const [displayRevokeSelfEditorStatusConfirmationModal, setDisplayRevokeSelfEditorStatusConfirmationModal] = useState(false);
+    const [displayRemokeEditorStatusToAnotherUserConfirmationModal, setDisplayRevokeEditorStatusToAnotherUserConfirmationModal] = useState(false);
 
     // @ts-ignore
     const onChangeEvent = (value): void => {
@@ -89,7 +90,7 @@ function UserAccessList({
                 if (currentUser.toUpperCase() === user.userId.toUpperCase()) {
                     setDisplayRevokeSelfEditorStatusConfirmationModal(true);
                 } else {
-                    SpaceClient.removeUser(currentSpace, user).then(onChange);
+                    setDisplayRevokeEditorStatusToAnotherUserConfirmationModal(true);
                 }
                 break;
             case 'owner':
@@ -99,6 +100,11 @@ function UserAccessList({
 
     const onSubmitOwnerChange = (): void => {
         SpaceClient.changeOwner(currentSpace, owner, user).then(onChange);
+    };
+
+    const revokeEditorStatus = (): void => {
+        SpaceClient.removeUser(currentSpace, user).then(onChange);
+        setDisplayRevokeEditorStatusToAnotherUserConfirmationModal(false);
     };
 
     return (
@@ -125,13 +131,25 @@ function UserAccessList({
                     close={(): void => setDisplayRevokeSelfEditorStatusConfirmationModal(false)}
                     submitButtonLabel="Yes"
                     closeButtonLabel="No"
-                    title="Are you sure?"
                     content={
                         <div>Removing yourself as editor will immediately revoke your access to this space.<br/>
                             <br/>
                             Do you still want to remove yourself as editor?
                         </div>
                     } />
+            }
+            {
+                displayRemokeEditorStatusToAnotherUserConfirmationModal && 
+                    <ConfirmationModal
+                        submit={revokeEditorStatus}
+                        close={(): void => setDisplayRevokeEditorStatusToAnotherUserConfirmationModal(false)}
+                        submitButtonLabel="Yes"
+                        closeButtonLabel="No"              
+                        content={
+                            <div>Removing {user.userId.toLowerCase()} as editor will immediately revoke their access to this space.<br/>
+                                <br/>
+                                Do you still want to remove {user.userId.toLowerCase()} as an editor?
+                            </div>}/>
             }
             <Select
                 // @ts-ignore
