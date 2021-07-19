@@ -116,6 +116,7 @@ function PersonForm({
     const [selectedPersonTags, setSelectedPersonTags] = useState<Array<Tag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
+    const [hasNewPersonCheckboxChanged, setHasNewPersonCheckboxChanged] = useState<boolean>(false);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -185,7 +186,14 @@ function PersonForm({
     };
 
     function handleNewPersonCheckboxChange() {
-        MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
+        if(hasNewPersonCheckboxChanged){
+            if(person.newPerson == true) {
+                MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', personEdited?.name + ' ' + viewingDate);
+            }
+            if(person.newPerson == false) {
+                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', personEdited?.name + ' ' + viewingDate);
+            }
+        }
     }
 
     const handleSubmit = async (event: FormEvent): Promise<void> => {
@@ -387,6 +395,7 @@ function PersonForm({
                             onChange={(): void => {
                                 updatePersonField('newPerson', !person.newPerson);
                                 updatePersonField('newPersonDate', viewingDate);
+                                setHasNewPersonCheckboxChanged(!person.newPerson);
                             }}
                         />
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>

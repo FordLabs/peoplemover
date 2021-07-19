@@ -212,7 +212,7 @@ describe('Person Form', () => {
                 fireEvent.click(await personForm.findByText('Add'));
             });
 
-            expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonChecked', TestUtils.hank.name])
+            expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonChecked', TestUtils.hank.name + ' '])
 
         });
 
@@ -237,8 +237,7 @@ describe('Person Form', () => {
                 fireEvent.click(await personForm.findByText('Add'));
             });
 
-            expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonUnchecked', TestUtils.hank.name])
-
+            expect(window._paq).toContainEqual(['trackEvent',TestUtils.space.name, 'newPersonUnchecked', TestUtils.hank.name]);
         });
     });
 });
