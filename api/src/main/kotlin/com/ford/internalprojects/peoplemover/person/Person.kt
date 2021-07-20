@@ -56,9 +56,4 @@ data class Person(
 ): NamedSpaceComponent {
     constructor(name: String, spaceUuid: String) :
             this(id = null, name = name, spaceRole = null, tags = HashSet(), notes = "", newPerson = false, newPersonDate = null, spaceUuid = spaceUuid, customField1 = null)
-
-    init {
-        if(newPerson && newPersonDate == null)
-            newPersonDate = LocalDate.now()
-    }
 }
