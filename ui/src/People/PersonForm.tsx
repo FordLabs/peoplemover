@@ -185,18 +185,25 @@ function PersonForm({
         return result;
     };
 
-    function handleNewPersonCheckboxChange(): void {
+    const handleNewPersonCheckboxChange = (): void  => {
         if (hasNewPersonChanged) {
+            if (isEditPersonForm) {
+                if (person.newPerson && !personEdited?.newPerson) {
+                    MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
+                }
+                if (!person.newPerson && personEdited?.newPerson) {
+                    const viewingDateMoment = moment(viewingDate).startOf('day');
+                    const checkedDateMoment = moment(person.newPersonDate).startOf('day');
+                    const daysChecked = moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays();
+                    MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + daysChecked + ' day(s)');
+                }
+            }
+        } else {
             if (person.newPerson) {
                 MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
-            } else {
-                const viewingDateMoment = moment(viewingDate).startOf('day');
-                const checkedDateMoment = moment(person.newPersonDate).startOf('day');
-                const daysChecked = moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays();
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + daysChecked + ' day(s)');
             }
-            setHasNewPersonChanged(false);
         }
+        setHasNewPersonChanged(false);
     }
 
     const handleSubmit = async (event: FormEvent): Promise<void> => {
@@ -213,6 +220,34 @@ function PersonForm({
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
             }
+
+            //updateNewPersonDateField()
+            //check if hasNewPersonChanged is true
+            //check the modal type (edit or add)
+            //check the original state of newPerson
+            //update the newPersonDate accordingly
+
+            if(hasNewPersonChanged){
+                if(!isEditPersonForm){
+                    if(person.newPerson === true){
+                        person.newPersonDate = viewingDate;
+                    }else {
+                        person.newPersonDate = undefined
+                    }
+                }
+                if(isEditPersonForm){
+                    if(person.newPerson === true && !person.newPersonDate){
+                        person.newPersonDate = viewingDate;
+                    }
+                    else {
+                        person.newPersonDate = undefined;
+                    }
+                }
+            }
+
+
+
+
             if (isEditPersonForm) {
                 const response = await PeopleClient.updatePerson(currentSpace, person, personTagModified);
                 const updatedPerson: Person = response.data;
@@ -396,10 +431,12 @@ function PersonForm({
                             type="checkbox"
                             checked={person.newPerson}
                             onChange={(): void => {
-                                if (person.newPerson === false) {
-                                    // Only set newPersonDate when going from unchecked to checked
-                                    updatePersonField('newPersonDate', viewingDate);
-                                }
+                                // if (person.newPerson === false) {
+                                //     // Only set newPersonDate when going from unchecked to checked
+                                //     updatePersonField('newPersonDate', viewingDate);
+                                // } else {
+                                //     updatePersonField('newPersonDate', null);
+                                // }
                                 updatePersonField('newPerson', !person.newPerson);
                                 setHasNewPersonChanged(true);
                             }}
