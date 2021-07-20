@@ -118,6 +118,10 @@ function PersonForm({
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
 
+    // Pre-populate newPerson flag and date for a person being created
+    const [initialNewPerson, setInitialNewPerson] = useState<boolean>(false);
+    const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
+
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
             return product1.name.toLowerCase().localeCompare(product2.name.toLowerCase());
@@ -138,6 +142,13 @@ function PersonForm({
     useOnLoad(() => {
         if (isEditPersonForm && personEdited) {
             populatedEntirePersonForm(personEdited);
+            // Pre-populate newPerson flag and date for a person being edited
+            setInitialNewPerson(personEdited.newPerson);
+            if (personEdited.newPersonDate !== null) {
+                const viewingDateMoment = moment(viewingDate).startOf('day');
+                const checkedDateMoment = moment(personEdited.newPersonDate).startOf('day');
+                setInitialNewPersonDuration(moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays());
+            }
         } else {
             if (initialPersonName) {
                 setPerson(
@@ -186,25 +197,20 @@ function PersonForm({
     };
 
     const handleNewPersonCheckboxChange = (): void  => {
+        // hasNewPersonChanged can only change if the form value changes from
+        // the original passed in value, regardless of the original passed in
+        // value being from a new person or a person being edited
         if (hasNewPersonChanged) {
-            if (isEditPersonForm) {
-                if (person.newPerson && !personEdited?.newPerson) {
-                    MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
-                }
-                if (!person.newPerson && personEdited?.newPerson) {
-                    const viewingDateMoment = moment(viewingDate).startOf('day');
-                    const checkedDateMoment = moment(person.newPersonDate).startOf('day');
-                    const daysChecked = moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays();
-                    MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + daysChecked + ' day(s)');
-                }
-            }
-        } else {
             if (person.newPerson) {
                 MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
+            } else {
+                // duration calculated at load time
+                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
             }
+            // Set to false after the Matomo event has been sent
+            setHasNewPersonChanged(false);
         }
-        setHasNewPersonChanged(false);
-    }
+    };
 
     const handleSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
@@ -221,32 +227,16 @@ function PersonForm({
                 setIsUnassignedDrawerOpen(true);
             }
 
-            //updateNewPersonDateField()
-            //check if hasNewPersonChanged is true
-            //check the modal type (edit or add)
-            //check the original state of newPerson
-            //update the newPersonDate accordingly
-
-            if(hasNewPersonChanged){
-                if(!isEditPersonForm){
-                    if(person.newPerson === true){
-                        person.newPersonDate = viewingDate;
-                    }else {
-                        person.newPersonDate = undefined
-                    }
-                }
-                if(isEditPersonForm){
-                    if(person.newPerson === true && !person.newPersonDate){
-                        person.newPersonDate = viewingDate;
-                    }
-                    else {
-                        person.newPersonDate = undefined;
-                    }
+            // hasNewPersonChanged can only change if the form value changes from
+            // the original passed in value, regardless of the original passed in
+            // value being from a new person or a person being edited
+            if (hasNewPersonChanged) {
+                if (person.newPerson) {
+                    person.newPersonDate = viewingDate;
+                } else {
+                    person.newPersonDate = undefined;
                 }
             }
-
-
-
 
             if (isEditPersonForm) {
                 const response = await PeopleClient.updatePerson(currentSpace, person, personTagModified);
@@ -431,14 +421,10 @@ function PersonForm({
                             type="checkbox"
                             checked={person.newPerson}
                             onChange={(): void => {
-                                // if (person.newPerson === false) {
-                                //     // Only set newPersonDate when going from unchecked to checked
-                                //     updatePersonField('newPersonDate', viewingDate);
-                                // } else {
-                                //     updatePersonField('newPersonDate', null);
-                                // }
-                                updatePersonField('newPerson', !person.newPerson);
-                                setHasNewPersonChanged(true);
+                                const newPersonFlag = !person.newPerson;
+                                updatePersonField('newPerson', newPersonFlag);
+                                // Only set if the value is being changed from the initial value
+                                setHasNewPersonChanged(newPersonFlag !== initialNewPerson);
                             }}
                         />
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
