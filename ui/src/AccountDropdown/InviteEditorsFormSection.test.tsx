@@ -220,27 +220,6 @@ describe('Invite Editors Form', function() {
             });
         });
 
-        it('should remove user', async () => {
-            await act(async () => {
-                const component = renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {currentSpace: TestUtils.space, currentUser:'user_id_1'} as GlobalStateProps);
-                const editorRow = within(await component.findByTestId('userListItem__user_id_2'));
-                const editor = editorRow.getByText(/editor/i);
-                fireEvent.keyDown(editor, {key: 'ArrowDown'});
-                const removeButton = await component.findByText(/remove/i);
-
-                SpaceClient.getUsersForSpace = jest.fn().mockReturnValueOnce(Promise.resolve(
-                    [{'userId': 'user_id', 'permission': 'owner'}] as UserSpaceMapping[]));
-
-                await fireEvent.click(removeButton);
-                expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]);
-                await wait(() => {
-                    expect(component.queryByText('user_id_2')).not.toBeInTheDocument();
-                    expect(component.queryByText(/^Editor$/)).not.toBeInTheDocument();
-                });
-            });
-        });
-
         it('should change owner', async () => {
             await act(async () => {
                 const component = renderWithRedux(
@@ -346,6 +325,36 @@ describe('Invite Editors Form', function() {
                     expect(component.queryByText('Are you sure?')).not.toBeInTheDocument();
                     expect(RedirectClient.redirect).toHaveBeenCalledWith('/user/dashboard');
 
+                });
+            });
+        });
+
+        it('should show a confirmation modal when removing editor access', async () => {
+            await act(async () => {
+                let currentUser = 'USER_ID';
+                const mockStore = configureStore([]);
+                const store = mockStore({
+                    currentSpace: TestUtils.space,
+                    viewingDate: new Date(2020, 4, 14),
+                    currentUser: currentUser,
+                });
+
+                const component = renderWithRedux(
+                    <InviteEditorsFormSection/>, store, undefined);
+
+                const editorRow = within(await component.findByTestId(`userListItem__user_id_2`));
+                const editor = editorRow.getByText(/editor/i);
+                fireEvent.keyDown(editor, {key: 'ArrowDown'});
+                const removeEditorButton = await editorRow.findByText(/remove/i);
+                await fireEvent.click(removeEditorButton);
+
+                await component.findByText('Are you sure?');
+                const confirmDeleteButton = await component.findByText('Yes');
+                fireEvent.click(confirmDeleteButton);
+
+                await wait(async () => {
+                    expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]);
+                    expect(component.queryByText('Are you sure?')).not.toBeInTheDocument();
                 });
             });
         });

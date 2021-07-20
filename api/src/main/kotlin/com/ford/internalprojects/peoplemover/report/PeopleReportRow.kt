@@ -23,20 +23,26 @@ data class PeopleReportRow (
     val customField1: String?,
     val personRole: String,
     val personNote: String,
-    val personTags: String
+    val personTags: String,
+    val productLocation: String,
+    val productTags: String
 ) {
     override fun equals(other: Any?): Boolean {
         return when (other) {
             is PeopleReportRow -> {
-                val otherTags = other.personTags.split(",").toHashSet()
-                val thisTags = this.personTags.split(",").toHashSet()
+                val otherPersonTags = other.personTags.split(",").toHashSet()
+                val thisPersonTags = this.personTags.split(",").toHashSet()
+                val otherProductTags = other.productTags.split(",").toHashSet()
+                val thisProductTags = this.productTags.split(",").toHashSet()
 
                 (this.productName == other.productName
                         && this.personName == other.personName
                         && this.customField1 == other.customField1
                         && this.personRole == other.personRole
                         && this.personNote == other.personNote
-                        && thisTags == otherTags)
+                        && this.productLocation == other.productLocation
+                        && thisProductTags == otherProductTags
+                        && thisPersonTags == otherPersonTags)
             }
             else -> false
         }

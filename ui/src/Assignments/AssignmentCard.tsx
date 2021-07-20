@@ -206,7 +206,6 @@ function AssignmentCard({
         >
             {assignment.person.newPerson && assignment.person.newPersonDate && <NewBadge newPersonDate={assignment.person.newPersonDate} viewingDate={viewingDate}/>}
             <PersonAndRoleInfo
-                isReadOnly={isReadOnly}
                 assignment={assignment}
                 isUnassignedProduct={isUnassignedProduct}/>
             <button

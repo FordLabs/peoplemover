@@ -32,8 +32,12 @@ import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -78,6 +82,12 @@ class ReportGeneratorControllerTest {
     private lateinit var personTagRepository: PersonTagRepository
 
     @Autowired
+    private lateinit var locationRepository: SpaceLocationRepository
+
+    @Autowired
+    private lateinit var productTagRepository: ProductTagRepository
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
@@ -94,6 +104,11 @@ class ReportGeneratorControllerTest {
     private lateinit var person3: Person
     private lateinit var space1: Space
     private lateinit var space2: Space
+    private lateinit var locationA: SpaceLocation
+    private lateinit var locationB: SpaceLocation
+    private lateinit var productTagA: ProductTag
+    private lateinit var productTagB: ProductTag
+    private lateinit var productTagAB: ProductTag
 
     val mar1 = "2019-03-01"
     val mar2 = "2019-03-02"
@@ -107,8 +122,13 @@ class ReportGeneratorControllerTest {
     fun setup() {
         space1 = spaceRepository.save(Space(name = "Undersea Pineapple", createdDate = LocalDate.of(2020, Month.FEBRUARY, 22).atTime(0, 0)))
         space2 = spaceRepository.save(Space(name = "Krusty Krabb", createdDate = LocalDate.now().atTime(0, 0)))
-        productA = productRepository.save(Product(name = "product a", spaceUuid = space1.uuid))
-        productB = productRepository.save(Product(name = "Product b", spaceUuid = space1.uuid))
+        locationA = locationRepository.save(SpaceLocation(spaceUuid = space1.uuid, name = "LocationA"))
+        locationB = locationRepository.save(SpaceLocation(spaceUuid = space1.uuid, name = "LocationB"))
+        productTagA = productTagRepository.save(ProductTag(spaceUuid = space1.uuid, name = "ProductTagA"))
+        productTagB = productTagRepository.save(ProductTag(spaceUuid = space1.uuid, name = "ProductTagB"))
+        productTagAB = productTagRepository.save(ProductTag(spaceUuid = space1.uuid, name = "ProductTagAB"))
+        productA = productRepository.save(Product(name = "product a", spaceUuid = space1.uuid, spaceLocation = locationA, tags = hashSetOf(productTagA, productTagAB)))
+        productB = productRepository.save(Product(name = "Product b", spaceUuid = space1.uuid, spaceLocation = locationB, tags = hashSetOf(productTagB, productTagAB)))
         spaceRole = spaceRolesRepository.save(SpaceRole(name = "Software Engineer", spaceUuid = space1.uuid))
         spaceRole2 = spaceRolesRepository.save(SpaceRole(name = "Product Designer", spaceUuid = space1.uuid))
         personTag1 = personTagRepository.save(PersonTag(spaceUuid = space1.uuid, name = "Java"))
@@ -134,6 +154,8 @@ class ReportGeneratorControllerTest {
         spaceRepository.deleteAll()
         userSpaceMappingRepository.deleteAll()
         personTagRepository.deleteAll()
+        locationRepository.deleteAll()
+        productRepository.deleteAll()
     }
 
     @Test
@@ -151,7 +173,7 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, person1.customField1, spaceRole.name, personNote = "Notes", personTags = hashSetOf(personTag1.name, personTag2.name).joinToString(","))
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, person1.customField1, spaceRole.name, personNote = "Notes", personTags = hashSetOf(personTag1.name, personTag2.name).joinToString(","), productLocation = locationA.name, productTags = hashSetOf(productTagA.name, productTagAB.name).joinToString(","))
 
         assertThat(actualPeopleReport.size).isOne()
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)
@@ -172,9 +194,9 @@ class ReportGeneratorControllerTest {
                         .constructCollectionType(MutableList::class.java, PeopleReportRow::class.java)
         )
 
-        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, person1.customField1, spaceRole.name, "Notes", hashSetOf(personTag1.name, personTag2.name).joinToString(","))
-        val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, "", spaceRole2.name, "", "")
-        val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "", "", "", "")
+        val expectedPeopleReport = PeopleReportRow(productA.name, person1.name, person1.customField1, spaceRole.name, "Notes", hashSetOf(personTag1.name, personTag2.name).joinToString(","), locationA.name, hashSetOf(productTagA.name, productTagAB.name).joinToString(","))
+        val expectedPeopleReport2 = PeopleReportRow(productA.name, person3.name, "", spaceRole2.name, "", "", locationA.name, hashSetOf(productTagA.name, productTagAB.name).joinToString(","))
+        val expectedPeopleReport3 = PeopleReportRow(productB.name, person2.name, "", "", "", "", locationB.name, hashSetOf(productTagB.name, productTagAB.name).joinToString(","))
 
         assertThat(actualPeopleReport.size).isEqualTo(3)
         assertThat(actualPeopleReport[0]).isEqualTo(expectedPeopleReport)

@@ -73,7 +73,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         return (<>
             {assignments.map(assignment => {
                 return (<div data-testid={assignment.id.toString()} key={assignment.id}>
-                    <PersonAndRoleInfo assignment={assignment} isReadOnly={true} isUnassignedProduct={false} timeOnProduct={calculateDuration(assignment, viewingDate)} />
+                    <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={false} timeOnProduct={calculateDuration(assignment, viewingDate)} />
                 </div>);
             })}
         </>);
