@@ -117,9 +117,7 @@ function PersonForm({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
-
-    // Pre-populate newPerson flag and date for a person being created
-    const [initialNewPerson, setInitialNewPerson] = useState<boolean>(false);
+    const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
     const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
 
     const alphabetize = (products: Array<Product>): void => {
@@ -142,8 +140,7 @@ function PersonForm({
     useOnLoad(() => {
         if (isEditPersonForm && personEdited) {
             populatedEntirePersonForm(personEdited);
-            // Pre-populate newPerson flag and date for a person being edited
-            setInitialNewPerson(personEdited.newPerson);
+            setInitialNewPersonFlag(personEdited.newPerson);
             if (personEdited.newPersonDate !== null) {
                 const viewingDateMoment = moment(viewingDate).startOf('day');
                 const checkedDateMoment = moment(personEdited.newPersonDate).startOf('day');
@@ -196,18 +193,13 @@ function PersonForm({
         return result;
     };
 
-    const handleNewPersonCheckboxChange = (): void  => {
-        // hasNewPersonChanged can only change if the form value changes from
-        // the original passed in value, regardless of the original passed in
-        // value being from a new person or a person being edited
+    const handleMatomoEventsForNewPersonCheckboxChange = (): void  => {
         if (hasNewPersonChanged) {
             if (person.newPerson) {
                 MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
             } else {
-                // duration calculated at load time
                 MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
             }
-            // Set to false after the Matomo event has been sent
             setHasNewPersonChanged(false);
         }
     };
@@ -227,9 +219,6 @@ function PersonForm({
                 setIsUnassignedDrawerOpen(true);
             }
 
-            // hasNewPersonChanged can only change if the form value changes from
-            // the original passed in value, regardless of the original passed in
-            // value being from a new person or a person being edited
             if (hasNewPersonChanged) {
                 if (person.newPerson) {
                     person.newPersonDate = viewingDate;
@@ -262,7 +251,7 @@ function PersonForm({
                     newPerson
                 );
             }
-            handleNewPersonCheckboxChange();
+            handleMatomoEventsForNewPersonCheckboxChange();
             closeModal();
         }
     };
@@ -423,8 +412,11 @@ function PersonForm({
                             onChange={(): void => {
                                 const newPersonFlag = !person.newPerson;
                                 updatePersonField('newPerson', newPersonFlag);
-                                // Only set if the value is being changed from the initial value
-                                setHasNewPersonChanged(newPersonFlag !== initialNewPerson);
+                                if (newPersonFlag === initialNewPersonFlag) {
+                                    setHasNewPersonChanged(false);
+                                } else {
+                                    setHasNewPersonChanged(true);
+                                }
                             }}
                         />
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>

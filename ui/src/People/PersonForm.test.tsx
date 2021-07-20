@@ -186,10 +186,12 @@ describe('Person Form', () => {
         });
     });
 
-    describe('handleNewPersonCheckboxChange()', () => {
+    describe('handleMatomoEventsForNewPersonCheckboxChange()', () => {
 
         let originalWindow: Window;
+
         afterEach(() => {
+            window._paq = [];
             (window as Window) = originalWindow;
         });
 
@@ -212,7 +214,6 @@ describe('Person Form', () => {
             });
 
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'newPersonChecked', TestUtils.hank.name]);
-
         });
 
         it('newPerson box goes from checked to unchecked, call matomo event for newPersonUnchecked action',  async () => {
@@ -237,5 +238,52 @@ describe('Person Form', () => {
 
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'newPersonUnchecked', newHank.name + ', 366 day(s)']);
         });
+
+        it('newPerson box goes from checked to unchecked to checked, DO NOT call any matomo event',  async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+            let newHank: Person = {...TestUtils.hank, name: 'XXXX', newPerson: true, newPersonDate: new Date(2019, 4, 14)};
+
+            await act( async () => {
+                personForm = renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={true}
+                        products={TestUtils.products}
+                        initiallySelectedProduct={TestUtils.productForHank}
+                        personEdited={newHank}
+                    />, store, undefined);
+            });
+
+            await act( async () => {
+                fireEvent.click(await personForm.findByTestId('personFormIsNewCheckbox'));
+                fireEvent.click(await personForm.findByTestId('personFormIsNewCheckbox'));
+                fireEvent.click(await personForm.findByText('Save'));
+            });
+
+            expect(window._paq).toEqual([]);
+        });
+
+        it('newPerson box goes from unchecked to checked to unchecked, DO NOT call matomo event',  async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+            await act( async () => {
+                personForm = renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={true}
+                        products={TestUtils.products}
+                        initiallySelectedProduct={TestUtils.productForHank}
+                        personEdited={TestUtils.hank}
+                    />, store, undefined);
+            });
+
+            await act( async () => {
+                fireEvent.click(await personForm.findByTestId('personFormIsNewCheckbox'));
+                fireEvent.click(await personForm.findByTestId('personFormIsNewCheckbox'));
+                fireEvent.click(await personForm.findByText('Save'));
+            });
+
+            expect(window._paq).toEqual([]);
+        });
+
     });
 });
