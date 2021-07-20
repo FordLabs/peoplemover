@@ -20,8 +20,10 @@ package com.ford.internalprojects.peoplemover.person
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
+import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
+import kotlin.collections.HashSet
 
 data class PersonRequest(
 
@@ -39,6 +41,8 @@ data class PersonRequest(
         @JsonProperty
         var newPerson: Boolean = false,
 
+        var newPersonDate: LocalDate?,
+
         val customField1: String? = null
 )
 
@@ -48,6 +52,7 @@ fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
         spaceRole = this.spaceRole,
         notes = this.notes,
         newPerson = this.newPerson,
+        newPersonDate = this.newPersonDate,
         spaceUuid = spaceUuid,
         tags = this.tags,
         customField1 = this.customField1

@@ -260,7 +260,7 @@ describe('Assignment Card', () => {
             } as GlobalStateProps;
         });
 
-        it('should show the new badge if the assignment says the person is new', () => {
+        it('should show the new badge if the assignment says the person is new and there is a newPersonDate', () => {
             const assignmentThatIsNew: Assignment = {
                 id: 199,
                 person: {
@@ -269,6 +269,7 @@ describe('Assignment Card', () => {
                     name: 'Mary Pettigrew',
                     spaceRole: {id: 3, spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Product Designer', color: {color: '1', id: 2}},
                     newPerson: true,
+                    newPersonDate: new Date('2021-01-01'),
                 },
                 placeholder: false,
                 productId: 0,

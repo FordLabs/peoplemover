@@ -204,7 +204,7 @@ function AssignmentCard({
                 }
             }}
         >
-            {assignment.person.newPerson && <div className="newPersonBadge"><NewBadge/></div>}
+            {assignment.person.newPerson && assignment.person.newPersonDate && <NewBadge newPersonDate={assignment.person.newPersonDate} viewingDate={viewingDate}/>}
             <PersonAndRoleInfo
                 assignment={assignment}
                 isUnassignedProduct={isUnassignedProduct}/>

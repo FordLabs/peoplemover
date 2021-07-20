@@ -116,6 +116,9 @@ function PersonForm({
     const [selectedPersonTags, setSelectedPersonTags] = useState<Array<Tag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
+    const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
+    const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
+    const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -137,6 +140,12 @@ function PersonForm({
     useOnLoad(() => {
         if (isEditPersonForm && personEdited) {
             populatedEntirePersonForm(personEdited);
+            setInitialNewPersonFlag(personEdited.newPerson);
+            if (personEdited.newPersonDate !== null) {
+                const viewingDateMoment = moment(viewingDate).startOf('day');
+                const checkedDateMoment = moment(personEdited.newPersonDate).startOf('day');
+                setInitialNewPersonDuration(moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays());
+            }
         } else {
             if (initialPersonName) {
                 setPerson(
@@ -184,6 +193,17 @@ function PersonForm({
         return result;
     };
 
+    const handleMatomoEventsForNewPersonCheckboxChange = (): void  => {
+        if (hasNewPersonChanged) {
+            if (person.newPerson) {
+                MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
+            } else {
+                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
+            }
+            setHasNewPersonChanged(false);
+        }
+    };
+
     const handleSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
 
@@ -198,6 +218,15 @@ function PersonForm({
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
             }
+
+            if (hasNewPersonChanged) {
+                if (person.newPerson) {
+                    person.newPersonDate = viewingDate;
+                } else {
+                    person.newPersonDate = undefined;
+                }
+            }
+
             if (isEditPersonForm) {
                 const response = await PeopleClient.updatePerson(currentSpace, person, personTagModified);
                 const updatedPerson: Person = response.data;
@@ -222,6 +251,7 @@ function PersonForm({
                     newPerson
                 );
             }
+            handleMatomoEventsForNewPersonCheckboxChange();
             closeModal();
         }
     };
@@ -250,7 +280,7 @@ function PersonForm({
         setSelectedProducts(updatedProducts.filter(product => product != null));
     };
 
-    const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | undefined): void => {
+    const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | Date | undefined): void => {
         setPerson((updatingPerson: Person) => ({...updatingPerson, [fieldName]: fieldValue}));
     };
 
@@ -380,7 +410,13 @@ function PersonForm({
                             type="checkbox"
                             checked={person.newPerson}
                             onChange={(): void => {
-                                updatePersonField('newPerson', !person.newPerson);
+                                const newPersonFlag = !person.newPerson;
+                                updatePersonField('newPerson', newPersonFlag);
+                                if (newPersonFlag === initialNewPersonFlag) {
+                                    setHasNewPersonChanged(false);
+                                } else {
+                                    setHasNewPersonChanged(true);
+                                }
                             }}
                         />
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
