@@ -42,7 +42,9 @@ data class ProductRequest(
     val archived: Boolean = false,
 
     @field:Size(max = 500, message = "notes cannot be longer than 500 characters")
-    var notes: String = ""
+    var notes: String = "",
+
+    var url: String = ""
 )
 
 fun ProductRequest.toProduct(productId: Int? = null, spaceUuid: String): Product =
@@ -56,6 +58,7 @@ fun ProductRequest.toProduct(productId: Int? = null, spaceUuid: String): Product
         spaceLocation = spaceLocation,
         archived = archived,
         notes = notes,
+        url = url,
         spaceUuid = spaceUuid
     )
 

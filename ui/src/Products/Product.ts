@@ -31,6 +31,7 @@ export interface Product {
     tags: Array<Tag>;
     archived: boolean;
     notes?: string;
+    url?: string;
     assignments: Array<Assignment>;
 }
 
@@ -45,6 +46,7 @@ export function emptyProduct(spaceUuid?: string): Product {
         tags: [],
         archived: false,
         notes: '',
+        url: '',
         assignments: [],
     };
 }

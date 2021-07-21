@@ -54,15 +54,18 @@ data class Product (
 
     var notes: String = "",
 
+    @Column()
+    val url: String = "",
+
     @Column(name = "space_uuid")
     override val spaceUuid: String
 
 ): NamedSpaceComponent {
 
     constructor(id: Int?, name: String, spaceUuid: String):
-        this(id, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceUuid)
+        this(id, name, HashSet(), HashSet(), null, null, "", null, false, "", "", spaceUuid)
 
     constructor(name: String, spaceUuid: String):
-            this(null, name, HashSet(), HashSet(), null, null, "", null, false, "", spaceUuid)
+            this(null, name, HashSet(), HashSet(), null, null, "", null, false, "", "", spaceUuid)
 
 }
