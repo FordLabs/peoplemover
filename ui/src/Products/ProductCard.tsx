@@ -130,6 +130,22 @@ function ProductCard({
         }
     }
 
+    function handleClickForProductUrl(): void {
+        if (product.url) {
+            window.open(product.url);
+        }
+    }
+
+    function handleKeyDownForProductUrl(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            handleClickForProductUrl();
+        }
+    }
+
+    function createProductClassName(): string {
+        return 'productName' + (product.url ? ' productNameUrl' : '');
+    }
+
     function listenKeyUp(event: React.KeyboardEvent): void {
         if (event.key === 'ArrowDown' && !isEditMenuOpen) {
             toggleEditMenu();
@@ -168,9 +184,10 @@ function ProductCard({
                     <div>
                         <div className="productNameEditContainer">
                             <div className="productDetails">
-                                <h2 className="productName" data-testid="productName">
+                                <div className={createProductClassName()} data-testid="productName" onClick={handleClickForProductUrl} onKeyPress={handleKeyDownForProductUrl}>
                                     {product.name}
-                                </h2>
+                                    {product.url && <i className="material-icons" aria-label="Assign Person">open_in_new</i>}
+                                </div>
                                 {!isReadOnly && (
                                     <div className={'productControlsContainer'}>
                                         <button
