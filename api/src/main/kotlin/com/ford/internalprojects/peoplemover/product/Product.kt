@@ -54,8 +54,7 @@ data class Product (
 
     var notes: String = "",
 
-    @Column()
-    val url: String = "",
+    val url: String? = "",
 
     @Column(name = "space_uuid")
     override val spaceUuid: String

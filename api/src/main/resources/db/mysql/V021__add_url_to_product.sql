@@ -1,1 +1,1 @@
-ALTER TABLE `product` ADD COLUMN `url` text;
+ALTER TABLE `product` ADD COLUMN `url` TEXT;
