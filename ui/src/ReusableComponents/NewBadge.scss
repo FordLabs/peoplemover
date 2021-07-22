@@ -24,16 +24,17 @@
     justify-content: center;
     background: $logo-gradient;
     border-radius: 8px;
-    margin-top: -5px;
+    margin-top: -7px;
     margin-left: -4px;
     width: 26px;
     height: 12px;
     font-size: 0.5rem;
     color: $white;
     font-weight: normal;
-    padding-top: 2px;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-top: 0.17em;
+    padding-left: 0.1em;
+    padding-right: 0.1em;
+    padding-bottom: 0.1em;
 
     &.stage2 {
         background: $logo-gradient-2;
