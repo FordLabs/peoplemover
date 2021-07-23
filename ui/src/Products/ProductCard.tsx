@@ -184,9 +184,13 @@ function ProductCard({
                     <div>
                         <div className="productNameEditContainer">
                             <div className="productDetails">
-                                <button className={createProductClassName()} data-testid="productName" onClick={handleClickForProductUrl} onKeyPress={handleKeyDownForProductUrl}>
-                                    {product.name}
-                                    {product.url && <i className="material-icons" aria-label="Assign Person">open_in_new</i>}
+                                <button className="productNameButton" onClick={handleClickForProductUrl} onKeyPress={handleKeyDownForProductUrl}>
+                                    <div data-testid="productName" className={createProductClassName()}>
+                                        {product.name}
+                                    </div>
+                                    <div>
+                                        {product.url && <i className="material-icons productUrlIcon productNameUrl" aria-label="Assign Person" data-testid="productUrl">open_in_new</i>}
+                                    </div>
                                 </button>
                                 {!isReadOnly && (
                                     <div className={'productControlsContainer'}>

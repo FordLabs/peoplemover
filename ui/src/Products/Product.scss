@@ -78,6 +78,12 @@
   justify-content: space-between;
   align-items: flex-start;
 
+  .productNameButton {
+    display: flex;
+    justify-content: space-between;
+    align-content: flex-start;
+  }
+
   .productName {
     margin: 5px 0;
     font-family: Helvetica, sans-serif;
@@ -93,6 +99,10 @@
   .productNameUrl {
     cursor: pointer;
     color: $prime-1;
+  }
+
+  .productUrlIcon {
+    font-size: 20px;
   }
 }
 

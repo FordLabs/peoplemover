@@ -16,19 +16,32 @@
  */
 
 import React from 'react';
-import configureStore from 'redux-mock-store';
+import configureStore, {MockStoreCreator, MockStoreEnhanced} from 'redux-mock-store';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {emptyProduct} from './Product';
 import ProductCard from './ProductCard';
 
 describe('ProductCard', () => {
-    it('should show the product name properly with/without the url', () => {
-        const mockStore = configureStore([]);
-        const store = mockStore({
+    let mockStore: MockStoreCreator<unknown, {}>;
+    let store: MockStoreEnhanced<unknown, {}>;
+
+    beforeEach(() => {
+        mockStore = configureStore([]);
+        store = mockStore({
             currentSpace: TestUtils.space,
             viewingDate: new Date(2020, 4, 14),
         });
+    });
+
+    it('should not show the product link icon when there is no url', () => {
         const testProduct = {...emptyProduct(), name: 'testProduct'};
         const app = renderWithRedux(<ProductCard product={testProduct}/>, store, undefined);
+        expect(app.queryAllByTestId('productUrl').length).toEqual(0);
+    });
+
+    it('should show the product link icon when there is a/an url', () => {
+        const testProduct = {...emptyProduct(), name: 'testProduct', url: 'any old url'};
+        const app = renderWithRedux(<ProductCard product={testProduct}/>, store, undefined);
+        expect(app.queryAllByTestId('productUrl').length).toEqual(1);
     });
 });
