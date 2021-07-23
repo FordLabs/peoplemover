@@ -16,7 +16,7 @@
  */
 
 import React, {FormEvent, useState, useEffect, createRef} from 'react';
-import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
+import {closeModalAction, fetchUserSpacesAction, setCurrentSpaceAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import SpaceClient from '../Space/SpaceClient';
 import {createEmptySpace, Space} from '../Space/Space';
@@ -30,12 +30,15 @@ interface SpaceFormProps {
     closeModal(): void;
 
     fetchUserSpaces(): void;
+
+    setCurrentSpace(space: Space): void;
 }
 
 function SpaceForm({
     space,
     closeModal,
     fetchUserSpaces,
+    setCurrentSpace,
 }: SpaceFormProps): JSX.Element {
     const maxLength = 40;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
@@ -63,8 +66,8 @@ function SpaceForm({
                 .then(fetchUserSpaces);
         } else {
             SpaceClient.createSpaceForUser(formSpace.name)
-                .then(closeModal)
-                .then(fetchUserSpaces);
+                .then((response) => setCurrentSpace(response.data.space))
+                .then(closeModal);
         }
     }
 
@@ -124,6 +127,7 @@ function SpaceForm({
 const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
+    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
 });
 
 export default connect(null, mapDispatchToProps)(SpaceForm);

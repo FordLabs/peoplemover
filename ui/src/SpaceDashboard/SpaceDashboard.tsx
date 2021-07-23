@@ -36,6 +36,7 @@ import Branding from '../ReusableComponents/Branding';
 import {AvailableModals} from '../Modal/AvailableModals';
 
 interface SpaceDashboardProps {
+    currentSpace: Space;
     setCurrentModal(modalState: CurrentModalState): void;
     fetchUserSpaces(): void;
     userSpaces: Array<Space>;
@@ -44,6 +45,7 @@ interface SpaceDashboardProps {
 }
 
 function SpaceDashboard({
+    currentSpace,
     setCurrentModal,
     fetchUserSpaces,
     userSpaces,
@@ -74,6 +76,12 @@ function SpaceDashboard({
             setIsLoading(false);
         });
     }, [fetchUserSpaces, setCurrentSpace]);
+
+    useEffect(() => {
+        if (currentSpace?.uuid) {
+            onSpaceClicked(currentSpace);
+        }
+    }, [currentSpace]);
 
     function WelcomeMessage(): JSX.Element {
         return (
@@ -131,6 +139,7 @@ function SpaceDashboard({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     userSpaces: state.userSpaces,
+    currentSpace: state.currentSpace,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
