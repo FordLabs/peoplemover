@@ -19,7 +19,7 @@ import React from 'react';
 import ArchivedProduct from '../Products/ArchivedProduct';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
-import {fireEvent, RenderResult} from '@testing-library/react';
+import {fireEvent, RenderResult, wait} from '@testing-library/react';
 import {createBrowserHistory, History} from 'history';
 import {Router} from 'react-router-dom';
 
@@ -28,18 +28,20 @@ describe('Archive Products', () => {
         let app: RenderResult;
         let history: History;
 
-        beforeEach(() => {
+        beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
             history = createBrowserHistory();
             history.push('/uuid');
 
-            app = renderWithRedux(
-                <Router history={history}>
-                    <PeopleMover/>
-                </Router>
-            );
+            await wait(() => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>
+                );
+            });
         });
 
         it('has the archived products drawer closed by default', async () => {
