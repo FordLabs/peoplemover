@@ -45,8 +45,11 @@ interface ProductCardProps {
     isReadOnly: boolean;
 
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
+
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
+
     setCurrentModal(modalState: CurrentModalState): void;
+
     fetchProducts(): void;
 }
 
@@ -71,6 +74,7 @@ function ProductCard({
             unregisterProductRef({ref: productRef, product});
         };
     }, []);
+
     /* eslint-enable */
 
     function toggleEditMenu(): void {
@@ -131,9 +135,7 @@ function ProductCard({
     }
 
     function handleClickForProductUrl(): void {
-        if (product.url) {
-            window.open(product.url);
-        }
+        window.open(product.url);
     }
 
     function handleKeyDownForProductUrl(event: React.KeyboardEvent): void {
@@ -178,18 +180,23 @@ function ProductCard({
     const classNameAndDataTestId = isUnassignedProduct(product) ? 'productDrawerContainer' : 'productCardContainer';
 
     return (
-        <div className={classNameAndDataTestId} data-testid={createDataTestId(classNameAndDataTestId, product.name)} ref={productRef}>
+        <div className={classNameAndDataTestId} data-testid={createDataTestId(classNameAndDataTestId, product.name)}
+            ref={productRef}>
             <div key={product.name}>
                 {!isUnassignedProduct(product) && (
                     <div>
                         <div className="productNameEditContainer">
                             <div className="productDetails">
-                                <button className="productNameButton" onClick={handleClickForProductUrl} onKeyPress={handleKeyDownForProductUrl}>
-                                    <div data-testid="productName" className={createProductClassName()}>
-                                        {product.name}{product.url && <i className="material-icons productUrlIcon productNameUrl" aria-label="Assign Person" data-testid="productUrl">open_in_new</i>}
-                                    </div>
-
-                                </button>
+                                {product.url ?
+                                    <button className="productNameButton" onClick={handleClickForProductUrl}
+                                        onKeyPress={handleKeyDownForProductUrl}>
+                                        <div data-testid="productName" className="productName productNameUrl">
+                                            {product.name}<i className="material-icons productUrlIcon productNameUrl"
+                                                aria-label="Assign Person"
+                                                data-testid="productUrl">open_in_new</i>
+                                        </div>
+                                    </button> :
+                                    <div data-testid="productName" className="productName">{product.name}</div>}
                                 {!isReadOnly && (
                                     <div className={'productControlsContainer'}>
                                         <button
@@ -206,12 +213,13 @@ function ProductCard({
                                             onClick={toggleEditMenu}
                                             onKeyUp={(e): void => listenKeyUp(e)}
                                         >
-                                            <i className="material-icons" aria-label="Product Menu" id={generateIdName()}>more_vert</i>
+                                            <i className="material-icons" aria-label="Product Menu"
+                                                id={generateIdName()}>more_vert</i>
                                         </button>
                                     </div>
                                 )}
                             </div>
-                            <TagList />
+                            <TagList/>
                             {
                                 isEditMenuOpen &&
                                 <EditMenu idToPass={generateIdName()} menuOptionList={getMenuOptionList()}
@@ -227,7 +235,7 @@ function ProductCard({
                         )}
                     </div>
                 )}
-                <AssignmentCardList product={product} />
+                <AssignmentCardList product={product}/>
             </div>
         </div>
     );
