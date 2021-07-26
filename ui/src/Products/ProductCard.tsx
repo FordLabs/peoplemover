@@ -144,10 +144,6 @@ function ProductCard({
         }
     }
 
-    function createProductClassName(): string {
-        return 'productName' + (product.url ? ' productNameUrl' : '');
-    }
-
     function listenKeyUp(event: React.KeyboardEvent): void {
         if (event.key === 'ArrowDown' && !isEditMenuOpen) {
             toggleEditMenu();
