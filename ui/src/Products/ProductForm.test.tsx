@@ -75,6 +75,7 @@ describe('ProductForm', function() {
                 archived: false,
                 dorf: '',
                 notes: '',
+                url: '',
                 tags: [TestUtils.productTag2],
                 assignments: [],
             } as Product);
