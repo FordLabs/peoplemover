@@ -204,7 +204,7 @@ function ProductForm({
                         id="url"
                         value={currentProduct.url}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('url', e.target.value)}
-                        placeholder="e.g. https://mach-e.ford.com/"/>
+                        placeholder="e.g. https://www.fordlabs.com"/>
                 </div>
                 <ProductFormLocationField
                     currentProductState={{currentProduct, setCurrentProduct}}
