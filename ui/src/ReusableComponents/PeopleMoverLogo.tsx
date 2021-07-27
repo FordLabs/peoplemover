@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import PersonIcon from '../Application/Assets/logo.svg';
+import PersonIcon from '../Application/Assets/small-logo.png';
 
 import './PeopleMoverLogo.scss';
 
