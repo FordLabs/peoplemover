@@ -350,4 +350,29 @@ class ProductControllerApiTest {
                 .andExpect(status().isForbidden)
     }
 
+    @Test
+    fun `post should append https if product url does not have it at the beginning`() {
+        val productAddRequest = ProductRequest(
+                name = "product one",
+                url = "www.fordlabs.com"
+        )
+
+        val result = mockMvc.perform(post(baseProductsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productAddRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualProduct: Product = objectMapper.readValue(
+                result.response.contentAsString,
+                Product::class.java
+        )
+        val productInDB: Product = productRepository.findByName("product one")!!
+
+        assertThat(actualProduct.name).isEqualTo("product one")
+        assertThat(actualProduct.url).isEqualTo("https://www.fordlabs.com")
+        assertThat(actualProduct.spaceUuid).isEqualTo(space.uuid)
+        assertThat(actualProduct).isEqualTo(productInDB)
+    }
 }
