@@ -22,19 +22,22 @@ import {connect} from 'react-redux';
 import {Assignment, calculateDuration} from '../Assignments/Assignment';
 import {Space} from '../Space/Space';
 import RedirectClient from '../Utils/RedirectClient';
-// import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
 import './TimeOnProduct.scss';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {fetchProductsAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import HeaderContainer from '../Header/HeaderContainer';
 import SubHeader from '../Header/SubHeader';
+import {Person} from '../People/Person';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 export interface TimeOnProductItem {
     personName: string;
     productName: string;
     personRole: string;
     timeOnProduct: number;
+    assignmentId: number;
+    personId: number;
 }
 
 export const generateTimeOnProductItems = (products: Product[], viewingDate: Date): TimeOnProductItem[] => {
@@ -47,6 +50,8 @@ export const generateTimeOnProductItems = (products: Product[], viewingDate: Dat
                 productName: productName,
                 personRole: assignment.person.spaceRole?.name || 'No Role Assigned',
                 timeOnProduct: calculateDuration(assignment, viewingDate),
+                assignmentId: assignment.id,
+                personId: assignment.person.id,
             });
         });
     });
@@ -62,11 +67,12 @@ export interface TimeOnProductProps {
     viewingDate: Date;
     products: Array<Product>;
     currentModal: CurrentModalState;
+    people: Array<Person>;
 
     fetchProducts(): Array<Product>;
 }
 
-function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetchProducts}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, viewingDate, products, currentModal, people, fetchProducts}: TimeOnProductProps): JSX.Element {
 
     const extractUuidFromUrl = (): string => {
         return window.location.pathname.split('/')[1];
@@ -85,51 +91,36 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         }
     }, [currentModal, currentSpace, fetchProducts]);
 
-    // const productNaming = (product: Product): string => {
-    //     if (product.name === UNASSIGNED) {
-    //         return 'unassigned persons:';
-    //     } else {
-    //         return product.name + ':';
-    //     }
-    //
-    // };
-
-    // const ListOfAssignments = ({assignments}: ListOfAssignmentsProps): JSX.Element => {
-    //     return (<>
-    //         {assignments.map(assignment => {
-    //             return (<div data-testid={assignment.id.toString()} key={assignment.id}>
-    //                 <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={false} timeOnProduct={calculateDuration(assignment, viewingDate)} />
-    //             </div>);
-    //         })}
-    //     </>);
-    // };
-
-    // const ListOfProducts = (): JSX.Element => {
-    //     return (<>
-    //         {products.map(product => {
-    //             return (
-    //                 <div data-testid={product.id} className="productContainer" key={product.id}>
-    //                     <h3 className="productName"> {productNaming(product)} </h3>
-    //                     <ListOfAssignments assignments={product.assignments}/>
-    //                 </div>);
-    //         })}
-    //     </>);
-    // };
+    const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
+        // const newModalState: CurrentModalState = {
+        //     modal: AvailableModals.EDIT_PERSON,
+        //     item: assignment,
+        // };
+        // setCurrentModal(newModalState);
+    };
 
     const convertToRow = (timeOnProductItem: TimeOnProductItem): JSX.Element => {
+        const unit = (timeOnProductItem.timeOnProduct > 1 ? 'days' : 'day');
         return (
-            <div className="timeOnProductRow">
-                <div className="timeOnProductCell">{timeOnProductItem.personName}</div>
+            <div className="timeOnProductRow"
+                data-testid={timeOnProductItem.assignmentId.toString()}
+                key={timeOnProductItem.assignmentId.toString()}
+            >
+                <button className="timeOnProductCell timeOnProductCellName"
+                    // onClick={onNameClick(timeOnProductItem)}
+                >
+                    {timeOnProductItem.personName}
+                </button>
                 <div className="timeOnProductCell">{timeOnProductItem.productName}</div>
                 <div className="timeOnProductCell">{timeOnProductItem.personRole}</div>
-                <div className="timeOnProductCell">{timeOnProductItem.timeOnProduct} days</div>
+                <div className="timeOnProductCell">{timeOnProductItem.timeOnProduct} {unit}</div>
             </div>
         );
     };
 
     const convertToTable = (timeOnProductItems: TimeOnProductItem[]): JSX.Element => {
         return (
-            <div>
+            <>
                 <div className="timeOnProductRow timeOnProductHeader">
                     <div className="timeOnProductCell">Name</div>
                     <div className="timeOnProductCell">Product</div>
@@ -139,20 +130,13 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                 {timeOnProductItems.map(timeOnProductItem => {
                     return convertToRow(timeOnProductItem);
                 })}
-            </div>
+            </>
         );
     };
 
     return (
         currentSpace && <>
             <CurrentModal/>
-            {/*<div>*/}
-            {/*    <h2 className="title">Time On Product (in calendar days)</h2>*/}
-            {/*    <div className="date">As of: {viewingDate.toDateString()}</div>*/}
-            {/*    {currentSpace && currentSpace.name && <>*/}
-            {/*        <ListOfProducts/>*/}
-            {/*    </>}*/}
-            {/*</div>*/}
             <div className="App">
                 <HeaderContainer>
                     <SubHeader/>
@@ -171,6 +155,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: state.viewingDate,
     products: state.products,
     currentModal: state.currentModal,
+    people: state.people,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

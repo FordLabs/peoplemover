@@ -41,7 +41,6 @@ describe('TimeOnProduct', () => {
             const list = await app.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
             expect(list).toContainHTML('Hank');
             expect(list).toContainHTML('1 day');
-
         });
 
         it('should show the number of days on the project since selected viewingDate', async () => {
@@ -99,9 +98,9 @@ describe('TimeOnProduct', () => {
             const viewingDate = new Date(2020, 0, 10);
             const timeOnProductItems = generateTimeOnProductItems(products, viewingDate);
 
-            const expectedProduct1 = {personName: 'Hank', productName: 'Hanky Product', personRole: 'Product Manager', timeOnProduct: 10};
-            const expectedProduct2 = {personName: 'Unassigned Person 7', productName: 'Unassigned', personRole: 'Software Engineer', timeOnProduct: 9};
-            const expectedProduct3 = {personName: 'Unassigned Person No Role', productName: 'Unassigned', personRole: 'No Role Assigned', timeOnProduct: 9};
+            const expectedProduct1 = {personName: 'Hank', productName: 'Hanky Product', personRole: 'Product Manager', timeOnProduct: 10, assignmentId: 3, personId: 200};
+            const expectedProduct2 = {personName: 'Unassigned Person 7', productName: 'Unassigned', personRole: 'Software Engineer', timeOnProduct: 9, assignmentId: 11, personId: 101};
+            const expectedProduct3 = {personName: 'Unassigned Person No Role', productName: 'Unassigned', personRole: 'No Role Assigned', timeOnProduct: 9, assignmentId: 14, personId: 106};
 
             expect(timeOnProductItems.length).toEqual(3);
             expect(timeOnProductItems).toContainEqual(expectedProduct1);

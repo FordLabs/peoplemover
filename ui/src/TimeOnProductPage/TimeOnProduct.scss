@@ -37,6 +37,14 @@
 .timeOnProductCell {
   height: 2rem;
   width: 12rem;
+  padding-left: 1rem;
+}
+
+.timeOnProductCellName {
+  cursor: pointer;
+  color: $prime-1;
+  background: $white;
+  text-align: left;
 }
 
 .timeOnProductRow {
@@ -44,11 +52,13 @@
   flex-direction: row;
   background: $white;
   margin: 0.5rem 0.5rem;
+  font-weight: bold;
+  line-height: 2rem;
 }
 
 .timeOnProductHeader {
   background: $gray-5;
-  font-weight: bold;
+  line-height: 2.4rem;
 }
 
 .timeOnProductTable {
@@ -60,5 +70,4 @@
   margin: 2rem 2rem;
   font-style: normal;
   font-size: 14px;
-  line-height: 16px;
 }
