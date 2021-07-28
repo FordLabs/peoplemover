@@ -24,7 +24,7 @@ import {Space} from '../Space/Space';
 import RedirectClient from '../Utils/RedirectClient';
 import './TimeOnProduct.scss';
 import CurrentModal from '../Redux/Containers/CurrentModal';
-import {fetchProductsAction} from '../Redux/Actions';
+import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import HeaderContainer from '../Header/HeaderContainer';
 import SubHeader from '../Header/SubHeader';
@@ -70,9 +70,10 @@ export interface TimeOnProductProps {
     people: Array<Person>;
 
     fetchProducts(): Array<Product>;
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function TimeOnProduct({currentSpace, viewingDate, products, currentModal, people, fetchProducts}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, viewingDate, products, currentModal, people, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
 
     const extractUuidFromUrl = (): string => {
         return window.location.pathname.split('/')[1];
@@ -92,11 +93,15 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, peopl
     }, [currentModal, currentSpace, fetchProducts]);
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
-        // const newModalState: CurrentModalState = {
-        //     modal: AvailableModals.EDIT_PERSON,
-        //     item: assignment,
-        // };
-        // setCurrentModal(newModalState);
+        const product = products.find(product => timeOnProductItem.productName === product.name);
+        const assignment = product?.assignments.find(assignment => timeOnProductItem.assignmentId === assignment.id);
+        if (assignment) {
+            const newModalState: CurrentModalState = {
+                modal: AvailableModals.EDIT_PERSON,
+                item: assignment.person,
+            };
+            setCurrentModal(newModalState);
+        }
     };
 
     const convertToRow = (timeOnProductItem: TimeOnProductItem): JSX.Element => {
@@ -107,7 +112,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, peopl
                 key={timeOnProductItem.assignmentId.toString()}
             >
                 <button className="timeOnProductCell timeOnProductCellName"
-                    // onClick={onNameClick(timeOnProductItem)}
+                    onClick={(): void => {onNameClick(timeOnProductItem);}}
                 >
                     {timeOnProductItem.personName}
                 </button>
@@ -159,6 +164,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
+    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     fetchProducts: () => dispatch(fetchProductsAction()),
 })
 
