@@ -19,8 +19,13 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import TimeOnProduct, {generateTimeOnProductItems} from './TimeOnProduct';
 import {MemoryRouter} from 'react-router-dom';
-import {GlobalStateProps} from '../Redux/Reducers';
+import rootReducer from '../Redux/Reducers';
 import {Product, UNASSIGNED} from '../Products/Product';
+import {cleanup, RenderResult} from '@testing-library/react';
+import {fireEvent} from '@testing-library/dom';
+import {createStore, Store} from 'redux';
+import {setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 describe('TimeOnProduct', () => {
     beforeEach(() => {
@@ -29,33 +34,51 @@ describe('TimeOnProduct', () => {
     });
 
     describe('calculation', () => {
-        it('should show 1 day spend on the project when viewingDate equal start date', async () => {
+        let store: Store;
+        let app: RenderResult;
+
+        beforeEach(() => {
             let initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 1),
                 products: [TestUtils.productForHank],
-            } as GlobalStateProps;
+            };
+            store = createStore(rootReducer, initialState);
+            store.dispatch = jest.fn();
+            app = renderWithRedux(<TimeOnProduct/>, store);
+        });
 
-            let app = renderWithRedux(<TimeOnProduct/>, undefined, initialState);
-
+        it('should show 1 day spend on the project when viewingDate equal start date', async () => {
             const list = await app.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
             expect(list).toContainHTML('Hank');
             expect(list).toContainHTML('1 day');
         });
 
         it('should show the number of days on the project since selected viewingDate', async () => {
+            cleanup();
             let initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 10),
                 products: [TestUtils.productForHank],
-            } as GlobalStateProps;
-
-            let app = renderWithRedux(<TimeOnProduct/>, undefined, initialState);
+            };
+            store = createStore(rootReducer, initialState);
+            store.dispatch = jest.fn();
+            app = renderWithRedux(<TimeOnProduct/>, store);
 
             const list = await app.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
             expect(list).toContainHTML('Hank');
             expect(list).toContainHTML('10 days');
+        });
 
+        it('should make the call to open the Edit Person modal when person name is clicked', async () => {
+            const hank = app.getByText('Hank');
+            fireEvent.click(hank);
+            expect(store.dispatch).toHaveBeenCalledWith(
+                setCurrentModalAction({
+                    modal: AvailableModals.EDIT_PERSON,
+                    item: TestUtils.hank,
+                })
+            );
         });
     });
 
