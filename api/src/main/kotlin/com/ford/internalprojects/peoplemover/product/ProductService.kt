@@ -49,7 +49,19 @@ class ProductService(
         productRepository.findProductByNameAndSpaceUuid(productRequest.name, spaceUuid)?.let {
             throw EntityAlreadyExistsException()
         }
+        validateLinkUrl(productRequest)
         return productRepository.createEntityAndUpdateSpaceLastModified(productRequest.toProduct(spaceUuid = spaceUuid))
+    }
+
+    private fun validateLinkUrl(productRequest: ProductRequest) {
+        if (!productRequest.url.isNullOrEmpty()) {
+            if ((productRequest.url!!.startsWith("https:", true) || productRequest.url!!.startsWith("http:", true))) {
+               return
+            }
+            else {
+                productRequest.url = "https://" + productRequest.url
+            }
+        }
     }
 
 
@@ -64,6 +76,8 @@ class ProductService(
                 }
             }
         }
+
+        validateLinkUrl(productRequest)
 
         val product: Product = productRequest.toProduct(productId, spaceUuid)
         return productRepository.updateEntityAndUpdateSpaceLastModified(product)
@@ -84,7 +98,7 @@ class ProductService(
                 .findProductByNameAndSpaceUuid("unassigned", productToDelete.spaceUuid)
                 ?: throw EntityNotExistsException()
 
-        val unassignedPeople = unassignedProduct.assignments.map{ it.person.id }
+        val unassignedPeople = unassignedProduct.assignments.map { it.person.id }
 
         productToDelete.assignments.forEach {
             if (unassignedPeople.contains(it.person.id)) {

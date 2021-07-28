@@ -46,6 +46,8 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
+import kotlin.collections.HashSet
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -112,9 +114,9 @@ class ProductControllerApiTest {
     @Test
     fun `POST should create new Product`() {
         val productAddRequest = ProductRequest(
-            name = "product one",
-            tags = setOf(tag),
-            spaceLocation = location
+                name = "product one",
+                tags = setOf(tag),
+                spaceLocation = location
         )
 
         val result = mockMvc.perform(post(baseProductsUrl)
@@ -166,16 +168,16 @@ class ProductControllerApiTest {
                 .andExpect(status().isConflict)
     }
 
-      @Test
-      fun `POST should return 403 when trying to create a product without write authorization`() {
+    @Test
+    fun `POST should return 403 when trying to create a product without write authorization`() {
         val requestBodyObject = ProductRequest("Not blank")
 
         mockMvc.perform(post(baseProductsUrl)
-              .header("Authorization", "Bearer ANONYMOUS_TOKEN")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(requestBodyObject)))
-              .andExpect(status().isForbidden)
-      }
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .andExpect(status().isForbidden)
+    }
 
 
     @Test
@@ -257,7 +259,7 @@ class ProductControllerApiTest {
     @Test
     fun `PUT should return 403 when trying to edit a product without write authorization`() {
         val product: Product = productRepository.save(Product("name", spaceUuid = space.uuid))
-        val requestBodyObject = ProductRequest( "newName",HashSet())
+        val requestBodyObject = ProductRequest("newName", HashSet())
 
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
@@ -269,7 +271,7 @@ class ProductControllerApiTest {
     @Test
     fun `PUT should return 400 when trying to edit a product in a space that you don not have access to`() {
         val product: Product = productRepository.save(Product("name", spaceUuid = spaceWithoutAccess.uuid))
-        val requestBodyObject = ProductRequest( "newName",HashSet())
+        val requestBodyObject = ProductRequest("newName", HashSet())
 
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -350,4 +352,76 @@ class ProductControllerApiTest {
                 .andExpect(status().isForbidden)
     }
 
+    @Test
+    fun `post should validate the url send with the product`() {
+        val productAddRequestWithoutHttps = ProductRequest(
+                name = "product without https",
+                url = "www.fordlabs.com"
+        )
+
+        val productAddRequestWithHttps = ProductRequest(
+                name = "product with https",
+                url = "https:www.fordlabs.com"
+        )
+
+        val productAddRequestWithHttp = ProductRequest(
+                name = "product with http",
+                url = "http:www.fordlabs.com"
+        )
+
+        mockMvc.perform(post(baseProductsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productAddRequestWithoutHttps)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        mockMvc.perform(post(baseProductsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productAddRequestWithHttps)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        mockMvc.perform(post(baseProductsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productAddRequestWithHttp)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val productWithoutHttpsInDB: Product = productRepository.findByName("product without https")!!
+        assertThat(productWithoutHttpsInDB.name).isEqualTo("product without https")
+        assertThat(productWithoutHttpsInDB.url).isEqualTo("https://www.fordlabs.com")
+
+        val productWithHttpsInDB: Product = productRepository.findByName("product with https")!!
+        assertThat(productWithHttpsInDB.name).isEqualTo("product with https")
+        assertThat(productWithHttpsInDB.url).isEqualTo("https:www.fordlabs.com")
+
+        val productWithHttpInDB: Product = productRepository.findByName("product with http")!!
+        assertThat(productWithHttpInDB.name).isEqualTo("product with http")
+        assertThat(productWithHttpInDB.url).isEqualTo("http:www.fordlabs.com")
+    }
+
+    @Test
+    fun `put should append https if product url does not have it at the beginning`() {
+
+        val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
+        val productEditRequest = ProductRequest(
+                name = "product one",
+                url = "www.fordlabs.com"
+        )
+
+        mockMvc.perform(put(getSingleProductUrl(product.id!!))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productEditRequest)))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val productInDB: Optional<Product> = productRepository.findById(product.id!!)
+
+        assertThat(productInDB.get().name).isEqualTo("product one")
+        assertThat(productInDB.get().url).isEqualTo("https://www.fordlabs.com")
+    }
 }
