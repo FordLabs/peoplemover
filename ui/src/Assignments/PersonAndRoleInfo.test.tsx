@@ -42,7 +42,7 @@ describe('PersonAndRoleInfo component for TimeOnProduct', () => {
         expect(store.dispatch).toHaveBeenCalledWith(
             setCurrentModalAction({
                 modal: AvailableModals.EDIT_PERSON,
-                item: TestUtils.assignmentForHank,
+                item: TestUtils.hank,
             }));
     });
 

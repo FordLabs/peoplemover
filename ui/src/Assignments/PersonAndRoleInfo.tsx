@@ -63,7 +63,7 @@ const PersonAndRoleInfo = ({
         }
         setCurrentModal({
             modal: AvailableModals.EDIT_PERSON,
-            item: assignment,
+            item: assignment.person,
         });
     };
 
