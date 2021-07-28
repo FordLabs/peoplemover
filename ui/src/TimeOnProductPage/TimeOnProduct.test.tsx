@@ -17,9 +17,10 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import TimeOnProduct from './TimeOnProduct';
+import TimeOnProduct, {generateTimeOnProductItems} from './TimeOnProduct';
 import {MemoryRouter} from 'react-router-dom';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {Product, UNASSIGNED} from '../Products/Product';
 
 describe('TimeOnProduct', () => {
     beforeEach(() => {
@@ -82,4 +83,30 @@ describe('TimeOnProduct', () => {
         });
     });
 
+    describe('generateTimeOnProductItems', () => {
+        it('should return an array of TimeOnProductItem objects', () => {
+            let unassignedProduct: Product = {
+                id: 999,
+                name: UNASSIGNED,
+                spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                assignments: [TestUtils.assignmentForUnassigned, TestUtils.assignmentForUnassignedNoRole],
+                startDate: '',
+                endDate: '',
+                archived: false,
+                tags: [],
+            };
+            const products = [TestUtils.productForHank, unassignedProduct];
+            const viewingDate = new Date(2020, 0, 10);
+            const timeOnProductItems = generateTimeOnProductItems(products, viewingDate);
+
+            const expectedProduct1 = {personName: 'Hank', productName: 'Hanky Product', personRole: 'Product Manager', timeOnProduct: 10};
+            const expectedProduct2 = {personName: 'Unassigned Person 7', productName: 'Unassigned', personRole: 'Software Engineer', timeOnProduct: 9};
+            const expectedProduct3 = {personName: 'Unassigned Person No Role', productName: 'Unassigned', personRole: 'No Role Assigned', timeOnProduct: 9};
+
+            expect(timeOnProductItems.length).toEqual(3);
+            expect(timeOnProductItems).toContainEqual(expectedProduct1);
+            expect(timeOnProductItems).toContainEqual(expectedProduct2);
+            expect(timeOnProductItems).toContainEqual(expectedProduct3);
+        });
+    });
 });

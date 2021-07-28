@@ -33,3 +33,32 @@
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+.timeOnProductCell {
+  height: 2rem;
+  width: 12rem;
+}
+
+.timeOnProductRow {
+  display: flex;
+  flex-direction: row;
+  background: $white;
+  margin: 0.5rem 0.5rem;
+}
+
+.timeOnProductHeader {
+  background: $gray-5;
+  font-weight: bold;
+}
+
+.timeOnProductTable {
+  display: flex;
+  flex-direction: column;
+  color: $gray-1;
+  background: $gray-5;
+  width: 48rem;
+  margin: 2rem 2rem;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 16px;
+}

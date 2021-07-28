@@ -16,17 +16,42 @@
  */
 
 import React, {useEffect} from 'react';
-import {Product} from '../Products/Product';
+import {Product, UNASSIGNED} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Assignment, calculateDuration} from '../Assignments/Assignment';
 import {Space} from '../Space/Space';
 import RedirectClient from '../Utils/RedirectClient';
-import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
+// import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
 import './TimeOnProduct.scss';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {fetchProductsAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import HeaderContainer from '../Header/HeaderContainer';
+import SubHeader from '../Header/SubHeader';
+
+export interface TimeOnProductItem {
+    personName: string;
+    productName: string;
+    personRole: string;
+    timeOnProduct: number;
+}
+
+export const generateTimeOnProductItems = (products: Product[], viewingDate: Date): TimeOnProductItem[] => {
+    const timeOnProductItem: TimeOnProductItem[] = [];
+    products.map(product => {
+        const productName = product.name === UNASSIGNED ? 'Unassigned' : product.name;
+        return product.assignments.map(assignment => {
+            return timeOnProductItem.push({
+                personName: assignment.person.name,
+                productName: productName,
+                personRole: assignment.person.spaceRole?.name || 'No Role Assigned',
+                timeOnProduct: calculateDuration(assignment, viewingDate),
+            });
+        });
+    });
+    return timeOnProductItem;
+};
 
 export interface ListOfAssignmentsProps {
     assignments: Array<Assignment>;
@@ -60,47 +85,81 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         }
     }, [currentModal, currentSpace, fetchProducts]);
 
-    const productNaming = (product: Product): string => {
-        if (product.name === 'unassigned') {
-            return 'unassigned persons:';
-        } else {
-            return product.name + ':';
-        }
+    // const productNaming = (product: Product): string => {
+    //     if (product.name === UNASSIGNED) {
+    //         return 'unassigned persons:';
+    //     } else {
+    //         return product.name + ':';
+    //     }
+    //
+    // };
 
+    // const ListOfAssignments = ({assignments}: ListOfAssignmentsProps): JSX.Element => {
+    //     return (<>
+    //         {assignments.map(assignment => {
+    //             return (<div data-testid={assignment.id.toString()} key={assignment.id}>
+    //                 <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={false} timeOnProduct={calculateDuration(assignment, viewingDate)} />
+    //             </div>);
+    //         })}
+    //     </>);
+    // };
+
+    // const ListOfProducts = (): JSX.Element => {
+    //     return (<>
+    //         {products.map(product => {
+    //             return (
+    //                 <div data-testid={product.id} className="productContainer" key={product.id}>
+    //                     <h3 className="productName"> {productNaming(product)} </h3>
+    //                     <ListOfAssignments assignments={product.assignments}/>
+    //                 </div>);
+    //         })}
+    //     </>);
+    // };
+
+    const convertToRow = (timeOnProductItem: TimeOnProductItem): JSX.Element => {
+        return (
+            <div className="timeOnProductRow">
+                <div className="timeOnProductCell">{timeOnProductItem.personName}</div>
+                <div className="timeOnProductCell">{timeOnProductItem.productName}</div>
+                <div className="timeOnProductCell">{timeOnProductItem.personRole}</div>
+                <div className="timeOnProductCell">{timeOnProductItem.timeOnProduct} days</div>
+            </div>
+        );
     };
 
-    const ListOfAssignments = ({assignments}: ListOfAssignmentsProps): JSX.Element => {
-        return (<>
-            {assignments.map(assignment => {
-                return (<div data-testid={assignment.id.toString()} key={assignment.id}>
-                    <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={false} timeOnProduct={calculateDuration(assignment, viewingDate)} />
-                </div>);
-            })}
-        </>);
-    };
-
-    const ListOfProducts = (): JSX.Element => {
-        return (<>
-            {products.map(product => {
-                return (
-                    <div data-testid={product.id} className="productContainer" key={product.id}>
-                        <h3 className="productName"> {productNaming(product)} </h3>
-                        <ListOfAssignments assignments={product.assignments}/>
-                    </div>);
-            })}
-        </>);
+    const convertToTable = (timeOnProductItems: TimeOnProductItem[]): JSX.Element => {
+        return (
+            <div>
+                <div className="timeOnProductRow timeOnProductHeader">
+                    <div className="timeOnProductCell">Name</div>
+                    <div className="timeOnProductCell">Product</div>
+                    <div className="timeOnProductCell">Role</div>
+                    <div className="timeOnProductCell">Days On Product</div>
+                </div>
+                {timeOnProductItems.map(timeOnProductItem => {
+                    return convertToRow(timeOnProductItem);
+                })}
+            </div>
+        );
     };
 
     return (
-
         currentSpace && <>
             <CurrentModal/>
-            <div>
-                <h2 className="title">Time On Product (in calendar days)</h2>
-                <div className="date">As of: {viewingDate.toDateString()}</div>
-                {currentSpace && currentSpace.name && <>
-                    <ListOfProducts/>
-                </>}
+            {/*<div>*/}
+            {/*    <h2 className="title">Time On Product (in calendar days)</h2>*/}
+            {/*    <div className="date">As of: {viewingDate.toDateString()}</div>*/}
+            {/*    {currentSpace && currentSpace.name && <>*/}
+            {/*        <ListOfProducts/>*/}
+            {/*    </>}*/}
+            {/*</div>*/}
+            <div className="App">
+                <HeaderContainer>
+                    <SubHeader/>
+                </HeaderContainer>
+                <div className="timeOnProductTable">
+                    {convertToTable(generateTimeOnProductItems(products, viewingDate))}
+                </div>
             </div>
         </>
     );
