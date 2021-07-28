@@ -126,11 +126,11 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, peopl
     const convertToTable = (timeOnProductItems: TimeOnProductItem[]): JSX.Element => {
         return (
             <>
-                <div className="timeOnProductRow timeOnProductHeader">
-                    <div className="timeOnProductCell">Name</div>
-                    <div className="timeOnProductCell">Product</div>
-                    <div className="timeOnProductCell">Role</div>
-                    <div className="timeOnProductCell">Days On Product</div>
+                <div className="timeOnProductHeader">
+                    <div className="timeOnProductHeaderCell timeOnProductHeaderName">Name</div>
+                    <div className="timeOnProductHeaderCell">Product</div>
+                    <div className="timeOnProductHeaderCell">Role</div>
+                    <div className="timeOnProductHeaderCell">Days On Product</div>
                 </div>
                 {timeOnProductItems.map(timeOnProductItem => {
                     return convertToRow(timeOnProductItem);

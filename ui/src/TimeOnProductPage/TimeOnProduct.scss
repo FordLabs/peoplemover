@@ -34,33 +34,6 @@
   margin-bottom: 5px;
 }
 
-.timeOnProductCell {
-  height: 2rem;
-  width: 12rem;
-  padding-left: 1rem;
-}
-
-.timeOnProductCellName {
-  cursor: pointer;
-  color: $prime-1;
-  background: $white;
-  text-align: left;
-}
-
-.timeOnProductRow {
-  display: flex;
-  flex-direction: row;
-  background: $white;
-  margin: 0.5rem 0.5rem;
-  font-weight: bold;
-  line-height: 2rem;
-}
-
-.timeOnProductHeader {
-  background: $gray-5;
-  line-height: 2.4rem;
-}
-
 .timeOnProductTable {
   display: flex;
   flex-direction: column;
@@ -70,4 +43,47 @@
   margin: 2rem 2rem;
   font-style: normal;
   font-size: 14px;
+
+  .timeOnProductRow {
+    display: flex;
+    flex-direction: row;
+    background: $white;
+    margin: 0.5rem 0.5rem;
+    font-weight: bold;
+    line-height: 2rem;
+
+    .timeOnProductCell {
+      height: 2rem;
+      width: 12rem;
+      padding-left: 1rem;
+      font-weight: bold;
+    }
+
+    .timeOnProductCellName {
+      cursor: pointer;
+      color: $prime-1;
+      background: $white;
+      text-align: left;
+    }
+  }
+
+  .timeOnProductHeader {
+    display: flex;
+    flex-direction: row;
+    line-height: 2.4rem;
+    margin: 0.5rem 0.5rem;
+    font-weight: bold;
+
+    .timeOnProductHeaderCell {
+      height: 2rem;
+      width: 12rem;
+      margin: 0rem;
+      padding-left: 1rem;
+    }
+
+    .timeOnProductHeaderName {
+      padding-left: 1rem;
+      width: 11rem;
+    }
+  }
 }
