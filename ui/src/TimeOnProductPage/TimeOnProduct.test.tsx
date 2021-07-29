@@ -17,7 +17,7 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import TimeOnProduct, {generateTimeOnProductItems} from './TimeOnProduct';
+import TimeOnProduct, {generateTimeOnProductItems, sortTimeOnProductItems, TimeOnProductItem} from './TimeOnProduct';
 import {MemoryRouter} from 'react-router-dom';
 import rootReducer from '../Redux/Reducers';
 import {Product, UNASSIGNED} from '../Products/Product';
@@ -129,6 +129,51 @@ describe('TimeOnProduct', () => {
             expect(timeOnProductItems).toContainEqual(expectedProduct1);
             expect(timeOnProductItems).toContainEqual(expectedProduct2);
             expect(timeOnProductItems).toContainEqual(expectedProduct3);
+        });
+    });
+
+    describe('TimeOnProductItems sort', () => {
+        it('should first sort by product name, role, time on product and person name, in that order', () => {
+            const timeOnProductItems: TimeOnProductItem[] = [
+                {assignmentId: 0,  productName: 'product1', personRole: 'role1', timeOnProduct: 10, personName: 'person2', personId: 2},
+                {assignmentId: 1,  productName: 'product2', personRole: 'role1', timeOnProduct: 10, personName: 'person2', personId: 2},
+                {assignmentId: 2,  productName: 'product3', personRole: 'role2', timeOnProduct: 10, personName: 'person2', personId: 2},
+                {assignmentId: 3,  productName: 'product4', personRole: 'role2', timeOnProduct: 10, personName: 'person2', personId: 2},
+                {assignmentId: 4,  productName: 'product1', personRole: 'role3', timeOnProduct: 20, personName: 'person2', personId: 2},
+                {assignmentId: 5,  productName: 'product2', personRole: 'role3', timeOnProduct: 20, personName: 'person2', personId: 2},
+                {assignmentId: 6,  productName: 'product3', personRole: 'role4', timeOnProduct: 20, personName: 'person2', personId: 2},
+                {assignmentId: 7,  productName: 'product4', personRole: 'role4', timeOnProduct: 20, personName: 'person2', personId: 2},
+                {assignmentId: 8,  productName: 'product1', personRole: 'role1', timeOnProduct: 30, personName: 'person1', personId: 1},
+                {assignmentId: 9,  productName: 'product2', personRole: 'role1', timeOnProduct: 30, personName: 'person1', personId: 1},
+                {assignmentId: 10, productName: 'product3', personRole: 'role2', timeOnProduct: 30, personName: 'person1', personId: 1},
+                {assignmentId: 11, productName: 'product4', personRole: 'role2', timeOnProduct: 30, personName: 'person1', personId: 1},
+                {assignmentId: 12, productName: 'product1', personRole: 'role3', timeOnProduct: 40, personName: 'person1', personId: 1},
+                {assignmentId: 13, productName: 'product2', personRole: 'role3', timeOnProduct: 40, personName: 'person1', personId: 1},
+                {assignmentId: 14, productName: 'product3', personRole: 'role4', timeOnProduct: 40, personName: 'person1', personId: 1},
+                {assignmentId: 15, productName: 'product4', personRole: 'role4', timeOnProduct: 40, personName: 'person1', personId: 1},
+            ];
+            const expectedTimeOnProductItems: TimeOnProductItem[] = [
+                {assignmentId: 8,  productName: 'product1', personRole: 'role1', timeOnProduct: 30, personName: 'person1', personId: 1},
+                {assignmentId: 0,  productName: 'product1', personRole: 'role1', timeOnProduct: 10, personName: 'person2', personId: 2},
+                {assignmentId: 12, productName: 'product1', personRole: 'role3', timeOnProduct: 40, personName: 'person1', personId: 1},
+                {assignmentId: 4,  productName: 'product1', personRole: 'role3', timeOnProduct: 20, personName: 'person2', personId: 2},
+                {assignmentId: 9,  productName: 'product2', personRole: 'role1', timeOnProduct: 30, personName: 'person1', personId: 1},
+                {assignmentId: 1,  productName: 'product2', personRole: 'role1', timeOnProduct: 10, personName: 'person2', personId: 2},
+                {assignmentId: 13, productName: 'product2', personRole: 'role3', timeOnProduct: 40, personName: 'person1', personId: 1},
+                {assignmentId: 5,  productName: 'product2', personRole: 'role3', timeOnProduct: 20, personName: 'person2', personId: 2},
+                {assignmentId: 10, productName: 'product3', personRole: 'role2', timeOnProduct: 30, personName: 'person1', personId: 1},
+                {assignmentId: 2,  productName: 'product3', personRole: 'role2', timeOnProduct: 10, personName: 'person2', personId: 2},
+                {assignmentId: 14, productName: 'product3', personRole: 'role4', timeOnProduct: 40, personName: 'person1', personId: 1},
+                {assignmentId: 6,  productName: 'product3', personRole: 'role4', timeOnProduct: 20, personName: 'person2', personId: 2},
+                {assignmentId: 11, productName: 'product4', personRole: 'role2', timeOnProduct: 30, personName: 'person1', personId: 1},
+                {assignmentId: 3,  productName: 'product4', personRole: 'role2', timeOnProduct: 10, personName: 'person2', personId: 2},
+                {assignmentId: 15, productName: 'product4', personRole: 'role4', timeOnProduct: 40, personName: 'person1', personId: 1},
+                {assignmentId: 7,  productName: 'product4', personRole: 'role4', timeOnProduct: 20, personName: 'person2', personId: 2},
+            ];
+            const actualTimeOnProductItems = timeOnProductItems.sort(sortTimeOnProductItems);
+            for (let i = 0; i < actualTimeOnProductItems.length; i++) {
+                expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
+            }
         });
     });
 });

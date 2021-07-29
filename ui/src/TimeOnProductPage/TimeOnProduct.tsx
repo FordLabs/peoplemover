@@ -19,7 +19,7 @@ import React, {useEffect} from 'react';
 import {Product, UNASSIGNED} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Assignment, calculateDuration} from '../Assignments/Assignment';
+import {calculateDuration} from '../Assignments/Assignment';
 import {Space} from '../Space/Space';
 import RedirectClient from '../Utils/RedirectClient';
 import './TimeOnProduct.scss';
@@ -28,7 +28,6 @@ import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import HeaderContainer from '../Header/HeaderContainer';
 import SubHeader from '../Header/SubHeader';
-import {Person} from '../People/Person';
 import {AvailableModals} from '../Modal/AvailableModals';
 
 export interface TimeOnProductItem {
@@ -58,22 +57,31 @@ export const generateTimeOnProductItems = (products: Product[], viewingDate: Dat
     return timeOnProductItem;
 };
 
-export interface ListOfAssignmentsProps {
-    assignments: Array<Assignment>;
-}
+export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductItem): number => {
+    let returnValue = a.productName.localeCompare(b.productName);
+    if (returnValue === 0) {
+        returnValue = a.personRole.localeCompare(b.personRole);
+        if (returnValue === 0) {
+            returnValue = b.timeOnProduct - a.timeOnProduct;
+            if (returnValue === 0) {
+                returnValue = a.personName.localeCompare(b.personName);
+            }
+        }
+    }
+    return returnValue;
+};
 
 export interface TimeOnProductProps {
     currentSpace: Space;
     viewingDate: Date;
     products: Array<Product>;
     currentModal: CurrentModalState;
-    people: Array<Person>;
 
     fetchProducts(): Array<Product>;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function TimeOnProduct({currentSpace, viewingDate, products, currentModal, people, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
 
     const extractUuidFromUrl = (): string => {
         return window.location.pathname.split('/')[1];
@@ -147,7 +155,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, peopl
                     <SubHeader/>
                 </HeaderContainer>
                 <div className="timeOnProductTable">
-                    {convertToTable(generateTimeOnProductItems(products, viewingDate))}
+                    {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
                 </div>
             </div>
         </>
@@ -160,7 +168,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: state.viewingDate,
     products: state.products,
     currentModal: state.currentModal,
-    people: state.people,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
