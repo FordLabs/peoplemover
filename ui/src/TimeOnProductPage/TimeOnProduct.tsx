@@ -101,8 +101,8 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
     }, [currentModal, currentSpace, fetchProducts]);
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
-        const product = products.find(product => timeOnProductItem.productName === product.name);
-        const assignment = product?.assignments.find(assignment => timeOnProductItem.assignmentId === assignment.id);
+        const product = products.find(item => timeOnProductItem.productName === item.name);
+        const assignment = product?.assignments.find(item => timeOnProductItem.assignmentId === item.id);
         if (assignment) {
             const newModalState: CurrentModalState = {
                 modal: AvailableModals.EDIT_PERSON,
