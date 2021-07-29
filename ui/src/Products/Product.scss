@@ -83,6 +83,8 @@
     justify-content: space-between;
     align-content: flex-start;
     background-color: $gray-5;
+    padding: 0px;
+    position: relative;
   }
 
   .productName {
@@ -104,6 +106,8 @@
 
   .productUrlIcon {
     font-size: 15px;
+    position: absolute;
+    bottom: 0.55em;
   }
 }
 
