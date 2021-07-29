@@ -133,46 +133,75 @@ describe('TimeOnProduct', () => {
     });
 
     describe('TimeOnProductItems sort', () => {
-        it('should first sort by product name, role, time on product and person name, in that order', () => {
+        it('should first sort by person nme', () => {
             const timeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 0,  productName: 'product1', personRole: 'role1', timeOnProduct: 10, personName: 'person2', personId: 2},
-                {assignmentId: 1,  productName: 'product2', personRole: 'role1', timeOnProduct: 10, personName: 'person2', personId: 2},
-                {assignmentId: 2,  productName: 'product3', personRole: 'role2', timeOnProduct: 10, personName: 'person2', personId: 2},
-                {assignmentId: 3,  productName: 'product4', personRole: 'role2', timeOnProduct: 10, personName: 'person2', personId: 2},
-                {assignmentId: 4,  productName: 'product1', personRole: 'role3', timeOnProduct: 20, personName: 'person2', personId: 2},
-                {assignmentId: 5,  productName: 'product2', personRole: 'role3', timeOnProduct: 20, personName: 'person2', personId: 2},
-                {assignmentId: 6,  productName: 'product3', personRole: 'role4', timeOnProduct: 20, personName: 'person2', personId: 2},
-                {assignmentId: 7,  productName: 'product4', personRole: 'role4', timeOnProduct: 20, personName: 'person2', personId: 2},
-                {assignmentId: 8,  productName: 'product1', personRole: 'role1', timeOnProduct: 30, personName: 'person1', personId: 1},
-                {assignmentId: 9,  productName: 'product2', personRole: 'role1', timeOnProduct: 30, personName: 'person1', personId: 1},
-                {assignmentId: 10, productName: 'product3', personRole: 'role2', timeOnProduct: 30, personName: 'person1', personId: 1},
-                {assignmentId: 11, productName: 'product4', personRole: 'role2', timeOnProduct: 30, personName: 'person1', personId: 1},
-                {assignmentId: 12, productName: 'product1', personRole: 'role3', timeOnProduct: 40, personName: 'person1', personId: 1},
-                {assignmentId: 13, productName: 'product2', personRole: 'role3', timeOnProduct: 40, personName: 'person1', personId: 1},
-                {assignmentId: 14, productName: 'product3', personRole: 'role4', timeOnProduct: 40, personName: 'person1', personId: 1},
-                {assignmentId: 15, productName: 'product4', personRole: 'role4', timeOnProduct: 40, personName: 'person1', personId: 1},
+                {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person2', personId: 2},
+                {assignmentId: 1,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person1', personId: 1},
+                {assignmentId: 2,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person1', personId: 1},
             ];
             const expectedTimeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 8,  productName: 'product1', personRole: 'role1', timeOnProduct: 30, personName: 'person1', personId: 1},
-                {assignmentId: 0,  productName: 'product1', personRole: 'role1', timeOnProduct: 10, personName: 'person2', personId: 2},
-                {assignmentId: 12, productName: 'product1', personRole: 'role3', timeOnProduct: 40, personName: 'person1', personId: 1},
-                {assignmentId: 4,  productName: 'product1', personRole: 'role3', timeOnProduct: 20, personName: 'person2', personId: 2},
-                {assignmentId: 9,  productName: 'product2', personRole: 'role1', timeOnProduct: 30, personName: 'person1', personId: 1},
-                {assignmentId: 1,  productName: 'product2', personRole: 'role1', timeOnProduct: 10, personName: 'person2', personId: 2},
-                {assignmentId: 13, productName: 'product2', personRole: 'role3', timeOnProduct: 40, personName: 'person1', personId: 1},
-                {assignmentId: 5,  productName: 'product2', personRole: 'role3', timeOnProduct: 20, personName: 'person2', personId: 2},
-                {assignmentId: 10, productName: 'product3', personRole: 'role2', timeOnProduct: 30, personName: 'person1', personId: 1},
-                {assignmentId: 2,  productName: 'product3', personRole: 'role2', timeOnProduct: 10, personName: 'person2', personId: 2},
-                {assignmentId: 14, productName: 'product3', personRole: 'role4', timeOnProduct: 40, personName: 'person1', personId: 1},
-                {assignmentId: 6,  productName: 'product3', personRole: 'role4', timeOnProduct: 20, personName: 'person2', personId: 2},
-                {assignmentId: 11, productName: 'product4', personRole: 'role2', timeOnProduct: 30, personName: 'person1', personId: 1},
-                {assignmentId: 3,  productName: 'product4', personRole: 'role2', timeOnProduct: 10, personName: 'person2', personId: 2},
-                {assignmentId: 15, productName: 'product4', personRole: 'role4', timeOnProduct: 40, personName: 'person1', personId: 1},
-                {assignmentId: 7,  productName: 'product4', personRole: 'role4', timeOnProduct: 20, personName: 'person2', personId: 2},
+                {assignmentId: 1,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person1', personId: 1},
+                {assignmentId: 2,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person1', personId: 1},
+                {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person2', personId: 2},
             ];
             const actualTimeOnProductItems = timeOnProductItems.sort(sortTimeOnProductItems);
             for (let i = 0; i < actualTimeOnProductItems.length; i++) {
                 expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
+                expect(actualTimeOnProductItems[i].personName).toEqual(expectedTimeOnProductItems[i].personName);
+            }
+        });
+
+        it('should first sort by person name, then by product name', () => {
+            const timeOnProductItems: TimeOnProductItem[] = [
+                {assignmentId: 0,  productName: 'product2', personRole: '', timeOnProduct: 0, personName: '', personId: 2},
+                {assignmentId: 1,  productName: 'product1', personRole: '', timeOnProduct: 0, personName: '', personId: 1},
+                {assignmentId: 2,  productName: 'product1', personRole: '', timeOnProduct: 0, personName: '', personId: 1},
+            ];
+            const expectedTimeOnProductItems: TimeOnProductItem[] = [
+                {assignmentId: 1,  productName: 'product1', personRole: '', timeOnProduct: 0, personName: '', personId: 1},
+                {assignmentId: 2,  productName: 'product1', personRole: '', timeOnProduct: 0, personName: '', personId: 1},
+                {assignmentId: 0,  productName: 'product2', personRole: '', timeOnProduct: 0, personName: '', personId: 2},
+            ];
+            const actualTimeOnProductItems = timeOnProductItems.sort(sortTimeOnProductItems);
+            for (let i = 0; i < actualTimeOnProductItems.length; i++) {
+                expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
+                expect(actualTimeOnProductItems[i].productName).toEqual(expectedTimeOnProductItems[i].productName);
+            }
+        });
+
+        it('should first sort by person name, then by product name, then by role', () => {
+            const timeOnProductItems: TimeOnProductItem[] = [
+                {assignmentId: 0,  productName: '', personRole: 'role2', timeOnProduct: 0, personName: '', personId: 2},
+                {assignmentId: 1,  productName: '', personRole: 'role1', timeOnProduct: 0, personName: '', personId: 1},
+                {assignmentId: 2,  productName: '', personRole: 'role1', timeOnProduct: 0, personName: '', personId: 1},
+            ];
+            const expectedTimeOnProductItems: TimeOnProductItem[] = [
+                {assignmentId: 1,  productName: '', personRole: 'role1', timeOnProduct: 0, personName: '', personId: 1},
+                {assignmentId: 2,  productName: '', personRole: 'role1', timeOnProduct: 0, personName: '', personId: 1},
+                {assignmentId: 0,  productName: '', personRole: 'role2', timeOnProduct: 0, personName: '', personId: 2},
+            ];
+            const actualTimeOnProductItems = timeOnProductItems.sort(sortTimeOnProductItems);
+            for (let i = 0; i < actualTimeOnProductItems.length; i++) {
+                expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
+                expect(actualTimeOnProductItems[i].productName).toEqual(expectedTimeOnProductItems[i].productName);
+            }
+        });
+
+        it('should first sort by person name, then by product name, then by role, then by time on product (descending)', () => {
+            const timeOnProductItems: TimeOnProductItem[] = [
+                {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 1, personName: '', personId: 1},
+                {assignmentId: 1,  productName: '', personRole: '', timeOnProduct: 1, personName: '', personId: 1},
+                {assignmentId: 2,  productName: '', personRole: '', timeOnProduct: 2, personName: '', personId: 2},
+            ];
+            const expectedTimeOnProductItems: TimeOnProductItem[] = [
+                {assignmentId: 2,  productName: '', personRole: '', timeOnProduct: 2, personName: '', personId: 2},
+                {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 1, personName: '', personId: 1},
+                {assignmentId: 1,  productName: '', personRole: '', timeOnProduct: 1, personName: '', personId: 1},
+            ];
+            const actualTimeOnProductItems = timeOnProductItems.sort(sortTimeOnProductItems);
+            for (let i = 0; i < actualTimeOnProductItems.length; i++) {
+                expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
+                expect(actualTimeOnProductItems[i].productName).toEqual(expectedTimeOnProductItems[i].productName);
             }
         });
     });

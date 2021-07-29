@@ -58,13 +58,13 @@ export const generateTimeOnProductItems = (products: Product[], viewingDate: Dat
 };
 
 export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductItem): number => {
-    let returnValue = a.productName.localeCompare(b.productName);
+    let returnValue = a.personName.localeCompare(b.personName);
     if (returnValue === 0) {
-        returnValue = a.personRole.localeCompare(b.personRole);
+        returnValue = a.productName.localeCompare(b.productName);
         if (returnValue === 0) {
-            returnValue = b.timeOnProduct - a.timeOnProduct;
+            returnValue = a.personRole.localeCompare(b.personRole);
             if (returnValue === 0) {
-                returnValue = a.personName.localeCompare(b.personName);
+                returnValue = b.timeOnProduct - a.timeOnProduct;
             }
         }
     }
