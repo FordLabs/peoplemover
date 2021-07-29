@@ -41,10 +41,10 @@ export interface TimeOnProductItem {
 
 export const generateTimeOnProductItems = (products: Product[], viewingDate: Date): TimeOnProductItem[] => {
     const timeOnProductItem: TimeOnProductItem[] = [];
-    products.map(product => {
+    products.forEach(product => {
         const productName = product.name === UNASSIGNED ? 'Unassigned' : product.name;
-        return product.assignments.map(assignment => {
-            return timeOnProductItem.push({
+        product.assignments.forEach(assignment => {
+            timeOnProductItem.push({
                 personName: assignment.person.name,
                 productName: productName,
                 personRole: assignment.person.spaceRole?.name || 'No Role Assigned',
