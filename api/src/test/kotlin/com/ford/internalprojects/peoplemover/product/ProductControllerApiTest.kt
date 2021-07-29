@@ -359,7 +359,7 @@ class ProductControllerApiTest {
                 url = "www.fordlabs.com"
         )
 
-        val productAddRequestWithHttps = ProductRequest(
+        val productAddRequestWithHttpsAndNoSlash = ProductRequest(
                 name = "product with https",
                 url = "https:www.fordlabs.com"
         )
@@ -379,7 +379,7 @@ class ProductControllerApiTest {
         mockMvc.perform(post(baseProductsUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(productAddRequestWithHttps)))
+                .content(objectMapper.writeValueAsString(productAddRequestWithHttpsAndNoSlash)))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -396,7 +396,7 @@ class ProductControllerApiTest {
 
         val productWithHttpsInDB: Product = productRepository.findByName("product with https")!!
         assertThat(productWithHttpsInDB.name).isEqualTo("product with https")
-        assertThat(productWithHttpsInDB.url).isEqualTo("https:www.fordlabs.com")
+        assertThat(productWithHttpsInDB.url).isEqualTo("https://www.fordlabs.com")
 
         val productWithHttpInDB: Product = productRepository.findByName("product with http")!!
         assertThat(productWithHttpInDB.name).isEqualTo("product with http")

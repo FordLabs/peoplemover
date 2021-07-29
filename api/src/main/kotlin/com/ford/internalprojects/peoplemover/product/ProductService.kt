@@ -55,8 +55,11 @@ class ProductService(
 
     private fun validateLinkUrl(productRequest: ProductRequest) {
         if (!productRequest.url.isNullOrEmpty()) {
-            if ((productRequest.url!!.startsWith("https:", true) || productRequest.url!!.startsWith("http:", true))) {
+            if ((productRequest.url!!.startsWith("https://", true) || productRequest.url!!.startsWith("http:", true))) {
                return
+            }
+            else if (productRequest.url!!.startsWith("https:", true)) {
+                productRequest.url = productRequest.url!!.replace("https:", "https://")
             }
             else {
                 productRequest.url = "https://" + productRequest.url
