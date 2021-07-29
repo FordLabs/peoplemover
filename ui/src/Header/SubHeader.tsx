@@ -17,10 +17,7 @@
 
 import React from 'react';
 import './SubHeader.scss';
-import {setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Dispatch} from 'redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -31,10 +28,12 @@ import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 
 interface Props {
     isReadOnly: boolean;
-    setCurrentModal(modalState: CurrentModalState): void;
+    showFilters?: boolean;
+    showSortBy?: boolean;
+    message?: JSX.Element;
 }
 
-function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
+function SubHeader({ isReadOnly, showFilters = true, showSortBy = true, message = undefined}: Props): JSX.Element {
     return (
         <section className="newSpaceSelectionContainer" aria-label="Filters">
             <div className="leftContent">
@@ -45,15 +44,16 @@ function SubHeader({ isReadOnly, setCurrentModal }: Props): JSX.Element {
                         View only
                     </span>
                 )}
+                {message && <>{message}</>}
             </div>
             <div className="rightContent">
-                <NavigationSection label="Filter by" icon="filter_list">
+                {showFilters && <NavigationSection label="Filter by" icon="filter_list">
                     <Filter filterType={FilterTypeListings.Location}/>
                     <Filter filterType={FilterTypeListings.ProductTag}/>
                     <Filter filterType={FilterTypeListings.PersonTag}/>
                     <Filter filterType={FilterTypeListings.Role}/>
-                </NavigationSection>
-                <ProductSortBy/>
+                </NavigationSection>}
+                {showSortBy && <ProductSortBy/>}
             </div>
         </section>
     );
@@ -64,9 +64,5 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     isReadOnly: state.isReadOnly,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SubHeader);
+export default connect(mapStateToProps)(SubHeader);
 /* eslint-enable */

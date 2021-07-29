@@ -311,6 +311,14 @@ class TestUtils {
         tags: [],
     };
 
+    static unassignedPersonNoRole: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 106,
+        name: 'Unassigned Person No Role',
+        newPerson: false,
+        tags: [],
+    };
+
     static unassignedBigBossSE: Person = {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         id: 102,
@@ -378,6 +386,17 @@ class TestUtils {
         placeholder: false,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         effectiveDate: new Date(2020, 4, 15),
+        startDate: new Date(2020, 0, 2),
+    };
+
+    static assignmentForUnassignedNoRole: Assignment = {
+        id: 14,
+        productId: 999,
+        person: TestUtils.unassignedPersonNoRole,
+        placeholder: false,
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        effectiveDate: new Date(2020, 4, 15),
+        startDate: new Date(2020, 0, 2),
     };
 
     static assignmentForUnassignedBigBossSE: Assignment = {
