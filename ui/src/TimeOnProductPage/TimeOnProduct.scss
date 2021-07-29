@@ -17,21 +17,16 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.title{
-  padding-top: 10px;
-  padding-left: 5px;
-}
-
-.date {
-  padding-left: 45px;
-}
-
-.productContainer{
-  margin-left: 50px;
-}
-.productName{
-  margin-top: 5px;
-  margin-bottom: 5px;
+.timeOnProductHeaderMessage {
+  margin: 0 0 0 18px;
+  font-size: 14px;
+  line-height: 23px;
+  font-style: normal;
+  font-weight: bold;
+  padding-left: 18px;
+  display: flex;
+  justify-content: left;
+  text-decoration: none;
 }
 
 .timeOnProductTable {

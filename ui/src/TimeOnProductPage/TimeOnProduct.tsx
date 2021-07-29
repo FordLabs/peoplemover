@@ -152,7 +152,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
             <CurrentModal/>
             <div className="App">
                 <HeaderContainer>
-                    <SubHeader/>
+                    <SubHeader showFilters={false} showSortBy={false} message={<div className="timeOnProductHeaderMessage"><span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product</div>}/>
                 </HeaderContainer>
                 <div className="timeOnProductTable">
                     {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
