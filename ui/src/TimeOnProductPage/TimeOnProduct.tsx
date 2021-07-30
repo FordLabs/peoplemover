@@ -98,7 +98,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         if (currentSpace && currentModal.modal === null) {
             fetchProducts();
         }
-    }, [currentModal, currentSpace, fetchProducts]);
+    }, [currentModal, currentSpace, fetchProducts, viewingDate]);
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
         const product = products.find(item => timeOnProductItem.productName === item.name);
@@ -112,6 +112,12 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         }
     };
 
+    const shortenName = (name: string, limit = 25): string => {
+        return (name.length > limit ?
+            name.substring(0, limit - 3) + '...' :
+            name);
+    };
+
     const convertToRow = (timeOnProductItem: TimeOnProductItem): JSX.Element => {
         const unit = (timeOnProductItem.timeOnProduct > 1 ? 'days' : 'day');
         return (
@@ -122,10 +128,10 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                 <button className="timeOnProductCell timeOnProductCellName"
                     onClick={(): void => {onNameClick(timeOnProductItem);}}
                 >
-                    {timeOnProductItem.personName}
+                    {shortenName(timeOnProductItem.personName, 15)}
                 </button>
-                <div className="timeOnProductCell">{timeOnProductItem.productName}</div>
-                <div className="timeOnProductCell">{timeOnProductItem.personRole}</div>
+                <div className="timeOnProductCell">{shortenName(timeOnProductItem.productName)}</div>
+                <div className="timeOnProductCell">{shortenName(timeOnProductItem.personRole, 15)}</div>
                 <div className="timeOnProductCell">{timeOnProductItem.timeOnProduct} {unit}</div>
             </div>
         );
