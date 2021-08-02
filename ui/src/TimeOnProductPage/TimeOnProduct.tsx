@@ -30,6 +30,8 @@ import HeaderContainer from '../Header/HeaderContainer';
 import SubHeader from '../Header/SubHeader';
 import {AvailableModals} from '../Modal/AvailableModals';
 
+export const LOADING = 'Loading...';
+
 export interface TimeOnProductItem {
     personName: string;
     productName: string;
@@ -118,7 +120,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         }
     };
 
-    const shortenName = (name: string, limit = 25): string => {
+    const shortenName = (name: string, limit = 50): string => {
         return (name.length > limit ?
             name.substring(0, limit - 3) + '...' :
             name);
@@ -134,11 +136,11 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                 <button className="timeOnProductCell timeOnProductCellName"
                     onClick={(): void => {onNameClick(timeOnProductItem);}}
                 >
-                    {shortenName(timeOnProductItem.personName, 15)}
+                    {shortenName(timeOnProductItem.personName)}
                 </button>
-                <div className="timeOnProductCell">{shortenName(timeOnProductItem.productName)}</div>
-                <div className="timeOnProductCell">{shortenName(timeOnProductItem.personRole, 15)}</div>
-                <div className="timeOnProductCell">{timeOnProductItem.timeOnProduct} {unit}</div>
+                <div className="timeOnProductCell">{shortenName(timeOnProductItem.productName, 40)}</div>
+                <div className="timeOnProductCell">{shortenName(timeOnProductItem.personRole, 40)}</div>
+                <div className="timeOnProductCellDays">{timeOnProductItem.timeOnProduct} {unit}</div>
             </div>
         );
     };
@@ -150,7 +152,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                     <div className="timeOnProductHeaderCell timeOnProductHeaderName">Name</div>
                     <div className="timeOnProductHeaderCell">Product</div>
                     <div className="timeOnProductHeaderCell">Role</div>
-                    <div className="timeOnProductHeaderCell">Days On Product</div>
+                    <div className="timeOnProductHeaderCellDays">Days On Product</div>
                 </div>
                 {timeOnProductItems.map(timeOnProductItem => {
                     return convertToRow(timeOnProductItem);
@@ -167,7 +169,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                     <SubHeader showFilters={false} showSortBy={false} message={<div className="timeOnProductHeaderMessage"><span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product</div>}/>
                 </HeaderContainer>
                 {isLoading ?
-                    <div className="timeOnProductLoading">Please wait... Loading...</div>
+                    <div className="timeOnProductLoading">{LOADING}</div>
                     : <div className="timeOnProductTable">
                         {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
                     </div>}

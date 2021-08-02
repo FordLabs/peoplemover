@@ -34,7 +34,7 @@
   flex-direction: column;
   color: $gray-1;
   background: $gray-5;
-  width: 48rem;
+  width: 60rem;
   margin: 2rem 2rem;
   font-style: normal;
   font-size: 14px;
@@ -45,13 +45,14 @@
     background: $white;
     margin: 0.5rem 0.5rem;
     font-weight: bold;
-    line-height: 2rem;
+    line-height: 3rem;
 
     .timeOnProductCell {
-      height: 2rem;
-      width: 12rem;
+      height: 3rem;
+      width: 15rem;
       padding-left: 1rem;
       font-weight: bold;
+      word-wrap: normal;
     }
 
     .timeOnProductCellName {
@@ -59,6 +60,13 @@
       color: $prime-1;
       background: $white;
       text-align: left;
+      font-family: Helvetica, sans-serif;
+      font-size: 14px;
+      width: 15rem;
+    }
+
+    .timeOnProductCellDays {
+      width: 12rem;
     }
   }
 
@@ -71,14 +79,18 @@
 
     .timeOnProductHeaderCell {
       height: 2rem;
-      width: 12rem;
+      width: 15rem;
       margin: 0rem;
       padding-left: 1rem;
     }
 
     .timeOnProductHeaderName {
       padding-left: 1rem;
-      width: 11rem;
+      width: 14rem;
+    }
+
+    .timeOnProductHeaderCellDays {
+      width: 12rem;
     }
   }
 }
