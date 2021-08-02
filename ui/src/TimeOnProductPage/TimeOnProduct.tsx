@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Product, UNASSIGNED} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
@@ -82,6 +82,7 @@ export interface TimeOnProductProps {
 }
 
 function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const extractUuidFromUrl = (): string => {
         return window.location.pathname.split('/')[1];
@@ -96,9 +97,14 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
 
     useEffect(() => {
         if (currentSpace && currentModal.modal === null) {
+            setIsLoading(true);
             fetchProducts();
         }
     }, [currentModal, currentSpace, fetchProducts, viewingDate]);
+
+    useEffect(() => {
+        setIsLoading(false);
+    }, [products]);
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
         const product = products.find(item => timeOnProductItem.productName === item.name);
@@ -160,9 +166,11 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                 <HeaderContainer>
                     <SubHeader showFilters={false} showSortBy={false} message={<div className="timeOnProductHeaderMessage"><span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product</div>}/>
                 </HeaderContainer>
-                <div className="timeOnProductTable">
-                    {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
-                </div>
+                {isLoading ?
+                    <div className="timeOnProductLoading">Please wait... Loading...</div>
+                    : <div className="timeOnProductTable">
+                        {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
+                    </div>}
             </div>
         </>
     );
