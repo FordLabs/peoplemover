@@ -60,13 +60,13 @@ export const generateTimeOnProductItems = (products: Product[], viewingDate: Dat
 };
 
 export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductItem): number => {
-    let returnValue = a.personName.localeCompare(b.personName);
+    let returnValue = b.timeOnProduct - a.timeOnProduct;
     if (returnValue === 0) {
-        returnValue = a.productName.localeCompare(b.productName);
+        returnValue = a.personName.localeCompare(b.personName);
         if (returnValue === 0) {
-            returnValue = a.personRole.localeCompare(b.personRole);
+            returnValue = a.productName.localeCompare(b.productName);
             if (returnValue === 0) {
-                returnValue = b.timeOnProduct - a.timeOnProduct;
+                returnValue = a.personRole.localeCompare(b.personRole);
             }
         }
     }
@@ -120,12 +120,6 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         }
     };
 
-    const shortenName = (name: string, limit = 50): string => {
-        return (name.length > limit ?
-            name.substring(0, limit - 3) + '...' :
-            name);
-    };
-
     const convertToRow = (timeOnProductItem: TimeOnProductItem): JSX.Element => {
         const unit = (timeOnProductItem.timeOnProduct > 1 ? 'days' : 'day');
         return (
@@ -136,11 +130,11 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                 <button className="timeOnProductCell timeOnProductCellName"
                     onClick={(): void => {onNameClick(timeOnProductItem);}}
                 >
-                    {shortenName(timeOnProductItem.personName)}
+                    {timeOnProductItem.personName}
                 </button>
-                <div className="timeOnProductCell">{shortenName(timeOnProductItem.productName, 40)}</div>
-                <div className="timeOnProductCell">{shortenName(timeOnProductItem.personRole, 40)}</div>
-                <div className="timeOnProductCellDays">{timeOnProductItem.timeOnProduct} {unit}</div>
+                <div className="timeOnProductCell">{timeOnProductItem.productName}</div>
+                <div className="timeOnProductCell">{timeOnProductItem.personRole}</div>
+                <div className="timeOnProductCell timeOnProductCellDays">{timeOnProductItem.timeOnProduct} {unit}</div>
             </div>
         );
     };
@@ -152,7 +146,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                     <div className="timeOnProductHeaderCell timeOnProductHeaderName">Name</div>
                     <div className="timeOnProductHeaderCell">Product</div>
                     <div className="timeOnProductHeaderCell">Role</div>
-                    <div className="timeOnProductHeaderCellDays">Days On Product</div>
+                    <div className="timeOnProductHeaderCell timeOnProductHeaderCellDays">Days On Product<i className="material-icons timeOnProductSortIcon">sort</i></div>
                 </div>
                 {timeOnProductItems.map(timeOnProductItem => {
                     return convertToRow(timeOnProductItem);

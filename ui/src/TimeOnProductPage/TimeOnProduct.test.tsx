@@ -17,15 +17,25 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import TimeOnProduct, {generateTimeOnProductItems, sortTimeOnProductItems, TimeOnProductItem} from './TimeOnProduct';
+import TimeOnProduct, {
+    generateTimeOnProductItems,
+    LOADING,
+    sortTimeOnProductItems,
+    TimeOnProductItem,
+} from './TimeOnProduct';
 import {MemoryRouter} from 'react-router-dom';
 import rootReducer from '../Redux/Reducers';
 import {Product, UNASSIGNED} from '../Products/Product';
 import {cleanup, RenderResult} from '@testing-library/react';
 import {fireEvent} from '@testing-library/dom';
-import {createStore, Store} from 'redux';
-import {setCurrentModalAction} from '../Redux/Actions';
+import {applyMiddleware, createStore, Store} from 'redux';
+import {
+    setCurrentModalAction,
+    setViewingDateAction,
+} from '../Redux/Actions';
 import {AvailableModals} from '../Modal/AvailableModals';
+import { act } from 'react-dom/test-utils';
+import thunk from 'redux-thunk';
 
 describe('TimeOnProduct', () => {
     beforeEach(() => {
@@ -132,7 +142,7 @@ describe('TimeOnProduct', () => {
         });
     });
 
-    describe('TimeOnProductItems sort', () => {
+    describe('sort', () => {
         it('should first sort by person nme', () => {
             const timeOnProductItems: TimeOnProductItem[] = [
                 {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person2', personId: 2},
@@ -203,6 +213,20 @@ describe('TimeOnProduct', () => {
                 expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
                 expect(actualTimeOnProductItems[i].productName).toEqual(expectedTimeOnProductItems[i].productName);
             }
+        });
+    });
+
+    describe('Loading', () => {
+        it('should show loading', async () => {
+            let initialState = {
+                currentSpace: TestUtils.space,
+            };
+            let store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            let app = renderWithRedux(<TimeOnProduct/>, store);
+            act(() => {
+                store.dispatch(setViewingDateAction(new Date(2020, 0, 1)));
+            });
+            await app.findByText(LOADING);
         });
     });
 });

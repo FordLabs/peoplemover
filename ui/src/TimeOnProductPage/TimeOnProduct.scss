@@ -34,7 +34,7 @@
   flex-direction: column;
   color: $gray-1;
   background: $gray-5;
-  width: 60rem;
+  width: 62rem;
   margin: 2rem 2rem;
   font-style: normal;
   font-size: 14px;
@@ -45,14 +45,16 @@
     background: $white;
     margin: 0.5rem 0.5rem;
     font-weight: bold;
-    line-height: 3rem;
 
     .timeOnProductCell {
+      display: flex;
+      align-items: center;
       height: 3rem;
-      width: 15rem;
+      width: 16rem;
       padding-left: 1rem;
       font-weight: bold;
-      word-wrap: normal;
+      white-space: nowrap;
+      overflow-x: hidden;
     }
 
     .timeOnProductCellName {
@@ -79,7 +81,7 @@
 
     .timeOnProductHeaderCell {
       height: 2rem;
-      width: 15rem;
+      width: 16rem;
       margin: 0rem;
       padding-left: 1rem;
     }
@@ -98,4 +100,9 @@
 .timeOnProductLoading {
   margin: 1rem 1rem;
   font-weight: normal;
+}
+
+.timeOnProductSortIcon {
+  padding: 0rem 0.4em;
+  font-size: 15px;
 }
