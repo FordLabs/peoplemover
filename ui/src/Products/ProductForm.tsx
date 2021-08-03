@@ -196,7 +196,7 @@ function ProductForm({
                     }
                 </div>
                 <div className="formItem">
-                    <label className="formItemLabel" htmlFor="url">URL</label>
+                    <label className="formItemLabel" htmlFor="url">Product Page URL</label>
                     <input className="formInput formTextInput"
                         data-testid="productFormUrlField"
                         type="text"
