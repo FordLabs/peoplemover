@@ -24,7 +24,6 @@ import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link} from 'react-router-dom';
 import './Headers.scss';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import flagsmith from 'flagsmith';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
