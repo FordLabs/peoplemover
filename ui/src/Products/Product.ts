@@ -20,6 +20,8 @@ import {Assignment} from '../Assignments/Assignment';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import moment from 'moment';
 
+export const UNASSIGNED = 'unassigned';
+
 export interface Product {
     id: number;
     name: string;
@@ -31,6 +33,7 @@ export interface Product {
     tags: Array<Tag>;
     archived: boolean;
     notes?: string;
+    url?: string;
     assignments: Array<Assignment>;
 }
 
@@ -45,6 +48,7 @@ export function emptyProduct(spaceUuid?: string): Product {
         tags: [],
         archived: false,
         notes: '',
+        url: '',
         assignments: [],
     };
 }

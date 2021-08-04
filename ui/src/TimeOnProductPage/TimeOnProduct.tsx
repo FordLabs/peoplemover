@@ -15,22 +15,63 @@
  * limitations under the License.
  */
 
-import React, {useEffect} from 'react';
-import {Product} from '../Products/Product';
+import React, {useEffect, useState} from 'react';
+import {Product, UNASSIGNED} from '../Products/Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Assignment, calculateDuration} from '../Assignments/Assignment';
+import {calculateDuration} from '../Assignments/Assignment';
 import {Space} from '../Space/Space';
 import RedirectClient from '../Utils/RedirectClient';
-import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
 import './TimeOnProduct.scss';
 import CurrentModal from '../Redux/Containers/CurrentModal';
-import {fetchProductsAction} from '../Redux/Actions';
+import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import HeaderContainer from '../Header/HeaderContainer';
+import SubHeader from '../Header/SubHeader';
+import {AvailableModals} from '../Modal/AvailableModals';
 
-export interface ListOfAssignmentsProps {
-    assignments: Array<Assignment>;
+export const LOADING = 'Loading...';
+
+export interface TimeOnProductItem {
+    personName: string;
+    productName: string;
+    personRole: string;
+    timeOnProduct: number;
+    assignmentId: number;
+    personId: number;
 }
+
+export const generateTimeOnProductItems = (products: Product[], viewingDate: Date): TimeOnProductItem[] => {
+    const timeOnProductItem: TimeOnProductItem[] = [];
+    products.forEach(product => {
+        const productName = product.name === UNASSIGNED ? 'Unassigned' : product.name;
+        product.assignments.forEach(assignment => {
+            timeOnProductItem.push({
+                personName: assignment.person.name,
+                productName: productName,
+                personRole: assignment.person.spaceRole?.name || 'No Role Assigned',
+                timeOnProduct: calculateDuration(assignment, viewingDate),
+                assignmentId: assignment.id,
+                personId: assignment.person.id,
+            });
+        });
+    });
+    return timeOnProductItem;
+};
+
+export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductItem): number => {
+    let returnValue = b.timeOnProduct - a.timeOnProduct;
+    if (returnValue === 0) {
+        returnValue = a.personName.localeCompare(b.personName);
+        if (returnValue === 0) {
+            returnValue = a.productName.localeCompare(b.productName);
+            if (returnValue === 0) {
+                returnValue = a.personRole.localeCompare(b.personRole);
+            }
+        }
+    }
+    return returnValue;
+};
 
 export interface TimeOnProductProps {
     currentSpace: Space;
@@ -39,9 +80,11 @@ export interface TimeOnProductProps {
     currentModal: CurrentModalState;
 
     fetchProducts(): Array<Product>;
+    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetchProducts}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const extractUuidFromUrl = (): string => {
         return window.location.pathname.split('/')[1];
@@ -56,51 +99,74 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
 
     useEffect(() => {
         if (currentSpace && currentModal.modal === null) {
+            setIsLoading(true);
             fetchProducts();
         }
-    }, [currentModal, currentSpace, fetchProducts]);
+    }, [currentModal, currentSpace, fetchProducts, viewingDate]);
 
-    const productNaming = (product: Product): string => {
-        if (product.name === 'unassigned') {
-            return 'unassigned persons:';
-        } else {
-            return product.name + ':';
+    useEffect(() => {
+        setIsLoading(false);
+    }, [products]);
+
+    const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
+        const product = products.find(item => timeOnProductItem.productName === item.name);
+        const assignment = product?.assignments.find(item => timeOnProductItem.assignmentId === item.id);
+        if (assignment) {
+            const newModalState: CurrentModalState = {
+                modal: AvailableModals.EDIT_PERSON,
+                item: assignment.person,
+            };
+            setCurrentModal(newModalState);
         }
-
     };
 
-    const ListOfAssignments = ({assignments}: ListOfAssignmentsProps): JSX.Element => {
-        return (<>
-            {assignments.map(assignment => {
-                return (<div data-testid={assignment.id.toString()} key={assignment.id}>
-                    <PersonAndRoleInfo assignment={assignment} isUnassignedProduct={false} timeOnProduct={calculateDuration(assignment, viewingDate)} />
-                </div>);
-            })}
-        </>);
+    const convertToRow = (timeOnProductItem: TimeOnProductItem): JSX.Element => {
+        const unit = (timeOnProductItem.timeOnProduct > 1 ? 'days' : 'day');
+        return (
+            <div className="timeOnProductRow"
+                data-testid={timeOnProductItem.assignmentId.toString()}
+                key={timeOnProductItem.assignmentId.toString()}
+            >
+                <button className="timeOnProductCell timeOnProductCellName"
+                    onClick={(): void => {onNameClick(timeOnProductItem);}}
+                >
+                    {timeOnProductItem.personName}
+                </button>
+                <div className="timeOnProductCell">{timeOnProductItem.productName}</div>
+                <div className="timeOnProductCell">{timeOnProductItem.personRole}</div>
+                <div className="timeOnProductCell timeOnProductCellDays">{timeOnProductItem.timeOnProduct} {unit}</div>
+            </div>
+        );
     };
 
-    const ListOfProducts = (): JSX.Element => {
-        return (<>
-            {products.map(product => {
-                return (
-                    <div data-testid={product.id} className="productContainer" key={product.id}>
-                        <h3 className="productName"> {productNaming(product)} </h3>
-                        <ListOfAssignments assignments={product.assignments}/>
-                    </div>);
-            })}
-        </>);
+    const convertToTable = (timeOnProductItems: TimeOnProductItem[]): JSX.Element => {
+        return (
+            <>
+                <div className="timeOnProductHeader">
+                    <div className="timeOnProductHeaderCell timeOnProductHeaderName">Name</div>
+                    <div className="timeOnProductHeaderCell">Product</div>
+                    <div className="timeOnProductHeaderCell">Role</div>
+                    <div className="timeOnProductHeaderCell timeOnProductHeaderCellDays">Days On Product<i className="material-icons timeOnProductSortIcon">sort</i></div>
+                </div>
+                {timeOnProductItems.map(timeOnProductItem => {
+                    return convertToRow(timeOnProductItem);
+                })}
+            </>
+        );
     };
 
     return (
-
         currentSpace && <>
             <CurrentModal/>
-            <div>
-                <h2 className="title">Time On Product (in calendar days)</h2>
-                <div className="date">As of: {viewingDate.toDateString()}</div>
-                {currentSpace && currentSpace.name && <>
-                    <ListOfProducts/>
-                </>}
+            <div className="App">
+                <HeaderContainer>
+                    <SubHeader showFilters={false} showSortBy={false} message={<div className="timeOnProductHeaderMessage"><span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product</div>}/>
+                </HeaderContainer>
+                {isLoading ?
+                    <div className="timeOnProductLoading">{LOADING}</div>
+                    : <div className="timeOnProductTable">
+                        {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
+                    </div>}
             </div>
         </>
     );
@@ -115,6 +181,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
+    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     fetchProducts: () => dispatch(fetchProductsAction()),
 })
 

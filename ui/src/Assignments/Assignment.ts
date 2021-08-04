@@ -32,7 +32,7 @@ export function calculateDuration(assignment: Assignment, viewingDate: Date): nu
     if (assignment.startDate) {
         const viewingDateMoment = moment(viewingDate).startOf('day');
         const startingDateMoment = moment(assignment.startDate).startOf('day');
-        return moment.duration(viewingDateMoment.diff(startingDateMoment)).asDays() + 1;
+        return Math.ceil(moment.duration(viewingDateMoment.diff(startingDateMoment)).asDays()) + 1;
     } else {
         return -1;
     }

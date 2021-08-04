@@ -33,20 +33,20 @@ describe('Unassigned Products', () => {
     let history: History;
 
     describe('Showing the unassigned product', () => {
-        beforeEach(  () => {
+        beforeEach(  async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
             history = createBrowserHistory();
             history.push('/uuid');
 
-
-            app = renderWithRedux(
-                <Router history={history}>
-                    <PeopleMover/>
-                </Router>
-            );
-
+            await wait(() => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>
+                );
+            });
         });
         it('has the unassigned product drawer closed by default', async () => {
             expect(app.queryByText(/unassigned/)).toBeNull();
@@ -71,7 +71,9 @@ describe('Unassigned Products', () => {
             fireEvent.click(unassignedDrawerCaret);
             expect(app.queryByText('unassignedPeopleContainer')).toBeNull();
         });
+    });
 
+    describe('showing the unanssigned product, but...', () => {
         it('hides the number of unassigned people when there are less than 1', async () => {
             const emptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
@@ -91,11 +93,14 @@ describe('Unassigned Products', () => {
                 currentSpace: TestUtils.space,
             } as GlobalStateProps;
 
-            const app2 = renderWithRedux(
-                <UnassignedDrawer/>,
-                undefined,
-                initialState
-            );
+            let app2: RenderResult;
+            await wait(() => {
+                app2 = renderWithRedux(
+                    <UnassignedDrawer/>,
+                    undefined,
+                    initialState
+                );
+            });
 
             expect(app2.queryByTestId('countBadge')).toBeNull();
         });

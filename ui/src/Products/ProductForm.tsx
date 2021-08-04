@@ -190,10 +190,21 @@ function ProductForm({
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('name', e.target.value)}
                         placeholder="e.g. Product 1"/>
                     {nameWarningMessage &&
-                        <span data-testid="productNameWarningMessage" className="productNameWarning">
-                            {nameWarningMessage}
-                        </span>
+                    <span data-testid="productNameWarningMessage" className="productNameWarning">
+                        {nameWarningMessage}
+                    </span>
                     }
+                </div>
+                <div className="formItem">
+                    <label className="formItemLabel" htmlFor="url">Product Page URL</label>
+                    <input className="formInput formTextInput"
+                        data-testid="productFormUrlField"
+                        type="text"
+                        name="url"
+                        id="url"
+                        value={currentProduct.url}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('url', e.target.value)}
+                        placeholder="e.g. https://www.fordlabs.com"/>
                 </div>
                 <ProductFormLocationField
                     currentProductState={{currentProduct, setCurrentProduct}}

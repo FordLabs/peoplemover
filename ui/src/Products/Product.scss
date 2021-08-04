@@ -78,12 +78,36 @@
   justify-content: space-between;
   align-items: flex-start;
 
+  .productNameButton {
+    display: flex;
+    justify-content: space-between;
+    align-content: flex-start;
+    background-color: $gray-5;
+    padding: 0px;
+    position: relative;
+  }
+
   .productName {
     margin: 5px 0;
+    font-family: Helvetica, sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.5px;
     font-size: 14px;
     line-height: 16px;
     color: $gray-1;
     word-break: break-word;
+    text-align: left;
+  }
+
+  .productNameUrl {
+    cursor: pointer;
+    color: $prime-1;
+  }
+
+  .productUrlIcon {
+    font-size: 15px;
+    position: absolute;
+    bottom: 0.55em;
   }
 }
 

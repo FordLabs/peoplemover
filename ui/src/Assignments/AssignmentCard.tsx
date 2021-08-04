@@ -78,7 +78,7 @@ function AssignmentCard({
         } else {
             const newModalState: CurrentModalState = {
                 modal: AvailableModals.EDIT_PERSON,
-                item: assignment,
+                item: assignment.person,
             };
             setCurrentModal(newModalState);
         }
@@ -88,7 +88,7 @@ function AssignmentCard({
         toggleEditMenu();
         const newModalState: CurrentModalState = {
             modal: AvailableModals.EDIT_PERSON,
-            item: assignment,
+            item: assignment.person,
         };
         setCurrentModal(newModalState);
     }

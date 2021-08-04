@@ -17,19 +17,92 @@
 
 @import '../Application/Styleguide/Colors.scss';
 
-.title{
-  padding-top: 10px;
-  padding-left: 5px;
+.timeOnProductHeaderMessage {
+  margin: 0 0 0 18px;
+  font-size: 14px;
+  line-height: 23px;
+  font-style: normal;
+  font-weight: bold;
+  padding-left: 18px;
+  display: flex;
+  justify-content: left;
+  text-decoration: none;
 }
 
-.date {
-  padding-left: 45px;
+.timeOnProductTable {
+  display: flex;
+  flex-direction: column;
+  color: $gray-1;
+  background: $gray-5;
+  width: 62rem;
+  margin: 2rem 2rem;
+  font-style: normal;
+  font-size: 14px;
+
+  .timeOnProductRow {
+    display: flex;
+    flex-direction: row;
+    background: $white;
+    margin: 0.5rem 0.5rem;
+    font-weight: bold;
+
+    .timeOnProductCell {
+      display: flex;
+      align-items: center;
+      height: 3rem;
+      width: 16rem;
+      padding-left: 1rem;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow-x: hidden;
+    }
+
+    .timeOnProductCellName {
+      cursor: pointer;
+      color: $prime-1;
+      background: $white;
+      text-align: left;
+      font-family: Helvetica, sans-serif;
+      font-size: 14px;
+      width: 15rem;
+    }
+
+    .timeOnProductCellDays {
+      width: 12rem;
+    }
+  }
+
+  .timeOnProductHeader {
+    display: flex;
+    flex-direction: row;
+    line-height: 2.4rem;
+    margin: 0.5rem 0.5rem;
+    font-weight: bold;
+
+    .timeOnProductHeaderCell {
+      height: 2rem;
+      width: 16rem;
+      margin: 0rem;
+      padding-left: 1rem;
+    }
+
+    .timeOnProductHeaderName {
+      padding-left: 1rem;
+      width: 14rem;
+    }
+
+    .timeOnProductHeaderCellDays {
+      width: 12rem;
+    }
+  }
 }
 
-.productContainer{
-  margin-left: 50px;
+.timeOnProductLoading {
+  margin: 1rem 1rem;
+  font-weight: normal;
 }
-.productName{
-  margin-top: 5px;
-  margin-bottom: 5px;
+
+.timeOnProductSortIcon {
+  padding: 0rem 0.4em;
+  font-size: 15px;
 }

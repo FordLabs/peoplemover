@@ -24,7 +24,6 @@ import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link} from 'react-router-dom';
 import './Headers.scss';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import flagsmith from 'flagsmith';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
@@ -42,7 +41,6 @@ function Header({
     const spaceName = currentSpace?.name;
     const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
     const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
-    const showTimeOnProductButton = flagsmith.hasFeature('show_time_on_product_button');
 
     const useReactPath = (): string => {
         const [path, setPath] = React.useState(window.location.pathname);
@@ -97,7 +95,7 @@ function Header({
                     <div className="headerLeftContainer">
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {showTimeOnProductButton && currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}><span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;</Link>}
+                        {currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}><span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;</Link>}
                         {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}`} onClick={(): void => sendEventTimeOnProductClick(false)}>&#60; Back</Link>}
                     </div>
                     {!hideAllButtons && showDropDown && <div className="headerRightContainer">
