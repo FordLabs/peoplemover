@@ -60,12 +60,15 @@ function SpaceForm({
             setShowWarningMessage(true);
         }
 
+        let spaceToSend = {...formSpace};
+        spaceToSend.name = spaceToSend.name.trim();
+
         if (!!space && formSpace.uuid) {
-            SpaceClient.editSpaceName(formSpace.uuid, formSpace, space.name)
+            SpaceClient.editSpaceName(formSpace.uuid, spaceToSend, space.name)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         } else {
-            SpaceClient.createSpaceForUser(formSpace.name)
+            SpaceClient.createSpaceForUser(spaceToSend.name)
                 .then((response) => setCurrentSpace(response.data.space))
                 .then(closeModal);
         }

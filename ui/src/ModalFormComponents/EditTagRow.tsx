@@ -53,6 +53,7 @@ function EditTagRow({
 
     const saveTag = (): void => {
         let newTag = tagInputValue as RoleEditRequest;
+        newTag.name = newTag.name.trim();
         if (colors && !(tagInputValue as RoleEditRequest).colorId) {
             newTag = ( {...tagInputValue, colorId: colors[colors.length - 1].id});
         }
