@@ -45,7 +45,7 @@ class SpaceService(
         } else {
             val savedSpace = spaceRepository.save(
                     Space(
-                            name = spaceName,
+                            name = spaceName.trim(),
                             lastModifiedDate = Timestamp(Date().time),
                             createdBy = createdBy,
                             createdDate = LocalDateTime.now()

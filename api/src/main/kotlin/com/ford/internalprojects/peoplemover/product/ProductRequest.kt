@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,15 +50,15 @@ data class ProductRequest(
 fun ProductRequest.toProduct(productId: Int? = null, spaceUuid: String): Product =
     Product(
         id = productId,
-        name = name,
+        name = name.trim(),
         tags = tags,
         startDate = startDate,
         endDate = endDate,
-        dorf = dorf,
+        dorf = dorf.trim(),
         spaceLocation = spaceLocation,
         archived = archived,
-        notes = notes,
-        url = url,
+        notes = notes.trim(),
+        url = url?.trim(),
         spaceUuid = spaceUuid
     )
 

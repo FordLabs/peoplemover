@@ -85,7 +85,6 @@ function ProductForm({
 
         setNameWarningMessage('');
 
-        currentProduct.tags = selectedProductTags;
         if (!currentSpace.uuid) {
             console.error('No current space uuid');
             return;
@@ -96,8 +95,14 @@ function ProductForm({
             return;
         }
 
+        let productToSend = {...currentProduct};
+        productToSend.name = productToSend.name.trim();
+        productToSend.url = productToSend.url?.trim();
+        productToSend.notes = productToSend.notes?.trim();
+        productToSend.tags = selectedProductTags;
+
         if (editing) {
-            ProductClient.editProduct(currentSpace, currentProduct)
+            ProductClient.editProduct(currentSpace, productToSend)
                 .then(closeModal)
                 .catch(error => {
                     if (error.response.status === 409) {
@@ -106,7 +111,7 @@ function ProductForm({
                 });
 
         } else {
-            ProductClient.createProduct(currentSpace, currentProduct)
+            ProductClient.createProduct(currentSpace, productToSend)
                 .then(closeModal)
                 .catch(error => {
                     if (error.response.status === 409) {

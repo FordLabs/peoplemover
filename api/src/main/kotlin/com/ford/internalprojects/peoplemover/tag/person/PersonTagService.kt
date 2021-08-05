@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,9 +28,10 @@ class PersonTagService(
         private val personTagRepository: PersonTagRepository
 ) {
     fun createPersonTagForSpace(request: TagRequest, spaceUuid: String): PersonTag {
+        val personTagToCreate = PersonTag(name = request.name.trim(), spaceUuid = spaceUuid)
         return try {
-            personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, request.name)?.let { throw EntityAlreadyExistsException() }
-            personTagRepository.createEntityAndUpdateSpaceLastModified(PersonTag(name = request.name, spaceUuid = spaceUuid))
+            personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, personTagToCreate.name)?.let { throw EntityAlreadyExistsException() }
+            personTagRepository.createEntityAndUpdateSpaceLastModified(personTagToCreate)
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
         }
@@ -52,9 +53,10 @@ class PersonTagService(
             personTagId: Int,
             tagEditRequest: TagRequest
     ): PersonTag {
+        val personTagToEdit = PersonTag(id = personTagId, name = tagEditRequest.name.trim(), spaceUuid = spaceUuid)
         return try {
-            personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, tagEditRequest.name)?.let { throw EntityAlreadyExistsException() }
-            personTagRepository.updateEntityAndUpdateSpaceLastModified(PersonTag(personTagId, spaceUuid, tagEditRequest.name))
+            personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, personTagToEdit.name)?.let { throw EntityAlreadyExistsException() }
+            personTagRepository.updateEntityAndUpdateSpaceLastModified(personTagToEdit)
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
         }

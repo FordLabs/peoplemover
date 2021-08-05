@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service
 class ColorService(private val colorRepository: ColorRepository) {
     fun addColors(colors: List<String>) {
         try {
-            colors.forEach { color: String -> colorRepository.save(Color(color = color)) }
+            colors.forEach { color: String -> colorRepository.save(Color(color = color.trim())) }
         } catch (e: DataIntegrityViolationException) {
             throw ColorAlreadyExistsException()
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,11 +49,11 @@ class ProductService(
         productRepository.findProductByNameAndSpaceUuid(productRequest.name, spaceUuid)?.let {
             throw EntityAlreadyExistsException()
         }
-        validateLinkUrl(productRequest)
+        ensureValidUrlScheme(productRequest)
         return productRepository.createEntityAndUpdateSpaceLastModified(productRequest.toProduct(spaceUuid = spaceUuid))
     }
 
-    private fun validateLinkUrl(productRequest: ProductRequest) {
+    private fun ensureValidUrlScheme(productRequest: ProductRequest) {
         if (!productRequest.url.isNullOrEmpty()) {
             if ((productRequest.url!!.startsWith("https://", true) || productRequest.url!!.startsWith("http:", true))) {
                return
@@ -80,7 +80,7 @@ class ProductService(
             }
         }
 
-        validateLinkUrl(productRequest)
+        ensureValidUrlScheme(productRequest)
 
         val product: Product = productRequest.toProduct(productId, spaceUuid)
         return productRepository.updateEntityAndUpdateSpaceLastModified(product)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,7 +48,7 @@ data class Space (
 )
 
 fun Space.update(editSpaceRequest: EditSpaceRequest): Space {
-    val updatedName = editSpaceRequest.name ?: this.name
+    val updatedName = editSpaceRequest.name?.trim() ?: this.name
     val updatedTodayViewAsPublic = editSpaceRequest.todayViewIsPublic ?: this.todayViewIsPublic
     return this.copy(name = updatedName, todayViewIsPublic = updatedTodayViewAsPublic, lastModifiedDate = Timestamp(Date().time))
 }

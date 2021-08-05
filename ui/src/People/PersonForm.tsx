@@ -213,7 +213,6 @@ function PersonForm({
             setIsPersonNameInvalid(false);
 
             let personTagModified = getAddedPersonTag();
-            person.tags = selectedPersonTags;
 
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
@@ -227,8 +226,14 @@ function PersonForm({
                 }
             }
 
+            let personToSend = {...person};
+            personToSend.name = personToSend.name.trim();
+            personToSend.customField1 = personToSend.customField1?.trim();
+            personToSend.notes = personToSend.notes?.trim();
+            personToSend.tags = selectedPersonTags;
+
             if (isEditPersonForm) {
-                const response = await PeopleClient.updatePerson(currentSpace, person, personTagModified);
+                const response = await PeopleClient.updatePerson(currentSpace, personToSend, personTagModified);
                 const updatedPerson: Person = response.data;
                 editPerson(updatedPerson);
                 if (hasAssignmentChanged) {
@@ -241,7 +246,7 @@ function PersonForm({
                 }
 
             } else {
-                const response = await PeopleClient.createPersonForSpace(currentSpace, person, personTagModified);
+                const response = await PeopleClient.createPersonForSpace(currentSpace, personToSend, personTagModified);
                 const newPerson: Person = response.data;
                 addPerson(newPerson);
                 await AssignmentClient.createAssignmentForDate(

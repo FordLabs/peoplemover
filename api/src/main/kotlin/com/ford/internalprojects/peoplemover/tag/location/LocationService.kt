@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Ford Motor Company
+ * Copyright (c) 2021 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,9 +28,9 @@ class LocationService(
 ) {
     fun addLocationToSpace(spaceUuid: String, locationAddRequest: TagRequest): SpaceLocation {
 
-        val spaceLocationToSave = SpaceLocation(name = locationAddRequest.name, spaceUuid = spaceUuid)
+        val spaceLocationToSave = SpaceLocation(name = locationAddRequest.name.trim(), spaceUuid = spaceUuid)
         return try {
-            spaceLocationRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, locationAddRequest.name)?.let { throw EntityAlreadyExistsException() }
+            spaceLocationRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, spaceLocationToSave.name)?.let { throw EntityAlreadyExistsException() }
             spaceLocationRepository.createEntityAndUpdateSpaceLastModified(spaceLocationToSave)
         } catch (e: DataIntegrityViolationException ) {
             throw EntityAlreadyExistsException()
@@ -41,11 +41,10 @@ class LocationService(
         spaceLocationRepository.findAllBySpaceUuid(spaceUuid)
 
     fun editLocation(spaceUuid: String, locationRequest: TagRequest, locationId: Int): SpaceLocation {
+        val spaceLocationToEdit = SpaceLocation(id = locationId, name = locationRequest.name.trim(), spaceUuid = spaceUuid)
         return try {
-            spaceLocationRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, locationRequest.name)?.let { throw EntityAlreadyExistsException() }
-            spaceLocationRepository.updateEntityAndUpdateSpaceLastModified(
-                SpaceLocation(id = locationId, name = locationRequest.name, spaceUuid = spaceUuid)
-            )
+            spaceLocationRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, spaceLocationToEdit.name)?.let { throw EntityAlreadyExistsException() }
+            spaceLocationRepository.updateEntityAndUpdateSpaceLastModified(spaceLocationToEdit)
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
         }
