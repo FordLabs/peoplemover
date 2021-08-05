@@ -48,7 +48,7 @@ data class Space (
 )
 
 fun Space.update(editSpaceRequest: EditSpaceRequest): Space {
-    val updatedName = editSpaceRequest.name ?: this.name
+    val updatedName = editSpaceRequest.name?.trim() ?: this.name
     val updatedTodayViewAsPublic = editSpaceRequest.todayViewIsPublic ?: this.todayViewIsPublic
     return this.copy(name = updatedName, todayViewIsPublic = updatedTodayViewAsPublic, lastModifiedDate = Timestamp(Date().time))
 }

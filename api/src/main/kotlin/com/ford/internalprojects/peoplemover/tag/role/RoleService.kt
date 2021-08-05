@@ -36,10 +36,10 @@ class RoleService(
     ): SpaceRole {
         spaceRolesRepository.findAllBySpaceUuidAndNameIgnoreCase(
                 spaceUuid,
-                role
+                role.trim()
         )?.let { throw EntityAlreadyExistsException() }
         val colorToAssign: Color? = getColorToAssign(spaceUuid, colorId)
-        val spaceRole = SpaceRole(name = role, color = colorToAssign, spaceUuid = spaceUuid)
+        val spaceRole = SpaceRole(name = role.trim(), color = colorToAssign, spaceUuid = spaceUuid)
         return spaceRolesRepository.createEntityAndUpdateSpaceLastModified(spaceRole)
     }
 
@@ -64,8 +64,8 @@ class RoleService(
                 SpaceRole(
                     id = roleId,
                     spaceUuid = spaceUuid,
-                    name = roleEditRequest.name,
-                        color = colorFound
+                    name = roleEditRequest.name.trim(),
+                    color = colorFound
                 )
         )
     }
@@ -92,7 +92,7 @@ class RoleService(
     private fun throwIfUpdatedRoleNameAlreadyUsed(roleEditRequest: RoleRequest, roleId: Int, spaceUuid: String) {
         spaceRolesRepository.findAllBySpaceUuidAndNameIgnoreCase(
                 spaceUuid,
-                roleEditRequest.name
+                roleEditRequest.name.trim()
         )?.let { spaceRole ->
             if (spaceRole.id != roleId) {
                 throw EntityAlreadyExistsException()

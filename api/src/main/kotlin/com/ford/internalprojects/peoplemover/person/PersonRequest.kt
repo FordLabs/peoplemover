@@ -48,12 +48,12 @@ data class PersonRequest(
 
 fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
         id = id,
-        name = this.name,
+        name = this.name.trim(),
         spaceRole = this.spaceRole,
-        notes = this.notes,
+        notes = this.notes?.trim(),
         newPerson = this.newPerson,
         newPersonDate = this.newPersonDate,
         spaceUuid = spaceUuid,
         tags = this.tags,
-        customField1 = this.customField1
+        customField1 = this.customField1?.trim()
 )

@@ -50,15 +50,15 @@ data class ProductRequest(
 fun ProductRequest.toProduct(productId: Int? = null, spaceUuid: String): Product =
     Product(
         id = productId,
-        name = name,
+        name = name.trim(),
         tags = tags,
         startDate = startDate,
         endDate = endDate,
-        dorf = dorf,
+        dorf = dorf.trim(),
         spaceLocation = spaceLocation,
         archived = archived,
-        notes = notes,
-        url = url,
+        notes = notes.trim(),
+        url = url?.trim(),
         spaceUuid = spaceUuid
     )
 

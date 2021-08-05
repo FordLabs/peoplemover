@@ -28,9 +28,10 @@ class ProductTagService(
         private val productTagRepository: ProductTagRepository
 ) {
     fun createProductTagForSpace(request: TagRequest, spaceUuid: String): ProductTag {
+        val productTagToCreate = ProductTag(name = request.name.trim(), spaceUuid = spaceUuid)
         return try {
-            productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, request.name)?.let { throw EntityAlreadyExistsException() }
-            productTagRepository.createEntityAndUpdateSpaceLastModified(ProductTag(name = request.name, spaceUuid = spaceUuid))
+            productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, productTagToCreate.name)?.let { throw EntityAlreadyExistsException() }
+            productTagRepository.createEntityAndUpdateSpaceLastModified(productTagToCreate)
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
         }
@@ -52,9 +53,10 @@ class ProductTagService(
             productTagId: Int,
             tagEditRequest: TagRequest
     ): ProductTag {
+        val productTagToEdit = ProductTag(id = productTagId, name = tagEditRequest.name.trim(), spaceUuid = spaceUuid)
         return try {
-            productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, tagEditRequest.name)?.let { throw EntityAlreadyExistsException() }
-            productTagRepository.updateEntityAndUpdateSpaceLastModified(ProductTag(productTagId, spaceUuid, tagEditRequest.name))
+            productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(spaceUuid, productTagToEdit.name)?.let { throw EntityAlreadyExistsException() }
+            productTagRepository.updateEntityAndUpdateSpaceLastModified(productTagToEdit)
         } catch (e: DataIntegrityViolationException) {
             throw EntityAlreadyExistsException()
         }
