@@ -37,6 +37,9 @@ import {createDataTestId} from '../tests/TestUtils';
 
 import './Product.scss';
 import {AvailableModals} from '../Modal/AvailableModals';
+import MatomoEvents from '../Matomo/MatomoEvents';
+
+export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
 interface ProductCardProps {
     product: Product;
@@ -135,6 +138,7 @@ function ProductCard({
     }
 
     function handleClickForProductUrl(): void {
+        handleMatomoEventsForProductUrlClicked();
         window.open(product.url);
     }
 
@@ -143,6 +147,10 @@ function ProductCard({
             handleClickForProductUrl();
         }
     }
+
+    const handleMatomoEventsForProductUrlClicked = (): void  => {
+        MatomoEvents.pushEvent(currentSpace.name, PRODUCT_URL_CLICKED, product.name);
+    };
 
     function listenKeyUp(event: React.KeyboardEvent): void {
         if (event.key === 'ArrowDown' && !isEditMenuOpen) {
