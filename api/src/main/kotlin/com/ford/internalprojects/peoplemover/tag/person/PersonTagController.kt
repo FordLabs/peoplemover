@@ -51,7 +51,7 @@ class PersonTagController {
     fun editPersonTag(
         @PathVariable spaceUuid: String,
         @PathVariable personTagId: Int,
-        @RequestBody tagRequest: TagRequest
+        @Valid @RequestBody tagRequest: TagRequest
     ): ResponseEntity<PersonTag> {
         val editedPersonTag: PersonTag = personTagService.editPersonTag(
             spaceUuid = spaceUuid,

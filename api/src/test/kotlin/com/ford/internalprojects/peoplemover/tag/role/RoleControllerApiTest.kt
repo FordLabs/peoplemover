@@ -27,6 +27,8 @@ import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.utilities.CHAR_260
+import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -392,5 +394,42 @@ class RoleControllerApiTest {
         mockMvc.perform(delete("$baseRolesUrl/111")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `POST should disallow invalid TagRequest inputs`() {
+        val nameTooLong = SpaceRole(name = CHAR_260, spaceUuid = space.uuid)
+        mockMvc.perform(post(baseRolesUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val emptyName = SpaceRole(name = EMPTY_NAME, spaceUuid = space.uuid)
+        mockMvc.perform(post(baseRolesUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(emptyName)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+    }
+
+    @Test
+    fun `PUT should disallow invalid TagRequest inputs`() {
+        val roleTag = spaceRolesRepository.save(SpaceRole(name = "test", spaceUuid = space.uuid))
+        val nameTooLong = SpaceRole(id = roleTag.id!!, name = CHAR_260, spaceUuid = space.uuid)
+        mockMvc.perform(put(baseRolesUrl + "/${roleTag.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val emptyName = SpaceRole(id = roleTag.id!!, name = EMPTY_NAME, spaceUuid = space.uuid)
+        mockMvc.perform(put(baseRolesUrl + "/${roleTag.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(emptyName)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
     }
 }

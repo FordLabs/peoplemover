@@ -32,6 +32,8 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
+import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
+import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -404,5 +406,56 @@ class PersonControllerApiTest {
 
         assertThat(personRepository.findAll()).doesNotContain(personToDelete)
         assertThat(assignmentRepository.findAll()).doesNotContain(assignmentToDelete)
+    }
+
+    @Test
+    fun `POST should disallow invalid PersonRequest inputs`() {
+        val nameTooLong = Person(name = CHAR_260, spaceUuid = space.uuid)
+        mockMvc.perform(post(basePeopleUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val nameBlank = Person(name = EMPTY_NAME, spaceUuid = space.uuid)
+        mockMvc.perform(post(basePeopleUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameBlank)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val notesTooLong = Person(name = "person name", spaceUuid = space.uuid, notes = CHAR_260)
+        mockMvc.perform(post(basePeopleUrl)
+            .header("Authorization", "Bearer GOOD_TOKEN")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(notesTooLong)))
+            .andExpect(status().isBadRequest)
+            .andReturn()
+    }
+
+    @Test
+    fun `PUT should disallow invalid PersonRequest inputs`() {
+        val person = personRepository.save(Person(name = "test person", spaceUuid = space.uuid))
+        val nameTooLong = Person(id = person.id!!, name = CHAR_260, spaceUuid = space.uuid)
+        mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val nameBlank = Person(id = person.id!!, name = EMPTY_NAME, spaceUuid = space.uuid)
+        mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameBlank)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val notesTooLong = Person(id = person.id!!, name = "person name", spaceUuid = space.uuid, notes = CHAR_260)
+        mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notesTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
     }
 }

@@ -255,7 +255,7 @@ class SpaceControllerApiTest {
 
     @Test
     @Transactional
-    fun `Edit Space Request should return 200 if space is edited correctly`() {
+    fun `PUT Edit Space Request should return 200 if space is edited correctly`() {
         val space = spaceRepository.save(Space(name = "test"))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
         val editedSpace = EditSpaceRequest(name = "edited")
@@ -280,7 +280,7 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `Edit Space Request should change public view flag correctly`() {
+    fun `PUT Edit Space Request should change public view flag correctly`() {
         val space = spaceRepository.save(Space(name = "test", todayViewIsPublic = false))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
         val spaceRequest = EditSpaceRequest(todayViewIsPublic = true)
@@ -299,7 +299,7 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `Edit Space Request should change both the name and the public view flag correctly`() {
+    fun `PUT Edit Space Request should change both the name and the public view flag correctly`() {
         val space = spaceRepository.save(Space(name = "oldname", todayViewIsPublic = false))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
@@ -322,7 +322,7 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `Edit Space Request should throw an exception if the new name consists only of space characters`() {
+    fun `PUT Edit Space Request should throw an exception if the new name consists only of space characters`() {
         val oldName = "old name"
         val space = spaceRepository.save(Space(name = oldName, todayViewIsPublic = false))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
@@ -344,7 +344,7 @@ class SpaceControllerApiTest {
 
     @Test
     @Transactional
-    fun `Edit Space Request should not save if no fields populated`() {
+    fun `PUT Edit Space Request should not save if no fields populated`() {
         val expectedTimeStamp = Timestamp.from(Instant.EPOCH)
         val space = spaceRepository.save(
                 Space(
@@ -377,7 +377,19 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `Edit Space Request New Space Name is Too Long`() {
+    fun `POST Edit Space Request New Space Name is Too Long`() {
+        val editedSpace = EditSpaceRequest(name = "12345678901234567890123456789012345678901")
+
+        mockMvc.perform(
+            post("$baseSpaceUrl/user")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editedSpace)))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `PUT Edit Space Request New Space Name is Too Long`() {
         val space = spaceRepository.save(Space(name = "space"))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
 
@@ -385,15 +397,14 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(editedSpace))
-        )
+            .header("Authorization", "Bearer GOOD_TOKEN")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(editedSpace)))
             .andExpect(status().isBadRequest)
     }
 
     @Test
-    fun `Edit Space Request should return 403 when trying to edit space without write authorization`() {
+    fun `PUT Edit Space Request should return 403 when trying to edit space without write authorization`() {
         val space = spaceRepository.save(Space(name = "space_that_nobody_has_write_access_to"))
 
         val requestBodyObject = EditSpaceRequest("not empty")
@@ -408,7 +419,7 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `Edit Space Request should not change the name of a space if name is null`() {
+    fun `PUT Edit Space Request should not change the name of a space if name is null`() {
         val expectedName = "oldname"
         val space = spaceRepository.save(Space(name = expectedName))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
@@ -426,5 +437,4 @@ class SpaceControllerApiTest {
         val actualSpace = spaceRepository.findByUuid(space.uuid)
         assertThat(actualSpace!!.name).isEqualTo(expectedName)
     }
-
 }

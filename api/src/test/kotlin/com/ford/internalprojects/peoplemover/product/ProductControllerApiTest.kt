@@ -31,6 +31,9 @@ import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.tag.product.ProductTag
 import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
+import com.ford.internalprojects.peoplemover.utilities.CHAR_260
+import com.ford.internalprojects.peoplemover.utilities.CHAR_520
+import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -423,5 +426,70 @@ class ProductControllerApiTest {
 
         assertThat(productInDB.get().name).isEqualTo("product one")
         assertThat(productInDB.get().url).isEqualTo("https://www.fordlabs.com")
+    }
+
+    @Test
+    fun `POST should disallow invalid ProductRequest inputs`() {
+        val nameTooLong = Product(name = CHAR_260, spaceUuid = space.uuid)
+        mockMvc.perform(post(baseProductsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val nameBlank = Product(name = EMPTY_NAME, spaceUuid = space.uuid)
+        mockMvc.perform(post(baseProductsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameBlank)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val notesTooLong = Product(name = "person name", spaceUuid = space.uuid, notes = CHAR_520)
+        mockMvc.perform(post(baseProductsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notesTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val dorfTooLong = Product(name = "person name", spaceUuid = space.uuid, dorf = CHAR_260)
+        mockMvc.perform(post(baseProductsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dorfTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+    }
+
+    @Test
+    fun `PUT should disallow invalid ProductRequest inputs`() {
+        val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
+        val nameTooLong = Product(id = product.id, name = CHAR_260, spaceUuid = space.uuid)
+        mockMvc.perform(put(getSingleProductUrl(product.id!!))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val nameBlank = Product(id = product.id, name = EMPTY_NAME, spaceUuid = space.uuid)
+        mockMvc.perform(put(getSingleProductUrl(product.id!!))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameBlank)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val notesTooLong = Product(id = product.id, name = "product name", spaceUuid = space.uuid, notes = CHAR_520)
+        mockMvc.perform(put(getSingleProductUrl(product.id!!))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notesTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val dorfTooLong = Product(id = product.id, name = "person name", spaceUuid = space.uuid, dorf = CHAR_260)
+        mockMvc.perform(put(getSingleProductUrl(product.id!!))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dorfTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
     }
 }
