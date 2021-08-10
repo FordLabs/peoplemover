@@ -52,7 +52,7 @@ class PersonController(
     fun updatePerson(
             @PathVariable spaceUuid: String,
             @PathVariable personId: Int,
-            @RequestBody personIncoming: PersonRequest
+            @Valid @RequestBody personIncoming: PersonRequest
     ): Person {
 
         val updatedPerson = personService.updatePerson(personIncoming.toPerson(spaceUuid, personId))

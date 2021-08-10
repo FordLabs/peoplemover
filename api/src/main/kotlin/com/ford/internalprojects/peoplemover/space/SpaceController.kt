@@ -37,13 +37,13 @@ class SpaceController(
 
     @PreAuthorize("hasPermission(#uuid, 'write')")
     @PutMapping("/{uuid}")
-    fun editSpace(@PathVariable uuid: String, @RequestBody @Valid editSpaceRequest: EditSpaceRequest): Space {
+    fun editSpace(@PathVariable uuid: String, @Valid @RequestBody editSpaceRequest: EditSpaceRequest): Space {
         return spaceService.editSpace(uuid, editSpaceRequest)
     }
 
     @PostMapping("/user")
     fun createSpace(
-            @RequestBody request: SpaceCreationRequest,
+            @Valid @RequestBody request: SpaceCreationRequest,
             @RequestHeader(name = "Authorization") token: String
     ): SpaceResponse {
         return spaceService.createSpaceWithUser(token.replace("Bearer ", ""), request.spaceName)

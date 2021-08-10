@@ -63,7 +63,7 @@ class ProductTagController (
     fun editProductTag(
             @PathVariable spaceUuid: String,
             @PathVariable productTagId: Int,
-            @RequestBody tagRequest: TagRequest
+            @Valid @RequestBody tagRequest: TagRequest
     ): ResponseEntity<ProductTag> {
         val editedProductTag = productTagService.editProductTag(
                 spaceUuid,

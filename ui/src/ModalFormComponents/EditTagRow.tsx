@@ -55,7 +55,7 @@ function EditTagRow({
         let newTag = tagInputValue as RoleEditRequest;
         newTag.name = newTag.name.trim();
         if (colors && !(tagInputValue as RoleEditRequest).colorId) {
-            newTag = ( {...tagInputValue, colorId: colors[colors.length - 1].id});
+            newTag.colorId = colors[colors.length - 1].id;
         }
         onSave(newTag).catch((error) => {
             if (error.response.status === 409) {
@@ -91,7 +91,7 @@ function EditTagRow({
     };
 
     const isTraitNameInvalid = (): boolean => {
-        return tagInputValue.name === ''
+        return tagInputValue.name.trim() === ''
         || showDuplicatedTagErrorMessage
         || (newNameIsDuplicated(tagInputValue.name) && isColorTheSame());
     };

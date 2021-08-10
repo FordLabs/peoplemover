@@ -26,6 +26,8 @@ import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.utilities.CHAR_260
+import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import com.google.common.collect.Sets.newHashSet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
@@ -327,5 +329,42 @@ class LocationControllerApiTest {
 
         val updatedProduct: Product = productRepository.findById(originalProduct.id!!).get()
         assertThat(updatedProduct.spaceLocation).isNull()
+    }
+
+    @Test
+    fun `POST should disallow invalid TagRequest inputs`() {
+        val nameTooLong = SpaceLocation(name = CHAR_260, spaceUuid = space.uuid)
+        mockMvc.perform(post(baseLocationsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val emptyName = SpaceLocation(name = EMPTY_NAME, spaceUuid = space.uuid)
+        mockMvc.perform(post(baseLocationsUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(emptyName)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+    }
+
+    @Test
+    fun `PUT should disallow invalid TagRequest inputs`() {
+        val location = spaceLocationRepository.save(SpaceLocation(name = "test", spaceUuid = space.uuid))
+        val nameTooLong = SpaceLocation(id = location.id!!, name = CHAR_260, spaceUuid = space.uuid)
+        mockMvc.perform(put(baseLocationsUrl + "/${location.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLong)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+        val emptyName = SpaceLocation(id = location.id!!, name = EMPTY_NAME, spaceUuid = space.uuid)
+        mockMvc.perform(put(baseLocationsUrl + "/${location.id}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(emptyName)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
     }
 }

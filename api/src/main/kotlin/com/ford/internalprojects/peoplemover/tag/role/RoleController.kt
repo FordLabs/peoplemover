@@ -21,6 +21,7 @@ import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/spaces/{spaceUuid}/roles")
@@ -40,7 +41,7 @@ class RoleController(
     @PostMapping
     fun addRoleForSpace(
         @PathVariable spaceUuid: String,
-        @RequestBody request: RoleRequest
+        @Valid @RequestBody request: RoleRequest
     ): ResponseEntity<SpaceRole> {
         val spaceRole: SpaceRole = roleService.addRoleToSpace(
             spaceUuid,
@@ -67,7 +68,7 @@ class RoleController(
     fun editRole(
         @PathVariable spaceUuid: String,
         @PathVariable roleId: Int,
-        @RequestBody roleEditRequest: RoleRequest
+        @Valid @RequestBody roleEditRequest: RoleRequest
     ): ResponseEntity<SpaceRole> {
         val updatedRole: SpaceRole = roleService.editRole(spaceUuid, roleId, roleEditRequest)
         logger.logInfoMessage("Role with id [${roleId}] edited to: " +
