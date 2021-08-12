@@ -77,21 +77,60 @@ internal class AssignmentToNewAssignmentConverterTest {
     }
 
     @Test
-    fun `three products, two of which should end when new assignments are received and one of which should continue` () {
+    fun `non-contiguous assignments to one project` () {
         var testPerson = Person(name = "Bugs Bunny", spaceUuid = "Outer Space")
         val prod1assignment1 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-06"))
         val prod1assignment2 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-16"))
         val prod1assignment3 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-26"))
         val prod3assignment1 = Assignment(person = testPerson, productId = 3, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-07-06"))
         val prod4assignment1 = Assignment(person = testPerson, productId = 4, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-07-30"))
+        val prod1assignment4 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-07-30"))
 
         val expectedProd1 = NewAssignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-06-06"), endDate= LocalDate.parse("2021-07-06"))
         val expectedProd3 = NewAssignment(person = testPerson, productId = 3, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-07-06"), endDate= LocalDate.parse("2021-07-30"))
         val expectedProd4 = NewAssignment(person = testPerson, productId = 4, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-07-30"), endDate= null)
+        val expectedProd1Again = NewAssignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-07-30"), endDate= null)
 
+        val conversionResult : List<NewAssignment> = AssignmentToNewAssignmentConverter().convert(listOf(prod1assignment1, prod1assignment2,prod1assignment3,prod3assignment1,prod4assignment1,prod1assignment4));
+        assertThat(conversionResult).containsExactlyInAnyOrderElementsOf(listOf(expectedProd1,expectedProd3,expectedProd4,expectedProd1Again));
+    }
 
+    @Test
+    fun `can distinguish between assignments of two different people` () {
+        var testPerson = Person(name = "Bugs Bunny", spaceUuid = "Outer Space")
+        var notTheTestPerson = Person(name = "Roger Rabbit", spaceUuid = "Outer Space")
+        val prod1assignment1 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-06"))
+        val prod1assignment2 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-16"))
+        val prod1assignment3 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-26"))
+        val prod3assignment1 = Assignment(person = notTheTestPerson, productId = 3, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-07-06"))
+        val prod4assignment1 = Assignment(person = testPerson, productId = 4, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-07-28"))
+        val prod1assignment4 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-07-30"))
 
-        val conversionResult : List<NewAssignment> = AssignmentToNewAssignmentConverter().convert(listOf(prod1assignment1, prod1assignment2,prod1assignment3,prod3assignment1,prod4assignment1 ));
-        assertThat(conversionResult).containsExactlyInAnyOrderElementsOf(listOf(expectedProd1,expectedProd3,expectedProd4));
+        val expectedProd1 = NewAssignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-06-06"), endDate= LocalDate.parse("2021-07-28"))
+        val expectedProd3 = NewAssignment(person = notTheTestPerson, productId = 3, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-07-06"), endDate= null)
+        val expectedProd4 = NewAssignment(person = testPerson, productId = 4, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-07-28"), endDate= LocalDate.parse("2021-07-30"))
+        val expectedProd1Again = NewAssignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-07-30"), endDate= null)
+
+        val conversionResult : List<NewAssignment> = AssignmentToNewAssignmentConverter().convert(listOf(prod1assignment1, prod1assignment2,prod1assignment3,prod3assignment1,prod4assignment1,prod1assignment4));
+        assertThat(conversionResult).containsExactlyInAnyOrderElementsOf(listOf(expectedProd1,expectedProd3,expectedProd4,expectedProd1Again));
+    }
+
+    @Test
+    fun `can distinguish between assignments in two different spaces` () {
+        var testPerson = Person(name = "Bugs Bunny", spaceUuid = "Outer Space")
+        val prod1assignment1 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-06"))
+        val prod1assignment2 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-16"))
+        val prod1assignment3 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-06-26"))
+        val prod3assignment1 = Assignment(person = testPerson, productId = 3, spaceUuid = "Inner Space", effectiveDate = LocalDate.parse("2021-07-06"))
+        val prod4assignment1 = Assignment(person = testPerson, productId = 4, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-07-28"))
+        val prod1assignment4 = Assignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", effectiveDate = LocalDate.parse("2021-07-30"))
+
+        val expectedProd1 = NewAssignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-06-06"), endDate= LocalDate.parse("2021-07-28"))
+        val expectedProd3 = NewAssignment(person = testPerson, productId = 3, spaceUuid = "Inner Space", startDate = LocalDate.parse("2021-07-06"), endDate= null)
+        val expectedProd4 = NewAssignment(person = testPerson, productId = 4, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-07-28"), endDate= LocalDate.parse("2021-07-30"))
+        val expectedProd1Again = NewAssignment(person = testPerson, productId = 1, spaceUuid = "Outer Space", startDate = LocalDate.parse("2021-07-30"), endDate= null)
+
+        val conversionResult : List<NewAssignment> = AssignmentToNewAssignmentConverter().convert(listOf(prod1assignment1, prod1assignment2,prod1assignment3,prod3assignment1,prod4assignment1,prod1assignment4));
+        assertThat(conversionResult).containsExactlyInAnyOrderElementsOf(listOf(expectedProd1,expectedProd3,expectedProd4,expectedProd1Again));
     }
 }
