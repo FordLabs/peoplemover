@@ -45,4 +45,5 @@ data class NewAssignment(
 
         @Column(name = "space_uuid")
         override val spaceUuid: String
+
 ): SpaceComponent
