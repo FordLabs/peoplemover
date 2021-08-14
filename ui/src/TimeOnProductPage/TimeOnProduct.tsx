@@ -78,12 +78,13 @@ export interface TimeOnProductProps {
     viewingDate: Date;
     products: Array<Product>;
     currentModal: CurrentModalState;
+    isReadOnly: boolean;
 
     fetchProducts(): Array<Product>;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, viewingDate, products, currentModal, isReadOnly, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const extractUuidFromUrl = (): string => {
@@ -120,6 +121,12 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
         }
     };
 
+    const getPersonNameClassName = (): string => {
+        let className = 'timeOnProductCell';
+        className += (isReadOnly ? ' timeOnProductCellNameDisabled' : ' timeOnProductCellName');
+        return className;
+    };
+
     const convertToRow = (timeOnProductItem: TimeOnProductItem): JSX.Element => {
         const unit = (timeOnProductItem.timeOnProduct > 1 ? 'days' : 'day');
         return (
@@ -127,8 +134,9 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, fetch
                 data-testid={timeOnProductItem.assignmentId.toString()}
                 key={timeOnProductItem.assignmentId.toString()}
             >
-                <button className="timeOnProductCell timeOnProductCellName"
+                <button className={getPersonNameClassName()}
                     onClick={(): void => {onNameClick(timeOnProductItem);}}
+                    disabled={isReadOnly}
                 >
                     {timeOnProductItem.personName}
                 </button>
@@ -178,6 +186,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     viewingDate: state.viewingDate,
     products: state.products,
     currentModal: state.currentModal,
+    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

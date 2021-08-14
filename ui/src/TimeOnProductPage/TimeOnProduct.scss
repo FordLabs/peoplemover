@@ -67,6 +67,17 @@
       width: 15rem;
     }
 
+    .timeOnProductCellNameDisabled {
+      cursor: default;
+      color: $gray-1;
+      background: $white;
+      text-align: left;
+      font-family: Helvetica, sans-serif;
+      font-size: 14px;
+      width: 15rem;
+      opacity: 1;
+    }
+
     .timeOnProductCellDays {
       width: 12rem;
     }
