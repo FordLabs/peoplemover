@@ -52,6 +52,7 @@ describe('TimeOnProduct', () => {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 1),
                 products: [TestUtils.productForHank],
+                isReadOnly: false,
             };
             store = createStore(rootReducer, initialState);
             store.dispatch = jest.fn();
@@ -81,7 +82,8 @@ describe('TimeOnProduct', () => {
         });
 
         it('should make the call to open the Edit Person modal when person name is clicked', async () => {
-            const hank = app.getByText('Hank');
+            const hank = app.getByText(TestUtils.hank.name);
+            expect(hank).toBeEnabled();
             fireEvent.click(hank);
             expect(store.dispatch).toHaveBeenCalledWith(
                 setCurrentModalAction({
@@ -227,6 +229,21 @@ describe('TimeOnProduct', () => {
                 store.dispatch(setViewingDateAction(new Date(2020, 0, 1)));
             });
             await app.findByText(LOADING);
+        });
+    });
+
+    describe('View Only', () => {
+        it('person name button should be disabled', () => {
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 0, 1),
+                products: [TestUtils.productForHank],
+                isReadOnly: true,
+            };
+            let store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            let app = renderWithRedux(<TimeOnProduct/>, store);
+            const hank = app.getByText(TestUtils.hank.name);
+            expect(hank).toBeDisabled();
         });
     });
 });

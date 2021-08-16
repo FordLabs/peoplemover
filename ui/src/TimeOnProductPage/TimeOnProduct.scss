@@ -55,16 +55,24 @@
       font-weight: bold;
       white-space: nowrap;
       overflow-x: hidden;
+      cursor: default;
+      background: $white;
+      text-align: left;
+      font-family: Helvetica, sans-serif;
+      font-size: 14px;
     }
 
     .timeOnProductCellName {
       cursor: pointer;
       color: $prime-1;
-      background: $white;
-      text-align: left;
-      font-family: Helvetica, sans-serif;
-      font-size: 14px;
       width: 15rem;
+    }
+
+    .timeOnProductCellNameDisabled {
+      cursor: default;
+      color: $gray-1;
+      width: 15rem;
+      opacity: 1;
     }
 
     .timeOnProductCellDays {
@@ -80,6 +88,7 @@
     font-weight: bold;
 
     .timeOnProductHeaderCell {
+      cursor: default;
       height: 2rem;
       width: 16rem;
       margin: 0rem;
