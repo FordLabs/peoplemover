@@ -52,6 +52,7 @@ describe('TimeOnProduct', () => {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 1),
                 products: [TestUtils.productForHank],
+                isReadOnly: false,
             };
             store = createStore(rootReducer, initialState);
             store.dispatch = jest.fn();
