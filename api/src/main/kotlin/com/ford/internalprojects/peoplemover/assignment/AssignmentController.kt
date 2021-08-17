@@ -33,7 +33,7 @@ class AssignmentController(
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/spaces/{spaceUuid}/person/{personId}/assignments/date/{requestedDate}")
-    fun getAssignmentsByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
+    fun getAssignmentsByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<AssignmentV1>> {
         spaceService.checkReadOnlyAccessByDate(requestedDate, spaceUuid)
 
         val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(requestedDate))
@@ -65,8 +65,8 @@ class AssignmentController(
             @PathVariable spaceUuid: String,
             @PathVariable personId: Int,
             @RequestBody createAssignmentRequest: CreateAssignmentsRequest
-    ): ResponseEntity<Set<Assignment>> {
-        val assignmentsCreated: Set<Assignment> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, spaceUuid, personId)
+    ): ResponseEntity<Set<AssignmentV1>> {
+        val assignmentsCreated: Set<AssignmentV1> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, spaceUuid, personId)
         logger.logInfoMessage("[${assignmentsCreated.size}] assignment(s) created " +
                 "for person with id: [${assignmentsCreated.first().person.id}] " +
                 "with effective date: [${assignmentsCreated.first().effectiveDate}]")

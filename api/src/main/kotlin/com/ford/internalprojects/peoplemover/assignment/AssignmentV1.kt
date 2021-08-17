@@ -23,7 +23,8 @@ import java.time.LocalDate
 import javax.persistence.*
 
 @Entity
-data class Assignment(
+@Table(name = "assignment")
+data class AssignmentV1(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         override val id: Int? = null,

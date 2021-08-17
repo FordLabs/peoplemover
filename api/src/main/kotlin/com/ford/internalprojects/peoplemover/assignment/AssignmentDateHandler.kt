@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 @Component
 class AssignmentDateHandler {
-    fun findUniqueDates(assignmentList: List<Assignment>): List<LocalDate> {
+    fun findUniqueDates(assignmentList: List<AssignmentV1>): List<LocalDate> {
         return assignmentList.map { assignment -> assignment.effectiveDate!!}.distinct()
     }
 

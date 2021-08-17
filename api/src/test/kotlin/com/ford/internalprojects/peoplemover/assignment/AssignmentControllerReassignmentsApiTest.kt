@@ -119,20 +119,20 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should return all reassignments for the given spaceUuid and exact requested date`() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr2),
@@ -161,26 +161,26 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should handle reassignment logic for person with multiple assignments changing only one of the assignments`() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -210,20 +210,20 @@ class AssignmentControllerReassignmentsApiTest {
     @Test
     fun `GET should return all reassignments should handle multiple historical assignments in db`() {
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr2),
@@ -255,7 +255,7 @@ class AssignmentControllerReassignmentsApiTest {
     @Test
     fun `GET should return reassignments with empty string fromProductName when there are no previous assignments`() {
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
@@ -284,7 +284,7 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should return no reassignment when fromProductName is empty and toProductName is unassigned`() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(mar1),
@@ -308,26 +308,26 @@ class AssignmentControllerReassignmentsApiTest {
     fun `GET should handle reassignments for multiple people being reassigned and sort in reverse chronological order`() {
 
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -363,28 +363,28 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should handle one assignment being cancelled when a person is on multiple assignments`() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -413,35 +413,35 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should handle one assignment being cancelled when a person is on multiple assignments and there is more than one reassignment`() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -477,35 +477,35 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should handle one assignment being cancelled and one being reassigned when a person is on multiple assignments and there is more than one reassignment`() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -541,28 +541,28 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should handle when one person is moved from two products to another two products `() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productThree.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productFour.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -593,20 +593,20 @@ class AssignmentControllerReassignmentsApiTest {
 
     @Test
     fun `GET should return all reassignments when requested date is today for read only space`() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personInReadOnlySpace,
                 productId = readOnlyProductOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = readOnlySpace.uuid
         ))
 
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personInReadOnlySpace,
                 productId = readOnlyProductTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = readOnlySpace.uuid
         ))
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = personInReadOnlySpace,
                 productId = readOnlyProductOne.id!!,
                 effectiveDate = LocalDate.parse(today),

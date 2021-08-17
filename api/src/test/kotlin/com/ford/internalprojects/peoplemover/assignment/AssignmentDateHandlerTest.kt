@@ -1,9 +1,7 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.person.Person
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import java.time.LocalDate
 
@@ -23,7 +21,7 @@ class AssignmentDateHandlerTest {
     @Test
     fun `findUniqueDates should return a unique date when one assignment supplied`() {
         effectiveDate = LocalDate.parse(jun1)
-        val assignmentList: List<Assignment> = listOf(Assignment(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate))
+        val assignmentList: List<AssignmentV1> = listOf(AssignmentV1(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate))
 
         val expectedDateList: List<LocalDate> = listOf(effectiveDate)
 
@@ -35,9 +33,9 @@ class AssignmentDateHandlerTest {
     @Test
     fun `findUniqueDates should return a unique date when two assignments with the same date are supplied`() {
         effectiveDate = LocalDate.parse(jun1)
-        val assignmentList: List<Assignment> = listOf(
-                Assignment(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate),
-                Assignment(person = person, spaceUuid = "space", productId = 2, effectiveDate = effectiveDate)
+        val assignmentList: List<AssignmentV1> = listOf(
+                AssignmentV1(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 2, effectiveDate = effectiveDate)
         )
 
         val expectedDateList: List<LocalDate> = listOf(effectiveDate)
@@ -51,9 +49,9 @@ class AssignmentDateHandlerTest {
     fun `findUniqueDates should return two unique dates when two assignments with different dates are supplied`() {
         val effectiveDate1 = LocalDate.parse(jun1)
         val effectiveDate2 = LocalDate.parse(jul1)
-        val assignmentList: List<Assignment> = listOf(
-                Assignment(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate1),
-                Assignment(person = person, spaceUuid = "space", productId = 2, effectiveDate = effectiveDate2)
+        val assignmentList: List<AssignmentV1> = listOf(
+                AssignmentV1(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate1),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 2, effectiveDate = effectiveDate2)
         )
 
         val expectedDateList: List<LocalDate> = listOf(effectiveDate1, effectiveDate2)
@@ -68,10 +66,10 @@ class AssignmentDateHandlerTest {
         val effectiveDate1 = LocalDate.parse(jun1)
         val effectiveDate2 = LocalDate.parse(jul1)
         val effectiveDate3 = LocalDate.parse(jul1)
-        val assignmentList: List<Assignment> = listOf(
-                Assignment(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate1),
-                Assignment(person = person, spaceUuid = "space", productId = 2, effectiveDate = effectiveDate2),
-                Assignment(person = person, spaceUuid = "space", productId = 3, effectiveDate = effectiveDate3)
+        val assignmentList: List<AssignmentV1> = listOf(
+                AssignmentV1(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate1),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 2, effectiveDate = effectiveDate2),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 3, effectiveDate = effectiveDate3)
         )
 
         val expectedDateList: List<LocalDate> = listOf(effectiveDate1, effectiveDate2)
@@ -83,8 +81,8 @@ class AssignmentDateHandlerTest {
 
     @Test
     fun `findUniqueDates should handle assignments with empty effective dates by giving them today's date`() {
-        val assignmentList: List<Assignment> = listOf(
-                Assignment(person = person, spaceUuid = "space", productId = 1)
+        val assignmentList: List<AssignmentV1> = listOf(
+                AssignmentV1(person = person, spaceUuid = "space", productId = 1)
         )
 
         val expectedDateList: List<LocalDate> = listOf(LocalDate.now())
@@ -102,13 +100,13 @@ class AssignmentDateHandlerTest {
         val effectiveDate4 = LocalDate.parse(sep1)
         val effectiveDate5 = LocalDate.parse(jul1)
         val effectiveDate6 = LocalDate.parse(aug1)
-        val assignmentList: List<Assignment> = listOf(
-                Assignment(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate1),
-                Assignment(person = person, spaceUuid = "space", productId = 2, effectiveDate = effectiveDate2),
-                Assignment(person = person, spaceUuid = "space", productId = 3, effectiveDate = effectiveDate3),
-                Assignment(person = person, spaceUuid = "space", productId = 4, effectiveDate = effectiveDate4),
-                Assignment(person = person, spaceUuid = "space", productId = 5, effectiveDate = effectiveDate5),
-                Assignment(person = person, spaceUuid = "space", productId = 6, effectiveDate = effectiveDate6)
+        val assignmentList: List<AssignmentV1> = listOf(
+                AssignmentV1(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate1),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 2, effectiveDate = effectiveDate2),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 3, effectiveDate = effectiveDate3),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 4, effectiveDate = effectiveDate4),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 5, effectiveDate = effectiveDate5),
+                AssignmentV1(person = person, spaceUuid = "space", productId = 6, effectiveDate = effectiveDate6)
         )
 
         val expectedDateList: List<LocalDate> = listOf(
