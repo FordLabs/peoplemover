@@ -18,7 +18,7 @@
 package com.ford.internalprojects.peoplemover.report
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.Assignment
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
@@ -52,7 +52,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Month
 
 @RunWith(SpringRunner::class)
@@ -140,9 +139,9 @@ class ReportGeneratorControllerTest {
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "SSQUAREP", spaceUuid = space1.uuid, permission = PERMISSION_OWNER))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceUuid = space1.uuid, permission = PERMISSION_EDITOR))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "PSTAR", spaceUuid = space2.uuid, permission = PERMISSION_OWNER))
-        assignmentRepository.save(Assignment(person = person1, productId = productA.id!!, effectiveDate = LocalDate.parse(mar1), spaceUuid = space1.uuid))
-        assignmentRepository.save(Assignment(person = person2, productId = productB.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
-        assignmentRepository.save(Assignment(person = person3, productId = productA.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
+        assignmentRepository.save(AssignmentV1(person = person1, productId = productA.id!!, effectiveDate = LocalDate.parse(mar1), spaceUuid = space1.uuid))
+        assignmentRepository.save(AssignmentV1(person = person2, productId = productB.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
+        assignmentRepository.save(AssignmentV1(person = person3, productId = productA.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
     }
 
     @After

@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.space.SpaceService
+import com.ford.internalprojects.peoplemover.utilities.AssignmentV1ToAssignmentV2Converter
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -33,12 +34,20 @@ class AssignmentController(
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/spaces/{spaceUuid}/person/{personId}/assignments/date/{requestedDate}")
-    fun getAssignmentsByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<Assignment>> {
+    fun getAssignmentsByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int, @PathVariable requestedDate: String): ResponseEntity<List<AssignmentV1>> {
         spaceService.checkReadOnlyAccessByDate(requestedDate, spaceUuid)
 
         val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(requestedDate))
         logger.logInfoMessage("All assignments retrieved for person with id: [$personId] on date: [$requestedDate].")
         return ResponseEntity.ok(assignmentsForPerson)
+    }
+
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
+    @GetMapping("/api/v2/{spaceUuid}/assignments/product/{productId}/date/{requestedDate}")
+    fun getAssignmentsV2ByProductIdForDate(@PathVariable spaceUuid: String, @PathVariable productId: Int, @PathVariable requestedDate: String): ResponseEntity<List<AssignmentV2>> {
+        val allAssignmentsForDate = assignmentService.getAssignmentsByDate(spaceUuid, LocalDate.parse(requestedDate));
+        val converter = AssignmentV1ToAssignmentV2Converter()
+        return ResponseEntity.ok(converter.convert(allAssignmentsForDate.filter { assignment ->  productId == assignment.productId}))
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
@@ -65,8 +74,8 @@ class AssignmentController(
             @PathVariable spaceUuid: String,
             @PathVariable personId: Int,
             @RequestBody createAssignmentRequest: CreateAssignmentsRequest
-    ): ResponseEntity<Set<Assignment>> {
-        val assignmentsCreated: Set<Assignment> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, spaceUuid, personId)
+    ): ResponseEntity<Set<AssignmentV1>> {
+        val assignmentsCreated: Set<AssignmentV1> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, spaceUuid, personId)
         logger.logInfoMessage("[${assignmentsCreated.size}] assignment(s) created " +
                 "for person with id: [${assignmentsCreated.first().person.id}] " +
                 "with effective date: [${assignmentsCreated.first().effectiveDate}]")

@@ -18,7 +18,7 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.Assignment
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
@@ -392,8 +392,8 @@ class PersonControllerApiTest {
         assertThat(personRepository.count()).isEqualTo(2)
 
         val product: Product = productRepository.save(Product(name = "product", spaceUuid = space.uuid))
-        val assignmentToDelete: Assignment = assignmentRepository.save(Assignment(person = personToDelete, productId = product.id!!, spaceUuid = space.uuid))
-        val assignmentToRemain: Assignment = assignmentRepository.save(Assignment(person = personToRemain, productId = product.id!!, spaceUuid = space.uuid))
+        val assignmentToDelete: AssignmentV1 = assignmentRepository.save(AssignmentV1(person = personToDelete, productId = product.id!!, spaceUuid = space.uuid))
+        val assignmentToRemain: AssignmentV1 = assignmentRepository.save(AssignmentV1(person = personToRemain, productId = product.id!!, spaceUuid = space.uuid))
         assertThat(assignmentRepository.count()).isEqualTo(2)
 
         mockMvc.perform(delete("$basePeopleUrl/${personToDelete.id}")

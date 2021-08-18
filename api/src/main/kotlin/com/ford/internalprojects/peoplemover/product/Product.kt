@@ -17,7 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.product
 
-import com.ford.internalprojects.peoplemover.assignment.Assignment
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
 import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.tag.product.ProductTag
@@ -27,36 +27,36 @@ import javax.persistence.*
 @Table
 @Entity
 data class Product (
-    @Id
+        @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Int? = null,
 
-    override var name: String,
+        override var name: String,
 
-    @OneToMany(mappedBy = "productId", fetch = FetchType.EAGER)
-    val assignments: Set<Assignment> = HashSet(),
+        @OneToMany(mappedBy = "productId", fetch = FetchType.EAGER)
+    val assignments: Set<AssignmentV1> = HashSet(),
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.REFRESH])
+        @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.REFRESH])
     @JoinTable(name = "product_tag_mapping", joinColumns = [JoinColumn(name = "product_id", referencedColumnName = "id")], inverseJoinColumns = [JoinColumn(name = "product_tag_id", referencedColumnName = "id")])
     val tags: Set<ProductTag> = HashSet(),
 
-    val startDate: LocalDate? = null,
+        val startDate: LocalDate? = null,
 
-    val endDate: LocalDate? = null,
+        val endDate: LocalDate? = null,
 
-    val dorf: String = "",
+        val dorf: String = "",
 
-    @ManyToOne
+        @ManyToOne
     @JoinColumn(name = "space_location_id")
     val spaceLocation: SpaceLocation? = null,
 
-    val archived: Boolean = false,
+        val archived: Boolean = false,
 
-    var notes: String = "",
+        var notes: String = "",
 
-    val url: String? = "",
+        val url: String? = "",
 
-    @Column(name = "space_uuid")
+        @Column(name = "space_uuid")
     override val spaceUuid: String
 
 ): NamedSpaceComponent {

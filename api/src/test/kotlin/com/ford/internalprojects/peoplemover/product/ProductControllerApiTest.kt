@@ -18,7 +18,7 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.Assignment
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
@@ -209,7 +209,7 @@ class ProductControllerApiTest {
     fun `PUT should update a product`() {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         val person: Person = personRepository.save(Person(name = "bob", spaceUuid = space.uuid))
-        assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceUuid = space.uuid))
+        assignmentRepository.save(AssignmentV1(person = person, productId = product.id!!, spaceUuid = space.uuid))
         val productEditRequest = ProductRequest(
                 name = "product two"
         )
@@ -300,14 +300,14 @@ class ProductControllerApiTest {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", spaceUuid = space.uuid))
         val person = personRepository.save(Person(name = "person", spaceUuid = space.uuid))
-        assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceUuid = space.uuid))
+        assignmentRepository.save(AssignmentV1(person = person, productId = product.id!!, spaceUuid = space.uuid))
 
         mockMvc.perform(delete(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val people: Iterable<Assignment> = assignmentRepository.findAll()
+        val people: Iterable<AssignmentV1> = assignmentRepository.findAll()
         assertThat(assignmentRepository.count()).isOne()
         assertThat(people.first().person.name).isEqualTo(person.name)
         assertThat(people.first().productId).isEqualTo(unassignedProduct.id)
@@ -318,15 +318,15 @@ class ProductControllerApiTest {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         val unassignedProduct: Product = productRepository.save(Product(name = "unassigned", spaceUuid = space.uuid))
         val person = personRepository.save(Person(name = "person", spaceUuid = space.uuid))
-        assignmentRepository.save(Assignment(person = person, productId = product.id!!, spaceUuid = space.uuid))
-        assignmentRepository.save(Assignment(person = person, productId = unassignedProduct.id!!, spaceUuid = space.uuid))
+        assignmentRepository.save(AssignmentV1(person = person, productId = product.id!!, spaceUuid = space.uuid))
+        assignmentRepository.save(AssignmentV1(person = person, productId = unassignedProduct.id!!, spaceUuid = space.uuid))
 
         mockMvc.perform(delete(getSingleProductUrl(product.id!!))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val people: Iterable<Assignment> = assignmentRepository.findAll()
+        val people: Iterable<AssignmentV1> = assignmentRepository.findAll()
         assertThat(assignmentRepository.count()).isOne()
         assertThat(people.first().person.name).isEqualTo(person.name)
         assertThat(people.first().productId).isEqualTo(unassignedProduct.id!!)

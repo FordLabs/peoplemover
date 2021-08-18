@@ -126,19 +126,19 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `GET should return all assignments for the given personId and a specific date`() {
-        val oldAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
+        val oldAssignmentForPerson1: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
-        val currentAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
+        val currentAssignmentForPerson1: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
-        val futureAssignmentForPerson1: Assignment = assignmentRepository.save(Assignment(
+        val futureAssignmentForPerson1: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr2),
@@ -146,13 +146,13 @@ class AssignmentControllerInTimeApiTest {
         ))
 
         val personTwo: Person = personRepository.save(Person(name = "person two", spaceUuid = editableSpace.uuid))
-        val currentAssignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
+        val currentAssignmentForPerson2: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
-        val futureAssignmentForPerson2: Assignment = assignmentRepository.save(Assignment(
+        val futureAssignmentForPerson2: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = personTwo,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr2),
@@ -163,9 +163,9 @@ class AssignmentControllerInTimeApiTest {
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
-        val actualAssignments: List<Assignment> = objectMapper.readValue(
+        val actualAssignments: List<AssignmentV1> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
         )
 
         assertThat(assignmentRepository.count()).isEqualTo(5)
@@ -177,7 +177,7 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `GET should return all assignments for a read only space when requested date is today`() {
-        val readOnlyAssignment: Assignment = assignmentRepository.save(Assignment(
+        val readOnlyAssignment: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = personInReadOnlySpace,
                 productId = productFour.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -188,9 +188,9 @@ class AssignmentControllerInTimeApiTest {
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
-        val actualAssignments: List<Assignment> = objectMapper.readValue(
+        val actualAssignments: List<AssignmentV1> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
         )
 
         assertThat(assignmentRepository.count()).isEqualTo(1)
@@ -201,7 +201,7 @@ class AssignmentControllerInTimeApiTest {
     @Test
     fun `GET should return all assignments for a read only space when requested date is tomorrow`() {
         val tomorrow = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ISO_DATE)
-        val readOnlyAssignment: Assignment = assignmentRepository.save(Assignment(
+        val readOnlyAssignment: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = personInReadOnlySpace,
                 productId = productFour.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -212,9 +212,9 @@ class AssignmentControllerInTimeApiTest {
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
-        val actualAssignments: List<Assignment> = objectMapper.readValue(
+        val actualAssignments: List<AssignmentV1> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
         )
 
         assertThat(assignmentRepository.count()).isEqualTo(1)
@@ -225,7 +225,7 @@ class AssignmentControllerInTimeApiTest {
     @Test
     fun `GET should return all assignments for a read only space when requested date is yesterday`() {
         val yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ISO_DATE)
-        val readOnlyAssignment: Assignment = assignmentRepository.save(Assignment(
+        val readOnlyAssignment: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = personInReadOnlySpace,
                 productId = productFour.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -236,9 +236,9 @@ class AssignmentControllerInTimeApiTest {
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
-        val actualAssignments: List<Assignment> = objectMapper.readValue(
+        val actualAssignments: List<AssignmentV1> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
         )
 
         assertThat(assignmentRepository.count()).isEqualTo(1)
@@ -256,14 +256,14 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `GET should return a set of effective dates given a space uuid`() {
-        val savedAssignmentOne = assignmentRepository.save(Assignment(
+        val savedAssignmentOne = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        val savedAssignmentTwo = assignmentRepository.save(Assignment(
+        val savedAssignmentTwo = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
@@ -293,14 +293,14 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `POST should only replace any existing assignments for a given date`() {
-        val nullAssignmentToKeep: Assignment = assignmentRepository.save(Assignment(
+        val nullAssignmentToKeep: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = null,
                 spaceUuid = editableSpace.uuid
         ))
 
-        val oldAssignmentToReplace: Assignment = assignmentRepository.save(Assignment(
+        val oldAssignmentToReplace: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -322,9 +322,9 @@ class AssignmentControllerInTimeApiTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+        val actualAssignments: Set<AssignmentV1> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, AssignmentV1::class.java)
         )
 
         assertThat(actualAssignments.size).isEqualTo(2)
@@ -355,7 +355,7 @@ class AssignmentControllerInTimeApiTest {
                 )
         )
 
-        val expectedAssignment = Assignment(
+        val expectedAssignment = AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -369,9 +369,9 @@ class AssignmentControllerInTimeApiTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+        val actualAssignments: Set<AssignmentV1> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, AssignmentV1::class.java)
         )
 
         assertThat(assignmentRepository.count()).isOne()
@@ -388,7 +388,7 @@ class AssignmentControllerInTimeApiTest {
                 )
         )
 
-        val expectedAssignment = Assignment(
+        val expectedAssignment = AssignmentV1(
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -402,9 +402,9 @@ class AssignmentControllerInTimeApiTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+        val actualAssignments: Set<AssignmentV1> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, AssignmentV1::class.java)
         )
 
         assertThat(assignmentRepository.count()).isOne()
@@ -414,7 +414,7 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `POST should assign person to unassigned when given an empty set of products`() {
-        assignmentRepository.save(Assignment(
+        assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -426,7 +426,7 @@ class AssignmentControllerInTimeApiTest {
                 products = Sets.newSet()
         )
 
-        val expectedAssignment = Assignment(
+        val expectedAssignment = AssignmentV1(
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -440,9 +440,9 @@ class AssignmentControllerInTimeApiTest {
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val actualAssignments: Set<Assignment> = objectMapper.readValue(
+        val actualAssignments: Set<AssignmentV1> = objectMapper.readValue(
                 result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Assignment::class.java)
+                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, AssignmentV1::class.java)
         )
 
         assertThat(assignmentRepository.count()).isOne()
@@ -487,14 +487,14 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `DELETE should remove assignment(s) given person and date`() {
-        val originalAssignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+        val originalAssignmentForPerson: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        val newAssignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+        val newAssignmentForPerson: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productTwo.id!!,
                 effectiveDate = LocalDate.parse(apr1),
@@ -512,14 +512,14 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `DELETE should assign person to unassigned when no previous assignment exists`() {
-        val originalAssignmentForPerson: Assignment = assignmentRepository.save(Assignment(
+        val originalAssignmentForPerson: AssignmentV1 = assignmentRepository.save(AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
                 effectiveDate = LocalDate.parse(mar1),
                 spaceUuid = editableSpace.uuid
         ))
 
-        val unassignedAssignmentForPerson = Assignment(
+        val unassignedAssignmentForPerson = AssignmentV1(
                 person = person,
                 productId = unassignedProduct.id!!,
                 effectiveDate = LocalDate.parse(mar1),
