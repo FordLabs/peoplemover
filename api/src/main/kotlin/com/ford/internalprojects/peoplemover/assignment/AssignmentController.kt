@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.space.SpaceService
+import com.ford.internalprojects.peoplemover.utilities.AssignmentV1ToAssignmentV2Converter
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -39,6 +40,14 @@ class AssignmentController(
         val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(requestedDate))
         logger.logInfoMessage("All assignments retrieved for person with id: [$personId] on date: [$requestedDate].")
         return ResponseEntity.ok(assignmentsForPerson)
+    }
+
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
+    @GetMapping("/api/v2/{spaceUuid}/assignments/product/{productId}/date/{requestedDate}")
+    fun getAssignmentsV2ByProductIdForDate(@PathVariable spaceUuid: String, @PathVariable productId: Int, @PathVariable requestedDate: String): ResponseEntity<List<AssignmentV2>> {
+        val allAssignmentsForDate = assignmentService.getAssignmentsByDate(spaceUuid, LocalDate.parse(requestedDate));
+        val converter = AssignmentV1ToAssignmentV2Converter()
+        return ResponseEntity.ok(converter.convert(allAssignmentsForDate.filter { assignment ->  productId == assignment.productId}))
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
