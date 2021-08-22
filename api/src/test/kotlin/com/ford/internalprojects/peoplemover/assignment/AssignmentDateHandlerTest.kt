@@ -166,4 +166,43 @@ class AssignmentDateHandlerTest {
 
         assertThat(actual).isEqualTo(expected)
     }
+
+    @Test
+    fun `findEndDate should return null if no assignments are passed to it`() {
+        assertThat(assignmentDateHandler.findEndDate(listOf(), listOf())).isNull()
+    }
+
+    @Test
+    fun `findEndDate should return null when both lists are equal`() {
+        val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
+        val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
+
+        val actual = assignmentDateHandler.findEndDate(uniqueDatesForAssignment, uniqueDatesForAllAssignment)
+
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `findEndDate should return newest of 2 dates when lists are not equal`() {
+        val uniqueDatesForAssignments: List<LocalDate> = listOf(LocalDate.parse(jul1))
+        val uniqueDatesForAllAssignments: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
+
+        val expected: LocalDate = LocalDate.parse(jun1)
+
+        val actual = assignmentDateHandler.findEndDate(uniqueDatesForAssignments, uniqueDatesForAllAssignments)
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `findEndDate should return first missing date`() {
+        val uniqueDatesForAssignments: List<LocalDate> = listOf(LocalDate.parse(sep1), LocalDate.parse(aug1))
+        val uniqueDatesForAllAssignments: List<LocalDate> = listOf(LocalDate.parse(sep1), LocalDate.parse(jul1), LocalDate.parse(aug1))
+
+        val expected: LocalDate = LocalDate.parse(jul1)
+
+        val actual = assignmentDateHandler.findEndDate(uniqueDatesForAssignments, uniqueDatesForAllAssignments)
+
+        assertThat(actual).isEqualTo(expected)
+    }
 }

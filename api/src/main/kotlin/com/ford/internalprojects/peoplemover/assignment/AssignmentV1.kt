@@ -45,5 +45,8 @@ data class AssignmentV1(
         override val spaceUuid: String,
 
         @Transient
-        var startDate: LocalDate? = null
+        var startDate: LocalDate? = null,
+
+        @Transient
+        var endDate: LocalDate? = null
 ): SpaceComponent

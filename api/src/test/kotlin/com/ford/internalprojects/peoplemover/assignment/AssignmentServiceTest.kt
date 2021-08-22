@@ -41,17 +41,19 @@ class AssignmentServiceTest {
         val assignment1 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-06"))
         val assignment2 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"))
         val assignment3 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"))
+        val assignment4 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-07"))
 
         val expectedAssignment1 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"), startDate = LocalDate.parse("2021-06-06"))
-        val expectedAssignment2 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"), startDate = LocalDate.parse("2021-06-07"))
+        val expectedAssignment2 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"), startDate = LocalDate.parse("2021-06-07"), endDate = LocalDate.parse("2021-07-07"))
 
         val allAssignmentsForPerson: List<AssignmentV1> = listOf(assignment1, assignment2, assignment3)
+        val allFutureAssignmentsForPerson: List<AssignmentV1> = listOf(assignment4)
         val assignmentsToUpdate: List<AssignmentV1> = listOf(assignment2, assignment3)
 
         val expectedAssignments: List<AssignmentV1> = listOf(expectedAssignment1, expectedAssignment2)
 
         val localAssignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, AssignmentDateHandler())
-        val actual: List<AssignmentV1> = localAssignmentService.calculateStartDatesForAssignments(assignmentsToUpdate, allAssignmentsForPerson)
+        val actual: List<AssignmentV1> = localAssignmentService.calculateStartAndEndDatesForAssignments(assignmentsToUpdate, allAssignmentsForPerson, allFutureAssignmentsForPerson)
 
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expectedAssignments)
     }
@@ -61,15 +63,17 @@ class AssignmentServiceTest {
         var testPerson = Person(name = "Test Person", spaceUuid = "Test Space")
         val juneAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-06"))
         val julyAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-06"))
+        val augAssignment = AssignmentV1(person = testPerson, productId = 0, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-08-06"))
 
         val allAssignmentsForPerson: List<AssignmentV1> = listOf(julyAssignment, juneAssignment)
+        val allFutureAssignmentsForPerson: List<AssignmentV1> = listOf(augAssignment)
         val assignmentsToUpdate: List<AssignmentV1> = listOf(julyAssignment)
 
-        val expectedAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-06"), startDate = LocalDate.parse("2021-06-06"))
+        val expectedAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-06"), startDate = LocalDate.parse("2021-06-06"), endDate = LocalDate.parse("2021-08-06"))
         val expectedAssignments: List<AssignmentV1> = listOf(expectedAssignment)
 
         val localAssignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, AssignmentDateHandler())
-        val actualAssignments: List<AssignmentV1> = localAssignmentService.calculateStartDatesForAssignments(assignmentsToUpdate, allAssignmentsForPerson)
+        val actualAssignments: List<AssignmentV1> = localAssignmentService.calculateStartAndEndDatesForAssignments(assignmentsToUpdate, allAssignmentsForPerson, allFutureAssignmentsForPerson)
 
         assertThat(actualAssignments).containsExactlyInAnyOrderElementsOf(expectedAssignments)
     }
@@ -97,10 +101,11 @@ class AssignmentServiceTest {
         val dummyDates: List<LocalDate> = listOf(LocalDate.now())
         every { assignmentDateHandler.findUniqueDates(any()) } returns dummyDates
         every { assignmentDateHandler.findStartDate(any(), any()) } returns pretendStartDate
+        every { assignmentDateHandler.findEndDate(any(), any()) } returns null
 
-        val actual = assignmentService.calculateStartDatesForAssignments(assignmentsToUpdate,allAssignmentsForPerson)
+        val actual = assignmentService.calculateStartAndEndDatesForAssignments(assignmentsToUpdate,allAssignmentsForPerson, listOf<AssignmentV1>())
 
-        verify(exactly = 3) { assignmentDateHandler.findUniqueDates(any()) }
+        verify(exactly = 6) { assignmentDateHandler.findUniqueDates(any()) }
         verify(exactly = 2) { assignmentDateHandler.findStartDate(any(), any()) }
 
         assertThat(actual).containsExactlyInAnyOrderElementsOf(updatedAssignmentList)

@@ -63,6 +63,7 @@ interface AssignmentHistory {
     productName: string;
     id: number;
     startDate: Date | undefined;
+    endDate: Date | undefined;
 }
 
 type AssignmentHistoryType = AssignmentHistory | undefined;
@@ -346,6 +347,7 @@ function PersonForm({
                     productName: product.name,
                     id: personsAssignment.id,
                     startDate: personsAssignment.startDate,
+                    endDate: personsAssignment.endDate,
                 };
             } else {
                 return undefined;
@@ -369,10 +371,17 @@ function PersonForm({
                             if (productName === 'unassigned') {
                                 productName = capitalize(productName);
                             }
-                            let effectiveDate = (assignmentHistory.startDate ? moment(assignmentHistory.startDate).format('MM/DD/YYYY') : 'undefined date');
-                            return (
-                                <div key={assignmentHistory.id}>Moved to {productName} on {effectiveDate}</div>
-                            );
+                            let startDate = (assignmentHistory.startDate ? moment(assignmentHistory.startDate).format('MM/DD/YYYY') : 'undefined date');
+                            let endDate = (assignmentHistory.endDate ? moment(assignmentHistory.endDate).format('MM/DD/YYYY') : undefined);
+                            if (endDate) {
+                                return (
+                                    <div key={assignmentHistory.id}>Assigned to {productName} from {startDate} to {endDate}</div>
+                                );
+                            } else {
+                                return (
+                                    <div key={assignmentHistory.id}>Moved to {productName} on {startDate}</div>
+                                );
+                            }
                         } else {
                             return (
                                 <div>No Assignment History</div>

@@ -43,20 +43,23 @@ class AssignmentService(
         val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
         val allAssignments: MutableList<AssignmentV1> = mutableListOf()
         people.forEach { person ->
-            val assignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
-            val lastAssignments: List<AssignmentV1> = getAllAssignmentsForPersonOnDate(person.id, assignmentsForPerson)
-            allAssignments.addAll(calculateStartDatesForAssignments(lastAssignments, assignmentsForPerson))
+            val previousAndCurrentAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
+            val futureAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateGreaterThanOrderByEffectiveDateAsc(person.id, requestedDate)
+            val lastAssignments: List<AssignmentV1> = getAllAssignmentsForPersonOnDate(person.id, previousAndCurrentAssignmentsForPerson)
+            allAssignments.addAll(calculateStartAndEndDatesForAssignments(lastAssignments, previousAndCurrentAssignmentsForPerson, futureAssignmentsForPerson))
         }
 
         return allAssignments
     }
 
-    fun calculateStartDatesForAssignments(assignments: List<AssignmentV1>, allAssignmentsSorted: List<AssignmentV1>): List<AssignmentV1> {
+    fun calculateStartAndEndDatesForAssignments(assignments: List<AssignmentV1>, previousAndCurrentAssignmentsSorted: List<AssignmentV1>, futureAssignmentsSorted: List<AssignmentV1>): List<AssignmentV1> {
         val returnValue: MutableList<AssignmentV1> = mutableListOf()
 
-        val allImportantDates = assignmentDateHandler.findUniqueDates(allAssignmentsSorted)
+        val allImportantPreviousAndCurrentDates = assignmentDateHandler.findUniqueDates(previousAndCurrentAssignmentsSorted)
+        val allImportantFutureDates = assignmentDateHandler.findUniqueDates(futureAssignmentsSorted)
         assignments.forEach { assignment ->
-            val importantDatesforProduct = assignmentDateHandler.findUniqueDates(allAssignmentsSorted.filter{all -> all.productId == assignment.productId})
+            val importantPreviousAndCurrentDatesForProduct = assignmentDateHandler.findUniqueDates(previousAndCurrentAssignmentsSorted.filter{ all -> all.productId == assignment.productId})
+            val importantFutureDatesForProduct = assignmentDateHandler.findUniqueDates(futureAssignmentsSorted.filter{ all -> all.productId == assignment.productId})
                 returnValue.add(
                         AssignmentV1(
                                 id = assignment.id,
@@ -65,7 +68,9 @@ class AssignmentService(
                                 effectiveDate = assignment.effectiveDate,
                                 productId = assignment.productId,
                                 spaceUuid = assignment.spaceUuid,
-                                startDate = assignmentDateHandler.findStartDate(importantDatesforProduct, allImportantDates)))
+                                startDate = assignmentDateHandler.findStartDate(importantPreviousAndCurrentDatesForProduct, allImportantPreviousAndCurrentDates),
+                                endDate = assignmentDateHandler.findEndDate(importantFutureDatesForProduct, allImportantFutureDates)
+                        ))
         }
         return returnValue
     }
