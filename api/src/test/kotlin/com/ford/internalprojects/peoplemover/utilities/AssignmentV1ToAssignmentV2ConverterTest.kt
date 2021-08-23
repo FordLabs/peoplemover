@@ -1,7 +1,6 @@
 package com.ford.internalprojects.peoplemover.utilities
 
-import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
-import com.ford.internalprojects.peoplemover.assignment.AssignmentV2
+import com.ford.internalprojects.peoplemover.assignment.*
 import com.ford.internalprojects.peoplemover.person.Person
 import org.junit.Test
 import java.time.LocalDate
@@ -130,4 +129,32 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
         val conversionResult : List<AssignmentV2> = AssignmentV1ToAssignmentV2Converter().convert(listOf(prod1assignment1, prod1assignment2,prod1assignment3,prod3assignment1,prod4assignment1,prod1assignment4))
         assertThat(conversionResult).containsExactlyInAnyOrderElementsOf(listOf(expectedProd1,expectedProd3,expectedProd4,expectedProd1Again))
     }
+
+    @Test
+    fun `can put one new assignment onto an existing set` () {
+        val spaceUuid = "doesntmatter"
+        val testPerson1 = Person(id = 1, name = "Bugs Bunny", spaceUuid = spaceUuid)
+        val testPerson2 = Person(id = 2, name = "Bugs Bunny", spaceUuid = spaceUuid)
+        val preExistingAssignments : List<AssignmentV2> = listOf(
+                AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = null),
+                AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = null)
+        );
+        val toPut : CreateAssignmentsRequest = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(ProductPlaceholderPair(3,false)));
+        val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson2, preExistingAssignments)
+
+        assertThat(result[0]).isEqualTo(preExistingAssignments[0]);
+        assertThat(result[1]).isEqualTo(AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-02"), endDate = LocalDate.parse("2275-01-03")))
+        assertThat(result[2]).isEqualTo(AssignmentV2(person=testPerson2, productId = 3, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-03"), endDate = null))
+    }
+
+    @Test
+    fun `can put several new assignments onto an existing set` () {
+
+    }
+
+    @Test
+    fun `can cancel one existing assignment via put` () {
+
+    }
+
 }

@@ -1,7 +1,9 @@
 package com.ford.internalprojects.peoplemover.utilities
 
+import com.ford.internalprojects.peoplemover.assignment.AssignmentRequest
 import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentV2
+import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.person.Person
 import java.time.LocalDate
 import kotlin.streams.toList
@@ -16,6 +18,22 @@ class AssignmentV1ToAssignmentV2Converter {
             v2Assignments.addAll(createListOfV2AssignmentsForAPerson(v1AssignmentsForPerson))
         }
         return v2Assignments.toList()
+    }
+
+    fun put(newAssignmentRequest: CreateAssignmentsRequest, person: Person, preExistingAssignments: List<AssignmentV2>) : List<AssignmentV2>{
+        for (assignment in getAssignmentsIntersectingDate(preExistingAssignments, newAssignmentRequest.requestedDate).filter { it.person.id == person.id }){
+            if(assignment.endDate == null){
+                assignment.endDate = newAssignmentRequest.requestedDate;
+            }
+        }
+        return preExistingAssignments;
+    }
+
+    private fun getAssignmentsIntersectingDate(assignments: List<AssignmentV2>, date: LocalDate): List<AssignmentV2> {
+        return assignments.filter { assignment: AssignmentV2 -> (assignment.startDate.isBefore(date) ||
+                assignment.startDate.isEqual(date)) &&
+                (assignment.endDate == null ||
+                        assignment.endDate!!.isAfter(date))}
     }
 
     private fun mapPersonToV1Assignments(v1Assignments: List<AssignmentV1>): Map<Person, List<AssignmentV1>> {
