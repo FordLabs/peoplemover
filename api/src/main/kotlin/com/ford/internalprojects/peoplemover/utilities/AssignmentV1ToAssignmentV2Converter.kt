@@ -1,6 +1,5 @@
 package com.ford.internalprojects.peoplemover.utilities
 
-import com.ford.internalprojects.peoplemover.assignment.AssignmentRequest
 import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentV2
 import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
@@ -20,13 +19,29 @@ class AssignmentV1ToAssignmentV2Converter {
         return v2Assignments.toList()
     }
 
-    fun put(newAssignmentRequest: CreateAssignmentsRequest, person: Person, preExistingAssignments: List<AssignmentV2>) : List<AssignmentV2>{
-        for (assignment in getAssignmentsIntersectingDate(preExistingAssignments, newAssignmentRequest.requestedDate).filter { it.person.id == person.id }){
-            if(assignment.endDate == null){
-                assignment.endDate = newAssignmentRequest.requestedDate;
+    fun put(newAssignmentV1Request: CreateAssignmentsRequest, person: Person, preExistingAssignmentsV2: List<AssignmentV2>) : List<AssignmentV2>{
+        var updatedAssignmentsV2 = endExistingAssignments(newAssignmentV1Request, person, preExistingAssignmentsV2).toMutableList()
+        updatedAssignmentsV2.addAll(createNewAssignments(newAssignmentV1Request, person))
+        return updatedAssignmentsV2.toList();
+    }
+
+    fun endExistingAssignments(newAssignmentV1Request: CreateAssignmentsRequest, person: Person, preExistingAssignmentsV2: List<AssignmentV2>): List<AssignmentV2> {
+        var personAssignmentsV2 = getAssignmentsIntersectingDate(preExistingAssignmentsV2, newAssignmentV1Request.requestedDate).filter { it.person.id == person.id }
+        var newAssignedProducts = newAssignmentV1Request.products.map { it.productId }.toSet()
+        for(assignmentV2 in personAssignmentsV2) {
+            if(!newAssignedProducts.contains(assignmentV2.productId)) {
+                assignmentV2.endDate = newAssignmentV1Request.requestedDate
             }
         }
-        return preExistingAssignments;
+        return preExistingAssignmentsV2.toList()
+    }
+
+    fun createNewAssignments(newAssignmentV1Request: CreateAssignmentsRequest, person: Person): List<AssignmentV2> {
+        var newAssignmentsV2 = mutableListOf<AssignmentV2>()
+        for(newAssignmentV1Info in newAssignmentV1Request.products) {
+            newAssignmentsV2.add(AssignmentV2(person = person, spaceUuid = person.spaceUuid, placeholder = newAssignmentV1Info.placeholder, productId = newAssignmentV1Info.productId, startDate = newAssignmentV1Request.requestedDate, endDate = null))
+        }
+        return newAssignmentsV2.toList()
     }
 
     private fun getAssignmentsIntersectingDate(assignments: List<AssignmentV2>, date: LocalDate): List<AssignmentV2> {

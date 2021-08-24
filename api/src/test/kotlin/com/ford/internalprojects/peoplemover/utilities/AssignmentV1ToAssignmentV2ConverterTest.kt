@@ -5,8 +5,6 @@ import com.ford.internalprojects.peoplemover.person.Person
 import org.junit.Test
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import java.io.BufferedReader
-import java.time.format.DateTimeFormatter
 
 internal class AssignmentV1ToAssignmentV2ConverterTest {
 
@@ -135,16 +133,19 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "Bugs Bunny", spaceUuid = spaceUuid)
         val testPerson2 = Person(id = 2, name = "Bugs Bunny", spaceUuid = spaceUuid)
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = null)
+        val assignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = null)
         val preExistingAssignments : List<AssignmentV2> = listOf(
-                AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = null),
-                AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = null)
+                assignment1,
+                assignment2
         );
-        val toPut : CreateAssignmentsRequest = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(ProductPlaceholderPair(3,false)));
+        val expectedAssignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = LocalDate.parse("2275-01-03"))
+        val expectedAssignment3 = AssignmentV2(person=testPerson2, productId = 3, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-03"), endDate = null)
+
+        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(ProductPlaceholderPair(3,false)));
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson2, preExistingAssignments)
 
-        assertThat(result[0]).isEqualTo(preExistingAssignments[0]);
-        assertThat(result[1]).isEqualTo(AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-02"), endDate = LocalDate.parse("2275-01-03")))
-        assertThat(result[2]).isEqualTo(AssignmentV2(person=testPerson2, productId = 3, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-03"), endDate = null))
+        assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(assignment1, expectedAssignment2, expectedAssignment3))
     }
 
     @Test
