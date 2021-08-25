@@ -2,6 +2,7 @@ package com.ford.internalprojects.peoplemover.utilities
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentV2
+import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.person.Person
 import java.time.LocalDate
 import kotlin.streams.toList
@@ -16,6 +17,59 @@ class AssignmentV1ToAssignmentV2Converter {
             v2Assignments.addAll(createListOfV2AssignmentsForAPerson(v1AssignmentsForPerson))
         }
         return v2Assignments.toList()
+    }
+
+    fun put(newAssignmentV1Request: CreateAssignmentsRequest, person: Person, preExistingAssignmentsV2: List<AssignmentV2>) : List<AssignmentV2>{
+        var personAssignmentsV2 = preExistingAssignmentsV2.filter { it.person.id == person.id }
+        var notPersonAssignmentsV2 = preExistingAssignmentsV2.filter { it.person.id != person.id }
+        var updatedAssignmentsV2 = notPersonAssignmentsV2.toMutableList()
+        personAssignmentsV2 = handleTheFunkyMergeCase(newAssignmentV1Request, personAssignmentsV2);
+        updatedAssignmentsV2.addAll(endExistingAssignments(newAssignmentV1Request, personAssignmentsV2))
+        updatedAssignmentsV2.addAll(createNewAssignments(newAssignmentV1Request, person, personAssignmentsV2))
+        return updatedAssignmentsV2.toList();
+    }
+
+    fun handleTheFunkyMergeCase(req: CreateAssignmentsRequest, assignments: List<AssignmentV2>): List<AssignmentV2>{
+        val toReturn: MutableList<AssignmentV2> = assignments.toMutableList()
+        for (product in req.products){
+                val postcursorAssignment: AssignmentV2? = toReturn.find { assignmentV2 ->  assignmentV2.productId == product.productId && assignmentV2.startDate.isEqual(req.requestedDate.plusDays(1))}
+                val precursorAssignment: AssignmentV2? = toReturn.find{assignmentV2 -> assignmentV2.productId == product.productId && assignmentV2.endDate!!.isEqual(req.requestedDate.plusDays(- 1))}
+            if(precursorAssignment != null && postcursorAssignment != null){
+                precursorAssignment.endDate = postcursorAssignment.endDate;
+                toReturn.remove(postcursorAssignment)
+            }
+        }
+        return toReturn;
+    }
+
+    fun endExistingAssignments(newAssignmentV1Request: CreateAssignmentsRequest, personAssignmentsV2: List<AssignmentV2>): List<AssignmentV2> {
+        var newAssignedProducts = newAssignmentV1Request.products.map { it.productId }.toSet()
+        for(assignmentV2 in personAssignmentsV2) {
+            if(isAssignmentIntersectingDate(assignmentV2, newAssignmentV1Request.requestedDate) && !newAssignedProducts.contains(assignmentV2.productId)) {
+                assignmentV2.endDate = newAssignmentV1Request.requestedDate
+            }
+        }
+        return personAssignmentsV2.toList()
+    }
+
+    fun createNewAssignments(newAssignmentV1Request: CreateAssignmentsRequest, person: Person, personAssignmentsV2: List<AssignmentV2>): List<AssignmentV2> {
+        var newAssignmentsV2 = mutableListOf<AssignmentV2>()
+        var earliestStartDate = personAssignmentsV2.minBy { it.startDate }?.startDate
+        var endDate: LocalDate? = null
+        if (earliestStartDate != null && newAssignmentV1Request.requestedDate.isBefore(earliestStartDate)) {
+            endDate = earliestStartDate
+        }
+        for(newAssignmentV1Info in newAssignmentV1Request.products) {
+            if(!personAssignmentsV2.any { it.productId == newAssignmentV1Info.productId }) {
+                newAssignmentsV2.add(AssignmentV2(person = person, spaceUuid = person.spaceUuid, placeholder = newAssignmentV1Info.placeholder, productId = newAssignmentV1Info.productId, startDate = newAssignmentV1Request.requestedDate, endDate = endDate))
+            }
+        }
+        return newAssignmentsV2.toList()
+    }
+
+    private fun isAssignmentIntersectingDate(assignment: AssignmentV2, date: LocalDate): Boolean {
+        return (assignment.startDate.isBefore(date) || assignment.startDate.isEqual(date)) &&
+               (assignment.endDate == null || assignment.endDate!!.isAfter(date))
     }
 
     private fun mapPersonToV1Assignments(v1Assignments: List<AssignmentV1>): Map<Person, List<AssignmentV1>> {
