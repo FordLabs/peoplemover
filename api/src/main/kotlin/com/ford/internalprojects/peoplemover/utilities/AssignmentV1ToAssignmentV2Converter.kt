@@ -23,9 +23,23 @@ class AssignmentV1ToAssignmentV2Converter {
         var personAssignmentsV2 = preExistingAssignmentsV2.filter { it.person.id == person.id }
         var notPersonAssignmentsV2 = preExistingAssignmentsV2.filter { it.person.id != person.id }
         var updatedAssignmentsV2 = notPersonAssignmentsV2.toMutableList()
+        personAssignmentsV2 = handleTheFunkyMergeCase(newAssignmentV1Request, personAssignmentsV2);
         updatedAssignmentsV2.addAll(endExistingAssignments(newAssignmentV1Request, personAssignmentsV2))
         updatedAssignmentsV2.addAll(createNewAssignments(newAssignmentV1Request, person, personAssignmentsV2))
         return updatedAssignmentsV2.toList();
+    }
+
+    fun handleTheFunkyMergeCase(req: CreateAssignmentsRequest, assignments: List<AssignmentV2>): List<AssignmentV2>{
+        val toReturn: MutableList<AssignmentV2> = assignments.toMutableList()
+        for (product in req.products){
+                val postcursorAssignment: AssignmentV2? = toReturn.find { assignmentV2 ->  assignmentV2.productId == product.productId && assignmentV2.startDate.isEqual(req.requestedDate.plusDays(1))}
+                val precursorAssignment: AssignmentV2? = toReturn.find{assignmentV2 -> assignmentV2.productId == product.productId && assignmentV2.endDate!!.isEqual(req.requestedDate.plusDays(- 1))}
+            if(precursorAssignment != null && postcursorAssignment != null){
+                precursorAssignment.endDate = postcursorAssignment.endDate;
+                toReturn.remove(postcursorAssignment)
+            }
+        }
+        return toReturn;
     }
 
     fun endExistingAssignments(newAssignmentV1Request: CreateAssignmentsRequest, personAssignmentsV2: List<AssignmentV2>): List<AssignmentV2> {
