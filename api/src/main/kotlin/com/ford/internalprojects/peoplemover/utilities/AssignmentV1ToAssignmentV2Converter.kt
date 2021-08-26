@@ -20,8 +20,9 @@ class AssignmentV1ToAssignmentV2Converter {
     }
 
     fun put(newAssignmentV1Request: CreateAssignmentsRequest, person: Person, preExistingAssignmentsV2: List<AssignmentV2>): List<AssignmentV2> {
-        var personAssignmentsV2 = preExistingAssignmentsV2.filter { it.person.id == person.id }
-        var notPersonAssignmentsV2 = preExistingAssignmentsV2.filter { it.person.id != person.id }
+        val preExistingAssignmentsCopy = preExistingAssignmentsV2.map { it.copy() }
+        var personAssignmentsV2 = preExistingAssignmentsCopy.filter { it.person.id == person.id }
+        var notPersonAssignmentsV2 = preExistingAssignmentsCopy.filter { it.person.id != person.id }
         var updatedAssignmentsV2 = notPersonAssignmentsV2.toMutableList()
         personAssignmentsV2 = handleTheFunkyMergeCase(newAssignmentV1Request, personAssignmentsV2);
         updatedAssignmentsV2.addAll(endExistingAssignments(newAssignmentV1Request, personAssignmentsV2))
