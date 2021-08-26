@@ -39,7 +39,7 @@ data class AssignmentV2(
         var productId: Int,
 
         @Column(name = "start_date")
-        val startDate: LocalDate = LocalDate.now(),
+        var startDate: LocalDate = LocalDate.now(),
 
         @Column(name = "end_date")
         var endDate: LocalDate? = LocalDate.now(),
