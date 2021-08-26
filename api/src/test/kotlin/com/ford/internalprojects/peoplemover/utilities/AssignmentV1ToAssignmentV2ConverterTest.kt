@@ -280,4 +280,27 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
 
         assertThat(assignmentToProduct2).isEqualTo( AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10")))
     }
+
+    @Test
+    fun `can merge with a later assignment` () {
+        val spaceUuid = "doesntmatter"
+        val testPerson1 = Person(id = 1, name = "Luke Skywalker", spaceUuid = spaceUuid)
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-05"))
+        val assignment2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-03"), endDate = LocalDate.parse("2275-01-05"))
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-04"))
+
+        val preExistingAssignments : List<AssignmentV2> = listOf(
+                assignment1,assignment2,assignment3
+        )
+        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-02"), setOf(
+                ProductPlaceholderPair(1,false),
+                ProductPlaceholderPair(2,false),
+                ProductPlaceholderPair(3,false)
+        ));
+
+        val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
+
+        val expectedMergedAssignment = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-02"), endDate = LocalDate.parse("2275-01-05"))
+        assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(assignment1, expectedMergedAssignment, assignment3))
+    }
 }
