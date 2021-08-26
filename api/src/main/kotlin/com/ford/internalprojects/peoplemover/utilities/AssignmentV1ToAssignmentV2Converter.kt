@@ -136,7 +136,7 @@ class AssignmentV1ToAssignmentV2Converter {
 
     private fun endAssignments(v2Assignments: List<AssignmentV2>, endDate: LocalDate) {
         for (v2Assignment in v2Assignments) {
-            v2Assignment.endDate = endDate;
+            v2Assignment.endDate = endDate.minusDays(1);
         }
     }
 
