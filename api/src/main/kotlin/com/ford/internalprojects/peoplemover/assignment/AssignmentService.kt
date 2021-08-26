@@ -92,6 +92,41 @@ class AssignmentService(
         return uniqueEffectiveDates.filterNot { effectiveDate -> getReassignmentsByExactDate(spaceUuid, effectiveDate).isNullOrEmpty() }.toSet()
     }
 
+    fun getEffectiveDates2(spaceUuid: String): Set<LocalDate> {
+        val uniqueEffectiveDates = mutableSetOf<LocalDate>()
+        val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
+        // Gather information person by person
+        people.map { person ->
+            val assignmentsForPerson: List<AssignmentV1> = assignmentRepository.getByPersonIdAndSpaceUuid(person.id!!, spaceUuid)
+            val assignmentsByDate = mutableMapOf<LocalDate, MutableSet<Int>>()
+            // Group a person's assignments by date
+            assignmentsForPerson.map { assignment ->
+                if(assignment.effectiveDate != null) {
+                    if(assignmentsByDate.containsKey(assignment.effectiveDate)) {
+                        assignmentsByDate[assignment.effectiveDate]!!.add(assignment.productId)
+                    } else {
+                        assignmentsByDate[assignment.effectiveDate] = mutableSetOf(assignment.productId)
+                    }
+                }
+            }
+            // Remember previous set of products for a particular date
+            var previousSetOfProducts = mutableSetOf<Int>()
+            // Sort the dates and iterate over them
+            assignmentsByDate.toSortedMap().keys.map { date ->
+                // Ignore dates we've already saved
+                if(!uniqueEffectiveDates.contains(date)) {
+                    // Ignore dates that have a set of products for this person that we've already seen
+                    if(!assignmentsByDate[date]!!.containsAll(previousSetOfProducts)) {
+                        // Haven't seen this before. Save the date, save the set of assignments
+                        uniqueEffectiveDates.add(date)
+                        previousSetOfProducts = assignmentsByDate[date]!!
+                    }
+                }
+            }
+        }
+        return uniqueEffectiveDates.toSet()
+    }
+
     fun getReassignmentsByExactDate(spaceUuid: String, requestedDate: LocalDate): List<Reassignment>? {
         val assignmentsWithExactDate = assignmentRepository.findAllBySpaceUuidAndEffectiveDate(spaceUuid = spaceUuid, requestedDate = requestedDate).sortedWith(compareByDescending { it.id })
         val assignmentsWithPreviousDate = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedDate)

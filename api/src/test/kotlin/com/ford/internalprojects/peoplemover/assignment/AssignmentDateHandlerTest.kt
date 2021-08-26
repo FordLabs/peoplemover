@@ -187,7 +187,7 @@ class AssignmentDateHandlerTest {
         val uniqueDatesForAssignments: List<LocalDate> = listOf(LocalDate.parse(jul1))
         val uniqueDatesForAllAssignments: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
 
-        val expected: LocalDate = LocalDate.parse(jun1)
+        val expected: LocalDate = LocalDate.parse(jun1).minusDays(1)
 
         val actual = assignmentDateHandler.findEndDate(uniqueDatesForAssignments, uniqueDatesForAllAssignments)
 
@@ -199,7 +199,7 @@ class AssignmentDateHandlerTest {
         val uniqueDatesForAssignments: List<LocalDate> = listOf(LocalDate.parse(sep1), LocalDate.parse(aug1))
         val uniqueDatesForAllAssignments: List<LocalDate> = listOf(LocalDate.parse(sep1), LocalDate.parse(jul1), LocalDate.parse(aug1))
 
-        val expected: LocalDate = LocalDate.parse(jul1)
+        val expected: LocalDate = LocalDate.parse(jul1).minusDays(1)
 
         val actual = assignmentDateHandler.findEndDate(uniqueDatesForAssignments, uniqueDatesForAllAssignments)
 

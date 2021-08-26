@@ -23,6 +23,8 @@ import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 
 @RestController
@@ -61,9 +63,21 @@ class AssignmentController(
     @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
     @GetMapping(path = ["/api/spaces/{spaceUuid}/assignment/dates"])
     fun getAllEffectiveDates(@PathVariable spaceUuid: String): ResponseEntity<Set<LocalDate>> {
-        val dates = assignmentService.getEffectiveDates(spaceUuid)
+        logger.logInfoMessage("START getAllEffectiveDates : [$spaceUuid].")
+        val start1 = Instant.now()
+        val dates1 = assignmentService.getEffectiveDates(spaceUuid)
+        val end1 = Instant.now()
+        val dates2 = assignmentService.getEffectiveDates2(spaceUuid)
+        val end2 = Instant.now()
+        val duration1 = Duration.between(start1, end1).toMillis()
+        val duration2 = Duration.between(end1, end2).toMillis()
+        val isEqual = dates1.containsAll(dates2)
+        logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]: original : $duration1")
+        logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]:      new : $duration2")
+        logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]:   equal? : $isEqual")
+        logger.logInfoMessage("END   getAllEffectiveDates : [$spaceUuid].")
         logger.logInfoMessage("All effective dates retrieved for space with uuid: [$spaceUuid].")
-        return ResponseEntity.ok(dates)
+        return ResponseEntity.ok(dates1)
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")

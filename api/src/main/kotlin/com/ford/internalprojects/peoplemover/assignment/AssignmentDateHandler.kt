@@ -38,7 +38,7 @@ class AssignmentDateHandler {
             endDate = null
             for (date in uniqueDatesForAllAssignmentSorted) {
                 if (!uniqueDatesForAssignments.contains(date)) {
-                    endDate = date
+                    endDate = date.minusDays(1)
                     break
                 }
             }
