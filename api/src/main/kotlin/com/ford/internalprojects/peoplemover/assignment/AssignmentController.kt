@@ -46,22 +46,25 @@ class AssignmentController(
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/v2/{spaceUuid}/assignments/product/{productId}")
     fun getAssignmentsV2ByProductIdForDate(@PathVariable spaceUuid: String, @PathVariable productId: Int): ResponseEntity<List<AssignmentV2>> {
-        val allAssignmentsForDate = assignmentService.getAssignmentsForSpace(spaceUuid);
-        return ResponseEntity.ok(converter.convert(allAssignmentsForDate).filter { assignment ->  productId == assignment.productId})
+        val allAssignments = assignmentService.getAssignmentsForSpace(spaceUuid);
+        logger.logInfoMessage("All v2 assignments retrieved for space [$spaceUuid] for product [$productId].")
+        return ResponseEntity.ok(converter.convert(allAssignments).filter { assignment ->  productId == assignment.productId})
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/v2/{spaceUuid}/assignments/person/{personId}")
     fun getAssignmentsV2ByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int): ResponseEntity<List<AssignmentV2>> {
-        val allAssignmentsForDate = assignmentService.getAssignmentsForSpace(spaceUuid);
-        return ResponseEntity.ok(converter.convert(allAssignmentsForDate).filter { assignment ->  personId == assignment.person.id})
+        val allAssignments = assignmentService.getAssignmentsForSpace(spaceUuid);
+        logger.logInfoMessage("All v2 assignments retrieved for space [$spaceUuid] for person [$personId].")
+        return ResponseEntity.ok(converter.convert(allAssignments).filter { assignment ->  personId == assignment.person.id})
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/v2/{spaceUuid}/assignments")
     fun getAssignmentsV2ByPersonIdForDate(@PathVariable spaceUuid: String): ResponseEntity<List<AssignmentV2>> {
-        val allAssignmentsForDate = assignmentService.getAssignmentsForSpace(spaceUuid);
-        return ResponseEntity.ok(converter.convert(allAssignmentsForDate))
+        val allAssignments = assignmentService.getAssignmentsForSpace(spaceUuid);
+        logger.logInfoMessage("All v2 assignments retrieved for space [$spaceUuid].")
+        return ResponseEntity.ok(converter.convert(allAssignments))
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
