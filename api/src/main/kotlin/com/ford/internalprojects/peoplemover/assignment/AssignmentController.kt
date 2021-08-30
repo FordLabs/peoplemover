@@ -29,6 +29,7 @@ import java.time.LocalDate
 class AssignmentController(
         private val assignmentService: AssignmentService,
         private val spaceService: SpaceService,
+        private val converter: AssignmentV1ToAssignmentV2Converter,
         private val logger: BasicLogger
 ) {
 
@@ -46,7 +47,6 @@ class AssignmentController(
     @GetMapping("/api/v2/{spaceUuid}/assignments/product/{productId}")
     fun getAssignmentsV2ByProductIdForDate(@PathVariable spaceUuid: String, @PathVariable productId: Int): ResponseEntity<List<AssignmentV2>> {
         val allAssignmentsForDate = assignmentService.getAssignmentsForSpace(spaceUuid);
-        val converter = AssignmentV1ToAssignmentV2Converter()
         return ResponseEntity.ok(converter.convert(allAssignmentsForDate).filter { assignment ->  productId == assignment.productId})
     }
 
@@ -54,8 +54,14 @@ class AssignmentController(
     @GetMapping("/api/v2/{spaceUuid}/assignments/person/{personId}")
     fun getAssignmentsV2ByPersonIdForDate(@PathVariable spaceUuid: String, @PathVariable personId: Int): ResponseEntity<List<AssignmentV2>> {
         val allAssignmentsForDate = assignmentService.getAssignmentsForSpace(spaceUuid);
-        val converter = AssignmentV1ToAssignmentV2Converter()
         return ResponseEntity.ok(converter.convert(allAssignmentsForDate).filter { assignment ->  personId == assignment.person.id})
+    }
+
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
+    @GetMapping("/api/v2/{spaceUuid}/assignments")
+    fun getAssignmentsV2ByPersonIdForDate(@PathVariable spaceUuid: String): ResponseEntity<List<AssignmentV2>> {
+        val allAssignmentsForDate = assignmentService.getAssignmentsForSpace(spaceUuid);
+        return ResponseEntity.ok(converter.convert(allAssignmentsForDate))
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'modify')")

@@ -6,7 +6,9 @@ import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.person.Person
 import java.time.LocalDate
 import kotlin.streams.toList
+import org.springframework.stereotype.Service
 
+@Service
 class AssignmentV1ToAssignmentV2Converter {
     fun convert(v1Assignments: List<AssignmentV1>): List<AssignmentV2> {
         val v2Assignments = mutableListOf<AssignmentV2>()
