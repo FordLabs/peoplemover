@@ -113,9 +113,9 @@ class AssignmentService(
             var previousSetOfProducts = mutableSetOf<Int>()
             // Sort the dates and iterate over them
             assignmentsByDate.toSortedMap().keys.map { date ->
-                // Ignore dates we've already saved
+                // Ignore dates we've already saved (from previous people)
                 if(!uniqueEffectiveDates.contains(date)) {
-                    // Ignore dates that have a set of products for this person that we've already seen
+                    // Ignore dates that have a set of products for this person that we've already seen (duplicates)
                     if(!assignmentsByDate[date]!!.containsAll(previousSetOfProducts)) {
                         // Haven't seen this before. Save the date, save the set of assignments
                         uniqueEffectiveDates.add(date)
