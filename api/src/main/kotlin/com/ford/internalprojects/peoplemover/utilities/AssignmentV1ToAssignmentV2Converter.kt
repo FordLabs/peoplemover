@@ -63,7 +63,7 @@ class AssignmentV1ToAssignmentV2Converter {
         var newAssignedProducts = newAssignmentV1Request.products.map { it.productId }.toSet()
         for (assignmentV2 in personAssignmentsV2) {
             if (isAssignmentIntersectingDate(assignmentV2, newAssignmentV1Request.requestedDate) && !newAssignedProducts.contains(assignmentV2.productId)) {
-                assignmentV2.endDate = newAssignmentV1Request.requestedDate
+                assignmentV2.endDate = newAssignmentV1Request.requestedDate.minusDays(1)
             }
         }
         return personAssignmentsV2.toList()
@@ -74,7 +74,7 @@ class AssignmentV1ToAssignmentV2Converter {
         var earliestStartDate = personAssignmentsV2.minBy { it.startDate }?.startDate
         var endDate: LocalDate? = null
         if (earliestStartDate != null && newAssignmentV1Request.requestedDate.isBefore(earliestStartDate)) {
-            endDate = earliestStartDate
+            endDate = earliestStartDate.minusDays(1)
         }
         for (newAssignmentV1Info in newAssignmentV1Request.products) {
             if (!personAssignmentsV2.any { it.productId == newAssignmentV1Info.productId }) {
@@ -115,9 +115,7 @@ class AssignmentV1ToAssignmentV2Converter {
                 endAssignments(findV2AssignmentsToEnd(v2Assignments, v1AssignmentsForEffectiveDate), effectiveDate)
                 for (v1Assignment in v1AssignmentsForEffectiveDate) {
                     if (!isAssignedToProductOnDate(v1Assignment.productId, effectiveDate, v2Assignments)) {
-                        // TODO: Remove id assignment from next line. Let AssignmentRepository set up Id behind the scenes. This is just for testing purposes right now.
-                        // TODO: Verify that the v1Assignment.person has been created properly.
-                        v2Assignments.add(AssignmentV2(id = v1Assignment.id, person = v1Assignment.person, placeholder = v1Assignment.placeholder, productId = v1Assignment.productId, startDate = effectiveDate, endDate = null, spaceUuid = v1Assignment.spaceUuid));
+                        v2Assignments.add(AssignmentV2(person = v1Assignment.person, placeholder = v1Assignment.placeholder, productId = v1Assignment.productId, startDate = effectiveDate, endDate = null, spaceUuid = v1Assignment.spaceUuid));
                     }
                 }
             }
@@ -136,9 +134,9 @@ class AssignmentV1ToAssignmentV2Converter {
         return v2AssignmentsToBeEnded.toList()
     }
 
-    private fun endAssignments(v2Assignments: List<AssignmentV2>, endDate: LocalDate) {
+    private fun endAssignments(v2Assignments: List<AssignmentV2>, nextStartDate: LocalDate) {
         for (v2Assignment in v2Assignments) {
-            v2Assignment.endDate = endDate.minusDays(1);
+            v2Assignment.endDate = nextStartDate.minusDays(1);
         }
     }
 
