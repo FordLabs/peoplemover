@@ -129,10 +129,10 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     }
 
     @Test
-    fun `put can add one new assignment onto an existing set` () {
+    fun `Put can put one new assignment each for two people onto an existing set` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "Bugs Bunny", spaceUuid = spaceUuid)
-        val testPerson2 = Person(id = 2, name = "Bugs Bunny", spaceUuid = spaceUuid)
+        val testPerson2 = Person(id = 2, name = "Babs Bunny", spaceUuid = spaceUuid)
         val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = null)
         val assignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = null)
         val preExistingAssignments : List<AssignmentV2> = listOf(
@@ -149,7 +149,7 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     }
 
     @Test
-    fun `put can add several new assignments onto an existing set` () {
+    fun `Put can add several new assignments onto an existing set without disrupting an existing assignment for a different person` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "Al Capone", spaceUuid = spaceUuid)
         val testPerson2 = Person(id = 2, name = "John Dillinger", spaceUuid = spaceUuid)
