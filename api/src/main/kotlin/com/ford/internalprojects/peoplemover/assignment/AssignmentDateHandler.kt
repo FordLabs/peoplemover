@@ -31,10 +31,10 @@ class AssignmentDateHandler {
         val uniqueDatesForAllAssignmentSorted = uniqueAllAssignmentFutureDates.sortedByDescending { date -> date }.reversed()
 
         var endDate: LocalDate? = null
-        if(uniqueAllAssignmentFutureDates.size > 0) {
+        if(uniqueAllAssignmentFutureDates.isNotEmpty()) {
             endDate = uniqueAllAssignmentFutureDates.first()
         }
-        if (uniqueProductAssignmentFutureDates.size > 0) {
+        if (uniqueProductAssignmentFutureDates.isNotEmpty()) {
             endDate = null
             for (date in uniqueDatesForAllAssignmentSorted) {
                 if (!uniqueProductAssignmentFutureDates.contains(date)) {

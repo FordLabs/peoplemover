@@ -37,8 +37,8 @@ class AssignmentService(
     fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<AssignmentV1> {
         val previousAndCurrentAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
         val futureAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateGreaterThanOrderByEffectiveDateAsc(personId, date)
-        val lastAssignments: List<AssignmentV1> = getAllAssignmentsForPersonOnDate(personId, previousAndCurrentAssignmentsForPerson)
-        return calculateStartAndEndDatesForAssignments(lastAssignments, previousAndCurrentAssignmentsForPerson, futureAssignmentsForPerson)
+        val currentAssignments: List<AssignmentV1> = getAllAssignmentsForPersonOnDate(personId, previousAndCurrentAssignmentsForPerson)
+        return calculateStartAndEndDatesForAssignments(currentAssignments, previousAndCurrentAssignmentsForPerson, futureAssignmentsForPerson)
     }
 
     fun getAssignmentsForSpace(spaceUuid: String) : List<AssignmentV1>{
@@ -52,7 +52,7 @@ class AssignmentService(
             allAssignments.addAll(getAssignmentsForTheGivenPersonIdAndDate(person.id!!, requestedDate))
         }
 
-        return allAssignments
+        return allAssignments.toList()
     }
 
     fun calculateStartAndEndDatesForAssignments(assignments: List<AssignmentV1>, previousAndCurrentAssignmentsSorted: List<AssignmentV1>, futureAssignmentsSorted: List<AssignmentV1>): List<AssignmentV1> {
@@ -75,7 +75,7 @@ class AssignmentService(
                                 endDate = assignmentDateHandler.findEndDate(importantFutureDatesForProduct, allImportantFutureDates)
                         ))
         }
-        return returnValue
+        return returnValue.toList()
     }
 
     fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
