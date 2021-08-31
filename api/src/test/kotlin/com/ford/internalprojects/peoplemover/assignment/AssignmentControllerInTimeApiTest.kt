@@ -168,9 +168,10 @@ class AssignmentControllerInTimeApiTest {
                 objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
         )
 
+        val expectedAssignment = AssignmentV1(id = currentAssignmentForPerson1.id, person = person, productId = productOne.id!!, effectiveDate = LocalDate.parse(apr1), spaceUuid = editableSpace.uuid, startDate = LocalDate.parse(mar1))
         assertThat(assignmentRepository.count()).isEqualTo(5)
         assertThat(actualAssignments.size).isOne()
-        assertThat(actualAssignments).contains(currentAssignmentForPerson1)
+        assertThat(actualAssignments).contains(expectedAssignment)
         assertThat(actualAssignments).doesNotContain(currentAssignmentForPerson2, futureAssignmentForPerson2)
         assertThat(actualAssignments).doesNotContain(oldAssignmentForPerson1, futureAssignmentForPerson1)
     }
@@ -193,9 +194,10 @@ class AssignmentControllerInTimeApiTest {
                 objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
         )
 
+        val expectedAssignment = AssignmentV1(id = readOnlyAssignment.id, person = personInReadOnlySpace, productId = productFour.id!!, effectiveDate = LocalDate.parse(apr1), spaceUuid = editableSpace.uuid, startDate = LocalDate.parse(apr1))
         assertThat(assignmentRepository.count()).isEqualTo(1)
         assertThat(actualAssignments.size).isOne()
-        assertThat(actualAssignments).contains(readOnlyAssignment)
+        assertThat(actualAssignments).contains(expectedAssignment)
     }
 
     @Test
@@ -217,9 +219,10 @@ class AssignmentControllerInTimeApiTest {
                 objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
         )
 
+        val expectedAssignment = AssignmentV1(id = readOnlyAssignment.id, person = personInReadOnlySpace, productId = productFour.id!!, effectiveDate = LocalDate.parse(apr1), spaceUuid = editableSpace.uuid, startDate = LocalDate.parse(apr1))
         assertThat(assignmentRepository.count()).isEqualTo(1)
         assertThat(actualAssignments.size).isOne()
-        assertThat(actualAssignments).contains(readOnlyAssignment)
+        assertThat(actualAssignments).contains(expectedAssignment)
     }
 
     @Test
@@ -241,9 +244,10 @@ class AssignmentControllerInTimeApiTest {
                 objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
         )
 
+        val expectedAssignment = AssignmentV1(id = readOnlyAssignment.id, person = personInReadOnlySpace, productId = productFour.id!!, effectiveDate = LocalDate.parse(apr1), spaceUuid = editableSpace.uuid, startDate = LocalDate.parse(apr1))
         assertThat(assignmentRepository.count()).isEqualTo(1)
         assertThat(actualAssignments.size).isOne()
-        assertThat(actualAssignments).contains(readOnlyAssignment)
+        assertThat(actualAssignments).contains(expectedAssignment)
     }
 
     @Test

@@ -35,8 +35,10 @@ class AssignmentService(
         private val assignmentDateHandler: AssignmentDateHandler
 ) {
     fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<AssignmentV1> {
-        val allAssignmentsBeforeOrOnDate = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
-        return getAllAssignmentsForPersonOnDate(personId, allAssignmentsBeforeOrOnDate)
+        val previousAndCurrentAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
+        val futureAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateGreaterThanOrderByEffectiveDateAsc(personId, date)
+        val lastAssignments: List<AssignmentV1> = getAllAssignmentsForPersonOnDate(personId, previousAndCurrentAssignmentsForPerson)
+        return calculateStartAndEndDatesForAssignments(lastAssignments, previousAndCurrentAssignmentsForPerson, futureAssignmentsForPerson)
     }
 
     fun getAssignmentsForSpace(spaceUuid: String) : List<AssignmentV1>{
@@ -47,10 +49,7 @@ class AssignmentService(
         val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
         val allAssignments: MutableList<AssignmentV1> = mutableListOf()
         people.forEach { person ->
-            val previousAndCurrentAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(person.id!!, requestedDate)
-            val futureAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.findAllByPersonIdAndEffectiveDateGreaterThanOrderByEffectiveDateAsc(person.id, requestedDate)
-            val lastAssignments: List<AssignmentV1> = getAllAssignmentsForPersonOnDate(person.id, previousAndCurrentAssignmentsForPerson)
-            allAssignments.addAll(calculateStartAndEndDatesForAssignments(lastAssignments, previousAndCurrentAssignmentsForPerson, futureAssignmentsForPerson))
+            allAssignments.addAll(getAssignmentsForTheGivenPersonIdAndDate(person.id!!, requestedDate))
         }
 
         return allAssignments
@@ -144,11 +143,16 @@ class AssignmentService(
         }
     }
 
+    // What is purpose of this function? Why does it do what it does?
+    // Seems like it could end up duplicating V1 assignments.
     fun changeProductStartDateForOneAssignment(assignment: AssignmentV1, updatedDate: LocalDate) {
         val currentAssignments = getAssignmentsForTheGivenPersonIdAndDate(assignment.person.id!!, updatedDate)
+        val currentAssignmentIds = currentAssignments.map { it.id }.toSet()
         deleteOneAssignment(assignment)
 
-        if (currentAssignments.contains(assignment)) {
+        // Because assignment may have a start/end date(s), the currentAssignments.contains will no longer work
+        // Change to use contains on a list of ids
+        if (currentAssignmentIds.contains(assignment.id)) {
             val updatedAssignment = assignment.copy(id = null, effectiveDate = updatedDate)
             val allAssignments = assignmentRepository.findAllByPersonAndEffectiveDate(assignment.person, assignment.effectiveDate!!)
                     .map { it.copy(id = null, effectiveDate = updatedDate) }
