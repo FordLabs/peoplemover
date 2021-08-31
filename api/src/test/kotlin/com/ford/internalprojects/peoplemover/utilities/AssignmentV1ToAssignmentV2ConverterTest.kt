@@ -388,4 +388,24 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
         val expectedAssignment2 = AssignmentV2(person = testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-03"), endDate = null)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(expectedAssignment1, expectedAssignment2))
     }
+
+    @Test
+    fun `put can end an assignment early and then start a new assignment` () {
+        val spaceUuid = "doesntmatter"
+        val testPerson1 = Person(id = 1, name = "C3PO", spaceUuid = spaceUuid)
+        val assignment1 = AssignmentV2(person = testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-04"))
+
+        val preExistingAssignments: List<AssignmentV2> = listOf(
+                assignment1
+        )
+        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+                ProductPlaceholderPair(2, false)
+        ));
+
+        val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
+
+        val expectedAssignment1 = AssignmentV2(person = testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-02"))
+        val expectedAssignment2 = AssignmentV2(person = testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-03"), endDate = null)
+        assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(expectedAssignment1, expectedAssignment2))
+    }
 }
