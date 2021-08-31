@@ -143,15 +143,11 @@ class AssignmentService(
         }
     }
 
-    // What is purpose of this function? Why does it do what it does?
-    // Seems like it could end up duplicating V1 assignments.
     fun changeProductStartDateForOneAssignment(assignment: AssignmentV1, updatedDate: LocalDate) {
         val currentAssignments = getAssignmentsForTheGivenPersonIdAndDate(assignment.person.id!!, updatedDate)
         val currentAssignmentIds = currentAssignments.map { it.id }.toSet()
         deleteOneAssignment(assignment)
 
-        // Because assignment may have a start/end date(s), the currentAssignments.contains will no longer work
-        // Change to use contains on a list of ids
         if (currentAssignmentIds.contains(assignment.id)) {
             val updatedAssignment = assignment.copy(id = null, effectiveDate = updatedDate)
             val allAssignments = assignmentRepository.findAllByPersonAndEffectiveDate(assignment.person, assignment.effectiveDate!!)

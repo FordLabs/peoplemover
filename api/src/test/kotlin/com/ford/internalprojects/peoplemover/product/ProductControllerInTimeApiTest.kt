@@ -372,7 +372,6 @@ class ProductControllerInTimeApiTest {
         val expectedNewAssignment = AssignmentV1(person = person, productId = product2.id!!, effectiveDate = newProductStartDate, spaceUuid = spaceWithEditAccess.uuid)
         val actualAssignments = assignmentRepository.findAll().toList()
 
-        // Is this test really applicable, do these results make sense?
         assertThat(assignmentRepository.count()).isEqualTo(3)
         assertThat(actualAssignments[0]).isEqualTo(untouchedAssignment)
         assertThat(actualAssignments[1]).isEqualToIgnoringGivenFields(expectedSameAssignment, "id")
