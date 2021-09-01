@@ -32,7 +32,7 @@ class AssignmentDateHandler {
 
         var endDate: LocalDate? = null
         if(uniqueAllAssignmentFutureDates.isNotEmpty()) {
-            endDate = uniqueAllAssignmentFutureDates.first()
+            endDate = uniqueAllAssignmentFutureDates.first().minusDays(1)
         }
         if (uniqueProductAssignmentFutureDates.isNotEmpty()) {
             endDate = null
