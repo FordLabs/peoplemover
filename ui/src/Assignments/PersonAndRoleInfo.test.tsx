@@ -23,41 +23,71 @@ import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {Assignment} from './Assignment';
 
 describe('PersonAndRoleInfo component for TimeOnProduct', () => {
 
-    it('should show a button that open the editPersonModal with number of days on project when timeOnProject is pass and is not viewOnly', async () => {
+    it('should show a one day time on product on hover on timer icon and is not viewOnly', async () => {
         let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly:false});
         store.dispatch = jest.fn();
+        const testAssignment: Assignment = {
+            id: 1,
+            productId: 1,
+            placeholder: false,
+            person: TestUtils.hank,
+            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+            effectiveDate: new Date(2020, 6, 1),
+            startDate: new Date(2020, 0, 1),
+            endDate: new Date(2020, 0, 1),
+        };
         let app = renderWithRedux(<PersonAndRoleInfo
-            assignment={TestUtils.assignmentForHank}
-            isUnassignedProduct={false}
-            timeOnProduct={55}/>, store);
+            assignment={testAssignment}
+            isUnassignedProduct={false}/>, store);
 
-        const editPersonLink = app.getByText('55 days');
-        expect(await editPersonLink).toBeVisible();
+        const icons = await app.container.getElementsByClassName('hoverableIcon');
+        expect(icons.length).toEqual(3);
 
-        await fireEvent.click(editPersonLink);
+        await fireEvent.mouseOver(icons[2]);
 
-        expect(store.dispatch).toHaveBeenCalledWith(
-            setCurrentModalAction({
-                modal: AvailableModals.EDIT_PERSON,
-                item: TestUtils.hank,
-            }));
+        expect(app.getByText('Time on Product:')).toBeVisible();
+        expect(app.getByText('1/1/20 - 1/1/20 (1 day)')).toBeVisible();
     });
 
-    it('should show the number of day on project as text when timeOnProject is pass and is viewOnly', async () => {
-        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly: true});
+    it('should show seven days time on product on hover on timer icon and is not viewOnly', async () => {
+        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly:false});
+        store.dispatch = jest.fn();
+        const testAssignment: Assignment = {
+            id: 1,
+            productId: 1,
+            placeholder: false,
+            person: TestUtils.hank,
+            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+            effectiveDate: new Date(2020, 6, 1),
+            startDate: new Date(2020, 0, 1),
+            endDate: new Date(2020, 0, 7),
+        };
+        let app = renderWithRedux(<PersonAndRoleInfo
+            assignment={testAssignment}
+            isUnassignedProduct={false}/>, store);
+
+        const icons = await app.container.getElementsByClassName('hoverableIcon');
+        expect(icons.length).toEqual(3);
+
+        await fireEvent.mouseOver(icons[2]);
+
+        expect(app.getByText('Time on Product:')).toBeVisible();
+        expect(app.getByText('1/1/20 - 1/7/20 (7 days)')).toBeVisible();
+    });
+
+    it('should show no icons when in viewOnly', async () => {
+        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly:true});
         store.dispatch = jest.fn();
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={TestUtils.assignmentForHank}
-            isUnassignedProduct={false}
-            timeOnProduct={55}/>, store);
+            isUnassignedProduct={false}/>, store);
 
-        const editPersonLink = app.getByText('55 days');
-        expect(await editPersonLink).toBeVisible();
-
-        await fireEvent.click(editPersonLink);
-        expect(store.dispatch).not.toBeCalled();
+        const icons = await app.container.getElementsByClassName('hoverableIcon');
+        expect(icons.length).toEqual(0);
     });
+
 });

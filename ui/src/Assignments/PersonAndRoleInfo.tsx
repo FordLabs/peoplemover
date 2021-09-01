@@ -16,26 +16,19 @@
  */
 
 import React, {ReactElement} from 'react';
-import {Assignment} from './Assignment';
+import {Assignment, calculateDuration} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {AvailableModals} from '../Modal/AvailableModals';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {setCurrentModalAction} from '../Redux/Actions';
-import MatomoEvents from '../Matomo/MatomoEvents';
-import {Space} from '../Space/Space';
 import HoverableIcon from './HoverableIcon';
+import moment from 'moment';
 
 interface Props {
     assignment: Assignment;
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
-    timeOnProduct?: number;
-    currentSpace: Space;
-
-    setCurrentModal(modalState: CurrentModalState): void;
+    viewingDate: Date;
 }
 
 const PersonAndRoleInfo = ({
@@ -43,29 +36,9 @@ const PersonAndRoleInfo = ({
     assignment = {id: 0} as Assignment,
     isUnassignedProduct,
     isDragging,
-    timeOnProduct,
-    setCurrentModal,
-    currentSpace,
+    viewingDate,
 }: Props): ReactElement => {
     const {person} = assignment;
-
-    const numberOfDaysString = (timeOnProject: number): string => {
-        if (timeOnProject === 1) {
-            return timeOnProject.toFixed(0).concat(' day');
-        } else {
-            return timeOnProject.toFixed(0).concat(' days');
-        }
-    };
-
-    const openEditPersonModal = (): void => {
-        if (timeOnProduct) {
-            MatomoEvents.pushEvent(currentSpace.name, 'openEditPersonFromTimeOnProduct', timeOnProduct.toString());
-        }
-        setCurrentModal({
-            modal: AvailableModals.EDIT_PERSON,
-            item: assignment.person,
-        });
-    };
 
     const listOfTagName = (): string[] => {
         if (person.tags) {
@@ -83,6 +56,24 @@ const PersonAndRoleInfo = ({
         }
     };
 
+    const getTimeOnProduct = (): string => {
+        if (assignment.startDate) {
+            const startString = moment(assignment.startDate).format('M/D/YY');
+            const duration = calculateDuration(assignment, viewingDate);
+            let days = 'days';
+            if (duration < 2) {
+                days = 'day';
+            }
+            let endString = 'tbd';
+            if (assignment.endDate) {
+                endString = moment(assignment.endDate).format('M/D/YY');
+            }
+            return startString + ' - ' + endString + ' (' + duration + ' ' + days + ')';
+        } else {
+            return 'no information available';
+        }
+    };
+
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer">
@@ -94,20 +85,14 @@ const PersonAndRoleInfo = ({
                     isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Person Tags'}/>
                 <HoverableIcon iconName={'note'} textToDisplay={passNote()} viewOnly={isReadOnly}
                     isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Notes'}/>
+                <HoverableIcon iconName={'timer'} textToDisplay={[getTimeOnProduct()]} viewOnly={isReadOnly}
+                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Time on Product'}/>
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
                     {person.spaceRole.name}
                 </div>
             )}
-            {timeOnProduct && !isReadOnly &&
-            <button className="timeOnProductButton timeOnProduct" onClick={(): void => {
-                openEditPersonModal();
-            }}>
-                {numberOfDaysString(timeOnProduct)}
-            </button>
-            }
-            {timeOnProduct && isReadOnly && <span className="timeOnProduct">{numberOfDaysString(timeOnProduct)}</span>}
         </div>
     );
 };
@@ -115,13 +100,9 @@ const PersonAndRoleInfo = ({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
-    currentSpace: state.currentSpace,
+    viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PersonAndRoleInfo);
+export default connect(mapStateToProps)(PersonAndRoleInfo);
 /* eslint-enable */
