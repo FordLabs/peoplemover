@@ -46,6 +46,16 @@ class AssignmentController(
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
+    @GetMapping("/api/spaces/{spaceUuid}/person/{personId}/assignments")
+    fun getAssignmentsByPersonId(@PathVariable spaceUuid: String, @PathVariable personId: Int): ResponseEntity<List<AssignmentV1>> {
+        spaceService.checkReadOnlyAccessByDate(null, spaceUuid)
+
+        val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonId(spaceUuid, personId)
+        logger.logInfoMessage("All assignments retrieved for person with id: [$personId].")
+        return ResponseEntity.ok(assignmentsForPerson)
+    }
+
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/v2/{spaceUuid}/assignments/product/{productId}")
     fun getAssignmentsV2ByProductId(@PathVariable spaceUuid: String, @PathVariable productId: Int): ResponseEntity<List<AssignmentV2>> {
         val allAssignments = assignmentService.getAssignmentsForSpace(spaceUuid);

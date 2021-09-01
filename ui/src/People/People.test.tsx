@@ -32,6 +32,7 @@ import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {Router} from 'react-router-dom';
 import {createBrowserHistory} from 'history';
+import {AxiosResponse} from 'axios';
 
 declare let window: MatomoWindow;
 
@@ -413,6 +414,11 @@ describe('People actions', () => {
         store.dispatch = jest.fn();
 
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments];
+
+        AssignmentClient.getAssignmentsUsingPersonId = jest.fn(() => Promise.resolve({
+            data: [TestUtils.assignmentForPerson1],
+        } as AxiosResponse));
+
         const component = <PersonForm isEditPersonForm={true}
             products={products}
             personEdited={TestUtils.person1}

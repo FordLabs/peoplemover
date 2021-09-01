@@ -21,8 +21,6 @@ import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {fireEvent} from '@testing-library/react';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {AvailableModals} from '../Modal/AvailableModals';
 import {Assignment} from './Assignment';
 
 describe('PersonAndRoleInfo component for TimeOnProduct', () => {

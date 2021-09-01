@@ -120,6 +120,7 @@ function PersonForm({
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
     const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
+    const [assignmentHistory, setAssignmentHistory] = useState<AssignmentHistory[]>([]);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -147,6 +148,7 @@ function PersonForm({
                 const checkedDateMoment = moment(personEdited.newPersonDate).startOf('day');
                 setInitialNewPersonDuration(moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays());
             }
+            getAssignmentHistory(personEdited);
         } else {
             if (initialPersonName) {
                 setPerson(
@@ -337,23 +339,24 @@ function PersonForm({
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
-    const getAssignmentHistory = (): AssignmentHistoryType[] => {
-        const returnValue = products.map((product) => {
-            const personsAssignment = product.assignments.find(
-                (assignment) => assignment.person.id === person.id
-            );
-            if (personsAssignment) {
-                return {
-                    productName: product.name,
-                    id: personsAssignment.id,
-                    startDate: personsAssignment.startDate,
-                    endDate: personsAssignment.endDate,
-                };
-            } else {
-                return undefined;
-            }
-        }).filter((assignmentHistory) => (assignmentHistory !== undefined));
-        return returnValue;
+    const getAssignmentHistory = (person: Person): void => {
+        AssignmentClient.getAssignmentsUsingPersonId(spaceUuid, person.id).then((response) => {
+            const assignments = response.data;
+            setAssignmentHistory(assignments.map((assignment: Assignment, index: number) => {
+                const productsById = products.filter(product => assignment.productId === product.id);
+                if (productsById.length > 0) {
+                    const productName = productsById[0].name;
+                    return {
+                        productName: productName,
+                        id: index,
+                        startDate: assignment.startDate,
+                        endDate: assignment.endDate,
+                    };
+                } else {
+                    return undefined;
+                }
+            }));
+        });
     };
 
     const capitalize = (s: string): string => {
@@ -361,10 +364,9 @@ function PersonForm({
     };
 
     const getAssignmentHistoryContent = (): JSX.Element => {
-        const assignmentHistories = getAssignmentHistory();
         return (
             <>
-                {assignmentHistories.map(
+                {assignmentHistory.map(
                     assignmentHistory => {
                         if (assignmentHistory) {
                             let productName = assignmentHistory.productName;

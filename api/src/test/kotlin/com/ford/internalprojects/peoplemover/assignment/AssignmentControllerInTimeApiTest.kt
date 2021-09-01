@@ -94,6 +94,9 @@ class AssignmentControllerInTimeApiTest {
     private fun getBaseAssignmentForPersonInSpaceOnDateUrl(spaceUuid: String, personId: Int, date: String) =
         "/api/spaces/$spaceUuid/person/$personId/assignments/date/$date"
 
+    private fun getBaseAssignmentForPersonInSpaceUrl(spaceUuid: String, personId: Int) =
+            "/api/spaces/$spaceUuid/person/$personId/assignments"
+
     private fun getBaseAssignmentDatesUrl(spaceUuid: String) =
         "/api/spaces/$spaceUuid/assignment/dates"
 
@@ -174,6 +177,58 @@ class AssignmentControllerInTimeApiTest {
         assertThat(actualAssignments).contains(expectedAssignment)
         assertThat(actualAssignments).doesNotContain(currentAssignmentForPerson2, futureAssignmentForPerson2)
         assertThat(actualAssignments).doesNotContain(oldAssignmentForPerson1, futureAssignmentForPerson1)
+    }
+
+    @Test
+    fun `GET should return all assignments for the given personId`() {
+        val oldAssignmentForPerson1: AssignmentV1 = assignmentRepository.save(AssignmentV1(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(mar1),
+                spaceUuid = editableSpace.uuid
+        ))
+        val currentAssignmentForPerson1: AssignmentV1 = assignmentRepository.save(AssignmentV1(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceUuid = editableSpace.uuid
+        ))
+        val futureAssignmentForPerson1: AssignmentV1 = assignmentRepository.save(AssignmentV1(
+                person = person,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr2),
+                spaceUuid = editableSpace.uuid
+        ))
+
+        val personTwo: Person = personRepository.save(Person(name = "person two", spaceUuid = editableSpace.uuid))
+        val currentAssignmentForPerson2: AssignmentV1 = assignmentRepository.save(AssignmentV1(
+                person = personTwo,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr1),
+                spaceUuid = editableSpace.uuid
+        ))
+        val futureAssignmentForPerson2: AssignmentV1 = assignmentRepository.save(AssignmentV1(
+                person = personTwo,
+                productId = productOne.id!!,
+                effectiveDate = LocalDate.parse(apr2),
+                spaceUuid = editableSpace.uuid
+        ))
+
+        val result = mockMvc.perform(get(getBaseAssignmentForPersonInSpaceUrl(editableSpace.uuid, person.id!!))
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
+        val actualAssignments: List<AssignmentV1> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, AssignmentV1::class.java)
+        )
+
+        val expectedAssignment = AssignmentV1(id = null, person = person, productId = productOne.id!!, effectiveDate = null, spaceUuid = editableSpace.uuid, startDate = LocalDate.parse(mar1))
+        assertThat(assignmentRepository.count()).isEqualTo(5)
+        assertThat(actualAssignments.size).isOne()
+        assertThat(actualAssignments).contains(expectedAssignment)
+        assertThat(actualAssignments).doesNotContain(currentAssignmentForPerson2, futureAssignmentForPerson2)
+        assertThat(actualAssignments).doesNotContain(oldAssignmentForPerson1, currentAssignmentForPerson1, futureAssignmentForPerson1)
     }
 
     @Test

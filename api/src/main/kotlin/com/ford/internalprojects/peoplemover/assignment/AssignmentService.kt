@@ -41,6 +41,56 @@ class AssignmentService(
         return calculateStartAndEndDatesForAssignments(currentAssignments, previousAndCurrentAssignmentsForPerson, futureAssignmentsForPerson)
     }
 
+    fun getAssignmentsForTheGivenPersonId(spaceUuid: String, personId: Int): List<AssignmentV1> {
+        val allAssignmentsForPerson: List<AssignmentV1> = assignmentRepository.getByPersonIdAndSpaceUuid(personId, spaceUuid)
+        val person = personRepository.findByIdAndSpaceUuid(personId, spaceUuid)
+        return if(person != null) {
+            getAssignmentHistoryForPerson(person, allAssignmentsForPerson)
+        } else {
+            listOf()
+        }
+    }
+
+    fun getAssignmentHistoryForPerson(person: Person, allAssignmentsForPerson: List<AssignmentV1>): List<AssignmentV1> {
+        // Organize assignments by date and product
+        val productsByDateMap = mutableMapOf<LocalDate, MutableSet<Int>>()
+        allAssignmentsForPerson.forEach { assignment ->
+            if(productsByDateMap.contains(assignment.effectiveDate)) {
+                productsByDateMap[assignment.effectiveDate]!!.add(assignment.productId)
+            } else {
+                productsByDateMap[assignment.effectiveDate!!] = mutableSetOf(assignment.productId)
+            }
+        }
+        // Create assignments with start/end dates based on organized assignments
+        val assignmentsForPerson = mutableListOf<AssignmentV1>()
+        val activeAssignments = mutableListOf<AssignmentV1>()
+        var previousProductSet = mutableSetOf<Int>()
+        val sortedDates = productsByDateMap.keys.sorted()
+        sortedDates.forEach { date ->
+            val productSet = productsByDateMap[date]
+            val startDate = date
+            val endDate = date.minusDays(1)
+            productSet!!.forEach { productId ->
+                if (!previousProductSet.contains(productId)) {
+                    // Found a new product. Make a new assignment
+                    activeAssignments.add(AssignmentV1(person = person, productId = productId, startDate = startDate, endDate = null, spaceUuid = person.spaceUuid, effectiveDate = null))
+                }
+            }
+            previousProductSet.forEach { previousProductId ->
+                if (!productSet.contains(previousProductId)) {
+                    // A product ended
+                    val endedProduct = activeAssignments.first { assignment -> previousProductId == assignment.productId }
+                    activeAssignments.remove(endedProduct)
+                    endedProduct.endDate = endDate
+                    assignmentsForPerson.add(endedProduct)
+                }
+            }
+            previousProductSet = productSet
+        }
+        assignmentsForPerson.addAll(activeAssignments)
+        return assignmentsForPerson.toList()
+    }
+
     fun getAssignmentsForSpace(spaceUuid: String) : List<AssignmentV1>{
         return assignmentRepository.findAllBySpaceUuid(spaceUuid);
     }

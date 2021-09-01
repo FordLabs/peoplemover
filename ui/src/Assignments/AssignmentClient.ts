@@ -61,6 +61,16 @@ class AssignmentClient {
         return Axios.get(url, {headers});
     }
 
+    static async getAssignmentsUsingPersonId(spaceUuid: string, personId: number): Promise<AxiosResponse> {
+        const url = `/api/spaces/${spaceUuid}/person/${personId}/assignments`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        };
+
+        return Axios.get(url, {headers});
+    }
+
     static async getAssignmentEffectiveDates(spaceUuid: string): Promise<AxiosResponse> {
         const url = `/api/spaces/${spaceUuid}/assignment/dates`;
         const headers = {
