@@ -88,7 +88,7 @@ class AssignmentService(
             previousProductSet = productSet
         }
         assignmentsForPerson.addAll(activeAssignments)
-        return assignmentsForPerson.toList()
+        return assignmentsForPerson.toList().reversed()
     }
 
     fun getAssignmentsForSpace(spaceUuid: String) : List<AssignmentV1>{
