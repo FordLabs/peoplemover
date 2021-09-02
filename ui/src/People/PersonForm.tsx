@@ -343,18 +343,19 @@ function PersonForm({
         AssignmentClient.getAssignmentsUsingPersonId(spaceUuid, person.id).then((response) => {
             const assignments = response.data;
             setAssignmentHistory(assignments.map((assignment: Assignment, index: number) => {
+                let productName: string;
                 const productsById = products.filter(product => assignment.productId === product.id);
                 if (productsById.length > 0) {
-                    const productName = productsById[0].name;
-                    return {
-                        productName: productName,
-                        id: index,
-                        startDate: assignment.startDate,
-                        endDate: assignment.endDate,
-                    };
+                    productName = productsById[0].name;
                 } else {
-                    return undefined;
+                    productName = 'Future Product';
                 }
+                return {
+                    productName: productName,
+                    id: index,
+                    startDate: assignment.startDate,
+                    endDate: assignment.endDate,
+                };
             }));
         });
     };
