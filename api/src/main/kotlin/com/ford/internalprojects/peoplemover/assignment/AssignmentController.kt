@@ -95,6 +95,8 @@ class AssignmentController(
         logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]: original : $duration1")
         logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]:      new : $duration2")
         logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]:   equal? : $isEqual1 / $isEqual2")
+        logger.logInfoMessage("dates1: $dates1")
+        logger.logInfoMessage("dates2: $dates2")
         logger.logInfoMessage("END   getAllEffectiveDates : [$spaceUuid].")
         logger.logInfoMessage("All effective dates retrieved for space with uuid: [$spaceUuid].")
         return ResponseEntity.ok(dates1)
