@@ -2,6 +2,7 @@ package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
+import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -12,6 +13,7 @@ import org.junit.Before
 import org.junit.Test
 
 import java.time.LocalDate
+import java.util.*
 
 
 class AssignmentServiceTest {
@@ -172,5 +174,37 @@ class AssignmentServiceTest {
         val actualAssignments: List<AssignmentV1> = localAssignmentService.getAssignmentHistoryForPerson(testPerson, allAssignmentsForPerson)
 
         assertThat(actualAssignments).containsExactlyInAnyOrderElementsOf(expectedAssignments)
+    }
+
+    @Test
+    fun `getEffectiveDates should return a set of unique dates for a set of assignments`() {
+        val testPerson = Person(id = 1, name = "Test Person", spaceUuid = "Test Space")
+        val assignment1 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-06"))
+        val assignment2 = AssignmentV1(person = testPerson, productId = 0, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-13"))
+        val assignment3 = AssignmentV1(person = testPerson, productId = 0, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-14"))
+        val assignment4 = AssignmentV1(person = testPerson, productId = 0, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-15"))
+        val assignment5 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-06"))
+
+        every { personRepository.findAllBySpaceUuid(any()) } returns listOf(testPerson)
+        every { assignmentRepository.getByPersonIdAndSpaceUuid(any(), any()) } returns listOf(assignment1, assignment2, assignment3, assignment4, assignment5)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-06-06")) } returns listOf(assignment1)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-06-13")) } returns listOf(assignment2)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-06-14")) } returns listOf(assignment3)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-06-15")) } returns listOf(assignment4)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-07-06")) } returns listOf(assignment5)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-06-05")) } returns listOf()
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-06-12")) } returns listOf(assignment1)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-06-13")) } returns listOf(assignment1, assignment2)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-06-14")) } returns listOf(assignment1, assignment2, assignment3)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-07-05")) } returns listOf(assignment1, assignment2, assignment3, assignment4)
+        every { assignmentRepository.findAllByEffectiveDateIsNullAndPersonId(any()) } returns listOf()
+
+        every { productRepository.findById(0) } returns Optional.of(Product(id=0, name="zero", spaceUuid = "Test Space"))
+        every { productRepository.findById(1) } returns Optional.of(Product(id=1, name = "one", spaceUuid = "Test Space"))
+
+        val dates1 = assignmentService.getEffectiveDates(testPerson.spaceUuid)
+        val dates2 = assignmentService.getEffectiveDates2(testPerson.spaceUuid)
+
+        assertThat(dates1).containsExactlyInAnyOrderElementsOf(dates2)
     }
 }

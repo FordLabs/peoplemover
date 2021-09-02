@@ -145,11 +145,11 @@ class AssignmentService(
         val uniqueEffectiveDates = mutableSetOf<LocalDate>()
         val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
         // Gather information person by person
-        people.map { person ->
+        people.forEach { person ->
             val assignmentsForPerson: List<AssignmentV1> = assignmentRepository.getByPersonIdAndSpaceUuid(person.id!!, spaceUuid)
             val assignmentsByDate = mutableMapOf<LocalDate, MutableSet<Int>>()
             // Group a person's assignments by date
-            assignmentsForPerson.map { assignment ->
+            assignmentsForPerson.forEach { assignment ->
                 if(assignment.effectiveDate != null) {
                     if(assignmentsByDate.containsKey(assignment.effectiveDate)) {
                         assignmentsByDate[assignment.effectiveDate]!!.add(assignment.productId)
@@ -161,11 +161,11 @@ class AssignmentService(
             // Remember previous set of products for a particular date
             var previousSetOfProducts = mutableSetOf<Int>()
             // Sort the dates and iterate over them
-            assignmentsByDate.toSortedMap().keys.map { date ->
+            assignmentsByDate.toSortedMap().keys.forEach { date ->
                 // Ignore dates we've already saved (from previous people)
                 if(!uniqueEffectiveDates.contains(date)) {
                     // Ignore dates that have a set of products for this person that we've already seen (duplicates)
-                    if(!assignmentsByDate[date]!!.containsAll(previousSetOfProducts)) {
+                    if(assignmentsByDate[date]!! != previousSetOfProducts) {
                         // Haven't seen this before. Save the date, save the set of assignments
                         uniqueEffectiveDates.add(date)
                         previousSetOfProducts = assignmentsByDate[date]!!
