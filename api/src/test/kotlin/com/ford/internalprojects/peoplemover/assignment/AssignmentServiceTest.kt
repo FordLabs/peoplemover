@@ -199,11 +199,78 @@ class AssignmentServiceTest {
         every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-07-05")) } returns listOf(assignment1, assignment2, assignment3, assignment4)
         every { assignmentRepository.findAllByEffectiveDateIsNullAndPersonId(any()) } returns listOf()
 
-        every { productRepository.findById(0) } returns Optional.of(Product(id=0, name="zero", spaceUuid = "Test Space"))
-        every { productRepository.findById(1) } returns Optional.of(Product(id=1, name = "one", spaceUuid = "Test Space"))
+        every { productRepository.findById(0) } returns Optional.of(Product(id = 0, name = "zero", spaceUuid = "Test Space"))
+        every { productRepository.findById(1) } returns Optional.of(Product(id = 1, name = "one", spaceUuid = "Test Space"))
 
         val dates1 = assignmentService.getEffectiveDates(testPerson.spaceUuid)
         val dates2 = assignmentService.getEffectiveDates2(testPerson.spaceUuid)
+
+        assertThat(dates1).containsExactlyInAnyOrderElementsOf(dates2)
+    }
+
+    @Test
+    fun `getEffectiveDates should return a set of unique dates for a set of assignments, with overlaps and duplicates`() {
+        val testPerson = Person(id = 1, name = "Test Person", spaceUuid = "Test Space")
+        val assignment1 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-06"))
+        val assignment2 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"))
+        val assignment3 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"))
+        val assignment4 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-09"))
+        val assignment5 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-09"))
+        val assignment6 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-07"))
+
+        every { personRepository.findAllBySpaceUuid(any()) } returns listOf(testPerson)
+        every { assignmentRepository.getByPersonIdAndSpaceUuid(any(), any()) } returns listOf(assignment1, assignment2, assignment3, assignment4, assignment5, assignment6)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-06-06")) } returns listOf(assignment1)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-06-07")) } returns listOf(assignment2, assignment3)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-06-09")) } returns listOf(assignment4, assignment5)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-07-07")) } returns listOf(assignment6)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-06-05")) } returns listOf()
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-06-06")) } returns listOf(assignment1)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-06-08")) } returns listOf(assignment1, assignment2, assignment3)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(any(), effectiveDate = LocalDate.parse("2021-07-06")) } returns listOf(assignment1, assignment2, assignment3, assignment4, assignment5)
+        every { assignmentRepository.findAllByEffectiveDateIsNullAndPersonId(any()) } returns listOf()
+
+        every { productRepository.findById(1) } returns Optional.of(Product(id = 1, name = "one", spaceUuid = "Test Space"))
+        every { productRepository.findById(2) } returns Optional.of(Product(id = 2, name = "two", spaceUuid = "Test Space"))
+
+        val dates1 = assignmentService.getEffectiveDates(testPerson.spaceUuid)
+        val dates2 = assignmentService.getEffectiveDates2(testPerson.spaceUuid)
+
+        assertThat(dates1).containsExactlyInAnyOrderElementsOf(dates2)
+    }
+
+    @Test
+    fun `getEffectiveDates should return a set of unique dates for a set of assignments, with multiple people with duplicates`() {
+        val testPerson1 = Person(id = 1, name = "Test Person 1", spaceUuid = "Test Space")
+        val testPerson2 = Person(id = 2, name = "Test Person 2", spaceUuid = "Test Space")
+        val assignment1 = AssignmentV1(effectiveDate = LocalDate.parse("2021-04-15"), productId = 1, person = testPerson1, spaceUuid = "Test Space")
+        val assignment2 = AssignmentV1(effectiveDate = LocalDate.parse("2021-04-15"), productId = 2, person = testPerson2, spaceUuid = "Test Space")
+        val assignment3 = AssignmentV1(effectiveDate = LocalDate.parse("2021-05-26"), productId = 3, person = testPerson1, spaceUuid = "Test Space")
+        val assignment4 = AssignmentV1(effectiveDate = LocalDate.parse("2021-05-27"), productId = 3, person = testPerson1, spaceUuid = "Test Space")
+        val assignment5 = AssignmentV1(effectiveDate = LocalDate.parse("2021-05-27"), productId = 2, person = testPerson2, spaceUuid = "Test Space")
+        val assignment6 = AssignmentV1(effectiveDate = LocalDate.parse("2021-06-15"), productId = 1, person = testPerson1, spaceUuid = "Test Space")
+
+        every { personRepository.findAllBySpaceUuid(any()) } returns listOf(testPerson1, testPerson2)
+        every { assignmentRepository.getByPersonIdAndSpaceUuid(1, any()) } returns listOf(assignment1, assignment3, assignment4, assignment6)
+        every { assignmentRepository.getByPersonIdAndSpaceUuid(2, any()) } returns listOf(assignment2, assignment5)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-04-15")) } returns listOf(assignment1, assignment2)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-05-26")) } returns listOf(assignment3)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-05-27")) } returns listOf(assignment4, assignment5)
+        every { assignmentRepository.findAllBySpaceUuidAndEffectiveDate(any(), requestedDate = LocalDate.parse("2021-06-15")) } returns listOf(assignment6)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(1, effectiveDate = LocalDate.parse("2021-04-14")) } returns listOf()
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(2, effectiveDate = LocalDate.parse("2021-04-14")) } returns listOf()
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(1, effectiveDate = LocalDate.parse("2021-05-25")) } returns listOf(assignment1)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(1, effectiveDate = LocalDate.parse("2021-05-26")) } returns listOf(assignment1, assignment3)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(2, effectiveDate = LocalDate.parse("2021-05-26")) } returns listOf(assignment2)
+        every { assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(1, effectiveDate = LocalDate.parse("2021-06-14")) } returns listOf(assignment1, assignment3, assignment4)
+        every { assignmentRepository.findAllByEffectiveDateIsNullAndPersonId(any()) } returns listOf()
+
+        every { productRepository.findById(1) } returns Optional.of(Product(id = 1, name = "one", spaceUuid = "Test Space"))
+        every { productRepository.findById(2) } returns Optional.of(Product(id = 2, name = "two", spaceUuid = "Test Space"))
+        every { productRepository.findById(3) } returns Optional.of(Product(id = 3, name = "three", spaceUuid = "Test Space"))
+
+        val dates1 = assignmentService.getEffectiveDates(testPerson1.spaceUuid)
+        val dates2 = assignmentService.getEffectiveDates2(testPerson1.spaceUuid)
 
         assertThat(dates1).containsExactlyInAnyOrderElementsOf(dates2)
     }

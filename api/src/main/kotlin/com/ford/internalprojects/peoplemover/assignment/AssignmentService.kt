@@ -168,9 +168,9 @@ class AssignmentService(
                     if(assignmentsByDate[date]!! != previousSetOfProducts) {
                         // Haven't seen this before. Save the date, save the set of assignments
                         uniqueEffectiveDates.add(date)
-                        previousSetOfProducts = assignmentsByDate[date]!!
                     }
                 }
+                previousSetOfProducts = assignmentsByDate[date]!!
             }
         }
         return uniqueEffectiveDates.toSet()
