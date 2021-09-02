@@ -91,7 +91,7 @@ class AssignmentController(
         val duration1 = Duration.between(start1, end1).toMillis()
         val duration2 = Duration.between(end1, end2).toMillis()
         val isEqual1 = dates1.containsAll(dates2)
-        val isEqual2 = dates1.containsAll(dates2)
+        val isEqual2 = dates2.containsAll(dates1)
         logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]: original : $duration1")
         logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]:      new : $duration2")
         logger.logInfoMessage("getAllEffectiveDates[$spaceUuid]:   equal? : $isEqual1 / $isEqual2")
