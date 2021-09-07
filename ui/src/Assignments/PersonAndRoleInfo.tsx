@@ -15,16 +15,14 @@
  * limitations under the License.
  */
 
-import React, {ReactElement} from 'react';
-import {Assignment} from './Assignment';
+import React, {ReactElement, useState} from 'react';
+import {Assignment, calculateDuration} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {setCurrentModalAction} from '../Redux/Actions';
-import MatomoEvents from '../Matomo/MatomoEvents';
-import {Space} from '../Space/Space';
 import HoverableIcon from './HoverableIcon';
 
 interface Props {
@@ -32,8 +30,7 @@ interface Props {
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
-    timeOnProduct?: number;
-    currentSpace: Space;
+    viewingDate: Date;
 
     setCurrentModal(modalState: CurrentModalState): void;
 }
@@ -43,24 +40,52 @@ const PersonAndRoleInfo = ({
     assignment = {id: 0} as Assignment,
     isUnassignedProduct,
     isDragging,
-    timeOnProduct,
     setCurrentModal,
-    currentSpace,
+    viewingDate,
 }: Props): ReactElement => {
     const {person} = assignment;
 
+    const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
+
+    const onHover = (boxIsHovered = false): void => {
+        setHoverBoxIsOpened(boxIsHovered);
+    };
+
+    const getDisplayContent = (): Map<string, string> => {
+        const toReturn = new Map<string, string>();
+        toReturn.set('Time on Product', numberOfDaysString(calculateDuration(assignment, viewingDate)));
+        if (assignment.person.notes !== undefined && assignment.person.notes !== '') {
+            toReturn.set('Notes', assignment.person.notes);
+        }
+        if (assignment.person.tags !== undefined && assignment.person.tags.length > 0) {
+            toReturn.set('Person Tags', listOfTagName().join(', '));
+        }
+        return toReturn;
+    };
+
+    const HoverBox = (): JSX.Element => {
+        const content = getDisplayContent();
+        return (
+            <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
+                {Array.from(content.keys()).map((key) => {
+                    return (<div key={key}><p className="hoverBoxTitle">{key}:</p>
+                        <p className="hoverBoxText">
+                            {content.get(key)}
+                        </p></div>);
+                })}
+            </div>
+        );
+    };
+
     const numberOfDaysString = (timeOnProject: number): string => {
         if (timeOnProject === 1) {
-            return timeOnProject.toFixed(0).concat(' day');
+            return timeOnProject.toFixed(0).concat(' Day');
         } else {
-            return timeOnProject.toFixed(0).concat(' days');
+            return timeOnProject.toFixed(0).concat(' Days');
         }
     };
 
     const openEditPersonModal = (): void => {
-        if (timeOnProduct) {
-            MatomoEvents.pushEvent(currentSpace.name, 'openEditPersonFromTimeOnProduct', timeOnProduct.toString());
-        }
         setCurrentModal({
             modal: AvailableModals.EDIT_PERSON,
             item: assignment.person,
@@ -75,7 +100,7 @@ const PersonAndRoleInfo = ({
         } else return [];
     };
 
-    const passNote = (): []|string[] => {
+    const passNote = (): [] | string[] => {
         if (person.notes) {
             return [person.notes];
         } else {
@@ -85,7 +110,10 @@ const PersonAndRoleInfo = ({
 
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
-            className="personNameAndRoleContainer">
+            className="personNameAndRoleContainer"
+            onMouseEnter={(): void => onHover(true)}
+            onMouseLeave={(): void => onHover(false)}
+        >
             <div
                 className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
@@ -100,14 +128,7 @@ const PersonAndRoleInfo = ({
                     {person.spaceRole.name}
                 </div>
             )}
-            {timeOnProduct && !isReadOnly &&
-            <button className="timeOnProductButton timeOnProduct" onClick={(): void => {
-                openEditPersonModal();
-            }}>
-                {numberOfDaysString(timeOnProduct)}
-            </button>
-            }
-            {timeOnProduct && isReadOnly && <span className="timeOnProduct">{numberOfDaysString(timeOnProduct)}</span>}
+            {!isDragging && hoverBoxIsOpened && <HoverBox/>}
         </div>
     );
 };
@@ -115,7 +136,7 @@ const PersonAndRoleInfo = ({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
-    currentSpace: state.currentSpace,
+    viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly
 });
 

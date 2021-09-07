@@ -481,21 +481,21 @@ describe('Assignment Card', () => {
                 initialState,
             );
 
-            expect(underTest.queryByText('The lil boss,The big boss')).toBeNull();
+            expect(underTest.queryByText('The lil boss, The big boss')).toBeNull();
 
             act(() => {
                 fireEvent.mouseEnter(underTest.getByText('local_offer'));
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.getByText('The lil boss,The big boss')).toBeVisible();
+            expect(underTest.getByText('The lil boss, The big boss')).toBeVisible();
 
             act(() => {
                 fireEvent.mouseLeave(underTest.getByText('local_offer'));
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.queryByText('The lil boss,The big boss')).toBeNull();
+            expect(underTest.queryByText('The lil boss, The big boss')).toBeNull();
         });
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {

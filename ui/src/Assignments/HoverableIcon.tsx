@@ -41,12 +41,9 @@ const HoverableIcon = ({
     };
 
     const HoverBox = (): JSX.Element => {
+
         return (
             <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
-                <p className="hoverBoxTitle">{type}:</p>
-                <p className="hoverBoxText">
-                    {textToDisplay.toString()}
-                </p>
             </div>
         );
     };
