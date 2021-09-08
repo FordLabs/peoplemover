@@ -104,5 +104,18 @@
 
   .tooltip-icon{
     justify-self: center;
+    margin: 12px;
+    color: $purple;
+    font-size: 16px;
+  }
+
+  .hoverBoxTitle{
+    line-height: 18px;
+    font-weight: bold;
+  }
+
+  .hoverBoxText {
+    line-height: 18px;
+    white-space: pre-wrap;
   }
 }

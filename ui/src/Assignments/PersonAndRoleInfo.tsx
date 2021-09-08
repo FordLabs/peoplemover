@@ -90,10 +90,10 @@ const PersonAndRoleInfo = ({
                 {content.map(hoverInfo => {
                     return (<div key={hoverInfo.title} className={'flex-row'}>
                         <i className={`material-icons tooltip-icon`} data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
-                        <div className={'flex-col'}><p className="hoverBoxTitle">{hoverInfo.title}:</p>
-                            <p className="hoverBoxText">
+                        <div className={'flex-col'}><div className="hoverBoxTitle">{hoverInfo.title}:</div>
+                            <div className="hoverBoxText">
                                 {hoverInfo.text}
-                            </p></div></div>);
+                            </div></div></div>);
                 })}
             </div>
         );
