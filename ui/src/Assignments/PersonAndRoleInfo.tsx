@@ -20,10 +20,13 @@ import {Assignment, calculateDuration} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {AvailableModals} from '../Modal/AvailableModals';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {setCurrentModalAction} from '../Redux/Actions';
 import HoverableIcon from './HoverableIcon';
+
+interface HoverInfo {
+    title: string;
+    text: string;
+    icon: string;
+}
 
 interface Props {
     assignment: Assignment;
@@ -31,8 +34,6 @@ interface Props {
     isReadOnly: boolean;
     isDragging: boolean;
     viewingDate: Date;
-
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 const PersonAndRoleInfo = ({
@@ -40,7 +41,6 @@ const PersonAndRoleInfo = ({
     assignment = {id: 0} as Assignment,
     isUnassignedProduct,
     isDragging,
-    setCurrentModal,
     viewingDate,
 }: Props): ReactElement => {
     const {person} = assignment;
@@ -51,14 +51,26 @@ const PersonAndRoleInfo = ({
         setHoverBoxIsOpened(boxIsHovered);
     };
 
-    const getDisplayContent = (): Map<string, string> => {
-        const toReturn = new Map<string, string>();
-        toReturn.set('Time on Product', numberOfDaysString(calculateDuration(assignment, viewingDate)));
-        if (assignment.person.notes !== undefined && assignment.person.notes !== '') {
-            toReturn.set('Notes', assignment.person.notes);
+    const getDisplayContent = (): HoverInfo[] => {
+        const toReturn: HoverInfo[] = [];
+        toReturn.push({
+            title: 'Time on Product',
+            text: numberOfDaysString(calculateDuration(assignment, viewingDate)),
+            icon: 'timer',
+        });
+        if (person.tags.length > 0) {
+            toReturn.push({
+                title: 'Person Tags',
+                text: listOfTagName().join(', '),
+                icon: 'local_offer',
+            });
         }
-        if (assignment.person.tags !== undefined && assignment.person.tags.length > 0) {
-            toReturn.set('Person Tags', listOfTagName().join(', '));
+        if (assignment.person.notes !== undefined && assignment.person.notes !== '') {
+            toReturn.push({
+                title: 'Notes',
+                text: assignment.person.notes,
+                icon: 'note',
+            });
         }
         return toReturn;
     };
@@ -67,10 +79,10 @@ const PersonAndRoleInfo = ({
         const content = getDisplayContent();
         return (
             <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
-                {Array.from(content.keys()).map((key) => {
-                    return (<div key={key}><p className="hoverBoxTitle">{key}:</p>
+                {content.map(hoverInfo => {
+                    return (<div key={hoverInfo.title}><p className="hoverBoxTitle">{hoverInfo.title}:</p>
                         <p className="hoverBoxText">
-                            {content.get(key)}
+                            {hoverInfo.text}
                         </p></div>);
                 })}
             </div>
@@ -83,13 +95,6 @@ const PersonAndRoleInfo = ({
         } else {
             return timeOnProject.toFixed(0).concat(' Days');
         }
-    };
-
-    const openEditPersonModal = (): void => {
-        setCurrentModal({
-            modal: AvailableModals.EDIT_PERSON,
-            item: assignment.person,
-        });
     };
 
     const listOfTagName = (): string[] => {
@@ -128,7 +133,7 @@ const PersonAndRoleInfo = ({
                     {person.spaceRole.name}
                 </div>
             )}
-            {!isDragging && hoverBoxIsOpened && <HoverBox/>}
+            {!isDragging && !isReadOnly && hoverBoxIsOpened && <HoverBox/>}
         </div>
     );
 };
@@ -140,9 +145,5 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     isReadOnly: state.isReadOnly
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PersonAndRoleInfo);
+export default connect(mapStateToProps)(PersonAndRoleInfo);
 /* eslint-enable */

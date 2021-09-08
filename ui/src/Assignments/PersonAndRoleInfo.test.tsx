@@ -21,10 +21,11 @@ import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {fireEvent} from '@testing-library/react';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
+import moment from 'moment';
 
 describe('the tooltip behavior on hover', () => {
     it('should show the notes of the person being hovered over', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={TestUtils.assignmentForHank}
             isUnassignedProduct={false}/>, store);
@@ -36,7 +37,7 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should not show the notes of the person being hovered over if they have none', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
         let assignmentOfPersonWithNoNotes = TestUtils.assignmentForPerson2;
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={assignmentOfPersonWithNoNotes}
@@ -49,20 +50,20 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should show the time on product of the person being hovered over', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false, viewingDate: moment('2021-01-01').toDate()});
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={TestUtils.assignmentForHank}
             isUnassignedProduct={false}/>, store);
         const theWholePersonAndRoleInfo = app.getByTestId('assignmentCard3info');
         expect(app.queryByText('Time on Product:')).not.toBeInTheDocument();
-        expect(app.queryByText('616 Days')).not.toBeInTheDocument();
+        expect(app.queryByText('367 Days')).not.toBeInTheDocument();
         await fireEvent.mouseOver(theWholePersonAndRoleInfo);
         expect(app.getByText('Time on Product:')).toBeInTheDocument();
-        expect(app.getByText('616 Days')).toBeInTheDocument();
+        expect(app.getByText('367 Days')).toBeInTheDocument();
     });
 
     it('should show the person tags of the person being hovered over', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={TestUtils.assignmentForPerson2}
             isUnassignedProduct={false}/>, store);
@@ -75,7 +76,7 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should not show the person tags of the person being hovered over if they have none', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
         let assignmentOfPersonWithNoTags = TestUtils.assignmentForUnassigned;
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={assignmentOfPersonWithNoTags}
@@ -84,5 +85,17 @@ describe('the tooltip behavior on hover', () => {
         expect(app.queryByText('Person Tags:')).not.toBeInTheDocument();
         await fireEvent.mouseOver(theWholePersonAndRoleInfo);
         expect(app.queryByText('Person Tags: ')).not.toBeInTheDocument();
+    });
+
+    it('should not show the hover if the space is read only', async () => {
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+        let app = renderWithRedux(<PersonAndRoleInfo
+            assignment={TestUtils.assignmentForHank}
+            isUnassignedProduct={false}/>, store);
+        const theWholePersonAndRoleInfo = app.getByTestId('assignmentCard3info');
+        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        await fireEvent.mouseOver(theWholePersonAndRoleInfo);
+        expect(app.queryByText('Notes:')).not.toBeInTheDocument();
+        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
     });
 });
