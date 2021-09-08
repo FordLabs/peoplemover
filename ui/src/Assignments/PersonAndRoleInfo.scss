@@ -23,20 +23,16 @@
   border-bottom-left-radius: 2px;
   padding: 4px 8px;
 
-  .notesIcon {
+  .personName {
+    word-break: break-word;
+  }
+
+  .personName > i{
     position: relative;
     color: $purple;
     margin-left: 4px;
     font-size: 16px;
     vertical-align: text-bottom;
-
-    &.unassignedNotesIcon {
-      position: unset;
-    }
-  }
-
-  .personName {
-    word-break: break-word;
   }
 
   .timeOnProductButton{
