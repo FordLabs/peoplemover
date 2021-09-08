@@ -361,33 +361,6 @@ describe('Assignment Card', () => {
             expect(underTest.getByText('This is a note')).toBeVisible();
         });
 
-        it('should hide notes when user hovers away', () => {
-            const underTest = renderWithRedux(
-                <AssignmentCard
-                    assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
-
-            expect(underTest.queryByText('This is a note')).toBeNull();
-
-            act(() => {
-                fireEvent.mouseEnter(underTest.getByText('note'));
-                jest.advanceTimersByTime(500);
-            });
-
-            expect(underTest.getByText('This is a note')).toBeInTheDocument();
-            expect(underTest.getByText('This is a note')).toBeVisible();
-
-            act(() => {
-                fireEvent.mouseLeave(underTest.getByText('note'));
-                jest.advanceTimersByTime(500);
-            });
-
-            expect(underTest.queryByText('This is a note')).toBeNull();
-        });
-
         it('should show hover box when assignment card is unassigned', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
@@ -470,32 +443,6 @@ describe('Assignment Card', () => {
                 initialState,
             );
             expect(underTest.queryByText('local_offer')).toBeNull();
-        });
-
-        it('should display tags when hovered on tag icon and remove it when hover away', () => {
-            const underTest = renderWithRedux(
-                <AssignmentCard
-                    assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
-
-            expect(underTest.queryByText('The lil boss, The big boss')).toBeNull();
-
-            act(() => {
-                fireEvent.mouseEnter(underTest.getByText('local_offer'));
-                jest.advanceTimersByTime(500);
-            });
-
-            expect(underTest.getByText('The lil boss, The big boss')).toBeVisible();
-
-            act(() => {
-                fireEvent.mouseLeave(underTest.getByText('local_offer'));
-                jest.advanceTimersByTime(500);
-            });
-
-            expect(underTest.queryByText('The lil boss, The big boss')).toBeNull();
         });
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {

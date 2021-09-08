@@ -90,4 +90,19 @@
     line-height: 18px;
     white-space: pre-wrap;
   }
+
+  .flex-row{
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+  }
+
+  .flex-col{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .tooltip-icon{
+    justify-self: center;
+  }
 }

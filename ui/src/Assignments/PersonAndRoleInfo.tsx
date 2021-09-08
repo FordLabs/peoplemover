@@ -20,7 +20,7 @@ import {Assignment, calculateDuration} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import HoverableIcon from './HoverableIcon';
+import {Person} from '../People/Person';
 
 interface HoverInfo {
     title: string;
@@ -45,10 +45,18 @@ const PersonAndRoleInfo = ({
 }: Props): ReactElement => {
     const {person} = assignment;
 
-    const [hoverBoxIsOpened, setHoverBoxIsOpened] = useState<boolean>(false);
+    const [isHoverBoxOpen, setHoverBoxIsOpened] = useState<boolean>(false);
 
     const onHover = (boxIsHovered = false): void => {
         setHoverBoxIsOpened(boxIsHovered);
+    };
+
+    const hasNotes = (person: Person): boolean => {
+        return person.notes !== undefined && person.notes !== '';
+    };
+
+    const hasTags = (person: Person): boolean => {
+        return person.tags && person.tags.length > 0;
     };
 
     const getDisplayContent = (): HoverInfo[] => {
@@ -58,17 +66,17 @@ const PersonAndRoleInfo = ({
             text: numberOfDaysString(calculateDuration(assignment, viewingDate)),
             icon: 'timer',
         });
-        if (person.tags.length > 0) {
+        if (hasTags(person)) {
             toReturn.push({
                 title: 'Person Tags',
                 text: listOfTagName().join(', '),
                 icon: 'local_offer',
             });
         }
-        if (assignment.person.notes !== undefined && assignment.person.notes !== '') {
+        if (hasNotes(person)) {
             toReturn.push({
                 title: 'Notes',
-                text: assignment.person.notes,
+                text: assignment.person.notes || '',
                 icon: 'note',
             });
         }
@@ -80,10 +88,12 @@ const PersonAndRoleInfo = ({
         return (
             <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
                 {content.map(hoverInfo => {
-                    return (<div key={hoverInfo.title}><p className="hoverBoxTitle">{hoverInfo.title}:</p>
-                        <p className="hoverBoxText">
-                            {hoverInfo.text}
-                        </p></div>);
+                    return (<div key={hoverInfo.title} className={'flex-row'}>
+                        <i className={`material-icons tooltip-icon`} data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
+                        <div className={'flex-col'}><p className="hoverBoxTitle">{hoverInfo.title}:</p>
+                            <p className="hoverBoxText">
+                                {hoverInfo.text}
+                            </p></div></div>);
                 })}
             </div>
         );
@@ -105,14 +115,6 @@ const PersonAndRoleInfo = ({
         } else return [];
     };
 
-    const passNote = (): [] | string[] => {
-        if (person.notes) {
-            return [person.notes];
-        } else {
-            return [];
-        }
-    };
-
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
             className="personNameAndRoleContainer"
@@ -123,17 +125,15 @@ const PersonAndRoleInfo = ({
                 className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
                 {person.name}
-                <HoverableIcon iconName={'local_offer'} textToDisplay={listOfTagName()} viewOnly={isReadOnly}
-                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Person Tags'}/>
-                <HoverableIcon iconName={'note'} textToDisplay={passNote()} viewOnly={isReadOnly}
-                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Notes'}/>
+                {hasTags(person) && !isReadOnly && <i className={'material-icons'}>local_offer</i>}
+                {hasNotes(person) && <i className={'material-icons'}>note</i>}
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
                     {person.spaceRole.name}
                 </div>
             )}
-            {!isDragging && !isReadOnly && hoverBoxIsOpened && <HoverBox/>}
+            {!isDragging && !isReadOnly && isHoverBoxOpen && <HoverBox/>}
         </div>
     );
 };
