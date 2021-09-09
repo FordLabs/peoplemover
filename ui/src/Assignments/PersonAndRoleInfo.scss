@@ -65,9 +65,9 @@
   border: 2px solid $gray-5;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
   border-radius: 4px;
-  top: 5px;
-  left: 5px;
-  width: 173px;
+  top: 20px;
+  left: 86px;
+  width: 203px;
   z-index: 10;
   color: $gray-1;
   font-size: 12px;
@@ -91,6 +91,8 @@
     display:flex;
     flex-direction: row;
     align-items:center;
+    margin-top:5px;
+    margin-bottom:5px;
   }
 
   .flex-col{
