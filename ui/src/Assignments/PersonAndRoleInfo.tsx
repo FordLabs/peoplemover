@@ -15,13 +15,18 @@
  * limitations under the License.
  */
 
-import React, {ReactElement} from 'react';
+import React, {ReactElement, useState} from 'react';
 import {Assignment, calculateDuration} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import HoverableIcon from './HoverableIcon';
-import moment from 'moment';
+import {Person} from '../People/Person';
+
+interface HoverInfo {
+    title: string;
+    text: string;
+    icon: string;
+}
 
 interface Props {
     assignment: Assignment;
@@ -40,6 +45,68 @@ const PersonAndRoleInfo = ({
 }: Props): ReactElement => {
     const {person} = assignment;
 
+    const [isHoverBoxOpen, setHoverBoxIsOpened] = useState<boolean>(false);
+
+    const onHover = (boxIsHovered = false): void => {
+        setHoverBoxIsOpened(boxIsHovered);
+    };
+
+    const hasNotes = (person: Person): boolean => {
+        return person.notes !== undefined && person.notes !== '';
+    };
+
+    const hasTags = (person: Person): boolean => {
+        return person.tags && person.tags.length > 0;
+    };
+
+    const getDisplayContent = (): HoverInfo[] => {
+        const toReturn: HoverInfo[] = [];
+        toReturn.push({
+            title: 'Time on Product',
+            text: numberOfDaysString(calculateDuration(assignment, viewingDate)),
+            icon: 'timer',
+        });
+        if (hasTags(person)) {
+            toReturn.push({
+                title: 'Person Tags',
+                text: listOfTagName().join(', '),
+                icon: 'local_offer',
+            });
+        }
+        if (hasNotes(person)) {
+            toReturn.push({
+                title: 'Notes',
+                text: assignment.person.notes || '',
+                icon: 'note',
+            });
+        }
+        return toReturn;
+    };
+
+    const HoverBox = (): JSX.Element => {
+        const content = getDisplayContent();
+        return (
+            <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
+                {content.map(hoverInfo => {
+                    return (<div key={hoverInfo.title} className={'flex-row'}>
+                        <i className={`material-icons tooltip-icon`} data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
+                        <div className={'flex-col'}><div className="hoverBoxTitle">{hoverInfo.title}:</div>
+                            <div className="hoverBoxText">
+                                {hoverInfo.text}
+                            </div></div></div>);
+                })}
+            </div>
+        );
+    };
+
+    const numberOfDaysString = (timeOnProject: number): string => {
+        if (timeOnProject === 1) {
+            return timeOnProject.toFixed(0).concat(' Day');
+        } else {
+            return timeOnProject.toFixed(0).concat(' Days');
+        }
+    };
+
     const listOfTagName = (): string[] => {
         if (person.tags) {
             return person.tags.map((tag) => {
@@ -48,51 +115,25 @@ const PersonAndRoleInfo = ({
         } else return [];
     };
 
-    const passNote = (): []|string[] => {
-        if (person.notes) {
-            return [person.notes];
-        } else {
-            return [];
-        }
-    };
-
-    const getTimeOnProduct = (): string => {
-        if (assignment.startDate) {
-            const startString = moment(assignment.startDate).format('M/D/YY');
-            const duration = calculateDuration(assignment, viewingDate);
-            let days = 'days';
-            if (duration < 2) {
-                days = 'day';
-            }
-            let endString = 'tbd';
-            if (assignment.endDate) {
-                endString = moment(assignment.endDate).format('M/D/YY');
-            }
-            return startString + ' - ' + endString + ' (' + duration + ' ' + days + ')';
-        } else {
-            return 'no information available';
-        }
-    };
-
     return (
         <div data-testid={`assignmentCard${assignment.id}info`}
-            className="personNameAndRoleContainer">
+            className="personNameAndRoleContainer"
+            onMouseEnter={(): void => onHover(true)}
+            onMouseLeave={(): void => onHover(false)}
+        >
             <div
                 className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
                 {person.name}
-                <HoverableIcon iconName={'local_offer'} textToDisplay={listOfTagName()} viewOnly={isReadOnly}
-                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Person Tags'}/>
-                <HoverableIcon iconName={'note'} textToDisplay={passNote()} viewOnly={isReadOnly}
-                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Notes'}/>
-                <HoverableIcon iconName={'timer'} textToDisplay={[getTimeOnProduct()]} viewOnly={isReadOnly}
-                    isDragging={isDragging} isUnassignedProduct={isUnassignedProduct} type={'Time on Product'}/>
+                {hasTags(person) && !isReadOnly && <i className={'material-icons'}>local_offer</i>}
+                {hasNotes(person) && !isReadOnly && <i className={'material-icons'}>note</i>}
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
                     {person.spaceRole.name}
                 </div>
             )}
+            {!isDragging && !isReadOnly && isHoverBoxOpen && <HoverBox/>}
         </div>
     );
 };

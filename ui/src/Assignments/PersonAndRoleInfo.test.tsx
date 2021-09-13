@@ -21,71 +21,86 @@ import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {fireEvent} from '@testing-library/react';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import {Assignment} from './Assignment';
+import moment from 'moment';
 
-describe('PersonAndRoleInfo component for TimeOnProduct', () => {
-
-    it('should show a one day time on product on hover on timer icon and is not viewOnly', async () => {
-        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly:false});
-        store.dispatch = jest.fn();
-        const testAssignment: Assignment = {
-            id: 1,
-            productId: 1,
-            placeholder: false,
-            person: TestUtils.hank,
-            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-            effectiveDate: new Date(2020, 6, 1),
-            startDate: new Date(2020, 0, 1),
-            endDate: new Date(2020, 0, 1),
-        };
-        let app = renderWithRedux(<PersonAndRoleInfo
-            assignment={testAssignment}
-            isUnassignedProduct={false}/>, store);
-
-        const icons = await app.container.getElementsByClassName('hoverableIcon');
-        expect(icons.length).toEqual(3);
-
-        await fireEvent.mouseOver(icons[2]);
-
-        expect(app.getByText('Time on Product:')).toBeVisible();
-        expect(app.getByText('1/1/20 - 1/1/20 (1 day)')).toBeVisible();
-    });
-
-    it('should show seven days time on product on hover on timer icon and is not viewOnly', async () => {
-        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly:false});
-        store.dispatch = jest.fn();
-        const testAssignment: Assignment = {
-            id: 1,
-            productId: 1,
-            placeholder: false,
-            person: TestUtils.hank,
-            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-            effectiveDate: new Date(2020, 6, 1),
-            startDate: new Date(2020, 0, 1),
-            endDate: new Date(2020, 0, 7),
-        };
-        let app = renderWithRedux(<PersonAndRoleInfo
-            assignment={testAssignment}
-            isUnassignedProduct={false}/>, store);
-
-        const icons = await app.container.getElementsByClassName('hoverableIcon');
-        expect(icons.length).toEqual(3);
-
-        await fireEvent.mouseOver(icons[2]);
-
-        expect(app.getByText('Time on Product:')).toBeVisible();
-        expect(app.getByText('1/1/20 - 1/7/20 (7 days)')).toBeVisible();
-    });
-
-    it('should show no icons when in viewOnly', async () => {
-        let store = createStore(rootReducer, {currentSpace:TestUtils.space, isReadOnly:true});
-        store.dispatch = jest.fn();
+describe('the tooltip behavior on hover', () => {
+    it('should show the notes of the person being hovered over', async () => {
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
         let app = renderWithRedux(<PersonAndRoleInfo
             assignment={TestUtils.assignmentForHank}
             isUnassignedProduct={false}/>, store);
-
-        const icons = await app.container.getElementsByClassName('hoverableIcon');
-        expect(icons.length).toEqual(0);
+        const theWholePersonAndRoleInfo = app.getByTestId('assignmentCard3info');
+        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(app.queryByTestId('note-icon')).not.toBeInTheDocument();
+        await fireEvent.mouseOver(theWholePersonAndRoleInfo);
+        expect(app.getByText('Notes:')).toBeInTheDocument();
+        expect(app.getByTestId('note-icon')).toBeInTheDocument();
+        expect(app.getByText("Don't forget the WD-40!")).toBeInTheDocument();
     });
 
+    it('should not show the notes of the person being hovered over if they have none', async () => {
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
+        let assignmentOfPersonWithNoNotes = TestUtils.assignmentForPerson2;
+        let app = renderWithRedux(<PersonAndRoleInfo
+            assignment={assignmentOfPersonWithNoNotes}
+            isUnassignedProduct={false}/>, store);
+        const theWholePersonAndRoleInfo = app.getByTestId('assignmentCard15info');
+        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        await fireEvent.mouseOver(theWholePersonAndRoleInfo);
+        expect(app.queryByText('Notes:')).not.toBeInTheDocument();
+        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+    });
+
+    it('should show the time on product of the person being hovered over', async () => {
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false, viewingDate: moment('2021-01-01').toDate()});
+        let app = renderWithRedux(<PersonAndRoleInfo
+            assignment={TestUtils.assignmentForHank}
+            isUnassignedProduct={false}/>, store);
+        const theWholePersonAndRoleInfo = app.getByTestId('assignmentCard3info');
+        expect(app.queryByText('Time on Product:')).not.toBeInTheDocument();
+        expect(app.queryByText('367 Days')).not.toBeInTheDocument();
+        await fireEvent.mouseOver(theWholePersonAndRoleInfo);
+        expect(app.getByText('Time on Product:')).toBeInTheDocument();
+        expect(app.getByTestId('timer-icon')).toBeInTheDocument();
+        expect(app.getByText('367 Days')).toBeInTheDocument();
+    });
+
+    it('should show the person tags of the person being hovered over', async () => {
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
+        let app = renderWithRedux(<PersonAndRoleInfo
+            assignment={TestUtils.assignmentForPerson2}
+            isUnassignedProduct={false}/>, store);
+        const theWholePersonAndRoleInfo = app.getByTestId('assignmentCard15info');
+        expect(app.queryByText('Person Tags:')).not.toBeInTheDocument();
+        expect(app.queryByTestId('local_offer-icon')).not.toBeInTheDocument();
+        expect(app.queryByText('The lil boss, The big boss')).not.toBeInTheDocument();
+        await fireEvent.mouseOver(theWholePersonAndRoleInfo);
+        expect(app.getByText('Person Tags:')).toBeInTheDocument();
+        expect(app.getByTestId('local_offer-icon')).toBeInTheDocument();
+        expect(app.getByText('The lil boss, The big boss')).toBeInTheDocument();
+    });
+
+    it('should not show the person tags of the person being hovered over if they have none', async () => {
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
+        let assignmentOfPersonWithNoTags = TestUtils.assignmentForUnassigned;
+        let app = renderWithRedux(<PersonAndRoleInfo
+            assignment={assignmentOfPersonWithNoTags}
+            isUnassignedProduct={false}/>, store);
+        const theWholePersonAndRoleInfo = app.getByTestId('assignmentCard11info');
+        expect(app.queryByText('Person Tags:')).not.toBeInTheDocument();
+        await fireEvent.mouseOver(theWholePersonAndRoleInfo);
+        expect(app.queryByText('Person Tags: ')).not.toBeInTheDocument();
+    });
+
+    it('should not show the hover if the space is read only', async () => {
+        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+        let app = renderWithRedux(<PersonAndRoleInfo
+            assignment={TestUtils.assignmentForHank}
+            isUnassignedProduct={false}/>, store);
+        const theWholePersonAndRoleInfo = app.getByTestId('assignmentCard3info');
+        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        await fireEvent.mouseOver(theWholePersonAndRoleInfo);
+        expect(app.queryByText('Notes:')).not.toBeInTheDocument();
+        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+    });
 });

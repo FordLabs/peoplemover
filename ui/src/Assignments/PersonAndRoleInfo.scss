@@ -23,20 +23,16 @@
   border-bottom-left-radius: 2px;
   padding: 4px 8px;
 
-  .notesIcon {
+  .personName {
+    word-break: break-word;
+  }
+
+  .personName > i{
     position: relative;
     color: $purple;
     margin-left: 4px;
     font-size: 16px;
     vertical-align: text-bottom;
-
-    &.unassignedNotesIcon {
-      position: unset;
-    }
-  }
-
-  .personName {
-    word-break: break-word;
   }
 
   .timeOnProductButton{
@@ -69,13 +65,14 @@
   border: 2px solid $gray-5;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
   border-radius: 4px;
-  top: 5px;
-  left: 5px;
-  width: 173px;
+  top: 20px;
+  left: 86px;
+  width: 203px;
   z-index: 10;
   color: $gray-1;
   font-size: 12px;
   font-weight: normal;
+  word-break: break-word;
 
   &.unassignedHoverBoxContainer {
     top: 20px;
@@ -87,6 +84,37 @@
 
   .hoverBoxNotes {
     margin: 16px 20px;
+    line-height: 18px;
+    white-space: pre-wrap;
+  }
+
+  .flex-row{
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    margin-top:5px;
+    margin-bottom:5px;
+    padding-right:40px;
+  }
+
+  .flex-col{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .tooltip-icon{
+    justify-self: center;
+    margin: 12px;
+    color: $purple;
+    font-size: 16px;
+  }
+
+  .hoverBoxTitle{
+    line-height: 18px;
+    font-weight: bold;
+  }
+
+  .hoverBoxText {
     line-height: 18px;
     white-space: pre-wrap;
   }
