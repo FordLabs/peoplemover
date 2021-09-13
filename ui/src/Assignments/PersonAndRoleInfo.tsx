@@ -126,7 +126,7 @@ const PersonAndRoleInfo = ({
                 data-testid="personName">
                 {person.name}
                 {hasTags(person) && !isReadOnly && <i className={'material-icons'}>local_offer</i>}
-                {hasNotes(person) && <i className={'material-icons'}>note</i>}
+                {hasNotes(person) && !isReadOnly && <i className={'material-icons'}>note</i>}
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>

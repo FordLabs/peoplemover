@@ -72,6 +72,7 @@
   color: $gray-1;
   font-size: 12px;
   font-weight: normal;
+  word-break: break-all;
 
   &.unassignedHoverBoxContainer {
     top: 20px;
@@ -93,6 +94,7 @@
     align-items:center;
     margin-top:5px;
     margin-bottom:5px;
+    padding-right:40px;
   }
 
   .flex-col{
