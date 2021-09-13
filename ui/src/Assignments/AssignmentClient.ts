@@ -92,6 +92,15 @@ class AssignmentClient {
 
         return Axios.get(url, {headers});
     }
+
+    static async getAssignmentsV2ForSpaceAndPerson(spaceUuid: string, personId: number) {
+        const url = `/api/v2/spaces/${spaceUuid}/person/${personId}/assignments`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        };
+        return Axios.get(url, {headers});
+    }
 }
 
 export default AssignmentClient;

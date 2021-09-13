@@ -26,7 +26,7 @@ import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
-import {AxiosResponse} from 'axios';
+import Axios, {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
@@ -104,11 +104,14 @@ describe('Person Form', () => {
         });
 
         it('should display assignment history text', async () => {
+            AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
+                data: [{...TestUtils.assignmentForHank, endDate: null}],
+            } as AxiosResponse));
             await act(async () => {
                 await personForm.findByText('View Assignment History');
             });
             await act(async () => {
-                await personForm.findByText('Moved to Hanky Product on 01/01/2020');
+                await personForm.findByText('Hanky Product 01/01/2020 - Current (135 days)');
             });
         });
     });

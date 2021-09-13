@@ -26,6 +26,7 @@ export interface Assignment {
     spaceUuid: string;
     effectiveDate?: Date;
     startDate?: Date;
+    endDate?: Date;
 }
 
 export function calculateDuration(assignment: Assignment, viewingDate: Date): number {
