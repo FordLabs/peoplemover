@@ -28,7 +28,7 @@ data class AssignmentV2(
 
         var productId: Int,
 
-        val startDate: LocalDate = LocalDate.now(),
+        var startDate: LocalDate = LocalDate.now(),
 
         var endDate: LocalDate? = LocalDate.now(),
 

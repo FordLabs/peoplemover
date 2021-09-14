@@ -46,6 +46,10 @@ class AssignmentService(
         return assignmentConverter.convert(allV1AssignmentsForPerson)
     }
 
+    fun getAssignmentsForSpace(spaceUuid: String) : List<AssignmentV1>{
+        return assignmentRepository.findAllBySpaceUuid(spaceUuid);
+    }
+
     fun getAssignmentsByDate(spaceUuid: String, requestedDate: LocalDate): List<AssignmentV1> {
         val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
         val allAssignments: MutableList<AssignmentV1> = mutableListOf()
