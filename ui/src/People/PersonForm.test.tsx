@@ -26,7 +26,7 @@ import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
-import Axios, {AxiosResponse} from 'axios';
+import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
@@ -85,6 +85,11 @@ describe('Person Form', () => {
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
+            AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
+                data: [{...TestUtils.assignmentForHank, endDate: null},
+                    TestUtils.assignmentVacationForHank,
+                    TestUtils.previousAssignmentForHank],
+            } as AxiosResponse));
             await act(async () => {
                 personForm = await renderWithRedux(
                     <PersonForm
@@ -104,14 +109,13 @@ describe('Person Form', () => {
         });
 
         it('should display assignment history text', async () => {
-            AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
-                data: [{...TestUtils.assignmentForHank, endDate: null}],
-            } as AxiosResponse));
             await act(async () => {
                 await personForm.findByText('View Assignment History');
             });
             await act(async () => {
-                await personForm.findByText('Hanky Product 01/01/2020 - Current (135 days)');
+                await personForm.findByText('Hanky Product 01/01/2020 - Current (134 days)');
+                await personForm.findByText('Unassigned 12/01/2019 - 12/31/2019 (31 days)');
+                await personForm.findByText('Product 3 10/01/2019 - 11/30/2019 (61 days)');
             });
         });
     });

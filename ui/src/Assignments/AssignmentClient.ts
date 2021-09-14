@@ -93,7 +93,7 @@ class AssignmentClient {
         return Axios.get(url, {headers});
     }
 
-    static async getAssignmentsV2ForSpaceAndPerson(spaceUuid: string, personId: number) {
+    static async getAssignmentsV2ForSpaceAndPerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
         const url = `/api/v2/spaces/${spaceUuid}/person/${personId}/assignments`;
         const headers = {
             'Content-Type': 'application/json',

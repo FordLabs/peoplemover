@@ -153,6 +153,10 @@ class TestUtils {
         AssignmentClient.getReassignments = jest.fn(() => Promise.resolve({
             data: [],
         } as AxiosResponse));
+        AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
+            data: [],
+        } as AxiosResponse));
+
 
         RoleClient.get = jest.fn(() => Promise.resolve({
             data: [
@@ -377,6 +381,26 @@ class TestUtils {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         effectiveDate: new Date(2020, 6, 1),
         startDate: new Date(2020, 0, 1),
+    };
+
+    static assignmentVacationForHank: Assignment = {
+        id: 20,
+        productId: 999,
+        person: TestUtils.hank,
+        placeholder: false,
+        spaceUuid: TestUtils.hank.spaceUuid,
+        startDate: new Date(2019, 11, 1),
+        endDate: new Date(2019, 11, 31),
+    };
+
+    static previousAssignmentForHank: Assignment = {
+        id: 21,
+        productId: 3,
+        person: TestUtils.hank,
+        placeholder: false,
+        spaceUuid: TestUtils.hank.spaceUuid,
+        startDate: new Date(2019, 9, 1),
+        endDate: new Date(2019, 10, 30),
     };
 
     static assignmentForUnassigned: Assignment = {

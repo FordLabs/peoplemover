@@ -36,7 +36,7 @@ import {Product} from '../Products/Product';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
-import {Assignment} from '../Assignments/Assignment';
+import {Assignment, calculateDuration} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
@@ -59,14 +59,6 @@ import {
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
 
-interface AssignmentHistory {
-    productName: string;
-    id: number;
-    startDate: Date | undefined;
-}
-
-type AssignmentHistoryType = AssignmentHistory | undefined;
-
 interface PersonFormProps {
     isEditPersonForm: boolean;
     products: Array<Product>;
@@ -76,7 +68,6 @@ interface PersonFormProps {
     currentSpace: Space;
     viewingDate: Date;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    currentUser: string;
     roles: Array<RoleTag>;
 
     closeModal(): void;
@@ -101,7 +92,6 @@ function PersonForm({
     setIsUnassignedDrawerOpen,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
-    currentUser,
     roles,
     fetchRoles,
 }: PersonFormProps): JSX.Element {
@@ -119,6 +109,7 @@ function PersonForm({
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
     const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
+    const [assignmentHistory, setAssignmentHistory] = useState<Array<Assignment>>([]);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -134,6 +125,11 @@ function PersonForm({
             .then((response) => {
                 const assignments: Array<Assignment> = response.data;
                 setSelectedProducts(createProductsFromAssignments(assignments));
+            });
+
+        AssignmentClient.getAssignmentsV2ForSpaceAndPerson(spaceUuid, personToPopulate.id)
+            .then((response) => {
+                setAssignmentHistory(response.data as Array<Assignment>);
             });
     };
 
@@ -336,42 +332,30 @@ function PersonForm({
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
-    const getAssignmentHistory = (): AssignmentHistoryType[] => {
-        const returnValue = products.map((product) => {
-            const personsAssignment = product.assignments.find(
-                (assignment) => assignment.person.id === person.id
-            );
-            if (personsAssignment) {
-                return {
-                    productName: product.name,
-                    id: personsAssignment.id,
-                    startDate: personsAssignment.startDate,
-                };
-            } else {
-                return undefined;
-            }
-        }).filter((assignmentHistory) => (assignmentHistory !== undefined));
-        return returnValue;
-    };
-
     const capitalize = (s: string): string => {
         return s.charAt(0).toUpperCase() + s.slice(1);
     };
 
     const getAssignmentHistoryContent = (): JSX.Element => {
-        const assignmentHistories = getAssignmentHistory();
         return (
             <>
-                {assignmentHistories.map(
-                    assignmentHistory => {
-                        if (assignmentHistory) {
-                            let productName = assignmentHistory.productName;
+                {assignmentHistory.map(
+                    assignment => {
+                        if (assignment) {
+                            let productName = 'Unknown/Future Product';
+                            let product = products.find((product) => product.id === assignment.productId);
+                            if (product) {
+                                productName = product.name;
+                            }
                             if (productName === 'unassigned') {
                                 productName = capitalize(productName);
                             }
-                            let effectiveDate = (assignmentHistory.startDate ? moment(assignmentHistory.startDate).format('MM/DD/YYYY') : 'undefined date');
+                            let startDate = (assignment.startDate ? moment(assignment.startDate).format('MM/DD/YYYY') : 'undefined date');
+                            let endDate = (assignment.endDate ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
+                            let duration = calculateDuration(assignment, viewingDate);
+                            let durationUnit = (duration === 1 ? 'day' : 'days');
                             return (
-                                <div key={assignmentHistory.id}>Moved to {productName} on {effectiveDate}</div>
+                                <div key={assignment.id}>{productName} {startDate} - {endDate} ({duration} {durationUnit})</div>
                             );
                         } else {
                             return (
@@ -382,10 +366,6 @@ function PersonForm({
                 )}
             </>
         );
-    };
-
-    const fireMatomoHoverEvent = (): void =>  {
-        MatomoEvents.pushEvent(currentSpace.name, 'assignmentHistoryClick', currentUser);
     };
 
     return (
@@ -458,7 +438,8 @@ function PersonForm({
                     onChange={changeProductName}
                 />
                 {isEditPersonForm && <div className="assignmentHistoryContainer">
-                    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()} onHover={fireMatomoHoverEvent}/>
+                    <div>View Assignment History</div>
+                    <>{getAssignmentHistoryContent()}</>
                 </div>}
                 <FormTagsField
                     tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
@@ -514,7 +495,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-    currentUser: state.currentUser,
     roles: state.roles,
 });
 

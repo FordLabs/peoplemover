@@ -3,9 +3,11 @@ package com.ford.internalprojects.peoplemover.utilities
 import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentV2
 import com.ford.internalprojects.peoplemover.person.Person
+import org.springframework.stereotype.Component
 import java.time.LocalDate
 import kotlin.streams.toList
 
+@Component
 class AssignmentV1ToAssignmentV2Converter {
     fun convert(v1Assignments: List<AssignmentV1>): List<AssignmentV2> {
         val v2Assignments = mutableListOf<AssignmentV2>()

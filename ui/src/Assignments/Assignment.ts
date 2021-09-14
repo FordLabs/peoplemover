@@ -31,10 +31,13 @@ export interface Assignment {
 
 export function calculateDuration(assignment: Assignment, viewingDate: Date): number {
     if (assignment.startDate) {
-        const viewingDateMoment = moment(viewingDate).startOf('day');
-        const startingDateMoment = moment(assignment.startDate).startOf('day');
-        return Math.ceil(moment.duration(viewingDateMoment.diff(startingDateMoment)).asDays()) + 1;
+        const startMoment = moment(assignment.startDate).startOf('day');
+        let endMoment = moment(viewingDate).startOf('day');
+        if (assignment.endDate) {
+            endMoment = moment(assignment.endDate).startOf('day');
+        }
+        return Math.floor(moment.duration(endMoment.diff(startMoment)).asDays()) + 1;
     } else {
-        return -1;
+        return 0;
     }
 }

@@ -29,6 +29,7 @@ import java.time.LocalDate
 class AssignmentController(
         private val assignmentService: AssignmentService,
         private val spaceService: SpaceService,
+        private val assignmentConverter: AssignmentV1ToAssignmentV2Converter,
         private val logger: BasicLogger
 ) {
 
@@ -43,11 +44,20 @@ class AssignmentController(
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
+    @GetMapping("/api/v2/spaces/{spaceUuid}/person/{personId}/assignments")
+    fun getAssignmentsByPersonId(@PathVariable spaceUuid: String, @PathVariable personId: Int): ResponseEntity<List<AssignmentV2>> {
+        spaceService.checkReadOnlyAccessByDate(null, spaceUuid)
+
+        val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonId(personId)
+        logger.logInfoMessage("All assignments retrieved for person with id: [$personId].")
+        return ResponseEntity.ok(assignmentsForPerson)
+    }
+
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/v2/{spaceUuid}/assignments/product/{productId}/date/{requestedDate}")
     fun getAssignmentsV2ByProductIdForDate(@PathVariable spaceUuid: String, @PathVariable productId: Int, @PathVariable requestedDate: String): ResponseEntity<List<AssignmentV2>> {
         val allAssignmentsForDate = assignmentService.getAssignmentsByDate(spaceUuid, LocalDate.parse(requestedDate));
-        val converter = AssignmentV1ToAssignmentV2Converter()
-        return ResponseEntity.ok(converter.convert(allAssignmentsForDate.filter { assignment ->  productId == assignment.productId}))
+        return ResponseEntity.ok(assignmentConverter.convert(allAssignmentsForDate.filter { assignment ->  productId == assignment.productId}))
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'modify')")

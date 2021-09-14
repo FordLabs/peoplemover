@@ -23,6 +23,7 @@ import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.person.exceptions.PersonNotExistsException
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
+import com.ford.internalprojects.peoplemover.utilities.AssignmentV1ToAssignmentV2Converter
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -32,11 +33,17 @@ class AssignmentService(
         private val assignmentRepository: AssignmentRepository,
         private val personRepository: PersonRepository,
         private val productRepository: ProductRepository,
+        private val assignmentConverter: AssignmentV1ToAssignmentV2Converter,
         private val assignmentDateHandler: AssignmentDateHandler
 ) {
     fun getAssignmentsForTheGivenPersonIdAndDate(personId: Int, date: LocalDate): List<AssignmentV1> {
         val allAssignmentsBeforeOrOnDate = assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId, date)
         return getAllAssignmentsForPersonOnDate(personId, allAssignmentsBeforeOrOnDate)
+    }
+
+    fun getAssignmentsForTheGivenPersonId(personId: Int): List<AssignmentV2> {
+        val allV1AssignmentsForPerson = assignmentRepository.findAllByPersonIdOrderByEffectiveDateAsc(personId)
+        return assignmentConverter.convert(allV1AssignmentsForPerson)
     }
 
     fun getAssignmentsByDate(spaceUuid: String, requestedDate: LocalDate): List<AssignmentV1> {
