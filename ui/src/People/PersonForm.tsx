@@ -58,6 +58,7 @@ import {
 } from '../SortingAndFiltering/FilterLibraries';
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {AssignmentHistory} from "../Assignments/AssignmentHistory";
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -332,40 +333,8 @@ function PersonForm({
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
-    const capitalize = (s: string): string => {
-        return s.charAt(0).toUpperCase() + s.slice(1);
-    };
-
     const getAssignmentHistoryContent = (): JSX.Element => {
-        return (
-            <>
-                {assignmentHistory.map(
-                    assignment => {
-                        if (assignment) {
-                            let productName = 'Unknown/Future Product';
-                            let product = products.find((product) => product.id === assignment.productId);
-                            if (product) {
-                                productName = product.name;
-                            }
-                            if (productName === 'unassigned') {
-                                productName = capitalize(productName);
-                            }
-                            let startDate = (assignment.startDate ? moment(assignment.startDate).format('MM/DD/YYYY') : 'undefined date');
-                            let endDate = (assignment.endDate ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
-                            let duration = calculateDuration(assignment, viewingDate);
-                            let durationUnit = (duration === 1 ? 'day' : 'days');
-                            return (
-                                <div key={assignment.id}>{productName} {startDate} - {endDate} ({duration} {durationUnit})</div>
-                            );
-                        } else {
-                            return (
-                                <div>No Assignment History</div>
-                            );
-                        }
-                    }
-                )}
-            </>
-        );
+        return (<AssignmentHistory assignmentHistory={assignmentHistory} products={products} date={viewingDate}/>)
     };
 
     return (
