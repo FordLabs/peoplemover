@@ -36,7 +36,7 @@ import {Product} from '../Products/Product';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
-import {Assignment, calculateDuration} from '../Assignments/Assignment';
+import {Assignment} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
@@ -58,7 +58,7 @@ import {
 } from '../SortingAndFiltering/FilterLibraries';
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {AssignmentHistory} from "../Assignments/AssignmentHistory";
+import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -110,7 +110,6 @@ function PersonForm({
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
     const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
-    const [assignmentHistory, setAssignmentHistory] = useState<Array<Assignment>>([]);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -126,11 +125,6 @@ function PersonForm({
             .then((response) => {
                 const assignments: Array<Assignment> = response.data;
                 setSelectedProducts(createProductsFromAssignments(assignments));
-            });
-
-        AssignmentClient.getAssignmentsV2ForSpaceAndPerson(spaceUuid, personToPopulate.id)
-            .then((response) => {
-                setAssignmentHistory(response.data as Array<Assignment>);
             });
     };
 
@@ -334,7 +328,7 @@ function PersonForm({
     };
 
     const getAssignmentHistoryContent = (): JSX.Element => {
-        return (<AssignmentHistory assignmentHistory={assignmentHistory} products={products} date={viewingDate}/>)
+        return (<AssignmentHistory person={person}/>);
     };
 
     return (

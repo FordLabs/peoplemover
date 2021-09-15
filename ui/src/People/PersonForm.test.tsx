@@ -112,11 +112,6 @@ describe('Person Form', () => {
             await act(async () => {
                 await personForm.findByText('View Assignment History');
             });
-            await act(async () => {
-                await personForm.findByText('Hanky Product 01/01/2020 - Current (134 days)');
-                await personForm.findByText('Unassigned 12/01/2019 - 12/31/2019 (31 days)');
-                await personForm.findByText('Product 3 10/01/2019 - 11/30/2019 (61 days)');
-            });
         });
     });
 

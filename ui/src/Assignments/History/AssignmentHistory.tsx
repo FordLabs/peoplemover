@@ -1,22 +1,39 @@
 import moment from "moment";
-import {Assignment, calculateDuration} from "./Assignment";
-import React from "react";
-import {Product} from "../Products/Product";
+import {Assignment, calculateDuration} from "../Assignment";
+import React, {useEffect, useState} from "react";
+import {Space} from "../../Space/Space";
+import {Person} from "../../People/Person";
+import {Product} from "../../Products/Product";
+import AssignmentClient from "../AssignmentClient";
+import ProductClient from "../../Products/ProductClient";
 
-interface AssignmentHistoryProps{
-    assignmentHistory: Array<Assignment>;
-    products: Array<Product>;
-    date: Date;
+interface AssignmentHistoryProps {
+    person: Person;
 }
-export function AssignmentHistory({products, assignmentHistory, date}: AssignmentHistoryProps): JSX.Element {
+
+export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element {
+
+    const [products, setProducts] = useState<Array<Product>>([]);
+    const [assignments, setAssignments] = useState<Array<Assignment>>([]);
 
     const capitalize = (s: string): string => {
         return s.charAt(0).toUpperCase() + s.slice(1);
     };
 
+    useEffect(() => {
+        ProductClient.getProductsForDate(person.spaceUuid, new Date()).then((result) => {
+            setProducts(result.data);
+        })
+        AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
+            setAssignments(result.data);
+        });
+    }, [person]);
+
+
+
     return (
         <>
-            {assignmentHistory.map(
+            {assignments.map(
                 assignment => {
                     if (assignment) {
                         let productName = 'Unknown/Future Product';
@@ -29,7 +46,7 @@ export function AssignmentHistory({products, assignmentHistory, date}: Assignmen
                         }
                         let startDate = (assignment.startDate ? moment(assignment.startDate).format('MM/DD/YYYY') : 'undefined date');
                         let endDate = (assignment.endDate ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
-                        let duration = calculateDuration(assignment, date);
+                        let duration = calculateDuration(assignment, new Date());
                         let durationUnit = (duration === 1 ? 'day' : 'days');
                         return (
                             <div
