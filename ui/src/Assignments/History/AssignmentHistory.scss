@@ -15,32 +15,29 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+@import '../../Application/Styleguide/Colors.scss';
 
-.personNameWarning{
-  color: $error-message;
-  font-size: 12px;
-  padding-top: 6px;
-  font-style: italic;
+.assignmentHistoryTable {
+  display: block;
+  height: 6.5rem;
+  width: 18rem;
+  border: 1px solid $gray-4;
+  overflow-y: scroll;
 }
 
-.notes {
-  padding: 8px;
-  box-sizing: border-box;
+.assignmentHistoryRow {
+  line-height: 1rem;
 }
 
-.isNewContainer{
-  font-size: 1.05rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin: 8px 0 0 0;
-  .checkbox {
-    margin-right: 6px;
-  }
-}
-
-.toolTipContent {
+.assignmentHistoryCell {
   font-family: Helvetica, sans-serif;
-  letter-spacing: normal;
+  font-size: 0.75rem;
+}
+
+.assignmentHistoryName {
+  width: 4.5rem;
+}
+
+.assignmentHistoryDate {
+  width: 13.5rem;
 }

@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2021 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import TestUtils, {mockDate} from "../../tests/TestUtils";
 import React from "react";
 import AssignmentClient from "../AssignmentClient";
@@ -27,10 +44,15 @@ describe('Assignment History', () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
 
         const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1
+        const str = '01/01/2020 - Current \\(' + expectedDuration + ' days\\)';
+        const regex = new RegExp(str);
 
-        await actual.findByText('Hanky Product 01/01/2020 - Current (' + expectedDuration + ' days)');
-        await actual.findByText('Unassigned 12/01/2019 - 12/31/2019 (31 days)');
-        await actual.findByText('Product 3 10/01/2019 - 11/30/2019 (61 days)');
+        await actual.findByText('Hanky Product');
+        await actual.findByText(regex);
+        await actual.findByText('Unassigned');
+        await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
+        await actual.findByText('Product 3');
+        await actual.findByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
     });
 
     it('should not show assignments from the future w.r.t. today', async () => {
@@ -68,6 +90,7 @@ describe('Assignment History', () => {
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
 
-        await actual.findByText(/Unknown Product 01\/01\/2020 - Current/);
+        await actual.findByText('Unknown Product');
+        await actual.findByText(/01\/01\/2020 - Current/);
     });
 });

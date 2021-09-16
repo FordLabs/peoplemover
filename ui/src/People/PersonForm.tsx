@@ -328,7 +328,7 @@ function PersonForm({
     };
 
     const getAssignmentHistoryContent = (): JSX.Element => {
-        return (<AssignmentHistory person={person}/>);
+        return (personEdited ? (<AssignmentHistory person={personEdited}/>) : <></>);
     };
 
     return (
@@ -400,8 +400,8 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
-                {isEditPersonForm && <div className="assignmentHistoryContainer">
-                    <div>View Assignment History</div>
+                {isEditPersonForm && <div className="formItem">
+                    <div className="formItemLabel">View Assignment History</div>
                     <>{getAssignmentHistoryContent()}</>
                 </div>}
                 <FormTagsField

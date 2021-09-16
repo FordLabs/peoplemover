@@ -125,7 +125,7 @@ describe('Person Form', () => {
                         isEditPersonForm={true}
                         products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
-                        initialPersonName={TestUtils.hank.name}
+                        personEdited={TestUtils.hank}
                     />, store, undefined);
             });
 
