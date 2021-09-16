@@ -35,8 +35,9 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         <>
             {assignments.map(
                 assignment => {
-                    if (assignment) {
-                        let productName = 'Unknown/Future Product';
+                    const now = new Date();
+                    if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
+                        let productName = 'Unknown Product';
                         let product = products.find((product) => product.id === assignment.productId);
                         if (product) {
                             productName = product.name;
@@ -46,15 +47,12 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
                         }
                         let startDate = (assignment.startDate ? moment(assignment.startDate).format('MM/DD/YYYY') : 'undefined date');
                         let endDate = (assignment.endDate ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
-                        let duration = calculateDuration(assignment, new Date());
+                        let duration = calculateDuration(assignment, now);
                         let durationUnit = (duration === 1 ? 'day' : 'days');
                         return (
                             <div
-                                key={assignment.id}>{productName} {startDate} - {endDate} ({duration} {durationUnit})</div>
-                        );
-                    } else {
-                        return (
-                            <div>No Assignment History</div>
+                                key={assignment.id}>{productName} {startDate} - {endDate} ({duration} {durationUnit})
+                            </div>
                         );
                     }
                 }
