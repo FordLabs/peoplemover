@@ -38,28 +38,22 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             setProducts(result.data);
         });
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
+            result.data.sort((a: Assignment, b: Assignment) => {
+                return moment(b.startDate) - moment(a.startDate);
+            });
             setAssignments(result.data);
         });
+
     }, [person]);
+
 
     const capitalize = (s: string): string => {
         return s.charAt(0).toUpperCase() + s.slice(1);
     };
 
-    const sortedAssignments = (): Array<Assignment> => {
-        const localAssignments = assignments;
-        return localAssignments.sort((a, b): number => {
-            if (a.startDate === undefined || b.startDate === undefined) {
-                return 0;
-            } else {
-                return new Date(b.startDate).valueOf() - new Date(a.startDate).valueOf();
-            }
-        });
-    };
-
     const generateTableRows = (): Array<JSX.Element> => {
         const assignmentHistoryRows: Array<JSX.Element> = [];
-        sortedAssignments().forEach(
+        assignments.forEach(
             (assignment, index) => {
                 const now = new Date();
                 if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
@@ -91,7 +85,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         <>
             <table className="assignmentHistoryTable">
                 <tbody>
-                    {generateTableRows()}
+                {generateTableRows()}
                 </tbody>
             </table>
         </>

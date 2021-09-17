@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import TestUtils, {mockDate} from "../../tests/TestUtils";
+import TestUtils from "../../tests/TestUtils";
 import React from "react";
 import AssignmentClient from "../AssignmentClient";
 import {AxiosResponse} from "axios";
-import {act, render, RenderResult} from '@testing-library/react';
+import {act, render} from '@testing-library/react';
 import {AssignmentHistory} from "./AssignmentHistory";
 import ProductClient from "../../Products/ProductClient";
 import moment, {now} from "moment";
@@ -92,5 +92,20 @@ describe('Assignment History', () => {
 
         await actual.findByText('Unknown Product');
         await actual.findByText(/01\/01\/2020 - Current/);
+    });
+
+    it('does not blow up if an assignment has no start date, and does not show a line in the table for it', async () => {
+        AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
+            data: [{...TestUtils.assignmentForHank, endDate: null, startDate: null},
+                TestUtils.assignmentVacationForHank,
+                TestUtils.previousAssignmentForHank],
+        } as AxiosResponse));
+        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
+            data: [TestUtils.unassignedProduct, TestUtils.productWithoutAssignments],
+        } as AxiosResponse));
+        await act(async () => {
+            const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+            expect(actual.queryByText('Hanky Product')).not.toBeInTheDocument();
+        });
     });
 });
