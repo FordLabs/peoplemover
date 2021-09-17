@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import TestUtils from "../../tests/TestUtils";
-import React from "react";
-import AssignmentClient from "../AssignmentClient";
-import {AxiosResponse} from "axios";
+import TestUtils from '../../tests/TestUtils';
+import React from 'react';
+import AssignmentClient from '../AssignmentClient';
+import {AxiosResponse} from 'axios';
 import {act, render} from '@testing-library/react';
-import {AssignmentHistory} from "./AssignmentHistory";
-import ProductClient from "../../Products/ProductClient";
-import moment, {now} from "moment";
+import {AssignmentHistory} from './AssignmentHistory';
+import ProductClient from '../../Products/ProductClient';
+import moment, {now} from 'moment';
 
 describe('Assignment History', () => {
 
@@ -43,7 +43,7 @@ describe('Assignment History', () => {
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
 
-        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1
+        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
         const str = '01/01/2020 - Current \\(' + expectedDuration + ' days\\)';
         const regex = new RegExp(str);
 
@@ -53,6 +53,16 @@ describe('Assignment History', () => {
         await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
         await actual.findByText('Product 3');
         await actual.findByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
+    });
+
+    it('should sort the history in reverse chrono', async () => {
+        const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+
+        const tableCells = await actual.findAllByRole('cell');
+        expect(tableCells.length).toEqual(6);
+        expect(tableCells[0].firstChild!.nodeValue).toEqual('Hanky Product');
+        expect(tableCells[2].firstChild!.nodeValue).toEqual('Unassigned');
+        expect(tableCells[4].firstChild!.nodeValue).toEqual('Product 3');
     });
 
     it('should not show assignments from the future w.r.t. today', async () => {
@@ -92,6 +102,10 @@ describe('Assignment History', () => {
 
         await actual.findByText('Unknown Product');
         await actual.findByText(/01\/01\/2020 - Current/);
+        await actual.findByText('Unassigned');
+        await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
+        await actual.findByText('Product 3');
+        await actual.findByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
     });
 
     it('does not blow up if an assignment has no start date, and does not show a line in the table for it', async () => {
@@ -106,21 +120,27 @@ describe('Assignment History', () => {
         await act(async () => {
             const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
             expect(actual.queryByText('Hanky Product')).not.toBeInTheDocument();
+            expect(actual.queryByText(/01\/01\/2020 - Current/)).not.toBeInTheDocument();
+            await actual.findByText('Unassigned');
+            await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
+            await actual.findByText('Product 3');
+            await actual.findByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
         });
     });
 
     it('does not blow up if an assignment has string start date, and does not show a line in the table for it', async () => {
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
-            data: [{...TestUtils.assignmentForHank, endDate: null, startDate: "xyz"},
+            data: [{...TestUtils.assignmentForHank, endDate: null, startDate: 'xyz'},
                 TestUtils.assignmentVacationForHank,
                 TestUtils.previousAssignmentForHank],
         } as AxiosResponse));
         ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
             data: [TestUtils.unassignedProduct, TestUtils.productWithoutAssignments],
         } as AxiosResponse));
-            const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+        const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await act(async () => {
             expect(actual.queryByText('Hanky Product')).not.toBeInTheDocument();
+            expect(actual.queryByText(/01\/01\/2020 - Current/)).not.toBeInTheDocument();
             await actual.findByText('Unassigned');
             await actual.getByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
             await actual.getByText('Product 3');

@@ -39,11 +39,10 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         });
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
             result.data.sort((a: Assignment, b: Assignment) => {
-                return moment(b.startDate) - moment(a.startDate);
+                return getDateValue(b.startDate) - getDateValue(a.startDate);
             });
             setAssignments(result.data);
         });
-
     }, [person]);
 
 
@@ -51,12 +50,21 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         return s.charAt(0).toUpperCase() + s.slice(1);
     };
 
+    const isValidDate = (d: Date | undefined): boolean => {
+        return d !== undefined && d !== null && typeof d.valueOf() === 'number';
+    };
+
+    const getDateValue = (d: Date | undefined): number => {
+        if (isValidDate(d)) return (d as Date).valueOf();
+        else return 0;
+    };
+
     const generateTableRows = (): Array<JSX.Element> => {
         const assignmentHistoryRows: Array<JSX.Element> = [];
         assignments.forEach(
             (assignment, index) => {
                 const now = new Date();
-                if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
+                if (assignment && isValidDate(assignment.startDate) && moment(assignment.startDate).isBefore(moment(now))) {
                     let productName = 'Unknown Product';
                     let product = products.find((product) => product.id === assignment.productId);
                     if (product) {
