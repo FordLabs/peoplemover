@@ -22,18 +22,20 @@
   height: 6.5rem;
   width: 18rem;
   border: 1px solid $gray-4;
+  border-radius: 2px;
   overflow-y: scroll;
   max-width: 100%;
   padding: 0 5px;
+  border-spacing: 0 8px;
 }
 
 .assignmentHistoryRow {
-  line-height: 9px;
+  line-height: 14px;
 }
 
 .assignmentHistoryCell {
   font-family: Helvetica, sans-serif;
-  font-size: 0.5rem;
+  font-size: 12px;
   color: $gray-1;
 }
 
@@ -43,4 +45,16 @@
 
 .assignmentHistoryDate {
   width: 68%;
+}
+
+.assignmentHistoryArrow {
+  padding: 0 3px 0 5px;
+}
+
+.flexRow{
+  display:flex;
+  align-content: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  cursor: pointer;
 }

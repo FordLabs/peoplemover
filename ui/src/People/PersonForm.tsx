@@ -401,7 +401,6 @@ function PersonForm({
                     onChange={changeProductName}
                 />
                 {isEditPersonForm && <div className="formItem">
-                    <div className="formItemLabel">View Assignment History</div>
                     <>{getAssignmentHistoryContent()}</>
                 </div>}
                 <FormTagsField

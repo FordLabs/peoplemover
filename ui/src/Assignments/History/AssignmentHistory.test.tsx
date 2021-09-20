@@ -19,10 +19,11 @@ import TestUtils from '../../tests/TestUtils';
 import React from 'react';
 import AssignmentClient from '../AssignmentClient';
 import {AxiosResponse} from 'axios';
-import {act, render} from '@testing-library/react';
+import {act, render, RenderResult} from '@testing-library/react';
 import {AssignmentHistory} from './AssignmentHistory';
 import ProductClient from '../../Products/ProductClient';
 import moment, {now} from 'moment';
+import {fireEvent} from "@testing-library/dom";
 
 describe('Assignment History', () => {
 
@@ -39,6 +40,19 @@ describe('Assignment History', () => {
         } as AxiosResponse));
     });
 
+    async function clickLabel(renderResult: RenderResult){
+        const historyLabel = await renderResult.findByText("View Assignment History");
+        expect(historyLabel).toBeInTheDocument();
+        fireEvent.click(historyLabel);
+    }
+
+    it('should not show history until it has been dropped down', async () => {
+        const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+        await actual.findByText("View Assignment History");
+        expect(await actual.queryByText("Hanky Product")).not.toBeInTheDocument();
+        expect(await actual.findByTestId('assignmentHistoryArrow')).toBeInTheDocument();
+    });
+
     it('should show the history happy path', async () => {
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
@@ -46,7 +60,7 @@ describe('Assignment History', () => {
         const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
         const str = '01/01/2020 - Current \\(' + expectedDuration + ' days\\)';
         const regex = new RegExp(str);
-
+        await clickLabel(actual);
         await actual.findByText('Hanky Product');
         await actual.findByText(regex);
         await actual.findByText('Unassigned');
@@ -57,8 +71,9 @@ describe('Assignment History', () => {
 
     it('should sort the history in reverse chrono', async () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
-
+        await clickLabel(actual);
         const tableCells = await actual.findAllByRole('cell');
+
         expect(tableCells.length).toEqual(6);
         expect(tableCells[0].firstChild!.nodeValue).toEqual('Hanky Product');
         expect(tableCells[2].firstChild!.nodeValue).toEqual('Unassigned');
@@ -84,6 +99,7 @@ describe('Assignment History', () => {
 
         await act(async () => {
             const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+            await clickLabel(actual);
             expect(await actual.queryByText(/Product 3 10\/01\/2119 - 11\/30\/2119/)).not.toBeInTheDocument();
         });
     });
@@ -99,6 +115,7 @@ describe('Assignment History', () => {
         } as AxiosResponse));
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+        await clickLabel(actual);
 
         await actual.findByText('Unknown Product');
         await actual.findByText(/01\/01\/2020 - Current/);
@@ -119,6 +136,8 @@ describe('Assignment History', () => {
         } as AxiosResponse));
         await act(async () => {
             const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+            await clickLabel(actual);
+
             expect(actual.queryByText('Hanky Product')).not.toBeInTheDocument();
             expect(actual.queryByText(/01\/01\/2020 - Current/)).not.toBeInTheDocument();
             await actual.findByText('Unassigned');
@@ -138,6 +157,8 @@ describe('Assignment History', () => {
             data: [TestUtils.unassignedProduct, TestUtils.productWithoutAssignments, TestUtils.productForHank],
         } as AxiosResponse));
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+        await clickLabel(actual);
+
         await act(async () => {
             await actual.findByText('Hanky Product');
             await actual.findByText(/01\/01\/2020 - Current/);

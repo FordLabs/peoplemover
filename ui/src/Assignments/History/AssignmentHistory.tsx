@@ -32,6 +32,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
 
     const [products, setProducts] = useState<Array<Product>>([]);
     const [assignments, setAssignments] = useState<Array<Assignment>>([]);
+    const [isShowing, setIsShowing] = useState<boolean>(false);
 
     useEffect(() => {
         ProductClient.getProductsForDate(person.spaceUuid, new Date()).then((result) => {
@@ -45,6 +46,10 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             setAssignments(data);
         });
     }, [person]);
+
+    const toggleShowing = () => {
+        setIsShowing(!isShowing);
+    }
 
 
     const capitalize = (s: string): string => {
@@ -87,11 +92,16 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
 
     return (
         <>
-            <table className="assignmentHistoryTable">
+        <div className={"flexRow"} onClick={toggleShowing}>
+            <span className="formItemLabel purple">View Assignment History</span>
+            <span className="material-icons assignmentHistoryArrow purple" data-testid="assignmentHistoryArrow">
+                {isShowing ? 'arrow_drop_up' : 'arrow_drop_down'}
+            </span></div>
+            {isShowing && <table className="assignmentHistoryTable">
                 <tbody>
                 {generateTableRows()}
                 </tbody>
-            </table>
+            </table>}
         </>
     );
 }
