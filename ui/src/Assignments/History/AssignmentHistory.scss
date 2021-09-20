@@ -23,21 +23,24 @@
   width: 18rem;
   border: 1px solid $gray-4;
   overflow-y: scroll;
+  max-width: 100%;
+  padding: 0 5px;
 }
 
 .assignmentHistoryRow {
-  line-height: 1rem;
+  line-height: 9px;
 }
 
 .assignmentHistoryCell {
   font-family: Helvetica, sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.5rem;
+  color: $gray-1;
 }
 
 .assignmentHistoryName {
-  width: 4.5rem;
+  width: 32%;
 }
 
 .assignmentHistoryDate {
-  width: 13.5rem;
+  width: 68%;
 }
