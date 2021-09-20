@@ -128,19 +128,19 @@ describe('Assignment History', () => {
         });
     });
 
-    it('does not blow up if an assignment has string start date, and does not show a line in the table for it', async () => {
+    it('can handle string start dates', async () => {
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
-            data: [{...TestUtils.assignmentForHank, endDate: null, startDate: 'xyz'},
+            data: [{...TestUtils.assignmentForHank, endDate: null, startDate: '2020-01-01'},
                 TestUtils.assignmentVacationForHank,
                 TestUtils.previousAssignmentForHank],
         } as AxiosResponse));
         ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
-            data: [TestUtils.unassignedProduct, TestUtils.productWithoutAssignments],
+            data: [TestUtils.unassignedProduct, TestUtils.productWithoutAssignments, TestUtils.productForHank],
         } as AxiosResponse));
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await act(async () => {
-            expect(actual.queryByText('Hanky Product')).not.toBeInTheDocument();
-            expect(actual.queryByText(/01\/01\/2020 - Current/)).not.toBeInTheDocument();
+            await actual.findByText('Hanky Product');
+            await actual.findByText(/01\/01\/2020 - Current/);
             await actual.findByText('Unassigned');
             await actual.getByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
             await actual.getByText('Product 3');

@@ -38,10 +38,11 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             setProducts(result.data);
         });
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
-            result.data.sort((a: Assignment, b: Assignment) => {
-                return getDateValue(b.startDate) - getDateValue(a.startDate);
+            const data = result.data.filter((item : Assignment) => {return isValidDate(new Date(item.startDate!))});
+            data.sort((a: Assignment, b: Assignment) => {
+                return new Date(b.startDate!).valueOf() - new Date(a.startDate!).valueOf();
             });
-            setAssignments(result.data);
+            setAssignments(data);
         });
     }, [person]);
 
@@ -54,17 +55,12 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         return d !== undefined && d !== null && typeof d.valueOf() === 'number';
     };
 
-    const getDateValue = (d: Date | undefined): number => {
-        if (isValidDate(d)) return (d as Date).valueOf();
-        else return 0;
-    };
-
     const generateTableRows = (): Array<JSX.Element> => {
         const assignmentHistoryRows: Array<JSX.Element> = [];
         assignments.forEach(
             (assignment, index) => {
                 const now = new Date();
-                if (assignment && isValidDate(assignment.startDate) && moment(assignment.startDate).isBefore(moment(now))) {
+                if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
                     let productName = 'Unknown Product';
                     let product = products.find((product) => product.id === assignment.productId);
                     if (product) {
