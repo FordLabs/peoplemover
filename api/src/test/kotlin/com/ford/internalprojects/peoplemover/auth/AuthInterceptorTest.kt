@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions.fail
 import org.junit.Before
 import org.junit.Test
 import org.springframework.security.authentication.TestingAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.jwt.Jwt
 import java.time.Instant
 import java.util.*
@@ -24,6 +25,8 @@ class AuthInterceptorTest {
 
     private lateinit var authInterceptor: CustomPermissionEvaluator
 
+    private val target = "target"
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
@@ -34,106 +37,145 @@ class AuthInterceptorTest {
     fun `should deny tokens that are not authenticated`() {
         val auth = TestingAuthenticationToken("Principal", "Credentials")
         auth.isAuthenticated = false
-        val target = "target"
         assertThat(authInterceptor.hasPermission(auth, target, "unknown_permission")).isFalse()
     }
+
+    @Test
+    fun `should deny if token doesn't have a subject`() {
+        val claims = mapOf("foo" to "bar")
+        val credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), claims)
+        val auth = TestingAuthenticationToken(null, credentials)
+        auth.isAuthenticated = true
+        assertThat(authInterceptor.hasPermission(auth, target, "read")).isFalse()
+    }
+
     @Test
     fun `should deny unknown permissions`() {
         every { spaceRepository.findByUuid(any()) } returns Space(name = "testSpace")
-        val auth = TestingAuthenticationToken("Principal", "Credentials")
-        auth.isAuthenticated = true
-        val target = "target"
-        assertThat(authInterceptor.hasPermission(auth, target, "unknown_permission")).isFalse()
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "unknown_permission")).isFalse()
     }
 
     @Test(expected = SpaceNotExistsException::class)
     fun `read should throw SpaceNotExistsException if space not found`() {
         every { spaceRepository.findByUuid(any()) } returns null
-        val auth = TestingAuthenticationToken("Principal", "Credentials")
-        auth.isAuthenticated = true
-        val target = "target"
-        assertThat(authInterceptor.hasPermission(auth, target, "read")).isTrue()
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "read")).isTrue()
         fail<String>("Exception should have been thrown")
     }
 
     @Test
     fun `read should allow if space is public`() {
         every { spaceRepository.findByUuid(any()) } returns Space(name = "testSpace", todayViewIsPublic = true)
-        val auth = TestingAuthenticationToken("Principal", "Credentials")
-        auth.isAuthenticated = true
-        val target = "target"
-        assertThat(authInterceptor.hasPermission(auth, target, "read")).isTrue()
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "read")).isTrue()
     }
 
     @Test
-    fun `read should deny if token doesn't have a subject`() {
+    fun `read should deny if user does not have permission on space`() {
+        setupMockForRW(false)
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "read")).isFalse()
+    }
+
+    @Test
+    fun `read should allow if user has permission on space`() {
+        setupMockForRW(true)
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "read")).isTrue()
+    }
+
+    @Test
+    fun `read should deny if app does not have permission on space`() {
+        setupMockForRW(false)
+        assertThat(authInterceptor.hasPermission(getAppAuth(), target, "read")).isFalse()
+    }
+
+    @Test
+    fun `read should allow if app has permission on space`() {
+        setupMockForRW(true)
+        assertThat(authInterceptor.hasPermission(getAppAuth(), target, "read")).isTrue()
+    }
+
+    @Test
+    fun `write should deny if user does not have permission on space`() {
+        setupMockForRW(false)
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "write")).isFalse()
+    }
+
+    @Test
+    fun `write should allow if user has permission on space`() {
+        setupMockForRW(true)
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "write")).isTrue()
+    }
+
+    @Test
+    fun `write should deny if app does not have permission on space`() {
+        setupMockForRW(false)
+        assertThat(authInterceptor.hasPermission(getAppAuth(), target, "write")).isFalse()
+    }
+
+    @Test
+    fun `write should allow if app has permission on space`() {
+        setupMockForRW(true)
+        assertThat(authInterceptor.hasPermission(getAppAuth(), target, "write")).isTrue()
+    }
+
+    @Test(expected = SpaceNotExistsException::class)
+    fun `owner should throw SpaceNotExistsException if space not found`() {
+        every { spaceRepository.findByUuid(any()) } returns null
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "owner")).isTrue()
+        fail<String>("Exception should have been thrown")
+    }
+
+    @Test
+    fun `owner should deny if user does not own space`() {
+        setupMockForOwner(false)
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "owner")).isFalse()
+    }
+
+    @Test
+    fun `owner should allow if user owns space`() {
+        setupMockForOwner(true)
+        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "owner")).isTrue()
+    }
+
+    @Test
+    fun `owner should deny if app does not own space`() {
+        setupMockForOwner(false)
+        assertThat(authInterceptor.hasPermission(getAppAuth(), target, "owner")).isFalse()
+    }
+
+    @Test
+    fun `owner should allow if app owns space`() {
+        setupMockForOwner(true)
+        assertThat(authInterceptor.hasPermission(getAppAuth(), target, "owner")).isTrue()
+    }
+
+    private fun setupMockForRW(findSubject: Boolean) {
         every { spaceRepository.findByUuid(any()) } returns Space(name = "testSpace")
-        every { userSpaceMappingRepository.findByUserIdAndSpaceUuid(any(), any()) } returns Optional.empty()
-        val claims = mapOf("foo" to "bar")
+        if(findSubject) {
+            every { userSpaceMappingRepository.findByUserIdAndSpaceUuid(any(), any()) } returns Optional.of(UserSpaceMapping(id = 1, userId = "Principal", permission = "yes", spaceUuid = "TestSpace"))
+        } else {
+            every { userSpaceMappingRepository.findByUserIdAndSpaceUuid(any(), any()) } returns Optional.empty()
+        }
+    }
+
+    private fun setupMockForOwner(findSubject: Boolean) {
+        every { spaceRepository.findByUuid(any()) } returns Space(name = "testSpace")
+        if(findSubject) {
+            every { userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(any(), any(), any()) } returns Optional.of(UserSpaceMapping(id = 1, userId = "my-app", permission = "yes", spaceUuid = "testSpace"))
+        } else {
+            every { userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(any(), any(), any()) } returns Optional.empty()
+        }
+    }
+
+    private fun getUserAuth(): Authentication {
+        val auth = TestingAuthenticationToken("Principal", "Credentials")
+        auth.isAuthenticated = true
+        return auth
+    }
+
+    private fun getAppAuth(): Authentication {
+        val claims = mapOf("appid" to "my-app")
         val credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), claims)
         val auth = TestingAuthenticationToken(null, credentials)
         auth.isAuthenticated = true
-        val target = "target"
-        assertThat(authInterceptor.hasPermission(auth, target, "read")).isFalse()
+        return auth
     }
-
-//    @Test
-//    fun `read should deny if user does not have permission on space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `read should allow if user has permission on space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `read should deny if app does not have permission on space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `read should allow if app has permission on space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `write should deny if user does not have permission on space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `write should allow if user has permission on space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `write should deny if app does not have permission on space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `write should allow if app has permission on space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `owner should deny if user does not own space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `owner should allow if user owns space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `owner should deny if app does not own space`() {
-//        fail<String>("Not Implemented")
-//    }
-//
-//    @Test
-//    fun `owner should allow if app owns space`() {
-//        fail<String>("Not Implemented")
-//    }
 }
