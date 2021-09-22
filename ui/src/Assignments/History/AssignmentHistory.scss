@@ -21,13 +21,12 @@
   display: block;
   width: 18rem;
   max-width: 100%;
-  padding: 0 5px;
 }
 
 .assignmentHistoryTableBorder {
   border: 1px solid $gray-4;
   border-radius: 2px;
-  border-spacing: 0 8px;
+  border-spacing: 5px 8px;
 }
 
 .assignmentHistoryTableCurrent {
