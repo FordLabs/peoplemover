@@ -19,14 +19,24 @@
 
 .assignmentHistoryTable {
   display: block;
-  height: 6.5rem;
   width: 18rem;
-  border: 1px solid $gray-4;
-  border-radius: 2px;
-  overflow-y: scroll;
   max-width: 100%;
   padding: 0 5px;
+}
+
+.assignmentHistoryTableBorder {
+  border: 1px solid $gray-4;
+  border-radius: 2px;
   border-spacing: 0 8px;
+}
+
+.assignmentHistoryTableCurrent {
+  height: 1.5rem;
+}
+
+.assignmentHistoryTablePast {
+  height: 6.5rem;
+  overflow-y: scroll;
 }
 
 .assignmentHistoryRow {
@@ -51,10 +61,18 @@
   padding: 0 3px 0 5px;
 }
 
+.assignmentHistoryPastLabel {
+  font-family: Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: $gray-3;
+  line-height: 1rem;
+  margin: 1rem 0 0.5rem 0.5rem;
+}
+
 .flexRow{
   display:flex;
   align-content: center;
-  justify-content: center;
   margin-bottom: 12px;
   cursor: pointer;
 }

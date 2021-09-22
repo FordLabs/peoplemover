@@ -63,6 +63,7 @@ describe('Assignment History', () => {
         await clickLabel(actual);
         await actual.findByText('Hanky Product');
         await actual.findByText(regex);
+        await actual.findByText('Past:');
         await actual.findByText('Unassigned');
         await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
         await actual.findByText('Product 3');
@@ -72,8 +73,12 @@ describe('Assignment History', () => {
     it('should sort the history in reverse chrono', async () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
+        const tables = await actual.findAllByRole('table');
         const tableCells = await actual.findAllByRole('cell');
 
+        expect(tables.length).toEqual(2);
+        expect(tables[0].children.item(0)?.children.length).toEqual(1);
+        expect(tables[1].children.item(0)?.children.length).toEqual(2);
         expect(tableCells.length).toEqual(6);
         expect(tableCells[0].firstChild!.nodeValue).toEqual('Hanky Product');
         expect(tableCells[2].firstChild!.nodeValue).toEqual('Unassigned');

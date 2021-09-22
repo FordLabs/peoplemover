@@ -39,7 +39,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             setProducts(result.data);
         });
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
-            const data = result.data.filter((item : Assignment) => {return isValidDate(new Date(item.startDate!))});
+            const data = result.data.filter((item: Assignment) => {return isValidDate(new Date(item.startDate!));});
             data.sort((a: Assignment, b: Assignment) => {
                 return new Date(b.startDate!).valueOf() - new Date(a.startDate!).valueOf();
             });
@@ -49,8 +49,13 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
 
     const toggleShowing = () => {
         setIsShowing(!isShowing);
-    }
+    };
 
+    const handleKeyDownForToggleShowing = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            toggleShowing();
+        }
+    };
 
     const capitalize = (s: string): string => {
         return s.charAt(0).toUpperCase() + s.slice(1);
@@ -60,29 +65,58 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         return d !== undefined && d !== null && typeof d.valueOf() === 'number';
     };
 
+    const getProductName = (assignment: Assignment): string => {
+        let productName = 'Unknown Product';
+        let product = products.find((product) => product.id === assignment.productId);
+        if (product) {
+            productName = product.name;
+        }
+        if (productName === 'unassigned') {
+            productName = capitalize(productName);
+        }
+        return productName;
+    };
+
+    const getStartDate = (assignment: Assignment): string => {
+        return (assignment.startDate ? moment(assignment.startDate).format('MM/DD/YYYY') : 'undefined date');
+    };
+
+    const getEndDate = (assignment: Assignment): string => {
+        return (assignment.endDate ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
+    };
+
+    const getDurationUnit = (duration: number): string => {
+        return (duration === 1 ? 'day' : 'days');
+    };
+
+    const generateTableRow = (assignment: Assignment, index: number): JSX.Element => {
+        const now = new Date();
+        if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
+            const productName = getProductName(assignment);
+            const startDate = getStartDate(assignment);
+            const endDate = getEndDate(assignment);
+            const duration = calculateDuration(assignment, now);
+            const durationUnit = getDurationUnit(duration);
+            return (<tr key={index} className="assignmentHistoryRow">
+                <td className="assignmentHistoryCell assignmentHistoryName">{productName}</td>
+                <td className="assignmentHistoryCell assignmentHistoryDate">{startDate} - {endDate} ({duration} {durationUnit})</td>
+            </tr>);
+        } else {
+            return (<></>);
+        }
+    };
+
     const generateTableRows = (): Array<JSX.Element> => {
         const assignmentHistoryRows: Array<JSX.Element> = [];
         assignments.forEach(
             (assignment, index) => {
+                if (index === 0) {
+                    return;
+                }
                 const now = new Date();
                 if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
-                    let productName = 'Unknown Product';
-                    let product = products.find((product) => product.id === assignment.productId);
-                    if (product) {
-                        productName = product.name;
-                    }
-                    if (productName === 'unassigned') {
-                        productName = capitalize(productName);
-                    }
-                    let startDate = (assignment.startDate ? moment(assignment.startDate).format('MM/DD/YYYY') : 'undefined date');
-                    let endDate = (assignment.endDate ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
-                    let duration = calculateDuration(assignment, now);
-                    let durationUnit = (duration === 1 ? 'day' : 'days');
                     assignmentHistoryRows.push(
-                        <tr key={index} className="assignmentHistoryRow">
-                            <td className="assignmentHistoryCell assignmentHistoryName">{productName}</td>
-                            <td className="assignmentHistoryCell assignmentHistoryDate">{startDate} - {endDate} ({duration} {durationUnit})</td>
-                        </tr>
+                        generateTableRow(assignment, index)
                     );
                 }
             }
@@ -90,18 +124,38 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         return assignmentHistoryRows;
     };
 
+    const generateAssignmentHistoryContent = (): JSX.Element => {
+        let returnValue = <></>;
+        if (isShowing) {
+            const index = 0;
+            const assignment = assignments[index];
+            returnValue =
+                <>
+                    <table className="assignmentHistoryTable assignmentHistoryTableCurrent">
+                        <tbody>
+                            {generateTableRow(assignment, index)}
+                        </tbody>
+                    </table>
+                    <div className="assignmentHistoryPastLabel">Past:</div>
+                    <table className="assignmentHistoryTable assignmentHistoryTableBorder assignmentHistoryTablePast">
+                        <tbody>
+                            {generateTableRows()}
+                        </tbody>
+                    </table>
+                </>;
+        }
+        return returnValue;
+    };
+
     return (
         <>
-        <div className={"flexRow"} onClick={toggleShowing}>
-            <span className="formItemLabel purple">View Assignment History</span>
-            <span className="material-icons assignmentHistoryArrow purple" data-testid="assignmentHistoryArrow">
-                {isShowing ? 'arrow_drop_up' : 'arrow_drop_down'}
-            </span></div>
-            {isShowing && <table className="assignmentHistoryTable">
-                <tbody>
-                {generateTableRows()}
-                </tbody>
-            </table>}
+            <div className={'flexRow'} onClick={toggleShowing} onKeyPress={handleKeyDownForToggleShowing}>
+                <span className="formItemLabel purple">View Assignment History</span>
+                <span className="material-icons assignmentHistoryArrow purple" data-testid="assignmentHistoryArrow">
+                    {isShowing ? 'arrow_drop_up' : 'arrow_drop_down'}
+                </span>
+            </div>
+            {generateAssignmentHistoryContent()}
         </>
     );
 }
