@@ -39,7 +39,9 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             setProducts(result.data);
         });
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
-            const data = result.data.filter((item: Assignment) => {return isValidDate(new Date(item.startDate!));});
+            const data = result.data.filter((item: Assignment) => {
+                return item !== null && isValidDate(new Date(item.startDate!)) && moment(item.startDate).isBefore(moment());
+            });
             data.sort((a: Assignment, b: Assignment) => {
                 return new Date(b.startDate!).valueOf() - new Date(a.startDate!).valueOf();
             });
@@ -82,22 +84,31 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     };
 
     const getEndDate = (assignment: Assignment): string => {
-        return (assignment.endDate ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
+        return ((assignment.endDate && moment(assignment.endDate).isBefore(moment())) ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
     };
 
     const getDurationUnit = (duration: number): string => {
         return (duration === 1 ? 'day' : 'days');
     };
 
-    const generateTableRow = (assignment: Assignment, index: number): JSX.Element => {
+    const getDurationWithRespectToToday = (assignment: Assignment) => {
+        const isFutureEnd: boolean = assignment.endDate !== null && moment(assignment.endDate).isAfter(moment.now());
+        if (isFutureEnd) {
+            return calculateDuration({...assignment, endDate: undefined}, new Date());
+        } else {
+            return calculateDuration(assignment, new Date());
+        }
+    };
+
+    const generateTableRow = (assignment: Assignment): JSX.Element => {
         const now = new Date();
         if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
             const productName = getProductName(assignment);
             const startDate = getStartDate(assignment);
             const endDate = getEndDate(assignment);
-            const duration = calculateDuration(assignment, now);
+            const duration = getDurationWithRespectToToday(assignment);
             const durationUnit = getDurationUnit(duration);
-            return (<tr key={index} className="assignmentHistoryRow">
+            return (<tr key={'' + person.id + assignment.productId + assignment.startDate} className="assignmentHistoryRow">
                 <td className="assignmentHistoryCell assignmentHistoryName">{productName}</td>
                 <td className="assignmentHistoryCell assignmentHistoryDate">{startDate} - {endDate} ({duration} {durationUnit})</td>
             </tr>);
@@ -116,10 +127,10 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
                 const now = new Date();
                 if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
                     assignmentHistoryRows.push(
-                        generateTableRow(assignment, index)
+                        generateTableRow(assignment),
                     );
                 }
-            }
+            },
         );
         return assignmentHistoryRows;
     };
@@ -127,16 +138,14 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     const generateAssignmentHistoryContent = (): JSX.Element => {
         let returnValue = <></>;
         if (isShowing) {
-            const index = 0;
-            const assignment = assignments[index];
             returnValue =
                 <>
                     <table className="assignmentHistoryTable assignmentHistoryTableCurrent">
                         <tbody>
-                            {generateTableRow(assignment, index)}
+                            {generateTableRow(assignments[0])}
                         </tbody>
                     </table>
-                    <div className="assignmentHistoryPastLabel">Past:</div>
+                    <div className="assignmentHistoryPastLabel">past:</div>
                     <table className="assignmentHistoryTable assignmentHistoryTableBorder assignmentHistoryTablePast">
                         <tbody>
                             {generateTableRows()}

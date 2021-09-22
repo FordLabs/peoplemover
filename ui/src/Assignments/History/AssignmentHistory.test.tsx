@@ -23,7 +23,7 @@ import {act, render, RenderResult} from '@testing-library/react';
 import {AssignmentHistory} from './AssignmentHistory';
 import ProductClient from '../../Products/ProductClient';
 import moment, {now} from 'moment';
-import {fireEvent} from "@testing-library/dom";
+import {fireEvent} from '@testing-library/dom';
 
 describe('Assignment History', () => {
 
@@ -40,16 +40,16 @@ describe('Assignment History', () => {
         } as AxiosResponse));
     });
 
-    async function clickLabel(renderResult: RenderResult){
-        const historyLabel = await renderResult.findByText("View Assignment History");
+    async function clickLabel(renderResult: RenderResult) {
+        const historyLabel = await renderResult.findByText('View Assignment History');
         expect(historyLabel).toBeInTheDocument();
         fireEvent.click(historyLabel);
     }
 
     it('should not show history until it has been dropped down', async () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
-        await actual.findByText("View Assignment History");
-        expect(await actual.queryByText("Hanky Product")).not.toBeInTheDocument();
+        await actual.findByText('View Assignment History');
+        expect(await actual.queryByText('Hanky Product')).not.toBeInTheDocument();
         expect(await actual.findByTestId('assignmentHistoryArrow')).toBeInTheDocument();
     });
 
@@ -63,7 +63,7 @@ describe('Assignment History', () => {
         await clickLabel(actual);
         await actual.findByText('Hanky Product');
         await actual.findByText(regex);
-        await actual.findByText('Past:');
+        await actual.findByText('past:');
         await actual.findByText('Unassigned');
         await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
         await actual.findByText('Product 3');
@@ -85,11 +85,10 @@ describe('Assignment History', () => {
         expect(tableCells[4].firstChild!.nodeValue).toEqual('Product 3');
     });
 
-    it('should not show assignments from the future w.r.t. today', async () => {
+    it('should show assignments with a future end date w.r.t. today as "current", and not show future assignments', async () => {
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
-            data: [{...TestUtils.assignmentForHank, endDate: null},
+            data: [{...TestUtils.assignmentForHank, endDate: new Date(2119, 8, 30)},
                 TestUtils.assignmentVacationForHank,
-                TestUtils.previousAssignmentForHank,
                 {
                     id: 2100,
                     productId: 3,
@@ -102,11 +101,23 @@ describe('Assignment History', () => {
             ],
         } as AxiosResponse));
 
-        await act(async () => {
-            const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
-            await clickLabel(actual);
-            expect(await actual.queryByText(/Product 3 10\/01\/2119 - 11\/30\/2119/)).not.toBeInTheDocument();
-        });
+        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
+        const str = '01/01/2020 - Current \\(' + expectedDuration + ' days\\)';
+        const regex = new RegExp(str);
+
+        const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+        await clickLabel(actual);
+        expect(await actual.findByText(/Hanky Product/)).toBeInTheDocument();
+        expect(await actual.findByText(regex)).toBeInTheDocument();
+        expect(await actual.queryByText(/Product 3/)).not.toBeInTheDocument();
+        const tables = await actual.findAllByRole('table');
+        const tableCells = await actual.findAllByRole('cell');
+        expect(tables.length).toEqual(2);
+        expect(tables[0].children.item(0)?.children.length).toEqual(1);
+        expect(tables[1].children.item(0)?.children.length).toEqual(1);
+        expect(tableCells.length).toEqual(4);
+        expect(tableCells[0].firstChild!.nodeValue).toEqual('Hanky Product');
+        expect(tableCells[2].firstChild!.nodeValue).toEqual('Unassigned');
     });
 
     it('does not blow up if an assignment has no matching product', async () => {
