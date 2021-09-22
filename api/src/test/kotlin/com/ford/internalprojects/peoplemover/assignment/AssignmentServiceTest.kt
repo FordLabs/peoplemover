@@ -3,6 +3,7 @@ package com.ford.internalprojects.peoplemover.assignment
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.ProductRepository
+import com.ford.internalprojects.peoplemover.utilities.AssignmentV1ToAssignmentV2Converter
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -27,12 +28,14 @@ class AssignmentServiceTest {
     @MockK
     lateinit var assignmentDateHandler: AssignmentDateHandler
 
+    private var assignmentConverter: AssignmentV1ToAssignmentV2Converter = AssignmentV1ToAssignmentV2Converter()
+
     private lateinit var assignmentService: AssignmentService
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        assignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, assignmentDateHandler)
+        assignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, assignmentConverter, assignmentDateHandler)
     }
 
     @Test
@@ -50,7 +53,7 @@ class AssignmentServiceTest {
 
         val expectedAssignments: List<AssignmentV1> = listOf(expectedAssignment1, expectedAssignment2)
 
-        val localAssignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, AssignmentDateHandler())
+        val localAssignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, assignmentConverter, AssignmentDateHandler())
         val actual: List<AssignmentV1> = localAssignmentService.calculateStartDatesForAssignments(assignmentsToUpdate, allAssignmentsForPerson)
 
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expectedAssignments)
@@ -68,7 +71,7 @@ class AssignmentServiceTest {
         val expectedAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-06"), startDate = LocalDate.parse("2021-06-06"))
         val expectedAssignments: List<AssignmentV1> = listOf(expectedAssignment)
 
-        val localAssignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, AssignmentDateHandler())
+        val localAssignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, assignmentConverter, AssignmentDateHandler())
         val actualAssignments: List<AssignmentV1> = localAssignmentService.calculateStartDatesForAssignments(assignmentsToUpdate, allAssignmentsForPerson)
 
         assertThat(actualAssignments).containsExactlyInAnyOrderElementsOf(expectedAssignments)
