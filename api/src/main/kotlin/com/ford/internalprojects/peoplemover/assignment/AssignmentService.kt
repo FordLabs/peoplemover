@@ -82,11 +82,11 @@ class AssignmentService(
     }
 
     fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
-        val toReturn = mutableSetOf<LocalDate>();
+        val toReturn = mutableSetOf<LocalDate>()
         assignmentConverter.convert(assignmentRepository.findAllBySpaceUuid(spaceUuid)).map { it ->
-            toReturn.add(it.startDate);
+            toReturn.add(it.startDate)
             if (it.endDate !== null) {
-                toReturn.add(it.endDate!!)
+                toReturn.add(it.endDate!!.plusDays(1))
             }
         }
         return toReturn;
