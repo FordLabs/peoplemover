@@ -46,7 +46,7 @@ class AssignmentService(
         return assignmentConverter.convert(allV1AssignmentsForPerson)
     }
 
-    fun getAssignmentsForSpace(spaceUuid: String) : List<AssignmentV1>{
+    fun getAssignmentsForSpace(spaceUuid: String): List<AssignmentV1> {
         return assignmentRepository.findAllBySpaceUuid(spaceUuid);
     }
 
@@ -67,21 +67,32 @@ class AssignmentService(
 
         val allImportantDates = assignmentDateHandler.findUniqueDates(allAssignmentsSorted)
         assignments.forEach { assignment ->
-            val importantDatesforProduct = assignmentDateHandler.findUniqueDates(allAssignmentsSorted.filter{all -> all.productId == assignment.productId})
-                returnValue.add(
-                        AssignmentV1(
-                                id = assignment.id,
-                                placeholder = assignment.placeholder,
-                                person = assignment.person,
-                                effectiveDate = assignment.effectiveDate,
-                                productId = assignment.productId,
-                                spaceUuid = assignment.spaceUuid,
-                                startDate = assignmentDateHandler.findStartDate(importantDatesforProduct, allImportantDates)))
+            val importantDatesforProduct = assignmentDateHandler.findUniqueDates(allAssignmentsSorted.filter { all -> all.productId == assignment.productId })
+            returnValue.add(
+                    AssignmentV1(
+                            id = assignment.id,
+                            placeholder = assignment.placeholder,
+                            person = assignment.person,
+                            effectiveDate = assignment.effectiveDate,
+                            productId = assignment.productId,
+                            spaceUuid = assignment.spaceUuid,
+                            startDate = assignmentDateHandler.findStartDate(importantDatesforProduct, allImportantDates)))
         }
         return returnValue
     }
 
     fun getEffectiveDates(spaceUuid: String): Set<LocalDate> {
+        val toReturn = mutableSetOf<LocalDate>();
+        assignmentConverter.convert(assignmentRepository.findAllBySpaceUuid(spaceUuid)).map { it ->
+            toReturn.add(it.startDate);
+            if (it.endDate !== null) {
+                toReturn.add(it.endDate!!)
+            }
+        }
+        return toReturn;
+    }
+
+    fun getEffectiveDatesOld(spaceUuid: String): Set<LocalDate> {
         val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
         val allAssignments: MutableList<AssignmentV1> = mutableListOf()
         people.forEach { person ->
@@ -187,14 +198,14 @@ class AssignmentService(
                 person.id === assignment.person.id
             }
 
-            val toProductName: String = exactAssignmentsForPerson.map { assignment ->  productRepository.findById(assignment.productId).get().name}.joinToString(" & ")
-            val fromProductName: String = previousAssignmentsForPerson.map { assignment ->  productRepository.findById(assignment.productId).get().name}.joinToString(" & ")
+            val toProductName: String = exactAssignmentsForPerson.map { assignment -> productRepository.findById(assignment.productId).get().name }.joinToString(" & ")
+            val fromProductName: String = previousAssignmentsForPerson.map { assignment -> productRepository.findById(assignment.productId).get().name }.joinToString(" & ")
             Reassignment(
                     person = person,
                     fromProductName = fromProductName,
                     toProductName = toProductName
             )
-        }.filterNot {  reassignment ->  reassignment.toProductName == "unassigned" && reassignment.fromProductName.isNullOrEmpty() }
+        }.filterNot { reassignment -> reassignment.toProductName == "unassigned" && reassignment.fromProductName.isNullOrEmpty() }
     }
 
     private fun requestOnlyContainsUnassigned(assignmentRequest: CreateAssignmentsRequest, spaceUuid: String): Boolean {
@@ -222,7 +233,7 @@ class AssignmentService(
         assignmentRequest.products.forEach { product ->
             productRepository.findByIdOrNull(product.productId) ?: throw EntityNotExistsException()
 
-            if(product.productId != unassignedProduct!!.id) {
+            if (product.productId != unassignedProduct!!.id) {
                 val assignment = assignmentRepository.saveAndUpdateSpaceLastModified(
                         AssignmentV1(
                                 person = person,

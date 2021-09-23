@@ -22,6 +22,7 @@ import com.ford.internalprojects.peoplemover.utilities.AssignmentV1ToAssignmentV
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.util.StopWatch
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -86,8 +87,16 @@ class AssignmentController(
     @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
     @GetMapping(path = ["/api/spaces/{spaceUuid}/assignment/dates"])
     fun getAllEffectiveDates(@PathVariable spaceUuid: String): ResponseEntity<Set<LocalDate>> {
+        val oldWatch = StopWatch();
+        val newWatch = StopWatch();
+        oldWatch.start()
+        val datesOld = assignmentService.getEffectiveDatesOld(spaceUuid)
+        oldWatch.stop()
+        newWatch.start()
         val dates = assignmentService.getEffectiveDates(spaceUuid)
-        logger.logInfoMessage("All effective dates retrieved for space with uuid: [$spaceUuid].")
+        newWatch.stop()
+        logger.logInfoMessage("All effective dates retrieved for space with uuid: [$spaceUuid]. Elapsed time: " + newWatch.totalTimeMillis)
+        logger.logInfoMessage("All old-style effective dates retrieved for space with uuid: [$spaceUuid].  Elapsed time: " + oldWatch.totalTimeMillis)
         return ResponseEntity.ok(dates)
     }
 
