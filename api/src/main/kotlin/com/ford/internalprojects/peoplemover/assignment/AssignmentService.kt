@@ -86,7 +86,7 @@ class AssignmentService(
         assignmentConverter.convert(assignmentRepository.findAllBySpaceUuid(spaceUuid)).map { it ->
             toReturn.add(it.startDate)
             if (it.endDate !== null) {
-                toReturn.add(it.endDate!!.plusDays(1))
+                toReturn.add(it.endDate!!)
             }
         }
         return toReturn;
