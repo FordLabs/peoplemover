@@ -92,19 +92,6 @@ class AssignmentService(
         return toReturn;
     }
 
-    fun getEffectiveDatesOld(spaceUuid: String): Set<LocalDate> {
-        val people: List<Person> = personRepository.findAllBySpaceUuid(spaceUuid)
-        val allAssignments: MutableList<AssignmentV1> = mutableListOf()
-        people.forEach { person ->
-            val assignmentsForPerson: List<AssignmentV1> = assignmentRepository.getByPersonIdAndSpaceUuid(person.id!!, spaceUuid)
-            allAssignments.addAll(assignmentsForPerson)
-        }
-
-        val uniqueEffectiveDates = allAssignments.mapNotNull { it.effectiveDate }.toSet()
-
-        return uniqueEffectiveDates.filterNot { effectiveDate -> getReassignmentsByExactDate(spaceUuid, effectiveDate).isNullOrEmpty() }.toSet()
-    }
-
     fun getReassignmentsByExactDate(spaceUuid: String, requestedDate: LocalDate): List<Reassignment>? {
         val assignmentsWithExactDate = assignmentRepository.findAllBySpaceUuidAndEffectiveDate(spaceUuid = spaceUuid, requestedDate = requestedDate).sortedWith(compareByDescending { it.id })
         val assignmentsWithPreviousDate = getAssignmentsWithPreviousDate(assignmentsWithExactDate, requestedDate)
