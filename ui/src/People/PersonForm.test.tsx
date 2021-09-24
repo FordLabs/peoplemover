@@ -19,7 +19,7 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import PersonForm from './PersonForm';
 import configureStore from 'redux-mock-store';
 import React from 'react';
-import {fireEvent, RenderResult} from '@testing-library/react';
+import {fireEvent, RenderResult, wait} from '@testing-library/react';
 import {act} from 'react-dom/test-utils';
 import selectEvent from 'react-select-event';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
@@ -94,7 +94,18 @@ describe('Person Form', () => {
                 personForm = await renderWithRedux(
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
+                        products={[...TestUtils.products,
+                            {
+                                id: 500,
+                                name: 'Already Closed Product',
+                                spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                                startDate: '2011-01-01',
+                                endDate: '2011-02-02',
+                                assignments: [],
+                                archived: false,
+                                tags: [],
+                            }]
+                        }
                         initiallySelectedProduct={TestUtils.productForHank}
                         initialPersonName={TestUtils.hank.name}
                         personEdited={TestUtils.hank}
@@ -112,6 +123,20 @@ describe('Person Form', () => {
             await act(async () => {
                 await personForm.findByText('View Assignment History');
             });
+        });
+
+        it('should only display active assignable projects in the assignment dropdown', async () => {
+            const assignmentDropDown = await personForm.findByLabelText('Assign to');
+            await wait(() => {
+                selectEvent.openMenu(assignmentDropDown);
+            });
+            expect(personForm.queryByText(TestUtils.unassignedProduct.name)).not.toBeInTheDocument();
+            await personForm.findByText(TestUtils.productWithAssignments.name);
+            await personForm.findByText(TestUtils.productForHank.name);
+            await personForm.findByText(TestUtils.productWithoutAssignments.name);
+            expect(personForm.queryByText(TestUtils.archivedProduct.name)).not.toBeInTheDocument();
+            await personForm.findByText(TestUtils.productWithoutLocation.name);
+            expect(personForm.queryByText('Already Closed Product')).not.toBeInTheDocument();
         });
     });
 

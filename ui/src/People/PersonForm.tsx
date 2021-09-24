@@ -32,7 +32,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
-import {Product} from '../Products/Product';
+import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
@@ -318,7 +318,7 @@ function PersonForm({
 
     const getAssignToOptions = (): Array<Option> => {
         const filteredProducts: Array<Product> = products
-            .filter(product => !product.archived && product.name !== 'unassigned');
+            .filter(product => isActiveProduct(product, viewingDate) && !isUnassignedProduct(product));
         alphabetize(filteredProducts);
         return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
     };
