@@ -108,8 +108,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     };
 
     const generateTableRow = (assignment: Assignment): JSX.Element => {
-        const now = new Date();
-        if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
+        if (assignment && moment(assignment.startDate).isBefore(moment())) {
             const productName = getProductName(assignment);
             const startDate = getStartDate(assignment);
             const endDate = getEndDate(assignment);
