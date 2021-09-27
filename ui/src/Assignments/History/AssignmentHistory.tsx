@@ -39,12 +39,13 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             setProducts(result.data);
         });
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
-            const data = result.data.filter((item: Assignment) => {
+            let data = result.data.filter((item: Assignment) => {
                 return item !== null && isValidDate(new Date(item.startDate!)) && moment(item.startDate).isBefore(moment());
             });
             data.sort((a: Assignment, b: Assignment) => {
                 return new Date(b.startDate!).valueOf() - new Date(a.startDate!).valueOf();
             });
+            data = subtractOneDayFromEndDates(data);
             setAssignments(data);
         });
     }, [person]);
@@ -52,6 +53,12 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     const toggleShowing = () => {
         setIsShowing(!isShowing);
     };
+
+    const subtractOneDayFromEndDates = (assignments: Array<Assignment>) => {
+        return assignments.map(assignment => {
+            return assignment.endDate == null ? assignment : {...assignment, endDate: moment(assignment.endDate).add(-1, 'day').toDate()}
+        });
+    }
 
     const handleKeyDownForToggleShowing = (event: React.KeyboardEvent) => {
         if (event.key === 'Enter') {
@@ -101,8 +108,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     };
 
     const generateTableRow = (assignment: Assignment): JSX.Element => {
-        const now = new Date();
-        if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
+        if (assignment && moment(assignment.startDate).isBefore(moment())) {
             const productName = getProductName(assignment);
             const startDate = getStartDate(assignment);
             const endDate = getEndDate(assignment);

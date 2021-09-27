@@ -390,7 +390,7 @@ class TestUtils {
         placeholder: false,
         spaceUuid: TestUtils.hank.spaceUuid,
         startDate: new Date(2019, 11, 1),
-        endDate: new Date(2019, 11, 31),
+        endDate: new Date(2020, 0, 1),
     };
 
     static previousAssignmentForHank: Assignment = {
@@ -400,7 +400,7 @@ class TestUtils {
         placeholder: false,
         spaceUuid: TestUtils.hank.spaceUuid,
         startDate: new Date(2019, 9, 1),
-        endDate: new Date(2019, 10, 30),
+        endDate: new Date(2019, 11, 1),
     };
 
     static assignmentForUnassigned: Assignment = {
