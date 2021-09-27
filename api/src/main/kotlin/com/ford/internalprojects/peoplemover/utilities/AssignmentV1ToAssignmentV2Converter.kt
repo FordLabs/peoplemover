@@ -64,7 +64,7 @@ class AssignmentV1ToAssignmentV2Converter {
         var newAssignedProducts = newAssignmentV1Request.products.map { it.productId }.toSet()
         for (assignmentV2 in personAssignmentsV2) {
             if (isAssignmentIntersectingDate(assignmentV2, newAssignmentV1Request.requestedDate) && !newAssignedProducts.contains(assignmentV2.productId)) {
-                assignmentV2.endDate = newAssignmentV1Request.requestedDate.minusDays(1)
+                assignmentV2.endDate = newAssignmentV1Request.requestedDate
             }
         }
         return personAssignmentsV2.toList()
@@ -75,7 +75,7 @@ class AssignmentV1ToAssignmentV2Converter {
         var earliestStartDate = personAssignmentsV2.minBy { it.startDate }?.startDate
         var endDate: LocalDate? = null
         if (earliestStartDate != null && newAssignmentV1Request.requestedDate.isBefore(earliestStartDate)) {
-            endDate = earliestStartDate.minusDays(1)
+            endDate = earliestStartDate
         }
         for (newAssignmentV1Info in newAssignmentV1Request.products) {
             if (!personAssignmentsV2.any { it.productId == newAssignmentV1Info.productId }) {
@@ -137,7 +137,7 @@ class AssignmentV1ToAssignmentV2Converter {
 
     private fun endAssignments(v2Assignments: List<AssignmentV2>, nextStartDate: LocalDate) {
         for (v2Assignment in v2Assignments) {
-            v2Assignment.endDate = nextStartDate.minusDays(1);
+            v2Assignment.endDate = nextStartDate;
         }
     }
 
