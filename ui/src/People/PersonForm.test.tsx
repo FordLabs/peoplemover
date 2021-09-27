@@ -85,6 +85,11 @@ describe('Person Form', () => {
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
+            AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
+                data: [{...TestUtils.assignmentForHank, endDate: null},
+                    TestUtils.assignmentVacationForHank,
+                    TestUtils.previousAssignmentForHank],
+            } as AxiosResponse));
             await act(async () => {
                 personForm = await renderWithRedux(
                     <PersonForm
@@ -107,9 +112,6 @@ describe('Person Form', () => {
             await act(async () => {
                 await personForm.findByText('View Assignment History');
             });
-            await act(async () => {
-                await personForm.findByText('Moved to Hanky Product on 01/01/2020');
-            });
         });
     });
 
@@ -123,7 +125,7 @@ describe('Person Form', () => {
                         isEditPersonForm={true}
                         products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
-                        initialPersonName={TestUtils.hank.name}
+                        personEdited={TestUtils.hank}
                     />, store, undefined);
             });
 

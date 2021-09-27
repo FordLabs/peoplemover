@@ -62,7 +62,11 @@ export function isUnassignedProduct(product: Product): boolean {
 export function isActiveProduct(product: Product, viewingDate: Date): boolean {
     return product.name.toLowerCase() !== 'unassigned'
         && !product.archived
-        && (product.endDate == null || product.endDate >= moment(viewingDate).format('YYYY-MM-DD'));
+        && endsOnOrAfterDate(product, viewingDate);
+}
+
+export function endsOnOrAfterDate(product: Product, date: Date): boolean {
+    return product.endDate == null || product.endDate >= moment(date).format('YYYY-MM-DD');
 }
 
 export  function isProductMatchingSelectedFilters(product: Product, locationTagFilters: Array<string>, productTagFilters: Array<string>): boolean {

@@ -34,6 +34,7 @@ function CalendarHeader({
     nextMonthButtonDisabled,
 }: CustomHeaderProps): JSX.Element {
     const MonthTitle = enUS?.localize?.month(date.getMonth());
+    const YearTitle = date.getFullYear();
     return (
         <div className="calendarContainer">
             <button
@@ -44,7 +45,7 @@ function CalendarHeader({
                 <i className="material-icons greyIcon">arrow_left</i>
             </button>
             <div className="monthText">
-                {MonthTitle}
+                {MonthTitle} {YearTitle}
             </div>
             <button
                 className="calendarMonthArrows"

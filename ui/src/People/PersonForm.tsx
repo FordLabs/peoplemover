@@ -58,14 +58,7 @@ import {
 } from '../SortingAndFiltering/FilterLibraries';
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
-
-interface AssignmentHistory {
-    productName: string;
-    id: number;
-    startDate: Date | undefined;
-}
-
-type AssignmentHistoryType = AssignmentHistory | undefined;
+import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -76,7 +69,6 @@ interface PersonFormProps {
     currentSpace: Space;
     viewingDate: Date;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    currentUser: string;
     roles: Array<RoleTag>;
 
     closeModal(): void;
@@ -101,7 +93,6 @@ function PersonForm({
     setIsUnassignedDrawerOpen,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
-    currentUser,
     roles,
     fetchRoles,
 }: PersonFormProps): JSX.Element {
@@ -336,56 +327,8 @@ function PersonForm({
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
-    const getAssignmentHistory = (): AssignmentHistoryType[] => {
-        const returnValue = products.map((product) => {
-            const personsAssignment = product.assignments.find(
-                (assignment) => assignment.person.id === person.id
-            );
-            if (personsAssignment) {
-                return {
-                    productName: product.name,
-                    id: personsAssignment.id,
-                    startDate: personsAssignment.startDate,
-                };
-            } else {
-                return undefined;
-            }
-        }).filter((assignmentHistory) => (assignmentHistory !== undefined));
-        return returnValue;
-    };
-
-    const capitalize = (s: string): string => {
-        return s.charAt(0).toUpperCase() + s.slice(1);
-    };
-
     const getAssignmentHistoryContent = (): JSX.Element => {
-        const assignmentHistories = getAssignmentHistory();
-        return (
-            <>
-                {assignmentHistories.map(
-                    assignmentHistory => {
-                        if (assignmentHistory) {
-                            let productName = assignmentHistory.productName;
-                            if (productName === 'unassigned') {
-                                productName = capitalize(productName);
-                            }
-                            let effectiveDate = (assignmentHistory.startDate ? moment(assignmentHistory.startDate).format('MM/DD/YYYY') : 'undefined date');
-                            return (
-                                <div key={assignmentHistory.id}>Moved to {productName} on {effectiveDate}</div>
-                            );
-                        } else {
-                            return (
-                                <div>No Assignment History</div>
-                            );
-                        }
-                    }
-                )}
-            </>
-        );
-    };
-
-    const fireMatomoHoverEvent = (): void =>  {
-        MatomoEvents.pushEvent(currentSpace.name, 'assignmentHistoryClick', currentUser);
+        return (personEdited ? (<AssignmentHistory person={personEdited}/>) : <></>);
     };
 
     return (
@@ -457,8 +400,8 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
-                {isEditPersonForm && <div className="assignmentHistoryContainer">
-                    <ToolTip toolTipLabel="View Assignment History" contentElement={getAssignmentHistoryContent()} onHover={fireMatomoHoverEvent}/>
+                {isEditPersonForm && <div className="formItem">
+                    <>{getAssignmentHistoryContent()}</>
                 </div>}
                 <FormTagsField
                     tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
@@ -514,7 +457,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-    currentUser: state.currentUser,
     roles: state.roles,
 });
 

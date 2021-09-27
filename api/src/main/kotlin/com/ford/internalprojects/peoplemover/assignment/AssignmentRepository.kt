@@ -27,7 +27,9 @@ interface AssignmentRepository : PeopleMoverRepository<AssignmentV1, Int> {
     fun getByPersonIdAndSpaceUuid(personId: Int, spaceUuid: String): List<AssignmentV1>
     fun findAllByPersonAndEffectiveDate(person: Person, requestedDate: LocalDate): List<AssignmentV1>
     fun findAllBySpaceUuidAndEffectiveDate(spaceUuid: String, requestedDate: LocalDate): List<AssignmentV1>
+    fun findAllBySpaceUuid(spaceUuid: String): List<AssignmentV1>
 
     fun findAllByEffectiveDateIsNullAndPersonId(personId: Int): List<AssignmentV1>
     fun findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(personId: Int, effectiveDate: LocalDate): List<AssignmentV1>
+    fun findAllByPersonIdOrderByEffectiveDateAsc(personId: Int): List<AssignmentV1>
 }

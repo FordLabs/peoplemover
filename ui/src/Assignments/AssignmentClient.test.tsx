@@ -162,6 +162,27 @@ describe('Assignment client', () => {
         expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
+    it('should request assignment history summary from the API', async () => {
+        const expectedConfig = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 123456',
+            },
+        };
+        await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(TestUtils.hank.spaceUuid, TestUtils.hank.id);
+        expect(Axios.get).toHaveBeenCalledWith('/api/v2/spaces/' + TestUtils.hank.spaceUuid + '/person/' + TestUtils.hank.id + '/assignments', expectedConfig);
+    });
+
+    it('should return what it gets from the assignment history summary API', async () => {
+        const assignment = TestUtils.assignmentForHank;
+        Axios.get = jest.fn().mockResolvedValue({
+            data: [assignment],
+        });
+
+        const actual = await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(TestUtils.hank.spaceUuid, TestUtils.hank.id);
+        expect(actual.data).toEqual([TestUtils.assignmentForHank]);
+    });
+
     it('should get reassignments given assignment', async () => {
         const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         const requestedDate = new Date(2020, 5, 20);
