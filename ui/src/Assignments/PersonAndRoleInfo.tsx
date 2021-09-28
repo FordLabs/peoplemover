@@ -133,7 +133,7 @@ const PersonAndRoleInfo = ({
                     {person.spaceRole.name}
                 </div>
             )}
-            {!isDragging && !isReadOnly && isHoverBoxOpen && <HoverBox/>}
+            {!isDragging && !isReadOnly && !isUnassignedProduct && isHoverBoxOpen && <HoverBox/>}
         </div>
     );
 };
