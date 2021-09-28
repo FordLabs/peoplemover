@@ -18,17 +18,17 @@
 import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import {fireEvent, queryByText, wait} from '@testing-library/react';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import Calendar from './Calendar';
+import configureStore from 'redux-mock-store';
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;
 
-    const initialState: PreloadedState<GlobalStateProps> = {
+    const mockStore = configureStore([]);
+    const store = mockStore({
         viewingDate: new Date(2020, 10, 14),
         currentSpace: TestUtils.space,
-    } as GlobalStateProps;
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -41,19 +41,19 @@ describe('Calendar', () => {
     });
 
     it('should have Viewing label and calendar icon',  () => {
-        const app = renderWithRedux(<Calendar/>, undefined, initialState);
+        const app = renderWithRedux(<Calendar/>, store);
         app.getByText(/viewing:/i);
         app.getByText(/calendar_today/i);
     });
 
     it('should display current date on initial load', async () => {
-        const app = renderWithRedux(<Calendar/>, undefined, initialState);
+        const app = renderWithRedux(<Calendar/>, store);
         const dateViewElement = await app.findByTestId('calendarToggle');
         expect(dateViewElement.innerHTML).toContain('Nov 14, 2020');
     });
 
     it('should have down caret when closed and up arrow when open', async () => {
-        const app = renderWithRedux(<Calendar/>, undefined, initialState);
+        const app = renderWithRedux(<Calendar/>, store);
         const datePickerOpener = await app.findByTestId('calendarToggle');
 
         await app.findByTestId('calendar_down-arrow');
@@ -66,5 +66,15 @@ describe('Calendar', () => {
         await wait(() => {
             expect(queryByText(calendar, 'May')).not.toBeInTheDocument();
         });
+    });
+
+    it('should show month and year in the header when opened', async () => {
+        const app = renderWithRedux(<Calendar/>, store);
+        const datePickerOpener = await app.findByTestId('calendarToggle');
+
+        await app.findByTestId('calendar_down-arrow');
+        fireEvent.click(datePickerOpener);
+
+        await app.findByText('November 2020');
     });
 });

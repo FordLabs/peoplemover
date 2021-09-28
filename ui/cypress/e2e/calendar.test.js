@@ -35,7 +35,7 @@ describe('Calendar', () => {
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();
 
-        const expectedCurrentMonth = Cypress.moment().format('MMMM');
+        const expectedCurrentMonth = Cypress.moment().format('MMMM YYYY');
         cy.get('.monthText').should('have.text', expectedCurrentMonth);
 
         const expectedCurrentDay = Cypress.moment().format('D');

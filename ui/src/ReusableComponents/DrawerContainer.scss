@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+@use 'sass:math';
 @import '../Application/Styleguide/Colors.scss';
 @import '../Application/Styleguide/Breakpoints.scss';
 
@@ -59,7 +60,7 @@
   $size: 22px;
 
   position: absolute;
-  left: -$size / 2;
+  left: math.div(-$size, 2);
   top: 0;
   bottom: 0;
   width: $size;
