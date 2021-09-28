@@ -70,49 +70,49 @@ class AuthInterceptorTest {
 
     @Test
     fun `read should deny if user does not have permission on space`() {
-        setupMockForRW(false)
+        setupMockForReadAndWrite(false)
         assertThat(authInterceptor.hasPermission(getUserAuth(), target, "read")).isFalse()
     }
 
     @Test
     fun `read should allow if user has permission on space`() {
-        setupMockForRW(true)
+        setupMockForReadAndWrite(true)
         assertThat(authInterceptor.hasPermission(getUserAuth(), target, "read")).isTrue()
     }
 
     @Test
     fun `read should deny if app does not have permission on space`() {
-        setupMockForRW(false)
+        setupMockForReadAndWrite(false)
         assertThat(authInterceptor.hasPermission(getAppAuth(), target, "read")).isFalse()
     }
 
     @Test
     fun `read should allow if app has permission on space`() {
-        setupMockForRW(true)
+        setupMockForReadAndWrite(true)
         assertThat(authInterceptor.hasPermission(getAppAuth(), target, "read")).isTrue()
     }
 
     @Test
     fun `write should deny if user does not have permission on space`() {
-        setupMockForRW(false)
+        setupMockForReadAndWrite(false)
         assertThat(authInterceptor.hasPermission(getUserAuth(), target, "write")).isFalse()
     }
 
     @Test
     fun `write should allow if user has permission on space`() {
-        setupMockForRW(true)
+        setupMockForReadAndWrite(true)
         assertThat(authInterceptor.hasPermission(getUserAuth(), target, "write")).isTrue()
     }
 
     @Test
     fun `write should deny if app does not have permission on space`() {
-        setupMockForRW(false)
+        setupMockForReadAndWrite(false)
         assertThat(authInterceptor.hasPermission(getAppAuth(), target, "write")).isFalse()
     }
 
     @Test
     fun `write should allow if app has permission on space`() {
-        setupMockForRW(true)
+        setupMockForReadAndWrite(true)
         assertThat(authInterceptor.hasPermission(getAppAuth(), target, "write")).isTrue()
     }
 
@@ -147,18 +147,18 @@ class AuthInterceptorTest {
         assertThat(authInterceptor.hasPermission(getAppAuth(), target, "owner")).isTrue()
     }
 
-    private fun setupMockForRW(findSubject: Boolean) {
+    private fun setupMockForReadAndWrite(shouldFindMapping: Boolean) {
         every { spaceRepository.findByUuid(any()) } returns Space(name = "testSpace")
-        if(findSubject) {
+        if(shouldFindMapping) {
             every { userSpaceMappingRepository.findByUserIdAndSpaceUuid(any(), any()) } returns Optional.of(UserSpaceMapping(id = 1, userId = "Principal", permission = "yes", spaceUuid = "TestSpace"))
         } else {
             every { userSpaceMappingRepository.findByUserIdAndSpaceUuid(any(), any()) } returns Optional.empty()
         }
     }
 
-    private fun setupMockForOwner(findSubject: Boolean) {
+    private fun setupMockForOwner(shouldFindMapping: Boolean) {
         every { spaceRepository.findByUuid(any()) } returns Space(name = "testSpace")
-        if(findSubject) {
+        if(shouldFindMapping) {
             every { userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(any(), any(), any()) } returns Optional.of(UserSpaceMapping(id = 1, userId = "my-app", permission = "yes", spaceUuid = "testSpace"))
         } else {
             every { userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(any(), any(), any()) } returns Optional.empty()

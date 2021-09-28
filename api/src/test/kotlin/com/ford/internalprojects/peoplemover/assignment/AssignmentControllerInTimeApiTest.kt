@@ -18,16 +18,18 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.auth.CustomPermissionEvaluator
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
+import io.mockk.impl.annotations.MockK
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -93,13 +95,13 @@ class AssignmentControllerInTimeApiTest {
     val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
     private fun getBaseAssignmentForPersonInSpaceUrl(spaceUuid: String, personId: Int) =
-        "/api/v2/spaces/$spaceUuid/person/$personId/assignments"
+            "/api/v2/spaces/$spaceUuid/person/$personId/assignments"
 
     private fun getBaseAssignmentForPersonInSpaceOnDateUrl(spaceUuid: String, personId: Int, date: String) =
-        "/api/spaces/$spaceUuid/person/$personId/assignments/date/$date"
+            "/api/spaces/$spaceUuid/person/$personId/assignments/date/$date"
 
     private fun getBaseAssignmentDatesUrl(spaceUuid: String) =
-        "/api/spaces/$spaceUuid/assignment/dates"
+            "/api/spaces/$spaceUuid/assignment/dates"
 
     private fun getBaseCreateAssignmentUrl(spaceUuid: String, personId: Int) = "/api/spaces/$spaceUuid/person/$personId/assignment/create"
     private fun getBaseDeleteAssignmentUrl(spaceUuid: String, personId: Int, requestedDate: String) = "/api/spaces/$spaceUuid/person/$personId/assignment/delete/$requestedDate"
@@ -447,7 +449,7 @@ class AssignmentControllerInTimeApiTest {
 
     @Test
     fun `POST should return 403 if user does not write access`() {
-        val person = Person(id= -1, name ="", spaceUuid = readOnlySpace.uuid);
+        val person = Person(id = -1, name = "", spaceUuid = readOnlySpace.uuid);
         val createAssignmentsRequest = CreateAssignmentsRequest(LocalDate.now(), HashSet())
 
         mockMvc.perform(post(getBaseCreateAssignmentUrl(readOnlySpace.uuid, person.id!!))
