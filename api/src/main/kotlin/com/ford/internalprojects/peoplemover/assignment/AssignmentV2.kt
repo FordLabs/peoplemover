@@ -18,33 +18,19 @@
 package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.person.Person
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import java.time.LocalDate
-import javax.persistence.*
 
-@Entity
-@Table(name = "new_assignment")
 data class AssignmentV2(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        override val id: Int? = null,
 
-        @OneToOne
-        @JoinColumn(name = "person_id")
         val person: Person,
 
-        @Column(name = "placeholder")
         var placeholder: Boolean = false,
 
         var productId: Int,
 
-        @Column(name = "start_date")
-        val startDate: LocalDate = LocalDate.now(),
+        var startDate: LocalDate = LocalDate.now(),
 
-        @Column(name = "end_date")
         var endDate: LocalDate? = LocalDate.now(),
 
-        @Column(name = "space_uuid")
-        override val spaceUuid: String
-
-): SpaceComponent
+        val spaceUuid: String
+)

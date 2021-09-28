@@ -19,11 +19,10 @@ import React, {useState} from 'react';
 import '../Application/Styleguide/Main.scss';
 import './ArchivedProductsDrawer.scss';
 import ArchivedProduct from './ArchivedProduct';
-import {Product} from './Product';
+import {endsOnOrAfterDate, Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import moment from 'moment';
 
 interface ArchivedProductsDrawerProps{
     products: Array<Product>;
@@ -36,7 +35,7 @@ function ArchivedProductsDrawer({products, viewingDate}: ArchivedProductsDrawerP
     const containee = <div className="archivedProductListContainer">
         {products.map(product => {
             const isArchived = product.archived
-                || (!!product.endDate && product.endDate < moment(viewingDate).format('YYYY-MM-DD'));
+                || !endsOnOrAfterDate(product, viewingDate);
             if (isArchived) {
                 return (
                     <div key={product.id}>
