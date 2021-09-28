@@ -114,10 +114,10 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             const endDate = getEndDate(assignment);
             const duration = getDurationWithRespectToToday(assignment);
             const durationUnit = getDurationUnit(duration);
-            return (<tr key={'' + person.id + assignment.productId + assignment.startDate} className="assignmentHistoryRow">
-                <td className="assignmentHistoryCell assignmentHistoryName">{productName}</td>
-                <td className="assignmentHistoryCell assignmentHistoryDate">{startDate} - {endDate} ({duration} {durationUnit})</td>
-            </tr>);
+            return (<div key={'' + person.id + assignment.productId + assignment.startDate} className="assignmentHistoryRow">
+                <div className="assignmentHistoryCell">{productName}</div>
+                <div className="assignmentHistoryCell">{startDate} - {endDate} ({duration} {durationUnit})</div>
+            </div>);
         } else {
             return (<></>);
         }
@@ -146,17 +146,13 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         if (isShowing) {
             returnValue =
                 <>
-                    <table className="assignmentHistoryTable assignmentHistoryTableCurrent">
-                        <tbody>
-                            {generateTableRow(assignments[0])}
-                        </tbody>
-                    </table>
+                    <div className="assignmentHistoryTable">
+                        {generateTableRow(assignments[0])}
+                    </div>
                     <div className="assignmentHistoryPastLabel">past:</div>
-                    <table className="assignmentHistoryTable assignmentHistoryTableBorder assignmentHistoryTablePast">
-                        <tbody>
-                            {generateTableRows()}
-                        </tbody>
-                    </table>
+                    <div className="assignmentHistoryTable assignmentHistoryTableBorder assignmentHistoryTablePast">
+                        {generateTableRows()}
+                    </div>
                 </>;
         }
         return returnValue;

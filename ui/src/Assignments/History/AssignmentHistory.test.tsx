@@ -40,11 +40,23 @@ describe('Assignment History', () => {
         } as AxiosResponse));
     });
 
-    async function clickLabel(renderResult: RenderResult) {
+    async function clickLabel(renderResult: RenderResult): Promise<void> {
         const historyLabel = await renderResult.findByText('View Assignment History');
         expect(historyLabel).toBeInTheDocument();
         fireEvent.click(historyLabel);
     }
+
+    const checkProductAndDates = (products: string[], dates: string[], container: HTMLElement) => {
+        if (products.length === dates.length) {
+            products.forEach((product, i) => {
+                const historyEntry = container.children[i < 1 ? 1 : 3].children[Math.max(i - 1, 0)];
+                expect(historyEntry.children[0].innerHTML).toEqual(products[i]);
+                expect(historyEntry.children[1].innerHTML).toEqual(dates[i]);
+            });
+        } else {
+            fail('differing array lengths');
+        }
+    };
 
     it('should not show history until it has been dropped down', async () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
@@ -61,28 +73,25 @@ describe('Assignment History', () => {
         const str = '01/01/2020 - Current \\(' + expectedDuration + ' days\\)';
         const regex = new RegExp(str);
         await clickLabel(actual);
-        await actual.findByText('Hanky Product');
+        await actual.findByText(/Hanky Product/);
         await actual.findByText(regex);
         await actual.findByText('past:');
-        await actual.findByText('Unassigned');
+        await actual.findByText(/Unassigned/);
         await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
-        await actual.findByText('Product 3');
+        await actual.findByText(/Product 3/);
         await actual.findByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
     });
+
 
     it('should sort the history in reverse chrono', async () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
-        const tables = await actual.findAllByRole('table');
-        const tableCells = await actual.findAllByRole('cell');
 
-        expect(tables.length).toEqual(2);
-        expect(tables[0].children.item(0)?.children.length).toEqual(1);
-        expect(tables[1].children.item(0)?.children.length).toEqual(2);
-        expect(tableCells.length).toEqual(6);
-        expect(tableCells[0].firstChild!.nodeValue).toEqual('Hanky Product');
-        expect(tableCells[2].firstChild!.nodeValue).toEqual('Unassigned');
-        expect(tableCells[4].firstChild!.nodeValue).toEqual('Product 3');
+        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
+        await actual.findByText('Hanky Product');
+        checkProductAndDates(['Hanky Product', 'Unassigned', 'Product 3'],
+            ['01/01/2020 - Current (' + expectedDuration + ' days)', '12/01/2019 - 12/31/2019 (31 days)', '10/01/2019 - 11/30/2019 (61 days)'],
+            actual.container);
     });
 
     it('should show assignments with a future end date w.r.t. today as "current", and not show future assignments', async () => {
@@ -102,22 +111,10 @@ describe('Assignment History', () => {
         } as AxiosResponse));
 
         const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
-        const str = '01/01/2020 - Current \\(' + expectedDuration + ' days\\)';
-        const regex = new RegExp(str);
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
-        expect(await actual.findByText(/Hanky Product/)).toBeInTheDocument();
-        expect(await actual.findByText(regex)).toBeInTheDocument();
-        expect(await actual.queryByText(/Product 3/)).not.toBeInTheDocument();
-        const tables = await actual.findAllByRole('table');
-        const tableCells = await actual.findAllByRole('cell');
-        expect(tables.length).toEqual(2);
-        expect(tables[0].children.item(0)?.children.length).toEqual(1);
-        expect(tables[1].children.item(0)?.children.length).toEqual(1);
-        expect(tableCells.length).toEqual(4);
-        expect(tableCells[0].firstChild!.nodeValue).toEqual('Hanky Product');
-        expect(tableCells[2].firstChild!.nodeValue).toEqual('Unassigned');
+        checkProductAndDates(['Hanky Product', 'Unassigned'], ['01/01/2020 - Current (' + expectedDuration + ' days)', '12/01/2019 - 12/31/2019 (31 days)'], actual.container);
     });
 
     it('does not blow up if an assignment has no matching product', async () => {
@@ -133,11 +130,11 @@ describe('Assignment History', () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
 
-        await actual.findByText('Unknown Product');
+        await actual.findByText(/Unknown Product/);
         await actual.findByText(/01\/01\/2020 - Current/);
-        await actual.findByText('Unassigned');
+        await actual.findByText(/Unassigned/);
         await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
-        await actual.findByText('Product 3');
+        await actual.findByText(/Product 3/);
         await actual.findByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
     });
 
@@ -154,11 +151,11 @@ describe('Assignment History', () => {
             const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
             await clickLabel(actual);
 
-            expect(actual.queryByText('Hanky Product')).not.toBeInTheDocument();
+            expect(actual.queryByText(/Hanky Product/)).not.toBeInTheDocument();
             expect(actual.queryByText(/01\/01\/2020 - Current/)).not.toBeInTheDocument();
-            await actual.findByText('Unassigned');
+            await actual.findByText(/Unassigned/);
             await actual.findByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
-            await actual.findByText('Product 3');
+            await actual.findByText(/Product 3/);
             await actual.findByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
         });
     });
@@ -176,11 +173,11 @@ describe('Assignment History', () => {
         await clickLabel(actual);
 
         await act(async () => {
-            await actual.findByText('Hanky Product');
+            await actual.findByText(/Hanky Product/);
             await actual.findByText(/01\/01\/2020 - Current/);
-            await actual.findByText('Unassigned');
+            await actual.findByText(/Unassigned/);
             await actual.getByText(/12\/01\/2019 - 12\/31\/2019 \(31 days\)/);
-            await actual.getByText('Product 3');
+            await actual.getByText(/Product 3/);
             await actual.getByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
         });
     });
