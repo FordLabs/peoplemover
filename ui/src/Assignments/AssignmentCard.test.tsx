@@ -21,13 +21,14 @@ import AssignmentCard from './AssignmentCard';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
-import {GlobalStateProps} from '../Redux/Reducers';
+import rootReducer from '../Redux/Reducers';
+import {createStore, Store} from 'redux';
 
 jest.useFakeTimers();
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
-    let initialState: GlobalStateProps;
+    let store: Store;
 
     beforeEach(() => {
         assignmentToRender =  {
@@ -46,24 +47,18 @@ describe('Assignment Card', () => {
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         };
 
-        initialState = {
-            currentSpace: TestUtils.space,
-        } as GlobalStateProps;
+        store = createStore(rootReducer, {currentSpace: TestUtils.space});
     });
 
     it('should render the assigned persons name', () => {
         const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
-            isUnassignedProduct={false}/>,
-        undefined,
-        initialState,);
+            isUnassignedProduct={false}/>, store,);
         expect(underTest.getByText('Billiam Handy')).toBeInTheDocument();
     });
 
     it('should render the assigned persons role if they have one', () => {
         const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
-            isUnassignedProduct={false}/>,
-        undefined,
-        initialState,);
+            isUnassignedProduct={false}/>, store);
         expect(underTest.getByText('Software Engineer')).toBeInTheDocument();
     });
 
@@ -74,31 +69,23 @@ describe('Assignment Card', () => {
         };
         const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
             assignment={placeholderAssignment}
-            isUnassignedProduct={false}/>,
-        undefined,
-        initialState,);
+            isUnassignedProduct={false}/>, store);
 
         fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
         expect(getByText('Unmark as Placeholder')).toBeInTheDocument();
     });
 
     describe('Read-Only Functionality', function() {
-        let initialState: GlobalStateProps;
 
         beforeEach(function() {
-            initialState = {
-                isReadOnly: true,
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
         });
 
         it('should not display edit Menu if in read only mode', function() {
 
             const underTest = renderWithRedux(
                 <AssignmentCard assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState);
+                    isUnassignedProduct={false}/>, store);
 
             let editPersonButton = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             editPersonButton.click();
@@ -112,9 +99,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard assignment={assignmentToRender}
                     isUnassignedProduct={false}
-                    startDraggingAssignment={startDraggingAssignment}/>,
-                undefined,
-                initialState);
+                    startDraggingAssignment={startDraggingAssignment}/>, store);
 
             fireEvent.mouseDown(underTest.getByTestId('assignmentCard__billiam_handy'));
             expect(startDraggingAssignment).not.toBeCalled();
@@ -127,9 +112,7 @@ describe('Assignment Card', () => {
             };
             const {getByTestId} = renderWithRedux(<AssignmentCard
                 assignment={placeholderAssignment}
-                isUnassignedProduct={false}/>,
-            undefined,
-            initialState);
+                isUnassignedProduct={false}/>, store);
 
             const assignmentCard = getByTestId('assignmentCard__billiam_handy');
             expect(assignmentCard).toHaveClass('NotPlaceholder');
@@ -140,20 +123,13 @@ describe('Assignment Card', () => {
 
     describe('Role color', () => {
 
-        let initialState: GlobalStateProps;
-
         beforeEach(() => {
-            initialState = {
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
+            store = createStore(rootReducer, {currentSpace: TestUtils.space});
         });
 
         it('should render software engineer color correctly', () => {
             const underTest = renderWithRedux(<AssignmentCard assignment={assignmentToRender}
-                isUnassignedProduct={false}/>,
-            undefined,
-            initialState,
-            );
+                isUnassignedProduct={false}/>, store);
             const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
             const person1RoleColor: Color = (person1Role.color as Color);
@@ -172,10 +148,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={otherBilliam}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
+                    isUnassignedProduct={false}/>, store);
             const assignmentCardEditContainer: HTMLElement = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             expect(assignmentCardEditContainer).toHaveStyle('background-color: transparent');
         });
@@ -184,9 +157,7 @@ describe('Assignment Card', () => {
             const {getByText, getByTestId, queryByText} = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
-            />,
-            undefined,
-            initialState);
+            />, store);
 
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
             expect(getByText('Edit Person')).toBeInTheDocument();
@@ -203,9 +174,7 @@ describe('Assignment Card', () => {
             const {queryByText, getByText, getByTestId} = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
-            />,
-            undefined,
-            initialState,);
+            />, store);
 
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
 
@@ -216,22 +185,15 @@ describe('Assignment Card', () => {
     });
 
     describe('Edit Menu', () => {
-        let initialState: GlobalStateProps;
-
         beforeEach(() => {
-            initialState = {
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
+            store = createStore(rootReducer, {currentSpace: TestUtils.space});
         });
 
         it('should begin life with the EditMenu closed', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.queryByText('Edit Person')).not.toBeInTheDocument();
             expect(underTest.queryByText('Edit Assignment')).not.toBeInTheDocument();
         });
@@ -240,9 +202,7 @@ describe('Assignment Card', () => {
             const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
-            />,
-            undefined,
-            initialState);
+            />, store);
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
             expect(getByText('Edit Person')).toBeInTheDocument();
             expect(getByText('Mark as Placeholder')).toBeInTheDocument();
@@ -252,12 +212,9 @@ describe('Assignment Card', () => {
     });
 
     describe('New Person Badge', () => {
-        let initialState: GlobalStateProps;
 
         beforeEach(() => {
-            initialState = {
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
+            store = createStore(rootReducer, {currentSpace: TestUtils.space});
         });
 
         it('should show the new badge if the assignment says the person is new and there is a newPersonDate', () => {
@@ -270,6 +227,7 @@ describe('Assignment Card', () => {
                     spaceRole: {id: 3, spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Product Designer', color: {color: '1', id: 2}},
                     newPerson: true,
                     newPersonDate: new Date('2021-01-01'),
+                    tags: [],
                 },
                 placeholder: false,
                 productId: 0,
@@ -278,10 +236,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentThatIsNew}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.getByText('NEW')).toBeInTheDocument();
         });
 
@@ -289,32 +244,22 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.queryByText('NEW')).not.toBeInTheDocument();
         });
     });
 
     describe('Hoverable Notes', () => {
-        let initialState: GlobalStateProps;
 
         beforeEach(() => {
-            initialState = {
-                currentSpace: TestUtils.space,
-                isDragging: false,
-            } as GlobalStateProps;
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
         });
 
         it('should display hover notes icon if person has valid notes', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.getByText('note')).toBeInTheDocument();
         });
 
@@ -322,10 +267,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                {...initialState, isReadOnly: true},
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.queryByTestId('notesIcon')).toBeNull();
         });
 
@@ -335,10 +277,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.queryByTestId('notesIcon')).toBeNull();
         });
 
@@ -346,11 +285,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
-
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.queryByText('This is a note')).toBeNull();
 
             act(() => {
@@ -361,15 +296,11 @@ describe('Assignment Card', () => {
             expect(underTest.getByText('This is a note')).toBeVisible();
         });
 
-        it('should show hover box when assignment card is unassigned', () => {
+        it('should not show hover box when assignment card is unassigned', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={true}/>,
-                undefined,
-                initialState,
-            );
-
+                    isUnassignedProduct={true}/>, store);
             expect(underTest.queryByText('This is a note')).toBeNull();
             expect(underTest.getByText('note')).toBeInTheDocument();
 
@@ -378,18 +309,15 @@ describe('Assignment Card', () => {
                 jest.advanceTimersByTime(500);
             });
 
-            expect(underTest.queryByText('This is a note')).not.toBeNull();
+            expect(underTest.queryByText('This is a note')).toBeNull();
         });
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: true});
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={true}/>,
-                undefined,
-                {...initialState, isDragging: true},
-            );
-
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.queryByText('This is a note')).toBeNull();
             expect(underTest.getByText('note')).toBeInTheDocument();
 
@@ -404,31 +332,23 @@ describe('Assignment Card', () => {
 
     describe('Hoverable Person tag', () => {
         beforeEach(() => {
-            initialState = {
-                currentSpace: TestUtils.space,
-                isDragging: false,
-            } as GlobalStateProps;
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
         });
 
         it('should display person tag Icon if person has valid notes', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.getByText('local_offer')).toBeInTheDocument();
         });
 
         it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false, isReadOnly: true});
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                {...initialState, isReadOnly: true},
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.queryByText('local_offer')).toBeNull();
         });
 
@@ -438,10 +358,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={false}/>,
-                undefined,
-                initialState,
-            );
+                    isUnassignedProduct={false}/>, store);
             expect(underTest.queryByText('local_offer')).toBeNull();
         });
 
@@ -449,11 +366,7 @@ describe('Assignment Card', () => {
             const underTest = renderWithRedux(
                 <AssignmentCard
                     assignment={assignmentToRender}
-                    isUnassignedProduct={true}/>,
-                undefined,
-                {...initialState, isDragging: true},
-            );
-
+                    isUnassignedProduct={true}/>, store);
             expect(underTest.queryByText('The lil boss,The big boss')).toBeNull();
             expect(underTest.getByText('local_offer')).toBeInTheDocument();
 
