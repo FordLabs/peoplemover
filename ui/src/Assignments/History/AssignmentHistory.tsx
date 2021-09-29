@@ -16,7 +16,7 @@
  */
 
 import moment from 'moment';
-import {Assignment, calculateDuration} from '../Assignment';
+import {Assignment, didAssignmentEndInThePast, getDurationWithRespectToToday} from '../Assignment';
 import React, {useEffect, useState} from 'react';
 import {Person} from '../../People/Person';
 import {Product} from '../../Products/Product';
@@ -56,9 +56,9 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
 
     const subtractOneDayFromEndDates = (assignments: Array<Assignment>) => {
         return assignments.map(assignment => {
-            return assignment.endDate == null ? assignment : {...assignment, endDate: moment(assignment.endDate).add(-1, 'day').toDate()}
+            return assignment.endDate == null ? assignment : {...assignment, endDate: moment(assignment.endDate).add(-1, 'day').toDate()};
         });
-    }
+    };
 
     const handleKeyDownForToggleShowing = (event: React.KeyboardEvent) => {
         if (event.key === 'Enter') {
@@ -91,20 +91,19 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     };
 
     const getEndDate = (assignment: Assignment): string => {
-        return ((assignment.endDate && moment(assignment.endDate).isBefore(moment())) ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
+        return (didAssignmentEndInThePast(assignment) ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
     };
 
     const getDurationUnit = (duration: number): string => {
         return (duration === 1 ? 'day' : 'days');
     };
 
-    const getDurationWithRespectToToday = (assignment: Assignment) => {
-        const isFutureEnd: boolean = assignment.endDate !== null && moment(assignment.endDate).isAfter(moment.now());
-        if (isFutureEnd) {
-            return calculateDuration({...assignment, endDate: undefined}, new Date());
-        } else {
-            return calculateDuration(assignment, new Date());
-        }
+    const getCurrentAssignments = (): Array<Assignment> => {
+        return assignments.filter(assignment => { return !didAssignmentEndInThePast(assignment);});
+    };
+
+    const getPastAssignments = (): Array<Assignment> => {
+        return assignments.filter(assignment => { return didAssignmentEndInThePast(assignment);});
     };
 
     const generateTableRow = (assignment: Assignment): JSX.Element => {
@@ -123,15 +122,11 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
         }
     };
 
-    const generateTableRows = (): Array<JSX.Element> => {
+    const generateTableRows = (inputAssignments: Array<Assignment>): Array<JSX.Element> => {
         const assignmentHistoryRows: Array<JSX.Element> = [];
-        assignments.forEach(
+        inputAssignments.forEach(
             (assignment, index) => {
-                if (index === 0) {
-                    return;
-                }
-                const now = new Date();
-                if (assignment && moment(assignment.startDate).isBefore(moment(now))) {
+                if (assignment && moment(assignment.startDate).isBefore(moment())) {
                     assignmentHistoryRows.push(
                         generateTableRow(assignment),
                     );
@@ -147,11 +142,11 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             returnValue =
                 <>
                     <div className="assignmentHistoryTable">
-                        {generateTableRow(assignments[0])}
+                        {generateTableRows(getCurrentAssignments())}
                     </div>
                     <div className="assignmentHistoryPastLabel">past:</div>
                     <div className="assignmentHistoryTable assignmentHistoryTableBorder assignmentHistoryTablePast">
-                        {generateTableRows()}
+                        {generateTableRows(getPastAssignments())}
                     </div>
                 </>;
         }

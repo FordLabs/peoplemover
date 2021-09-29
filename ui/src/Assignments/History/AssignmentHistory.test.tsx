@@ -46,16 +46,24 @@ describe('Assignment History', () => {
         fireEvent.click(historyLabel);
     }
 
-    const checkProductAndDates = (products: string[], dates: string[], container: HTMLElement) => {
+    const checkProductAndDates = (products: string[], dates: string[], container: HTMLElement, isCurrent: boolean) => {
         if (products.length === dates.length) {
             products.forEach((product, i) => {
-                const historyEntry = container.children[i < 1 ? 1 : 3].children[Math.max(i - 1, 0)];
+                const historyEntry = container.children[isCurrent ? 1 : 3].children[i];
                 expect(historyEntry.children[0].innerHTML).toEqual(products[i]);
                 expect(historyEntry.children[1].innerHTML).toEqual(dates[i]);
             });
         } else {
             fail('differing array lengths');
         }
+    };
+
+    const checkCurrentProductAndDates = (products: string[], dates: string[], container: HTMLElement) => {
+        checkProductAndDates(products, dates, container, true);
+    };
+
+    const checkPastProductAndDates = (products: string[], dates: string[], container: HTMLElement) => {
+        checkProductAndDates(products, dates, container, false);
     };
 
     it('should not show history until it has been dropped down', async () => {
@@ -82,15 +90,17 @@ describe('Assignment History', () => {
         await actual.findByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
     });
 
-
     it('should sort the history in reverse chrono', async () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
 
         const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
         await actual.findByText('Hanky Product');
-        checkProductAndDates(['Hanky Product', 'Unassigned', 'Product 3'],
-            ['01/01/2020 - Current (' + expectedDuration + ' days)', '12/01/2019 - 12/31/2019 (31 days)', '10/01/2019 - 11/30/2019 (61 days)'],
+        checkCurrentProductAndDates(['Hanky Product'],
+            ['01/01/2020 - Current (' + expectedDuration + ' days)'],
+            actual.container);
+        checkPastProductAndDates(['Unassigned', 'Product 3'],
+            ['12/01/2019 - 12/31/2019 (31 days)', '10/01/2019 - 11/30/2019 (61 days)'],
             actual.container);
     });
 
@@ -114,7 +124,8 @@ describe('Assignment History', () => {
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
-        checkProductAndDates(['Hanky Product', 'Unassigned'], ['01/01/2020 - Current (' + expectedDuration + ' days)', '12/01/2019 - 12/31/2019 (31 days)'], actual.container);
+        checkCurrentProductAndDates(['Hanky Product'], ['01/01/2020 - Current (' + expectedDuration + ' days)'], actual.container);
+        checkPastProductAndDates(['Unassigned'], ['12/01/2019 - 12/31/2019 (31 days)'], actual.container);
     });
 
     it('does not blow up if an assignment has no matching product', async () => {
@@ -180,5 +191,31 @@ describe('Assignment History', () => {
             await actual.getByText(/Product 3/);
             await actual.getByText(/10\/01\/2019 - 11\/30\/2019 \(61 days\)/);
         });
+    });
+
+    it('should show multiple current assignments in the current section', async () => {
+        AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
+            data: [{...TestUtils.assignmentForHank, endDate: new Date(2119, 8, 30)},
+                TestUtils.assignmentVacationForHank,
+                {
+                    id: 2100,
+                    productId: 3,
+                    person: TestUtils.hank,
+                    placeholder: false,
+                    spaceUuid: TestUtils.hank.spaceUuid,
+                    startDate: TestUtils.assignmentForHank.startDate,
+                    endDate: TestUtils.assignmentForHank.endDate,
+                },
+            ],
+        } as AxiosResponse));
+
+        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
+
+        const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+        await clickLabel(actual);
+        checkCurrentProductAndDates(['Hanky Product', TestUtils.productWithoutAssignments.name],
+            ['01/01/2020 - Current (' + expectedDuration + ' days)', '01/01/2020 - Current (' + expectedDuration + ' days)'],
+            actual.container);
+        checkPastProductAndDates(['Unassigned'], ['12/01/2019 - 12/31/2019 (31 days)'], actual.container);
     });
 });

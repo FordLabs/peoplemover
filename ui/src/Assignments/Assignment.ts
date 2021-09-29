@@ -41,3 +41,16 @@ export function calculateDuration(assignment: Assignment, viewingDate: Date): nu
         return 0;
     }
 }
+
+export const getDurationWithRespectToToday = (assignment: Assignment): number => {
+    const isFutureEnd: boolean = assignment.endDate !== null && moment(assignment.endDate).isAfter(moment.now());
+    if (isFutureEnd) {
+        return calculateDuration({...assignment, endDate: undefined}, new Date());
+    } else {
+        return calculateDuration(assignment, new Date());
+    }
+};
+
+export const didAssignmentEndInThePast = (assignment: Assignment): boolean => {
+    return (assignment.endDate !== null && moment(assignment.endDate).isBefore(moment()));
+};
