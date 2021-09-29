@@ -51,7 +51,7 @@ class SpaceController(
 
     @GetMapping("/user")
     fun getAllSpacesForUser(@RequestHeader(name = "Authorization") accessToken: String): List<Space> {
-        return spaceService.getSpacesForUser(accessToken.replace("Bearer ", ""))
+        return spaceService.getSpacesForUser()
     }
 }
 

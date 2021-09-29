@@ -24,7 +24,9 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.LocalDate
@@ -74,8 +76,17 @@ class SpaceService(
         }
     }
 
-    fun getSpacesForUser(accessToken: String): List<Space> {
-        val principal: String = SecurityContextHolder.getContext().authentication.name
+    fun getUsernameOrAppName(auth: Authentication): String{
+       return if(auth.name == null){
+            ""
+        }
+        else{
+            auth.name
+        }
+    }
+
+    fun getSpacesForUser(): List<Space> {
+        val principal: String = getUsernameOrAppName(SecurityContextHolder.getContext().authentication)
         val spaceUuids: List<String> =
                 userSpaceMappingRepository.findAllByUserId(principal).map { mapping -> mapping.spaceUuid }.toList()
         return spaceRepository.findAllByUuidIn(spaceUuids)
@@ -114,7 +125,7 @@ class SpaceService(
     }
 
     private fun userHasEditAccessToSpace(spaceUuid: String): Boolean {
-        val spacesForUser = getSpacesForUser(SecurityContextHolder.getContext().authentication.name).map { it.uuid }
+        val spacesForUser = getSpacesForUser().map { it.uuid }
         return spacesForUser.contains(spaceUuid)
     }
 
