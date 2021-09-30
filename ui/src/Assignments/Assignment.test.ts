@@ -35,7 +35,7 @@ describe('Assignment', () => {
             expect(calculateDuration(assignment, viewingDate)).toEqual(0);
         });
 
-        it('should return 1 if the assignment starts the same day as the viewing date', () => {
+        it('should return 1 if the assignment starts the same day as the viewing date with no end date', () => {
             assignment.startDate = new Date(2020, 0, 1);
             const viewingDate = new Date(2020, 0, 1);
             expect(calculateDuration(assignment, viewingDate)).toEqual(1);
