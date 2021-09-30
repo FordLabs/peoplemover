@@ -1,45 +1,67 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.product.ProductService
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.fail
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.authentication.TestingAuthenticationToken
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContext
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
+import java.time.Instant
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 class SpaceServiceTest {
 
-   @Autowired
-   lateinit var underTest : SpaceService
+    @Autowired
+    lateinit var underTest: SpaceService
 
+    @MockBean
     lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
-    @Test
-    fun `getSpaceForUser should not blow up if Principal has no name`() {
+    @Before
+    fun before() {
         mockkStatic(SecurityContextHolder::class)
+
+    }
+
+    @After
+    fun after() {
+        unmockkStatic(SecurityContextHolder::class)
+        Mockito.clearInvocations(userSpaceMappingRepository)
+    }
+
+    @Test
+    fun `getSpacesForUser should not blow up if Principal has no name`() {
         every { SecurityContextHolder.getContext().authentication.name } returns null
         try {
             underTest.getSpacesForUser()
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             fail<String>("Should not have caught an exception here")
         }
-        unmockkStatic(SecurityContextHolder::class)
+    }
+
+    @Test
+    fun `getSpacesForUser should identify a Principal by app id if no Name is available`() {
+        every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("appid" to "easyas123"))
+        every { SecurityContextHolder.getContext().authentication.name } returns null
+        try {
+            underTest.getSpacesForUser()
+        } catch (e: Exception) {
+            fail<String>("Should not have caught an exception here")
+        }
+        Mockito.verify(userSpaceMappingRepository).findAllByUserId("easyas123")
     }
 }
