@@ -17,7 +17,7 @@ class CustomPermissionEvaluator(
     override fun hasPermission(auth: Authentication, targetDomainObject: Any, permission: Any): Boolean {
 
         if (!auth.isAuthenticated) return false
-        val subject: String = getSubject(auth) ?: return false
+        val subject: String = getUsernameOrAppName(auth) ?: return false
 
         val targetIdString = targetDomainObject.toString()
         val currentSpace: Space? = getCurrentSpace(targetIdString)
@@ -32,11 +32,6 @@ class CustomPermissionEvaluator(
 
     override fun hasPermission(auth: Authentication, targetId: Serializable, targetType: String, permission: Any): Boolean
         = hasPermission(auth, targetId, permission)
-
-    private fun getSubject(auth: Authentication): String? {
-        return if((auth.name != null) && auth.name.isNotEmpty()) auth.name
-        else (auth.credentials as Jwt).claims["appid"]?.toString()
-    }
 
     private fun getCurrentSpace(uuid: String): Space? {
         return spaceRepository.findByUuid(uuid)
