@@ -149,6 +149,29 @@ class ProductControllerInTimeApiTest {
     }
 
     @Test
+    fun `GET should include assignments for archived people`() {
+        person.archiveDate = LocalDate.parse("1066-10-14")
+        personRepository.save(person)
+        val assignment = assignmentRepository.save(AssignmentV1(person=person, productId=product1.id ?: 0, spaceUuid=spaceWithEditAccess.uuid, effectiveDate = LocalDate.parse("1999-01-01")))
+
+        val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$may1")
+                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val actualProducts: List<Product> = objectMapper.readValue(
+                result.response.contentAsString,
+                objectMapper.typeFactory.constructCollectionType(MutableList::class.java, Product::class.java)
+        )
+
+        val actualProduct1: Product = actualProducts[0]
+        assertThat(actualProduct1.id).isEqualTo(product1.id)
+        assertThat(actualProduct1.assignments.size).isOne()
+        assertThat(actualProduct1.assignments.first().id).isEqualTo(assignment.id);
+        assertThat(actualProduct1.assignments.first().person.archiveDate).isEqualTo(LocalDate.parse("1066-10-14"))
+    }
+
+    @Test
     fun `GET should return FORBIDDEN when accessing products without edit permission for a date that is not today`() {
         val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
         mockMvc.perform(get("$baseUrl?requestedDate=$may1")
