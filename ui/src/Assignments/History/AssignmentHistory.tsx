@@ -45,19 +45,12 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             data.sort((a: Assignment, b: Assignment) => {
                 return new Date(b.startDate!).valueOf() - new Date(a.startDate!).valueOf();
             });
-            data = subtractOneDayFromEndDates(data);
             setAssignments(data);
         });
     }, [person]);
 
     const toggleShowing = () => {
         setIsShowing(!isShowing);
-    };
-
-    const subtractOneDayFromEndDates = (assignments: Array<Assignment>) => {
-        return assignments.map(assignment => {
-            return assignment.endDate == null ? assignment : {...assignment, endDate: moment(assignment.endDate).add(-1, 'day').toDate()};
-        });
     };
 
     const handleKeyDownForToggleShowing = (event: React.KeyboardEvent) => {
@@ -91,7 +84,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     };
 
     const getEndDate = (assignment: Assignment): string => {
-        return (didAssignmentEndInThePast(assignment) ? moment(assignment.endDate).format('MM/DD/YYYY') : 'Current');
+        return (didAssignmentEndInThePast(assignment) ? moment(assignment.endDate).subtract(1, 'days').format('MM/DD/YYYY') : 'Current');
     };
 
     const getDurationUnit = (duration: number): string => {
@@ -111,7 +104,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             const productName = getProductName(assignment);
             const startDate = getStartDate(assignment);
             const endDate = getEndDate(assignment);
-            const duration = getDurationWithRespectToToday(assignment);
+            const duration = getDurationWithRespectToToday(assignment) - 1;
             const durationUnit = getDurationUnit(duration);
             return (<div key={'' + person.id + assignment.productId + assignment.startDate} className="assignmentHistoryRow">
                 <div className="assignmentHistoryCell">{productName}</div>

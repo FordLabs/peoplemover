@@ -24,21 +24,13 @@ import {AssignmentHistory} from './AssignmentHistory';
 import ProductClient from '../../Products/ProductClient';
 import moment, {now} from 'moment';
 import {fireEvent} from '@testing-library/dom';
+import {Assignment} from "../Assignment";
 
 describe('Assignment History', () => {
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-        AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
-            data: [{...TestUtils.assignmentForHank, endDate: null},
-                TestUtils.assignmentVacationForHank,
-                TestUtils.previousAssignmentForHank],
-        } as AxiosResponse));
-        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
-            data: [TestUtils.productForHank, TestUtils.unassignedProduct, TestUtils.productWithoutAssignments],
-        } as AxiosResponse));
-    });
+    const daysBetweenStartAndToday = (assignment: Assignment): number  => {
+       return Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(assignment.startDate).startOf('day'))).asDays());
+    }
 
     async function clickLabel(renderResult: RenderResult): Promise<void> {
         const historyLabel = await renderResult.findByText('View Assignment History');
@@ -50,6 +42,7 @@ describe('Assignment History', () => {
         if (products.length === dates.length) {
             products.forEach((product, i) => {
                 const historyEntry = container.children[isCurrent ? 1 : 3].children[i];
+                expect(historyEntry).toBeDefined();
                 expect(historyEntry.children[0].innerHTML).toEqual(products[i]);
                 expect(historyEntry.children[1].innerHTML).toEqual(dates[i]);
             });
@@ -66,6 +59,19 @@ describe('Assignment History', () => {
         checkProductAndDates(products, dates, container, false);
     };
 
+    beforeEach(() => {
+        jest.clearAllMocks();
+        TestUtils.mockClientCalls();
+        AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
+            data: [{...TestUtils.assignmentForHank, endDate: null},
+                TestUtils.assignmentVacationForHank,
+                TestUtils.previousAssignmentForHank],
+        } as AxiosResponse));
+        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
+            data: [TestUtils.productForHank, TestUtils.unassignedProduct, TestUtils.productWithoutAssignments],
+        } as AxiosResponse));
+    });
+
     it('should not show history until it has been dropped down', async () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await actual.findByText('View Assignment History');
@@ -77,8 +83,7 @@ describe('Assignment History', () => {
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
 
-        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
-        const str = '01/01/2020 - Current \\(' + expectedDuration + ' days\\)';
+        const str = '01/01/2020 - Current \\(' + daysBetweenStartAndToday(TestUtils.assignmentForHank) + ' days\\)';
         const regex = new RegExp(str);
         await clickLabel(actual);
         await actual.findByText(/Hanky Product/);
@@ -94,10 +99,9 @@ describe('Assignment History', () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
 
-        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
         await actual.findByText('Hanky Product');
         checkCurrentProductAndDates(['Hanky Product'],
-            ['01/01/2020 - Current (' + expectedDuration + ' days)'],
+            ['01/01/2020 - Current (' + daysBetweenStartAndToday(TestUtils.assignmentForHank) + ' days)'],
             actual.container);
         checkPastProductAndDates(['Unassigned', 'Product 3'],
             ['12/01/2019 - 12/31/2019 (31 days)', '10/01/2019 - 11/30/2019 (61 days)'],
@@ -120,11 +124,31 @@ describe('Assignment History', () => {
             ],
         } as AxiosResponse));
 
-        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
+        const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
+        await clickLabel(actual);
+        checkCurrentProductAndDates(['Hanky Product'], ['01/01/2020 - Current (' + daysBetweenStartAndToday(TestUtils.assignmentForHank) + ' days)'], actual.container);
+        checkPastProductAndDates(['Unassigned'], ['12/01/2019 - 12/31/2019 (31 days)'], actual.container);
+    });
+
+    it('should show assignments with an end date of today as "current", and not show assignments beginning tomorrow', async () => {
+        AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
+            data: [{...TestUtils.assignmentForHank, endDate: moment().add(1, 'days').toDate()},
+                TestUtils.assignmentVacationForHank,
+                {
+                    id: 2100,
+                    productId: 3,
+                    person: TestUtils.hank,
+                    placeholder: false,
+                    spaceUuid: TestUtils.hank.spaceUuid,
+                    startDate: moment().add(1, 'days').toDate(),
+                    endDate: new Date(2119, 10, 30),
+                },
+            ],
+        } as AxiosResponse));
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
-        checkCurrentProductAndDates(['Hanky Product'], ['01/01/2020 - Current (' + expectedDuration + ' days)'], actual.container);
+        checkCurrentProductAndDates(['Hanky Product'], ['01/01/2020 - Current (' + daysBetweenStartAndToday(TestUtils.assignmentForHank) + ' days)'], actual.container);
         checkPastProductAndDates(['Unassigned'], ['12/01/2019 - 12/31/2019 (31 days)'], actual.container);
     });
 
@@ -209,7 +233,7 @@ describe('Assignment History', () => {
             ],
         } as AxiosResponse));
 
-        const expectedDuration = Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(TestUtils.assignmentForHank.startDate).startOf('day'))).asDays()) + 1;
+        const expectedDuration = daysBetweenStartAndToday(TestUtils.assignmentForHank);
 
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await clickLabel(actual);
