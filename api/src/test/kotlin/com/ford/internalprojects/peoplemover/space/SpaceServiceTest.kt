@@ -60,7 +60,7 @@ class SpaceServiceTest {
     }
 
     @Test
-    fun `getSpacesForUser should handle a token that has no Principal name and no appId name`() {
+    fun `getSpacesForUser should return no spaces given a token that has no Principal name and no appId name`() {
         every { SecurityContextHolder.getContext().authentication.name } returns null
         every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("noAppId" to "Nothing"))
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
@@ -68,7 +68,7 @@ class SpaceServiceTest {
     }
 
     @Test
-    fun `getSpacesForUser should handle a token that has a Principal name`() {
+    fun `getSpacesForUser should use the principal name if a token has a Principal name and an appId`() {
         every { SecurityContextHolder.getContext().authentication.name } returns "Bob"
         every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("appId" to "Nothing"))
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
@@ -76,7 +76,15 @@ class SpaceServiceTest {
     }
 
     @Test
-    fun `getSpacesForUser should handle a token that has no Principal name but does have an appId name`() {
+    fun `getSpacesForUser should use the principal name if a token has a Principal name and no appId`() {
+        every { SecurityContextHolder.getContext().authentication.name } returns "Bob"
+        every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("dontcare" to "dontcare"))
+        assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
+        Mockito.verify(userSpaceMappingRepository, times(1)).findAllByUserId("Bob")
+    }
+
+    @Test
+    fun `getSpacesForUser should use the appId if a token has an appId name but no principal name`() {
         every { SecurityContextHolder.getContext().authentication.name } returns null
         every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("appid" to "easyas123"))
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
@@ -84,7 +92,7 @@ class SpaceServiceTest {
     }
 
     @Test
-    fun `getSpacesForUser should handle a token that doesn't have jwt credentials`() {
+    fun `getSpacesForUser should return no spaces given a token that doesn't have jwt credentials`() {
         every { SecurityContextHolder.getContext().authentication.name } returns null
         every { SecurityContextHolder.getContext().authentication.credentials } returns null
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
