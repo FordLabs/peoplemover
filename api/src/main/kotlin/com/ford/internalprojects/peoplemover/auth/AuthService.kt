@@ -1,10 +1,29 @@
+/*
+ * Copyright (c) 2021 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.ford.internalprojects.peoplemover.auth
 
 import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.stereotype.Service
+import java.lang.ClassCastException
 
 @Service
 class AuthService (
@@ -23,5 +42,14 @@ class AuthService (
     fun requestIsAuthorizedFromReportProperties(authentication: Authentication): Boolean {
         val authorizedUsers = users.toLowerCase().split(",")
         return authorizedUsers.contains(authentication.name.toLowerCase())
+    }
+}
+
+fun getUsernameOrAppName(auth: Authentication): String? {
+    return try {
+        if ((auth.name != null) && auth.name.isNotEmpty()) auth.name
+        else (auth.credentials as Jwt).claims["appid"]?.toString()
+    } catch(e: ClassCastException) {
+        null
     }
 }
