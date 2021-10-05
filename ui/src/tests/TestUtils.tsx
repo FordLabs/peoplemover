@@ -304,6 +304,7 @@ class TestUtils {
         notes: "Don't forget the WD-40!",
         newPerson: false,
         tags: [TestUtils.personTag1],
+        archiveDate: new Date(2200, 0, 1),
     };
 
     static unassignedPerson: Person = {
@@ -313,6 +314,7 @@ class TestUtils {
         spaceRole: TestUtils.softwareEngineer,
         newPerson: false,
         tags: [],
+        archiveDate: new Date(2001, 10, 10),
     };
 
     static unassignedPersonNoRole: Person = {

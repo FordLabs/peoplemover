@@ -28,6 +28,7 @@ export interface Person {
     spaceUuid: string;
     tags: Array<Tag>;
     customField1?: string;
+    archiveDate?: Date;
 }
 
 export function emptyPerson(): Person {
