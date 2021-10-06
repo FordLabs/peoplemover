@@ -332,6 +332,7 @@ class TestUtils {
         spaceRole: TestUtils.softwareEngineer,
         newPerson: false,
         tags: [TestUtils.personTag2],
+        archiveDate: new Date(1993, 8, 1),
     };
 
     static person2: Person = {
