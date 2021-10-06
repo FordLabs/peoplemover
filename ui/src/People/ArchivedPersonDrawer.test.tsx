@@ -20,9 +20,13 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
+import {createBrowserHistory, History} from "history";
+import {Router} from "react-router-dom";
+import PeopleMover from "../Application/PeopleMover";
 
 describe('Archived People', () => {
     let app: RenderResult;
+    let history: History;
 
     const mayFourteen: Date = new Date(2020, 4, 14);
 
@@ -78,4 +82,26 @@ describe('Archived People', () => {
 
         });
     });
+
+    describe ('Showing the drawer in the app', () => {
+        beforeEach(  async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+
+            history = createBrowserHistory();
+            history.push('/uuid');
+
+            await wait(() => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>
+                );
+            });
+        });
+
+        it('should show the archived people drawer', () => {
+            expect(app.getByText('Archived People')).toBeInTheDocument();
+        })
+    })
 });

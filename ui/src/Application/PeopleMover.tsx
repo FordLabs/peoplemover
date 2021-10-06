@@ -56,6 +56,7 @@ import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import HeaderContainer from '../Header/HeaderContainer';
 import {RoleTag} from '../Roles/RoleTag.interface';
+import ArchivedPersonDrawer from "../People/ArchivedPersonDrawer";
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -204,8 +205,9 @@ function PeopleMover({
                                         <span>Add Person</span>
                                     </button>
                                     <UnassignedDrawer/>
-                                    <ArchivedProductsDrawer/>
                                     <ReassignedDrawer/>
+                                    <ArchivedPersonDrawer/>
+                                    <ArchivedProductsDrawer/>
                                 </div>
                             </div>
                         )}
