@@ -49,29 +49,23 @@ describe('Archive Products', () => {
         });
     
         it('shows the archived product drawer when the handle is clicked', async () => {
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
-            const archivedDrawerCaret = drawerCarets[1];
-            fireEvent.click(archivedDrawerCaret);
+            const productArchivedDrawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            fireEvent.click(productArchivedDrawerCaret);
             await app.findByText('I am archived');
         });
     
         it('hides the archived product drawer when the handle is clicked again', async () => {
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
-            const archivedDrawerCaret = drawerCarets[1];
-            fireEvent.click(archivedDrawerCaret);
+            const drawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            fireEvent.click(drawerCaret);
             await app.findByText('I am archived');
-    
-            fireEvent.click(archivedDrawerCaret);
+
+            fireEvent.click(drawerCaret);
             expect(app.queryByText('I am archived')).toBeNull();
         });
     
         it('should open the edit product modal if you click an archived product', async () => {
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
-            const archivedDrawerCaret = drawerCarets[1];
-            fireEvent.click(archivedDrawerCaret);
+            const drawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            fireEvent.click(drawerCaret);
             fireEvent.click(app.getByTestId('archivedProduct_4'));
 
             await app.findByText('Edit Product');

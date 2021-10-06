@@ -53,16 +53,14 @@ describe('Unassigned Products', () => {
         });
 
         it('shows the unassigned product drawer when the handle is clicked', async () => {
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const unassignedDrawerCaret = drawerCarets[0];
+            const unassignedDrawerCaret = await app.findByTestId('unassignedDrawerCaret');
             fireEvent.click(unassignedDrawerCaret);
 
             await app.findByTestId('unassignedPeopleContainer');
         });
 
         it('hides the unassigned product drawer when the handle is clicked again', async () => {
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const unassignedDrawerCaret = drawerCarets[0];
+            const unassignedDrawerCaret = await app.findByTestId('unassignedDrawerCaret');
 
             fireEvent.click(unassignedDrawerCaret);
 
@@ -160,9 +158,8 @@ describe('Unassigned Products', () => {
         });
 
         it('should open edit person dialog when clicking on ellipsis', async () => {
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const unassignedDrawer = drawerCarets[0];
-            fireEvent.click(unassignedDrawer);
+            const unassignedDrawerCaret = await app.findByTestId('unassignedDrawerCaret');
+            fireEvent.click(unassignedDrawerCaret);
 
             const editUnassignment = await app.findByTestId(`editPersonIconContainer__unassigned_person_7`);
             fireEvent.click(editUnassignment);
@@ -172,9 +169,8 @@ describe('Unassigned Products', () => {
         });
 
         it('should close unassigned edit menu when opening an edit menu in product list', async () => {
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            const unassignedDrawer = drawerCarets[0];
-            fireEvent.click(unassignedDrawer);
+            const unassignedDrawerCaret = await app.findByTestId('unassignedDrawerCaret');
+            fireEvent.click(unassignedDrawerCaret);
 
             const editUnassignment = await app.findByTestId(`editPersonIconContainer__unassigned_person_7`);
             fireEvent.click(editUnassignment);

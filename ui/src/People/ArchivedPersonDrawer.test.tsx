@@ -50,22 +50,28 @@ describe('Archived People', () => {
         });
 
         it('shows the name of an archived person once opened', async () => {
-            fireEvent.click(app.getAllByTestId('drawerCaret')[0]);
+            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            fireEvent.click(drawerCaret);
             expect(await app.findByText(TestUtils.unassignedPerson.name)).toBeInTheDocument();
         });
 
-        it('does not show names of people who are not archived', () => {
+        it('does not show names of people who are not archived', async () => {
+            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            fireEvent.click(drawerCaret);
             expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
         });
 
-        it('should not show people who have not passed their archived date', () => {
+        it('should not show people who have not passed their archived date', async () => {
+            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            fireEvent.click(drawerCaret);
             expect(app.queryByText(TestUtils.hank.name)).not.toBeInTheDocument();
         });
 
         it('can be closed and opened again', async () => {
-            fireEvent.click(app.getAllByTestId('drawerCaret')[0]);
+            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            fireEvent.click(drawerCaret);
             expect(await app.findByText(TestUtils.unassignedPerson.name)).toBeInTheDocument();
-            fireEvent.click(app.getAllByTestId('drawerCaret')[0]);
+            fireEvent.click(drawerCaret);
             expect(await app.queryByText(TestUtils.unassignedPerson.name)).not.toBeInTheDocument();
 
         });

@@ -596,10 +596,8 @@ describe('Products', () => {
 
         it('should not show archive button option in delete modal if product is already archived', async () => {
             const app = applicationSetup();
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
-            const archivedProductsDrawer = drawerCarets[1];
-            fireEvent.click(archivedProductsDrawer);
+            const drawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            fireEvent.click(drawerCaret);
 
             const archivedProductButton = await app.findByTestId('archivedProduct_4');
             fireEvent.click(archivedProductButton);
@@ -685,11 +683,8 @@ describe('Products', () => {
                 expect(app.queryByText('Archive Product')).not.toBeInTheDocument();
                 expect(app.queryByText('Product 1')).not.toBeInTheDocument();
             });
-            const drawerCarets = await app.findAllByTestId('drawerCaret');
-            // TODO: change to drawerCarets[2] after reinstating ReassignedDrawer
-            const archivedProductDrawerOpener = drawerCarets[1];
-
-            fireEvent.click(archivedProductDrawerOpener);
+            const drawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            fireEvent.click(drawerCaret);
             await app.findByText('Product 1');
         });
     });
