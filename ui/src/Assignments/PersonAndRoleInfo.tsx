@@ -16,7 +16,7 @@
  */
 
 import React, {ReactElement, useState} from 'react';
-import {Assignment, calculateDuration} from './Assignment';
+import {calculateDuration} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
@@ -28,22 +28,23 @@ interface HoverInfo {
     icon: string;
 }
 
-interface Props {
-    assignment: Assignment;
+interface PersonAndRoleInfoProps {
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
     viewingDate: Date;
+    person: Person;
+    duration?: number;
 }
 
 const PersonAndRoleInfo = ({
-    isReadOnly,
-    assignment = {id: 0} as Assignment,
-    isUnassignedProduct,
-    isDragging,
-    viewingDate,
-}: Props): ReactElement => {
-    const {person} = assignment;
+                               isReadOnly,
+                               isUnassignedProduct,
+                               isDragging,
+                               viewingDate,
+                               duration,
+                               person,
+                           }: PersonAndRoleInfoProps): ReactElement => {
 
     const [isHoverBoxOpen, setHoverBoxIsOpened] = useState<boolean>(false);
 
@@ -63,7 +64,7 @@ const PersonAndRoleInfo = ({
         const toReturn: HoverInfo[] = [];
         toReturn.push({
             title: 'Time on Product',
-            text: numberOfDaysString(calculateDuration(assignment, viewingDate)),
+            text: numberOfDaysString(duration),
             icon: 'timer',
         });
         if (hasTags(person)) {
@@ -76,7 +77,7 @@ const PersonAndRoleInfo = ({
         if (hasNotes(person)) {
             toReturn.push({
                 title: 'Notes',
-                text: assignment.person.notes || '',
+                text: person.notes || '',
                 icon: 'note',
             });
         }
@@ -89,11 +90,15 @@ const PersonAndRoleInfo = ({
             <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
                 {content.map(hoverInfo => {
                     return (<div key={hoverInfo.title} className={'flex-row'}>
-                        <i className={`material-icons tooltip-icon`} data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
-                        <div className={'flex-col'}><div className="hoverBoxTitle">{hoverInfo.title}:</div>
+                        <i className={`material-icons tooltip-icon`}
+                           data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
+                        <div className={'flex-col'}>
+                            <div className="hoverBoxTitle">{hoverInfo.title}:</div>
                             <div className="hoverBoxText">
                                 {hoverInfo.text}
-                            </div></div></div>);
+                            </div>
+                        </div>
+                    </div>);
                 })}
             </div>
         );
@@ -116,10 +121,10 @@ const PersonAndRoleInfo = ({
     };
 
     return (
-        <div data-testid={`assignmentCard${assignment.id}info`}
-            className="personNameAndRoleContainer"
-            onMouseEnter={(): void => onHover(true)}
-            onMouseLeave={(): void => onHover(false)}
+        <div data-testid={`assignmentCardPersonInfo`}
+             className="personNameAndRoleContainer"
+             onMouseEnter={(): void => onHover(true)}
+             onMouseLeave={(): void => onHover(false)}
         >
             <div
                 className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
