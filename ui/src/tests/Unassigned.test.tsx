@@ -102,6 +102,57 @@ describe('Unassigned Products', () => {
 
             expect(app2.queryByTestId('countBadge')).toBeNull();
         });
+
+        it('does not show archived people as unassigned', async () => {
+            const initialState: PreloadedState<GlobalStateProps> = {
+                allGroupedTagFilterOptions: [
+                    { label: 'Location Tags:', options: []},
+                    { label: 'Product Tags:', options: [{}]},
+                    { label: 'Role Tags:', options: []},
+                    { label: 'Person Tags:', options: []},
+                ],
+                isUnassignedDrawerOpen: true,
+                products: [TestUtils.unassignedProduct],
+                currentSpace: TestUtils.space,
+            } as GlobalStateProps;
+
+            let app2: RenderResult;
+            await wait(() => {
+                app2 = renderWithRedux(
+                    <UnassignedDrawer/>,
+                    undefined,
+                    initialState
+                );
+            });
+
+            expect(app2.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
+        });
+
+        it('should show an archived person as unassigned if their archive date has not passed', async () => {
+            const product = {...TestUtils.unassignedProduct, assignments:[TestUtils.assignmentForHank]};
+            const initialState: PreloadedState<GlobalStateProps> = {
+                allGroupedTagFilterOptions: [
+                    { label: 'Location Tags:', options: []},
+                    { label: 'Product Tags:', options: [{}]},
+                    { label: 'Role Tags:', options: []},
+                    { label: 'Person Tags:', options: []},
+                ],
+                isUnassignedDrawerOpen: true,
+                products: [product],
+                currentSpace: TestUtils.space,
+            } as GlobalStateProps;
+
+            let app2: RenderResult;
+            await wait(() => {
+                app2 = renderWithRedux(
+                    <UnassignedDrawer/>,
+                    undefined,
+                    initialState
+                );
+            });
+
+            app2.getByText(TestUtils.hank.name);
+        });
     });
 
     describe('Automated linkage between modals and drawers', () => {
@@ -165,7 +216,7 @@ describe('Unassigned Products', () => {
             fireEvent.click(editUnassignment);
 
             const unassignedPersonName: HTMLInputElement = await app.findByLabelText('Name') as HTMLInputElement;
-            expect(unassignedPersonName.value).toEqual(TestUtils.assignmentForUnassigned.person.name);
+            expect(unassignedPersonName.value).toEqual(TestUtils.unassignedPerson.name);
         });
 
         it('should close unassigned edit menu when opening an edit menu in product list', async () => {
@@ -177,7 +228,7 @@ describe('Unassigned Products', () => {
 
             const unassignedPersonName = await app.findByLabelText('Name');
             // @ts-ignore
-            expect(unassignedPersonName.value).toEqual(TestUtils.assignmentForUnassigned.person.name);
+            expect(unassignedPersonName.value).toEqual(TestUtils.unassignedPerson.name);
 
             const closeForm = await app.findByTestId('modalCloseButton');
             fireEvent.click(closeForm);

@@ -20,9 +20,9 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
-import {createBrowserHistory, History} from "history";
-import {Router} from "react-router-dom";
-import PeopleMover from "../Application/PeopleMover";
+import {createBrowserHistory, History} from 'history';
+import {Router} from 'react-router-dom';
+import PeopleMover from '../Application/PeopleMover';
 
 describe('Archived People', () => {
     let app: RenderResult;
@@ -39,7 +39,7 @@ describe('Archived People', () => {
             const store = mockStore({
                 currentSpace: TestUtils.space,
                 viewingDate: mayFourteen,
-                people: [...TestUtils.people,TestUtils.unassignedBigBossSE]
+                people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
             });
 
             await wait(() => {
@@ -56,14 +56,14 @@ describe('Archived People', () => {
         it('shows the name of an archived person once opened, but not an unarchived person', async () => {
             const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await app.findByText(TestUtils.unassignedPerson.name)).toBeInTheDocument();
+            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
             expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
         });
 
         it('shows the names of two archived people', async () => {
             const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await app.findByText(TestUtils.unassignedPerson.name)).toBeInTheDocument();
+            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
             expect(await app.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
         });
 
@@ -76,14 +76,14 @@ describe('Archived People', () => {
         it('can be closed and opened again', async () => {
             const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await app.findByText(TestUtils.unassignedPerson.name)).toBeInTheDocument();
+            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
             fireEvent.click(drawerCaret);
-            expect(await app.queryByText(TestUtils.unassignedPerson.name)).not.toBeInTheDocument();
+            expect(await app.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
 
         });
     });
 
-    describe ('Showing the drawer in the app', () => {
+    describe('Showing the drawer in the app', () => {
         beforeEach(  async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
@@ -102,6 +102,6 @@ describe('Archived People', () => {
 
         it('should show the archived people drawer', () => {
             expect(app.getByText('Archived People')).toBeInTheDocument();
-        })
-    })
+        });
+    });
 });

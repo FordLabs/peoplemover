@@ -50,7 +50,7 @@ function DrawerContainer({
         <div className={ `drawerContainer ${isDrawerOpen ? 'drawerBottomBorder' : ''}`} data-testid={testId}>
             <button className={`drawerHeader ${isDrawerOpen ? '' : 'drawerBottomBorder'}`}
                 onClick={(): void => setIsDrawerOpen(!isDrawerOpen)}
-                data-testid={testId+"Caret"}>
+                data-testid={testId + 'Caret'}>
 
                 {canRenderCountBadge() && <div className="countBadge" data-testid="countBadge">{numberForCountBadge}</div>}
 

@@ -307,6 +307,16 @@ class TestUtils {
         archiveDate: new Date(2200, 0, 1),
     };
 
+    static archivedPerson: Person = {
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        id: 1010,
+        name: 'Unassigned Person 77',
+        spaceRole: TestUtils.softwareEngineer,
+        newPerson: false,
+        tags: [],
+        archiveDate: new Date(2001, 10, 10),
+    };
+
     static unassignedPerson: Person = {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         id: 101,
@@ -314,7 +324,6 @@ class TestUtils {
         spaceRole: TestUtils.softwareEngineer,
         newPerson: false,
         tags: [],
-        archiveDate: new Date(2001, 10, 10),
     };
 
     static unassignedPersonNoRole: Person = {
@@ -364,6 +373,7 @@ class TestUtils {
     static people: Array<Person> = [
         TestUtils.person1,
         TestUtils.hank,
+        TestUtils.archivedPerson,
         TestUtils.unassignedPerson,
     ];
 
@@ -410,6 +420,16 @@ class TestUtils {
         id: 11,
         productId: 999,
         person: TestUtils.unassignedPerson,
+        placeholder: false,
+        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        effectiveDate: new Date(2020, 4, 15),
+        startDate: new Date(2020, 0, 2),
+    };
+
+    static assignmentForArchived: Assignment = {
+        id: 111,
+        productId: 999,
+        person: TestUtils.archivedPerson,
         placeholder: false,
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         effectiveDate: new Date(2020, 4, 15),
@@ -479,7 +499,7 @@ class TestUtils {
         id: 999,
         name: 'unassigned',
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        assignments: [TestUtils.assignmentForUnassigned],
+        assignments: [TestUtils.assignmentForUnassigned, TestUtils.assignmentForArchived],
         startDate: '',
         endDate: '',
         archived: false,
