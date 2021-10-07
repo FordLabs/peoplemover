@@ -72,7 +72,7 @@ function PersonCard({
                 <PersonAndRoleInfo
                     person={person}
                     duration={NaN}
-                    isUnassignedProduct={true}
+                    isUnassignedProduct={false}
                 />
             </div>
             <button
