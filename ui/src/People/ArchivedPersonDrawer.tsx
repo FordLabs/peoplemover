@@ -36,8 +36,8 @@ function ArchivedPersonDrawer({
     const getArchivedPeopleElements = (): JSX.Element => {
         return (
             <div>
-                {people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment())).
-                    map(person => {
+                {people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment()))
+                    .map(person => {
                         return (<PersonCard person={person} key={person.id}/>);
                     })}
             </div>
