@@ -72,7 +72,8 @@ function PersonCard({
                 <PersonAndRoleInfo
                     person={person}
                     duration={NaN}
-                    isUnassignedProduct={false}/>
+                    isUnassignedProduct={true}
+                />
             </div>
             <button
                 className="personRoleColor"

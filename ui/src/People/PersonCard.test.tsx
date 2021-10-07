@@ -38,15 +38,21 @@ describe('Person Card', () => {
             spaceRole: TestUtils.softwareEngineer,
             notes: 'This is a note',
             tags: TestUtils.personTags,
+            archiveDate: new Date(2000, 0, 1),
         };
 
-        store = createStore(rootReducer, {currentSpace: TestUtils.space});
+        store = createStore(rootReducer, {currentSpace: TestUtils.space, viewingDate: new Date(2020, 0, 1)});
         store.dispatch = jest.fn();
     });
 
     it('should render the assigned persons name', () => {
         const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
         expect(underTest.getByText('Billiam Handy')).toBeInTheDocument();
+    });
+
+    it('should render the assigned persons role if they have one', () => {
+        const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
+        expect(underTest.getByText('Software Engineer')).toBeInTheDocument();
     });
 
     it('should make the call to open the Edit Person modal when person name is clicked', async () => {
@@ -62,9 +68,17 @@ describe('Person Card', () => {
         );
     });
 
-    it('should render the assigned persons role if they have one', () => {
-        const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
-        expect(underTest.getByText('Software Engineer')).toBeInTheDocument();
+    it('should not show any icons (note, tag)', () => {
+        const app = renderWithRedux(<PersonCard person={personToRender}/>, store);
+        expect(app.queryByText('note')).toBeNull();
+        expect(app.queryByText('local_offer')).toBeNull();
+    });
+
+    it('should not have the hover box on mouseover', async () => {
+        const app = renderWithRedux(<PersonCard person={personToRender}/>, store);
+        fireEvent.mouseEnter(await app.getByText(personToRender.name));
+        expect(await app.queryByText('note')).toBeNull();
+        expect(app.queryByText('local_offer')).toBeNull();
     });
 
     describe('Read-Only Functionality', function() {
@@ -76,10 +90,10 @@ describe('Person Card', () => {
 
         it('should not display edit Menu if in read only mode', function() {
             const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
-            let editPersonButton = underTest.getByTestId('archivedPersonIconContainer__billiam_handy');
-            editPersonButton.click();
+            let editPersonMenuButton = underTest.getByTestId('archivedPersonIconContainer__billiam_handy');
+            editPersonMenuButton.click();
             expect(underTest.queryByTestId('editMenu')).toBeNull();
-            expect(editPersonButton.childElementCount).toEqual(0);
+            expect(editPersonMenuButton.childElementCount).toEqual(0);
         });
 
         it('should not display Edit Person Modal if in read only mode', function() {
@@ -87,117 +101,6 @@ describe('Person Card', () => {
             const billiam = underTest.getByText(personToRender.name);
             fireEvent.click(billiam);
             expect(store.dispatch).not.toHaveBeenCalled();
-        });
-
-    });
-
-    xdescribe('Hoverable Notes', () => {
-
-        beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
-        });
-
-        it('should display hover notes icon if person has valid notes', () => {
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.getByText('note')).toBeInTheDocument();
-        });
-
-        it('should not display hover notes icon if person has valid notes, but user is readOnly', () => {
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.queryByTestId('notesIcon')).toBeNull();
-        });
-
-        it('should not display hover notes icon if person has no notes', () => {
-            delete personToRender.notes;
-
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.queryByTestId('notesIcon')).toBeNull();
-        });
-
-        it('should display hover notes when hovered over', () => {
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.queryByText('This is a note')).toBeNull();
-
-            act(() => {
-                fireEvent.mouseEnter(underTest.getByText('note'));
-                jest.advanceTimersByTime(500);
-            });
-
-            expect(underTest.getByText('This is a note')).toBeVisible();
-        });
-
-        it('should not show hover box when assignment card is unassigned', () => {
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.queryByText('This is a note')).toBeNull();
-            expect(underTest.getByText('note')).toBeInTheDocument();
-
-            act(() => {
-                fireEvent.mouseEnter(underTest.getByText('note'));
-                jest.advanceTimersByTime(500);
-            });
-
-            expect(underTest.queryByText('This is a note')).toBeNull();
-        });
-
-        it('should hide hover box for assignment when an assignment is being dragged', () => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: true});
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.queryByText('This is a note')).toBeNull();
-            expect(underTest.getByText('note')).toBeInTheDocument();
-
-            act(() => {
-                fireEvent.mouseEnter(underTest.getByText('note'));
-                jest.advanceTimersByTime(500);
-            });
-
-            expect(underTest.queryByText('This is a note')).toBeNull();
-        });
-    });
-
-    xdescribe('Hoverable Person tag', () => {
-        beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
-        });
-
-        it('should display person tag Icon if person has valid notes', () => {
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.getByText('local_offer')).toBeInTheDocument();
-        });
-
-        it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false, isReadOnly: true});
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.queryByText('local_offer')).toBeNull();
-        });
-
-        it('should not display person tag Icon if person has no person tags', () => {
-            delete personToRender.tags;
-
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.queryByText('local_offer')).toBeNull();
-        });
-
-        it('should hide hover box for assignment when an assignment is being dragged', () => {
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-            expect(underTest.queryByText('The lil boss,The big boss')).toBeNull();
-            expect(underTest.getByText('local_offer')).toBeInTheDocument();
-
-            act(() => {
-                fireEvent.mouseEnter(underTest.getByText('local_offer'));
-                jest.advanceTimersByTime(500);
-            });
-
-            expect(underTest.queryByText('The lil boss,The big boss')).toBeNull();
         });
     });
 });

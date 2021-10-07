@@ -19,7 +19,7 @@ import React, {ReactElement, useState} from 'react';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Person} from '../People/Person';
+import {Person, isArchived} from '../People/Person';
 
 interface HoverInfo {
     title: string;
@@ -31,6 +31,7 @@ interface PersonAndRoleInfoProps {
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
+    viewingDate: Date;
     person: Person;
     duration: number;
 }
@@ -39,6 +40,7 @@ const PersonAndRoleInfo = ({
     isReadOnly,
     isUnassignedProduct,
     isDragging,
+    viewingDate,
     duration,
     person,
 }: PersonAndRoleInfoProps): ReactElement => {
@@ -127,15 +129,15 @@ const PersonAndRoleInfo = ({
                 className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
                 {person.name}
-                {hasTags(person) && !isReadOnly && <i className={'material-icons'}>local_offer</i>}
-                {hasNotes(person) && !isReadOnly && <i className={'material-icons'}>note</i>}
+                {hasTags(person) && !isReadOnly && !isArchived(person, viewingDate) && <i className={'material-icons'}>local_offer</i>}
+                {hasNotes(person) && !isReadOnly && !isArchived(person, viewingDate) && <i className={'material-icons'}>note</i>}
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
                     {person.spaceRole.name}
                 </div>
             )}
-            {!isDragging && !isReadOnly && !isUnassignedProduct && isHoverBoxOpen && <HoverBox/>}
+            {!isDragging && !isReadOnly && !isUnassignedProduct && !isArchived(person, viewingDate) && isHoverBoxOpen && <HoverBox/>}
         </div>
     );
 };
@@ -143,6 +145,7 @@ const PersonAndRoleInfo = ({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
+    viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly
 });
 
