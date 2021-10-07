@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+import {fireEvent} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import rootReducer from '../Redux/Reducers';
@@ -30,6 +30,7 @@ describe('Person Card', () => {
     let store: Store;
 
     beforeEach(() => {
+        jest.clearAllMocks();
         personToRender = {
             newPerson: false,
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
@@ -43,6 +44,10 @@ describe('Person Card', () => {
 
         store = createStore(rootReducer, {currentSpace: TestUtils.space, viewingDate: new Date(2020, 0, 1)});
         store.dispatch = jest.fn();
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     it('should render the assigned persons name', () => {
