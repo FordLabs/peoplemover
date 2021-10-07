@@ -20,8 +20,10 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import rootReducer from '../Redux/Reducers';
 import {createStore, Store} from 'redux';
-import PersonCard from "./PersonCard";
-import {Person} from "./Person";
+import PersonCard from './PersonCard';
+import {Person} from './Person';
+import {setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 describe('Person Card', () => {
     let personToRender: Person;
@@ -39,11 +41,25 @@ describe('Person Card', () => {
         };
 
         store = createStore(rootReducer, {currentSpace: TestUtils.space});
+        store.dispatch = jest.fn();
     });
 
     it('should render the assigned persons name', () => {
-        const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store,);
+        const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
         expect(underTest.getByText('Billiam Handy')).toBeInTheDocument();
+    });
+
+    it('should make the call to open the Edit Person modal when person name is clicked', async () => {
+        const app = renderWithRedux(<PersonCard person={personToRender}/>, store);
+        const billiam = app.getByText(personToRender.name);
+        expect(billiam).toBeEnabled();
+        fireEvent.click(billiam);
+        expect(store.dispatch).toHaveBeenCalledWith(
+            setCurrentModalAction({
+                modal: AvailableModals.EDIT_PERSON,
+                item: personToRender,
+            })
+        );
     });
 
     xit('should render the assigned persons role if they have one', () => {
@@ -51,13 +67,13 @@ describe('Person Card', () => {
         expect(underTest.getByText('Software Engineer')).toBeInTheDocument();
     });
 
-    xdescribe('Read-Only Functionality', function () {
+    xdescribe('Read-Only Functionality', function() {
 
-        beforeEach(function () {
+        beforeEach(function() {
             store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
         });
 
-        it('should not display edit Menu if in read only mode', function () {
+        it('should not display edit Menu if in read only mode', function() {
 
             const underTest = renderWithRedux(
                 <PersonCard person={personToRender}/>, store);

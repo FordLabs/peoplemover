@@ -16,7 +16,6 @@
  */
 
 import React, {ReactElement, useState} from 'react';
-import {calculateDuration} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
@@ -32,19 +31,17 @@ interface PersonAndRoleInfoProps {
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
-    viewingDate: Date;
     person: Person;
-    duration?: number;
+    duration: number;
 }
 
 const PersonAndRoleInfo = ({
-                               isReadOnly,
-                               isUnassignedProduct,
-                               isDragging,
-                               viewingDate,
-                               duration,
-                               person,
-                           }: PersonAndRoleInfoProps): ReactElement => {
+    isReadOnly,
+    isUnassignedProduct,
+    isDragging,
+    duration,
+    person,
+}: PersonAndRoleInfoProps): ReactElement => {
 
     const [isHoverBoxOpen, setHoverBoxIsOpened] = useState<boolean>(false);
 
@@ -91,7 +88,7 @@ const PersonAndRoleInfo = ({
                 {content.map(hoverInfo => {
                     return (<div key={hoverInfo.title} className={'flex-row'}>
                         <i className={`material-icons tooltip-icon`}
-                           data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
+                            data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
                         <div className={'flex-col'}>
                             <div className="hoverBoxTitle">{hoverInfo.title}:</div>
                             <div className="hoverBoxText">
@@ -122,9 +119,9 @@ const PersonAndRoleInfo = ({
 
     return (
         <div data-testid={`assignmentCardPersonInfo`}
-             className="personNameAndRoleContainer"
-             onMouseEnter={(): void => onHover(true)}
-             onMouseLeave={(): void => onHover(false)}
+            className="personNameAndRoleContainer"
+            onMouseEnter={(): void => onHover(true)}
+            onMouseLeave={(): void => onHover(false)}
         >
             <div
                 className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
@@ -146,7 +143,6 @@ const PersonAndRoleInfo = ({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
-    viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly
 });
 

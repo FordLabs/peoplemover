@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject} from 'react';
-import EditMenu from '../ReusableComponents/EditMenu';
-
+import React from 'react';
 import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
 import {setCurrentModalAction} from '../Redux/Actions';
@@ -25,13 +23,11 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import '../Application/Styleguide/Main.scss';
 import {createDataTestId} from '../tests/TestUtils';
-import {Space} from '../Space/Space';
 import {AvailableModals} from '../Modal/AvailableModals';
-import {Person} from "./Person";
-import PersonAndRoleInfo from "../Assignments/PersonAndRoleInfo";
+import {Person} from './Person';
+import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
 
 interface PersonCardProps {
-    currentSpace: Space;
     viewingDate: Date;
     isReadOnly: boolean;
     person: Person;
@@ -40,14 +36,11 @@ interface PersonCardProps {
 }
 
 function PersonCard({
-                        currentSpace,
-                        viewingDate,
-                        isReadOnly,
-                        person,
-                        setCurrentModal,
-                    }: PersonCardProps): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const spaceUuid = currentSpace.uuid!;
+    viewingDate,
+    isReadOnly,
+    person,
+    setCurrentModal,
+}: PersonCardProps): JSX.Element {
 
     function toggleModal(): void {
         const newModalState: CurrentModalState = {
@@ -55,6 +48,12 @@ function PersonCard({
             item: person,
         };
         setCurrentModal(newModalState);
+    }
+
+    function handleKeyPress(event: React.KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            toggleModal();
+        }
     }
 
     const cssRoleColor = person.spaceRole?.color?.color ? person.spaceRole.color.color : 'transparent';
@@ -66,13 +65,13 @@ function PersonCard({
         >
             {person.newPerson && person.newPersonDate &&
             <div className="newPersonBadge"><NewBadge newPersonDate={person.newPersonDate}
-                                                      viewingDate={viewingDate}/></div>}
-                                                      <div onClick={toggleModal} data-testid={createDataTestId('editPersonIconContainer', person.name)}>
-            <PersonAndRoleInfo
-                person={person}
-                duration={NaN}
-                isUnassignedProduct={false}/>
-                                                      </div>
+                viewingDate={viewingDate}/></div>}
+            <div onClick={toggleModal} onKeyPress={handleKeyPress} data-testid={createDataTestId('editPersonIconContainer', person.name)}>
+                <PersonAndRoleInfo
+                    person={person}
+                    duration={NaN}
+                    isUnassignedProduct={false}/>
+            </div>
             <button
                 className="personRoleColor"
                 aria-label="Person Menu"
@@ -93,7 +92,6 @@ function PersonCard({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly,
 });

@@ -18,21 +18,16 @@
 import React from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
-import {fetchProductsAction, setCurrentModalAction, setIsDragging} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Person} from '../People/Person';
-import PersonCard from "./PersonCard";
+import {Person} from './Person';
+import PersonCard from './PersonCard';
 
 interface PersonCardListProps {
     people: Array<Person>;
-    viewingDate: Date;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function PersonCardList({
     people,
-    viewingDate,
 }: PersonCardListProps): JSX.Element {
 
     const classNameAndDataTestId = 'archivedPeopleContainer';
@@ -43,10 +38,10 @@ function PersonCardList({
                 className={classNameAndDataTestId}
                 data-testid={classNameAndDataTestId}>
                 {people.map((person: Person) =>
-                        <PersonCard person={person}
-                            key={person.id}
-                        />
-                    )}
+                    <PersonCard person={person}
+                        key={person.id}
+                    />
+                )}
             </div>
         </React.Fragment>
     );
@@ -54,17 +49,8 @@ function PersonCardList({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    productRefs: state.productRefs,
-    currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
+    people: state.people,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    fetchProducts: () => dispatch(fetchProductsAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    setIsDragging: (isDragging: boolean) => dispatch(setIsDragging(isDragging)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PersonCardList);
+export default connect(mapStateToProps)(PersonCardList);
 /* eslint-enable */

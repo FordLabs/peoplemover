@@ -16,207 +16,29 @@
  */
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import moment from 'moment';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
-import {Product} from '../Products/Product';
-import PersonCardList from "./PersonCardList";
-import {RenderResult} from "@testing-library/react";
-import {fireEvent} from "@testing-library/dom";
+import PersonCardList from './PersonCardList';
+import {RenderResult} from '@testing-library/react';
+import {fireEvent} from '@testing-library/dom';
+import {createStore} from 'redux';
+import rootReducer from '../Redux/Reducers';
+import {setCurrentModalAction} from '../Redux/Actions';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 describe('Person Card List', () => {
 
     it('should open EditPersonModal when clicked', async () => {
-        const app: RenderResult = renderWithRedux(<PersonCardList people={TestUtils.people}/>);
+        let store = createStore(rootReducer, {people: TestUtils.people});
+        store.dispatch = jest.fn();
+        const app: RenderResult = renderWithRedux(<PersonCardList/>, store);
         const hank = await app.findByText('Hank');
         fireEvent.click(hank);
-        expect(app.findByTestId('editMenu')).toBeInTheDocument();
+        expect(store.dispatch).toHaveBeenCalledWith(
+            setCurrentModalAction({
+                modal: AvailableModals.EDIT_PERSON,
+                item: TestUtils.hank,
+            })
+        );
     });
 
-    let product: Product = {
-        id: 1,
-        name: 'Product 1',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        startDate: '2011-01-01',
-        endDate: '2022-02-02',
-        spaceLocation: TestUtils.southfield,
-        assignments: TestUtils.assignmentsFilterTest,
-        archived: false,
-        tags: [],
-        notes: '',
-    };
-
-    describe('filtering person by role and person tag',  () => {
-
-        it('should not filter people if no role or tag are selected', async () => {
-            let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [{
-                        label: 'Software Engineer',
-                        value: '1_Software Engineer',
-                        selected: false,
-                    }],
-                },
-                {
-                    label:'Person Tags:',
-                    options: [{
-                        label: 'The lil boss',
-                        value: '1_The_lil_boss',
-                        selected: false,
-                    }],
-                },
-            ];
-
-            const initialState = {
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-
-            let component = await renderWithRedux(<AssignmentCardList product={product}/>, undefined, initialState);
-
-            await expect(component.queryByTestId('assignmentCard__person_1')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_se')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_pm')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_norole_notag')).toBeTruthy();
-
-        });
-
-        it('should filter people that do not have selected role', async () => {
-
-            let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [{
-                        label: 'Software Engineer',
-                        value: '1_Software Engineer',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Person Tags:',
-                    options: [{
-                        label: 'The lil boss',
-                        value: '1_The_lil_boss',
-                        selected: false,
-                    }],
-                },
-            ];
-
-            const initialState = {
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-
-            let component = await renderWithRedux(<AssignmentCardList product={product}/>, undefined, initialState);
-
-            await expect(component.queryByTestId('assignmentCard__person_1')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_se')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_pm')).toBeNull();
-            await expect(component.queryByTestId('assignmentCard__bob_norole_notag')).toBeNull();
-        });
-
-        it('should filter people that do not have the person tag selected', async () => {
-            let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [{
-                        label: 'Software Engineer',
-                        value: '1_Software Engineer',
-                        selected: false,
-                    }],
-                },
-                {
-                    label:'Person Tags:',
-                    options: [{
-                        label: 'The lil boss',
-                        value: '1_The_lil_boss',
-                        selected: true,
-                    }],
-                },
-            ];
-
-            const initialState = {
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-
-            let component = await renderWithRedux(<AssignmentCardList product={product}/>, undefined, initialState);
-
-            await expect(component.queryByTestId('assignmentCard__person_1')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_se')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_pm')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_norole_notag')).toBeNull();
-        });
-
-        it('should filter people that do not have the role and person tag selected', async () => {
-            let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [{
-                        label: 'Software Engineer',
-                        value: '1_Software Engineer',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Person Tags:',
-                    options: [{
-                        label: 'The lil boss',
-                        value: '1_The_lil_boss',
-                        selected: true,
-                    }],
-                },
-            ];
-
-            const initialState = {
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                currentSpace: TestUtils.space,
-            } as GlobalStateProps;
-
-            let component = await renderWithRedux(<PersonCardList people={product}/>, undefined, initialState);
-
-            await expect(component.queryByTestId('assignmentCard__person_1')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_se')).toBeTruthy();
-            await expect(component.queryByTestId('assignmentCard__bob_pm')).toBeNull();
-            await expect(component.queryByTestId('assignmentCard__bob_norole_notag')).toBeNull();
-        });
-    });
 });
 

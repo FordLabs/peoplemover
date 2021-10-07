@@ -34,7 +34,7 @@ describe('the tooltip behavior on hover', () => {
         let app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.hank}
             isUnassignedProduct={false}
-            duration={parseInt("dontcare")}/>, store);
+            duration={parseInt('dontcare', 1)}/>, store);
         expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
         expect(app.queryByTestId('note-icon')).not.toBeInTheDocument();
         await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
@@ -45,11 +45,10 @@ describe('the tooltip behavior on hover', () => {
 
     it('should not show the notes of the person being hovered over if they have none', async () => {
         let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        let assignmentOfPersonWithNoNotes = TestUtils.assignmentForPerson2;
         let app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.person2}
             isUnassignedProduct={false}
-        duration={parseInt("dontcare")}/>, store);
+            duration={parseInt('dontcare', 1)}/>, store);
         expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
         await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
         expect(app.queryByText('Notes:')).not.toBeInTheDocument();
@@ -61,7 +60,7 @@ describe('the tooltip behavior on hover', () => {
         let app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.hank}
             isUnassignedProduct={false}
-        duration={367}/>, store);
+            duration={367}/>, store);
         expect(app.queryByText('Time on Product:')).not.toBeInTheDocument();
         expect(app.queryByText('367 Days')).not.toBeInTheDocument();
         await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
@@ -75,7 +74,7 @@ describe('the tooltip behavior on hover', () => {
         let app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.person2}
             isUnassignedProduct={false}
-        duration={parseInt("dontcare")}/>, store);
+            duration={parseInt('dontcare', 1)}/>, store);
         expect(app.queryByText('Person Tags:')).not.toBeInTheDocument();
         expect(app.queryByTestId('local_offer-icon')).not.toBeInTheDocument();
         expect(app.queryByText('The lil boss, The big boss')).not.toBeInTheDocument();
@@ -90,7 +89,7 @@ describe('the tooltip behavior on hover', () => {
         let app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.unassignedPerson}
             isUnassignedProduct={false}
-        duration={parseInt("dontcare")}/>, store);
+            duration={parseInt('dontcare', 1)}/>, store);
         expect(app.queryByText('Person Tags:')).not.toBeInTheDocument();
         await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
         expect(app.queryByText('Person Tags: ')).not.toBeInTheDocument();
@@ -99,7 +98,7 @@ describe('the tooltip behavior on hover', () => {
     it('should not show the hover if the space is read only', async () => {
         let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
         let app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.hank}
+            person={TestUtils.hank} duration={0}
             isUnassignedProduct={false}/>, store);
         expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
         await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
@@ -110,7 +109,7 @@ describe('the tooltip behavior on hover', () => {
     it('should not show the hover if it is part of the Unassigned product', async () => {
         let store = createStore(rootReducer, {currentSpace: TestUtils.space});
         let app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.hank}
+            person={TestUtils.hank} duration={0}
             isUnassignedProduct={true}/>, store);
         expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
         await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
