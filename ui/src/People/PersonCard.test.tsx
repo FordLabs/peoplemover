@@ -62,26 +62,31 @@ describe('Person Card', () => {
         );
     });
 
-    xit('should render the assigned persons role if they have one', () => {
+    it('should render the assigned persons role if they have one', () => {
         const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
         expect(underTest.getByText('Software Engineer')).toBeInTheDocument();
     });
 
-    xdescribe('Read-Only Functionality', function() {
+    describe('Read-Only Functionality', function() {
 
         beforeEach(function() {
             store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+            store.dispatch = jest.fn();
         });
 
         it('should not display edit Menu if in read only mode', function() {
-
-            const underTest = renderWithRedux(
-                <PersonCard person={personToRender}/>, store);
-
-            let editPersonButton = underTest.getByTestId('editPersonIconContainer__billiam_handy');
+            const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
+            let editPersonButton = underTest.getByTestId('archivedPersonIconContainer__billiam_handy');
             editPersonButton.click();
             expect(underTest.queryByTestId('editMenu')).toBeNull();
             expect(editPersonButton.childElementCount).toEqual(0);
+        });
+
+        it('should not display Edit Person Modal if in read only mode', function() {
+            const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
+            const billiam = underTest.getByText(personToRender.name);
+            fireEvent.click(billiam);
+            expect(store.dispatch).not.toHaveBeenCalled();
         });
 
     });

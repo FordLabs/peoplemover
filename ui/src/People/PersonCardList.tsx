@@ -16,7 +16,6 @@
  */
 
 import React from 'react';
-import '../Products/Product.scss';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Person} from './Person';

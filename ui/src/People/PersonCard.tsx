@@ -43,11 +43,13 @@ function PersonCard({
 }: PersonCardProps): JSX.Element {
 
     function toggleModal(): void {
-        const newModalState: CurrentModalState = {
-            modal: AvailableModals.EDIT_PERSON,
-            item: person,
-        };
-        setCurrentModal(newModalState);
+        if (!isReadOnly) {
+            const newModalState: CurrentModalState = {
+                modal: AvailableModals.EDIT_PERSON,
+                item: person,
+            };
+            setCurrentModal(newModalState);
+        }
     }
 
     function handleKeyPress(event: React.KeyboardEvent): void {
@@ -66,7 +68,7 @@ function PersonCard({
             {person.newPerson && person.newPersonDate &&
             <div className="newPersonBadge"><NewBadge newPersonDate={person.newPersonDate}
                 viewingDate={viewingDate}/></div>}
-            <div onClick={toggleModal} onKeyPress={handleKeyPress} data-testid={createDataTestId('editPersonIconContainer', person.name)}>
+            <div onClick={toggleModal} onKeyPress={handleKeyPress} data-testid={createDataTestId('archivedPersonContainer', person.name)}>
                 <PersonAndRoleInfo
                     person={person}
                     duration={NaN}
@@ -77,7 +79,7 @@ function PersonCard({
                 aria-label="Person Menu"
                 disabled={isReadOnly}
                 style={{backgroundColor: cssRoleColor}}
-                data-testid={createDataTestId('editPersonIconContainer', person.name)}
+                data-testid={createDataTestId('archivedPersonIconContainer', person.name)}
                 onClick={toggleModal}
             >
                 {!isReadOnly &&
