@@ -93,14 +93,6 @@ describe('Person Card', () => {
             store.dispatch = jest.fn();
         });
 
-        it('should not display edit Menu if in read only mode', function() {
-            const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
-            let editPersonMenuButton = underTest.getByTestId('archivedPersonIconContainer__billiam_handy');
-            editPersonMenuButton.click();
-            expect(underTest.queryByTestId('editMenu')).toBeNull();
-            expect(editPersonMenuButton.childElementCount).toEqual(0);
-        });
-
         it('should not display Edit Person Modal if in read only mode', function() {
             const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
             const billiam = underTest.getByText(personToRender.name);

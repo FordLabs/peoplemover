@@ -26,6 +26,7 @@ import {createDataTestId} from '../tests/TestUtils';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {Person} from './Person';
 import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
+import './PersonCard.scss';
 
 interface PersonCardProps {
     viewingDate: Date;
@@ -58,8 +59,6 @@ function PersonCard({
         }
     }
 
-    const cssRoleColor = person.spaceRole?.color?.color ? person.spaceRole.color.color : 'transparent';
-
     return (
         <div
             className={'archivedPersonCard'}
@@ -75,20 +74,6 @@ function PersonCard({
                     isUnassignedProduct={false}
                 />
             </div>
-            <button
-                className="personRoleColor"
-                aria-label="Person Menu"
-                disabled={isReadOnly}
-                style={{backgroundColor: cssRoleColor}}
-                data-testid={createDataTestId('archivedPersonIconContainer', person.name)}
-                onClick={toggleModal}
-            >
-                {!isReadOnly &&
-                <i className="material-icons personEditIcon greyIcon" aria-hidden>
-                    more_vert
-                </i>
-                }
-            </button>
         </div>
     );
 }
