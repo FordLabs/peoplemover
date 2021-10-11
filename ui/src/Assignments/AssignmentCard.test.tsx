@@ -121,6 +121,20 @@ describe('Assignment Card', () => {
 
     });
 
+    const expectEditMenuContents = (shown: boolean, getByText: Function, queryByText: Function): void => {
+        if (shown) {
+            expect(getByText('Edit Person')).toBeInTheDocument();
+            expect(getByText('Mark as Placeholder')).toBeInTheDocument();
+            expect(getByText('Archive Person')).toBeInTheDocument();
+            expect(getByText('Cancel Assignment')).toBeInTheDocument();
+        } else {
+            expect(queryByText('Edit Person')).not.toBeInTheDocument();
+            expect(queryByText('Mark as Placeholder')).not.toBeInTheDocument();
+            expect(queryByText('Archive Person')).not.toBeInTheDocument();
+            expect(queryByText('Edit Assignment')).not.toBeInTheDocument();
+        }
+    };
+
     describe('Role color', () => {
 
         beforeEach(() => {
@@ -160,14 +174,10 @@ describe('Assignment Card', () => {
             />, store);
 
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
-            expect(getByText('Edit Person')).toBeInTheDocument();
-            expect(getByText('Mark as Placeholder')).toBeInTheDocument();
-            expect(getByText('Cancel Assignment')).toBeInTheDocument();
+            expectEditMenuContents(true, getByText, null);
 
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
-            expect(queryByText('Edit Person')).not.toBeInTheDocument();
-            expect(queryByText('Mark as Placeholder')).not.toBeInTheDocument();
-            expect(queryByText('Edit Assignment')).not.toBeInTheDocument();
+            expectEditMenuContents(false, null, queryByText);
         });
 
         it('should close edit menu when clicking any edit menu option', () => {
@@ -180,7 +190,7 @@ describe('Assignment Card', () => {
 
             fireEvent.click(getByText('Edit Person'));
 
-            expect(queryByText('Edit Person')).not.toBeInTheDocument();
+            expectEditMenuContents(false, null, queryByText);
         });
     });
 
@@ -194,8 +204,7 @@ describe('Assignment Card', () => {
                 <AssignmentCard
                     assignment={assignmentToRender}
                     isUnassignedProduct={false}/>, store);
-            expect(underTest.queryByText('Edit Person')).not.toBeInTheDocument();
-            expect(underTest.queryByText('Edit Assignment')).not.toBeInTheDocument();
+            expectEditMenuContents(false, null, underTest.queryByText);
         });
 
         it('should open the EditMenu when you click the colorful div w/ triple dots', () => {
@@ -204,9 +213,7 @@ describe('Assignment Card', () => {
                 isUnassignedProduct={false}
             />, store);
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
-            expect(getByText('Edit Person')).toBeInTheDocument();
-            expect(getByText('Mark as Placeholder')).toBeInTheDocument();
-            expect(getByText('Cancel Assignment')).toBeInTheDocument();
+            expectEditMenuContents(true, getByText, null);
         });
 
     });
