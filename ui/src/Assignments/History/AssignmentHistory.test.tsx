@@ -29,14 +29,14 @@ import {Assignment} from "../Assignment";
 describe('Assignment History', () => {
 
     const daysBetweenStartAndToday = (assignment: Assignment): number  => {
-       return Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(assignment.startDate).startOf('day'))).asDays());
-    }
+        return Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(assignment.startDate).startOf('day'))).asDays());
+    };
 
     async function clickLabel(renderResult: RenderResult): Promise<void> {
         const historyLabel = await renderResult.findByText('View Assignment History');
         expect(historyLabel).toBeInTheDocument();
         fireEvent.click(historyLabel);
-    }
+    };
 
     const checkProductAndDates = (products: string[], dates: string[], container: HTMLElement, isCurrent: boolean) => {
         if (products.length === dates.length) {

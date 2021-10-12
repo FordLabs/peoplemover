@@ -26,7 +26,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import '../Application/Styleguide/Main.scss';
 import './AssignmentCard.scss';
-import {Assignment} from './Assignment';
+import {Assignment, calculateDuration} from './Assignment';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
@@ -219,7 +219,8 @@ function AssignmentCard({
             <div className="newPersonBadge"><NewBadge newPersonDate={assignment.person.newPersonDate}
                 viewingDate={viewingDate}/></div>}
             <PersonAndRoleInfo
-                assignment={assignment}
+                person={assignment.person}
+                duration={calculateDuration(assignment, viewingDate)}
                 isUnassignedProduct={isUnassignedProduct}/>
             <button
                 className="personRoleColor"

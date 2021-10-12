@@ -29,8 +29,6 @@ import org.junit.Before
 import org.junit.Test
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.oauth2.jwt.Jwt
-import java.time.Instant
 import java.util.*
 
 class AuthInterceptorTest {
@@ -40,6 +38,8 @@ class AuthInterceptorTest {
     @MockK
     lateinit var spaceRepository: SpaceRepository
 
+    lateinit var authServiceTest: AuthServiceTest
+
     private lateinit var authInterceptor: CustomPermissionEvaluator
 
     private val target = "target"
@@ -48,6 +48,7 @@ class AuthInterceptorTest {
     fun setUp() {
         MockKAnnotations.init(this)
         authInterceptor = CustomPermissionEvaluator(userSpaceMappingRepository, spaceRepository)
+        authServiceTest = AuthServiceTest()
     }
 
     @Test
@@ -59,9 +60,7 @@ class AuthInterceptorTest {
 
     @Test
     fun `should deny if token doesn't have a subject`() {
-        val claims = mapOf("foo" to "bar")
-        val credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), claims)
-        val auth = TestingAuthenticationToken(null, credentials)
+        val auth = TestingAuthenticationToken(null, createMockJwt(true))
         auth.isAuthenticated = true
         assertThat(authInterceptor.hasPermission(auth, target, "read")).isFalse()
     }
@@ -189,9 +188,8 @@ class AuthInterceptorTest {
     }
 
     private fun getAppAuth(): Authentication {
-        val claims = mapOf("appid" to "my-app")
-        val credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), claims)
-        val auth = TestingAuthenticationToken(null, credentials)
+        val fakeJwt = createMockJwt(false)
+        val auth = TestingAuthenticationToken(null, fakeJwt)
         auth.isAuthenticated = true
         return auth
     }

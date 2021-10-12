@@ -23,6 +23,7 @@ import {connect} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Person} from './Person';
 import moment from 'moment';
+import PersonCard from './PersonCard';
 
 interface ArchivedPersonDrawerProps {
     people: Array<Person>;
@@ -35,9 +36,9 @@ function ArchivedPersonDrawer({
     const getArchivedPeopleElements = (): JSX.Element => {
         return (
             <div>
-                {people.filter(person => moment(person.archiveDate).isBefore(moment())).
-                    map(person => {
-                        return (<div key={person.id}>{person.name}</div>);
+                {people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment()))
+                    .map(person => {
+                        return (<PersonCard person={person} key={person.id}/>);
                     })}
             </div>
         );

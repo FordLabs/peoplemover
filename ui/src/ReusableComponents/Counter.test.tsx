@@ -168,7 +168,7 @@ describe('counter', () => {
     });
 
     it('should display the number of products and people when one person tag filter is applied', async () => {
-        let expectedString = 'Results - Products: 1, People: 2 (Unassigned: 1)';
+        let expectedString = 'Results - Products: 1, People: 1 (Unassigned: 0)';
         let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
@@ -197,7 +197,7 @@ describe('counter', () => {
     });
 
     it('should display the number of products and people when people are in multiple products', async () => {
-        let expectedString = 'Results - Products: 2, People: 4 (Unassigned: 1)';
+        let expectedString = 'Results - Products: 2, People: 3 (Unassigned: 0)';
         let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
