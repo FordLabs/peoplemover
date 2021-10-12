@@ -192,10 +192,9 @@ class AuthInterceptorTest {
         val claims = mapOf("appid" to "my-app")
         var credentials: Jwt? = null
         try {
-            credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), claims)
+            credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("typ" to "JWT"), claims)
         } catch(e: Exception) {
             e.printStackTrace()
-            fail<String>("Caught Exception ${e}")
             fail<String>("Stack Trace: ${e.printStackTrace()}")
         }
         val auth = TestingAuthenticationToken(null, credentials)
