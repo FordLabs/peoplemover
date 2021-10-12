@@ -34,6 +34,7 @@ import {createDataTestId} from '../tests/TestUtils';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
+import PeopleClient from '../People/PeopleClient';
 
 interface AssignmentCardProps {
     currentSpace: Space;
@@ -159,6 +160,7 @@ function AssignmentCard({
 
     async function archivePersonAndCloseEditMenu(): Promise<void> {
         toggleEditMenu();
+        PeopleClient.updatePerson(currentSpace, {...assignment.person, archiveDate: moment().startOf('day').toDate()}, [] );
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {

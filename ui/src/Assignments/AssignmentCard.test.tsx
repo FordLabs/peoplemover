@@ -23,6 +23,9 @@ import {Assignment} from './Assignment';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import rootReducer from '../Redux/Reducers';
 import {createStore, Store} from 'redux';
+import PeopleClient from '../People/PeopleClient';
+import {AxiosResponse} from 'axios';
+import moment from 'moment';
 
 jest.useFakeTimers();
 
@@ -214,6 +217,18 @@ describe('Assignment Card', () => {
             />, store);
             fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
             expectEditMenuContents(true, getByText, null);
+        });
+
+        it('should use the PersonClient to update the assigned person to an archive date of today when Archive Person is clicked', () => {
+            PeopleClient.updatePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
+            const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
+                assignment={assignmentToRender}
+                isUnassignedProduct={false}
+            />, store);
+            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
+            expectEditMenuContents(true, getByText, null);
+            fireEvent.click(getByText('Archive Person'));
+            expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, {...assignmentToRender.person, archiveDate: moment().startOf('day').toDate()}, []);
         });
 
     });
