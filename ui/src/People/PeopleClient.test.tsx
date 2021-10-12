@@ -120,6 +120,7 @@ describe('People Client', function() {
             await PeopleClient.createPersonForSpace(TestUtils.space, person, ['bob']);
             // @ts-ignore
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addPerson', expectedName]);
+            // @ts-ignore
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonTagToANewPerson', 'bob']);
         });
     });

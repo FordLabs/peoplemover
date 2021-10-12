@@ -90,6 +90,7 @@ describe('PeopleMover', () => {
             expect(app.queryByTestId('unassignedDrawer')).toBeNull();
             expect(app.queryByTestId('archivedProductsDrawer')).toBeNull();
             expect(app.queryByTestId('reassignmentDrawer')).toBeNull();
+            expect(app.queryByTestId('archivedPersonDrawer')).toBeNull();
         });
 
         it('should display Add Person button on startup', async () => {

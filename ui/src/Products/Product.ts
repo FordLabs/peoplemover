@@ -19,6 +19,7 @@ import {Tag} from '../Tags/Tag';
 import {Assignment} from '../Assignments/Assignment';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import moment from 'moment';
+import {isArchived} from '../People/Person';
 
 export const UNASSIGNED = 'unassigned';
 
@@ -67,6 +68,10 @@ export function isActiveProduct(product: Product, viewingDate: Date): boolean {
 
 export function endsOnOrAfterDate(product: Product, date: Date): boolean {
     return product.endDate == null || product.endDate >= moment(date).format('YYYY-MM-DD');
+}
+
+export function stripAssignmentsForArchivedPeople(product: Product, viewingDate: Date): Product {
+    return {...product, assignments: product.assignments.filter(assignment => !isArchived(assignment.person, viewingDate))};
 }
 
 export  function isProductMatchingSelectedFilters(product: Product, locationTagFilters: Array<string>, productTagFilters: Array<string>): boolean {

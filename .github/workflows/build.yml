@@ -27,7 +27,7 @@ jobs:
         env:
           TZ: 'America/Detroit'
       - name: Test
-        run: ./gradlew clean test
+        run: ./gradlew --stacktrace clean test
         working-directory: ./api
         env:
           TZ: 'America/Detroit'

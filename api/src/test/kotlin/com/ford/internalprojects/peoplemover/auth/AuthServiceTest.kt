@@ -26,20 +26,11 @@ class AuthServiceTest {
 
     @Test
     fun `validateToken - should return token if valid in ADFS`() {
-        val accessToken = "valid_Token"
-        val headers = HashMap<String, Any>()
-        headers["typ"] = "JWT"
-        val claims = HashMap<String, Any>()
-        claims["sub"] = "USER_ID"
-        val issuedAt = Instant.MIN
-        val expiredAt = Instant.now()
-        claims["expiresAt"] = expiredAt
-        claims["iss"] = "https://localhost"
-        val fakeJwt = Jwt(accessToken, issuedAt, expiredAt, headers, claims)
-        val authVerifyResponse = OAuthVerifyResponse("USER_ID", emptyList(), expiredAt.toEpochMilli(), "https://localhost", "USER_ID")
-        `when`(jwtDecoder.decode(accessToken)).thenReturn(fakeJwt)
+        val fakeJwt = createMockJwt(true)
+        val authVerifyResponse = OAuthVerifyResponse("USER_ID", emptyList(), fakeJwt.expiresAt!!.toEpochMilli(), "https://localhost", "USER_ID")
+        `when`(jwtDecoder.decode("token")).thenReturn(fakeJwt)
 
-        val actual = authservice.validateToken(accessToken)
+        val actual = authservice.validateToken("token")
 
         assertThat(actual).isEqualTo(authVerifyResponse)
     }
@@ -51,4 +42,20 @@ class AuthServiceTest {
 
         authservice.validateToken(accessToken)
     }
+}
+
+fun createMockJwt(isUserToken: Boolean): Jwt {
+    val headers = HashMap<String, Any>()
+    headers["typ"] = "JWT"
+    val claims = HashMap<String, Any>()
+    if(isUserToken) {
+        claims["sub"] = "USER_ID"
+    } else {
+        claims["appid"] = "APP_ID"
+    }
+    val issuedAt = Instant.MIN
+    val expiredAt = Instant.now()
+    claims["expiresAt"] = expiredAt
+    claims["iss"] = "https://localhost"
+    return Jwt("token", issuedAt, expiredAt, headers, claims)
 }

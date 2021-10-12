@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
+import com.ford.internalprojects.peoplemover.auth.createMockJwt
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -32,10 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
-import java.time.Instant
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -62,7 +61,7 @@ class SpaceServiceTest {
     @Test
     fun `getSpacesForUser should return no spaces given a token that has no Principal name and no appId name`() {
         every { SecurityContextHolder.getContext().authentication.name } returns null
-        every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("noAppId" to "Nothing"))
+        every { SecurityContextHolder.getContext().authentication.credentials } returns createMockJwt(true)
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
         Mockito.verifyNoMoreInteractions(userSpaceMappingRepository)
     }
@@ -70,7 +69,7 @@ class SpaceServiceTest {
     @Test
     fun `getSpacesForUser should use the principal name if a token has a Principal name and an appId`() {
         every { SecurityContextHolder.getContext().authentication.name } returns "Bob"
-        every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("appId" to "Nothing"))
+        every { SecurityContextHolder.getContext().authentication.credentials } returns createMockJwt(false)
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
         Mockito.verify(userSpaceMappingRepository, times(1)).findAllByUserId("Bob")
     }
@@ -78,7 +77,7 @@ class SpaceServiceTest {
     @Test
     fun `getSpacesForUser should use the principal name if a token has a Principal name and no appId`() {
         every { SecurityContextHolder.getContext().authentication.name } returns "Bob"
-        every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("dontcare" to "dontcare"))
+        every { SecurityContextHolder.getContext().authentication.credentials } returns createMockJwt(true)
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
         Mockito.verify(userSpaceMappingRepository, times(1)).findAllByUserId("Bob")
     }
@@ -86,9 +85,9 @@ class SpaceServiceTest {
     @Test
     fun `getSpacesForUser should use the appId if a token has an appId name but no principal name`() {
         every { SecurityContextHolder.getContext().authentication.name } returns null
-        every { SecurityContextHolder.getContext().authentication.credentials } returns Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), mapOf("appid" to "easyas123"))
+        every { SecurityContextHolder.getContext().authentication.credentials } returns createMockJwt(false)
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
-        Mockito.verify(userSpaceMappingRepository, times(1)).findAllByUserId("easyas123")
+        Mockito.verify(userSpaceMappingRepository, times(1)).findAllByUserId("APP_ID")
     }
 
     @Test

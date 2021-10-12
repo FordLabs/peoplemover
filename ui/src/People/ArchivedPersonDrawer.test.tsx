@@ -20,9 +20,13 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
+import {createBrowserHistory, History} from 'history';
+import {Router} from 'react-router-dom';
+import PeopleMover from '../Application/PeopleMover';
 
 describe('Archived People', () => {
     let app: RenderResult;
+    let history: History;
 
     const mayFourteen: Date = new Date(2020, 4, 14);
 
@@ -35,7 +39,7 @@ describe('Archived People', () => {
             const store = mockStore({
                 currentSpace: TestUtils.space,
                 viewingDate: mayFourteen,
-                people: TestUtils.people,
+                people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
             });
 
             await wait(() => {
@@ -49,16 +53,18 @@ describe('Archived People', () => {
             expect(app.queryByText(/Archived People/)).toBeInTheDocument();
         });
 
-        it('shows the name of an archived person once opened', async () => {
+        it('shows the name of an archived person once opened, but not an unarchived person', async () => {
             const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await app.findByText(TestUtils.unassignedPerson.name)).toBeInTheDocument();
+            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
+            expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
         });
 
-        it('does not show names of people who are not archived', async () => {
+        it('shows the names of two archived people', async () => {
             const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
+            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
+            expect(await app.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
         });
 
         it('should not show people who have not passed their archived date', async () => {
@@ -70,10 +76,32 @@ describe('Archived People', () => {
         it('can be closed and opened again', async () => {
             const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await app.findByText(TestUtils.unassignedPerson.name)).toBeInTheDocument();
+            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
             fireEvent.click(drawerCaret);
-            expect(await app.queryByText(TestUtils.unassignedPerson.name)).not.toBeInTheDocument();
+            expect(await app.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
 
+        });
+    });
+
+    describe('Showing the drawer in the app', () => {
+        beforeEach(  async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+
+            history = createBrowserHistory();
+            history.push('/uuid');
+
+            await wait(() => {
+                app = renderWithRedux(
+                    <Router history={history}>
+                        <PeopleMover/>
+                    </Router>
+                );
+            });
+        });
+
+        it('should show the archived people drawer', () => {
+            expect(app.getByText('Archived People')).toBeInTheDocument();
         });
     });
 });

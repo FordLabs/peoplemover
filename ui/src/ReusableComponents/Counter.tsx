@@ -17,7 +17,12 @@
 
 import React from 'react';
 import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
-import {isActiveProduct, isProductMatchingSelectedFilters, Product} from '../Products/Product';
+import {
+    isActiveProduct,
+    isProductMatchingSelectedFilters,
+    Product,
+    stripAssignmentsForArchivedPeople,
+} from '../Products/Product';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import './Counter.scss';
 import {isPersonMatchingSelectedFilters} from '../People/Person';
@@ -67,8 +72,8 @@ function Counter(props: CounterProps): JSX.Element {
     const getPeopleCount = (): void => {
         let peopleSet = new Set<number>();
         let unassignedPeopleSet = new Set<number>();
-
-        unassignedPeopleSet = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(unassignedProduct);
+        const unassignedWithoutArchived = stripAssignmentsForArchivedPeople(unassignedProduct, props.viewingDate);
+        unassignedPeopleSet = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(unassignedWithoutArchived);
         productAndPeopleCount.unassignedPeopleCount = unassignedPeopleSet.size;
 
         filteredProducts.forEach(product => {

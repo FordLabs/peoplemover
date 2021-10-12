@@ -18,7 +18,7 @@
 import React from 'react';
 import './PersonDrawer.scss';
 import './UnassignedDrawer.scss';
-import {Product} from '../Products/Product';
+import {Product, stripAssignmentsForArchivedPeople} from '../Products/Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import ProductCard from '../Products/ProductCard';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -30,20 +30,25 @@ interface UnassignedDrawerProps {
     isUnassignedDrawerOpen: boolean;
     setIsUnassignedDrawerOpen(isOpen: boolean): void;
     product: Product;
+    viewingDate: Date;
 }
 
 function UnassignedDrawer({
     isUnassignedDrawerOpen,
     setIsUnassignedDrawerOpen,
     product,
+    viewingDate,
 }: UnassignedDrawerProps): JSX.Element {
+
+    let productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(product, viewingDate);
+
     const containee =
-        <ProductCard product={product} />;
+        <ProductCard product={productWithoutArchivedPeople} />;
     return (
         <DrawerContainer
             drawerIcon="supervisor_account"
             testId="unassignedDrawer"
-            numberForCountBadge={product.assignments ? product.assignments.length : 0}
+            numberForCountBadge={productWithoutArchivedPeople.assignments ? productWithoutArchivedPeople.assignments.length : 0}
             containerTitle="Unassigned"
             containee={containee}
             isDrawerOpen={isUnassignedDrawerOpen}
@@ -63,6 +68,7 @@ const getUnassignedProduct = (products: Array<Product>): Product => {
 const mapStateToProps = (state: GlobalStateProps) => ({
     isUnassignedDrawerOpen: state.isUnassignedDrawerOpen,
     product: getUnassignedProduct(state.products ? state.products : []),
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

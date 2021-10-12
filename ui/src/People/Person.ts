@@ -17,6 +17,7 @@
 
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {Tag} from '../Tags/Tag';
+import moment from 'moment';
 
 export interface Person {
     id: number;
@@ -65,4 +66,8 @@ export function isPersonMatchingSelectedFilters(person: Person, selectedRoleFilt
     }
 
     return isMatchingRole && isMatchingPersonTag;
+}
+
+export function isArchived(person: Person, date: Date): boolean {
+    return person.archiveDate != null && moment(person.archiveDate).isBefore(moment(date));
 }

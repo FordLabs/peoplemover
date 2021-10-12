@@ -16,11 +16,10 @@
  */
 
 import React, {ReactElement, useState} from 'react';
-import {Assignment, calculateDuration} from './Assignment';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Person} from '../People/Person';
+import {Person, isArchived} from '../People/Person';
 
 interface HoverInfo {
     title: string;
@@ -28,22 +27,23 @@ interface HoverInfo {
     icon: string;
 }
 
-interface Props {
-    assignment: Assignment;
+interface PersonAndRoleInfoProps {
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
     viewingDate: Date;
+    person: Person;
+    duration: number;
 }
 
 const PersonAndRoleInfo = ({
     isReadOnly,
-    assignment = {id: 0} as Assignment,
     isUnassignedProduct,
     isDragging,
     viewingDate,
-}: Props): ReactElement => {
-    const {person} = assignment;
+    duration,
+    person,
+}: PersonAndRoleInfoProps): ReactElement => {
 
     const [isHoverBoxOpen, setHoverBoxIsOpened] = useState<boolean>(false);
 
@@ -63,7 +63,7 @@ const PersonAndRoleInfo = ({
         const toReturn: HoverInfo[] = [];
         toReturn.push({
             title: 'Time on Product',
-            text: numberOfDaysString(calculateDuration(assignment, viewingDate)),
+            text: numberOfDaysString(duration),
             icon: 'timer',
         });
         if (hasTags(person)) {
@@ -76,7 +76,7 @@ const PersonAndRoleInfo = ({
         if (hasNotes(person)) {
             toReturn.push({
                 title: 'Notes',
-                text: assignment.person.notes || '',
+                text: person.notes || '',
                 icon: 'note',
             });
         }
@@ -89,11 +89,15 @@ const PersonAndRoleInfo = ({
             <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
                 {content.map(hoverInfo => {
                     return (<div key={hoverInfo.title} className={'flex-row'}>
-                        <i className={`material-icons tooltip-icon`} data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
-                        <div className={'flex-col'}><div className="hoverBoxTitle">{hoverInfo.title}:</div>
+                        <i className={`material-icons tooltip-icon`}
+                            data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
+                        <div className={'flex-col'}>
+                            <div className="hoverBoxTitle">{hoverInfo.title}:</div>
                             <div className="hoverBoxText">
                                 {hoverInfo.text}
-                            </div></div></div>);
+                            </div>
+                        </div>
+                    </div>);
                 })}
             </div>
         );
@@ -116,7 +120,7 @@ const PersonAndRoleInfo = ({
     };
 
     return (
-        <div data-testid={`assignmentCard${assignment.id}info`}
+        <div data-testid={`assignmentCardPersonInfo`}
             className="personNameAndRoleContainer"
             onMouseEnter={(): void => onHover(true)}
             onMouseLeave={(): void => onHover(false)}
@@ -125,15 +129,15 @@ const PersonAndRoleInfo = ({
                 className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
                 {person.name}
-                {hasTags(person) && !isReadOnly && <i className={'material-icons'}>local_offer</i>}
-                {hasNotes(person) && !isReadOnly && <i className={'material-icons'}>note</i>}
+                {hasTags(person) && !isReadOnly && !isArchived(person, viewingDate) && <i className={'material-icons'}>local_offer</i>}
+                {hasNotes(person) && !isReadOnly && !isArchived(person, viewingDate) && <i className={'material-icons'}>note</i>}
             </div>
             {person?.spaceRole?.name && (
                 <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
                     {person.spaceRole.name}
                 </div>
             )}
-            {!isDragging && !isReadOnly && !isUnassignedProduct && isHoverBoxOpen && <HoverBox/>}
+            {!isDragging && !isReadOnly && !isUnassignedProduct && !isArchived(person, viewingDate) && isHoverBoxOpen && <HoverBox/>}
         </div>
     );
 };
