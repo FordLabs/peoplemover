@@ -60,7 +60,7 @@ class AuthInterceptorTest {
     @Test
     fun `should deny if token doesn't have a subject`() {
         val claims = mapOf("foo" to "bar")
-        val credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), claims)
+        val credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("typ" to "JWT"), claims)
         val auth = TestingAuthenticationToken(null, credentials)
         auth.isAuthenticated = true
         assertThat(authInterceptor.hasPermission(auth, target, "read")).isFalse()
