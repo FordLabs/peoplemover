@@ -28,15 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.Instant
-import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -69,7 +66,7 @@ class AuthControllerTest {
     @Test
     fun `POST validate access token - should return OK if access token valid`() {
         val request = ValidateTokenRequest(accessToken = "access_token")
-        `when`(jwtDecoder.decode(request.accessToken)).thenReturn(getJwt("access_token"))
+        `when`(jwtDecoder.decode(request.accessToken)).thenReturn(createMockJwt(true))
 
         mockMvc.perform(post("/api/access_token/validate")
                 .header("Authorization", "Bearer access_token")
@@ -94,7 +91,7 @@ class AuthControllerTest {
     @Test
     fun `POST validateAndAuthenticateAccessToken should return 200 ok if space uuid is found in database for user from ADFS`() {
         val accessToken = "fake_access_token"
-        `when`(jwtDecoder.decode(accessToken)).thenReturn(getJwt(accessToken))
+        `when`(jwtDecoder.decode(accessToken)).thenReturn(createMockJwt(true))
 
         val savedSpace = spaceRepository.save(Space(name = "spaceThree", uuid = uuid))
 
@@ -115,7 +112,7 @@ class AuthControllerTest {
     @Test
     fun `POST validateAndAuthenticateAccessToken should return 403 if space not mapped to user`() {
         val accessToken = "fake_access_token"
-        `when`(jwtDecoder.decode(accessToken)).thenReturn(getJwt(accessToken))
+        `when`(jwtDecoder.decode(accessToken)).thenReturn(createMockJwt(true))
 
         spaceRepository.save(Space(name = "spaceThree", uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
 
@@ -133,7 +130,7 @@ class AuthControllerTest {
     @Test
     fun `POST validateAndAuthenticateAccessToken should return 404 if space does not exist`() {
         val accessToken = "fake_access_token"
-        `when`(jwtDecoder.decode(accessToken)).thenReturn(getJwt(accessToken))
+        `when`(jwtDecoder.decode(accessToken)).thenReturn(createMockJwt(true))
 
         val request = AuthCheckScopesRequest(
                 accessToken = accessToken,
@@ -144,17 +141,5 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
                 .andExpect(status().isNotFound)
-    }
-
-    private fun getJwt(accessToken: String): Jwt {
-        val issuedAt = Instant.MIN
-        val headers = HashMap<String, Any>()
-        headers["typ"] = "JWT"
-        val claims = HashMap<String, Any>()
-        claims["sub"] = "USER_ID"
-        val expiresAt = Instant.now()
-        claims["expiresAt"] = expiresAt
-        claims["iss"] = "https://localhost"
-        return Jwt(accessToken, issuedAt, expiresAt, headers, claims)
     }
 }
