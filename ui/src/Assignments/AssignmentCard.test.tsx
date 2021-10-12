@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+import {act, fireEvent, RenderResult} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from './AssignmentCard';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
@@ -70,12 +70,12 @@ describe('Assignment Card', () => {
             ...assignmentToRender,
             placeholder: true,
         };
-        const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
+        const underTest = renderWithRedux(<AssignmentCard
             assignment={placeholderAssignment}
             isUnassignedProduct={false}/>, store);
 
-        fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
-        expect(getByText('Unmark as Placeholder')).toBeInTheDocument();
+        fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
+        expect(underTest.getByText('Unmark as Placeholder')).toBeInTheDocument();
     });
 
     describe('Read-Only Functionality', function() {
@@ -113,28 +113,28 @@ describe('Assignment Card', () => {
                 ...assignmentToRender,
                 placeholder: true,
             };
-            const {getByTestId} = renderWithRedux(<AssignmentCard
+            const underTest = renderWithRedux(<AssignmentCard
                 assignment={placeholderAssignment}
                 isUnassignedProduct={false}/>, store);
 
-            const assignmentCard = getByTestId('assignmentCard__billiam_handy');
+            const assignmentCard = underTest.getByTestId('assignmentCard__billiam_handy');
             expect(assignmentCard).toHaveClass('NotPlaceholder');
             expect(assignmentCard).not.toHaveClass('Placeholder');
         });
 
     });
 
-    const expectEditMenuContents = (shown: boolean, getByText: Function, queryByText: Function): void => {
+    const expectEditMenuContents = (shown: boolean, elementUnderTest: RenderResult): void => {
         if (shown) {
-            expect(getByText('Edit Person')).toBeInTheDocument();
-            expect(getByText('Mark as Placeholder')).toBeInTheDocument();
-            expect(getByText('Archive Person')).toBeInTheDocument();
-            expect(getByText('Cancel Assignment')).toBeInTheDocument();
+            expect(elementUnderTest.getByText('Edit Person')).toBeInTheDocument();
+            expect(elementUnderTest.getByText('Mark as Placeholder')).toBeInTheDocument();
+            expect(elementUnderTest.getByText('Archive Person')).toBeInTheDocument();
+            expect(elementUnderTest.getByText('Cancel Assignment')).toBeInTheDocument();
         } else {
-            expect(queryByText('Edit Person')).not.toBeInTheDocument();
-            expect(queryByText('Mark as Placeholder')).not.toBeInTheDocument();
-            expect(queryByText('Archive Person')).not.toBeInTheDocument();
-            expect(queryByText('Edit Assignment')).not.toBeInTheDocument();
+            expect(elementUnderTest.queryByText('Edit Person')).not.toBeInTheDocument();
+            expect(elementUnderTest.queryByText('Mark as Placeholder')).not.toBeInTheDocument();
+            expect(elementUnderTest.queryByText('Archive Person')).not.toBeInTheDocument();
+            expect(elementUnderTest.queryByText('Edit Assignment')).not.toBeInTheDocument();
         }
     };
 
@@ -171,29 +171,29 @@ describe('Assignment Card', () => {
         });
 
         it('should close the EditMenu when you click the colorful div w/ triple dots if it was open when you clicked', () => {
-            const {getByText, getByTestId, queryByText} = renderWithRedux(<AssignmentCard
+            const underTest = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
             />, store);
 
-            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
-            expectEditMenuContents(true, getByText, null);
+            fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
+            expectEditMenuContents(true, underTest);
 
-            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
-            expectEditMenuContents(false, null, queryByText);
+            fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
+            expectEditMenuContents(false, underTest);
         });
 
         it('should close edit menu when clicking any edit menu option', () => {
-            const {queryByText, getByText, getByTestId} = renderWithRedux(<AssignmentCard
+            const underTest = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
             />, store);
 
-            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
+            fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
 
-            fireEvent.click(getByText('Edit Person'));
+            fireEvent.click(underTest.getByText('Edit Person'));
 
-            expectEditMenuContents(false, null, queryByText);
+            expectEditMenuContents(false, underTest);
         });
     });
 
@@ -207,27 +207,27 @@ describe('Assignment Card', () => {
                 <AssignmentCard
                     assignment={assignmentToRender}
                     isUnassignedProduct={false}/>, store);
-            expectEditMenuContents(false, null, underTest.queryByText);
+            expectEditMenuContents(false, underTest);
         });
 
         it('should open the EditMenu when you click the colorful div w/ triple dots', () => {
-            const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
+            const underTest = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
             />, store);
-            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
-            expectEditMenuContents(true, getByText, null);
+            fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
+            expectEditMenuContents(true, underTest);
         });
 
         it('should use the PersonClient to update the assigned person to an archive date of today when Archive Person is clicked', () => {
             PeopleClient.updatePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-            const {getByText, getByTestId} = renderWithRedux(<AssignmentCard
+            const underTest = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
                 isUnassignedProduct={false}
             />, store);
-            fireEvent.click(getByTestId('editPersonIconContainer__billiam_handy'));
-            expectEditMenuContents(true, getByText, null);
-            fireEvent.click(getByText('Archive Person'));
+            fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
+            expectEditMenuContents(true, underTest);
+            fireEvent.click(underTest.getByText('Archive Person'));
             expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, {...assignmentToRender.person, archiveDate: moment().startOf('day').toDate()}, []);
         });
 
