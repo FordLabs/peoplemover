@@ -160,7 +160,7 @@ function AssignmentCard({
 
     async function archivePersonAndCloseEditMenu(): Promise<void> {
         toggleEditMenu();
-        PeopleClient.updatePerson(currentSpace, {...assignment.person, archiveDate: moment().startOf('day').toDate()}, [] );
+        PeopleClient.archivePerson(currentSpace, assignment.person);
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
