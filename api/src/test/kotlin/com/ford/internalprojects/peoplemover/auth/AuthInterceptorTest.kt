@@ -190,7 +190,12 @@ class AuthInterceptorTest {
 
     private fun getAppAuth(): Authentication {
         val claims = mapOf("appid" to "my-app")
-        val credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), claims)
+        var credentials: Jwt? = null
+        try {
+            credentials = Jwt("token", Instant.now(), Instant.now(), mapOf("h" to "h"), claims)
+        } catch(e: Exception) {
+            e.printStackTrace()
+        }
         val auth = TestingAuthenticationToken(null, credentials)
         auth.isAuthenticated = true
         return auth
