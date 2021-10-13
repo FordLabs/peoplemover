@@ -339,6 +339,29 @@ class PersonControllerApiTest {
     }
 
     @Test
+    fun `POST should return 400 when trying to archive a person and no archive date is supplied`() {
+        val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
+        personRepository.save(requestBodyObject)
+
+        mockMvc.perform(post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("archiveDate: none"))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `POST should return 400 when trying to archive a person and no content is supplied`() {
+        val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
+        personRepository.save(requestBodyObject)
+
+        mockMvc.perform(post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `PUT should return 403 when trying to edit a person in a space without write authorization`() {
         val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
         personRepository.save(requestBodyObject)

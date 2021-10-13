@@ -20,6 +20,5 @@ package com.ford.internalprojects.peoplemover.person
 import java.time.LocalDate
 
 data class ArchivePersonRequest(
-
         var archiveDate: LocalDate
 )
