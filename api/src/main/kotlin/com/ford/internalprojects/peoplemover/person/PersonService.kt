@@ -17,11 +17,19 @@
 
 package com.ford.internalprojects.peoplemover.person
 
+import com.ford.internalprojects.peoplemover.assignment.AssignmentService
+import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
+import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
+import com.ford.internalprojects.peoplemover.product.ProductRepository
+import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class PersonService(
-        private val personRepository: PersonRepository
+        private val personRepository: PersonRepository,
+        private val assignmentService: AssignmentService,
+        private val productRepository: ProductRepository
 ) {
 
     fun createPerson(personIncoming: Person): Person = personRepository.createEntityAndUpdateSpaceLastModified(personIncoming)
@@ -32,5 +40,17 @@ class PersonService(
 
     fun removePerson(personId: Int, spaceUuid: String) {
         personRepository.deleteEntityAndUpdateSpaceLastModified(personId, spaceUuid)
+    }
+
+    fun archivePerson(spaceUuid: String, personId: Int, archiveDate: LocalDate): Boolean {
+        val person = personRepository.findByIdAndSpaceUuid(personId, spaceUuid) ?: return false
+        if(person.archiveDate == null) {
+            if(!assignmentService.isUnassigned(person, archiveDate)) {
+                assignmentService.unassignPerson(person, archiveDate)
+            }
+            person.archiveDate = archiveDate
+            personRepository.save(person)
+        }
+        return true
     }
 }

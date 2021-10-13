@@ -18,6 +18,8 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -45,6 +47,20 @@ class PersonController(
         val personCreated = personService.createPerson(personIncoming.toPerson(spaceUuid))
         logger.logInfoMessage("Person with id [${personCreated.id}] created for space: [$spaceUuid].")
         return personCreated
+    }
+
+    @PreAuthorize("hasPermission(#spaceUuid, 'write')")
+    @PostMapping("/{personId}/archive")
+    fun archivePerson(
+            @PathVariable spaceUuid: String,
+            @PathVariable personId: Int,
+            @Valid @RequestBody archivePersonRequest: ArchivePersonRequest
+    ): ResponseEntity<String> {
+        return if(personService.archivePerson(spaceUuid, personId, archivePersonRequest.archiveDate)) {
+            ResponseEntity(HttpStatus.OK)
+        } else {
+            ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
