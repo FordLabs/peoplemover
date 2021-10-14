@@ -54,18 +54,13 @@ describe('Archived People', () => {
             expect(app.queryByText(/Archived People/)).toBeInTheDocument();
         });
 
-        it('shows the name of an archived person once opened, but not an unarchived person', async () => {
-            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
-            fireEvent.click(drawerCaret);
-            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
-            expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
-        });
-
-        it('shows the names of two archived people', async () => {
+        it('shows the names of two archived people but not one unarchived person', async () => {
             const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
             expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
             expect(await app.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
+            expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
+            expect(app.container.getElementsByClassName('archivedPersonCard').length).toEqual(2);
         });
 
         it('should not show people who have not passed their archived date', async () => {
