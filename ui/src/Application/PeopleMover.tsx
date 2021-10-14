@@ -25,7 +25,7 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
-    fetchLocationsAction,
+    fetchLocationsAction, fetchPeopleAction,
     fetchPersonTagsAction,
     fetchProductsAction,
     fetchProductTagsAction,
@@ -71,6 +71,8 @@ export interface PeopleMoverProps {
 
     fetchProducts(): Array<Product>;
 
+    fetchPeople(): Array<Person>;
+
     fetchProductTags(): Array<Tag>;
 
     fetchPersonTags(): Array<Tag>;
@@ -95,6 +97,7 @@ function PeopleMover({
     isReadOnly,
     allGroupedTagFilterOptions,
     fetchProducts,
+    fetchPeople,
     fetchProductTags,
     fetchPersonTags,
     fetchLocations,
@@ -152,17 +155,13 @@ function PeopleMover({
             fetchPersonTags();
             fetchLocations();
             fetchRoles();
-            PeopleClient.getAllPeopleInSpace(currentSpace.uuid)
-                .then((response) => {
-                    const peopleInSpace = response.data;
-                    setPeople(peopleInSpace);
-                })
-                .catch(handleErrors);
+            fetchPeople();
         }
     }, [
         currentSpace,
         setPeople,
         fetchProducts,
+        fetchPeople,
         fetchProductTags,
         fetchPersonTags,
         fetchLocations,
@@ -236,6 +235,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
     fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
     fetchLocations: () => dispatch(fetchLocationsAction()),
+    fetchPeople: () => dispatch(fetchPeopleAction()),
     fetchRoles: () => dispatch(fetchRolesAction()),
     setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
