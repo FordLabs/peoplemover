@@ -27,16 +27,18 @@ import PersonCard from './PersonCard';
 
 interface ArchivedPersonDrawerProps {
     people: Array<Person>;
+    viewingDate: Date;
 }
 
 function ArchivedPersonDrawer({
     people,
+    viewingDate,
 }: ArchivedPersonDrawerProps): JSX.Element {
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
     const getArchivedPeopleElements = (): JSX.Element => {
         return (
             <div>
-                {people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment()))
+                {people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment(viewingDate)))
                     .map(person => {
                         return (<PersonCard person={person} key={person.id}/>);
                     })}
@@ -59,6 +61,7 @@ function ArchivedPersonDrawer({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     people: state.people,
+    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

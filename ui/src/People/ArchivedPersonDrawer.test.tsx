@@ -28,7 +28,8 @@ describe('Archived People', () => {
     let app: RenderResult;
     let history: History;
 
-    const mayFourteen: Date = new Date(2020, 4, 14);
+    const mayFourteen2020: Date = new Date(2020, 4, 14);
+    const mayFourteen1999: Date = new Date(1999, 4, 14);
 
     describe('Showing archived people', () => {
         beforeEach(async () => {
@@ -38,7 +39,7 @@ describe('Archived People', () => {
             const mockStore = configureStore([]);
             const store = mockStore({
                 currentSpace: TestUtils.space,
-                viewingDate: mayFourteen,
+                viewingDate: mayFourteen2020,
                 people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
             });
 
@@ -79,7 +80,32 @@ describe('Archived People', () => {
             expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
             fireEvent.click(drawerCaret);
             expect(await app.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
+        });
 
+        it('should not show an archived person if the viewing date is before their archive date', async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+
+            const mockStore = configureStore([]);
+            const store = mockStore({
+                currentSpace: TestUtils.space,
+                viewingDate: mayFourteen1999,
+                people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
+            });
+
+            await wait(() => {
+                app.unmount();
+                app = renderWithRedux(
+                    <ArchivedPersonDrawer/>, store, undefined
+                );
+            });
+
+            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            fireEvent.click(drawerCaret);
+            expect(await app.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
+            expect(await app.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
+            expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
+            expect(app.container.getElementsByClassName('archivedPersonCard').length).toEqual(1);
         });
     });
 
