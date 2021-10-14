@@ -270,7 +270,7 @@ class AssignmentService(
     fun isUnassigned(person: Person, date: LocalDate): Boolean {
         val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", person.spaceUuid)
         val personAssignments = getAssignmentsForTheGivenPersonIdAndDate(person.id!!, date)
-        return (personAssignments.first().productId == unassignedProduct?.id)
+        return (personAssignments.isEmpty() || personAssignments.first().productId == unassignedProduct?.id)
     }
 
     fun unassignPerson(person: Person, date: LocalDate) {
