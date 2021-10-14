@@ -19,8 +19,6 @@
 
 .archivedPersonCard {
   background: $gray-7;
-  display: flex;
-  justify-content: space-between;
   margin: 4px 5px 8px 5px;
   cursor: pointer;
   position: relative;
@@ -33,4 +31,22 @@
   min-height: 43px;
   box-sizing: border-box;
   overflow-wrap: break-word;
+  .archivedPersonContainer {
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    align-items: center;
+
+    &:hover {
+      .archivedPersonEditIcon {
+        margin-left: 0;
+        visibility: visible;
+      }
+    }
+
+    .archivedPersonEditIcon {
+      visibility: hidden;
+      margin-left: 2px;
+    }
+  }
 }

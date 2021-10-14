@@ -67,12 +67,15 @@ function PersonCard({
             {person.newPerson && person.newPersonDate &&
             <div className="newPersonBadge"><NewBadge newPersonDate={person.newPersonDate}
                 viewingDate={viewingDate}/></div>}
-            <div onClick={toggleModal} onKeyPress={handleKeyPress} data-testid={createDataTestId('archivedPersonContainer', person.name)}>
+            <div onClick={toggleModal} className={'archivedPersonContainer'} onKeyPress={handleKeyPress} data-testid={createDataTestId('archivedPersonContainer', person.name)}>
                 <PersonAndRoleInfo
                     person={person}
                     duration={NaN}
                     isUnassignedProduct={false}
                 />
+                <i className="material-icons archivedPersonEditIcon greyIcon" aria-hidden>
+                    more_vert
+                </i>
             </div>
         </div>
     );
