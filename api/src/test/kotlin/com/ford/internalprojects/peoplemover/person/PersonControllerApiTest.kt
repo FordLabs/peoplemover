@@ -18,8 +18,7 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
-import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.*
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
@@ -27,6 +26,7 @@ import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.space.SpaceService
 import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
@@ -48,6 +48,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDate
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -59,6 +60,9 @@ class PersonControllerApiTest {
     private lateinit var mockMvc: MockMvc
 
     @Autowired
+    private lateinit var spaceService: SpaceService
+
+    @Autowired
     private lateinit var spaceRepository: SpaceRepository
 
     @Autowired
@@ -66,6 +70,9 @@ class PersonControllerApiTest {
 
     @Autowired
     private lateinit var personRepository: PersonRepository
+
+    @Autowired
+    private lateinit var assignmentService: AssignmentService
 
     @Autowired
     private lateinit var assignmentRepository: AssignmentRepository
@@ -96,8 +103,8 @@ class PersonControllerApiTest {
 
     @Before
     fun setUp() {
-        space = spaceRepository.save(Space(name = "spaceWithThisName"))
-        spaceTwo = spaceRepository.save(Space(name = "spaceThatUserDoesNotHaveAccessTo"))
+        space = spaceService.createSpaceWithName("spaceWithThisName", "Nobody")
+        spaceTwo = spaceService.createSpaceWithName("spaceThatUserDoesNotHaveAccessTo", "Nobody")
 
         tag = personTagRepository.save(PersonTag(spaceUuid = space.uuid, name = "Agency Employee" ))
 
@@ -225,6 +232,134 @@ class PersonControllerApiTest {
         assertThat(personRepository.findAllBySpaceUuid(spaceTwo.uuid)).isEmpty()
     }
 
+    @Test
+    fun `POST should return 200 when archiving a person who is not archived, and the person becomes unassigned and archived`(){
+        val today = LocalDate.now()
+        var product = Product(name = "productOne", spaceUuid = space.uuid)
+        productRepository.save(product)
+        val requestBodyObject = Person(name = "archivedPerson", spaceUuid = space.uuid)
+        personRepository.save(requestBodyObject)
+        val assignment = AssignmentV1(productId = product.id!!, person = requestBodyObject, effectiveDate = LocalDate.ofYearDay(2020, 1), spaceUuid = space.uuid)
+        assignmentRepository.save(assignment)
+        val archivePersonRequest = ArchivePersonRequest(today)
+
+        mockMvc.perform(post("$basePeopleUrl/${requestBodyObject.id}/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(archivePersonRequest)))
+                .andExpect(status().isOk)
+
+        val archivedPerson = personRepository.findById(requestBodyObject.id!!)
+        assertThat(archivedPerson.get().archiveDate).isEqualTo(today)
+        val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
+        assertThat(unassignedProduct?.assignments?.size).isOne()
+        val unassignedPerson = unassignedProduct?.assignments?.first()?.person
+        assertThat(unassignedPerson?.name).isEqualTo("archivedPerson")
+        assertThat(unassignedPerson?.archiveDate).isEqualTo(today)
+    }
+
+    @Test
+    fun `POST should return 200 when archiving a person who already is archived, but not change archive date`(){
+        val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
+        val requestBodyObject = Person(name = "archivedPerson", spaceUuid = space.uuid, archiveDate = LocalDate.ofYearDay(2020, 1))
+        personRepository.save(requestBodyObject)
+        val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
+        val createAssignmentRequest = CreateAssignmentsRequest(LocalDate.ofYearDay(2020, 1), setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false)))
+        val assignments = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, space.uuid, requestBodyObject.id!!)
+
+        mockMvc.perform(post("$basePeopleUrl/${requestBodyObject.id}/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(archivePersonRequest)))
+                .andExpect(status().isOk)
+
+        val archivedPerson = personRepository.findById(requestBodyObject.id!!)
+        assertThat(archivedPerson.get().archiveDate).isEqualTo("2020-01-01")
+        val actualAssignment = assignmentRepository.getByPersonIdAndSpaceUuid(archivedPerson.get().id!!, space.uuid)
+        assertThat(actualAssignment.size).isOne()
+        assertThat(actualAssignment.first().id).isEqualTo(assignments.first().id)
+    }
+
+    @Test
+    fun `POST should return 200 when archiving a person who is already unassigned, but not yet archived`() {
+        val today = LocalDate.now()
+        val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
+        val requestBodyObject = Person(name = "archivedPerson", spaceUuid = space.uuid)
+        personRepository.save(requestBodyObject)
+        val archivePersonRequest = ArchivePersonRequest(today)
+        val createAssignmentRequest = CreateAssignmentsRequest(LocalDate.ofYearDay(2020, 1), setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false)))
+        val assignments = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, space.uuid, requestBodyObject.id!!)
+
+        mockMvc.perform(post("$basePeopleUrl/${requestBodyObject.id}/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(archivePersonRequest)))
+                .andExpect(status().isOk)
+
+        val archivedPerson = personRepository.findById(requestBodyObject.id!!)
+        assertThat(archivedPerson.get().archiveDate).isEqualTo(today)
+        val actualAssignment = assignmentRepository.getByPersonIdAndSpaceUuid(archivedPerson.get().id!!, space.uuid)
+        assertThat(actualAssignment.size).isOne()
+        assertThat(actualAssignment.first().id).isEqualTo(assignments.first().id)
+    }
+
+    @Test
+    fun `POST should return 400 when archiving someone who does not exist`(){
+        val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
+
+        mockMvc.perform(post("$basePeopleUrl/1/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(archivePersonRequest)))
+        .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `POST should return 403 when archiving someone for a space that doesn't exist`(){
+        val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
+
+        mockMvc.perform(post(getBasePeopleUrl("fake-uuid") + "/1/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(archivePersonRequest)))
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `POST should return 403 when trying to archive a person in a space without write authorization`(){
+        val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
+        personRepository.save(requestBodyObject)
+        val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
+
+        mockMvc.perform(post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(archivePersonRequest)))
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `POST should return 400 when trying to archive a person and no archive date is supplied`() {
+        val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
+        personRepository.save(requestBodyObject)
+
+        mockMvc.perform(post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("archiveDate: none"))
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `POST should return 400 when trying to archive a person and no content is supplied`() {
+        val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
+        personRepository.save(requestBodyObject)
+
+        mockMvc.perform(post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+    }
 
     @Test
     fun `PUT should return 403 when trying to edit a person in a space without write authorization`() {

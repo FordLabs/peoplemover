@@ -266,4 +266,16 @@ class AssignmentService(
     fun updateAssignment(assignmentToUpdate: AssignmentV1) {
         assignmentRepository.updateEntityAndUpdateSpaceLastModified(assignmentToUpdate)
     }
+
+    fun isUnassigned(person: Person, date: LocalDate): Boolean {
+        val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", person.spaceUuid)
+        val personAssignments = getAssignmentsForTheGivenPersonIdAndDate(person.id!!, date)
+        return (personAssignments.isEmpty() || personAssignments.first().productId == unassignedProduct?.id)
+    }
+
+    fun unassignPerson(person: Person, date: LocalDate) {
+        val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", person.spaceUuid)
+        val createAssignmentRequest = CreateAssignmentsRequest(date, setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false)))
+        createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, person.spaceUuid, person.id!!)
+    }
 }

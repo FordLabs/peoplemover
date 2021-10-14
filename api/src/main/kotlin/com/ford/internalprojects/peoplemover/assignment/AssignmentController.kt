@@ -60,6 +60,7 @@ class AssignmentController(
         return ResponseEntity.ok(assignmentConverter.convert(allAssignmentsForDate.filter { assignment ->  productId == assignment.productId}))
     }
 
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping("/api/v2/{spaceUuid}/assignments/product/{productId}")
     fun getAssignmentsV2ByProductId(@PathVariable spaceUuid: String, @PathVariable productId: Int): ResponseEntity<List<AssignmentV2>> {
         val allAssignments = assignmentService.getAssignmentsForSpace(spaceUuid);
@@ -83,7 +84,7 @@ class AssignmentController(
         return ResponseEntity.ok(assignmentConverter.convert(allAssignments))
     }
 
-    @PreAuthorize("hasPermission(#spaceUuid, 'modify')")
+    @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping(path = ["/api/spaces/{spaceUuid}/assignment/dates"])
     fun getAllEffectiveDates(@PathVariable spaceUuid: String): ResponseEntity<Set<LocalDate>> {
         val dates = assignmentService.getEffectiveDates(spaceUuid)

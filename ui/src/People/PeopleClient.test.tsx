@@ -20,6 +20,7 @@ import PeopleClient from './PeopleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 import {Person} from './Person';
+import moment from 'moment';
 
 jest.mock('axios');
 
@@ -84,6 +85,15 @@ describe('People Client', function() {
                 expect(response.data).toBe('Updated Person');
                 done();
             });
+    });
+
+    it('should archive a person on today', function(done) {
+        const archivedPerson = TestUtils.person1;
+        const expectedUrl = basePeopleUrl + `/${archivedPerson.id}/archive`;
+        PeopleClient.archivePerson(TestUtils.space, archivedPerson).then((response) => {
+            expect(Axios.post).toHaveBeenCalledWith(expectedUrl, {archiveDate: moment().startOf('day').toDate()}, expectedConfig);
+            done();
+        });
     });
 
     it('should delete a person', function(done) {

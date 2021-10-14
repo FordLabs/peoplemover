@@ -34,6 +34,7 @@ import {createDataTestId} from '../tests/TestUtils';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
+import PeopleClient from '../People/PeopleClient';
 
 interface AssignmentCardProps {
     currentSpace: Space;
@@ -157,6 +158,11 @@ function AssignmentCard({
         });
     }
 
+    async function archivePersonAndCloseEditMenu(): Promise<void> {
+        toggleEditMenu();
+        PeopleClient.archivePerson(currentSpace, assignment.person);
+    }
+
     function getMenuOptionList(): Array<EditMenuOption> {
         return [
             {
@@ -168,6 +174,11 @@ function AssignmentCard({
                 callback: markAsPlaceholderAndCloseEditMenu,
                 text: assignment.placeholder ? 'Unmark as Placeholder' : 'Mark as Placeholder',
                 icon: 'create',
+            },
+            {
+                callback: archivePersonAndCloseEditMenu,
+                text: 'Archive Person',
+                icon: 'inbox',
             },
             {
                 callback: cancelAssignmentAndCloseEditMenu,
@@ -204,7 +215,9 @@ function AssignmentCard({
                 }
             }}
         >
-            {assignment.person.newPerson && assignment.person.newPersonDate && <div className="newPersonBadge"><NewBadge newPersonDate={assignment.person.newPersonDate} viewingDate={viewingDate}/></div>}
+            {assignment.person.newPerson && assignment.person.newPersonDate &&
+            <div className="newPersonBadge"><NewBadge newPersonDate={assignment.person.newPersonDate}
+                viewingDate={viewingDate}/></div>}
             <PersonAndRoleInfo
                 person={assignment.person}
                 duration={calculateDuration(assignment, viewingDate)}
@@ -213,14 +226,14 @@ function AssignmentCard({
                 className="personRoleColor"
                 aria-label="Person Menu"
                 disabled={isReadOnly}
-                style={{backgroundColor: cssRoleColor }}
+                style={{backgroundColor: cssRoleColor}}
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
                 onClick={toggleEditMenu}
             >
                 {!isReadOnly &&
-                    <i className="material-icons personEditIcon greyIcon" aria-hidden>
-                        more_vert
-                    </i>
+                <i className="material-icons personEditIcon greyIcon" aria-hidden>
+                    more_vert
+                </i>
                 }
             </button>
             {editMenuIsOpened &&

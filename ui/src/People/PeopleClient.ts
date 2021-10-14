@@ -20,35 +20,34 @@ import {Person} from './Person';
 import {getToken} from '../Auth/TokenProvider';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import moment from 'moment';
 
 class PeopleClient {
+
     private static getBasePeopleUrl(spaceUuid: string): string {
         return '/api/spaces/' + spaceUuid + '/people';
     }
 
-    static async getAllPeopleInSpace(spaceUuid: string): Promise<AxiosResponse> {
-        const url = this.getBasePeopleUrl(spaceUuid);
-        let config = {
+    private static config(): object {
+        return {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
         };
+    }
 
-        return Axios.get(url, config);
+    static async getAllPeopleInSpace(spaceUuid: string): Promise<AxiosResponse> {
+        const url = this.getBasePeopleUrl(spaceUuid);
+
+        return Axios.get(url, this.config());
     }
 
     static async createPersonForSpace(space: Space, person: Person, personTagModified: string[]): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBasePeopleUrl(space.uuid!);
-        let config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.post(url, person, config).then(result => {
+        return Axios.post(url, person, this.config()).then(result => {
             MatomoEvents.pushEvent(space.name, 'addPerson', person.name);
             if (personTagModified.length > 0 ) MatomoEvents.pushEvent(space.name, 'assignPersonTagToANewPerson', personTagModified.toString());
             return result;
@@ -58,17 +57,18 @@ class PeopleClient {
         });
     }
 
+    static async archivePerson(space: Space, person: Person): Promise<AxiosResponse> {
+        const archiveDate = moment().startOf('day').toDate();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const url = this.getBasePeopleUrl(space.uuid!) + '/' + person.id + '/archive';
+        return Axios.post(url, {archiveDate: archiveDate}, this.config());
+    }
+
     static async updatePerson(space: Space, person: Person, personTagModified: string[]): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBasePeopleUrl(space.uuid!!) + `/${person.id}`;
-        let config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.put(url, person, config).then(result => {
+        return Axios.put(url, person, this.config()).then(result => {
             MatomoEvents.pushEvent(space.name, 'editPerson', person.name);
             if (personTagModified.length > 0 ) MatomoEvents.pushEvent(space.name, 'assignPersonTagToAnAlreadyExistingPerson', personTagModified.toString());
             return result;
@@ -80,14 +80,8 @@ class PeopleClient {
 
     static async removePerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
         const url = this.getBasePeopleUrl(spaceUuid) + `/${personId}`;
-        let config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.delete(url, config);
+        return Axios.delete(url, this.config());
     }
 }
 

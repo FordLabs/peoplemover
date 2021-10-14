@@ -2,6 +2,7 @@ package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
+import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.utilities.AssignmentV1ToAssignmentV2Converter
 import io.mockk.MockKAnnotations
@@ -9,6 +10,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.Before
 import org.junit.Test
 
@@ -107,5 +109,17 @@ class AssignmentServiceTest {
         verify(exactly = 2) { assignmentDateHandler.findStartDate(any(), any()) }
 
         assertThat(actual).containsExactlyInAnyOrderElementsOf(updatedAssignmentList)
+    }
+
+    @Test
+    fun `isUnassigned says 'yes' and does not throw exceptions if the person has 0 assignments`() {
+        val date = LocalDate.now()
+        val product = Product(100, "unassigned", "Test Space")
+        var testPerson = Person(id =  101, name = "Test Person", spaceUuid = "Test Space")
+        every{productRepository.findProductByNameAndSpaceUuid("unassigned", "Test Space")} returns product
+        every{assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(101, date)} returns emptyList()
+        every{assignmentRepository.findAllByEffectiveDateIsNullAndPersonId(101)} returns emptyList()
+        val underTest = assignmentService.isUnassigned(testPerson, date)
+        assertThat(underTest).isTrue()
     }
 }
