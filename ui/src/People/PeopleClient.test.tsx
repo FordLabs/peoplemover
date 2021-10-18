@@ -20,6 +20,7 @@ import PeopleClient from './PeopleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 import {Person} from './Person';
+import moment from 'moment';
 
 jest.mock('axios');
 

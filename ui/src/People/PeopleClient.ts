@@ -20,6 +20,7 @@ import {Person} from './Person';
 import {getToken} from '../Auth/TokenProvider';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import moment from 'moment';
 
 class PeopleClient {
 
