@@ -22,9 +22,10 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import rootReducer from '../Redux/Reducers';
-import {createStore, Store} from 'redux';
+import {applyMiddleware, createStore, Store} from 'redux';
 import PeopleClient from '../People/PeopleClient';
 import {AxiosResponse} from 'axios';
+import thunk from 'redux-thunk';
 
 jest.useFakeTimers();
 
@@ -49,7 +50,10 @@ describe('Assignment Card', () => {
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         };
 
-        store = createStore(rootReducer, {currentSpace: TestUtils.space});
+        TestUtils.mockClientCalls();
+
+        store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+
     });
 
     it('should render the assigned persons name', () => {
@@ -198,7 +202,7 @@ describe('Assignment Card', () => {
 
     describe('Edit Menu', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
         });
 
         it('should begin life with the EditMenu closed', () => {
@@ -235,7 +239,7 @@ describe('Assignment Card', () => {
     describe('New Person Badge', () => {
 
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
         });
 
         it('should show the new badge if the assignment says the person is new and there is a newPersonDate', () => {
@@ -273,7 +277,7 @@ describe('Assignment Card', () => {
     describe('Hoverable Notes', () => {
 
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false}, applyMiddleware(thunk));
         });
 
         it('should display hover notes icon if person has valid notes', () => {
@@ -353,7 +357,7 @@ describe('Assignment Card', () => {
 
     describe('Hoverable Person tag', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false}, applyMiddleware(thunk));
         });
 
         it('should display person tag Icon if person has valid notes', () => {

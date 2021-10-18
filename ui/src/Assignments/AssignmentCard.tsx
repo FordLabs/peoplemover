@@ -20,7 +20,7 @@ import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
-import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
+import {fetchPeopleAction, fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -48,6 +48,8 @@ interface AssignmentCardProps {
     setCurrentModal(modalState: CurrentModalState): void;
 
     fetchProducts(): void;
+
+    fetchPeople(): void;
 }
 
 function AssignmentCard({
@@ -59,6 +61,7 @@ function AssignmentCard({
     startDraggingAssignment,
     setCurrentModal,
     fetchProducts,
+    fetchPeople,
 }: AssignmentCardProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
@@ -160,7 +163,14 @@ function AssignmentCard({
 
     async function archivePersonAndCloseEditMenu(): Promise<void> {
         toggleEditMenu();
-        PeopleClient.archivePerson(currentSpace, assignment.person);
+        PeopleClient.archivePerson(currentSpace, assignment.person).then(() => {
+            if (fetchProducts) {
+                fetchProducts();
+            }
+            if (fetchPeople) {
+                fetchPeople();
+            }
+        });
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -257,6 +267,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     fetchProducts: () => dispatch(fetchProductsAction()),
+    fetchPeople: () => dispatch(fetchPeopleAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCard);
