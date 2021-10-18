@@ -31,7 +31,7 @@ import {AxiosResponse} from 'axios';
 import LocationClient from '../Locations/LocationClient';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import PeopleClient from "../People/PeopleClient";
+import PeopleClient from '../People/PeopleClient';
 
 
 describe('Actions', () => {

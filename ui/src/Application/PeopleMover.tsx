@@ -39,7 +39,6 @@ import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
-import PeopleClient from '../People/PeopleClient';
 import {Redirect} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';

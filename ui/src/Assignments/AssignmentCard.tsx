@@ -167,7 +167,7 @@ function AssignmentCard({
             if (fetchProducts) {
                 fetchProducts();
             }
-            if(fetchPeople){
+            if (fetchPeople) {
                 fetchPeople();
             }
         });

@@ -25,7 +25,7 @@ import rootReducer from '../Redux/Reducers';
 import {applyMiddleware, createStore, Store} from 'redux';
 import PeopleClient from '../People/PeopleClient';
 import {AxiosResponse} from 'axios';
-import thunk from "redux-thunk";
+import thunk from 'redux-thunk';
 
 jest.useFakeTimers();
 
