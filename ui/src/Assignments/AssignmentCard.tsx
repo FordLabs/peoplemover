@@ -163,7 +163,7 @@ function AssignmentCard({
 
     async function archivePersonAndCloseEditMenu(): Promise<void> {
         toggleEditMenu();
-        PeopleClient.archivePerson(currentSpace, assignment.person).then(() => {
+        PeopleClient.archivePerson(currentSpace, assignment.person, viewingDate).then(() => {
             if (fetchProducts) {
                 fetchProducts();
             }

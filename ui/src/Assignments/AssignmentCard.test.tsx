@@ -50,6 +50,7 @@ describe('Assignment Card', () => {
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         };
 
+        jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
         store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
@@ -202,7 +203,7 @@ describe('Assignment Card', () => {
 
     describe('Edit Menu', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, viewingDate: new Date(2020, 0, 1)}, applyMiddleware(thunk));
         });
 
         it('should begin life with the EditMenu closed', () => {
@@ -222,7 +223,7 @@ describe('Assignment Card', () => {
             expectEditMenuContents(true, underTest);
         });
 
-        it('should use the PersonClient to update the assigned person to an archive date of today when Archive Person is clicked', () => {
+        it('should use the PersonClient to update the assigned person to archived as of the viewing date when Archive Person is clicked', () => {
             PeopleClient.archivePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
             const underTest = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
@@ -231,7 +232,7 @@ describe('Assignment Card', () => {
             fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
             expectEditMenuContents(true, underTest);
             fireEvent.click(underTest.getByText('Archive Person'));
-            expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestUtils.space, assignmentToRender.person);
+            expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestUtils.space, assignmentToRender.person, new Date(2020, 0, 1));
         });
 
     });
