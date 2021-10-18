@@ -474,7 +474,8 @@ class PersonControllerApiTest {
                 id = person.id,
                 name = "New John",
                 spaceUuid = space.uuid,
-                spaceRole = engineer
+                spaceRole = engineer,
+                archiveDate = LocalDate.ofYearDay(2020, 2)
         )
         val result = mockMvc.perform(put(basePeopleUrl + "/${person.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")

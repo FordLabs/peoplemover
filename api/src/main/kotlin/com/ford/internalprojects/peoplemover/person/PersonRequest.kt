@@ -43,7 +43,9 @@ data class PersonRequest(
 
         var newPersonDate: LocalDate?,
 
-        val customField1: String? = null
+        val customField1: String? = null,
+
+        val archiveDate: LocalDate?
 )
 
 fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
@@ -55,5 +57,6 @@ fun PersonRequest.toPerson(spaceUuid: String, id: Int? = null): Person = Person(
         newPersonDate = this.newPersonDate,
         spaceUuid = spaceUuid,
         tags = this.tags,
-        customField1 = this.customField1?.trim()
+        customField1 = this.customField1?.trim(),
+        archiveDate = this.archiveDate
 )
