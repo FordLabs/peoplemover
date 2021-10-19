@@ -140,17 +140,15 @@ describe('Person Form', () => {
         });
 
         it('should show unassigned in the AssignTo field for an unassigned person', async () => {
+            AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn(() => Promise.resolve({
+                data: [TestUtils.assignmentForUnassigned],
+            } as AxiosResponse));
             personForm.unmount();
             await act(async () => {
                 personForm = await renderWithRedux(
                     <PersonForm
                         isEditPersonForm={true}
-                        products={ [TestUtils.unassignedProduct,
-                            TestUtils.productForHank,
-                            TestUtils.productWithoutAssignments,
-                            TestUtils.archivedProduct,
-                            TestUtils.productWithoutLocation,
-                        ]}
+                        products={TestUtils.products}
                         personEdited={TestUtils.unassignedPerson}
                     />, store);
             });
@@ -158,17 +156,15 @@ describe('Person Form', () => {
         });
 
         it('should show Archived in the AssignTo field for an archived person', async () => {
+            AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn(() => Promise.resolve({
+                data: [TestUtils.assignmentForArchived],
+            } as AxiosResponse));
             personForm.unmount();
             await act(async () => {
                 personForm = await renderWithRedux(
                     <PersonForm
                         isEditPersonForm={true}
-                        products={ [TestUtils.unassignedProduct,
-                            TestUtils.productForHank,
-                            TestUtils.productWithoutAssignments,
-                            TestUtils.archivedProduct,
-                            TestUtils.productWithoutLocation,
-                        ]}
+                        products={TestUtils.products}
                         personEdited={TestUtils.archivedPerson}
                     />, store);
             });
