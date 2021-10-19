@@ -138,6 +138,42 @@ describe('Person Form', () => {
             await personForm.findByText(TestUtils.productWithoutLocation.name);
             expect(personForm.queryByText('Already Closed Product')).not.toBeInTheDocument();
         });
+
+        it('should show unassigned in the AssignTo field for an unassigned person', async () => {
+            personForm.unmount();
+            await act(async () => {
+                personForm = await renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={true}
+                        products={ [TestUtils.unassignedProduct,
+                            TestUtils.productForHank,
+                            TestUtils.productWithoutAssignments,
+                            TestUtils.archivedProduct,
+                            TestUtils.productWithoutLocation,
+                        ]}
+                        personEdited={TestUtils.unassignedPerson}
+                    />, store);
+            });
+            expect(await personForm.findByText('unassigned')).toBeInTheDocument();
+        });
+
+        it('should show Archived in the AssignTo field for an archived person', async () => {
+            personForm.unmount();
+            await act(async () => {
+                personForm = await renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={true}
+                        products={ [TestUtils.unassignedProduct,
+                            TestUtils.productForHank,
+                            TestUtils.productWithoutAssignments,
+                            TestUtils.archivedProduct,
+                            TestUtils.productWithoutLocation,
+                        ]}
+                        personEdited={TestUtils.archivedPerson}
+                    />, store);
+            });
+            expect(await personForm.findByText('archived')).toBeInTheDocument();
+        });
     });
 
     describe('handleSubmit()', () => {

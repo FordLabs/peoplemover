@@ -63,6 +63,11 @@ export const MetadataMultiSelectProps = {
         id: 'product',
         placeholder: 'unassigned',
     },
+    ARCHIVED_PERSON_ASSIGN_TO: {
+        title: 'Assign to',
+        id: 'product',
+        placeholder: 'archived',
+    },
 };
 
 interface MultiSelectProps extends ReactSelectProps {
