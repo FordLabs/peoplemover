@@ -35,6 +35,9 @@ import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import PeopleClient from '../People/PeopleClient';
+import ConfirmationModal, {ConfirmationModalProps} from "../Modal/ConfirmationModal";
+import FormButton from "../ModalFormComponents/FormButton";
+import {JSX} from "@babel/types";
 
 interface AssignmentCardProps {
     currentSpace: Space;
@@ -66,6 +69,7 @@ function AssignmentCard({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
+    const [modal, setModal] = useState<JSX.Element | null>(null);
     const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
     function onEditMenuClosed(): void {
@@ -161,8 +165,7 @@ function AssignmentCard({
         });
     }
 
-    async function archivePersonAndCloseEditMenu(): Promise<void> {
-        toggleEditMenu();
+    async function doArchivePerson(): Promise<void> {
         PeopleClient.archivePerson(currentSpace, assignment.person, viewingDate).then(() => {
             if (fetchProducts) {
                 fetchProducts();
@@ -171,6 +174,26 @@ function AssignmentCard({
                 fetchPeople();
             }
         });
+    }
+
+    async function showArchivePersonModalAndCloseEditMenu(): Promise<void>{
+        toggleEditMenu()
+        const propsForDeleteConfirmationModal: ConfirmationModalProps = {
+            submit: doArchivePerson,
+            close: () => {
+                setModal(null);
+            },
+            secondaryButton: undefined,
+            content: (
+                <>
+                    <div>Archiving this person will remove them from all current assigments.</div>
+
+                    <div><br/>You can later access this person from the Archived Person drawer.</div>
+                </>
+            ),
+            submitButtonLabel: 'Archive',
+        };
+        setModal(ConfirmationModal(propsForDeleteConfirmationModal));
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -186,7 +209,7 @@ function AssignmentCard({
                 icon: 'create',
             },
             {
-                callback: archivePersonAndCloseEditMenu,
+                callback: showArchivePersonModalAndCloseEditMenu,
                 text: 'Archive Person',
                 icon: 'inbox',
             },
@@ -253,6 +276,7 @@ function AssignmentCard({
                 testId={createDataTestId('editMenu', assignment.person.name)}
             />
             }
+            {modal}
         </div>
     );
 }

@@ -26,6 +26,7 @@ import {applyMiddleware, createStore, Store} from 'redux';
 import PeopleClient from '../People/PeopleClient';
 import {AxiosResponse} from 'axios';
 import thunk from 'redux-thunk';
+import {findByText} from "@testing-library/dom";
 
 
 jest.useFakeTimers();
@@ -224,7 +225,20 @@ describe('Assignment Card', () => {
             expectEditMenuContents(true, underTest);
         });
 
-        it('should use the PersonClient to update the assigned person to archived as of the viewing date when Archive Person is clicked', () => {
+        it('should show a confirmation modal when Archive Person is clicked, and be able to close it', async () => {
+            const underTest = renderWithRedux(<AssignmentCard
+                assignment={assignmentToRender}
+                isUnassignedProduct={false}
+            />, store);
+            fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
+            expectEditMenuContents(true, underTest);
+            fireEvent.click(underTest.getByText('Archive Person'));
+            expect(await underTest.findByText('Are you sure?')).toBeInTheDocument();
+            fireEvent.click(underTest.getByText('Cancel'));
+            expect(await underTest.queryByText('Are you sure?')).not.toBeInTheDocument();
+        });
+
+        it('should use the PersonClient to update the assigned person to archived as of the viewing date when Archive Person is clicked and the modal is confirmed', async () => {
             PeopleClient.archivePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
             const underTest = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
@@ -233,6 +247,7 @@ describe('Assignment Card', () => {
             fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
             expectEditMenuContents(true, underTest);
             fireEvent.click(underTest.getByText('Archive Person'));
+            fireEvent.click(await underTest.findByText('Archive'));
             expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestUtils.space, assignmentToRender.person, new Date(2020, 0, 1));
         });
 
