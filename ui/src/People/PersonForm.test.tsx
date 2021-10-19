@@ -29,6 +29,7 @@ import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, Person} from './Person';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import moment from 'moment';
 
 declare let window: MatomoWindow;
 
@@ -242,6 +243,44 @@ describe('Person Form', () => {
 
             const expectedPerson: Person =  {...TestUtils.hank, newPerson: true, newPersonDate: mayFourteen};
             expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, expectedPerson, []);
+        });
+
+        it('should send a regular assignment request on an unarchived person', async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+            const updatedPerson = {...TestUtils.archivedPerson, archiveDate: null};
+            PeopleClient.updatePerson = jest.fn(() => Promise.resolve({
+                data: updatedPerson,
+            } as AxiosResponse));
+            AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({
+                data: [{...TestUtils.assignmentForUnassigned, productId: TestUtils.productWithoutAssignments.id}],
+            } as AxiosResponse));
+            AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn(() => Promise.resolve({
+                data: [TestUtils.assignmentForArchived],
+            } as AxiosResponse));
+            await act( async () => {
+                personForm = renderWithRedux(
+                    <PersonForm
+                        isEditPersonForm={true}
+                        products={[TestUtils.unassignedProduct, TestUtils.productWithoutAssignments]}
+                        personEdited={TestUtils.archivedPerson}
+                    />, store, undefined);
+            });
+            await wait(async () => {
+                selectEvent.openMenu(await personForm.findByLabelText('Assign to'));
+            });
+            await personForm.findByText(TestUtils.productWithoutAssignments.name);
+            await selectEvent.select(await personForm.findByLabelText('Assign to'), TestUtils.productWithoutAssignments.name);
+            await wait( async () => {
+                fireEvent.click(await personForm.findByText('Save'));
+            });
+
+            expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(1);
+            expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
+                moment(mayFourteen).format('YYYY-MM-DD'),
+                [{'placeholder': false, 'productId': TestUtils.productWithoutAssignments.id}],
+                TestUtils.space,
+                updatedPerson);
         });
     });
 

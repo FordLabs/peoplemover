@@ -275,6 +275,7 @@ function PersonForm({
         });
         setHasAssignmentChanged(true);
         setSelectedProducts(updatedProducts.filter(product => product != null));
+        updatePersonField('archiveDate', undefined);
     };
 
     const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | Date | undefined): void => {
