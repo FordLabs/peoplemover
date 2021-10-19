@@ -49,7 +49,7 @@ class PersonService(
                 assignmentService.unassignPerson(person, archiveDate)
             }
             person.archiveDate = archiveDate
-            personRepository.save(person)
+            updatePerson(person)
         }
         return true
     }

@@ -22,9 +22,11 @@ import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Assignment} from './Assignment';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import rootReducer from '../Redux/Reducers';
-import {createStore, Store} from 'redux';
+import {applyMiddleware, createStore, Store} from 'redux';
 import PeopleClient from '../People/PeopleClient';
 import {AxiosResponse} from 'axios';
+import thunk from 'redux-thunk';
+
 
 jest.useFakeTimers();
 
@@ -49,7 +51,11 @@ describe('Assignment Card', () => {
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         };
 
-        store = createStore(rootReducer, {currentSpace: TestUtils.space});
+        jest.clearAllMocks();
+        TestUtils.mockClientCalls();
+
+        store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+
     });
 
     it('should render the assigned persons name', () => {
@@ -198,7 +204,7 @@ describe('Assignment Card', () => {
 
     describe('Edit Menu', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, viewingDate: new Date(2020, 0, 1)}, applyMiddleware(thunk));
         });
 
         it('should begin life with the EditMenu closed', () => {
@@ -218,7 +224,7 @@ describe('Assignment Card', () => {
             expectEditMenuContents(true, underTest);
         });
 
-        it('should use the PersonClient to update the assigned person to an archive date of today when Archive Person is clicked', () => {
+        it('should use the PersonClient to update the assigned person to archived as of the viewing date when Archive Person is clicked', () => {
             PeopleClient.archivePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
             const underTest = renderWithRedux(<AssignmentCard
                 assignment={assignmentToRender}
@@ -227,7 +233,7 @@ describe('Assignment Card', () => {
             fireEvent.click(underTest.getByTestId('editPersonIconContainer__billiam_handy'));
             expectEditMenuContents(true, underTest);
             fireEvent.click(underTest.getByText('Archive Person'));
-            expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestUtils.space, assignmentToRender.person);
+            expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestUtils.space, assignmentToRender.person, new Date(2020, 0, 1));
         });
 
     });
@@ -235,7 +241,7 @@ describe('Assignment Card', () => {
     describe('New Person Badge', () => {
 
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
         });
 
         it('should show the new badge if the assignment says the person is new and there is a newPersonDate', () => {
@@ -273,7 +279,7 @@ describe('Assignment Card', () => {
     describe('Hoverable Notes', () => {
 
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false}, applyMiddleware(thunk));
         });
 
         it('should display hover notes icon if person has valid notes', () => {
@@ -353,7 +359,7 @@ describe('Assignment Card', () => {
 
     describe('Hoverable Person tag', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false}, applyMiddleware(thunk));
         });
 
         it('should display person tag Icon if person has valid notes', () => {

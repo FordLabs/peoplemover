@@ -16,7 +16,6 @@
  */
 
 import React, {useState} from 'react';
-import './ArchivedPersonDrawer.scss';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';

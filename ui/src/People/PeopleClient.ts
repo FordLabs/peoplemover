@@ -20,7 +20,6 @@ import {Person} from './Person';
 import {getToken} from '../Auth/TokenProvider';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import moment from 'moment';
 
 class PeopleClient {
 
@@ -57,8 +56,7 @@ class PeopleClient {
         });
     }
 
-    static async archivePerson(space: Space, person: Person): Promise<AxiosResponse> {
-        const archiveDate = moment().startOf('day').toDate();
+    static async archivePerson(space: Space, person: Person, archiveDate: Date): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBasePeopleUrl(space.uuid!) + '/' + person.id + '/archive';
         return Axios.post(url, {archiveDate: archiveDate}, this.config());
