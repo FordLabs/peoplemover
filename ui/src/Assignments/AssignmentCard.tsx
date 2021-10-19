@@ -35,9 +35,8 @@ import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';
 import PeopleClient from '../People/PeopleClient';
-import ConfirmationModal, {ConfirmationModalProps} from "../Modal/ConfirmationModal";
-import FormButton from "../ModalFormComponents/FormButton";
-import {JSX} from "@babel/types";
+import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import {JSX} from '@babel/types';
 
 interface AssignmentCardProps {
     currentSpace: Space;
@@ -176,8 +175,8 @@ function AssignmentCard({
         });
     }
 
-    async function showArchivePersonModalAndCloseEditMenu(): Promise<void>{
-        toggleEditMenu()
+    async function showArchivePersonModalAndCloseEditMenu(): Promise<void> {
+        toggleEditMenu();
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: doArchivePerson,
             close: () => {
