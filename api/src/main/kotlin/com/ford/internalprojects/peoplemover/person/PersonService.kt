@@ -28,8 +28,7 @@ import java.time.LocalDate
 @Service
 class PersonService(
         private val personRepository: PersonRepository,
-        private val assignmentService: AssignmentService,
-        private val productRepository: ProductRepository
+        private val assignmentService: AssignmentService
 ) {
 
     fun createPerson(personIncoming: Person): Person = personRepository.createEntityAndUpdateSpaceLastModified(personIncoming)
