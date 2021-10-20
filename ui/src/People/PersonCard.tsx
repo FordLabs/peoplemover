@@ -73,9 +73,19 @@ function PersonCard({
                     duration={NaN}
                     isUnassignedProduct={false}
                 />
-                <i className="material-icons archivedPersonEditIcon greyIcon" aria-hidden>
-                    more_vert
-                </i>
+                <button
+                    className="archivedPersonRoleColor"
+                    aria-label="Person Menu"
+                    disabled={isReadOnly}
+                    style={{backgroundColor: 'transparent'}}
+                    onClick={toggleModal}
+                >
+                    {!isReadOnly &&
+                    <i className="material-icons archivedPersonEditIcon greyIcon" aria-hidden>
+                        more_vert
+                    </i>
+                    }
+                </button>
             </div>
         </div>
     );
