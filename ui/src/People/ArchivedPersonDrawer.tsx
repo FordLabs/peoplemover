@@ -34,13 +34,17 @@ function ArchivedPersonDrawer({
     viewingDate,
 }: ArchivedPersonDrawerProps): JSX.Element {
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+
+    const getArchivedPeople = (): Array<Person> => {
+        return people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment(viewingDate)));
+    };
+
     const getArchivedPeopleElements = (): JSX.Element => {
         return (
             <div>
-                {people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment(viewingDate)))
-                    .map(person => {
-                        return (<PersonCard person={person} key={person.id}/>);
-                    })}
+                {getArchivedPeople().map(person => {
+                    return (<PersonCard person={person} key={person.id}/>);
+                })}
             </div>
         );
     };
@@ -49,7 +53,7 @@ function ArchivedPersonDrawer({
         <DrawerContainer
             drawerIcon="supervisor_account"
             testId="archivedPersonDrawer"
-            numberForCountBadge={0}
+            numberForCountBadge={getArchivedPeople().length}
             containerTitle="Archived People"
             containee={getArchivedPeopleElements()}
             isDrawerOpen={isDrawerOpen}
