@@ -104,6 +104,7 @@ describe('ProductCard', () => {
         const productCard = renderWithRedux(<ProductCard product={testProduct}/>, store);
         fireEvent.click(await productCard.findByTestId(createDataTestId('editProductIcon', TestUtils.productWithAssignments.name)));
         fireEvent.click(await productCard.findByText('Archive Product'));
+        fireEvent.click(productCard.getByText('Archive'));
 
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(3);
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person1);
@@ -113,4 +114,29 @@ describe('ProductCard', () => {
         expect(ProductClient.editProduct).toHaveBeenCalledWith(TestUtils.space, {...testProduct, endDate: may13String}, true);
         expect(store.dispatch).toHaveBeenCalledTimes(1);
     });
+
+    it('should show a confirmation modal when Archive Person is clicked, and be able to close it', async () => {
+        jest.clearAllMocks();
+        TestUtils.mockClientCalls();
+        const productCard = renderWithRedux(<ProductCard product={TestUtils.productWithAssignments}/>, store);
+        expectEditMenuContents(false, productCard);
+        fireEvent.click(productCard.getByTestId(createDataTestId('editProductIcon', TestUtils.productWithAssignments.name)));
+        expectEditMenuContents(true, productCard);
+        fireEvent.click(productCard.getByText('Archive Product'));
+        expect(await productCard.findByText('Are you sure?')).toBeInTheDocument();
+        fireEvent.click(productCard.getByText('Cancel'));
+        expect(await productCard.queryByText('Are you sure?')).not.toBeInTheDocument();
+    });
+
+    const expectEditMenuContents = (shown: boolean, elementUnderTest: RenderResult): void => {
+        if (shown) {
+            expect(elementUnderTest.getByText('Edit Product')).toBeInTheDocument();
+            expect(elementUnderTest.getByText('Archive Product')).toBeInTheDocument();
+        } else {
+            expect(elementUnderTest.queryByText('Edit Product')).not.toBeInTheDocument();
+            expect(elementUnderTest.queryByText('Archive Product')).not.toBeInTheDocument();
+        }
+    };
+
+
 });

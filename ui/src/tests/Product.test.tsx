@@ -679,6 +679,7 @@ describe('Products', () => {
             const archiveProductMenuOption = await app.findByText('Archive Product');
             updateGetAllProductsResponse();
             fireEvent.click(archiveProductMenuOption);
+            fireEvent.click(await app.findByText('Archive'));
             await wait(() => {
                 expect(app.queryByText('Archive Product')).not.toBeInTheDocument();
                 expect(app.queryByText('Product 1')).not.toBeInTheDocument();

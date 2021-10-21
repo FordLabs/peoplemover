@@ -29,7 +29,6 @@ import {ProductCardRefAndProductPair} from './ProductDnDHelper';
 import {isUnassignedProduct, Product} from './Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
 import {Space} from '../Space/Space';
@@ -40,6 +39,8 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
+import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import {JSX} from '@babel/types';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
@@ -69,6 +70,7 @@ function ProductCard({
     fetchProducts,
 }: ProductCardProps): JSX.Element {
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
+    const [modal, setModal] = useState<JSX.Element | null>(null);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
     /* eslint-disable */
@@ -98,7 +100,7 @@ function ProductCard({
                 icon: 'create',
             },
             {
-                callback: archiveProductAndCloseEditMenu,
+                callback: showArchiveProductModalAndCloseEditMenu,
                 text: 'Archive Product',
                 icon: 'inbox',
             },
@@ -114,15 +116,30 @@ function ProductCard({
         setCurrentModal(newModal);
     }
 
-    function archiveProductAndCloseEditMenu(): void {
+    async function showArchiveProductModalAndCloseEditMenu(): Promise<void> {
         toggleEditMenu();
-        archiveProduct().then(fetchProducts);
+        const propsForDeleteConfirmationModal: ConfirmationModalProps = {
+            submit: archiveProduct,
+            close: () => {
+                setModal(null);
+            },
+            secondaryButton: undefined,
+            content: (
+                <>
+                    <div>Archiving this product will move any people assigned to this product to Unassigned (unless they have already been assigned to another product).</div>
+
+                    <div><br/>You can access these people from the Unassigned drawer.</div>
+                </>
+            ),
+            submitButtonLabel: 'Archive',
+        };
+        setModal(ConfirmationModal(propsForDeleteConfirmationModal));
     }
 
-    function archiveProduct(): Promise<AxiosResponse | void> {
+    function archiveProduct(): void {
         if (!currentSpace.uuid) {
             console.error('No current space uuid');
-            return Promise.resolve();
+            return;
         }
         const assignmentEndDate = moment(viewingDate).format('YYYY-MM-DD');
         const productEndDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
@@ -131,7 +148,7 @@ function ProductCard({
             AssignmentClient.createAssignmentForDate(assignmentEndDate, unassignment, currentSpace, assignment.person);
         });
         const archivedProduct = {...product, endDate: productEndDate};
-        return ProductClient.editProduct(currentSpace, archivedProduct, true);
+        ProductClient.editProduct(currentSpace, archivedProduct, true).then(fetchProducts);
     }
 
     const setCurrentModalToCreateAssignment = (): void => setCurrentModal({
@@ -249,6 +266,7 @@ function ProductCard({
                 )}
                 <AssignmentCardList product={product}/>
             </div>
+            {modal}
         </div>
     );
 }
