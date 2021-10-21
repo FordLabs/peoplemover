@@ -16,28 +16,44 @@
  */
 
 import React from 'react';
-import configureStore, {MockStoreCreator, MockStoreEnhanced} from 'redux-mock-store';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {createDataTestId, renderWithRedux} from '../tests/TestUtils';
 import {emptyProduct} from './Product';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {act} from 'react-dom/test-utils';
 import {fireEvent, RenderResult} from '@testing-library/react';
+import ProductClient from './ProductClient';
+import {AxiosResponse} from 'axios';
+import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import moment from 'moment';
+import rootReducer from '../Redux/Reducers';
+import {applyMiddleware, createStore, Store} from 'redux';
+import thunk from 'redux-thunk';
+import AssignmentClient from '../Assignments/AssignmentClient';
 
 declare let window: MatomoWindow;
 
 describe('ProductCard', () => {
     let originalWindow: Window;
 
-    let mockStore: MockStoreCreator<unknown, {}>;
-    let store: MockStoreEnhanced<unknown, {}>;
+    const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
+        { label:'Location Tags:', options: [] },
+        { label:'Product Tags:', options: [] },
+        { label:'Role Tags:', options: [] },
+        { label:'Person Tags:', options: [] },
+    ];
+    const mayFourteenth2020 = new Date(2020, 4, 14);
+    let store: Store;
 
     beforeEach(() => {
-        mockStore = configureStore([]);
-        store = mockStore({
-            currentSpace: TestUtils.space,
-            viewingDate: new Date(2020, 4, 14),
-        });
+        store = createStore(rootReducer, 
+            {
+                currentSpace: TestUtils.space,
+                viewingDate: mayFourteenth2020,
+                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+                products: TestUtils.products,
+            },
+            applyMiddleware(thunk));
     });
 
     afterEach(() => {
@@ -74,5 +90,26 @@ describe('ProductCard', () => {
         expect(window.open).toHaveBeenCalledTimes(1);
         expect(window.open).toHaveBeenCalledWith('any old url');
         expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, PRODUCT_URL_CLICKED, 'testProduct']);
+    });
+
+    it('archiving a product sets the appropriate fields in the product and moves all people to unassigned', async () => {
+        jest.clearAllMocks();
+        TestUtils.mockClientCalls();
+        const may13String = moment(mayFourteenth2020).subtract(1, 'day').format('YYYY-MM-DD');
+        const testProduct = {...TestUtils.productWithAssignments, assignments: [TestUtils.assignmentForPerson1, TestUtils.assignmentForPerson2, TestUtils.assignmentForPerson3]};
+        const expectedProduct = {...testProduct, endDate: may13String};
+        ProductClient.editProduct = jest.fn(() => Promise.resolve({data: expectedProduct} as AxiosResponse));
+        store.dispatch = jest.fn();
+        const productCard = renderWithRedux(<ProductCard product={testProduct}/>, store);
+        fireEvent.click(await productCard.findByTestId(createDataTestId('editProductIcon', TestUtils.productWithAssignments.name)));
+        fireEvent.click(await productCard.findByText('Archive Product'));
+
+        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(3);
+        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may13String, [], TestUtils.space, TestUtils.person1);
+        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may13String, [], TestUtils.space, TestUtils.person2);
+        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may13String, [], TestUtils.space, TestUtils.person3);
+        expect(ProductClient.editProduct).toHaveBeenCalledTimes(1);
+        expect(ProductClient.editProduct).toHaveBeenCalledWith(TestUtils.space, {...testProduct, endDate: may13String}, true);
+        expect(store.dispatch).toHaveBeenCalledTimes(1);
     });
 });

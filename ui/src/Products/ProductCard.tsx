@@ -38,6 +38,8 @@ import {createDataTestId} from '../tests/TestUtils';
 import './Product.scss';
 import {AvailableModals} from '../Modal/AvailableModals';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
+import AssignmentClient from '../Assignments/AssignmentClient';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
@@ -122,7 +124,12 @@ function ProductCard({
             console.error('No current space uuid');
             return Promise.resolve();
         }
-        const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
+        const endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
+        const unassignment: Array<ProductPlaceholderPair> = [];
+        product.assignments.forEach(assignment => {
+            AssignmentClient.createAssignmentForDate(endDate, unassignment, currentSpace, assignment.person);
+        });
+        const archivedProduct = {...product, endDate: endDate};
         return ProductClient.editProduct(currentSpace, archivedProduct, true);
     }
 
