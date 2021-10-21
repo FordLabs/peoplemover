@@ -124,12 +124,13 @@ function ProductCard({
             console.error('No current space uuid');
             return Promise.resolve();
         }
-        const endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
+        const assignmentEndDate = moment(viewingDate).format('YYYY-MM-DD');
+        const productEndDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
         const unassignment: Array<ProductPlaceholderPair> = [];
         product.assignments.forEach(assignment => {
-            AssignmentClient.createAssignmentForDate(endDate, unassignment, currentSpace, assignment.person);
+            AssignmentClient.createAssignmentForDate(assignmentEndDate, unassignment, currentSpace, assignment.person);
         });
-        const archivedProduct = {...product, endDate: endDate};
+        const archivedProduct = {...product, endDate: productEndDate};
         return ProductClient.editProduct(currentSpace, archivedProduct, true);
     }
 

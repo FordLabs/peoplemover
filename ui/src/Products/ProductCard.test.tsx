@@ -96,6 +96,7 @@ describe('ProductCard', () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
         const may13String = moment(mayFourteenth2020).subtract(1, 'day').format('YYYY-MM-DD');
+        const may14String = moment(mayFourteenth2020).format('YYYY-MM-DD');
         const testProduct = {...TestUtils.productWithAssignments, assignments: [TestUtils.assignmentForPerson1, TestUtils.assignmentForPerson2, TestUtils.assignmentForPerson3]};
         const expectedProduct = {...testProduct, endDate: may13String};
         ProductClient.editProduct = jest.fn(() => Promise.resolve({data: expectedProduct} as AxiosResponse));
@@ -105,9 +106,9 @@ describe('ProductCard', () => {
         fireEvent.click(await productCard.findByText('Archive Product'));
 
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(3);
-        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may13String, [], TestUtils.space, TestUtils.person1);
-        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may13String, [], TestUtils.space, TestUtils.person2);
-        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may13String, [], TestUtils.space, TestUtils.person3);
+        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person1);
+        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person2);
+        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person3);
         expect(ProductClient.editProduct).toHaveBeenCalledTimes(1);
         expect(ProductClient.editProduct).toHaveBeenCalledWith(TestUtils.space, {...testProduct, endDate: may13String}, true);
         expect(store.dispatch).toHaveBeenCalledTimes(1);
