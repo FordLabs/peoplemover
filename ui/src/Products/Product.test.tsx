@@ -23,8 +23,8 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from './ProductClient';
 import TestUtils, {createDataTestId, renderWithRedux} from '../tests/TestUtils';
 import {wait} from '@testing-library/dom';
-import {PreloadedState, Store} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import {Product} from './Product';
 import {Person} from '../People/Person';
@@ -34,12 +34,15 @@ import moment from 'moment';
 import {createBrowserHistory} from 'history';
 import {Router} from 'react-router-dom';
 import ProductCard from './ProductCard';
+import thunk from 'redux-thunk';
 
 jest.mock('axios');
 
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
     const addProductModalTitle = 'Add New Product';
+    let store: Store;
+
 
     function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
         let history = createBrowserHistory();
@@ -67,12 +70,12 @@ describe('Products', () => {
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            } as GlobalStateProps;
+            };
 
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             let app = await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                undefined,
-                initialState);
+                store);
 
             await app.findByText('Product 3');
         });
@@ -83,12 +86,12 @@ describe('Products', () => {
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            } as GlobalStateProps;
+            };
 
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             let app = await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                undefined,
-                initialState);
+                store);
 
             await app.findByText('Dearborn');
         });
@@ -99,12 +102,12 @@ describe('Products', () => {
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            } as GlobalStateProps;
+            };
 
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             let app = await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                undefined,
-                initialState);
+                store);
 
             await app.findByText('AV');
             expect(app.queryByText('FordX')).not.toBeInTheDocument();
@@ -116,12 +119,12 @@ describe('Products', () => {
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            } as GlobalStateProps;
+            };
 
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             let app = await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                undefined,
-                initialState);
+                store);
 
             await app.findAllByText('Add a person by clicking Add Person icon above or drag them in.');
         });
@@ -135,12 +138,12 @@ describe('Products', () => {
                     isReadOnly: false,
                     allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                     currentModal: {modal: null},
-                } as GlobalStateProps;
+                };
 
+                store = createStore(rootReducer, initialState, applyMiddleware(thunk));
                 let app = await renderWithRedux(
                     <ProductCard product={TestUtils.productWithAssignments}/>,
-                    undefined,
-                    initialState);
+                    store);
 
                 AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({} as AxiosResponse));
 
@@ -156,11 +159,12 @@ describe('Products', () => {
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            } as GlobalStateProps;
+            };
+
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             let app = await renderWithRedux(
                 <ProductCard product={TestUtils.productWithAssignments}/>,
-                undefined,
-                initialState);
+                store);
 
             expect(app.queryByText('Add a person by clicking')).not.toBeInTheDocument();
         });
@@ -264,11 +268,12 @@ describe('Products', () => {
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            } as GlobalStateProps;
+            };
+
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             let app = await renderWithRedux(
                 <ProductCard product={productWithManyAssignments}/>,
-                undefined,
-                initialState);
+                store);
 
             const expectedPersonsInOrder: Array<Person> = [
                 {
@@ -340,12 +345,12 @@ describe('Products', () => {
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            } as GlobalStateProps;
+            };
 
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             let app = await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                undefined,
-                initialState);
+                store);
 
             await app.findByTestId('addPersonToProductIcon__product_3');
         });
@@ -356,12 +361,12 @@ describe('Products', () => {
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            } as GlobalStateProps;
+            };
 
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             let app = await renderWithRedux(
                 <ProductCard product={TestUtils.unassignedProduct}/>,
-                undefined,
-                initialState);
+                store);
 
             expect(app.queryByTestId('addPersonToProductIcon__unassigned')).not.toBeInTheDocument();
         });
@@ -612,9 +617,10 @@ describe('Products', () => {
                 ProductClient.editProduct = jest.fn().mockResolvedValue({});
 
                 const viewingDate = new Date(2020, 6, 17);
-                const initialState: PreloadedState<GlobalStateProps> = {viewingDate: viewingDate} as GlobalStateProps;
+                const initialState = {viewingDate: viewingDate};
                 await act(async () => {
-                    const app = applicationSetup(undefined, initialState);
+                    store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+                    const app = applicationSetup(store);
 
                     const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
                     fireEvent.click(editProduct3Button);
@@ -699,12 +705,12 @@ describe('Products', () => {
                     viewingDate: new Date(2020, 4, 14),
                     isReadOnly: true,
                     allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                } as GlobalStateProps;
+                };
 
+                store = createStore(rootReducer, initialState, applyMiddleware(thunk));
                 app = renderWithRedux(
                     <ProductCard product={TestUtils.productWithAssignments}/>,
-                    undefined,
-                    initialState);
+                    store);
             });
         });
 
