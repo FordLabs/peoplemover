@@ -24,7 +24,7 @@ import {Reassignment} from './Reassignment';
 import {Product} from '../Products/Product';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
-import {Person} from '../People/Person';
+import {isArchived, Person} from '../People/Person';
 import {fetchProductsAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
 
@@ -84,6 +84,10 @@ function ReassignedDrawer({
         } else if (!reassignment.fromProductName) {
             oneWayReassignment = `Assigned to ${reassignment.toProductName}`;
         }
+        let toProductName = reassignment.toProductName;
+        if (isArchived(reassignment.person, viewingDate)) {
+            toProductName = 'archived';
+        }
 
         return  (
             <div key={index} className="reassignmentSection" data-testid="reassignmentSection">
@@ -92,7 +96,7 @@ function ReassignedDrawer({
                 {!oneWayReassignment &&
                     <div className="additionalInfo">{reassignment.fromProductName}
                         <i className="material-icons">east</i>
-                        {reassignment.toProductName}
+                        {toProductName}
                     </div>
                 }
                 {oneWayReassignment &&
