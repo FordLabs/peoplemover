@@ -27,6 +27,7 @@ import {Space} from '../Space/Space';
 import {isArchived, Person} from '../People/Person';
 import {fetchProductsAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import PeopleClient from '../People/PeopleClient';
 
 interface ReassignedDrawerProps {
     products: Array<Product>;
@@ -112,6 +113,9 @@ function ReassignedDrawer({
 
     async function revert(person: Person): Promise<void> {
         const reassignment = reassignments.find(reassignment => reassignment.person.id === person.id);
+        if (isArchived(person, viewingDate)) {
+            PeopleClient.updatePerson(currentSpace, {...person, archiveDate: undefined}, []);
+        }
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
                 fetchProducts();

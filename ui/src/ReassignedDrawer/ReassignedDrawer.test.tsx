@@ -15,13 +15,16 @@
  * limitations under the License.
  */
 
-import {RenderResult, wait} from '@testing-library/react';
+import {fireEvent, RenderResult, wait} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import configureStore from 'redux-mock-store';
 import ReassignedDrawer from './ReassignedDrawer';
 import AssignmentClient from '../Assignments/AssignmentClient';
+import PeopleClient from '../People/PeopleClient';
 import {AxiosResponse} from 'axios';
+import thunk from 'redux-thunk';
+import {applyMiddleware, createStore} from 'redux';
+import rootReducer from '../Redux/Reducers';
 
 describe('ReassignedDrawer', () => {
     let app: RenderResult;
@@ -42,12 +45,12 @@ describe('ReassignedDrawer', () => {
                 } as AxiosResponse
             ));
 
-            const mockStore = configureStore([]);
-            const store = mockStore({
+            const store = createStore(rootReducer, {
                 currentSpace: TestUtils.space,
                 viewingDate: mayFourteen2020,
                 people: TestUtils.people,
-            });
+            }, applyMiddleware(thunk));
+            store.dispatch = jest.fn();
 
             await wait(async () => {
                 app = renderWithRedux(<ReassignedDrawer/>, store);
@@ -56,10 +59,26 @@ describe('ReassignedDrawer', () => {
 
         it('should show that they have been archived', async () => {
             expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             expect(await app.findByText(TestUtils.archivedPerson.spaceRole!.name)).toBeInTheDocument();
             expect(await app.findByText(/Product 1/)).toBeInTheDocument();
             expect(await app.queryByText(/unassigned/)).not.toBeInTheDocument();
             expect(await app.findByText(/archived/)).toBeInTheDocument();
+        });
+
+        it('should unarchive an archived person that gets reverted', async () => {
+            AssignmentClient.deleteAssignmentForDate = jest.fn(() => Promise.resolve(
+                { data: []} as AxiosResponse
+            ));
+            PeopleClient.updatePerson = jest.fn(() => Promise.resolve(
+                {data: {...TestUtils.archivedPerson, archiveDate: null}} as AxiosResponse
+            ));
+            const revertButton = await app.findByText('Revert');
+            fireEvent.click(revertButton);
+            expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledTimes(1);
+            expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledWith(mayFourteen2020, TestUtils.archivedPerson);
+            expect(PeopleClient.updatePerson).toHaveBeenCalledTimes(1);
+            expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, {...TestUtils.archivedPerson, archiveDate: undefined}, []);
         });
     });
 });
