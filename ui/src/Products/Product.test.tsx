@@ -20,20 +20,20 @@ import {AxiosResponse} from 'axios';
 import {act, fireEvent, RenderResult} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import ProductClient from '../Products/ProductClient';
-import TestUtils, {createDataTestId, renderWithRedux} from './TestUtils';
+import ProductClient from './ProductClient';
+import TestUtils, {createDataTestId, renderWithRedux} from '../tests/TestUtils';
 import {wait} from '@testing-library/dom';
 import {PreloadedState, Store} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import {Product} from '../Products/Product';
+import {Product} from './Product';
 import {Person} from '../People/Person';
 import LocationClient from '../Locations/LocationClient';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {createBrowserHistory} from 'history';
 import {Router} from 'react-router-dom';
-import ProductCard from '../Products/ProductCard';
+import ProductCard from './ProductCard';
 
 jest.mock('axios');
 

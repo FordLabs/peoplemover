@@ -16,13 +16,13 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from './TestUtils';
+import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {AxiosResponse} from 'axios';
-import ProductClient from '../Products/ProductClient';
-import ProductList from '../Products/ProductList';
+import ProductClient from './ProductClient';
+import ProductList from './ProductList';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
-import {Product} from '../Products/Product';
+import {Product} from './Product';
 
 describe('Product List tests', () => {
 

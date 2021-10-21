@@ -19,7 +19,7 @@ import {
     DraggedCardOffset,
     getProductWithMostOverlappingArea,
     getTopLeftOfDraggedCard,
-} from '../Products/ProductDnDHelper';
+} from './ProductDnDHelper';
 import React from 'react';
 
 describe('dragging cards', () => {
