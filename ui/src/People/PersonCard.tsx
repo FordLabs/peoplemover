@@ -22,7 +22,7 @@ import {setCurrentModalAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import '../Application/Styleguide/Main.scss';
-import {createDataTestId} from '../tests/TestUtils';
+import {createDataTestId} from '../Utils/ReactUtils';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {Person} from './Person';
 import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';

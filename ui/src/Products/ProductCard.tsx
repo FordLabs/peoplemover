@@ -33,7 +33,7 @@ import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
 import {Space} from '../Space/Space';
-import {createDataTestId} from '../tests/TestUtils';
+import {createDataTestId} from '../Utils/ReactUtils';
 
 import './Product.scss';
 import {AvailableModals} from '../Modal/AvailableModals';
