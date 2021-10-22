@@ -80,12 +80,12 @@ function ReassignedDrawer({
 
     function mapsReassignments(reassignment: Reassignment, index: number): JSX.Element {
         let oneWayReassignment: string | undefined;
-        if (!reassignment.toProductName) {
-            oneWayReassignment = `${reassignment.fromProductName} assignment cancelled`;
-        } else if (!reassignment.fromProductName) {
-            oneWayReassignment = `Assigned to ${reassignment.toProductName}`;
+        if (!reassignment.destinationProductName) {
+            oneWayReassignment = `${reassignment.originProductName} assignment cancelled`;
+        } else if (!reassignment.originProductName) {
+            oneWayReassignment = `Assigned to ${reassignment.destinationProductName}`;
         }
-        let toProductName = reassignment.toProductName;
+        let toProductName = reassignment.destinationProductName;
         if (isArchived(reassignment.person, viewingDate)) {
             toProductName = 'archived';
         }
@@ -95,7 +95,7 @@ function ReassignedDrawer({
                 <div className="name">{reassignment.person.name}</div>
                 <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
                 {!oneWayReassignment &&
-                    <div className="additionalInfo">{reassignment.fromProductName}
+                    <div className="additionalInfo">{reassignment.originProductName}
                         <i className="material-icons">east</i>
                         {toProductName}
                     </div>
@@ -119,9 +119,9 @@ function ReassignedDrawer({
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
                 fetchProducts();
-                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`);
+                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`);
             }).catch(err => {
-                MatomoEvents.pushEvent(currentSpace.name, 'revertError', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`, err.code);
+                MatomoEvents.pushEvent(currentSpace.name, 'revertError', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`, err.code);
                 return Promise.reject(err);
             });
     }

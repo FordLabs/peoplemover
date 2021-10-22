@@ -39,8 +39,8 @@ describe('ReassignedDrawer', () => {
                 {
                     data: [{
                         person: TestUtils.archivedPerson,
-                        fromProductName: fromProductName,
-                        toProductName: 'unassigned',
+                        originProductName: fromProductName,
+                        destinationProductName: 'unassigned',
                     }],
                 } as AxiosResponse
             ));

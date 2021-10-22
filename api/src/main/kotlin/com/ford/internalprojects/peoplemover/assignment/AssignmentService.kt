@@ -189,10 +189,10 @@ class AssignmentService(
             val fromProductName: String = previousAssignmentsForPerson.map { assignment -> productRepository.findById(assignment.productId).get().name }.joinToString(" & ")
             Reassignment(
                     person = person,
-                    fromProductName = fromProductName,
-                    toProductName = toProductName
+                    originProductName = fromProductName,
+                    destinationProductName = toProductName
             )
-        }.filterNot { reassignment -> reassignment.toProductName == "unassigned" && reassignment.fromProductName.isNullOrEmpty() }
+        }.filterNot { reassignment -> reassignment.destinationProductName == "unassigned" && reassignment.originProductName.isNullOrEmpty() }
     }
 
     private fun requestOnlyContainsUnassigned(assignmentRequest: CreateAssignmentsRequest, spaceUuid: String): Boolean {
