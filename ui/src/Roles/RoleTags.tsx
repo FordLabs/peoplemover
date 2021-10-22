@@ -21,7 +21,7 @@ import React, {useState} from 'react';
 import {TagInterface} from '../Tags/Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import RoleClient from './RoleClient';
-import {createDataTestId} from '../tests/TestUtils';
+import {createDataTestId} from '../Utils/ReactUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';

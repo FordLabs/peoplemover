@@ -578,8 +578,8 @@ class TestUtils {
     };
 
     static productWithTags: Product = {
-        id: 1,
-        name: 'Product 1',
+        id: 6,
+        name: 'Product 6',
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         startDate: '2011-01-01',
         endDate: '2022-02-02',

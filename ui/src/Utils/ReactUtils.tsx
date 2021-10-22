@@ -15,10 +15,7 @@
  * limitations under the License.
  */
 
-import {Person} from '../People/Person';
 
-export interface Reassignment {
-    person: Person;
-    originProductName?: string;
-    destinationProductName: string;
+export function createDataTestId(prefix: string, name: string): string {
+    return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
 }

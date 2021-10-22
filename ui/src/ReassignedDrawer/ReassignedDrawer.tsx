@@ -24,9 +24,10 @@ import {Reassignment} from './Reassignment';
 import {Product} from '../Products/Product';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
-import {Person} from '../People/Person';
+import {isArchived, Person} from '../People/Person';
 import {fetchProductsAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import PeopleClient from '../People/PeopleClient';
 
 interface ReassignedDrawerProps {
     products: Array<Product>;
@@ -79,10 +80,14 @@ function ReassignedDrawer({
 
     function mapsReassignments(reassignment: Reassignment, index: number): JSX.Element {
         let oneWayReassignment: string | undefined;
-        if (!reassignment.toProductName) {
-            oneWayReassignment = `${reassignment.fromProductName} assignment cancelled`;
-        } else if (!reassignment.fromProductName) {
-            oneWayReassignment = `Assigned to ${reassignment.toProductName}`;
+        if (!reassignment.destinationProductName) {
+            oneWayReassignment = `${reassignment.originProductName} assignment cancelled`;
+        } else if (!reassignment.originProductName) {
+            oneWayReassignment = `Assigned to ${reassignment.destinationProductName}`;
+        }
+        let toProductName = reassignment.destinationProductName;
+        if (isArchived(reassignment.person, viewingDate)) {
+            toProductName = 'archived';
         }
 
         return  (
@@ -90,9 +95,9 @@ function ReassignedDrawer({
                 <div className="name">{reassignment.person.name}</div>
                 <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
                 {!oneWayReassignment &&
-                    <div className="additionalInfo">{reassignment.fromProductName}
+                    <div className="additionalInfo">{reassignment.originProductName}
                         <i className="material-icons">east</i>
-                        {reassignment.toProductName}
+                        {toProductName}
                     </div>
                 }
                 {oneWayReassignment &&
@@ -108,12 +113,15 @@ function ReassignedDrawer({
 
     async function revert(person: Person): Promise<void> {
         const reassignment = reassignments.find(reassignment => reassignment.person.id === person.id);
+        if (isArchived(person, viewingDate)) {
+            PeopleClient.updatePerson(currentSpace, {...person, archiveDate: undefined}, []);
+        }
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
                 fetchProducts();
-                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`);
+                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`);
             }).catch(err => {
-                MatomoEvents.pushEvent(currentSpace.name, 'revertError', `From: ${reassignment?.fromProductName} To: ${reassignment?.toProductName}`, err.code);
+                MatomoEvents.pushEvent(currentSpace.name, 'revertError', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`, err.code);
                 return Promise.reject(err);
             });
     }
