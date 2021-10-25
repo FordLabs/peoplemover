@@ -18,6 +18,8 @@
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {Tag} from '../Tags/Tag';
 import moment from 'moment';
+import {Product} from '../Products/Product';
+import {Assignment} from '../Assignments/Assignment';
 
 export interface Person {
     id: number;
@@ -71,3 +73,17 @@ export function isPersonMatchingSelectedFilters(person: Person, selectedRoleFilt
 export function isArchived(person: Person, date: Date): boolean {
     return person.archiveDate != null && moment(person.archiveDate).isBefore(moment(date));
 }
+
+export const getAssignedProducts = (person: Person, products: Array<Product>): Array<Product> => {
+    return products.filter((product) => product.assignments.find((assignment) => assignment.person.id === person.id));
+};
+
+export const getAssignments = (person: Person, products: Array<Product>): Array<Assignment> => {
+    const personProducts = getAssignedProducts(person, products);
+    const assignments: Array<Assignment> = [];
+    personProducts.forEach(product => {
+        const assignment = product.assignments.find(assignment => assignment.person.id === person.id);
+        if (assignment !== undefined) { assignments.push(assignment);}
+    });
+    return assignments;
+};

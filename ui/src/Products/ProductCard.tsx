@@ -41,7 +41,7 @@ import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
-import {Person} from '../People/Person';
+import {getAssignments, Person} from '../People/Person';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
@@ -154,20 +154,14 @@ function ProductCard({
     }
 
     const getRemainingAssignments = (person: Person): Array<ProductPlaceholderPair> => {
-        let remainingAssignments: Array<ProductPlaceholderPair> = [];
-        products
-            .filter((innerProduct) => innerProduct.id !== product.id)
-            .forEach((innerProduct) => {
-                const assignmentToProduct = innerProduct.assignments.find(
-                    (assignmentForProduct) => assignmentForProduct.person.id === person.id);
-                if (assignmentToProduct !== undefined) {
-                    remainingAssignments.push({
-                        productId: innerProduct.id,
-                        placeholder: assignmentToProduct.placeholder || false,
-                    } as ProductPlaceholderPair);
-                }
+        return getAssignments(person, products)
+            .filter(assignment => assignment.productId !== product.id)
+            .map(assignment => {
+                return {
+                    productId: assignment.productId,
+                    placeholder: assignment.placeholder || false,
+                };
             });
-        return remainingAssignments;
     };
 
     const setCurrentModalToCreateAssignment = (): void => setCurrentModal({

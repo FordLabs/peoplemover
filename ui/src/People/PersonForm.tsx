@@ -30,7 +30,7 @@ import {
 } from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
-import {emptyPerson, Person} from './Person';
+import {emptyPerson, getAssignments, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
@@ -160,16 +160,12 @@ function PersonForm({
     };
 
     const getSelectedProductPairs = (): ProductPlaceholderPair[] => {
-        return selectedProducts.map((product) => {
-            const placeholderForProduct = product.assignments.find(
-                (assignmentForProduct) => assignmentForProduct.person.id === person.id
-            )?.placeholder;
+        return getAssignments(person, selectedProducts).map(assignment => {
             return {
-                productId: product.id,
-                placeholder: placeholderForProduct || false,
+                productId: assignment.productId,
+                placeholder: assignment.placeholder || false,
             } as ProductPlaceholderPair;
         });
-
     };
 
     const getAddedPersonTag = (): string[] => {
