@@ -51,7 +51,16 @@ describe('ProductCard', () => {
                 currentSpace: TestUtils.space,
                 viewingDate: mayFourteenth2020,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                products: TestUtils.products,
+                products: [TestUtils.unassignedProduct,
+                    TestUtils.productWithoutAssignments,
+                    TestUtils.archivedProduct,
+                    TestUtils.productWithoutLocation,
+                    TestUtils.productWithAssignments,
+                    {...TestUtils.productForHank, assignments: [
+                        TestUtils.assignmentForHank,
+                        {...TestUtils.assignmentForPerson1, productId: TestUtils.productForHank.id},
+                    ]},
+                ],
             },
             applyMiddleware(thunk));
     });
@@ -107,7 +116,7 @@ describe('ProductCard', () => {
         fireEvent.click(productCard.getByText('Archive'));
 
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(3);
-        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person1);
+        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [{productId: TestUtils.productForHank.id, placeholder: false}], TestUtils.space, TestUtils.person1);
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person2);
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person3);
         expect(ProductClient.editProduct).toHaveBeenCalledTimes(1);

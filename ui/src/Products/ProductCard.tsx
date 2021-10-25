@@ -41,6 +41,7 @@ import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
+import {Person} from '../People/Person';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
@@ -49,6 +50,7 @@ interface ProductCardProps {
     currentSpace: Space;
     viewingDate: Date;
     isReadOnly: boolean;
+    products: Array<Product>;
 
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
 
@@ -64,6 +66,7 @@ function ProductCard({
     currentSpace,
     viewingDate,
     isReadOnly,
+    products,
     registerProductRef,
     unregisterProductRef,
     setCurrentModal,
@@ -143,13 +146,29 @@ function ProductCard({
         }
         const assignmentEndDate = moment(viewingDate).format('YYYY-MM-DD');
         const productEndDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
-        const unassignment: Array<ProductPlaceholderPair> = [];
         product.assignments.forEach(assignment => {
-            AssignmentClient.createAssignmentForDate(assignmentEndDate, unassignment, currentSpace, assignment.person);
+            AssignmentClient.createAssignmentForDate(assignmentEndDate, getRemainingAssignments(assignment.person), currentSpace, assignment.person);
         });
         const archivedProduct = {...product, endDate: productEndDate};
         ProductClient.editProduct(currentSpace, archivedProduct, true).then(fetchProducts);
     }
+
+    const getRemainingAssignments = (person: Person): Array<ProductPlaceholderPair> => {
+        let remainingAssignments: Array<ProductPlaceholderPair> = [];
+        products
+            .filter((innerProduct) => innerProduct.id !== product.id)
+            .forEach((innerProduct) => {
+                const assignmentToProduct = innerProduct.assignments.find(
+                    (assignmentForProduct) => assignmentForProduct.person.id === person.id);
+                if (assignmentToProduct !== undefined) {
+                    remainingAssignments.push({
+                        productId: innerProduct.id,
+                        placeholder: assignmentToProduct.placeholder || false,
+                    } as ProductPlaceholderPair);
+                }
+            });
+        return remainingAssignments;
+    };
 
     const setCurrentModalToCreateAssignment = (): void => setCurrentModal({
         modal: AvailableModals.CREATE_ASSIGNMENT,
@@ -276,6 +295,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly,
+    products: state.products,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
