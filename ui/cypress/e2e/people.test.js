@@ -50,7 +50,7 @@ describe('People', () => {
 
         cy.get('@reassignmentDrawer')
             .should('contain', 'Reassigned')
-            .find('[data-testid=countBadge]').should('not.exist');
+            .find('[data-testid=reassignmentDrawerCountBadge]').should('not.exist');
 
         const assignedPerson = {...person};
 
@@ -151,7 +151,7 @@ describe('People', () => {
 
                 cy.get('[data-testid=reassignmentDrawer]')
                     .should('contain', 'Reassigned')
-                    .find('[data-testid=countBadge]').should('have.text', '1');
+                    .find('[data-testid=reassignmentDrawerCountBadge]').should('have.text', '1');
 
                 ensureUnassignedPersonIsPresentInUnassignedDrawer(unassignedPerson);
             });
@@ -384,7 +384,7 @@ const ensureUnassignedPersonIsPresentInUnassignedDrawer = (unassignedPerson) => 
     cy.get('[data-testid=unassignedDrawer]').as('unassignedDrawer');
     cy.get('@unassignedDrawer')
         .should('contain', 'Unassigned')
-        .find('[data-testid=countBadge]').should('have.text', '2');
+        .find('[data-testid=unassignedDrawerCountBadge]').should('have.text', '2');
 
     cy.get('@unassignedDrawer')
         .find('[data-testid=unassignedPeopleContainer] [data-testid=assignmentCard__person_name]')
