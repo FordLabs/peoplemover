@@ -54,14 +54,14 @@ export function emptyProduct(spaceUuid?: string): Product {
     };
 }
 
-const unassignedProductName = 'unassigned';
+export const unassignedProductName = 'unassigned';
 
 export function isUnassignedProduct(product: Product): boolean {
     return product.name === unassignedProductName;
 }
 
 export function isActiveProduct(product: Product, viewingDate: Date): boolean {
-    return product.name.toLowerCase() !== 'unassigned'
+    return product.name.toLowerCase() !== unassignedProductName
         && !product.archived
         && endsOnOrAfterDate(product, viewingDate);
 }

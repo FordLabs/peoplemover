@@ -170,7 +170,6 @@ function PersonForm({
                 placeholder: placeholderForProduct || false,
             } as ProductPlaceholderPair;
         });
-
     };
 
     const getAddedPersonTag = (): string[] => {

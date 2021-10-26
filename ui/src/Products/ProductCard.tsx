@@ -29,7 +29,6 @@ import {ProductCardRefAndProductPair} from './ProductDnDHelper';
 import {isUnassignedProduct, Product} from './Product';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {AxiosResponse} from 'axios';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
 import {Space} from '../Space/Space';
@@ -38,6 +37,11 @@ import {createDataTestId} from '../Utils/ReactUtils';
 import './Product.scss';
 import {AvailableModals} from '../Modal/AvailableModals';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
+import AssignmentClient from '../Assignments/AssignmentClient';
+import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import {JSX} from '@babel/types';
+import {getAssignments, Person} from '../People/Person';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
@@ -46,6 +50,7 @@ interface ProductCardProps {
     currentSpace: Space;
     viewingDate: Date;
     isReadOnly: boolean;
+    products: Array<Product>;
 
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
 
@@ -61,12 +66,14 @@ function ProductCard({
     currentSpace,
     viewingDate,
     isReadOnly,
+    products,
     registerProductRef,
     unregisterProductRef,
     setCurrentModal,
     fetchProducts,
 }: ProductCardProps): JSX.Element {
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
+    const [modal, setModal] = useState<JSX.Element | null>(null);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
     /* eslint-disable */
@@ -96,7 +103,7 @@ function ProductCard({
                 icon: 'create',
             },
             {
-                callback: archiveProductAndCloseEditMenu,
+                callback: showArchiveProductModalAndCloseEditMenu,
                 text: 'Archive Product',
                 icon: 'inbox',
             },
@@ -112,19 +119,50 @@ function ProductCard({
         setCurrentModal(newModal);
     }
 
-    function archiveProductAndCloseEditMenu(): void {
+    async function showArchiveProductModalAndCloseEditMenu(): Promise<void> {
         toggleEditMenu();
-        archiveProduct().then(fetchProducts);
+        const propsForDeleteConfirmationModal: ConfirmationModalProps = {
+            submit: archiveProduct,
+            close: () => {
+                setModal(null);
+            },
+            secondaryButton: undefined,
+            content: (
+                <>
+                    <div>Archiving this product will move any people assigned to this product to Unassigned (unless they have already been assigned to another product).</div>
+
+                    <div><br/>You can access these people from the Unassigned drawer.</div>
+                </>
+            ),
+            submitButtonLabel: 'Archive',
+        };
+        setModal(ConfirmationModal(propsForDeleteConfirmationModal));
     }
 
-    function archiveProduct(): Promise<AxiosResponse | void> {
+    function archiveProduct(): void {
         if (!currentSpace.uuid) {
             console.error('No current space uuid');
-            return Promise.resolve();
+            return;
         }
-        const archivedProduct = {...product, endDate: moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD')};
-        return ProductClient.editProduct(currentSpace, archivedProduct, true);
+        const assignmentEndDate = moment(viewingDate).format('YYYY-MM-DD');
+        const productEndDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
+        product.assignments.forEach(assignment => {
+            AssignmentClient.createAssignmentForDate(assignmentEndDate, getRemainingAssignments(assignment.person), currentSpace, assignment.person);
+        });
+        const archivedProduct = {...product, endDate: productEndDate};
+        ProductClient.editProduct(currentSpace, archivedProduct, true).then(fetchProducts);
     }
+
+    const getRemainingAssignments = (person: Person): Array<ProductPlaceholderPair> => {
+        return getAssignments(person, products)
+            .filter(assignment => assignment.productId !== product.id)
+            .map(assignment => {
+                return {
+                    productId: assignment.productId,
+                    placeholder: assignment.placeholder || false,
+                };
+            });
+    };
 
     const setCurrentModalToCreateAssignment = (): void => setCurrentModal({
         modal: AvailableModals.CREATE_ASSIGNMENT,
@@ -241,6 +279,7 @@ function ProductCard({
                 )}
                 <AssignmentCardList product={product}/>
             </div>
+            {modal}
         </div>
     );
 }
@@ -250,6 +289,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly,
+    products: state.products,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
