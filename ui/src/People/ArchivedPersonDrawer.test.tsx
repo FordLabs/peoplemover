@@ -61,6 +61,7 @@ describe('Archived People', () => {
             expect(await app.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
             expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
             expect(app.container.getElementsByClassName('archivedPersonCard').length).toEqual(2);
+            expect((await app.findByTestId('countBadge')).innerHTML).toEqual('2');
         });
 
         it('should not show people who have not passed their archived date', async () => {

@@ -141,8 +141,8 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignment = Reassignment(
                 person = person,
-                fromProductName = productOne.name,
-                toProductName = productTwo.name
+                originProductName = productOne.name,
+                destinationProductName = productTwo.name
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
@@ -189,8 +189,8 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignment = Reassignment(
                 person = person,
-                fromProductName = productOne.name,
-                toProductName = productThree.name
+                originProductName = productOne.name,
+                destinationProductName = productThree.name
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
@@ -232,8 +232,8 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignment = Reassignment(
                 person = person,
-                fromProductName = productTwo.name,
-                toProductName = productThree.name
+                originProductName = productTwo.name,
+                destinationProductName = productThree.name
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid, apr2))
@@ -264,8 +264,8 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignment = Reassignment(
                 person = person,
-                fromProductName = "",
-                toProductName = productOne.name
+                originProductName = "",
+                destinationProductName = productOne.name
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,mar1))
@@ -336,14 +336,14 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignmentForPerson = Reassignment(
                 person = person,
-                fromProductName = productOne.name,
-                toProductName = productTwo.name
+                originProductName = productOne.name,
+                destinationProductName = productTwo.name
         )
 
         val reassignmentForPersonTwo = Reassignment(
                 person = personTwo,
-                fromProductName = productTwo.name,
-                toProductName = productOne.name
+                originProductName = productTwo.name,
+                destinationProductName = productOne.name
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
@@ -393,8 +393,8 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignmentForPerson = Reassignment(
                 person = person,
-                fromProductName = productOne.name,
-                toProductName = ""
+                originProductName = productOne.name,
+                destinationProductName = ""
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
@@ -450,14 +450,14 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignmentForPerson = Reassignment(
                 person = person,
-                fromProductName = productOne.name,
-                toProductName = ""
+                originProductName = productOne.name,
+                destinationProductName = ""
         )
 
         val reassignmentForPersonTwo = Reassignment(
                 person = personTwo,
-                fromProductName = productTwo.name,
-                toProductName = productOne.name
+                originProductName = productTwo.name,
+                destinationProductName = productOne.name
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
@@ -514,14 +514,14 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignmentForPerson = Reassignment(
                 person = person,
-                fromProductName = productOne.name + " & " + productTwo.name,
-                toProductName = productThree.name
+                originProductName = productOne.name + " & " + productTwo.name,
+                destinationProductName = productThree.name
         )
 
         val reassignmentForPersonTwo = Reassignment(
                 person = personTwo,
-                fromProductName = productTwo.name,
-                toProductName = productOne.name
+                originProductName = productTwo.name,
+                destinationProductName = productOne.name
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(editableSpace.uuid,apr1))
@@ -572,8 +572,8 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignmentForPerson = Reassignment(
                 person = person,
-                fromProductName = productOne.name + " & " + productTwo.name,
-                toProductName = productFour.name + " & " + productThree.name
+                originProductName = productOne.name + " & " + productTwo.name,
+                destinationProductName = productFour.name + " & " + productThree.name
         )
 
 
@@ -615,8 +615,8 @@ class AssignmentControllerReassignmentsApiTest {
 
         val reassignment = Reassignment(
                 person = personInReadOnlySpace,
-                fromProductName = readOnlyProductTwo.name,
-                toProductName = readOnlyProductOne.name
+                originProductName = readOnlyProductTwo.name,
+                destinationProductName = readOnlyProductOne.name
         )
 
         val result = mockMvc.perform(get(baseReassignmentUrl(readOnlySpace.uuid,today))

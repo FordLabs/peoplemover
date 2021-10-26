@@ -19,7 +19,7 @@ import React, {ChangeEvent, useState} from 'react';
 import SaveIcon from '../Application/Assets/saveIcon.png';
 import CloseIcon from '../Application/Assets/closeIcon.png';
 import {JSX} from '@babel/types';
-import {createDataTestId} from '../tests/TestUtils';
+import {createDataTestId} from '../Utils/ReactUtils';
 import {TagRequest} from '../Tags/TagRequest.interface';
 
 import './TagRowsContainer.scss';

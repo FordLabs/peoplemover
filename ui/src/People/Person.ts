@@ -79,9 +79,8 @@ export const getAssignedProducts = (person: Person, products: Array<Product>): A
 };
 
 export const getAssignments = (person: Person, products: Array<Product>): Array<Assignment> => {
-    const personProducts = getAssignedProducts(person, products);
     const assignments: Array<Assignment> = [];
-    personProducts.forEach(product => {
+    products.forEach(product => {
         const assignment = product.assignments.find(assignment => assignment.person.id === person.id);
         if (assignment !== undefined) { assignments.push(assignment);}
     });

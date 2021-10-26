@@ -30,7 +30,7 @@ import {Assignment, calculateDuration} from './Assignment';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
-import {createDataTestId} from '../tests/TestUtils';
+import {createDataTestId} from '../Utils/ReactUtils';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AvailableModals} from '../Modal/AvailableModals';

@@ -44,6 +44,22 @@
       }
     }
 
+    .archivedPersonRoleColor {
+      width: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 43px;
+      min-width: 20px;
+
+      &:focus {
+        .archivedPersonEditIcon {
+          margin-left: 0;
+          visibility: visible;
+        }
+      }
+    }
+
     .archivedPersonEditIcon {
       visibility: hidden;
       margin-left: 2px;

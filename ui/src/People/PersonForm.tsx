@@ -30,7 +30,7 @@ import {
 } from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
-import {emptyPerson, getAssignments, Person} from './Person';
+import {emptyPerson, isArchived, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
@@ -100,6 +100,7 @@ function PersonForm({
     const spaceUuid = currentSpace.uuid!;
     const { ROLE_TAGS } = MetadataReactSelectProps;
     const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
+    const { ARCHIVED_PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
@@ -160,10 +161,13 @@ function PersonForm({
     };
 
     const getSelectedProductPairs = (): ProductPlaceholderPair[] => {
-        return getAssignments(person, selectedProducts).map(assignment => {
+        return selectedProducts.map((product) => {
+            const placeholderForProduct = product.assignments.find(
+                (assignmentForProduct) => assignmentForProduct.person.id === person.id
+            )?.placeholder;
             return {
-                productId: assignment.productId,
-                placeholder: assignment.placeholder || false,
+                productId: product.id,
+                placeholder: placeholderForProduct || false,
             } as ProductPlaceholderPair;
         });
     };
@@ -270,6 +274,7 @@ function PersonForm({
         });
         setHasAssignmentChanged(true);
         setSelectedProducts(updatedProducts.filter(product => product != null));
+        updatePersonField('archiveDate', undefined);
     };
 
     const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | Date | undefined): void => {
@@ -391,7 +396,7 @@ function PersonForm({
                     isLoading={isLoading}
                 />
                 <SelectWithNoCreateOption
-                    metadata={PERSON_ASSIGN_TO}
+                    metadata={isArchived(person, viewingDate) ? ARCHIVED_PERSON_ASSIGN_TO : PERSON_ASSIGN_TO}
                     values={selectedProducts.map(x => {return {value:x.name, label:x.name};})}
                     options={getAssignToOptions()}
                     onChange={changeProductName}

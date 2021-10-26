@@ -18,7 +18,7 @@
 import React, {createRef} from 'react';
 import './EditMenu.scss';
 import AccessibleDropdownContainer from './AccessibleDropdownContainer';
-import {createDataTestId} from '../tests/TestUtils';
+import {createDataTestId} from '../Utils/ReactUtils';
 
 export interface EditMenuOption {
     callback(): void;
