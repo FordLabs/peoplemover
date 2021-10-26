@@ -16,7 +16,6 @@
  */
 
 import React from 'react';
-import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -64,9 +63,6 @@ function PersonCard({
             className={'archivedPersonCard'}
             data-testid={createDataTestId('archivedPersonCard', person.name)}
         >
-            {person.newPerson && person.newPersonDate &&
-            <div className="newPersonBadge"><NewBadge newPersonDate={person.newPersonDate}
-                viewingDate={viewingDate}/></div>}
             <div onClick={toggleModal} className={'archivedPersonContainer'} onKeyPress={handleKeyPress} data-testid={createDataTestId('archivedPersonContainer', person.name)}>
                 <PersonAndRoleInfo
                     person={person}
