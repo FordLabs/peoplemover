@@ -25,7 +25,7 @@ import {Product} from '../Products/Product';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
 import {isArchived, Person} from '../People/Person';
-import {fetchProductsAction} from '../Redux/Actions';
+import {fetchPeopleAction, fetchProductsAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import PeopleClient from '../People/PeopleClient';
 
@@ -35,6 +35,7 @@ interface ReassignedDrawerProps {
     currentSpace: Space;
 
     fetchProducts(): Array<Product>;
+    fetchPeople(): Array<Person>;
 }
 
 function ReassignedDrawer({
@@ -42,6 +43,7 @@ function ReassignedDrawer({
     viewingDate,
     currentSpace,
     fetchProducts,
+    fetchPeople,
 }: ReassignedDrawerProps): JSX.Element {
     const [showDrawer, setShowDrawer] = useState(true);
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
@@ -136,6 +138,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     fetchProducts: () => dispatch(fetchProductsAction()),
+    fetchPeople: () => dispatch(fetchPeopleAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReassignedDrawer);

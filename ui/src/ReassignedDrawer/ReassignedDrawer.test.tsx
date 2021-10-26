@@ -32,6 +32,7 @@ describe('ReassignedDrawer', () => {
     const fromProductName = 'Product 1';
 
     describe('archived people', () => {
+
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
