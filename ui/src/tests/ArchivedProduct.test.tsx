@@ -72,10 +72,14 @@ describe('Archive Products', () => {
             // @ts-ignore
             expect(app.getByLabelText('Name').value).toEqual('I am archived');
         });
+
+        it('displays a badge with the number of archived products', async () => {
+            expect((await app.findByTestId('archivedProductsDrawerCountBadge')).innerHTML).toEqual('1');
+        });
     });
     
     describe('component that summarizes a product in the graveyard', () => {
-        it('should render the number of peopleReducer on the product', () => {
+        it('should render the number of people on the product', () => {
             const component = renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
             expect(component.getByText('1')).toBeInTheDocument();
         });

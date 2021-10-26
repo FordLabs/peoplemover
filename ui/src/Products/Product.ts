@@ -60,6 +60,11 @@ export function isUnassignedProduct(product: Product): boolean {
     return product.name === unassignedProductName;
 }
 
+export function isArchivedOnDate(product: Product, viewingDate: Date): boolean {
+    return product.archived
+    || !endsOnOrAfterDate(product, viewingDate);
+}
+
 export function isActiveProduct(product: Product, viewingDate: Date): boolean {
     return product.name.toLowerCase() !== unassignedProductName
         && !product.archived

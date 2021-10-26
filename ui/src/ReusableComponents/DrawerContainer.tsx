@@ -52,7 +52,7 @@ function DrawerContainer({
                 onClick={(): void => setIsDrawerOpen(!isDrawerOpen)}
                 data-testid={testId + 'Caret'}>
 
-                {canRenderCountBadge() && <div className="countBadge" data-testid="countBadge">{numberForCountBadge}</div>}
+                {canRenderCountBadge() && <div className="countBadge" data-testid={testId + 'CountBadge'}>{numberForCountBadge}</div>}
 
                 <div className="drawerContainerTitleAndIcon">
                     <i className="material-icons" aria-hidden>{drawerIcon}</i>

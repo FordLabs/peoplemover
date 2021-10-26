@@ -501,7 +501,7 @@ class TestUtils {
         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         assignments: [TestUtils.assignmentForUnassigned, TestUtils.assignmentForArchived],
         startDate: '',
-        endDate: '',
+        endDate: undefined,
         archived: false,
         tags: [],
     };

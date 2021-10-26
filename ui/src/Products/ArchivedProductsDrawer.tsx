@@ -19,7 +19,7 @@ import React, {useState} from 'react';
 import '../Application/Styleguide/Main.scss';
 import './ArchivedProductsDrawer.scss';
 import ArchivedProduct from './ArchivedProduct';
-import {endsOnOrAfterDate, Product} from './Product';
+import {isArchivedOnDate, Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -32,22 +32,22 @@ interface ArchivedProductsDrawerProps{
 function ArchivedProductsDrawer({products, viewingDate}: ArchivedProductsDrawerProps): JSX.Element {
     const [showDrawer, setShowDrawer] = useState(false);
 
+    const getArchivedProducts = (): Array<Product> => {
+        return products.filter(product => isArchivedOnDate(product, viewingDate));
+    };
+
     const containee = <div className="archivedProductListContainer">
-        {products.map(product => {
-            const isArchived = product.archived
-                || !endsOnOrAfterDate(product, viewingDate);
-            if (isArchived) {
-                return (
-                    <div key={product.id}>
-                        <ArchivedProduct product={product}/>
-                    </div>
-                );
-            }
-            return null;
+        {getArchivedProducts().map(product => {
+            return (
+                <div key={product.id}>
+                    <ArchivedProduct product={product}/>
+                </div>
+            );
         })}
     </div>;
     return (
         <DrawerContainer drawerIcon="inbox"
+            numberForCountBadge={getArchivedProducts().length}
             containerTitle="Archived Products"
             testId="archivedProductsDrawer"
             containee={containee}
