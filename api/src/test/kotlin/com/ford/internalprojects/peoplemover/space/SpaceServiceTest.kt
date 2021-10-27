@@ -17,6 +17,8 @@
 
 package com.ford.internalprojects.peoplemover.space
 
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.auth.createMockJwt
 import io.mockk.every
@@ -43,6 +45,9 @@ class SpaceServiceTest {
 
     @Autowired
     lateinit var underTest: SpaceService
+
+    @Autowired
+    lateinit var spaceRepository: SpaceRepository
 
     @MockBean
     lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
@@ -96,5 +101,14 @@ class SpaceServiceTest {
         every { SecurityContextHolder.getContext().authentication.credentials } returns null
         assertThat(underTest.getSpacesForUser().size).isEqualTo(0)
         Mockito.verifyNoMoreInteractions(userSpaceMappingRepository)
+    }
+
+    @Test
+    fun `duplicating a space should make the caller the owner`() {
+        every { SecurityContextHolder.getContext().authentication.name } returns "USER_ID"
+        val oldSpace = spaceRepository.save(Space(name = "old space"))
+        var newSpace = underTest.duplicateSpace(oldSpace.uuid)
+        val expectedUserSpaceMapping = UserSpaceMapping(userId = "USER_ID", spaceUuid = newSpace.uuid, permission = PERMISSION_OWNER)
+        Mockito.verify(userSpaceMappingRepository, times(1)).save(expectedUserSpaceMapping)
     }
 }

@@ -20,8 +20,6 @@ package com.ford.internalprojects.peoplemover.space
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.*
-import com.ford.internalprojects.peoplemover.customfield.CustomFieldMapping
-import com.ford.internalprojects.peoplemover.customfield.CustomFieldMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
@@ -61,9 +59,6 @@ class SpaceControllerApiTest {
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
     @Autowired
-    private lateinit var customFieldMappingRepository: CustomFieldMappingRepository
-
-    @Autowired
     private lateinit var mockMvc: MockMvc
 
     var baseSpaceUrl: String = "/api/spaces"
@@ -72,7 +67,6 @@ class SpaceControllerApiTest {
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()
-        customFieldMappingRepository.deleteAll()
         spaceRepository.deleteAll()
         userSpaceMappingRepository.deleteAll()
     }
@@ -181,16 +175,6 @@ class SpaceControllerApiTest {
             )
         )
 
-        customFieldMappingRepository.save(
-            CustomFieldMapping(
-                referenceName = "field1",
-                vanityName = "cdsid",
-                spaceUuid = space1.uuid
-            )
-        )
-
-        val customFieldMapping = customFieldMappingRepository.findAll().first()
-
         val result = mockMvc.perform(
             get(baseSpaceUrl + "/" + space1.uuid)
                 .header("Authorization", "Bearer GOOD_TOKEN")
@@ -202,8 +186,6 @@ class SpaceControllerApiTest {
             result.response.contentAsByteArray,
             Space::class.java
         )
-
-        space1.customFieldLabels = listOf(customFieldMapping)
 
         assertThat(actualSpace).isEqualTo(space1)
     }
@@ -454,6 +436,8 @@ class SpaceControllerApiTest {
                 Space::class.java
         )
 
+        val newSpaceInDb = spaceRepository.findByUuid(newSpace.uuid)
+        assertThat(newSpaceInDb).isEqualTo(newSpace)
         assertThat(oldSpace.uuid).isNotEqualTo(newSpace.uuid)
         assertThat(newSpace.name).isEqualTo("${oldSpace.name} Duplicate")
     }

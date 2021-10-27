@@ -17,7 +17,6 @@
 
 package com.ford.internalprojects.peoplemover.space
 
-import com.ford.internalprojects.peoplemover.customfield.CustomFieldMapping
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
@@ -40,11 +39,7 @@ data class Space (
     var createdBy: String? = null,
 
     @Column(name="created_date")
-    var createdDate: LocalDateTime? = null,
-
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "space_uuid")
-    var customFieldLabels: List<CustomFieldMapping> = emptyList()
+    var createdDate: LocalDateTime? = null
 )
 
 fun Space.update(editSpaceRequest: EditSpaceRequest): Space {

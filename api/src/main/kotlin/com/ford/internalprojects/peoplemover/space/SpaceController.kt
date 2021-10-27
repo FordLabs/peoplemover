@@ -54,10 +54,10 @@ class SpaceController(
         return spaceService.getSpacesForUser()
     }
 
+    @PreAuthorize("hasPermission(#uuid, 'write')")
     @PostMapping("/{uuid}/duplicate")
     fun duplicateSpace(@PathVariable uuid: String): Space {
-        val originalSpace = spaceService.getSpace(uuid)
-        return Space(name = "${originalSpace.name} Duplicate")
+        return spaceService.duplicateSpace(uuid)
     }
 }
 

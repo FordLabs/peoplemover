@@ -120,4 +120,10 @@ class SpaceService(
         return spacesForUser.contains(spaceUuid)
     }
 
+    fun duplicateSpace(spaceUuid: String): Space {
+        val originalSpace = getSpace(spaceUuid)
+        val newSpaceUuid = spaceRepository.save(Space(name = "${originalSpace.name} Duplicate")).uuid
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = SecurityContextHolder.getContext().authentication.name, spaceUuid = newSpaceUuid, permission = PERMISSION_OWNER))
+        return spaceRepository.findByUuid(newSpaceUuid)!!
+    }
 }
