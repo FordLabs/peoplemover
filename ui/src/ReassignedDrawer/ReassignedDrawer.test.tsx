@@ -23,11 +23,13 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import {AxiosResponse} from 'axios';
 import thunk from 'redux-thunk';
-import {applyMiddleware, createStore} from 'redux';
+import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
+import ProductClient from '../Products/ProductClient';
 
 describe('ReassignedDrawer', () => {
     let app: RenderResult;
+    let store: Store;
     const mayFourteen2020: Date = new Date(2020, 4, 14);
     const fromProductName = 'Product 1';
 
@@ -46,12 +48,11 @@ describe('ReassignedDrawer', () => {
                 } as AxiosResponse
             ));
 
-            const store = createStore(rootReducer, {
+            store = createStore(rootReducer, {
                 currentSpace: TestUtils.space,
                 viewingDate: mayFourteen2020,
                 people: TestUtils.people,
             }, applyMiddleware(thunk));
-            store.dispatch = jest.fn();
 
             await wait(async () => {
                 app = renderWithRedux(<ReassignedDrawer/>, store);
@@ -75,11 +76,17 @@ describe('ReassignedDrawer', () => {
                 {data: {...TestUtils.archivedPerson, archiveDate: null}} as AxiosResponse
             ));
             const revertButton = await app.findByText('Revert');
-            fireEvent.click(revertButton);
+            await wait(() => {
+                fireEvent.click(revertButton);
+            });
             expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledTimes(1);
             expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledWith(mayFourteen2020, TestUtils.archivedPerson);
             expect(PeopleClient.updatePerson).toHaveBeenCalledTimes(1);
             expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, {...TestUtils.archivedPerson, archiveDate: undefined}, []);
+            expect(ProductClient.getProductsForDate).toHaveBeenCalledTimes(1);
+            expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, mayFourteen2020);
+            expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledTimes(1);
+            expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(TestUtils.space.uuid);
         });
     });
 });

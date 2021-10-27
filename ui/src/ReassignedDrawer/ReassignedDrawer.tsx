@@ -121,6 +121,7 @@ function ReassignedDrawer({
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
                 fetchProducts();
+                fetchPeople();
                 MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`);
             }).catch(err => {
                 MatomoEvents.pushEvent(currentSpace.name, 'revertError', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`, err.code);
