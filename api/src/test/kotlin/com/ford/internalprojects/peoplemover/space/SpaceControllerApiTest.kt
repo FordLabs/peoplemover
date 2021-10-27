@@ -437,4 +437,24 @@ class SpaceControllerApiTest {
         val actualSpace = spaceRepository.findByUuid(space.uuid)
         assertThat(actualSpace!!.name).isEqualTo(expectedName)
     }
+
+    @Test
+    fun `POST Duplicate Space Request should return a new space`() {
+        val oldSpace = spaceRepository.save(Space(name = "old space"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = oldSpace.uuid, permission = PERMISSION_OWNER))
+        val result = mockMvc.perform(
+                post("$baseSpaceUrl/${oldSpace.uuid}/duplicate")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                        .andExpect(status().isOk)
+                        .andReturn()
+        val newSpace: Space = objectMapper.readValue(
+                result.response.contentAsString,
+                Space::class.java
+        )
+
+        assertThat(oldSpace.uuid).isNotEqualTo(newSpace.uuid)
+        assertThat(newSpace.name).isEqualTo("${oldSpace.name} Duplicate")
+    }
 }

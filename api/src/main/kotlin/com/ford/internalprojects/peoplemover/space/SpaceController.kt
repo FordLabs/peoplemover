@@ -53,5 +53,11 @@ class SpaceController(
     fun getAllSpacesForUser(@RequestHeader(name = "Authorization") accessToken: String): List<Space> {
         return spaceService.getSpacesForUser()
     }
+
+    @PostMapping("/{uuid}/duplicate")
+    fun duplicateSpace(@PathVariable uuid: String): Space {
+        val originalSpace = spaceService.getSpace(uuid)
+        return Space(name = "${originalSpace.name} Duplicate")
+    }
 }
 
