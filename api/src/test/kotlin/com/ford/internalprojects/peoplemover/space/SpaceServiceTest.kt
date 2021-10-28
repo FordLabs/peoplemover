@@ -21,6 +21,16 @@ import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.auth.createMockJwt
+import com.ford.internalprojects.peoplemover.color.Color
+import com.ford.internalprojects.peoplemover.color.ColorRepository
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -51,6 +61,17 @@ class SpaceServiceTest {
 
     @MockBean
     lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
+
+    @Autowired
+    lateinit var colorRepository: ColorRepository
+    @Autowired
+    lateinit var roleRepository: SpaceRolesRepository
+    @Autowired
+    lateinit var locationRepository: SpaceLocationRepository
+    @Autowired
+    lateinit var productTagRepository: ProductTagRepository
+    @Autowired
+    lateinit var personTagRepository: PersonTagRepository
 
     @Before
     fun before() {
@@ -105,10 +126,48 @@ class SpaceServiceTest {
 
     @Test
     fun `duplicating a space should make the caller the owner`() {
-        every { SecurityContextHolder.getContext().authentication.name } returns "USER_ID"
-        val oldSpace = spaceRepository.save(Space(name = "old space"))
-        var newSpace = underTest.duplicateSpace(oldSpace.uuid)
-        val expectedUserSpaceMapping = UserSpaceMapping(userId = "USER_ID", spaceUuid = newSpace.uuid, permission = PERMISSION_OWNER)
-        Mockito.verify(userSpaceMappingRepository, times(1)).save(expectedUserSpaceMapping)
+        try {
+            every { SecurityContextHolder.getContext().authentication.name } returns "USER_ID"
+            val oldSpace = spaceRepository.save(Space(name = "old space"))
+            var newSpace = underTest.duplicateSpace(oldSpace.uuid)
+            val expectedUserSpaceMapping = UserSpaceMapping(userId = "USER_ID", spaceUuid = newSpace.uuid, permission = PERMISSION_OWNER)
+            Mockito.verify(userSpaceMappingRepository, times(1)).save(expectedUserSpaceMapping)
+        } finally {
+            spaceRepository.deleteAll()
+        }
+    }
+
+    @Test
+    fun `duplicating a space should duplicate the tags`() {
+        try {
+            every { SecurityContextHolder.getContext().authentication.name } returns "USER_ID"
+            val oldSpace = spaceRepository.save(Space(name = "old space"))
+            locationRepository.save(SpaceLocation(spaceUuid = oldSpace.uuid, name = "location"))
+            productTagRepository.save(ProductTag(spaceUuid = oldSpace.uuid, name = "product tag"))
+            personTagRepository.save(PersonTag(spaceUuid = oldSpace.uuid, name = "person tag"))
+            val color = colorRepository.save(Color(color = "red"))
+            roleRepository.save(SpaceRole(spaceUuid = oldSpace.uuid, name = "role", color = color))
+            var newSpace = underTest.duplicateSpace(oldSpace.uuid)
+            val actualLocations = locationRepository.findAllBySpaceUuid(newSpace.uuid)
+            assertThat(actualLocations.size).isOne()
+            assertThat(actualLocations.toList()[0].name).isEqualTo("location")
+            val actualProductTags = productTagRepository.findAllBySpaceUuid(newSpace.uuid)
+            assertThat(actualProductTags.size).isOne()
+            assertThat(actualProductTags.toList()[0].name).isEqualTo("product tag")
+            val actualPersonTags = personTagRepository.findAllBySpaceUuid(newSpace.uuid)
+            assertThat(actualPersonTags.size).isOne()
+            assertThat(actualPersonTags.toList()[0].name).isEqualTo("person tag")
+            val actualRoles = roleRepository.findAllBySpaceUuid(newSpace.uuid)
+            assertThat(actualRoles.size).isOne()
+            assertThat(actualRoles.toList()[0].name).isEqualTo("role")
+            assertThat(actualRoles.toList()[0].color?.color).isEqualTo(color.color)
+        } finally {
+            spaceRepository.deleteAll()
+            colorRepository.deleteAll()
+            roleRepository.deleteAll()
+            locationRepository.deleteAll()
+            productTagRepository.deleteAll()
+            personTagRepository.deleteAll()
+        }
     }
 }

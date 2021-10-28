@@ -61,4 +61,9 @@ class ProductTagService(
             throw EntityAlreadyExistsException()
         }
     }
+
+    fun duplicate(originalSpaceUuid: String, destinationSpaceUuid: String) {
+        val originalPersonTags = getAllProductTags(originalSpaceUuid)
+        originalPersonTags.map {personTag -> createProductTagForSpace(TagRequest(personTag.name), destinationSpaceUuid)}
+    }
 }

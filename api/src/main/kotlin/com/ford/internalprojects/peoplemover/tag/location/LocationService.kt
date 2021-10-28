@@ -53,4 +53,9 @@ class LocationService(
     fun deleteLocation(locationId: Int, spaceUuid: String) {
         spaceLocationRepository.deleteEntityAndUpdateSpaceLastModified(locationId, spaceUuid)
     }
+
+    fun duplicate(originalSpaceUuid: String, destinationSpaceUuid: String) {
+        val originalLocations = getLocationsForSpace(originalSpaceUuid)
+        originalLocations.map {location -> addLocationToSpace(destinationSpaceUuid, TagRequest(location.name))}
+    }
 }

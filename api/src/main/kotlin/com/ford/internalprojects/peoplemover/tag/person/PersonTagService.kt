@@ -61,4 +61,9 @@ class PersonTagService(
             throw EntityAlreadyExistsException()
         }
     }
+
+    fun duplicate(originalSpaceUuid: String, destinationSpaceUuid: String) {
+        val originalPersonTags = getAllPersonTags(originalSpaceUuid)
+        originalPersonTags.map {personTag -> createPersonTagForSpace(TagRequest(personTag.name), destinationSpaceUuid)}
+    }
 }

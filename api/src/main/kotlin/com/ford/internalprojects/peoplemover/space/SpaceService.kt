@@ -25,7 +25,10 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import org.springframework.security.core.Authentication
+import com.ford.internalprojects.peoplemover.tag.location.LocationService
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagService
+import com.ford.internalprojects.peoplemover.tag.role.RoleService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
@@ -38,6 +41,10 @@ import java.util.*
 class SpaceService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
+        private val locationService: LocationService,
+        private val productTagService: ProductTagService,
+        private val personTagService: PersonTagService,
+        private val roleService: RoleService,
         private val userSpaceMappingRepository: UserSpaceMappingRepository
 ) {
 
@@ -124,6 +131,10 @@ class SpaceService(
         val originalSpace = getSpace(spaceUuid)
         val newSpaceUuid = spaceRepository.save(Space(name = "${originalSpace.name} Duplicate")).uuid
         userSpaceMappingRepository.save(UserSpaceMapping(userId = SecurityContextHolder.getContext().authentication.name, spaceUuid = newSpaceUuid, permission = PERMISSION_OWNER))
+        locationService.duplicate(originalSpace.uuid, newSpaceUuid)
+        productTagService.duplicate(originalSpace.uuid, newSpaceUuid)
+        personTagService.duplicate(originalSpace.uuid, newSpaceUuid)
+        roleService.duplicate(originalSpace.uuid, newSpaceUuid)
         return spaceRepository.findByUuid(newSpaceUuid)!!
     }
 }

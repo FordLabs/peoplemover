@@ -99,4 +99,9 @@ class RoleService(
             }
         }
     }
+
+    fun duplicate(originalSpaceUuid: String, destinationSpaceUuid: String) {
+        val originalRoles = getRolesForSpace(originalSpaceUuid)
+        originalRoles.map { role -> addRoleToSpace(destinationSpaceUuid, role.name, role.color?.id) }
+    }
 }
