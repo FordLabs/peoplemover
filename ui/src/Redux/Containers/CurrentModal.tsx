@@ -37,6 +37,7 @@ import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSec
 import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
 import {FilterTypeListings} from '../../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../../Modal/AvailableModals';
+import LeaveSpaceForm from "../../SpaceDashboard/LeaveSpaceForm";
 
 export interface ModalMetadataItem {
     title: string;
@@ -135,8 +136,8 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             }];
         case AvailableModals.LEAVE_SPACE:
             return[{
-                title: "Poopy Non-Tested String",
-                form: <div>Leave & delete</div>,
+                title: "Are you sure?",
+                form: <LeaveSpaceForm space={item}/>
             }]
         default:
             return null;
