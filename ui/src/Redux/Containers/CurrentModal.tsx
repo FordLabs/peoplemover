@@ -133,6 +133,11 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
                 title: 'Your team member now has access!',
                 form: <GrantEditAccessConfirmationForm />,
             }];
+        case AvailableModals.LEAVE_SPACE:
+            return[{
+                title: "Poopy Non-Tested String",
+                form: <div>Leave & delete</div>,
+            }]
         default:
             return null;
     }

@@ -57,6 +57,10 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
         return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
     }
 
+    function openLeaveModal(): void {
+        return setCurrentModal({modal: AvailableModals.LEAVE_SPACE, item: space});
+    }
+
     const ActionsDropdownContent = (): JSX.Element => {
         return (
             <AccessibleDropdownContainer
@@ -73,6 +77,15 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                 >
                     <i className="material-icons">edit</i>
                 Edit
+                </button>
+                <button
+                    data-testid="leaveSpace"
+                    className="dropdownOptions"
+                    role="menuitem"
+                    onClick={openLeaveModal}
+                >
+                    <i className="material-icons">edit</i>
+                    Leave Space
                 </button>
             </AccessibleDropdownContainer>
         );

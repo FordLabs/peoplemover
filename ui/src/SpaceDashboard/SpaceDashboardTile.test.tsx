@@ -51,7 +51,7 @@ describe('SpaceDashboardTile tests', () => {
         await act(async () => {
             const editSpaceEllipsis = await component.findByTestId('ellipsisButton');
             fireEvent.click(editSpaceEllipsis);
-            const editSpaceTile = await component.findByTestId('editSpace');
+            const editSpaceTile = await component.findByText('Edit');
             fireEvent.click(editSpaceTile);
         });
         expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
@@ -60,9 +60,37 @@ describe('SpaceDashboardTile tests', () => {
         }));
     });
 
+    it('should open leave space modal on click', async () => {
+        await act(async () => {
+            const spaceEllipsis = await component.findByTestId('ellipsisButton');
+            fireEvent.click(spaceEllipsis);
+            const leaveSpaceTile = await component.findByText('Leave Space');
+            fireEvent.click(leaveSpaceTile);
+        });
+        expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
+            modal: AvailableModals.LEAVE_SPACE,
+            item: TestUtils.space,
+        }));
+    });
+
+
+
     it('should focus the first dropdown option when opened', async () => {
         const spaceTileDropdownButton = await component.findByTestId('ellipsisButton');
         spaceTileDropdownButton.click();
         await wait(() => expect(component.getByTestId('editSpace')).toHaveFocus());
+    });
+    
+    xit('should see the two options "leave & delete" and "assign a new owner"', async () => {
+        await act(async () => {
+            const spaceEllipsis = await component.findByTestId('ellipsisButton');
+            fireEvent.click(spaceEllipsis);
+
+            const leaveSpaceTile = await component.findByTestId('leaveSpace');
+            fireEvent.click(leaveSpaceTile);
+        });
+        expect(await component.findByText('Leave & delete')).toBeInTheDocument();
+        expect(component.getByText('Assign a new owner')).toBeInTheDocument();
+
     });
 });
