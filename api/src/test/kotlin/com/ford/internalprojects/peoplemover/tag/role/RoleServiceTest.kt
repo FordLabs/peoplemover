@@ -66,9 +66,10 @@ class RoleServiceTest {
         roleService.duplicate(oldSpace.uuid, newSpace.uuid)
         val actualRoles = roleRepository.findAllBySpaceUuid(newSpace.uuid)
         assertThat(actualRoles.size).isEqualTo(2)
-        (0..1).forEach { index ->
-            assertThat(actualRoles.toList()[index].name).isEqualTo(initialNames[index])
-            assertThat(actualRoles.toList()[index].color).isEqualTo(initialColors[index])
+        actualRoles.forEachIndexed { index, role ->
+            assertThat(role.name).isEqualTo(initialRoles[index].name)
+            assertThat(role.color).isEqualTo(initialRoles[index].color)
+            assertThat(role.id).isNotEqualTo(initialRoles[index].id)
         }
     }
 }

@@ -21,6 +21,7 @@ import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.auth.getUsernameOrAppName
+import com.ford.internalprojects.peoplemover.person.PersonService
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
@@ -45,6 +46,7 @@ class SpaceService(
         private val productTagService: ProductTagService,
         private val personTagService: PersonTagService,
         private val roleService: RoleService,
+        private val personService: PersonService,
         private val userSpaceMappingRepository: UserSpaceMappingRepository
 ) {
 
@@ -131,10 +133,11 @@ class SpaceService(
         val originalSpace = getSpace(spaceUuid)
         val newSpaceUuid = spaceRepository.save(Space(name = "${originalSpace.name} Duplicate")).uuid
         userSpaceMappingRepository.save(UserSpaceMapping(userId = SecurityContextHolder.getContext().authentication.name, spaceUuid = newSpaceUuid, permission = PERMISSION_OWNER))
-        locationService.duplicate(originalSpace.uuid, newSpaceUuid)
-        productTagService.duplicate(originalSpace.uuid, newSpaceUuid)
-        personTagService.duplicate(originalSpace.uuid, newSpaceUuid)
-        roleService.duplicate(originalSpace.uuid, newSpaceUuid)
+        locationService.duplicate(spaceUuid, newSpaceUuid)
+        productTagService.duplicate(spaceUuid, newSpaceUuid)
+        personTagService.duplicate(spaceUuid, newSpaceUuid)
+        roleService.duplicate(spaceUuid, newSpaceUuid)
+        personService.duplicate(spaceUuid, newSpaceUuid)
         return spaceRepository.findByUuid(newSpaceUuid)!!
     }
 }

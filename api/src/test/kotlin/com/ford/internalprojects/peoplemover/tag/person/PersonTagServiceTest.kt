@@ -58,8 +58,10 @@ class PersonTagServiceTest {
         personTagService.duplicate(oldSpace.uuid, newSpace.uuid)
         val actualPersonTags = personTagRepository.findAllBySpaceUuid(newSpace.uuid)
         assertThat(actualPersonTags.size).isEqualTo(2)
-        actualPersonTags.forEach { personTag ->
+        actualPersonTags.forEachIndexed { index, personTag ->
             assertThat(initialNames).contains(personTag.name)
+            assertThat(personTag.name).isEqualTo(initialPersonTags[index].name)
+            assertThat(personTag.id).isNotEqualTo(initialPersonTags[index].id)
         }
     }
 }

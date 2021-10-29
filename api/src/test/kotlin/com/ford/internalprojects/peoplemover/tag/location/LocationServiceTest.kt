@@ -57,8 +57,10 @@ class LocationServiceTest {
         locationService.duplicate(oldSpace.uuid, newSpace.uuid)
         val actualLocations = locationRepository.findAllBySpaceUuid(newSpace.uuid)
         assertThat(actualLocations.size).isEqualTo(2)
-        actualLocations.forEach { location ->
+        actualLocations.forEachIndexed { index, location ->
             assertThat(initialNames).contains(location.name)
+            assertThat(location.name).isEqualTo(initialLocations[index].name)
+            assertThat(location.id).isNotEqualTo(initialLocations[index].id)
         }
     }
 }

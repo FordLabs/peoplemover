@@ -84,8 +84,11 @@ class PersonServiceTest {
         personService.duplicate(oldSpace.uuid, newSpace.uuid)
         val actualPersons = personRepository.findAllBySpaceUuid(newSpace.uuid)
         assertThat(actualPersons.size).isEqualTo(2)
-        actualPersons.forEach { person ->
+        actualPersons.forEachIndexed { index, person ->
             assertThat(initialNames).contains(person.name)
+            assertThat(person.name).isEqualTo(initialPersons[index].name)
+            println("new: ${person.id} : original: ${initialPersons[index].id}")
+            assertThat(person.id).isNotEqualTo(initialPersons[index].id)
         }
     }
 }

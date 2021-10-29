@@ -58,8 +58,10 @@ class ProductTagServiceTest {
         productTagService.duplicate(oldSpace.uuid, newSpace.uuid)
         val actualProductTags = productTagRepository.findAllBySpaceUuid(newSpace.uuid)
         assertThat(actualProductTags.size).isEqualTo(2)
-        actualProductTags.forEach { productTag ->
+        actualProductTags.forEachIndexed { index, productTag ->
             assertThat(initialNames).contains(productTag.name)
+            assertThat(productTag.name).isEqualTo(initialProductTags[index].name)
+            assertThat(productTag.id).isNotEqualTo(initialProductTags[index].id)
         }
     }
 }

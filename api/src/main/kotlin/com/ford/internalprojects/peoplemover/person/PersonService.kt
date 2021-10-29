@@ -57,7 +57,7 @@ class PersonService(
     fun duplicate(originalSpaceUuid: String, destinationSpaceUuid: String) {
         val originalPeople = getPeopleInSpace(originalSpaceUuid)
         originalPeople.map {originalPerson ->
-            var newRole = spaceRolesRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, originalPerson.spaceRole!!.name)
+            var newRole = spaceRolesRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, (originalPerson.spaceRole?.name ?: "") )
             var newTags = originalPerson.tags.map { tag -> personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, tag.name)}
             createPerson(Person(
                     name = originalPerson.name,
