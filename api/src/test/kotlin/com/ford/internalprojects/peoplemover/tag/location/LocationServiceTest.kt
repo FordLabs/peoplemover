@@ -20,6 +20,7 @@ package com.ford.internalprojects.peoplemover.tag.location
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,6 +42,11 @@ class LocationServiceTest {
     @Autowired
     lateinit var spaceRepository: SpaceRepository
 
+    @After
+    fun tearDown() {
+        spaceRepository.deleteAll()
+        locationRepository.deleteAll()
+    }
     @Test
     fun `should duplicate locations`() {
         val oldSpace = spaceRepository.save(Space(name = "old space"))
@@ -54,7 +60,5 @@ class LocationServiceTest {
         actualLocations.forEach { location ->
             assertThat(initialNames).contains(location.name)
         }
-        spaceRepository.deleteAll()
-        locationRepository.deleteAll()
     }
 }

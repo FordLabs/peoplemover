@@ -22,6 +22,7 @@ import com.ford.internalprojects.peoplemover.color.ColorRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,6 +47,13 @@ class RoleServiceTest {
     @Autowired
     lateinit var colorRepository: ColorRepository
 
+    @After
+    fun tearDown() {
+        spaceRepository.deleteAll()
+        roleRepository.deleteAll()
+        colorRepository.deleteAll()
+    }
+
     @Test
     fun `should duplicate roles`() {
         val oldSpace = spaceRepository.save(Space(name = "old space"))
@@ -62,8 +70,5 @@ class RoleServiceTest {
             assertThat(actualRoles.toList()[index].name).isEqualTo(initialNames[index])
             assertThat(actualRoles.toList()[index].color).isEqualTo(initialColors[index])
         }
-        spaceRepository.deleteAll()
-        roleRepository.deleteAll()
-        colorRepository.deleteAll()
     }
 }
