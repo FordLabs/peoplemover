@@ -18,16 +18,17 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
-import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
-import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
-import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
 class PersonService(
         private val personRepository: PersonRepository,
+        private val spaceRolesRepository: SpaceRolesRepository,
+        private val personTagRepository: PersonTagRepository,
         private val assignmentService: AssignmentService
 ) {
 
@@ -51,5 +52,24 @@ class PersonService(
             updatePerson(person)
         }
         return true
+    }
+
+    fun duplicate(originalSpaceUuid: String, destinationSpaceUuid: String) {
+        val originalPeople = getPeopleInSpace(originalSpaceUuid)
+        originalPeople.map {originalPerson ->
+            var newRole = spaceRolesRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, originalPerson.spaceRole!!.name)
+            var newTags = originalPerson.tags.map { tag -> personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, tag.name)}
+            createPerson(Person(
+                    name = originalPerson.name,
+                    spaceRole = newRole,
+                    tags = newTags.toSet() as Set<PersonTag>,
+                    notes = originalPerson.notes,
+                    newPerson = originalPerson.newPerson,
+                    newPersonDate = originalPerson.newPersonDate,
+                    spaceUuid = destinationSpaceUuid,
+                    customField1 = originalPerson.customField1,
+                    archiveDate = originalPerson.archiveDate
+            ))
+        }
     }
 }
