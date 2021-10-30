@@ -17,6 +17,8 @@
 
 package com.ford.internalprojects.peoplemover.space
 
+import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
@@ -25,6 +27,8 @@ import com.ford.internalprojects.peoplemover.color.Color
 import com.ford.internalprojects.peoplemover.color.ColorRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
+import com.ford.internalprojects.peoplemover.product.Product
+import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.tag.person.PersonTag
@@ -76,6 +80,10 @@ class SpaceServiceTest {
     lateinit var personTagRepository: PersonTagRepository
     @Autowired
     lateinit var personRepository: PersonRepository
+    @Autowired
+    lateinit var productRepository: ProductRepository
+    @Autowired
+    lateinit var assignmentRepository: AssignmentRepository
 
     @Before
     fun before() {
@@ -142,7 +150,7 @@ class SpaceServiceTest {
     }
 
     @Test
-    fun `duplicating a space should duplicate the tags and people`() {
+    fun `duplicating a space should duplicate the tags, people and products`() {
         try {
             every { SecurityContextHolder.getContext().authentication.name } returns "USER_ID"
             val oldSpace = spaceRepository.save(Space(name = "old space"))
@@ -151,24 +159,32 @@ class SpaceServiceTest {
             personTagRepository.save(PersonTag(spaceUuid = oldSpace.uuid, name = "person tag"))
             val color = colorRepository.save(Color(color = "red"))
             roleRepository.save(SpaceRole(spaceUuid = oldSpace.uuid, name = "role", color = color))
-            personRepository.save(Person(spaceUuid = oldSpace.uuid, name = "person"))
+            val person = personRepository.save(Person(spaceUuid = oldSpace.uuid, name = "person"))
+            val product = productRepository.save(Product(spaceUuid = oldSpace.uuid, name = "product"))
+            assignmentRepository.save(AssignmentV1(spaceUuid = oldSpace.uuid, productId = product.id!!, person = person))
             var newSpace = underTest.duplicateSpace(oldSpace.uuid)
             val actualLocations = locationRepository.findAllBySpaceUuid(newSpace.uuid)
             assertThat(actualLocations.size).isOne()
-            assertThat(actualLocations.toList()[0].name).isEqualTo("location")
+            assertThat(actualLocations.first().name).isEqualTo("location")
             val actualProductTags = productTagRepository.findAllBySpaceUuid(newSpace.uuid)
             assertThat(actualProductTags.size).isOne()
-            assertThat(actualProductTags.toList()[0].name).isEqualTo("product tag")
+            assertThat(actualProductTags.first().name).isEqualTo("product tag")
             val actualPersonTags = personTagRepository.findAllBySpaceUuid(newSpace.uuid)
             assertThat(actualPersonTags.size).isOne()
-            assertThat(actualPersonTags.toList()[0].name).isEqualTo("person tag")
+            assertThat(actualPersonTags.first().name).isEqualTo("person tag")
             val actualRoles = roleRepository.findAllBySpaceUuid(newSpace.uuid)
             assertThat(actualRoles.size).isOne()
-            assertThat(actualRoles.toList()[0].name).isEqualTo("role")
-            assertThat(actualRoles.toList()[0].color?.color).isEqualTo(color.color)
+            assertThat(actualRoles.first().name).isEqualTo("role")
+            assertThat(actualRoles.first().color?.color).isEqualTo(color.color)
             val actualPeople = personRepository.findAllBySpaceUuid(newSpace.uuid)
             assertThat(actualPeople.size).isOne()
             assertThat(actualPeople[0].name).isEqualTo("person")
+            val actualProducts = productRepository.findAllBySpaceUuid(newSpace.uuid)
+            assertThat(actualProducts.size).isOne()
+            assertThat(actualProducts[0].name).isEqualTo("product")
+            assertThat(actualProducts[0].assignments.size).isOne()
+            assertThat(actualProducts[0].assignments.first().person).isEqualTo(personRepository.findAllBySpaceUuid(newSpace.uuid).first())
+            assertThat(actualProducts[0].assignments.first().productId).isEqualTo(productRepository.findAllBySpaceUuid(newSpace.uuid).first().id!!)
         } finally {
             spaceRepository.deleteAll()
             colorRepository.deleteAll()
@@ -177,6 +193,8 @@ class SpaceServiceTest {
             productTagRepository.deleteAll()
             personTagRepository.deleteAll()
             personRepository.deleteAll()
+            productRepository.deleteAll()
+            assignmentRepository.deleteAll()
         }
     }
 }

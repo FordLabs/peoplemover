@@ -138,6 +138,7 @@ class SpaceService(
         personTagService.duplicate(spaceUuid, newSpaceUuid)
         roleService.duplicate(spaceUuid, newSpaceUuid)
         personService.duplicate(spaceUuid, newSpaceUuid)
+        productService.duplicate(spaceUuid, newSpaceUuid)
         return spaceRepository.findByUuid(newSpaceUuid)!!
     }
 }

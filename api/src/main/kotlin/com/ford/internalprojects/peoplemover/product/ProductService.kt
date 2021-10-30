@@ -17,16 +17,26 @@
 
 package com.ford.internalprojects.peoplemover.product
 
+import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityAlreadyExistsException
 import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityNotExistsException
+import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
 class ProductService(
         private val productRepository: ProductRepository,
+        private val locationRepository: SpaceLocationRepository,
+        private val productTagRepository: ProductTagRepository,
+        private val assignmentRepository: AssignmentRepository,
+        private val personRepository: PersonRepository,
         private val assignmentService: AssignmentService
 ) {
     fun findAll(): List<Product> =
@@ -119,5 +129,31 @@ class ProductService(
                 spaceUuid = space.uuid
         )
         productRepository.createEntityAndUpdateSpaceLastModified(unassignedProduct)
+    }
+
+    fun duplicate(originalSpaceUuid: String, destinationSpaceUuid: String) {
+        val originalProducts = findAllBySpaceUuid(originalSpaceUuid)
+        val newPeople = personRepository.findAllBySpaceUuid(destinationSpaceUuid)
+        originalProducts.map {originalProduct ->
+            var newRole = locationRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, (originalProduct.spaceLocation?.name ?: "") )
+            var newTags = originalProduct.tags.map { tag -> productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, tag.name)}
+            // Issue: Need to figure out a better way to do this rather than suppressing unchecked casts
+            // Issue: Need to figure out a better way of doing this rather than hitting product and assignment repositories directly
+            @Suppress("UNCHECKED_CAST")
+            var newProduct = productRepository.save(Product(
+                    name = originalProduct.name,
+                    spaceLocation = newRole,
+                    tags = newTags.toSet() as Set<ProductTag>,
+                    spaceUuid = destinationSpaceUuid
+            ))
+            originalProduct.assignments.map { assignment -> assignmentRepository.save(AssignmentV1(
+                    productId = newProduct.id!!,
+                    placeholder = assignment.placeholder,
+                    effectiveDate = assignment.effectiveDate,
+                    spaceUuid = destinationSpaceUuid,
+                    // Issue: People with the same name in a space can't be distinguished
+                    person = newPeople.find { person -> person.name == assignment.person.name }!!
+            ))}
+        }
     }
 }
