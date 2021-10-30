@@ -146,13 +146,23 @@ class ProductService(
                     tags = newTags.toSet() as Set<ProductTag>,
                     spaceUuid = destinationSpaceUuid
             ))
-            originalProduct.assignments.map { assignment -> assignmentRepository.save(AssignmentV1(
+            originalProduct.assignments.map { originalAssignment -> assignmentRepository.save(AssignmentV1(
                     productId = newProduct.id!!,
-                    placeholder = assignment.placeholder,
-                    effectiveDate = assignment.effectiveDate,
+                    placeholder = originalAssignment.placeholder,
+                    effectiveDate = originalAssignment.effectiveDate,
                     spaceUuid = destinationSpaceUuid,
-                    // Issue: People with the same name in a space can't be distinguished
-                    person = newPeople.find { person -> person.name == assignment.person.name }!!
+                    // Issue: Is this enough to distinguish people?
+                    person = newPeople.find { person ->
+                        person.name == originalAssignment.person.name
+                                && person.newPerson == originalAssignment.person.newPerson
+                                && person.newPersonDate == originalAssignment.person.newPersonDate
+                                && person.archiveDate == originalAssignment.person.archiveDate
+                                && person.customField1 == originalAssignment.person.customField1
+                                && person.notes == originalAssignment.person.notes
+                                && person.spaceRole?.name == originalAssignment.person.spaceRole?.name
+                                && person.tags.size == originalAssignment.person.tags.size
+                        // How to do this for each tag name?
+                    }!!
             ))}
         }
     }
