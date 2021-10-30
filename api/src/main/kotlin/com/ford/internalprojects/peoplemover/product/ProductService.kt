@@ -161,7 +161,8 @@ class ProductService(
                                 && person.notes == originalAssignment.person.notes
                                 && person.spaceRole?.name == originalAssignment.person.spaceRole?.name
                                 && person.tags.size == originalAssignment.person.tags.size
-                        // How to do this for each tag name?
+                                && person.tags.map { tag -> tag.name }.containsAll(originalAssignment.person.tags.map { tag -> tag.name })
+                                && originalAssignment.person.tags.map { tag -> tag.name }.containsAll(person.tags.map { tag -> tag.name })
                     }!!
             ))}
         }
