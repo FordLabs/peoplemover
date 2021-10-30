@@ -88,6 +88,9 @@ class PersonServiceTest {
             assertThat(initialNames).contains(person.name)
             assertThat(person.name).isEqualTo(initialPersons[index].name)
             assertThat(person.id).isNotEqualTo(initialPersons[index].id)
+            assertThat(person.spaceRole).isEqualTo(spaceRolesRepository.findAllBySpaceUuid(newSpace.uuid).toList()[index])
+            assertThat(person.tags.size).isOne()
+            assertThat(person.tags.first()).isEqualTo(personTagRepository.findAllBySpaceUuid(newSpace.uuid)[index])
         }
     }
 }
