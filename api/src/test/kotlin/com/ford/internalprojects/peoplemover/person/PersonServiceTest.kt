@@ -87,7 +87,6 @@ class PersonServiceTest {
         actualPersons.forEachIndexed { index, person ->
             assertThat(initialNames).contains(person.name)
             assertThat(person.name).isEqualTo(initialPersons[index].name)
-            println("new: ${person.id} : original: ${initialPersons[index].id}")
             assertThat(person.id).isNotEqualTo(initialPersons[index].id)
         }
     }
