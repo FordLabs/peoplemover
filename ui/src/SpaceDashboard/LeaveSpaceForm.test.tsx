@@ -4,10 +4,11 @@ import {act, RenderResult} from '@testing-library/react';
 import LeaveSpaceForm from './LeaveSpaceForm';
 import {fireEvent} from '@testing-library/dom';
 import SpaceClient from '../Space/SpaceClient';
-import {closeModalAction} from '../Redux/Actions';
+import {AvailableActions, closeModalAction} from '../Redux/Actions';
 import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
+import {AvailableModals} from '../Modal/AvailableModals';
 
 
 
@@ -56,7 +57,16 @@ describe('Space Form', () => {
 
 
         it('should open the Invite Others to Edit modal when the assign a new owner button is pressed', () => {
-            fail('writeme');
+            SpaceClient.deleteSpaceByUuid = jest.fn();
+            act(() => {
+                const bigRedButton = form.getByText('Assign a new owner');
+                fireEvent.click(bigRedButton);
+            });
+            expect(store.dispatch).toHaveBeenCalledWith({
+                type: AvailableActions.SET_CURRENT_MODAL,
+                modal: AvailableModals.SHARE_SPACE_ACCESS,
+                item: TestUtils.space,
+            });
         });
 
         it('should remove you as an editor after the Invite Others to Edit modal actions are completed', () => {

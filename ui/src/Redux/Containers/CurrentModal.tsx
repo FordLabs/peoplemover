@@ -127,7 +127,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
         case AvailableModals.SHARE_SPACE_ACCESS:
             return [
                 {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
-                {title: 'Invite others to edit', form: <InviteEditorsFormSection/>},
+                {title: 'Invite others to edit', form: <InviteEditorsFormSection space={item}/>},
             ];
         case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
             return [{
