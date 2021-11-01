@@ -68,13 +68,5 @@ describe('Space Form', () => {
                 item: TestUtils.space,
             });
         });
-
-        it('should remove you as an editor after the Invite Others to Edit modal actions are completed', () => {
-            fail('writeme');
-        });
-    });
-
-    it('should write its Cypress test verifying the linkage present in CurrentModal.tsx', () => {
-        fail('should write its Cypress test verifying the linkage present in CurrentModal.tsx');
     });
 });
