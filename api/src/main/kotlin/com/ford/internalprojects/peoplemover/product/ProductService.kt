@@ -136,14 +136,12 @@ class ProductService(
         val newPeople = personRepository.findAllBySpaceUuid(destinationSpaceUuid)
         originalProducts.map {originalProduct ->
             var newRole = locationRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, (originalProduct.spaceLocation?.name ?: "") )
-            var newTags = originalProduct.tags.map { tag -> productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(destinationSpaceUuid, tag.name)}
-            // Issue: Need to figure out a better way to do this rather than suppressing unchecked casts
+            var newTags = originalProduct.tags.map { tag -> productTagRepository.findAllBySpaceUuidAndName(destinationSpaceUuid, tag.name)}
             // Issue: Need to figure out a better way of doing this rather than hitting product and assignment repositories directly
-            @Suppress("UNCHECKED_CAST")
             var newProduct = productRepository.save(Product(
                     name = originalProduct.name,
                     spaceLocation = newRole,
-                    tags = newTags.toSet() as Set<ProductTag>,
+                    tags = newTags.toSet(),
                     spaceUuid = destinationSpaceUuid
             ))
             originalProduct.assignments.map { originalAssignment -> assignmentRepository.save(AssignmentV1(
