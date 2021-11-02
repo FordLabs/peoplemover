@@ -18,6 +18,8 @@
 package com.ford.internalprojects.peoplemover.space
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -52,6 +54,12 @@ class SpaceController(
     @GetMapping("/user")
     fun getAllSpacesForUser(@RequestHeader(name = "Authorization") accessToken: String): List<Space> {
         return spaceService.getSpacesForUser()
+    }
+
+    @PreAuthorize("hasPermission(#uuid, 'owner')")
+    @DeleteMapping("/{uuid}")
+    fun deleteSpace(@RequestHeader(name = "Authorization") accessToken: String, @PathVariable uuid: String): ResponseEntity<Unit> {
+        return if (spaceService.deleteSpace(uuid)) { ResponseEntity(HttpStatus.OK) } else{ ResponseEntity(HttpStatus.BAD_REQUEST)}
     }
 }
 
