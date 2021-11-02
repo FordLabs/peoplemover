@@ -10,8 +10,6 @@ import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
 import {AvailableModals} from '../Modal/AvailableModals';
 
-
-
 describe('Space Form', () => {
     let form: RenderResult;
     let store: Store;
@@ -35,7 +33,7 @@ describe('Space Form', () => {
             expect(form.getByText('Assign a new owner')).toBeInTheDocument();
         });
         it('should stop showing the modal when the leave and delete button is pressed',  async () => {
-            SpaceClient.deleteSpaceByUuid = jest.fn();
+            SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
             act(() => {
                 const bigRedButton = form.getByText('Leave & delete');
                 fireEvent.click(bigRedButton);
@@ -46,15 +44,13 @@ describe('Space Form', () => {
 
     describe('things to do', () => {
         it('should call the space client when the leave and delete button is pressed with appropriate spaceId',  () => {
-            SpaceClient.deleteSpaceByUuid = jest.fn();
+            SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
             act(() => {
                 const bigRedButton = form.getByText('Leave & delete');
                 fireEvent.click(bigRedButton);
             });
             expect(SpaceClient.deleteSpaceByUuid).toHaveBeenCalledWith(TestUtils.space.uuid);
         });
-
-
 
         it('should open the Invite Others to Edit modal when the assign a new owner button is pressed', () => {
             SpaceClient.deleteSpaceByUuid = jest.fn();

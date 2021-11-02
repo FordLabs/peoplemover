@@ -28,4 +28,21 @@ describe('The Space Dashboard', () => {
         cy.contains('Assign a new owner').click();
         cy.contains('Invite others to edit');
     });
+
+    it('refreshes page after deleting a space', () => {
+        cy.visit('/user/dashboard');
+        cy.injectAxe();
+        cy.get('.createNewSpaceButton').click();
+        cy.get('[data-testid=createSpaceInputField]').type('abc');
+        cy.get('[data-testid=createSpaceButton]').click();
+        cy.contains('Unassigned');
+        cy.contains('PEOPLEMOVER').click();
+        cy.get('[data-testid=spaceDashboardTile]')
+            .should('contain.text', 'abc');
+        cy.get('#ellipsis-button-abc').first().click();
+        cy.contains('Leave Space').click();
+        cy.contains('Leave & delete').click();
+        cy.get('[data-testid=spaceDashboardTile]')
+            .should('not.contain.text', 'abc');
+    });
 });

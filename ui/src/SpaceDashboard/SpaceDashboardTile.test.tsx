@@ -73,24 +73,9 @@ describe('SpaceDashboardTile tests', () => {
         }));
     });
 
-
-
     it('should focus the first dropdown option when opened', async () => {
         const spaceTileDropdownButton = await component.findByTestId('ellipsisButton');
         spaceTileDropdownButton.click();
         await wait(() => expect(component.getByTestId('editSpace')).toHaveFocus());
-    });
-    
-    xit('should see the two options "leave & delete" and "assign a new owner"', async () => {
-        await act(async () => {
-            const spaceEllipsis = await component.findByTestId('ellipsisButton');
-            fireEvent.click(spaceEllipsis);
-
-            const leaveSpaceTile = await component.findByTestId('leaveSpace');
-            fireEvent.click(leaveSpaceTile);
-        });
-        expect(await component.findByText('Leave & delete')).toBeInTheDocument();
-        expect(component.getByText('Assign a new owner')).toBeInTheDocument();
-
     });
 });
