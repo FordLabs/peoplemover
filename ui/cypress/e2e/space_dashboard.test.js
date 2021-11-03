@@ -27,6 +27,7 @@ describe('The Space Dashboard', () => {
         cy.contains('Leave Space').click();
         cy.contains('Assign a new owner').click();
         cy.contains('Invite others to edit');
+        cy.contains('Invite others to view').should('not.exist');
     });
 
     it('refreshes page after deleting a space', () => {

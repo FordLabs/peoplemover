@@ -16,4 +16,5 @@ export enum AvailableModals {
     MY_LOCATION_TAGS,
     MY_PRODUCT_TAGS,
     MY_PERSON_TAGS,
+    TRANSFER_OWNERSHIP,
 }

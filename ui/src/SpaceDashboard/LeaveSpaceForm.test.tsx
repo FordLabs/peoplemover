@@ -60,7 +60,7 @@ describe('Space Form', () => {
             });
             expect(store.dispatch).toHaveBeenCalledWith({
                 type: AvailableActions.SET_CURRENT_MODAL,
-                modal: AvailableModals.SHARE_SPACE_ACCESS,
+                modal: AvailableModals.TRANSFER_OWNERSHIP,
                 item: TestUtils.space,
             });
         });

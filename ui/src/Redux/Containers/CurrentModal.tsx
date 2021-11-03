@@ -129,6 +129,10 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
                 {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
                 {title: 'Invite others to edit', form: <InviteEditorsFormSection space={item}/>},
             ];
+        case AvailableModals.TRANSFER_OWNERSHIP:
+            return [
+                {title: 'Invite others to edit', form: <InviteEditorsFormSection space={item}/>},
+            ];
         case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
             return [{
                 title: 'Your team member now has access!',

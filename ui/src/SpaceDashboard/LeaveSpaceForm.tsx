@@ -21,7 +21,7 @@ function LeaveSpaceForm({space, closeModal, setCurrentModal, fetchUserSpaces}: L
         submitButtonLabel: 'Assign a new owner',
         closeButtonLabel: 'Leave & delete',
         submit(item?: unknown): void | Promise<void> {
-            setCurrentModal({modal: AvailableModals.SHARE_SPACE_ACCESS, item: space});
+            setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
         },
         close() {
             closeModal();
