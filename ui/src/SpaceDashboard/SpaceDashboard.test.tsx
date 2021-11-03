@@ -18,7 +18,7 @@
 import Cookies from 'universal-cookie';
 import SpaceDashboard from './SpaceDashboard';
 import React from 'react';
-import {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {fireEvent, RenderResult, wait} from '@testing-library/react';
@@ -29,6 +29,7 @@ import {createEmptySpace} from '../Space/Space';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setCurrentSpaceAction, setViewingDateAction} from '../Redux/Actions';
+import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 class MockDate extends Date {
     constructor() {

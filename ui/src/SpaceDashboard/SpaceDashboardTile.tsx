@@ -19,25 +19,29 @@ import {Space} from '../Space/Space';
 import * as React from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
 import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
 import {AvailableModals} from '../Modal/AvailableModals';
+import SpaceClient from '../Space/SpaceClient';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 interface SpaceDashboardTileProps {
     space: Space;
     onClick: (space: Space) => void;
+    currentUser: string;
 
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
+function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
     const spaceHtmlElementId = space.name.replace(' ', '-');
     const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
 
+    const [isUserOwner, setIsUserOwner] = useState<boolean>(false);
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     let timestamp: string;
@@ -48,6 +52,18 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
     } else {
         timestamp = lastModifiedMoment.format('dddd, MMMM D, YYYY [at] h:mm a');
     }
+
+    useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        SpaceClient.getUsersForSpace(space.uuid!!).then((result) => {
+            const isOwner = result.some(userSpaceMapping =>
+                (currentUser && userSpaceMapping.userId.toUpperCase() === currentUser.toUpperCase() &&
+                userSpaceMapping.permission.toUpperCase() === 'OWNER')
+            );
+            setIsUserOwner(isOwner);
+        });
+
+    }, [setIsUserOwner]);
 
     function handleDropdownClick(): void {
         setDropdownToggle(!dropdownToggle);
@@ -78,6 +94,7 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                     <i className="material-icons">edit</i>
                 Edit
                 </button>
+                {isUserOwner &&
                 <button
                     data-testid="leaveSpace"
                     className="dropdownOptions"
@@ -87,6 +104,7 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                     <i className="material-icons">edit</i>
                     Leave Space
                 </button>
+                }
             </AccessibleDropdownContainer>
         );
     };
@@ -127,9 +145,13 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
 }
 
 /* eslint-disable */
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentUser: state.currentUser
+});
+
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(null, mapDispatchToProps)(SpaceDashboardTile);
+export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboardTile);
 /* eslint-enable */
