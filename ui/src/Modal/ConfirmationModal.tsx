@@ -27,6 +27,7 @@ export interface ConfirmationModalProps {
     title?: string;
     content: JSX.Element;
     secondaryButton?: JSX.Element;
+    containerClassname?: string;
 }
 
 function ConfirmationModal({
@@ -37,6 +38,7 @@ function ConfirmationModal({
     title = 'Are you sure?',
     content,
     secondaryButton,
+    containerClassname = '',
 }: ConfirmationModalProps): JSX.Element {
     const SubmitButton = (): JSX.Element => (
         <FormButton
@@ -59,7 +61,7 @@ function ConfirmationModal({
 
     return (
         <div className="modalBackground">
-            <div className="modalContents">
+            <div className={containerClassname ? 'modalContents ' + containerClassname : 'modalContents'}>
                 <div className="modalCard">
                     <ModalCardBanner
                         title={title}

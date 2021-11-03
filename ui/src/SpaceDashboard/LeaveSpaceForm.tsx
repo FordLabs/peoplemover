@@ -6,6 +6,7 @@ import {closeModalAction, fetchUserSpacesAction, setCurrentModalAction} from '..
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AvailableModals} from '../Modal/AvailableModals';
+import FormButton from '../ModalFormComponents/FormButton';
 
 interface LeaveSpaceFormProps {
     space: Space;
@@ -16,19 +17,28 @@ interface LeaveSpaceFormProps {
 
 function LeaveSpaceForm({space, closeModal, setCurrentModal, fetchUserSpaces}: LeaveSpaceFormProps): JSX.Element {
     const modalProps = {title: 'Are you sure?',
+        containerClassname: 'leaveSpaceModal',
         content: <><div>As the owner of this space, leaving will permanently delete the space for yourself and all others that have access.</div>
             <div>Do you want to assign a new owner before leaving?</div></>,
         submitButtonLabel: 'Assign a new owner',
-        closeButtonLabel: 'Leave & delete',
+        secondaryButton: (
+            <FormButton
+                buttonStyle="secondary"
+                testId="confirmationModalLeaveAndDeleteSpace"
+                onClick={(): void => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    SpaceClient.deleteSpaceByUuid(space.uuid!!).then(() => {
+                        fetchUserSpaces();
+                    });
+                    closeModal();
+                }}>
+            Leave & delete
+            </FormButton>),
         submit(item?: unknown): void | Promise<void> {
             setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
         },
         close() {
             closeModal();
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            SpaceClient.deleteSpaceByUuid(space.uuid!!).then(() => {
-                fetchUserSpaces();
-            });
         },
     } as ConfirmationModalProps;
 

@@ -32,10 +32,20 @@ describe('Space Form', () => {
         it('should have an option to assign a new owner', () => {
             expect(form.getByText('Assign a new owner')).toBeInTheDocument();
         });
+
         it('should stop showing the modal when the leave and delete button is pressed',  async () => {
             SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
             act(() => {
                 const bigRedButton = form.getByText('Leave & delete');
+                fireEvent.click(bigRedButton);
+            });
+            expect(store.dispatch).toBeCalledWith(closeModalAction());
+        });
+
+        it('should stop showing the modal when the close button is pressed',  async () => {
+            SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
+            act(() => {
+                const bigRedButton = form.getByText('Cancel');
                 fireEvent.click(bigRedButton);
             });
             expect(store.dispatch).toBeCalledWith(closeModalAction());
