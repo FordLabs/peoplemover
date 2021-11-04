@@ -43,18 +43,20 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
     const [me, setMe] = useState<UserSpaceMapping>();
 
-    useEffect(() => {
-        getUsers(currentSpace, setUsersList);
-    }, [currentSpace, setUsersList]);
 
-    const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
-        if (currentSpace.uuid) {
-            SpaceClient.getUsersForSpace(currentSpace.uuid).then((users) => {
-                setUsersList(users.filter(u => u.permission == 'editor'));
-                setMe(users.find(u => u.userId.toUpperCase() === currentUser.toUpperCase()));
-            });
-        }
-    };
+
+    useEffect(() => {
+        const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
+            if (currentSpace.uuid) {
+                SpaceClient.getUsersForSpace(currentSpace.uuid).then((users) => {
+                    setUsersList(users.filter(u => u.permission === 'editor'));
+                    setMe(users.find(u => u.userId.toUpperCase() === currentUser.toUpperCase()));
+                });
+            }
+        };
+        getUsers(currentSpace, setUsersList);
+    }, [currentSpace, setUsersList, currentUser]);
+
 
     const handleSubmit = (e: FormEvent): void => {
         e.preventDefault();
