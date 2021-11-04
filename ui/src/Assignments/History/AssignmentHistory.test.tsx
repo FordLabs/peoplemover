@@ -72,6 +72,10 @@ describe('Assignment History', () => {
         } as AxiosResponse));
     });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     it('should not show history until it has been dropped down', async () => {
         const actual = render(<AssignmentHistory person={TestUtils.hank}/>);
         await actual.findByText('View Assignment History');
