@@ -63,7 +63,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
             setIsUserOwner(isOwner);
         });
 
-    }, [setIsUserOwner]);
+    }, [setIsUserOwner, currentUser, space.uuid]);
 
     function handleDropdownClick(): void {
         setDropdownToggle(!dropdownToggle);
