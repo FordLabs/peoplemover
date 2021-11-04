@@ -18,15 +18,17 @@
 /// <reference types="Cypress" />
 
 describe('The Space Dashboard', () => {
+    beforeEach(() => {
+        cy.server();
+    });
+
     it('can open the Invite Editors modal from the Space Dashboard', () => {
+        cy.route('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
         cy.visit('/user/dashboard');
         cy.injectAxe();
         cy.contains('Flipping Sweet');
-        // TODO: Need to find a better way of handling this timing issue
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1000).then(() => {
-            cy.get('[id=ellipsis-button-Flipping-Sweet]').click();
-        });
+        cy.wait('@getSpaceUsers');
+        cy.get('[id=ellipsis-button-Flipping-Sweet]').click();
         cy.contains('Leave Space').click();
         cy.contains('Assign a new owner').click();
         cy.contains('Invite others to edit');
@@ -34,6 +36,7 @@ describe('The Space Dashboard', () => {
     });
 
     it('refreshes page after deleting a space', () => {
+        cy.route('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
         cy.visit('/user/dashboard');
         cy.injectAxe();
         cy.get('.createNewSpaceButton').click();
@@ -44,11 +47,10 @@ describe('The Space Dashboard', () => {
         cy.get('[data-testid=spaceDashboardTile]')
             .should('contain.text', 'abc');
         cy.contains('abc');
-        // TODO: Need to find a better way of handling this timing issue
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1000).then(() => {
-            cy.get('[id=ellipsis-button-abc]').click();
-        });
+        cy.wait('@getSpaceUsers');
+        cy.wait('@getSpaceUsers');
+        cy.wait('@getSpaceUsers');
+        cy.get('[id=ellipsis-button-abc]').click();
         cy.contains('Leave Space').click();
         cy.contains('Leave & delete').click();
         cy.get('[data-testid=spaceDashboardTile]')
