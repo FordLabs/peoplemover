@@ -31,8 +31,7 @@ describe('The Space Dashboard', () => {
         cy.get('[id=ellipsis-button-Flipping-Sweet]').click();
         cy.contains('Leave Space').click();
         cy.contains('Assign a new owner').click();
-        cy.contains('Invite others to edit');
-        cy.contains('Invite others to view').should('not.exist');
+        cy.contains('Transfer Ownership of Space');
     });
 
     it('refreshes page after deleting a space', () => {

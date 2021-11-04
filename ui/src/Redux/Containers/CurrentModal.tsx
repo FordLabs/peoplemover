@@ -38,6 +38,7 @@ import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormS
 import {FilterTypeListings} from '../../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../../Modal/AvailableModals';
 import LeaveSpaceForm from "../../SpaceDashboard/LeaveSpaceForm";
+import TransferOwnershipForm from "../../SpaceDashboard/TransferOwnershipForm";
 
 export interface ModalMetadataItem {
     title: string;
@@ -131,7 +132,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             ];
         case AvailableModals.TRANSFER_OWNERSHIP:
             return [
-                {title: 'Invite others to edit', form: <InviteEditorsFormSection space={item}/>},
+                {title: 'Transfer Ownership of Space', form: <TransferOwnershipForm space={item}/>},
             ];
         case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
             return [{
