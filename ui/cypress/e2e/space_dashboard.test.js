@@ -40,7 +40,7 @@ describe('The Space Dashboard', () => {
         cy.contains('PEOPLEMOVER').click();
         cy.get('[data-testid=spaceDashboardTile]')
             .should('contain.text', 'abc');
-        cy.get('#ellipsis-button-abc').first().click();
+        cy.get('#ellipsis-button-abc').click();
         cy.contains('Leave Space').click();
         cy.contains('Leave & delete').click();
         cy.get('[data-testid=spaceDashboardTile]')
