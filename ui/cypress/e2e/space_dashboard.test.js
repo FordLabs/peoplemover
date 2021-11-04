@@ -21,9 +21,12 @@ describe('The Space Dashboard', () => {
     it('can open the Invite Editors modal from the Space Dashboard', () => {
         cy.visit('/user/dashboard');
         cy.injectAxe();
-        cy.get('[data-testid=spaceDashboardTile]')
-            .should('contain.text', 'Flipping Sweet');
-        cy.get('[data-testid=ellipsisButton]').click();
+        cy.contains('Flipping Sweet');
+        // TODO: Need to find a better way of handling this timing issue
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(1000).then(() => {
+            cy.get('[id=ellipsis-button-Flipping-Sweet]').click();
+        });
         cy.contains('Leave Space').click();
         cy.contains('Assign a new owner').click();
         cy.contains('Invite others to edit');
@@ -40,7 +43,12 @@ describe('The Space Dashboard', () => {
         cy.contains('PEOPLEMOVER').click();
         cy.get('[data-testid=spaceDashboardTile]')
             .should('contain.text', 'abc');
-        cy.get('#ellipsis-button-abc').click();
+        cy.contains('abc');
+        // TODO: Need to find a better way of handling this timing issue
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(1000).then(() => {
+            cy.get('[id=ellipsis-button-abc]').click();
+        });
         cy.contains('Leave Space').click();
         cy.contains('Leave & delete').click();
         cy.get('[data-testid=spaceDashboardTile]')
