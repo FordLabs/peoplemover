@@ -52,4 +52,8 @@ class PersonService(
         }
         return true
     }
+
+    fun search(request: PersonSearchRequest): List<PersonSearchResponse> {
+        return personRepository.findAllByName(request.name!!).map { person -> PersonSearchResponse(person, 100.0f) }
+    }
 }

@@ -17,12 +17,13 @@
 
 package com.ford.internalprojects.peoplemover.person
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
-import org.springframework.stereotype.Repository
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 
-@Repository
-interface PersonRepository : PeopleMoverRepository<Person, Int> {
-    fun findAllBySpaceUuid(uuid: String): List<Person>
-    fun findByIdAndSpaceUuid(id: Int, spaceUuid: String): Person?
-    fun findAllByName(name: String): List<Person>
-}
+data class PersonSearchRequest(
+        val name: String?,
+        val spaceName: String?,
+        val productName: String?,
+        val role: String?
+)
+

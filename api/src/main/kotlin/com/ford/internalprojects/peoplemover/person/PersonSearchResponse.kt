@@ -17,12 +17,16 @@
 
 package com.ford.internalprojects.peoplemover.person
 
-import com.ford.internalprojects.peoplemover.baserepository.PeopleMoverRepository
-import org.springframework.stereotype.Repository
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
+import java.time.LocalDate
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
+import kotlin.collections.HashSet
 
-@Repository
-interface PersonRepository : PeopleMoverRepository<Person, Int> {
-    fun findAllBySpaceUuid(uuid: String): List<Person>
-    fun findByIdAndSpaceUuid(id: Int, spaceUuid: String): Person?
-    fun findAllByName(name: String): List<Person>
-}
+data class PersonSearchResponse(
+        val personFound: Person,
+        val matchPercent: Float
+)
+

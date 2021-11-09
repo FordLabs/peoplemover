@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.space
 
+import com.ford.internalprojects.peoplemover.person.PersonSearchRequest
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
