@@ -12,13 +12,13 @@ cfConfig {
     space = "FordLabs_Experiments_InternalProjects-prod"
     org = "FordLabs_Experiments_InternalProjects_EDC1_Prod"
 
-    ccUser = peoplemoverPcfUsername
-    ccPassword = peoplemoverPcfPassword
+    ccUser = System.getenv("peoplemoverPcfUsername") ?: "ccUser"
+    ccPassword = System.getenv("peoplemoverPcfPassword") ?: "ccPassword"
 
     name = "engineeringEnvUI"
     host = "engineeringEnvUI"
-    ccHost = peoplemoverPcfccHost
-    domain = peoplemoverPcfdomain
+    ccHost = System.getenv("peoplemoverPcfccHost") ?: "ccHost"
+    domain = System.getenv("peoplemoverPcfdomain") ?: "domain"
 }
 
 task pushBranchUI(type: Exec) {
