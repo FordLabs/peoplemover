@@ -34,7 +34,7 @@ the `e2e-test` profile replaces it with a simplified auth system for testing.
 ### H2 In-Memory Database
 The simplest way to get the application spun up is by using the in-memory database via Gradle:
 ```
-SPRING_PROFILES_ACTIVE=e2e-test ./gradlew bootRun
+SPRING_PROFILES_ACTIVE=e2e-test,h2 ./gradlew bootRun
 ```
 
 ### Docker MySql Database
