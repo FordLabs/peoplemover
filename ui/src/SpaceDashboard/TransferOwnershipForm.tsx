@@ -25,7 +25,7 @@ import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-
+import './TransferOwnershipForm.scss';
 
 interface TransferOwnershipFormProps {
     currentSpace: Space;
@@ -72,7 +72,6 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
 
     return (
         <form className="transferOwnershipForm form" onSubmit={handleSubmit}>
-            (
             <>
                 <div className={'transferOwnershipFormPrompt'}>
                         Please choose who you would like to be the new owner of {currentSpace.name}
@@ -97,7 +96,6 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
                     </FormButton>
                 </div>
             </>
-            )
         </form>
     );
 }
