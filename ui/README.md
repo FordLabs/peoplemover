@@ -39,8 +39,8 @@ This will connect the frontend with to the server at localhost:8080/api.
 The ui application will start at localhost:3000.
 
 Note: If you are running the backend with simplified authentication, your ability to access the frontend will be limited.
-If this is the case, you should be able to navigate to the [home page](http://localhost:3000) and the 
-[test space](http://localhost:3000/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa)
+If this is the case, you should be able to navigate to the [home page](https://localhost:3000) and the 
+[test space](https://localhost:3000/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa)
 
 
 ## Set up Analytics
