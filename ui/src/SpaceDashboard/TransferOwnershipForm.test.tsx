@@ -68,6 +68,11 @@ describe('Transfer Ownership Form', () => {
             await act(async () => {fireEvent.click(form.getByText('Transfer ownership'));});
             await expect(store.dispatch).toBeCalledWith(closeModalAction());
         });
+        it('should be able to choose a person by clicking anywhere in their row', async () => {
+            fireEvent.click(form.getByTestId('transferOwnershipFormRadioControl-user_id_2'));
+            await act(async () => {fireEvent.click(form.getByText('Transfer ownership'));});
+            await expect(store.dispatch).toBeCalledWith(closeModalAction());
+        });
         it('should use the Client to promote the selected editor to owner', () => {
             fireEvent.click(form.getByText('user_id_2'));
             fireEvent.click(form.getByText('Transfer ownership'));

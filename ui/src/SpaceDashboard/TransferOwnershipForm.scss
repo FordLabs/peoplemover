@@ -38,3 +38,25 @@
 .primaryButton{
   width: 173px;
 }
+
+.transferOwnershipFormRadioContainer{
+  display:flex;
+  flex-direction: column;
+  flex: 1;
+  margin-top: 15px;
+}
+
+.transferOwnershipFormRadioControl{
+  width: 375px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.personRadioUserId{
+  flex: 1;
+  margin-left: 15px;
+}
+
