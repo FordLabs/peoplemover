@@ -22,7 +22,7 @@ import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {RenderResult} from '@testing-library/react';
 import {act} from 'react-dom/test-utils';
-import {closeModalAction} from '../Redux/Actions';
+import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
@@ -63,7 +63,7 @@ describe('Transfer Ownership Form', () => {
     });
 
     describe('the happy path', () => {
-        it('should close the modal when properly submitted', async () => {
+        it('should close the modal when a persons name is clicked and Transfer button pressed', async () => {
             fireEvent.click(form.getByText('user_id_2'));
             await act(async () => {fireEvent.click(form.getByText('Transfer ownership'));});
             await expect(store.dispatch).toBeCalledWith(closeModalAction());
@@ -82,6 +82,11 @@ describe('Transfer Ownership Form', () => {
             fireEvent.click(form.getByText('user_id_2'));
             await fireEvent.click(form.getByText('Transfer ownership'));
             expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[0]);
+        });
+        xit('should refresh user spaces if a new owner is assigned', async () => {
+            fireEvent.click(form.getByTestId('transferOwnershipFormRadioControl-user_id_2'));
+            await act(async () => {fireEvent.click(form.getByText('Transfer ownership'));});
+            await expect(store.dispatch).toHaveBeenNthCalledWith(1, fetchUserSpacesAction());
         });
     });
 });

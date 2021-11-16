@@ -17,9 +17,8 @@
 
 import React, {FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
-import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {closeModalAction, setCurrentModalAction} from '../Redux/Actions';
+import {closeModalAction, fetchUserSpacesAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -32,13 +31,14 @@ interface TransferOwnershipFormProps {
     currentUser: string;
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
+    fetchUserSpaces(): void;
 }
 
 interface TransferOwnershipFormOwnProps {
     space?: Space;
 }
 
-function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurrentModal}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
+function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurrentModal, fetchUserSpaces}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
     const [selectedUser, setSelectedUser] = useState<UserSpaceMapping | null>(null);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
     const [me, setMe] = useState<UserSpaceMapping>();
@@ -65,6 +65,7 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
         if (!currentOwner || !newOwner) return;
         SpaceClient.changeOwner(currentSpace, currentOwner, newOwner).then(() => {
             SpaceClient.removeUser(currentSpace, currentOwner).then(() => {
+                fetchUserSpaces();
                 closeModal();
             });
         });
@@ -73,10 +74,10 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
     const renderOption = (person: UserSpaceMapping): JSX.Element => {
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         return <div key={person.id} className={'transferOwnershipFormRadioControl'}
-                    data-testid={'transferOwnershipFormRadioControl-'+person.userId}
-                    onClick={(): void => setSelectedUser(person)}>
+            data-testid={'transferOwnershipFormRadioControl-' + person.userId}
+            onClick={(): void => setSelectedUser(person)}>
             <i className={'material-icons'} aria-hidden>account_circle</i>
-            <span className={'personRadioUserId'}>{person.userId}</span>
+            <span className={'personRadioUserId'}>{person.userId.toLowerCase()}</span>
             <input type={'radio'} name={'newOwner'} value={person.userId} checked={selectedUser ? selectedUser.id === person.id : false}/>
         </div>;
     };
@@ -87,7 +88,7 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
                 <div className={'transferOwnershipFormPrompt'}>
                         Please choose who you would like to be the new owner of {currentSpace.name}
                 </div>
-                <div className={"transferOwnershipFormRadioContainer"}>
+                <div className={'transferOwnershipFormRadioContainer'}>
                     {usersList.map((user) => renderOption(user))}
                 </div>
                 <div className="buttonsContainer">
@@ -112,9 +113,10 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
 }
 
 /* eslint-disable */
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
+    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
 const mapStateToProps = (state: GlobalStateProps, ownProps?: TransferOwnershipFormOwnProps) => ({
