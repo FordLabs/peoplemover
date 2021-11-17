@@ -80,6 +80,10 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
         return setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
     }
 
+    function openDeleteModal(): void {
+        return setCurrentModal({modal: AvailableModals.LEAVE_SPACE, item: space});
+    }
+
     const ActionsDropdownContent = (): JSX.Element => {
         return (
             <AccessibleDropdownContainer
@@ -106,6 +110,17 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
                 >
                     <i className="material-icons">edit</i>
                     Leave Space
+                </button>
+                }
+                {isUserOwner &&
+                <button
+                    data-testid="deleteSpace"
+                    className="dropdownOptions"
+                    role="menuitem"
+                    onClick={openDeleteModal}
+                >
+                    <i className="material-icons">delete</i>
+                    Delete Space
                 </button>
                 }
             </AccessibleDropdownContainer>
