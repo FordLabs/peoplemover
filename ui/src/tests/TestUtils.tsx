@@ -41,6 +41,9 @@ import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
+import {createBrowserHistory, Location} from 'history';
+import {Router} from 'react-router-dom';
+import PeopleMover from '../Application/PeopleMover';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
@@ -53,6 +56,23 @@ export function renderWithRedux(
 ): RenderResult {
     const testingStore: Store = store ? store : createStore(rootReducer, initialState, applyMiddleware(thunk));
     return render(<Provider store={testingStore}>{component}</Provider>);
+}
+
+export function getApplicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>, location?: Location): RenderResult {
+    let history = createBrowserHistory();
+    if (location) {
+        history.push(location);
+    } else {
+        history.push('/uuid');
+    }
+
+    return renderWithRedux(
+        <Router history={history}>
+            <PeopleMover/>
+        </Router>,
+        store,
+        initialState
+    );
 }
 
 export function renderWithReduxEnzyme(

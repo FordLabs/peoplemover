@@ -28,6 +28,7 @@ import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import configureStore from 'redux-mock-store';
 import RedirectClient from '../Utils/RedirectClient';
+import {Space} from '../Space/Space';
 
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();
@@ -51,6 +52,21 @@ describe('Invite Editors Form', function() {
                     {currentSpace: TestUtils.space, currentUser: 'User_id'} as GlobalStateProps);
             }
 
+            function renderComponentWithSpaceFromProps(): RenderResult {
+                const space: Space = {
+                    id: 2,
+                    uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                    name: 'local testSpace',
+                    lastModifiedDate: TestUtils.originDateString,
+                    todayViewIsPublic: true,
+                };
+
+                return renderWithRedux(
+                    <InviteEditorsFormSection collapsed={false} space={space}/>,
+                    undefined,
+                    {currentSpace: TestUtils.space, currentUser: 'User_id'} as GlobalStateProps);
+            }
+
             function validateApiCall(userIds: string[]): void {
                 expect(Axios.post).toHaveBeenCalledWith(
                     `/api/spaces/${TestUtils.space.uuid}/users`,
@@ -63,6 +79,30 @@ describe('Invite Editors Form', function() {
                     },
                 );
             }
+
+            it('should render the local test space', async () => {
+                const component = renderComponentWithSpaceFromProps();
+                await component.findByText('Enter CDSID of your editors');
+                const inputField = component.getByLabelText(/People with this permission can edit/);
+                fireEvent.change(inputField, {target: {value: 'hford1'}});
+                fireEvent.keyDown(inputField, {key: 'Enter', code: 'Enter'});
+
+                expect(component.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
+                component.getByText('hford1');
+
+                await fireEvent.click(component.getByTestId('inviteEditorsFormSubmitButton'));
+
+                expect(Axios.post).toHaveBeenCalledWith(
+                    `/api/spaces/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa/users`,
+                    {userIds: ['hford1']},
+                    {
+                        headers: {
+                            Authorization: 'Bearer 123456',
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+            });
 
             it('should add users as editors', async function() {
                 const component = renderComponent();

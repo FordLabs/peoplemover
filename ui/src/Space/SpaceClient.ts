@@ -25,29 +25,33 @@ import MatomoEvents from '../Matomo/MatomoEvents';
 const baseSpaceUrl = `/api/spaces`;
 
 class SpaceClient {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static getConfig(withJson = true): any {
+        if (withJson)
+            return {headers: {
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            }};
+        else return {headers: {
+            'Authorization': `Bearer ${getToken()}`}};
+    }
+
+    static async deleteSpaceByUuid(uuid: string): Promise<void> {
+        const url = `${baseSpaceUrl}/${uuid}`;
+        return Axios.delete(url, SpaceClient.getConfig(false));
+
+    }
 
     static async getSpacesForUser(): Promise<AxiosResponse<Space[]>> {
         const url = baseSpaceUrl + '/user';
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.get(url, config);
+        return Axios.get(url, SpaceClient.getConfig());
     }
 
     static async getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
         const url = `${baseSpaceUrl}/${spaceUuid}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.get(url, config);
+        return Axios.get(url, SpaceClient.getConfig());
     }
 
     static compareByPermissionThenByUserId = (a: UserSpaceMapping, b: UserSpaceMapping): number => {
@@ -64,14 +68,9 @@ class SpaceClient {
 
     static async getUsersForSpace(spaceUuid: string): Promise<UserSpaceMapping[]> {
         const url = `${baseSpaceUrl}/${spaceUuid}/users`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.get(url, config).then((users) => {
+
+        return Axios.get(url, SpaceClient.getConfig()).then((users) => {
             return users.data.sort(SpaceClient.compareByPermissionThenByUserId);
         });
     }
@@ -79,14 +78,9 @@ class SpaceClient {
     static async createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
         const url = `${baseSpaceUrl}/user`;
         const data = { spaceName };
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.post(url, data, config);
+
+        return Axios.post(url, data, SpaceClient.getConfig());
     }
 
     static async editSpaceName(uuid: string, editedSpace: Space, oldSpaceName: string): Promise<AxiosResponse> {
@@ -112,26 +106,16 @@ class SpaceClient {
     private static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
         const url = `${baseSpaceUrl}/${uuid}`;
         const data = editedSpace;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.put(url, data, config);
+
+        return Axios.put(url, data, SpaceClient.getConfig());
     }
 
     static async inviteUsersToSpace(space: Space, userIds: string[]): Promise<AxiosResponse<void>> {
         const url = `${baseSpaceUrl}/${space.uuid}/users`;
         const data = { userIds };
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-        return Axios.post(url, data, config).then((result) => {
+
+        return Axios.post(url, data, SpaceClient.getConfig()).then((result) => {
             MatomoEvents.pushEvent(space.name, 'inviteUser', userIds.join(', '));
             return result;
         }).catch((error) => {
@@ -142,12 +126,7 @@ class SpaceClient {
 
     static removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
         const url = `${baseSpaceUrl}/${space.uuid}/users/${user.userId}`;
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-        return Axios.delete(url, config).then((result) => {
+        return Axios.delete(url, SpaceClient.getConfig(false)).then((result) => {
             MatomoEvents.pushEvent(space.name, 'removeUser', user.userId);
             return result;
         }).catch((error) => {
@@ -158,13 +137,8 @@ class SpaceClient {
 
     static async changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping): Promise<AxiosResponse<void>> {
         const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
 
-        return Axios.put(url, null, config).then((result) => {
+        return Axios.put(url, null, this.getConfig(false)).then((result) => {
             MatomoEvents.pushEvent(space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`);
             return result;
         }).catch((error) => {

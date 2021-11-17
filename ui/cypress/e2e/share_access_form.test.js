@@ -57,7 +57,7 @@ describe('Share Access Form', () => {
             expandInviteToEditModalCard();
         });
 
-        it('Add people to a space should show link to space url', () => {
+        it('Invite editors to a space should show link to space url', () => {
             cy.server();
             cy.route('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
             const spaceUuid = Cypress.env('SPACE_UUID');
@@ -104,7 +104,7 @@ describe('Share Access Form', () => {
                 .click();
             cy.get('[data-testid=confirmDeleteButton]').should('contain.text', 'Yes').click();
 
-            cy.get('[data-testid=userIdName]').eq(1).should('not.exist');
+            cy.get('[data-testid=userIdName]').should('have.length', 2)
             cy.get('[data-testid=userListItem__ELISE]').should('not.exist');
         });
 

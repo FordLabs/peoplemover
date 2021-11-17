@@ -25,6 +25,7 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -87,8 +88,12 @@ class SpaceService(
         return spaceRepository.findByUuid(uuid) ?: throw SpaceNotExistsException()
     }
 
-    fun deleteSpace(uuid: String) {
-        spaceRepository.deleteByUuid(uuid)
+    fun deleteSpace(uuid: String) : Boolean {
+        if(spaceRepository.findByUuid(uuid) != null){
+            spaceRepository.deleteByUuid(uuid)
+            return true
+        }
+        return false
     }
 
     fun editSpace(uuid: String, editSpaceRequest: EditSpaceRequest): Space {
