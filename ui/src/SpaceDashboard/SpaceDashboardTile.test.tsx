@@ -111,7 +111,7 @@ describe('SpaceDashboardTile tests', () => {
             fireEvent.click(leaveSpaceTile);
         });
         expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
-            modal: AvailableModals.LEAVE_SPACE,
+            modal: AvailableModals.TRANSFER_OWNERSHIP,
             item: TestUtils.space,
         }));
     });

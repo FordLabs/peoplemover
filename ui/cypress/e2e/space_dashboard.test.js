@@ -30,11 +30,10 @@ describe('The Space Dashboard', () => {
         cy.wait('@getSpaceUsers');
         cy.get('[id=ellipsis-button-Flipping-Sweet]').click();
         cy.contains('Leave Space').click();
-        cy.contains('Assign a new owner').click();
         cy.contains('Transfer Ownership of Space');
     });
 
-    it('refreshes page after deleting a space', () => {
+    xit('refreshes page after deleting a space', () => {
         cy.route('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
         cy.visit('/user/dashboard');
         cy.injectAxe();

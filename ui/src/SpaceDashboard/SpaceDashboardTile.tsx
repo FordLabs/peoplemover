@@ -77,7 +77,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
     }
 
     function openLeaveModal(): void {
-        return setCurrentModal({modal: AvailableModals.LEAVE_SPACE, item: space});
+        return setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
     }
 
     const ActionsDropdownContent = (): JSX.Element => {
