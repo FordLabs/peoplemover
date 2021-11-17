@@ -38,7 +38,7 @@ describe('SpaceDashboardTile tests', () => {
         jest.clearAllMocks();
         SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping]
+            [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping, {id: '2', userId: 'USER_IDDQD', permission: 'editor', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping]
         ));
         store = createStore(rootReducer, {currentUser: 'USER_ID'});
         store.dispatch = jest.fn();
@@ -73,6 +73,23 @@ describe('SpaceDashboardTile tests', () => {
         SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping]
+        ));
+        await act(async () => {
+            component.unmount();
+            component = renderWithRedux(
+                <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>, store, undefined
+            );
+            const spaceEllipsis = await component.findByTestId('ellipsisButton');
+            fireEvent.click(spaceEllipsis);
+        });
+        expect(SpaceClient.getUsersForSpace).toHaveBeenCalledWith(TestUtils.space.uuid);
+        expect(component.queryByText('Leave Space')).not.toBeInTheDocument();
+    });
+
+    it('should not show Leave Space menu item if space has no editors', async () => {
+        SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping]
         ));
         await act(async () => {
             component.unmount();

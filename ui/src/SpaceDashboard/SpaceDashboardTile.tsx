@@ -17,9 +17,9 @@
 
 import {Space} from '../Space/Space';
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
-import {useEffect, useState} from 'react';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -41,6 +41,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
     const spaceHtmlElementId = space.name.replace(' ', '-');
     const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
 
+    const [spaceHasEditors, setSpaceHasEditors] = useState<boolean>(false);
     const [isUserOwner, setIsUserOwner] = useState<boolean>(false);
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
@@ -56,11 +57,13 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         SpaceClient.getUsersForSpace(space.uuid!!).then((result) => {
-            const isOwner = result.some(userSpaceMapping =>
+            setIsUserOwner(result.some(userSpaceMapping =>
                 (currentUser && userSpaceMapping.userId.toUpperCase() === currentUser.toUpperCase() &&
-                userSpaceMapping.permission.toUpperCase() === 'OWNER')
-            );
-            setIsUserOwner(isOwner);
+                    userSpaceMapping.permission.toUpperCase() === 'OWNER')
+            ));
+            setSpaceHasEditors(result.some(userSpaceMapping => currentUser &&
+                userSpaceMapping.userId.toUpperCase() !== currentUser.toUpperCase() &&
+                userSpaceMapping.permission.toUpperCase() === 'EDITOR'));
         });
 
     }, [setIsUserOwner, currentUser, space.uuid]);
@@ -94,7 +97,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
                     <i className="material-icons">edit</i>
                 Edit
                 </button>
-                {isUserOwner &&
+                {isUserOwner && spaceHasEditors &&
                 <button
                     data-testid="leaveSpace"
                     className="dropdownOptions"
