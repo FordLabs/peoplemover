@@ -63,24 +63,27 @@ describe('Transfer Ownership Form', () => {
     });
 
     describe('the happy path', () => {
-        it('should close the modal when a persons name is clicked and Transfer button pressed', async () => {
+        it('should close the modal when a persons name is clicked and Transfer button, then OK is pressed on the confirmation', async () => {
             fireEvent.click(form.getByText('user_id_2'));
             await act(async () => {fireEvent.click(form.getByText('Transfer ownership'));});
+            await form.findByText('Ownership has been transferred to user_id_2 and you have been removed from the space testSpace.');
+            await act(async () => {fireEvent.click(form.getByText('Ok'));});
             await expect(store.dispatch).toBeCalledWith(closeModalAction());
         });
         it('should be able to choose a person by clicking anywhere in their row', async () => {
             fireEvent.click(form.getByTestId('transferOwnershipFormRadioControl-user_id_2'));
             await act(async () => {fireEvent.click(form.getByText('Transfer ownership'));});
+            await act(async () => {fireEvent.click(form.getByText('Ok'));});
             await expect(store.dispatch).toBeCalledWith(closeModalAction());
         });
-        it('should use the Client to promote the selected editor to owner', () => {
+        it('should use the Client to promote the selected editor to owner', async () => {
             fireEvent.click(form.getByText('user_id_2'));
-            fireEvent.click(form.getByText('Transfer ownership'));
+            await act(async () => {fireEvent.click(form.getByText('Transfer ownership'));});
             expect(SpaceClient.changeOwner).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[0], TestUtils.spaceMappingsArray[1]);
         });
         it('should use the Client to remove the current users permissions from the space', async () => {
             fireEvent.click(form.getByText('user_id_2'));
-            await fireEvent.click(form.getByText('Transfer ownership'));
+            await act(async () => {fireEvent.click(form.getByText('Transfer ownership'));});
             expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[0]);
         });
         xit('should refresh user spaces if a new owner is assigned', async () => {

@@ -25,6 +25,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import './TransferOwnershipForm.scss';
+import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
 
 interface TransferOwnershipFormProps {
     currentSpace: Space;
@@ -42,6 +43,7 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
     const [selectedUser, setSelectedUser] = useState<UserSpaceMapping | null>(null);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
     const [me, setMe] = useState<UserSpaceMapping>();
+    const [submitted, setSubmitted] = useState<boolean>(false);
 
 
 
@@ -66,7 +68,7 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
         SpaceClient.changeOwner(currentSpace, currentOwner, newOwner).then(() => {
             SpaceClient.removeUser(currentSpace, currentOwner).then(() => {
                 fetchUserSpaces();
-                closeModal();
+                setSubmitted(true);
             });
         });
     };
@@ -82,7 +84,16 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
         </div>;
     };
 
-    return (
+    const notificationModalProps = {content:<span>{'Ownership has been transferred to ' + selectedUser?.userId +
+        ' and you have been removed from the space ' +
+        currentSpace.name +
+        '.'}</span>,
+    title: 'Confirmed',
+    close: closeModal} as NotificationModalProps;
+
+    if (submitted) return (<NotificationModal {...notificationModalProps}/>);
+
+    else return (
         <form className="transferOwnershipForm form" onSubmit={handleSubmit}>
             <>
                 <div className={'transferOwnershipFormPrompt'}>
