@@ -81,7 +81,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
     }
 
     function openDeleteModal(): void {
-        return setCurrentModal({modal: AvailableModals.LEAVE_SPACE, item: space});
+        return setCurrentModal({modal: AvailableModals.DELETE_SPACE, item: space});
     }
 
     const ActionsDropdownContent = (): JSX.Element => {

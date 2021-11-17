@@ -1,7 +1,7 @@
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import * as React from 'react';
 import {act, RenderResult} from '@testing-library/react';
-import LeaveSpaceForm from './LeaveSpaceForm';
+import DeleteSpaceForm from './DeleteSpaceForm';
 import {fireEvent} from '@testing-library/dom';
 import SpaceClient from '../Space/SpaceClient';
 import {AvailableActions, closeModalAction} from '../Redux/Actions';
@@ -10,33 +10,33 @@ import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
 import {AvailableModals} from '../Modal/AvailableModals';
 
-describe('Space Form', () => {
+describe('Delete Space Form', () => {
     let form: RenderResult;
     let store: Store;
     beforeEach(() => {
         store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
         store.dispatch = jest.fn();
-        form = renderWithRedux(<LeaveSpaceForm space={TestUtils.space}/>, store);
+        form = renderWithRedux(<DeleteSpaceForm space={TestUtils.space}/>, store);
     });
     describe('things to display', () => {
 
         it('Should show copy and prompt "do you want to assign a new owner before leaving?"', () => {
-            expect(form.getByText('As the owner of this space, leaving will permanently delete the space for yourself and all others that have access.')).toBeInTheDocument();
-            expect(form.getByText('Do you want to assign a new owner before leaving?')).toBeInTheDocument();
+            expect(form.getByText(/As owner of this space, deleting it will permanently remove it from all users' dashboards. This action cannot be undone./)).toBeInTheDocument();
+            expect(form.getByText('If you\'d like to leave without deleting the space, please transfer ownership to a new owner.')).toBeInTheDocument();
         });
 
-        it('should have an option to leave & delete', () => {
-            expect(form.getByText('Leave & delete')).toBeInTheDocument();
+        it('should have an option to delete', () => {
+            expect(form.getByText('Delete space')).toBeInTheDocument();
         });
 
         it('should have an option to assign a new owner', () => {
-            expect(form.getByText('Assign a new owner')).toBeInTheDocument();
+            expect(form.getByText('Transfer Ownership')).toBeInTheDocument();
         });
 
         it('should stop showing the modal when the leave and delete button is pressed',  async () => {
             SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
             act(() => {
-                const bigRedButton = form.getByText('Leave & delete');
+                const bigRedButton = form.getByText('Delete space');
                 fireEvent.click(bigRedButton);
             });
             expect(store.dispatch).toBeCalledWith(closeModalAction());
@@ -56,16 +56,16 @@ describe('Space Form', () => {
         it('should call the space client when the leave and delete button is pressed with appropriate spaceId',  () => {
             SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
             act(() => {
-                const bigRedButton = form.getByText('Leave & delete');
+                const bigRedButton = form.getByText('Delete space');
                 fireEvent.click(bigRedButton);
             });
             expect(SpaceClient.deleteSpaceByUuid).toHaveBeenCalledWith(TestUtils.space.uuid);
         });
 
-        it('should open the Invite Others to Edit modal when the assign a new owner button is pressed', () => {
+        it('should open the Transfer Ownership modal when the assign a new owner button is pressed', () => {
             SpaceClient.deleteSpaceByUuid = jest.fn();
             act(() => {
-                const bigRedButton = form.getByText('Assign a new owner');
+                const bigRedButton = form.getByText('Transfer Ownership');
                 fireEvent.click(bigRedButton);
             });
             expect(store.dispatch).toHaveBeenCalledWith({

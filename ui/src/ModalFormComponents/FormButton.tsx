@@ -18,7 +18,7 @@ import React, {ReactNode} from 'react';
 
 import './FormButton.scss';
 
-type ButtonStyle = 'primary' | 'secondary';
+type ButtonStyle = 'primary' | 'secondary' | 'redalert';
 type ButtonType = 'submit' | 'reset' | 'button';
 
 interface Props {

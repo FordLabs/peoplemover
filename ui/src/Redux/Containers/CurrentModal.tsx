@@ -37,7 +37,7 @@ import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSec
 import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
 import {FilterTypeListings} from '../../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../../Modal/AvailableModals';
-import LeaveSpaceForm from "../../SpaceDashboard/LeaveSpaceForm";
+import DeleteSpaceForm from "../../SpaceDashboard/DeleteSpaceForm";
 import TransferOwnershipForm from "../../SpaceDashboard/TransferOwnershipForm";
 
 export interface ModalMetadataItem {
@@ -139,10 +139,10 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
                 title: 'Your team member now has access!',
                 form: <GrantEditAccessConfirmationForm />,
             }];
-        case AvailableModals.LEAVE_SPACE:
+        case AvailableModals.DELETE_SPACE:
             return[{
                 title: "Are you sure?",
-                form: <LeaveSpaceForm space={item}/>
+                form: <DeleteSpaceForm space={item}/>
             }]
         default:
             return null;

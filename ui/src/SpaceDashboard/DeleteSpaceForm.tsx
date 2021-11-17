@@ -8,22 +8,22 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AvailableModals} from '../Modal/AvailableModals';
 import FormButton from '../ModalFormComponents/FormButton';
 
-interface LeaveSpaceFormProps {
+interface DeleteSpaceFormProps {
     space: Space;
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
     fetchUserSpaces(): void;
 }
 
-function LeaveSpaceForm({space, closeModal, setCurrentModal, fetchUserSpaces}: LeaveSpaceFormProps): JSX.Element {
+function DeleteSpaceForm({space, closeModal, setCurrentModal, fetchUserSpaces}: DeleteSpaceFormProps): JSX.Element {
     const modalProps = {title: 'Are you sure?',
         containerClassname: 'leaveSpaceModal',
-        content: <><div>As the owner of this space, leaving will permanently delete the space for yourself and all others that have access.</div>
-            <div>Do you want to assign a new owner before leaving?</div></>,
-        submitButtonLabel: 'Assign a new owner',
+        content: <><div>As owner of this space, deleting it will permanently remove it from all users&apos; dashboards. This action cannot be undone.</div>
+            <div>If you&apos;d like to leave without deleting the space, please transfer ownership to a new owner.</div></>,
+        submitButtonLabel: 'Transfer Ownership',
         secondaryButton: (
             <FormButton
-                buttonStyle="secondary"
+                buttonStyle="redalert"
                 testId="confirmationModalLeaveAndDeleteSpace"
                 onClick={(): void => {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -32,7 +32,7 @@ function LeaveSpaceForm({space, closeModal, setCurrentModal, fetchUserSpaces}: L
                     });
                     closeModal();
                 }}>
-            Leave & delete
+            Delete space
             </FormButton>),
         submit(item?: unknown): void | Promise<void> {
             setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
@@ -53,5 +53,5 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
-export default connect(null, mapDispatchToProps)(LeaveSpaceForm);
+export default connect(null, mapDispatchToProps)(DeleteSpaceForm);
 /* eslint-enable */
