@@ -20,6 +20,7 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
+import LeaveIcon from '../Application/Assets/leave-icon.svg';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -104,7 +105,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
                     role="menuitem"
                     onClick={openLeaveModal}
                 >
-                    <i className="material-icons">edit</i>
+                    <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
                     Leave Space
                 </button>
                 }
