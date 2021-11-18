@@ -63,4 +63,20 @@ describe('the confirmation modal for deleting a board', () => {
                 </FormButton>)}/>);
         expect(productComponent.getByText('Archive')).toBeInTheDocument();
     });
+
+    it('should use the classname given for the modal content', () => {
+        const productComponent = render(<ConfirmationModal
+            content={<></>}
+            close={noop}
+            submit={(): void => undefined}
+            containerClassname={'countChocula'}
+            secondaryButton={(
+                <FormButton
+                    buttonStyle="secondary"
+                    testId="confirmationModalArchive"
+                    onClick={noop}>
+                    Archive
+                </FormButton>)}/>);
+        expect(productComponent.container.firstChild?.firstChild).toHaveClass('countChocula');
+    });
 });

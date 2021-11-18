@@ -162,4 +162,15 @@ describe('Space Client', function() {
                 done();
             });
     });
+
+    it('should delete a space by uuid', (done) => {
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        SpaceClient.deleteSpaceByUuid(TestUtils.space.uuid!!).then(() => {
+            expect(Axios.delete).toHaveBeenCalledWith(
+                `/api/spaces/${TestUtils.space.uuid}`,
+                {headers: {Authorization: 'Bearer 123456'}}
+            );
+            done();
+        });
+    });
 });

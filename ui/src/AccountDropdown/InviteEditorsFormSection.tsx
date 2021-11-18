@@ -56,12 +56,16 @@ const inviteEditorsStyle = {
 };
 
 
-interface InviteEditorsFormProps {
+interface InviteEditorsFormReduxProps {
     collapsed?: boolean;
     currentSpace: Space;
     currentUser: string;
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
+}
+
+interface InviteEditorsFormOwnProps {
+    space?: Space;
 }
 
 const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
@@ -70,7 +74,7 @@ const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMappin
     }
 };
 
-function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: InviteEditorsFormProps): JSX.Element {
+function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: InviteEditorsFormReduxProps, {space}: InviteEditorsFormOwnProps): JSX.Element {
     const isExpanded = !collapsed;
     const [invitedUserIds, setInvitedUserIds] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
@@ -219,8 +223,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
+const mapStateToProps = (state: GlobalStateProps, ownProps?: InviteEditorsFormOwnProps) => ({
+    currentSpace: ownProps?.space || state.currentSpace,
     currentUser: state.currentUser,
 });
 

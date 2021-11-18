@@ -19,40 +19,26 @@ import React from 'react';
 import FormButton from '../ModalFormComponents/FormButton';
 import ModalCardBanner from './ModalCardBanner';
 
-export interface ConfirmationModalProps {
-    submit(item?: unknown): void | Promise<void>;
+export interface NotificationModalProps {
     close(): void;
-    submitButtonLabel?: string;
     closeButtonLabel?: string;
     title?: string;
     content: JSX.Element;
-    secondaryButton?: JSX.Element;
     containerClassname?: string;
 }
 
-function ConfirmationModal({
-    submit,
+function NotificationModal({
     close,
-    submitButtonLabel = 'Delete',
-    closeButtonLabel = 'Cancel',
-    title = 'Are you sure?',
+    closeButtonLabel = 'Ok',
+    title = 'Confirmed',
     content,
-    secondaryButton,
     containerClassname = '',
-}: ConfirmationModalProps): JSX.Element {
-    const SubmitButton = (): JSX.Element => (
-        <FormButton
-            className="confirmationModalDelete"
-            onClick={submit}
-            buttonStyle="primary"
-            testId="confirmDeleteButton">
-            {submitButtonLabel}
-        </FormButton>
-    );
+}: NotificationModalProps): JSX.Element {
+
 
     const CancelButton = (): JSX.Element => (
         <FormButton
-            buttonStyle="secondary"
+            buttonStyle="primary"
             testId="confirmationModalCancel"
             onClick={close}>
             {closeButtonLabel}
@@ -70,12 +56,8 @@ function ConfirmationModal({
                     <div className="confirmationModalContent">
                         {content}
                     </div>
-                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${secondaryButton ? 'secondaryButtonContainer' : ''}`}>
-                        <div className={`cancelAndArchiveContainer ${secondaryButton ? 'secondaryButtonContainer' : ''}`}>
-                            <CancelButton />
-                            {secondaryButton}
-                        </div>
-                        <SubmitButton />
+                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls`}>
+                        <CancelButton />
                     </div>
                 </div>
             </div>
@@ -83,4 +65,4 @@ function ConfirmationModal({
     );
 }
 
-export default ConfirmationModal;
+export default NotificationModal;

@@ -37,6 +37,8 @@ import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSec
 import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
 import {FilterTypeListings} from '../../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../../Modal/AvailableModals';
+import LeaveSpaceForm from "../../SpaceDashboard/LeaveSpaceForm";
+import TransferOwnershipForm from "../../SpaceDashboard/TransferOwnershipForm";
 
 export interface ModalMetadataItem {
     title: string;
@@ -126,13 +128,22 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
         case AvailableModals.SHARE_SPACE_ACCESS:
             return [
                 {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
-                {title: 'Invite others to edit', form: <InviteEditorsFormSection/>},
+                {title: 'Invite others to edit', form: <InviteEditorsFormSection space={item}/>},
+            ];
+        case AvailableModals.TRANSFER_OWNERSHIP:
+            return [
+                {title: 'Transfer Ownership of Space', form: <TransferOwnershipForm space={item}/>},
             ];
         case AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION:
             return [{
                 title: 'Your team member now has access!',
                 form: <GrantEditAccessConfirmationForm />,
             }];
+        case AvailableModals.LEAVE_SPACE:
+            return[{
+                title: "Are you sure?",
+                form: <LeaveSpaceForm space={item}/>
+            }]
         default:
             return null;
     }

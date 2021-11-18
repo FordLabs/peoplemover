@@ -16,14 +16,14 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from './TestUtils';
+import TestUtils, {getApplicationSetup, renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {queryByAttribute, RenderResult, wait} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createBrowserHistory, History, Location} from 'history';
 import SpaceClient from '../Space/SpaceClient';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
-import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
+import {applyMiddleware, createStore, Store} from 'redux';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {createEmptySpace} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
@@ -38,23 +38,6 @@ describe('PeopleMover', () => {
     let history: History;
     const addProductButtonText = 'Add Product';
     let store: Store;
-
-    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>, location?: Location): RenderResult {
-        let history = createBrowserHistory();
-        if (location) {
-            history.push(location);
-        } else {
-            history.push('/uuid');
-        }
-
-        return renderWithRedux(
-            <Router history={history}>
-                <PeopleMover/>
-            </Router>,
-            store,
-            initialState
-        );
-    }
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -82,7 +65,7 @@ describe('PeopleMover', () => {
                     allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 } as GlobalStateProps;
                 store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-                app = applicationSetup(store, initialState);
+                app = getApplicationSetup(store, initialState);
             });
         });
 
@@ -125,7 +108,7 @@ describe('PeopleMover', () => {
             let location: Location = {hash: '', pathname: '/uuid', search: '', state: undefined};
             let initialState = {viewingDate: new Date(2020, 10, 14)} as GlobalStateProps;
             await wait(() => {
-                app = applicationSetup(undefined, initialState, location);
+                app = getApplicationSetup(undefined, initialState, location);
             });
         });
 
@@ -153,7 +136,7 @@ describe('PeopleMover', () => {
     describe('Read only view Header and Footer Content', () => {
         beforeEach(async () => {
             await wait(() => {
-                app = applicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+                app = getApplicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
             });
         });
 
@@ -185,7 +168,7 @@ describe('PeopleMover', () => {
     describe('Page Title', () => {
         beforeEach(async () => {
             await wait(() => {
-                app = applicationSetup();
+                app = getApplicationSetup();
             });
         });
 
@@ -202,7 +185,7 @@ describe('PeopleMover', () => {
     describe('Products', () => {
         beforeEach(async () => {
             await wait(() => {
-                app = applicationSetup();
+                app = getApplicationSetup();
             });
         });
 
@@ -304,7 +287,7 @@ describe('PeopleMover', () => {
     describe('Products in read only view', () => {
         beforeEach(async () => {
             await wait(() => {
-                app = applicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+                app = getApplicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
             });
         });
 

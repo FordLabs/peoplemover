@@ -29,6 +29,7 @@ import {createEmptySpace} from '../Space/Space';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setCurrentSpaceAction, setViewingDateAction} from '../Redux/Actions';
+import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 class MockDate extends Date {
     constructor() {
@@ -83,6 +84,10 @@ describe('SpaceDashboard', () => {
             });
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('should redirect to space when a space in the dashboard is clicked', async () => {
             const space1 = await component.findByText('Space1');
             await fireEvent.click(space1);
@@ -122,6 +127,10 @@ describe('SpaceDashboard', () => {
             ({component} = await createTestComponent(false));
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('should show welcome message', async () => {
             await component.findByText(`Welcome to PeopleMover!`);
         });
@@ -146,6 +155,7 @@ describe('SpaceDashboard', () => {
             lastModifiedDate: '2020-04-14T18:06:11.791+0000',
         }] : [];
         SpaceClient.getSpacesForUser = jest.fn(() => Promise.resolve({data: responseData} as AxiosResponse));
+        SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve([] as Array<UserSpaceMapping>));
 
         // @ts-ignore
         let component: RenderResult = null;

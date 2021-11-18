@@ -17,27 +17,33 @@
 
 import {Space} from '../Space/Space';
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
-import {useState} from 'react';
+import LeaveIcon from '../Application/Assets/leave-icon.svg';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
 import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
 import {AvailableModals} from '../Modal/AvailableModals';
+import SpaceClient from '../Space/SpaceClient';
+import {GlobalStateProps} from '../Redux/Reducers';
 
 interface SpaceDashboardTileProps {
     space: Space;
     onClick: (space: Space) => void;
+    currentUser: string;
 
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
+function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
     const spaceHtmlElementId = space.name.replace(' ', '-');
     const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
 
+    const [spaceHasEditors, setSpaceHasEditors] = useState<boolean>(false);
+    const [isUserOwner, setIsUserOwner] = useState<boolean>(false);
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     let timestamp: string;
@@ -49,12 +55,30 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
         timestamp = lastModifiedMoment.format('dddd, MMMM D, YYYY [at] h:mm a');
     }
 
+    useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        SpaceClient.getUsersForSpace(space.uuid!!).then((result) => {
+            setIsUserOwner(result.some(userSpaceMapping =>
+                (currentUser && userSpaceMapping.userId.toUpperCase() === currentUser.toUpperCase() &&
+                    userSpaceMapping.permission.toUpperCase() === 'OWNER')
+            ));
+            setSpaceHasEditors(result.some(userSpaceMapping => currentUser &&
+                userSpaceMapping.userId.toUpperCase() !== currentUser.toUpperCase() &&
+                userSpaceMapping.permission.toUpperCase() === 'EDITOR'));
+        });
+
+    }, [setIsUserOwner, currentUser, space.uuid]);
+
     function handleDropdownClick(): void {
         setDropdownToggle(!dropdownToggle);
     }
 
     function openEditModal(): void {
         return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
+    }
+
+    function openLeaveModal(): void {
+        return setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
     }
 
     const ActionsDropdownContent = (): JSX.Element => {
@@ -74,6 +98,17 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
                     <i className="material-icons">edit</i>
                 Edit
                 </button>
+                {isUserOwner && spaceHasEditors &&
+                <button
+                    data-testid="leaveSpace"
+                    className="dropdownOptions"
+                    role="menuitem"
+                    onClick={openLeaveModal}
+                >
+                    <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
+                    Leave Space
+                </button>
+                }
             </AccessibleDropdownContainer>
         );
     };
@@ -114,9 +149,13 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: SpaceD
 }
 
 /* eslint-disable */
+const mapStateToProps = (state: GlobalStateProps) => ({
+    currentUser: state.currentUser
+});
+
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(null, mapDispatchToProps)(SpaceDashboardTile);
+export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboardTile);
 /* eslint-enable */

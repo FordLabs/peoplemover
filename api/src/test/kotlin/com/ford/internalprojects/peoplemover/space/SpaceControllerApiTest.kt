@@ -126,22 +126,6 @@ class SpaceControllerApiTest {
     }
 
     @Test
-    fun `POST should return 401 when token is not valid`() {
-        val request = SpaceCreationRequest(spaceName = "New Space")
-        val token = "INVALID_TOKEN"
-
-        mockMvc.perform(
-            post("$baseSpaceUrl/user")
-                .content(objectMapper.writeValueAsString(request))
-                .header("Authorization", "Bearer $token")
-                .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isUnauthorized)
-
-        assertThat(spaceRepository.count()).isZero()
-    }
-
-    @Test
     fun `GET should return all spaces for current user`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne"))
         val space2: Space = spaceRepository.save(Space(name = "SpaceTwo"))
@@ -206,6 +190,22 @@ class SpaceControllerApiTest {
         space1.customFieldLabels = listOf(customFieldMapping)
 
         assertThat(actualSpace).isEqualTo(space1)
+    }
+
+    @Test
+    fun `POST should return 401 when token is not valid`() {
+        val request = SpaceCreationRequest(spaceName = "New Space")
+        val token = "INVALID_TOKEN"
+
+        mockMvc.perform(
+                post("$baseSpaceUrl/user")
+                        .content(objectMapper.writeValueAsString(request))
+                        .header("Authorization", "Bearer $token")
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isUnauthorized)
+
+        assertThat(spaceRepository.count()).isZero()
     }
 
     @Test
@@ -437,4 +437,57 @@ class SpaceControllerApiTest {
         val actualSpace = spaceRepository.findByUuid(space.uuid)
         assertThat(actualSpace!!.name).isEqualTo(expectedName)
     }
+
+    //region DELETE
+    @Test
+    fun `DEL should return 200 if space was deleted`() {
+        val space = spaceRepository.save(Space(name = "spacespacespace"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+
+        mockMvc.perform(
+                delete("$baseSpaceUrl/${space.uuid}")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+                .andExpect(status().isOk)
+
+        assertThat(spaceRepository.count()).isZero();
+    }
+
+    @Test
+    fun `DEL should return 403 when trying to edit space without owner authorization`() {
+        val space = spaceRepository.save(Space(name = "memberspace"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_EDITOR))
+        mockMvc.perform(
+                delete("$baseSpaceUrl/${space.uuid}")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `DEL should return 401 when token is not valid`() {
+        val token = "INVALID_TOKEN"
+
+        mockMvc.perform(
+                delete("$baseSpaceUrl/abcd")
+                        .header("Authorization", "Bearer $token")
+        )
+                .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `DEL should return 400 if space does not exist`() {
+        val space = spaceRepository.save(Space(name = "spacespacespace"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+
+        mockMvc.perform(
+                delete("$baseSpaceUrl/badSpace")
+                        .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+                .andExpect(status().isBadRequest)
+    }
+
+    //endregion
 }
