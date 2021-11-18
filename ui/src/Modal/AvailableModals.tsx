@@ -17,4 +17,5 @@ export enum AvailableModals {
     MY_PRODUCT_TAGS,
     MY_PERSON_TAGS,
     TRANSFER_OWNERSHIP,
+    DELETE_SPACE_NO_EDITORS
 }
