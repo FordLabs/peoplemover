@@ -29,11 +29,16 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
 
 
     useOnLoad(() => {
-        const accessToken = getToken();
+        const authenticatedRoute = <Route {...rest}>{children}</Route>;
+        if (!window.runConfig.auth_enabled) {
+            setRenderedElement(authenticatedRoute);
+        } else {
+            const accessToken = getToken();
 
-        AccessTokenClient.validateAccessToken(accessToken)
-            .then(() => setRenderedElement(<Route {...rest}>{children}</Route>))
-            .catch(() => setRenderedElement(<RedirectToADFS/>));
+            AccessTokenClient.validateAccessToken(accessToken)
+                .then(() => setRenderedElement(authenticatedRoute))
+                .catch(() => setRenderedElement(<RedirectToADFS/>));
+        }
     });
 
     return <>{renderedElement}</>;
