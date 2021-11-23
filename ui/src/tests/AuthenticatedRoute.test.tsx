@@ -42,7 +42,7 @@ describe('AuthenticatedRoute', function() {
 
     it('should display content when authenticated', async () => {
         Axios.post = jest.fn(() => Promise.resolve({} as AxiosResponse));
-        const component = renderComponent({authenticated: true}).component;
+        const component = renderComponent({authenticated: true, securityEnabled: true}).component;
 
         await wait(() => {
             const result = component.queryByText('Hello, Secured World!');
@@ -53,7 +53,7 @@ describe('AuthenticatedRoute', function() {
     it('should redirect to Auth provider when not Authenticated', async () => {
         Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
         window.location = {href: '', origin: 'http://localhost'} as Location;
-        renderComponent({authenticated: false});
+        renderComponent({authenticated: false, securityEnabled: true});
         const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
 
         await wait(() => {
@@ -61,11 +61,20 @@ describe('AuthenticatedRoute', function() {
         });
     });
 
+    it('should display content when security is disabled', async () => {
+        const component = renderComponent({authenticated: false, securityEnabled: false}).component;
+
+        await wait(() => {
+            const result = component.queryByText('Hello, Secured World!');
+            expect(result).not.toBeNull();
+        });
+    });
+
     describe('set redirect pathname variable', () => {
         beforeEach(() => {
             sessionStorage.clear();
             Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
-            setRunConfig();
+            setRunConfig(true);
         });
 
         it('should set the appropriate space UUID in the ADFS redirect session storage variable', async () => {
@@ -102,12 +111,13 @@ describe('AuthenticatedRoute', function() {
         }
     });
 
-    function setRunConfig(): void {
+    function setRunConfig(securityEnabled: boolean): void {
         /* eslint-disable @typescript-eslint/camelcase */
         window.runConfig = {
             adfs_url_template: 'http://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s',
             adfs_client_id: 'urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa',
             adfs_resource: 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb',
+            auth_enabled: securityEnabled,
         } as RunConfig;
         /* eslint-enable @typescript-eslint/camelcase */
     }
@@ -122,9 +132,9 @@ describe('AuthenticatedRoute', function() {
         );
     }
 
-    function renderComponent({authenticated}: ComponentState): RenderedComponent {
+    function renderComponent({authenticated, securityEnabled}: ComponentState): RenderedComponent {
         const history = createMemoryHistory({ initialEntries: ['/secure'] });
-        setRunConfig();
+        setRunConfig(securityEnabled);
         if (authenticated) {
             new Cookies().set('accessToken', 'TOTALLY_REAL_ACCESS_TOKEN', {path: '/'});
         }
@@ -136,6 +146,7 @@ describe('AuthenticatedRoute', function() {
 
     interface ComponentState {
         authenticated: boolean;
+        securityEnabled: boolean;
     }
 
     interface RenderedComponent {
