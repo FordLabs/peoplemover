@@ -116,28 +116,16 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
                     Leave Space
                 </button>
                 }
-                {isUserOwner && spaceHasEditors &&
+                {isUserOwner &&
                 <button
                     data-testid="deleteSpace"
                     className="dropdownOptions"
                     role="menuitem"
-                    onClick={openDeleteModal}
+                    onClick={spaceHasEditors ? openDeleteModal : openDeleteNoEditorsModal}
                 >
                     <i className="material-icons">delete</i>
                     Delete Space
                 </button>
-                }
-                {isUserOwner && !spaceHasEditors &&
-                <button
-                    data-testid="deleteSpaceNoEditors"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={openDeleteNoEditorsModal}
-                >
-                    <i className="material-icons">delete</i>
-                    Delete Space
-                </button>
-
                 }
             </AccessibleDropdownContainer>
         );

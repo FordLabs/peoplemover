@@ -39,8 +39,6 @@ import {FilterTypeListings} from '../../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../../Modal/AvailableModals';
 import DeleteSpaceForm from "../../SpaceDashboard/DeleteSpaceForm";
 import TransferOwnershipForm from "../../SpaceDashboard/TransferOwnershipForm";
-import DeleteSpaceFormNoEditors from "../../SpaceDashboard/DeleteSpaceWithNoEditorsForm";
-import DeleteSpaceWithNoEditorsForm from "../../SpaceDashboard/DeleteSpaceWithNoEditorsForm";
 
 export interface ModalMetadataItem {
     title: string;
@@ -144,12 +142,12 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
         case AvailableModals.DELETE_SPACE:
             return[{
                 title: "Are you sure?",
-                form: <DeleteSpaceForm space={item}/>
+                form: <DeleteSpaceForm space={item} spaceHasEditors={true}/>
             }];
         case AvailableModals.DELETE_SPACE_NO_EDITORS:
             return[{
                 title:"Are you for real?",
-                form: <DeleteSpaceWithNoEditorsForm space={item}/>
+                form: <DeleteSpaceForm space={item} spaceHasEditors={false}/>
             }]
         default:
             return null;

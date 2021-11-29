@@ -13,10 +13,11 @@ interface DeleteSpaceFormProps {
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
     fetchUserSpaces(): void;
+    spaceHasEditors?: boolean;
 }
 
-function DeleteSpaceForm({space, closeModal, setCurrentModal, fetchUserSpaces}: DeleteSpaceFormProps): JSX.Element {
-    const modalProps = {title: 'Are you sure?',
+function DeleteSpaceForm({space, closeModal, setCurrentModal, fetchUserSpaces, spaceHasEditors}: DeleteSpaceFormProps): JSX.Element {
+    const propsWithEditors = {title: 'Are you sure?',
         containerClassname: 'leaveSpaceModal',
         content: <><div>As owner of this space, deleting it will permanently remove it from all users&apos; dashboards. This action cannot be undone.</div>
             <div>If you&apos;d like to leave without deleting the space, please transfer ownership to a new owner.</div></>,
@@ -42,7 +43,28 @@ function DeleteSpaceForm({space, closeModal, setCurrentModal, fetchUserSpaces}: 
         },
     } as ConfirmationModalProps;
 
-    return (<ConfirmationModal {...modalProps}/>);
+    const propsWithoutEditors = {title: 'Are you sure?',
+        containerClassname: 'leaveSpaceModal',
+        content: <><div>Deleting this space will permanently remove it from PeopleMover.</div>
+            <div>Are you sure you want to delete it?</div></>,
+        submitButtonLabel: 'Delete Space',
+        submit(item?: unknown): void | Promise<void> {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            SpaceClient.deleteSpaceByUuid(space.uuid!!).then(() => {
+                fetchUserSpaces();
+            });
+            setCurrentModal({modal: AvailableModals.DELETE_SPACE_CONFIRMATION, item: space});
+        },
+        close() {
+            closeModal();
+        },
+    } as ConfirmationModalProps;
+
+    if (spaceHasEditors === undefined || spaceHasEditors) {
+        return (<ConfirmationModal {...propsWithEditors}/>);
+    } else {
+        return (<ConfirmationModal {...propsWithoutEditors}/>);
+    }
 
 }
 
