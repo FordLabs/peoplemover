@@ -124,8 +124,12 @@
   font-family: Helvetica, sans-serif;
   font-size: 12px;
 
-  i {
+  i,img {
     margin-right: 0.5rem;
+  }
+  img{
+    width: 18px;
+    height: 18px;
   }
 
   @include phone  {
