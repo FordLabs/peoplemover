@@ -78,6 +78,7 @@ function DeleteSpaceForm({
             <div>Are you sure you want to delete it?</div>
         </>,
         submitButtonLabel: 'Delete Space',
+        primaryButtonStyle: 'redalert',
         submit(item?: unknown): void | Promise<void> {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             SpaceClient.deleteSpaceByUuid(space.uuid!!).then(() => {

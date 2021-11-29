@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import FormButton from '../ModalFormComponents/FormButton';
 import ModalCardBanner from './ModalCardBanner';
+import FormButton, {ButtonStyle} from '../ModalFormComponents/FormButton';
 
 export interface ConfirmationModalProps {
     submit(item?: unknown): void | Promise<void>;
@@ -28,6 +28,7 @@ export interface ConfirmationModalProps {
     content: JSX.Element;
     secondaryButton?: JSX.Element;
     containerClassname?: string;
+    primaryButtonStyle?: string;
 }
 
 function ConfirmationModal({
@@ -39,12 +40,13 @@ function ConfirmationModal({
     content,
     secondaryButton,
     containerClassname = '',
+    primaryButtonStyle = 'primary',
 }: ConfirmationModalProps): JSX.Element {
     const SubmitButton = (): JSX.Element => (
         <FormButton
             className="confirmationModalDelete"
             onClick={submit}
-            buttonStyle="primary"
+            buttonStyle={primaryButtonStyle as ButtonStyle}
             testId="confirmDeleteButton">
             {submitButtonLabel}
         </FormButton>
