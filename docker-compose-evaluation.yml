@@ -29,6 +29,6 @@ services:
     container_name: ui
     build: ./ui
     ports:
-      - "1337:80"
+      - "3001:80"
     links:
       - peoplemover-api
