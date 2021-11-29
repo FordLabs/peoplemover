@@ -146,7 +146,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             }];
         case AvailableModals.DELETE_SPACE_NO_EDITORS:
             return[{
-                title:"Are you for real?",
+                title:"Are you sure?",
                 form: <DeleteSpaceForm space={item} spaceHasEditors={false}/>
             }]
         default:

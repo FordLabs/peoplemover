@@ -48,16 +48,33 @@ describe('Delete Space Form', () => {
                 expect(form.getByText('Transfer Ownership')).toBeInTheDocument();
             });
 
-            it('should stop showing the modal when the leave and delete button is pressed',  async () => {
+            it('should show a notification after Leave and Delete is pressed', async () => {
                 SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
-                act(() => {
+                await act(async () => {
                     const bigRedButton = form.getByText('Delete space');
                     fireEvent.click(bigRedButton);
+                });
+                await act(async () => {
+                    expect(form.getByText('Confirmed')).toBeInTheDocument();
+                    expect(form.getByText('testSpace has been deleted from PeopleMover.')).toBeInTheDocument();
+
+                });
+            });
+
+            it('should close the modal after OK is pressed on the notification of deletion', async () => {
+                SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
+                await act(async () => {
+                    const bigRedButton = form.getByText('Delete space');
+                    fireEvent.click(bigRedButton);
+                });
+                await act(async () => {
+                    const okButton = form.getByText('Ok');
+                    fireEvent.click(okButton);
                 });
                 expect(store.dispatch).toBeCalledWith(closeModalAction());
             });
 
-            it('should stop showing the modal when the close button is pressed',  async () => {
+            it('should stop showing the modal when the close button is pressed', async () => {
                 SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
                 act(() => {
                     const bigRedButton = form.getByText('Cancel');
@@ -68,7 +85,7 @@ describe('Delete Space Form', () => {
         });
 
         describe('things to do', () => {
-            it('should call the space client when the leave and delete button is pressed with appropriate spaceId',  () => {
+            it('should call the space client when the leave and delete button is pressed with appropriate spaceId', () => {
                 SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
                 act(() => {
                     const bigRedButton = form.getByText('Delete space');
