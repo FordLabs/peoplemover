@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  peoplemover-mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "PASSWORD"
+      MYSQL_DATABASE: "PEOPLEMOVER_DB"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: "mysql -uroot -pPASSWORD PEOPLEMOVER_DB -e 'select 1'"
+      interval: 1s
+      retries: 120
+  peoplemover-api:
+    container_name: api
+    build: ./api
+    ports:
+      - "8080:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=e2e-test"
+      - "SPRING_DATASOURCE_URL=jdbc:mysql://peoplemover-mysql:3306/PEOPLEMOVER_DB?serverTimezone=America/Detroit"
+    depends_on:
+      peoplemover-mysql:
+        condition: service_healthy
+    links:
+      - peoplemover-mysql
+  peoplemover-ui:
+    container_name: ui
+    build: ./ui
+    ports:
+      - "1337:80"
+    links:
+      - peoplemover-api
