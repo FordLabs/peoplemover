@@ -9,6 +9,7 @@ import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AvailableModals} from '../Modal/AvailableModals';
 import FormButton from '../ModalFormComponents/FormButton';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
+import './DeleteSpaceForm.scss';
 
 interface DeleteSpaceFormProps {
     space: Space;
