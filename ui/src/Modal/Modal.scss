@@ -106,23 +106,11 @@
     align-self: unset;
 }
 
-.confirmationModalDelete {
-    width:115px;
-    flex-grow:0;
-}
-
 .confirmationControlButtons {
     margin-top: 32px;
     justify-content: space-evenly;
     width: 50%;
     align-self: center;
-}
-
-.leaveSpaceModal
-{
-    .formButton{
-        height: 44px;
-    }
 }
 
 .cancelAndArchiveContainer {

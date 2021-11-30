@@ -15,31 +15,16 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors';
+@import "../Application/Styleguide/Colors.scss";
 
-.formButton {
-  border-radius: 6px;
-  width: 100px;
-  height: 32px;
+.yesNoButtons{
+  width:83% !important;
 }
 
-.formButton.link {
-  flex-grow: 0;
+.redalertButton{
+  width: 120px;
 }
 
-.primaryButton {
-  color: $white;
-  background-color: $prime-1;
-}
-
-.redalertButton {
-  color: $white;
-  background-color: $red;
-}
-
-.secondaryButton {
-  background-color: white;
-  border: 1px solid $prime-1;
-  box-sizing: border-box;
-  color: $prime-1;
+.cancelAndArchiveContainer{
+  width: 230px;
 }
