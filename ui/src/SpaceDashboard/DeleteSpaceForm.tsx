@@ -46,6 +46,7 @@ function DeleteSpaceForm({
             <div>As owner of this space, deleting it will permanently remove it from all users&apos; dashboards. This
                 action cannot be undone.
             </div>
+            <br/>
             <div>If you&apos;d like to leave without deleting the space, please transfer ownership to a new owner.</div>
         </>,
         submitButtonLabel: 'Transfer Ownership',
@@ -75,6 +76,7 @@ function DeleteSpaceForm({
         containerClassname: 'leaveSpaceModal',
         content: <>
             <div>Deleting this space will permanently remove it from PeopleMover.</div>
+            <br/>
             <div>Are you sure you want to delete it?</div>
         </>,
         submitButtonLabel: 'Delete Space',
