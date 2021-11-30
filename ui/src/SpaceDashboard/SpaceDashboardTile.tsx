@@ -81,6 +81,14 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
         return setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
     }
 
+    function openDeleteModal(): void {
+        return setCurrentModal({modal: AvailableModals.DELETE_SPACE, item: space});
+    }
+
+    function openDeleteNoEditorsModal(): void {
+        return setCurrentModal({modal: AvailableModals.DELETE_SPACE_NO_EDITORS, item: space});
+    }
+
     const ActionsDropdownContent = (): JSX.Element => {
         return (
             <AccessibleDropdownContainer
@@ -107,6 +115,17 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
                 >
                     <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
                     Leave Space
+                </button>
+                }
+                {isUserOwner &&
+                <button
+                    data-testid="deleteSpace"
+                    className="dropdownOptions"
+                    role="menuitem"
+                    onClick={spaceHasEditors ? openDeleteModal : openDeleteNoEditorsModal}
+                >
+                    <i className="material-icons">delete</i>
+                    Delete Space
                 </button>
                 }
             </AccessibleDropdownContainer>
