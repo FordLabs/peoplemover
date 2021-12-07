@@ -23,7 +23,7 @@ Constraints on this acceptance criteria:
 2. Constraint 2
 3. etc
 
-## Accessiblity Implemented (optional)
+## Accessibility Implemented (optional)
 
 1. Constraint 1
 2. Constraint 2
