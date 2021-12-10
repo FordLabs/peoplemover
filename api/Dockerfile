@@ -7,5 +7,5 @@ RUN gradle clean assemble -x generateGitProperties
 ### STAGE 2: Run ###
 FROM openjdk:11-jre-slim
 COPY --from=build /home/gradle/src/build/libs/*.jar app.jar
-EXPOSE 8080
+EXPOSE 8081
 ENTRYPOINT ["java","-jar","app.jar"]

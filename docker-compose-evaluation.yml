@@ -16,8 +16,9 @@ services:
     container_name: api
     build: ./api
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
+      - "SERVER_PORT=8081"
       - "SPRING_PROFILES_ACTIVE=e2e-test"
       - "SPRING_DATASOURCE_URL=jdbc:mysql://peoplemover-mysql:3306/PEOPLEMOVER_DB?serverTimezone=America/Detroit"
     depends_on:
