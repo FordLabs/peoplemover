@@ -38,7 +38,7 @@ function Branding(): JSX.Element {
                 FordLabs
             </a>
             <span className="brandingMessage brandingLeftPadSmall">|
-                <a href="mailto:matieh@ford.com" className="brandingMessage brandingLeftPadSmall">Contact Us</a>
+                <a href="mailto:ksawyer8@ford.com,jrozan1@ford.com,dgijsber@ford.com?subject=PeopleMover Web Contact" className="brandingMessage brandingLeftPadSmall">Contact Us</a>
             </span>
         </div>
     );
