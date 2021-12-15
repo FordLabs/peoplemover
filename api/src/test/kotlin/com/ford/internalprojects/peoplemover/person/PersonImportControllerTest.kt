@@ -35,6 +35,7 @@ import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -133,7 +134,7 @@ class PersonImportControllerTest {
     }
 
     @Test
-    fun `uploading the import template with two people adds them both to an empty space`() {
+    fun `uploading two people adds them both to an empty space`() {
 
         var superheroRole = SpaceRole(spaceUuid = space.uuid, name = "Superhero")
         var sidekickRole = SpaceRole(spaceUuid = space.uuid, name = "Sidekick")
@@ -185,5 +186,32 @@ class PersonImportControllerTest {
             assertThat(expectedPerson.tags).isEqualTo(allPeopleInSpace[index].tags)
         }
     }
+
+    @Test
+    fun `uploading two people to a space with two people means you now have four people`(){
+
+    }
+
+    @Test
+    fun `invalid person name causes a 400 response and no people are imported`(){
+
+    }
+
+    @Test
+    @Ignore
+    fun `Trying to import someone who collides (define) with someone else causes what exactly`(){
+
+    }
+
+    @Test
+    fun `Trying to import someone with an unknown role creates that role before import`(){
+
+    }
+
+    @Test
+    fun `Trying to import someone with an unknown tag creates that role before import`(){
+
+    }
+
 
 }
