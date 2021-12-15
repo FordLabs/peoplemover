@@ -56,7 +56,7 @@ class PersonController(
             @PathVariable personId: Int,
             @Valid @RequestBody archivePersonRequest: ArchivePersonRequest
     ): ResponseEntity<String> {
-        return if(personService.archivePerson(spaceUuid, personId, archivePersonRequest.archiveDate)) {
+        return if (personService.archivePerson(spaceUuid, personId, archivePersonRequest.archiveDate)) {
             ResponseEntity(HttpStatus.OK)
         } else {
             ResponseEntity(HttpStatus.BAD_REQUEST)

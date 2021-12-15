@@ -18,11 +18,8 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RequestMapping("/api/spaces/{spaceUuid}/people/import")
 @RestController
@@ -41,12 +38,15 @@ class PersonImportController(
     @PostMapping
     fun importPeople(
             @PathVariable spaceUuid: String,
-            @Valid @RequestBody personIncoming: PersonImportRequest
+            @RequestBody personRequests: List<PersonRequest>
     ): Boolean {
+
+        for (request in personRequests) {
+            val personCreated = personService.createPerson(request.toPerson(spaceUuid))
+
+        }
+
         return false;
     }
-class PersonImportRequest{
-
-}
 
 }

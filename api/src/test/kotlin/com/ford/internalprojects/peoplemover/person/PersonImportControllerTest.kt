@@ -18,11 +18,11 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.*
+import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.AssignmentService
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
@@ -32,8 +32,6 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
-import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
-import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -46,9 +44,9 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.LocalDate
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -106,7 +104,7 @@ class PersonImportControllerTest {
         space = spaceService.createSpaceWithName("spaceWithThisName", "Nobody")
         spaceTwo = spaceService.createSpaceWithName("spaceThatUserDoesNotHaveAccessTo", "Nobody")
 
-        tag = personTagRepository.save(PersonTag(spaceUuid = space.uuid, name = "Agency Employee" ))
+        tag = personTagRepository.save(PersonTag(spaceUuid = space.uuid, name = "Night Shift"))
 
         basePeopleUrl = getBaseImportUrl(space.uuid)
 
@@ -125,12 +123,51 @@ class PersonImportControllerTest {
     }
 
     @Test
-    fun `requesting a download template always gets you the same (correct) file every time`(){
-    var expected = "Person Name\tCDSID\tPerson Role\tPerson Note\tPerson Tags\r\nBruce Wayne\timbatman\tSuperhero\tLikes champagne\tNight Shift"
+    fun `requesting a download template always gets you the same (correct) file every time`() {
+        var expected = "Person Name\tCDSID\tPerson Role\tPerson Note\tPerson Tags\r\nBruce Wayne\timbatman\tSuperhero\tLikes champagne\tNight Shift"
         val mvcResult = mockMvc.perform(get(getBaseImportUrl(space.uuid))
                 .header("Authorization", "Bearer GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn();
         assertThat(mvcResult.response.contentAsString).isEqualTo(expected)
     }
+
+    @Test
+    fun `uploading the import template with a person adds them to an empty space`() {
+
+        var spaceRole = SpaceRole(spaceUuid = space.uuid, name = "Superhero")
+        spaceRolesRepository.save(spaceRole);
+
+        val personToCreate = Person(
+                name = "Bruce Wayne",
+                customField1 = "imbatman",
+                spaceRole = spaceRole,
+                notes = "Likes champagne",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+
+        var personJSON = objectMapper.writeValueAsString(listOf(personToCreate));
+
+
+        val mvcResult = mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(personJSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andReturn();
+        assertThat(personRepository.count()).isEqualTo(1)
+
+        val person = personRepository.findAllBySpaceUuid(space.uuid)[0]
+
+        assertThat(person.name).isEqualTo("Bruce Wayne")
+        assertThat(person.customField1).isEqualTo("imbatman")
+        assertThat(person.notes).isEqualTo("Likes champagne")
+        assertThat(person.spaceRole).isEqualTo(spaceRole)
+        assertThat(person.tags).isEqualTo(setOf(tag))
+
+
+    }
+
 }
