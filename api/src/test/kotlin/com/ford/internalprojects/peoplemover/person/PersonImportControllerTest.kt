@@ -133,41 +133,57 @@ class PersonImportControllerTest {
     }
 
     @Test
-    fun `uploading the import template with a person adds them to an empty space`() {
+    fun `uploading the import template with two people adds them both to an empty space`() {
 
-        var spaceRole = SpaceRole(spaceUuid = space.uuid, name = "Superhero")
-        spaceRolesRepository.save(spaceRole);
+        var superheroRole = SpaceRole(spaceUuid = space.uuid, name = "Superhero")
+        var sidekickRole = SpaceRole(spaceUuid = space.uuid, name = "Sidekick")
+        spaceRolesRepository.save(superheroRole);
+        spaceRolesRepository.save(sidekickRole);
 
-        val personToCreate = Person(
+        val batman = Person(
                 name = "Bruce Wayne",
                 customField1 = "imbatman",
-                spaceRole = spaceRole,
+                spaceRole = superheroRole,
                 notes = "Likes champagne",
-                newPerson = true,
+                newPerson = false,
                 spaceUuid = space.uuid,
                 tags = setOf(tag)
         )
 
-        var personJSON = objectMapper.writeValueAsString(listOf(personToCreate));
+        val robin = Person(
+                name = "Dick Grayson",
+                customField1 = "imrobin1",
+                spaceRole = sidekickRole,
+                notes = "Likes Capri Suns",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+        val expectedPeople : List<Person> = listOf(batman, robin)
 
+        var personJSON = objectMapper.writeValueAsString(expectedPeople);
 
-        val mvcResult = mockMvc.perform(post(getBaseImportUrl(space.uuid))
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .content(personJSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
                 .andReturn();
-        assertThat(personRepository.count()).isEqualTo(1)
-
-        val person = personRepository.findAllBySpaceUuid(space.uuid)[0]
-
-        assertThat(person.name).isEqualTo("Bruce Wayne")
-        assertThat(person.customField1).isEqualTo("imbatman")
-        assertThat(person.notes).isEqualTo("Likes champagne")
-        assertThat(person.spaceRole).isEqualTo(spaceRole)
-        assertThat(person.tags).isEqualTo(setOf(tag))
 
 
+        checkPeople(expectedPeople, space.uuid)
+    }
+
+    private fun checkPeople(expectedPeople: List<Person>, spaceUuid: String) {
+        assertThat(personRepository.count()).isEqualTo(expectedPeople.size.toLong())
+        val allPeopleInSpace = personRepository.findAllBySpaceUuid(spaceUuid)
+        expectedPeople.forEachIndexed{index, expectedPerson ->
+            assertThat(expectedPerson.name).isEqualTo(allPeopleInSpace[index].name)
+            assertThat(expectedPerson.customField1).isEqualTo(allPeopleInSpace[index].customField1)
+            assertThat(expectedPerson.notes).isEqualTo(allPeopleInSpace[index].notes)
+            assertThat(expectedPerson.spaceRole).isEqualTo(allPeopleInSpace[index].spaceRole)
+            assertThat(expectedPerson.tags).isEqualTo(allPeopleInSpace[index].tags)
+        }
     }
 
 }
