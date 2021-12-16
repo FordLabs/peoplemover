@@ -31,7 +31,7 @@ data class PersonRequest(
         @field:Size(max = 255, message = "Name cannot exceed 255 characters.")
         val name: String,
 
-        val tags: Set<PersonTag> = HashSet(),
+        var tags: Set<PersonTag> = HashSet(),
 
         var spaceRole: SpaceRole? = null,
 

@@ -17,6 +17,9 @@
 
 package com.ford.internalprojects.peoplemover.person
 
+import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
 import com.ford.internalprojects.peoplemover.tag.role.RoleService
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.security.access.prepost.PreAuthorize
@@ -27,7 +30,8 @@ import org.springframework.web.bind.annotation.*
 class PersonImportController(
         private val logger: BasicLogger,
         private val personService: PersonService,
-        private val roleService: RoleService
+        private val roleService: RoleService,
+        private val personTagService: PersonTagService
 ) {
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
@@ -44,9 +48,13 @@ class PersonImportController(
     ): Boolean {
 
         for (request in personRequests) {
-            personService.createPerson(createRoleIfNotExists(request, spaceUuid).toPerson(spaceUuid))
+
+            var newRequest : PersonRequest = createTagIfNotExists(request, spaceUuid)
+            newRequest = createRoleIfNotExists(newRequest, spaceUuid)
+
+            personService.createPerson(newRequest.toPerson(spaceUuid))
         }
-        return false;
+        return false
     }
 
     private fun createRoleIfNotExists(request: PersonRequest, spaceUuid: String): PersonRequest {
@@ -55,7 +63,22 @@ class PersonImportController(
                 request.spaceRole = roleService.addRoleToSpace(spaceUuid, request.spaceRole!!.name, null)
             }
         }
-        return request;
+        return request
+    }
+
+    private fun createTagIfNotExists(request: PersonRequest, spaceUuid: String) : PersonRequest {
+
+        var newTags : MutableSet<PersonTag> = mutableSetOf()
+
+        for (tag in request.tags) {
+
+            if (!personTagService.getAllPersonTags(spaceUuid).contains(tag)) {
+                newTags.add(personTagService.createPersonTagForSpace(TagRequest(tag.name), spaceUuid))
+
+            }
+        }
+        request.tags = newTags
+        return request
     }
 
 }
