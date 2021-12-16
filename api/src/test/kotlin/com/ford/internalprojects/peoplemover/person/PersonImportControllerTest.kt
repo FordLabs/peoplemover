@@ -165,7 +165,7 @@ class PersonImportControllerTest {
 
     @Test
     fun `uploading two people adds them both to an empty space`() {
-        val expectedPeople : List<Person> = listOf(batman, robin)
+        val expectedPeople: List<Person> = listOf(batman, robin)
 
         var personJSON = objectMapper.writeValueAsString(expectedPeople);
 
@@ -183,38 +183,60 @@ class PersonImportControllerTest {
     private fun checkPeople(expectedPeople: List<Person>, spaceUuid: String) {
         assertThat(personRepository.count()).isEqualTo(expectedPeople.size.toLong())
         val allPeopleInSpace = personRepository.findAllBySpaceUuid(spaceUuid)
-        expectedPeople.forEachIndexed{index, expectedPerson ->
+        expectedPeople.forEachIndexed { index, expectedPerson ->
             assertThat(expectedPerson.name).isEqualTo(allPeopleInSpace[index].name)
             assertThat(expectedPerson.customField1).isEqualTo(allPeopleInSpace[index].customField1)
             assertThat(expectedPerson.notes).isEqualTo(allPeopleInSpace[index].notes)
-            assertThat(expectedPerson.spaceRole).isEqualTo(allPeopleInSpace[index].spaceRole)
+            assertThat(expectedPerson.spaceRole?.name).isEqualTo(allPeopleInSpace[index].spaceRole?.name)
             assertThat(expectedPerson.tags).isEqualTo(allPeopleInSpace[index].tags)
         }
     }
 
     @Test
-    fun `uploading two people to a space with two people means you now have four people`(){
+    fun `uploading two people to a space with two people means you now have four people`() {
 
     }
 
     @Test
-    fun `invalid person name causes a 400 response and no people are imported`(){
+    fun `invalid person name causes a 400 response and no people are imported`() {
 
     }
 
     @Test
     @Ignore
-    fun `Trying to import someone who already exists creates a copy of the existing person`(){
+    fun `Trying to import someone who already exists creates a copy of the existing person`() {
 
     }
 
     @Test
-    fun `Trying to import someone with an unknown role creates that role before import`(){
+    fun `Trying to import someone with an unknown role creates that role before import`() {
+        robin = Person(
+                name = "Dick Grayson",
+                customField1 = "imrobin1",
+                spaceRole = SpaceRole(name = "Innocent Bystander", spaceUuid = space.uuid),
+                notes = "Likes Capri Suns",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+        val expectedPeople: List<Person> = listOf(robin)
 
+        var personJSON = objectMapper.writeValueAsString(expectedPeople);
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(personJSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andReturn();
+
+
+        checkPeople(expectedPeople, space.uuid)
+        assertThat(spaceRolesRepository.count()).isEqualTo(3);
     }
 
     @Test
-    fun `Trying to import someone with an unknown tag creates that role before import`(){
+    fun `Trying to import someone with an unknown tag creates that role before import`() {
 
     }
 

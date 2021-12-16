@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.person
 
+import com.ford.internalprojects.peoplemover.tag.role.RoleService
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -25,7 +26,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class PersonImportController(
         private val logger: BasicLogger,
-        private val personService: PersonService
+        private val personService: PersonService,
+        private val roleService: RoleService
 ) {
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
@@ -42,11 +44,18 @@ class PersonImportController(
     ): Boolean {
 
         for (request in personRequests) {
-            val personCreated = personService.createPerson(request.toPerson(spaceUuid))
-
+            personService.createPerson(createRoleIfNotExists(request, spaceUuid).toPerson(spaceUuid))
         }
-
         return false;
+    }
+
+    private fun createRoleIfNotExists(request: PersonRequest, spaceUuid: String): PersonRequest {
+        if (request.spaceRole != null) {
+            if (!roleService.getRolesForSpace(spaceUuid).contains(request.spaceRole!!)) {
+                request.spaceRole = roleService.addRoleToSpace(spaceUuid, request.spaceRole!!.name, null)
+            }
+        }
+        return request;
     }
 
 }
