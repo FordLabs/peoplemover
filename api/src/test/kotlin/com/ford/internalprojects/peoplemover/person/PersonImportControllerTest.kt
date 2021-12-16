@@ -188,7 +188,6 @@ class PersonImportControllerTest {
             assertThat(expectedPerson.customField1).isEqualTo(allPeopleInSpace[index].customField1)
             assertThat(expectedPerson.notes).isEqualTo(allPeopleInSpace[index].notes)
             assertThat(expectedPerson.spaceRole?.name).isEqualTo(allPeopleInSpace[index].spaceRole?.name)
-            assertThat(expectedPerson.tags).isEqualTo(allPeopleInSpace[index].tags)
         }
     }
 
@@ -254,6 +253,12 @@ class PersonImportControllerTest {
         assertThat(personRepository.findAllBySpaceUuid(space.uuid).first().tags.contains(tag))
         assertThat(personTagRepository.count()).isEqualTo(1)
 
+
+    }
+
+    @Test
+    @Ignore
+    fun `Trying to import someone who has existing tags and strange tags imports the person with all tags`() {
 
     }
 
