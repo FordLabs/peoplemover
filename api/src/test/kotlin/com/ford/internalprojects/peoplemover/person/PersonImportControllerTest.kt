@@ -35,6 +35,7 @@ import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -93,6 +94,12 @@ class PersonImportControllerTest {
     private lateinit var space: Space
     private lateinit var spaceTwo: Space
 
+    private lateinit var batman: Person
+    private lateinit var robin: Person
+
+    private lateinit var superheroRole: SpaceRole
+    private lateinit var sidekickRole: SpaceRole
+
     private lateinit var tag: PersonTag
 
     var basePeopleUrl: String = ""
@@ -109,6 +116,30 @@ class PersonImportControllerTest {
         basePeopleUrl = getBaseImportUrl(space.uuid)
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+        superheroRole = spaceRolesRepository.save(SpaceRole(spaceUuid = space.uuid, name = "Superhero"));
+        sidekickRole = spaceRolesRepository.save(SpaceRole(spaceUuid = space.uuid, name = "Sidekick"));
+
+        batman = Person(
+                name = "Bruce Wayne",
+                customField1 = "imbatman",
+                spaceRole = superheroRole,
+                notes = "Likes champagne",
+                newPerson = false,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+
+        robin = Person(
+                name = "Dick Grayson",
+                customField1 = "imrobin1",
+                spaceRole = sidekickRole,
+                notes = "Likes Capri Suns",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+
+
     }
 
     @After
@@ -133,41 +164,81 @@ class PersonImportControllerTest {
     }
 
     @Test
-    fun `uploading the import template with a person adds them to an empty space`() {
+    fun `uploading two people adds them both to an empty space`() {
+        val expectedPeople: List<Person> = listOf(batman, robin)
 
-        var spaceRole = SpaceRole(spaceUuid = space.uuid, name = "Superhero")
-        spaceRolesRepository.save(spaceRole);
+        var personJSON = objectMapper.writeValueAsString(expectedPeople);
 
-        val personToCreate = Person(
-                name = "Bruce Wayne",
-                customField1 = "imbatman",
-                spaceRole = spaceRole,
-                notes = "Likes champagne",
-                newPerson = true,
-                spaceUuid = space.uuid,
-                tags = setOf(tag)
-        )
-
-        var personJSON = objectMapper.writeValueAsString(listOf(personToCreate));
-
-
-        val mvcResult = mockMvc.perform(post(getBaseImportUrl(space.uuid))
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .content(personJSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
                 .andReturn();
-        assertThat(personRepository.count()).isEqualTo(1)
 
-        val person = personRepository.findAllBySpaceUuid(space.uuid)[0]
 
-        assertThat(person.name).isEqualTo("Bruce Wayne")
-        assertThat(person.customField1).isEqualTo("imbatman")
-        assertThat(person.notes).isEqualTo("Likes champagne")
-        assertThat(person.spaceRole).isEqualTo(spaceRole)
-        assertThat(person.tags).isEqualTo(setOf(tag))
+        checkPeople(expectedPeople, space.uuid)
+    }
 
+    private fun checkPeople(expectedPeople: List<Person>, spaceUuid: String) {
+        assertThat(personRepository.count()).isEqualTo(expectedPeople.size.toLong())
+        val allPeopleInSpace = personRepository.findAllBySpaceUuid(spaceUuid)
+        expectedPeople.forEachIndexed { index, expectedPerson ->
+            assertThat(expectedPerson.name).isEqualTo(allPeopleInSpace[index].name)
+            assertThat(expectedPerson.customField1).isEqualTo(allPeopleInSpace[index].customField1)
+            assertThat(expectedPerson.notes).isEqualTo(allPeopleInSpace[index].notes)
+            assertThat(expectedPerson.spaceRole?.name).isEqualTo(allPeopleInSpace[index].spaceRole?.name)
+            assertThat(expectedPerson.tags).isEqualTo(allPeopleInSpace[index].tags)
+        }
+    }
+
+    @Test
+    fun `uploading two people to a space with two people means you now have four people`() {
 
     }
+
+    @Test
+    fun `invalid person name causes a 400 response and no people are imported`() {
+
+    }
+
+    @Test
+    @Ignore
+    fun `Trying to import someone who already exists creates a copy of the existing person`() {
+
+    }
+
+    @Test
+    fun `Trying to import someone with an unknown role creates that role before import`() {
+        robin = Person(
+                name = "Dick Grayson",
+                customField1 = "imrobin1",
+                spaceRole = SpaceRole(name = "Innocent Bystander", spaceUuid = space.uuid),
+                notes = "Likes Capri Suns",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+        val expectedPeople: List<Person> = listOf(robin)
+
+        var personJSON = objectMapper.writeValueAsString(expectedPeople);
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(personJSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andReturn();
+
+
+        checkPeople(expectedPeople, space.uuid)
+        assertThat(spaceRolesRepository.count()).isEqualTo(3);
+    }
+
+    @Test
+    fun `Trying to import someone with an unknown tag creates that role before import`() {
+
+    }
+
 
 }
