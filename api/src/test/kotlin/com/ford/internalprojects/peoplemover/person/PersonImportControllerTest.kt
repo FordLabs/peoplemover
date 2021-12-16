@@ -94,6 +94,12 @@ class PersonImportControllerTest {
     private lateinit var space: Space
     private lateinit var spaceTwo: Space
 
+    private lateinit var batman: Person
+    private lateinit var robin: Person
+
+    private lateinit var superheroRole: SpaceRole
+    private lateinit var sidekickRole: SpaceRole
+
     private lateinit var tag: PersonTag
 
     var basePeopleUrl: String = ""
@@ -110,6 +116,30 @@ class PersonImportControllerTest {
         basePeopleUrl = getBaseImportUrl(space.uuid)
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+        superheroRole = spaceRolesRepository.save(SpaceRole(spaceUuid = space.uuid, name = "Superhero"));
+        sidekickRole = spaceRolesRepository.save(SpaceRole(spaceUuid = space.uuid, name = "Sidekick"));
+
+        batman = Person(
+                name = "Bruce Wayne",
+                customField1 = "imbatman",
+                spaceRole = superheroRole,
+                notes = "Likes champagne",
+                newPerson = false,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+
+        robin = Person(
+                name = "Dick Grayson",
+                customField1 = "imrobin1",
+                spaceRole = sidekickRole,
+                notes = "Likes Capri Suns",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+
+
     }
 
     @After
@@ -135,31 +165,6 @@ class PersonImportControllerTest {
 
     @Test
     fun `uploading two people adds them both to an empty space`() {
-
-        var superheroRole = SpaceRole(spaceUuid = space.uuid, name = "Superhero")
-        var sidekickRole = SpaceRole(spaceUuid = space.uuid, name = "Sidekick")
-        spaceRolesRepository.save(superheroRole);
-        spaceRolesRepository.save(sidekickRole);
-
-        val batman = Person(
-                name = "Bruce Wayne",
-                customField1 = "imbatman",
-                spaceRole = superheroRole,
-                notes = "Likes champagne",
-                newPerson = false,
-                spaceUuid = space.uuid,
-                tags = setOf(tag)
-        )
-
-        val robin = Person(
-                name = "Dick Grayson",
-                customField1 = "imrobin1",
-                spaceRole = sidekickRole,
-                notes = "Likes Capri Suns",
-                newPerson = true,
-                spaceUuid = space.uuid,
-                tags = setOf(tag)
-        )
         val expectedPeople : List<Person> = listOf(batman, robin)
 
         var personJSON = objectMapper.writeValueAsString(expectedPeople);
@@ -199,7 +204,7 @@ class PersonImportControllerTest {
 
     @Test
     @Ignore
-    fun `Trying to import someone who collides (define) with someone else causes what exactly`(){
+    fun `Trying to import someone who already exists creates a copy of the existing person`(){
 
     }
 
