@@ -257,8 +257,36 @@ class PersonImportControllerTest {
     }
 
     @Test
-    @Ignore
     fun `Trying to import someone who has existing tags and strange tags imports the person with all tags`() {
+
+        val strangeTag = PersonTag(spaceUuid = space.uuid, name = "Day Shift")
+
+        val flash = Person(
+                name = "Barry Allen",
+                customField1 = "iamspeed",
+                spaceRole = superheroRole,
+                notes = "Likes decaf coffee",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag, strangeTag)
+        )
+
+        val expectedPeople: List<Person> = listOf(flash)
+
+        var personJSON = objectMapper.writeValueAsString(expectedPeople);
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(personJSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andReturn();
+
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).first().tags.count()).isEqualTo(2)
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).first().tags.contains(tag))
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).first().tags.contains(strangeTag))
+
+        assertThat(personTagRepository.count()).isEqualTo(2)
 
     }
 

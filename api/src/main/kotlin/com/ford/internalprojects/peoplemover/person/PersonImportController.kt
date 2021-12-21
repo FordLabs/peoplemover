@@ -76,6 +76,9 @@ class PersonImportController(
                 newTags.add(personTagService.createPersonTagForSpace(TagRequest(tag.name), spaceUuid))
 
             }
+            else {
+                newTags.add(tag)
+            }
         }
         request.tags = newTags
         return request
