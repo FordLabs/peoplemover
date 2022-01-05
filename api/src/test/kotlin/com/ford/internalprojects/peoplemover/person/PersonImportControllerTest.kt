@@ -32,6 +32,8 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
+import com.ford.internalprojects.peoplemover.utilities.CHAR_260
+import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -45,6 +47,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -138,8 +141,6 @@ class PersonImportControllerTest {
                 spaceUuid = space.uuid,
                 tags = setOf(tag)
         )
-
-
     }
 
     @After
@@ -193,17 +194,105 @@ class PersonImportControllerTest {
 
     @Test
     fun `uploading two people to a space with two people means you now have four people`() {
+        personRepository.createEntityAndUpdateSpaceLastModified(batman)
+        personRepository.createEntityAndUpdateSpaceLastModified(robin)
 
-    }
+        val flash = Person(
+                name = "Barry Allen",
+                customField1 = "iamspeed",
+                spaceRole = superheroRole,
+                notes = "Likes decaf coffee",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
 
-    @Test
-    fun `invalid person name causes a 400 response and no people are imported`() {
+        val superman = Person(
+                name = "Clark Kent",
+                customField1 = "itsabird",
+                spaceRole = superheroRole,
+                notes = "Wears glasses",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+
+        val expectedPeople: List<Person> = listOf(flash, superman, batman, robin)
+
+        val newPeople: List<Person> = listOf(flash, superman)
+
+
+        var personJSON = objectMapper.writeValueAsString(newPeople);
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(personJSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andReturn();
+
+        assertThat(personRepository.count()).isEqualTo(expectedPeople.size.toLong())
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).contains(robin))
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).contains(flash))
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).contains(batman))
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).contains(superman))
 
     }
 
     @Test
     @Ignore
+    fun `invalid person name causes a 400 response and no people are imported`() {
+
+        val nameTooLong = Person(name = CHAR_260, spaceUuid = space.uuid)
+        val notesTooLong = Person(name = "person name", spaceUuid = space.uuid, notes = CHAR_260)
+        val nameBlank = Person(name = EMPTY_NAME, spaceUuid = space.uuid)
+
+        val nameTooLongList: List<Person> = listOf(batman, nameTooLong, robin)
+        val notesTooLongList: List<Person> = listOf(batman, notesTooLong, robin)
+        val nameBlackList: List<Person> = listOf(batman, nameBlank, robin)
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameTooLongList)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nameBlackList)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notesTooLongList)))
+                .andExpect(status().isBadRequest)
+                .andReturn()
+
+    }
+
+    @Test
     fun `Trying to import someone who already exists creates a copy of the existing person`() {
+        personRepository.createEntityAndUpdateSpaceLastModified(batman)
+
+        val newPeople: List<Person> = listOf(batman)
+
+        val expectedPeople: List<Person> = listOf(batman, batman)
+
+        var personJSON = objectMapper.writeValueAsString(newPeople);
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(personJSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andReturn();
+
+
+        checkPeople(expectedPeople, space.uuid)
 
     }
 

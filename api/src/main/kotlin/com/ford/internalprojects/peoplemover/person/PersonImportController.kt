@@ -23,7 +23,9 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
 import com.ford.internalprojects.peoplemover.tag.role.RoleService
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RequestMapping("/api/spaces/{spaceUuid}/people/import")
 @RestController
@@ -42,10 +44,11 @@ class PersonImportController(
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping
+    @Validated
     fun importPeople(
             @PathVariable spaceUuid: String,
             @RequestBody personRequests: List<PersonRequest>
-    ): Boolean {
+    ) {
 
         for (request in personRequests) {
 
@@ -54,7 +57,6 @@ class PersonImportController(
 
             personService.createPerson(newRequest.toPerson(spaceUuid))
         }
-        return false
     }
 
     private fun createRoleIfNotExists(request: PersonRequest, spaceUuid: String): PersonRequest {
