@@ -10,6 +10,6 @@ project:
 targets:
   only:
     - type: gradle
-      path: api
+      path: .
     - type: npm
       path: ui
