@@ -22,11 +22,15 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
 import com.ford.internalprojects.peoplemover.tag.role.RoleService
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
+import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 
+
+@Validated
 @RequestMapping("/api/spaces/{spaceUuid}/people/import")
 @RestController
 class PersonImportController(
@@ -44,10 +48,9 @@ class PersonImportController(
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping
-    @Validated
     fun importPeople(
             @PathVariable spaceUuid: String,
-            @RequestBody personRequests: List<PersonRequest>
+            @RequestBody @Valid personRequests: List<PersonRequest>
     ) {
 
         for (request in personRequests) {
@@ -86,4 +89,14 @@ class PersonImportController(
         return request
     }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolationException() {
+        // Intentionally left blank
+    }
+
 }
+
+
+

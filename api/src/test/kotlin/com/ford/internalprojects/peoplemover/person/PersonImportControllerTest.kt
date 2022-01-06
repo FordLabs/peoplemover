@@ -52,6 +52,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
+
 @AutoConfigureMockMvc
 @SpringBootTest
 @ActiveProfiles("test")
@@ -240,7 +241,6 @@ class PersonImportControllerTest {
     }
 
     @Test
-    @Ignore
     fun `invalid person name causes a 400 response and no people are imported`() {
 
         val nameTooLong = Person(name = CHAR_260, spaceUuid = space.uuid)
