@@ -202,6 +202,14 @@ function PeopleMover({
                                         <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
                                         <span>Add Person</span>
                                     </button>
+                                    <button
+                                        type="button"
+                                        className={`addPersonButton`}
+                                        data-testid="bulkImportButton"
+                                        onClick={(): void => setCurrentModal({modal: AvailableModals.BULK_IMPORT})}>
+                                        <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
+                                        <span>Import people from CSV file</span>
+                                    </button>
                                     <UnassignedDrawer/>
                                     <ReassignedDrawer/>
                                     <ArchivedPersonDrawer/>

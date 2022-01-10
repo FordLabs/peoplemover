@@ -39,6 +39,7 @@ import {FilterTypeListings} from '../../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../../Modal/AvailableModals';
 import DeleteSpaceForm from "../../SpaceDashboard/DeleteSpaceForm";
 import TransferOwnershipForm from "../../SpaceDashboard/TransferOwnershipForm";
+import BulkImportForm from "../../People/BulkImportForm";
 
 export interface ModalMetadataItem {
     title: string;
@@ -93,6 +94,12 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
                     initiallySelectedProduct={item ? item.initiallySelectedProduct : undefined}
                     initialPersonName={item ? item.initialPersonName : ''}/>,
             }];
+        case AvailableModals.BULK_IMPORT:
+            return [{
+                title:`Bulk Import`,
+                form: <BulkImportForm/>,
+            }];
+
         case AvailableModals.EDIT_PERSON:
             return [{
                 title: 'Edit Person',

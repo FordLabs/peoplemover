@@ -193,6 +193,29 @@ describe('People actions', () => {
         });
     });
 
+    describe('Bulk Import Form', () => {
+        let app: RenderResult;
+
+        beforeEach(async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+
+            await wait(() => {
+                app = applicationSetup(undefined, initialState);
+            });
+        });
+
+        it('opens BulkImportForm component when Bulk Import button is clicked', async () => {
+            const bulkImportButton = await app.findByText('Import people from CSV file');
+            fireEvent.click(bulkImportButton);
+
+            await app.findByText('Bulk Import');
+        });
+
+
+
+    });
+
     describe('Roles', () => {
         let app: RenderResult;
 
