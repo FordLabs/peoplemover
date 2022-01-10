@@ -25,6 +25,9 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
+import {AvailableModals} from "../Modal/AvailableModals";
+import fileDownload from "js-file-download";
+import ReportClient from "../Reports/ReportClient";
 
 interface BulkImportForm {
     currentSpace: Space;
@@ -47,15 +50,7 @@ function BulkImportForm({currentSpace, currentUser, closeModal, setCurrentModal,
 
 
     useEffect(() => {
-        const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
-            if (currentSpace.uuid) {
-                SpaceClient.getUsersForSpace(currentSpace.uuid).then((users) => {
-                    setUsersList(users.filter(u => u.permission === 'editor'));
-                    setMe(users.find(u => u.userId.toUpperCase() === currentUser.toUpperCase()));
-                });
-            }
-        };
-        getUsers(currentSpace, setUsersList);
+        //empty for reason
     }, [currentSpace, setUsersList, currentUser]);
 
 
@@ -64,12 +59,32 @@ function BulkImportForm({currentSpace, currentUser, closeModal, setCurrentModal,
 
     };
 
-    const renderOption = (person: UserSpaceMapping): JSX.Element => {
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+    function DownloadReportButton(): JSX.Element {
+        const template = 'Person Name,CDSID,Person Role,Person Note,Person Tags\r\nBruce Wayne,imbatman,Superhero,Likes champagne,Night Shift';
+
+        const handleDownloadReport = async (): Promise<void> => {
+            fileDownload(template, 'peopleMoverTemplate.csv');
+        };
+
+        return (
+            <button
+                onClick={handleDownloadReport}
+            >
+                Download Report
+            </button>
+        );
+    }
+
+    const renderOption = (): JSX.Element => {
+        const template = 'Person Name,CDSID,Person Role,Person Note,Person Tags\r\nBruce Wayne,imbatman,Superhero,Likes champagne,Night Shift';
+        const handleDownloadReport = async (): Promise<void> => {
+            fileDownload(template, 'peopleMoverTemplate.csv');
+        };
+
         return <div className={'bulkImportDownloadTemplate'}
-            data-testid={'bulkImportDownloadTemplate'}
-            onClick={(): void => setSelectedUser(person)}>
-            <div> Download this PeopleMover Template  <span className="material-icons">file_download</span></div>
+            data-testid={'bulkImportDownloadTemplate'}>
+            {<DownloadReportButton/>}
+            <div onClick={handleDownloadReport} onKeyDown={handleDownloadReport}> Download this PeopleMover Template  <span className="material-icons">file_download</span></div>
             <div> Please do not change any column names. </div>
         </div>;
     };
@@ -90,7 +105,7 @@ function BulkImportForm({currentSpace, currentUser, closeModal, setCurrentModal,
                     To add multiple people at one time, please use the PeopleMover template to upload a csv file.
                 </div>
                 <div className={'bulkImportFormContainer'}>
-                    {usersList.map((user) => renderOption(user))}
+                    {renderOption()}
                 </div>
 
                 <div className="buttonsContainer">

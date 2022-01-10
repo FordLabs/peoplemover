@@ -53,6 +53,7 @@ describe('People actions', () => {
     const addPersonButtonText = 'Add Person';
     const addPersonModalTitle = 'Add New Person';
     const submitFormButtonText = 'Add';
+    let store: import('redux').Store<import('redux').AnyAction>;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -191,29 +192,6 @@ describe('People actions', () => {
 
             expect(await app.findByText('Please enter a person name.')).toBeInTheDocument();
         });
-    });
-
-    describe('Bulk Import Form', () => {
-        let app: RenderResult;
-
-        beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
-            await wait(() => {
-                app = applicationSetup(undefined, initialState);
-            });
-        });
-
-        it('opens BulkImportForm component when Bulk Import button is clicked', async () => {
-            const bulkImportButton = await app.findByText('Import people from CSV file');
-            fireEvent.click(bulkImportButton);
-
-            await app.findByText('Bulk Import');
-        });
-
-
-
     });
 
     describe('Roles', () => {
@@ -555,6 +533,26 @@ describe('People actions', () => {
                 );
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'cancelAssignment', TestUtils.person1.name]);
             });
+        });
+    });
+
+    describe('Bulk Import Form', () => {
+        let app: RenderResult;
+
+        beforeEach(async () => {
+            jest.clearAllMocks();
+            TestUtils.mockClientCalls();
+
+            await wait(() => {
+                app = applicationSetup(undefined, initialState);
+            });
+        });
+
+        it('opens BulkImportForm component when Bulk Import button is clicked', async () => {
+            const bulkImportButton = await app.findByText('Import people from CSV file');
+            fireEvent.click(bulkImportButton);
+
+            await app.findByText('Bulk Import');
         });
     });
 });
