@@ -56,8 +56,6 @@ import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries
 import HeaderContainer from '../Header/HeaderContainer';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
-import AccessibleDropdownContainer from "../ReusableComponents/AccessibleDropdownContainer";
-import LeaveIcon from "./Assets/leave-icon.svg";
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -108,7 +106,6 @@ function PeopleMover({
     setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
     const [redirect, setRedirect] = useState<JSX.Element>();
-    const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     function hasProductsAndFilters(): boolean {
         return Boolean(products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0);
@@ -171,37 +168,6 @@ function PeopleMover({
         handleErrors,
     ]);
 
-    function handleDropdownClick(): void {
-        setDropdownToggle(!dropdownToggle);
-    }
-
-    const ActionsDropdownContent = (): JSX.Element => {
-        return (
-            <AccessibleDropdownContainer
-                handleClose={(): void => {setDropdownToggle(false);}}
-                className="ellipsisDropdownContainer"
-            >
-                <button
-                    autoFocus
-                    data-testid="addOnePerson"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}
-                >
-                    Add one person
-                </button>
-                <button
-                    data-testid="importPeople"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}
-                >
-                  Import people from excel
-                </button>
-            </AccessibleDropdownContainer>
-        );
-    };
-
     /* eslint-disable */
     useEffect(() => {
         if (currentSpace && hasProductsAndFilters()) fetchProducts();
@@ -232,10 +198,9 @@ function PeopleMover({
                                         type="button"
                                         className={`addPersonButton`}
                                         data-testid="addPersonButton"
-                                        onClick={handleDropdownClick}>
+                                        onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
                                         <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
                                         <span>Add Person</span>
-                                        {dropdownToggle && <ActionsDropdownContent/>}
                                     </button>
                                     <UnassignedDrawer/>
                                     <ReassignedDrawer/>
