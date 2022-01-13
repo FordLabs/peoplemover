@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {connect} from 'react-redux';
 import {closeModalAction, fetchUserSpacesAction, setCurrentModalAction} from '../Redux/Actions';
@@ -28,6 +28,7 @@ import NotificationModal, {NotificationModalProps} from '../Modal/NotificationMo
 import {AvailableModals} from "../Modal/AvailableModals";
 import fileDownload from "js-file-download";
 import ReportClient from "../Reports/ReportClient";
+
 
 interface BulkImportForm {
     currentSpace: Space;
@@ -59,12 +60,22 @@ function BulkImportForm({currentSpace, currentUser, closeModal, setCurrentModal,
 
     };
 
+    const handleFileUpload = (e: ChangeEvent): void =>{
+        const target= e.target as HTMLInputElement;
+        const file: File = (target.files as FileList)[0];
+        console.log(file.name);
+        return undefined;
+    }
+
     const renderOption = (): JSX.Element => {
 
         return <div className={'bulkImportDownloadTemplate'}
             data-testid={'bulkImportDownloadTemplate'}>
-            <a href={'ui/public/pmBulkImportTemplate.csv'}> Download this PeopleMover Template <span className="material-icons">file_download</span></a>
+            <a href={'pmBulkImportTemplate.csv'}> Download this PeopleMover Template <span className="material-icons">file_download</span></a>
             <div> Please do not change any column names. </div>
+            <br/>
+            <div>Upload the updated csv with your team information</div>
+            <input type={'file'} accept={'.csv'} onChange={handleFileUpload}/>
         </div>;
     };
 
