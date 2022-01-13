@@ -25,9 +25,7 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
-import {AvailableModals} from "../Modal/AvailableModals";
-import fileDownload from "js-file-download";
-import ReportClient from "../Reports/ReportClient";
+
 
 
 interface BulkImportForm {
@@ -64,6 +62,7 @@ function BulkImportForm({currentSpace, currentUser, closeModal, setCurrentModal,
         const target= e.target as HTMLInputElement;
         const file: File = (target.files as FileList)[0];
         console.log(file.name);
+
         return undefined;
     }
 

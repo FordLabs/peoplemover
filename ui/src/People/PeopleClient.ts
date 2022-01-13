@@ -81,6 +81,16 @@ class PeopleClient {
 
         return Axios.delete(url, this.config());
     }
+
+    static async bulkImportPeople(space: Space, person: Person,people: string): Promise<AxiosResponse> {
+        const url = this.getBasePeopleUrl(space.uuid!!) + `/${person.id}`;
+
+        return Axios.post(url, person, this.config()).then(result => {
+            return result;
+        }).catch( err => {
+            return Promise.reject(err.code);
+        });
+    }
 }
 
 export default PeopleClient;
