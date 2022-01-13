@@ -59,32 +59,11 @@ function BulkImportForm({currentSpace, currentUser, closeModal, setCurrentModal,
 
     };
 
-    function DownloadReportButton(): JSX.Element {
-        const template = 'Person Name,CDSID,Person Role,Person Note,Person Tags\r\nBruce Wayne,imbatman,Superhero,Likes champagne,Night Shift';
-
-        const handleDownloadReport = async (): Promise<void> => {
-            fileDownload(template, 'peopleMoverTemplate.csv');
-        };
-
-        return (
-            <button
-                onClick={handleDownloadReport}
-            >
-                Download Report
-            </button>
-        );
-    }
-
     const renderOption = (): JSX.Element => {
-        const template = 'Person Name,CDSID,Person Role,Person Note,Person Tags\r\nBruce Wayne,imbatman,Superhero,Likes champagne,Night Shift';
-        const handleDownloadReport = async (): Promise<void> => {
-            fileDownload(template, 'peopleMoverTemplate.csv');
-        };
 
         return <div className={'bulkImportDownloadTemplate'}
             data-testid={'bulkImportDownloadTemplate'}>
-            {<DownloadReportButton/>}
-            <div onClick={handleDownloadReport} onKeyDown={handleDownloadReport}> Download this PeopleMover Template  <span className="material-icons">file_download</span></div>
+            <a href={'ui/public/pmBulkImportTemplate.csv'}> Download this PeopleMover Template <span className="material-icons">file_download</span></a>
             <div> Please do not change any column names. </div>
         </div>;
     };
