@@ -20,3 +20,10 @@ export interface TagInterface {
     name: string;
     spaceUuid: string;
 }
+export function createTag(name: string, spaceUUid: string): TagInterface {
+    return {
+        id:-1,
+        name: name,
+        spaceUuid: spaceUUid
+    }
+}

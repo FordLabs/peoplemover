@@ -77,12 +77,12 @@ class PersonImportController(
 
         for (tag in request.tags) {
 
-            if (!personTagService.getAllPersonTags(spaceUuid).contains(tag)) {
+            if (!personTagService.getAllPersonTags(spaceUuid).any { it.name == tag.name}) {
                 newTags.add(personTagService.createPersonTagForSpace(TagRequest(tag.name), spaceUuid))
 
             }
             else {
-                newTags.add(tag)
+                newTags.add(personTagService.getAllPersonTags(spaceUuid).first { it.name == tag.name })
             }
         }
         request.tags = newTags

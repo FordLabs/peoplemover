@@ -16,7 +16,6 @@
  */
 
 import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
-import SpaceClient from '../Space/SpaceClient';
 import {connect} from 'react-redux';
 import {closeModalAction, fetchUserSpacesAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -25,7 +24,9 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
-
+import PeopleClient from "./PeopleClient";
+import {emptyPerson} from "./Person";
+import {createTag} from "../Tags/Tag.interface";
 
 
 interface BulkImportForm {
@@ -46,8 +47,6 @@ function BulkImportForm({currentSpace, currentUser, closeModal, setCurrentModal,
     const [me, setMe] = useState<UserSpaceMapping>();
     const [submitted, setSubmitted] = useState<boolean>(false);
 
-
-
     useEffect(() => {
         //empty for reason
     }, [currentSpace, setUsersList, currentUser]);
@@ -61,10 +60,43 @@ function BulkImportForm({currentSpace, currentUser, closeModal, setCurrentModal,
     const handleFileUpload = (e: ChangeEvent): void =>{
         const target= e.target as HTMLInputElement;
         const file: File = (target.files as FileList)[0];
-        console.log(file.name);
+
+        const fileReader = new FileReader();
+
+        fileReader.readAsText(file);
+
+        let fileAsText = '';
+        fileReader.onload = (event) => {
+            fileAsText = event.target!.result!.toString();
+
+            let tags = [];
+            let fileAsArray = fileAsText.split('\n');
+            let peopleAsJson = [];
+
+            for (let i = 1; i < fileAsArray.length; i++) {
+                let person = fileAsArray[i].split(',');
+
+                tags = [];
+                if (person.length >= 5) {
+                    for (let j = 4; j < person.length; j++) {
+                        tags.push(createTag(person[j].replace('"', ''), currentSpace.uuid!));
+                    }
+                }
+
+                let personBeingParsed = emptyPerson();
+                personBeingParsed.name = person[0];
+                personBeingParsed.customField1 = person[1];
+                personBeingParsed.spaceRole = createTag(person[2], currentSpace.uuid!);
+                personBeingParsed.notes = person[3];
+                personBeingParsed.tags = tags;
+
+                peopleAsJson.push(personBeingParsed);
+            }
+            PeopleClient.bulkImportPeople(currentSpace, peopleAsJson).then(closeModal);
+        };
 
         return undefined;
-    }
+    };
 
     const renderOption = (): JSX.Element => {
 
