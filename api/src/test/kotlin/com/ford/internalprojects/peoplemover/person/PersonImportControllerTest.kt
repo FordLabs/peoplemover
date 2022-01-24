@@ -357,7 +357,7 @@ class PersonImportControllerTest {
                 notes = "Likes decaf coffee",
                 newPerson = true,
                 spaceUuid = space.uuid,
-                tags = setOf(tag, strangeTag)
+                tags = setOf(PersonTag(spaceUuid = space.uuid, name = "Night Shift"), strangeTag)
         )
 
         val expectedPeople: List<Person> = listOf(flash)
