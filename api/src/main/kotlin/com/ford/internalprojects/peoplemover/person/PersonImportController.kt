@@ -55,7 +55,7 @@ class PersonImportController(
 
         for (request in personRequests) {
 
-            var newRequest : PersonRequest = createTagIfNotExists(request, spaceUuid)
+            var newRequest : PersonRequest = createTagsIfNew(request, spaceUuid)
             newRequest = createRoleIfNotExists(newRequest, spaceUuid)
 
             personService.createPerson(newRequest.toPerson(spaceUuid))
@@ -64,25 +64,30 @@ class PersonImportController(
 
     private fun createRoleIfNotExists(request: PersonRequest, spaceUuid: String): PersonRequest {
         if (request.spaceRole != null) {
-            if (!roleService.getRolesForSpace(spaceUuid).contains(request.spaceRole!!)) {
+            val rolesForSpace = roleService.getRolesForSpace(spaceUuid)
+            if (!rolesForSpace.any { request.spaceRole!!.name == it.name }) {
                 request.spaceRole = roleService.addRoleToSpace(spaceUuid, request.spaceRole!!.name, null)
             }
+            else{
+                request.spaceRole = rolesForSpace.first{request.spaceRole!!.name == it.name}
+            }
         }
+        print(request)
         return request
     }
 
-    private fun createTagIfNotExists(request: PersonRequest, spaceUuid: String) : PersonRequest {
+    private fun createTagsIfNew(request: PersonRequest, spaceUuid: String) : PersonRequest {
 
         var newTags : MutableSet<PersonTag> = mutableSetOf()
-
+        val allTagsInSpace = personTagService.getAllPersonTags(spaceUuid)
         for (tag in request.tags) {
 
-            if (!personTagService.getAllPersonTags(spaceUuid).any { it.name == tag.name}) {
+            if (!allTagsInSpace.any { it.name == tag.name }) {
                 newTags.add(personTagService.createPersonTagForSpace(TagRequest(tag.name), spaceUuid))
 
             }
             else {
-                newTags.add(personTagService.getAllPersonTags(spaceUuid).first { it.name == tag.name })
+                newTags.add(allTagsInSpace.first { it.name == tag.name})
             }
         }
         request.tags = newTags
