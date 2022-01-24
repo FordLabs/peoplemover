@@ -324,8 +324,34 @@ class PersonImportControllerTest {
     }
 
     @Test
-    fun `Trying to import someone with an unknown tag creates that tag before import`() {
+    fun `Trying to import someone with an existing role works and does not duplicate the role`() {
+        robin = Person(
+                name = "Dick Grayson",
+                customField1 = "imrobin1",
+                spaceRole = SpaceRole(spaceUuid = space.uuid, name = "Sidekick"),
+                notes = "Likes Capri Suns",
+                newPerson = true,
+                spaceUuid = space.uuid,
+                tags = setOf(tag)
+        )
+        val expectedPeople: List<Person> = listOf(robin)
 
+        var personJSON = objectMapper.writeValueAsString(expectedPeople);
+
+        mockMvc.perform(post(getBaseImportUrl(space.uuid))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .content(personJSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andReturn();
+
+
+        checkPeople(expectedPeople, space.uuid)
+        assertThat(spaceRolesRepository.count()).isEqualTo(2);
+    }
+
+    @Test
+    fun `Trying to import someone with an unknown tag creates that tag before import`() {
         personTagRepository.deleteAll()
 
         val expectedPeople: List<Person> = listOf(robin);
@@ -341,8 +367,6 @@ class PersonImportControllerTest {
         assertThat(personRepository.findAllBySpaceUuid(space.uuid).first().tags.count()).isEqualTo(1)
         assertThat(personRepository.findAllBySpaceUuid(space.uuid).first().tags.contains(tag))
         assertThat(personTagRepository.count()).isEqualTo(1)
-
-
     }
 
     @Test

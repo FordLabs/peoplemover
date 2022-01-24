@@ -64,10 +64,15 @@ class PersonImportController(
 
     private fun createRoleIfNotExists(request: PersonRequest, spaceUuid: String): PersonRequest {
         if (request.spaceRole != null) {
-            if (!roleService.getRolesForSpace(spaceUuid).contains(request.spaceRole!!)) {
+            val rolesForSpace = roleService.getRolesForSpace(spaceUuid)
+            if (!rolesForSpace.any { request.spaceRole!!.name == it.name }) {
                 request.spaceRole = roleService.addRoleToSpace(spaceUuid, request.spaceRole!!.name, null)
             }
+            else{
+                request.spaceRole = rolesForSpace.first{request.spaceRole!!.name == it.name}
+            }
         }
+        print(request)
         return request
     }
 
