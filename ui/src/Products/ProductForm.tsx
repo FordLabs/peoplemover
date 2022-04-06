@@ -140,7 +140,7 @@ function ProductForm({
 
     function determineIfProductIsArchived(): boolean {
         if (!product?.endDate) return false;
-        return product.endDate < moment(viewingDate).format('YYYY-MM-DD');
+        return moment(product.endDate).isBefore(moment(viewingDate));
     }
 
     function displayDeleteProductModal(): void {
