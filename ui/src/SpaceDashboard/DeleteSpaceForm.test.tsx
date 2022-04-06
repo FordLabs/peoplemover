@@ -85,10 +85,10 @@ describe('Delete Space Form', () => {
         });
 
         describe('things to do', () => {
-            it('should call the space client when the leave and delete button is pressed with appropriate spaceId', () => {
+            it('should call the space client when the leave and delete button is pressed with appropriate spaceId', async () => {
                 SpaceClient.deleteSpaceByUuid = jest.fn(() => Promise.resolve());
-                act(() => {
-                    const bigRedButton = form.getByText('Delete space');
+                await act(async () => {
+                    const bigRedButton = await form.getByText('Delete space');
                     fireEvent.click(bigRedButton);
                 });
                 expect(SpaceClient.deleteSpaceByUuid).toHaveBeenCalledWith(TestUtils.space.uuid);
