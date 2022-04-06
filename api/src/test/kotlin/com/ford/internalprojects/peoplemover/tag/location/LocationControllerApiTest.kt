@@ -28,7 +28,6 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.TagRequest
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
-import com.google.common.collect.Sets.newHashSet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -94,7 +93,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `GET should get Locations`() {
-        val expectedLocations: Set<SpaceLocation> = newHashSet(
+        val expectedLocations: Set<SpaceLocation> = setOf(
                 spaceLocationRepository.save(SpaceLocation(name = "Mars", spaceUuid = space.uuid)),
                 spaceLocationRepository.save(SpaceLocation(name = "Venus", spaceUuid = space.uuid))
         )

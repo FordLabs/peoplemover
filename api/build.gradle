@@ -38,12 +38,7 @@ jar {
 }
 
 dependencies {
-    compile 'com.google.guava:guava:28.2-jre'
-    compile 'org.springframework.cloud:spring-cloud-spring-service-connector:2.0.7.RELEASE'
-    compile 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.7.RELEASE'
-    compile 'com.microsoft.sqlserver:mssql-jdbc:7.2.2.jre11'
-    compile 'org.flywaydb:flyway-maven-plugin:6.2.1'
-    compile 'org.springframework.boot:spring-boot-starter-actuator:2.4.0'
+    annotationProcessor 'org.projectlombok:lombok:1.18.10'
     compileOnly 'org.projectlombok:lombok:1.18.10'
 
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
@@ -51,21 +46,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.2.4.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-security:2.2.4.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.4.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
-    implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.30'
     implementation 'com.auth0:java-jwt:3.10.0'
+    implementation 'org.flywaydb:flyway-core:5.2.4'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     runtimeOnly 'mysql:mysql-connector-java:8.0.25'
     runtimeOnly 'com.h2database:h2:1.4.200'
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.2.41'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-
-    annotationProcessor 'org.projectlombok:lombok:1.18.10'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
     testImplementation "io.mockk:mockk:1.11.0"
 }
 
@@ -91,11 +84,13 @@ project.tasks["jacocoTestReport"].dependsOn "test"
 project.tasks["sonarqube"].dependsOn "jacocoTestReport"
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "11"
     }
 }
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "11"
     }
 }
