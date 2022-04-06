@@ -14,7 +14,7 @@
     "prebuild": "npm run generate-build-version",
     "start": "HTTPS=true react-scripts start",
     "start:e2e": "react-scripts start",
-    "start:backend": "cd ../api && SPRING_PROFILES_ACTIVE=e2e-test ./gradlew bRu",
+    "start:backend": "cd ../ && SPRING_PROFILES_ACTIVE=e2e-test ./gradlew api:bootRun",
     "test:unit": "react-scripts test",
     "test:unit:ci": "CI=true react-scripts test --runInBand",
     "test:unit:coverage": "CI=true react-scripts test --coverage --testResultsProcessor jest-sonar-reporter",

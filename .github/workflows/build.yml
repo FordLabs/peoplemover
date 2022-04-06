@@ -29,21 +29,18 @@ jobs:
         env:
           TZ: 'America/Detroit'
       - name: Test
-        run: ./gradlew --stacktrace clean test
-        working-directory: ./api
+        run: ./gradlew api:test
         env:
           TZ: 'America/Detroit'
       - name: Build PR
-        run: ./gradlew assemble
+        run: ./gradlew api:assemble
         env:
           HEAD_BRANCH: ${{ github.head_ref }}
-        working-directory: ./api
         if: github.event_name == 'pull_request'
       - name: Build
-        run: ./gradlew assemble
+        run: ./gradlew api:assemble
         env:
           HEAD_BRANCH: stage
-        working-directory: ./api
         if: github.event_name == 'push'
       - name: Release artifact
         uses: actions/upload-artifact@v2
