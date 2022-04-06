@@ -32,19 +32,17 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
-import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
+import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -53,7 +51,6 @@ import java.time.LocalDate
 @AutoConfigureMockMvc
 @SpringBootTest
 @ActiveProfiles("test")
-@RunWith(SpringRunner::class)
 class PersonControllerApiTest {
 
     @Autowired
@@ -101,20 +98,26 @@ class PersonControllerApiTest {
 
     private fun getBasePeopleUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/people"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         space = spaceService.createSpaceWithName("spaceWithThisName", "Nobody")
         spaceTwo = spaceService.createSpaceWithName("spaceThatUserDoesNotHaveAccessTo", "Nobody")
 
-        tag = personTagRepository.save(PersonTag(spaceUuid = space.uuid, name = "Agency Employee" ))
+        tag = personTagRepository.save(PersonTag(spaceUuid = space.uuid, name = "Agency Employee"))
 
         basePeopleUrl = getBasePeopleUrl(space.uuid)
 
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+        userSpaceMappingRepository.save(
+            UserSpaceMapping(
+                userId = "USER_ID",
+                spaceUuid = space.uuid,
+                permission = PERMISSION_OWNER
+            )
+        )
 
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         assignmentRepository.deleteAll()
         spaceRolesRepository.deleteAll()
@@ -128,28 +131,30 @@ class PersonControllerApiTest {
     @Test
     fun `POST should add a new person to the repository`() {
         val spaceRole: SpaceRole = spaceRolesRepository.save(
-                SpaceRole(
-                    name = "Software Engineer",
-                    spaceUuid = space.uuid
-                )
+            SpaceRole(
+                name = "Software Engineer",
+                spaceUuid = space.uuid
+            )
         )
 
         val personToCreate = Person(
-                name = "John",
-                spaceRole = spaceRole,
-                notes = "Some Notes",
-                newPerson = true,
-                spaceUuid = space.uuid,
-                tags = setOf(tag),
-                customField1 = "John35"
+            name = "John",
+            spaceRole = spaceRole,
+            notes = "Some Notes",
+            newPerson = true,
+            spaceUuid = space.uuid,
+            tags = setOf(tag),
+            customField1 = "John35"
         )
         assertThat(personRepository.count()).isZero()
-        val result = mockMvc.perform(post(basePeopleUrl)
+        val result = mockMvc.perform(
+            post(basePeopleUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(personToCreate)))
-                .andExpect(status().isOk)
-                .andReturn()
+                .content(objectMapper.writeValueAsString(personToCreate))
+        )
+            .andExpect(status().isOk)
+            .andReturn()
 
         val actualPerson: Person = objectMapper.readValue(result.response.contentAsString, Person::class.java)
 
@@ -184,10 +189,12 @@ class PersonControllerApiTest {
             tags = setOf(tag)
         )
         assertThat(personRepository.count()).isZero()
-        val result = mockMvc.perform(post(basePeopleUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(personToCreate)))
+        val result = mockMvc.perform(
+            post(basePeopleUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(personToCreate))
+        )
             .andExpect(status().isOk)
             .andReturn()
 
@@ -210,11 +217,13 @@ class PersonControllerApiTest {
     fun `POST should return 403 when trying to add person to a space without write authorization`() {
         val requestBodyObject = Person(name = "name", spaceUuid = space.uuid)
 
-        mockMvc.perform(post(basePeopleUrl)
+        mockMvc.perform(
+            post(basePeopleUrl)
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBodyObject)))
-                .andExpect(status().isForbidden)
+                .content(objectMapper.writeValueAsString(requestBodyObject))
+        )
+            .andExpect(status().isForbidden)
     }
 
     @Test
@@ -222,32 +231,41 @@ class PersonControllerApiTest {
         val newPersonName = "tryToAddToSpaceTwo"
         val requestBodyObject = Person(name = newPersonName, spaceUuid = spaceTwo.uuid)
 
-        mockMvc.perform(post(basePeopleUrl)
+        mockMvc.perform(
+            post(basePeopleUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBodyObject)))
-                .andExpect(status().isOk)
+                .content(objectMapper.writeValueAsString(requestBodyObject))
+        )
+            .andExpect(status().isOk)
 
-        assertThat(personRepository.findAllBySpaceUuid(space.uuid).map{ it.name }).contains(newPersonName)
+        assertThat(personRepository.findAllBySpaceUuid(space.uuid).map { it.name }).contains(newPersonName)
         assertThat(personRepository.findAllBySpaceUuid(spaceTwo.uuid)).isEmpty()
     }
 
     @Test
-    fun `POST should return 200 when archiving a person who is not archived, and the person becomes unassigned and archived`(){
+    fun `POST should return 200 when archiving a person who is not archived, and the person becomes unassigned and archived`() {
         val today = LocalDate.now()
         var product = Product(name = "productOne", spaceUuid = space.uuid)
         productRepository.save(product)
         val requestBodyObject = Person(name = "archivedPerson", spaceUuid = space.uuid)
         personRepository.save(requestBodyObject)
-        val assignment = AssignmentV1(productId = product.id!!, person = requestBodyObject, effectiveDate = LocalDate.ofYearDay(2020, 1), spaceUuid = space.uuid)
+        val assignment = AssignmentV1(
+            productId = product.id!!,
+            person = requestBodyObject,
+            effectiveDate = LocalDate.ofYearDay(2020, 1),
+            spaceUuid = space.uuid
+        )
         assignmentRepository.save(assignment)
         val archivePersonRequest = ArchivePersonRequest(today)
 
-        mockMvc.perform(post("$basePeopleUrl/${requestBodyObject.id}/archive")
+        mockMvc.perform(
+            post("$basePeopleUrl/${requestBodyObject.id}/archive")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(archivePersonRequest)))
-                .andExpect(status().isOk)
+                .content(objectMapper.writeValueAsString(archivePersonRequest))
+        )
+            .andExpect(status().isOk)
 
         val archivedPerson = personRepository.findById(requestBodyObject.id!!)
         assertThat(archivedPerson.get().archiveDate).isEqualTo(today)
@@ -259,19 +277,29 @@ class PersonControllerApiTest {
     }
 
     @Test
-    fun `POST should return 200 when archiving a person who already is archived, but not change archive date`(){
+    fun `POST should return 200 when archiving a person who already is archived, but not change archive date`() {
         val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
-        val requestBodyObject = Person(name = "archivedPerson", spaceUuid = space.uuid, archiveDate = LocalDate.ofYearDay(2020, 1))
+        val requestBodyObject =
+            Person(name = "archivedPerson", spaceUuid = space.uuid, archiveDate = LocalDate.ofYearDay(2020, 1))
         personRepository.save(requestBodyObject)
         val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
-        val createAssignmentRequest = CreateAssignmentsRequest(LocalDate.ofYearDay(2020, 1), setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false)))
-        val assignments = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, space.uuid, requestBodyObject.id!!)
+        val createAssignmentRequest = CreateAssignmentsRequest(
+            LocalDate.ofYearDay(2020, 1),
+            setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false))
+        )
+        val assignments = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(
+            createAssignmentRequest,
+            space.uuid,
+            requestBodyObject.id!!
+        )
 
-        mockMvc.perform(post("$basePeopleUrl/${requestBodyObject.id}/archive")
+        mockMvc.perform(
+            post("$basePeopleUrl/${requestBodyObject.id}/archive")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(archivePersonRequest)))
-                .andExpect(status().isOk)
+                .content(objectMapper.writeValueAsString(archivePersonRequest))
+        )
+            .andExpect(status().isOk)
 
         val archivedPerson = personRepository.findById(requestBodyObject.id!!)
         assertThat(archivedPerson.get().archiveDate).isEqualTo("2020-01-01")
@@ -287,14 +315,23 @@ class PersonControllerApiTest {
         val requestBodyObject = Person(name = "archivedPerson", spaceUuid = space.uuid)
         personRepository.save(requestBodyObject)
         val archivePersonRequest = ArchivePersonRequest(today)
-        val createAssignmentRequest = CreateAssignmentsRequest(LocalDate.ofYearDay(2020, 1), setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false)))
-        val assignments = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, space.uuid, requestBodyObject.id!!)
+        val createAssignmentRequest = CreateAssignmentsRequest(
+            LocalDate.ofYearDay(2020, 1),
+            setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false))
+        )
+        val assignments = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(
+            createAssignmentRequest,
+            space.uuid,
+            requestBodyObject.id!!
+        )
 
-        mockMvc.perform(post("$basePeopleUrl/${requestBodyObject.id}/archive")
+        mockMvc.perform(
+            post("$basePeopleUrl/${requestBodyObject.id}/archive")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(archivePersonRequest)))
-                .andExpect(status().isOk)
+                .content(objectMapper.writeValueAsString(archivePersonRequest))
+        )
+            .andExpect(status().isOk)
 
         val archivedPerson = personRepository.findById(requestBodyObject.id!!)
         assertThat(archivedPerson.get().archiveDate).isEqualTo(today)
@@ -304,38 +341,44 @@ class PersonControllerApiTest {
     }
 
     @Test
-    fun `POST should return 400 when archiving someone who does not exist`(){
+    fun `POST should return 400 when archiving someone who does not exist`() {
         val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
 
-        mockMvc.perform(post("$basePeopleUrl/1/archive")
+        mockMvc.perform(
+            post("$basePeopleUrl/1/archive")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(archivePersonRequest)))
-        .andExpect(status().isBadRequest)
+                .content(objectMapper.writeValueAsString(archivePersonRequest))
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
-    fun `POST should return 403 when archiving someone for a space that doesn't exist`(){
+    fun `POST should return 403 when archiving someone for a space that doesn't exist`() {
         val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
 
-        mockMvc.perform(post(getBasePeopleUrl("fake-uuid") + "/1/archive")
+        mockMvc.perform(
+            post(getBasePeopleUrl("fake-uuid") + "/1/archive")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(archivePersonRequest)))
-                .andExpect(status().isForbidden)
+                .content(objectMapper.writeValueAsString(archivePersonRequest))
+        )
+            .andExpect(status().isForbidden)
     }
 
     @Test
-    fun `POST should return 403 when trying to archive a person in a space without write authorization`(){
+    fun `POST should return 403 when trying to archive a person in a space without write authorization`() {
         val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
         personRepository.save(requestBodyObject)
         val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
 
-        mockMvc.perform(post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
+        mockMvc.perform(
+            post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(archivePersonRequest)))
-                .andExpect(status().isForbidden)
+                .content(objectMapper.writeValueAsString(archivePersonRequest))
+        )
+            .andExpect(status().isForbidden)
     }
 
     @Test
@@ -343,11 +386,18 @@ class PersonControllerApiTest {
         val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
         personRepository.save(requestBodyObject)
 
-        mockMvc.perform(post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
+        mockMvc.perform(
+            post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("archiveDate: none"))
-                .andExpect(status().isBadRequest)
+                .content(
+                    """
+                    {
+                      "archiveDate": null
+                    }
+                """.trimIndent()
+                )
+        ).andExpect(status().isBadRequest)
     }
 
     @Test
@@ -355,10 +405,12 @@ class PersonControllerApiTest {
         val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
         personRepository.save(requestBodyObject)
 
-        mockMvc.perform(post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
+        mockMvc.perform(
+            post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
                 .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -366,11 +418,13 @@ class PersonControllerApiTest {
         val requestBodyObject = Person(name = "oldname", spaceUuid = space.uuid)
         personRepository.save(requestBodyObject)
 
-        mockMvc.perform(put("${getBasePeopleUrl(spaceUuid = space.uuid)}/${requestBodyObject.id!!}")
+        mockMvc.perform(
+            put("${getBasePeopleUrl(spaceUuid = space.uuid)}/${requestBodyObject.id!!}")
                 .header("Authorization", "Bearer ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBodyObject)))
-                .andExpect(status().isForbidden)
+                .content(objectMapper.writeValueAsString(requestBodyObject))
+        )
+            .andExpect(status().isForbidden)
     }
 
     @Test
@@ -378,26 +432,36 @@ class PersonControllerApiTest {
         val requestBodyObject = Person(name = "oldname", spaceUuid = spaceTwo.uuid)
         personRepository.save(requestBodyObject)
 
-        mockMvc.perform(put("${getBasePeopleUrl(spaceUuid = space.uuid)}/${requestBodyObject.id!!}")
+        mockMvc.perform(
+            put("${getBasePeopleUrl(spaceUuid = space.uuid)}/${requestBodyObject.id!!}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBodyObject)))
-                .andExpect(status().isBadRequest)
+                .content(objectMapper.writeValueAsString(requestBodyObject))
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET should return an empty set when no people belong to a space`() {
         val emptySpace: Space = spaceRepository.save(Space(name = "ChuckECheese"))
-        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = emptySpace.uuid, permission = PERMISSION_OWNER))
+        userSpaceMappingRepository.save(
+            UserSpaceMapping(
+                userId = "USER_ID",
+                spaceUuid = emptySpace.uuid,
+                permission = PERMISSION_OWNER
+            )
+        )
 
         val result = mockMvc
-                .perform(get(getBasePeopleUrl(emptySpace.uuid))
-                        .header("Authorization", "Bearer GOOD_TOKEN"))
-                .andExpect(status().isOk)
-                .andReturn()
+            .perform(
+                get(getBasePeopleUrl(emptySpace.uuid))
+                    .header("Authorization", "Bearer GOOD_TOKEN")
+            )
+            .andExpect(status().isOk)
+            .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
         )
         assertThat(actualPeople).isEqualTo(emptySet<Person>())
     }
@@ -405,22 +469,28 @@ class PersonControllerApiTest {
     @Test
     fun `GET should only return people in requested space`() {
         val otherSpace: Space = spaceRepository.save(Space(name = "other"))
-        val expectedPerson: Person = personRepository.save(Person(
+        val expectedPerson: Person = personRepository.save(
+            Person(
                 name = "HEY I SHOULD SHOW UP IN THE RESULTS",
                 spaceUuid = space.uuid
-        ))
-        val unexpectedPerson: Person = personRepository.save(Person(
+            )
+        )
+        val unexpectedPerson: Person = personRepository.save(
+            Person(
                 name = "HEY I SHOULD NOT SHOW UP",
                 spaceUuid = otherSpace.uuid
-        ))
+            )
+        )
         val result = mockMvc
-                .perform(get(basePeopleUrl)
-                        .header("Authorization", "Bearer GOOD_TOKEN"))
-                .andExpect(status().isOk)
-                .andReturn()
+            .perform(
+                get(basePeopleUrl)
+                    .header("Authorization", "Bearer GOOD_TOKEN")
+            )
+            .andExpect(status().isOk)
+            .andReturn()
         val actualPeople: Set<Person> = objectMapper.readValue(
-                result.response.contentAsString,
-                objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableSet::class.java, Person::class.java)
         )
         assertThat(actualPeople).containsExactly(expectedPerson)
         assertThat(actualPeople).doesNotContain(unexpectedPerson)
@@ -428,26 +498,32 @@ class PersonControllerApiTest {
 
     @Test
     fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
-        mockMvc.perform(get(basePeopleUrl)
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
-                .andExpect(status().isForbidden)
-                .andReturn()
+        mockMvc.perform(
+            get(basePeopleUrl)
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        )
+            .andExpect(status().isForbidden)
+            .andReturn()
     }
 
     @Test
     fun `GET should return 200 read-only when valid token that isn't an editor requests a space while read-only flag is on`() {
         val space1: Space = spaceRepository.save(Space(name = "SpaceOne", todayViewIsPublic = true))
 
-        mockMvc.perform(get(getBasePeopleUrl(space1.uuid))
-            .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+        mockMvc.perform(
+            get(getBasePeopleUrl(space1.uuid))
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        )
             .andExpect(status().isOk)
             .andReturn()
     }
 
     @Test
     fun `GET should return 400 when requesting people from invalid space`() {
-        mockMvc.perform(get(getBasePeopleUrl("FiveNightsAtFreddys"))
-            .header("Authorization", "Bearer GOOD_TOKEN"))
+        mockMvc.perform(
+            get(getBasePeopleUrl("FiveNightsAtFreddys"))
+                .header("Authorization", "Bearer GOOD_TOKEN")
+        )
             .andExpect(status().isBadRequest)
             .andReturn()
     }
@@ -466,27 +542,32 @@ class PersonControllerApiTest {
                 spaceUuid = space.uuid
             )
         )
-        val person: Person = personRepository.save(Person(
+        val person: Person = personRepository.save(
+            Person(
                 name = "John",
                 spaceUuid = space.uuid,
-                spaceRole = softwareEngineer))
-        val updatePersonRequest = Person(
-                id = person.id,
-                name = "New John",
-                spaceUuid = space.uuid,
-                spaceRole = engineer,
-                archiveDate = LocalDate.ofYearDay(2020, 2)
+                spaceRole = softwareEngineer
+            )
         )
-        val result = mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+        val updatePersonRequest = Person(
+            id = person.id,
+            name = "New John",
+            spaceUuid = space.uuid,
+            spaceRole = engineer,
+            archiveDate = LocalDate.ofYearDay(2020, 2)
+        )
+        val result = mockMvc.perform(
+            put(basePeopleUrl + "/${person.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatePersonRequest)))
-                .andExpect(status().isOk)
-                .andReturn()
+                .content(objectMapper.writeValueAsString(updatePersonRequest))
+        )
+            .andExpect(status().isOk)
+            .andReturn()
 
         val updatedPerson: Person = objectMapper.readValue(
-                result.response.contentAsString,
-                Person::class.java
+            result.response.contentAsString,
+            Person::class.java
         )
 
         val updatedPersonInDb: Person = personRepository.findById(person.id!!).get()
@@ -497,28 +578,34 @@ class PersonControllerApiTest {
     @Test
     fun `DELETE should return 400 when person does not exist`() {
         val notSavedPersonId = 1103
-        mockMvc.perform(delete("$basePeopleUrl/$notSavedPersonId")
+        mockMvc.perform(
+            delete("$basePeopleUrl/$notSavedPersonId")
                 .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `DELETE should return 403 when trying to delete a person without write authorization`() {
         val personToDelete: Person = personRepository.save(Person(name = "Donald", spaceUuid = space.uuid))
 
-        mockMvc.perform(delete( "$basePeopleUrl/${personToDelete.id!!}")
-              .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
-              .andExpect(status().isForbidden)
+        mockMvc.perform(
+            delete("$basePeopleUrl/${personToDelete.id!!}")
+                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+        )
+            .andExpect(status().isForbidden)
     }
 
     @Test
     fun `DELETE should return 400 when trying to delete a person in a space you do not have access to`() {
         val personToDelete: Person = personRepository.save(Person(name = "Donald", spaceUuid = spaceTwo.uuid))
 
-        mockMvc.perform(delete( "$basePeopleUrl/${personToDelete.id!!}")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
-                .andExpect(status().isBadRequest)
+        mockMvc.perform(
+            delete("$basePeopleUrl/${personToDelete.id!!}")
+                .header("Authorization", "Bearer GOOD_TOKEN")
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -528,14 +615,28 @@ class PersonControllerApiTest {
         assertThat(personRepository.count()).isEqualTo(2)
 
         val product: Product = productRepository.save(Product(name = "product", spaceUuid = space.uuid))
-        val assignmentToDelete: AssignmentV1 = assignmentRepository.save(AssignmentV1(person = personToDelete, productId = product.id!!, spaceUuid = space.uuid))
-        val assignmentToRemain: AssignmentV1 = assignmentRepository.save(AssignmentV1(person = personToRemain, productId = product.id!!, spaceUuid = space.uuid))
+        val assignmentToDelete: AssignmentV1 = assignmentRepository.save(
+            AssignmentV1(
+                person = personToDelete,
+                productId = product.id!!,
+                spaceUuid = space.uuid
+            )
+        )
+        val assignmentToRemain: AssignmentV1 = assignmentRepository.save(
+            AssignmentV1(
+                person = personToRemain,
+                productId = product.id!!,
+                spaceUuid = space.uuid
+            )
+        )
         assertThat(assignmentRepository.count()).isEqualTo(2)
 
-        mockMvc.perform(delete("$basePeopleUrl/${personToDelete.id}")
+        mockMvc.perform(
+            delete("$basePeopleUrl/${personToDelete.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
 
         assertThat(personRepository.findAll()).containsExactly(personToRemain)
         assertThat(assignmentRepository.findAll()).containsExactly(assignmentToRemain)
@@ -547,24 +648,30 @@ class PersonControllerApiTest {
     @Test
     fun `POST should disallow invalid PersonRequest inputs`() {
         val nameTooLong = Person(name = CHAR_260, spaceUuid = space.uuid)
-        mockMvc.perform(post(basePeopleUrl)
+        mockMvc.perform(
+            post(basePeopleUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(nameTooLong)))
-                .andExpect(status().isBadRequest)
-                .andReturn()
+                .content(objectMapper.writeValueAsString(nameTooLong))
+        )
+            .andExpect(status().isBadRequest)
+            .andReturn()
         val nameBlank = Person(name = EMPTY_NAME, spaceUuid = space.uuid)
-        mockMvc.perform(post(basePeopleUrl)
+        mockMvc.perform(
+            post(basePeopleUrl)
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(nameBlank)))
-                .andExpect(status().isBadRequest)
-                .andReturn()
+                .content(objectMapper.writeValueAsString(nameBlank))
+        )
+            .andExpect(status().isBadRequest)
+            .andReturn()
         val notesTooLong = Person(name = "person name", spaceUuid = space.uuid, notes = CHAR_260)
-        mockMvc.perform(post(basePeopleUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(notesTooLong)))
+        mockMvc.perform(
+            post(basePeopleUrl)
+                .header("Authorization", "Bearer GOOD_TOKEN")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notesTooLong))
+        )
             .andExpect(status().isBadRequest)
             .andReturn()
     }
@@ -573,25 +680,31 @@ class PersonControllerApiTest {
     fun `PUT should disallow invalid PersonRequest inputs`() {
         val person = personRepository.save(Person(name = "test person", spaceUuid = space.uuid))
         val nameTooLong = Person(id = person.id!!, name = CHAR_260, spaceUuid = space.uuid)
-        mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+        mockMvc.perform(
+            put(basePeopleUrl + "/${person.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(nameTooLong)))
-                .andExpect(status().isBadRequest)
-                .andReturn()
+                .content(objectMapper.writeValueAsString(nameTooLong))
+        )
+            .andExpect(status().isBadRequest)
+            .andReturn()
         val nameBlank = Person(id = person.id!!, name = EMPTY_NAME, spaceUuid = space.uuid)
-        mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+        mockMvc.perform(
+            put(basePeopleUrl + "/${person.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(nameBlank)))
-                .andExpect(status().isBadRequest)
-                .andReturn()
+                .content(objectMapper.writeValueAsString(nameBlank))
+        )
+            .andExpect(status().isBadRequest)
+            .andReturn()
         val notesTooLong = Person(id = person.id!!, name = "person name", spaceUuid = space.uuid, notes = CHAR_260)
-        mockMvc.perform(put(basePeopleUrl + "/${person.id}")
+        mockMvc.perform(
+            put(basePeopleUrl + "/${person.id}")
                 .header("Authorization", "Bearer GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(notesTooLong)))
-                .andExpect(status().isBadRequest)
-                .andReturn()
+                .content(objectMapper.writeValueAsString(notesTooLong))
+        )
+            .andExpect(status().isBadRequest)
+            .andReturn()
     }
 }

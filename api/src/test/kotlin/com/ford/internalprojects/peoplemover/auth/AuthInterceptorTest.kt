@@ -23,14 +23,17 @@ import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsExce
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.fail
-import org.junit.Before
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.Authentication
 import java.util.*
 
+@ExtendWith(MockKExtension::class)
 class AuthInterceptorTest {
     @MockK
     lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
@@ -44,7 +47,7 @@ class AuthInterceptorTest {
 
     private val target = "target"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this)
         authInterceptor = CustomPermissionEvaluator(userSpaceMappingRepository, spaceRepository)
@@ -71,11 +74,14 @@ class AuthInterceptorTest {
         assertThat(authInterceptor.hasPermission(getUserAuth(), target, "unknown_permission")).isFalse()
     }
 
-    @Test(expected = SpaceNotExistsException::class)
+    @Test
     fun `read should throw SpaceNotExistsException if space not found`() {
         every { spaceRepository.findByUuid(any()) } returns null
-        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "read")).isTrue()
-        fail<String>("Exception should have been thrown")
+        assertThatThrownBy {
+            this.authInterceptor.hasPermission(getUserAuth(), target, "read")
+        }.isInstanceOf(
+            SpaceNotExistsException::class.java
+        )
     }
 
     @Test
@@ -132,11 +138,12 @@ class AuthInterceptorTest {
         assertThat(authInterceptor.hasPermission(getAppAuth(), target, "write")).isTrue()
     }
 
-    @Test(expected = SpaceNotExistsException::class)
+    @Test
     fun `owner should throw SpaceNotExistsException if space not found`() {
         every { spaceRepository.findByUuid(any()) } returns null
-        assertThat(authInterceptor.hasPermission(getUserAuth(), target, "owner")).isTrue()
-        fail<String>("Exception should have been thrown")
+        assertThatThrownBy { this.authInterceptor.hasPermission(getUserAuth(), target, "owner") }.isInstanceOf(
+            SpaceNotExistsException::class.java
+        )
     }
 
     @Test
@@ -165,8 +172,10 @@ class AuthInterceptorTest {
 
     private fun setupMockForReadAndWrite(shouldFindMapping: Boolean) {
         every { spaceRepository.findByUuid(any()) } returns Space(name = "testSpace")
-        if(shouldFindMapping) {
-            every { userSpaceMappingRepository.findByUserIdAndSpaceUuid(any(), any()) } returns Optional.of(UserSpaceMapping(id = 1, userId = "Principal", permission = "yes", spaceUuid = "TestSpace"))
+        if (shouldFindMapping) {
+            every { userSpaceMappingRepository.findByUserIdAndSpaceUuid(any(), any()) } returns Optional.of(
+                UserSpaceMapping(id = 1, userId = "Principal", permission = "yes", spaceUuid = "TestSpace")
+            )
         } else {
             every { userSpaceMappingRepository.findByUserIdAndSpaceUuid(any(), any()) } returns Optional.empty()
         }
@@ -174,10 +183,29 @@ class AuthInterceptorTest {
 
     private fun setupMockForOwner(shouldFindMapping: Boolean) {
         every { spaceRepository.findByUuid(any()) } returns Space(name = "testSpace")
-        if(shouldFindMapping) {
-            every { userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(any(), any(), any()) } returns Optional.of(UserSpaceMapping(id = 1, userId = "my-app", permission = "yes", spaceUuid = "testSpace"))
+        if (shouldFindMapping) {
+            every {
+                userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(
+                    any(),
+                    any(),
+                    any()
+                )
+            } returns Optional.of(
+                UserSpaceMapping(
+                    id = 1,
+                    userId = "my-app",
+                    permission = "yes",
+                    spaceUuid = "testSpace"
+                )
+            )
         } else {
-            every { userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(any(), any(), any()) } returns Optional.empty()
+            every {
+                userSpaceMappingRepository.findByUserIdAndSpaceUuidAndPermission(
+                    any(),
+                    any(),
+                    any()
+                )
+            } returns Optional.empty()
         }
     }
 

@@ -8,15 +8,16 @@ import com.ford.internalprojects.peoplemover.utilities.AssignmentV1ToAssignmentV
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.fail
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
 import java.time.LocalDate
 
-
+@ExtendWith(MockKExtension::class)
 class AssignmentServiceTest {
     @MockK
     lateinit var assignmentRepository: AssignmentRepository
@@ -34,7 +35,7 @@ class AssignmentServiceTest {
 
     private lateinit var assignmentService: AssignmentService
 
-    @Before
+    @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this)
         assignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, assignmentConverter, assignmentDateHandler)
