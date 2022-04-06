@@ -96,7 +96,8 @@ describe('ProductForm', function() {
         });
 
         await act(async () => {
-            const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store, undefined);
+            const archivedProduct = {...TestUtils.productWithoutLocation, endDate: '2020-02-02'};
+            const app = renderWithRedux(<ProductForm editing={true} product={archivedProduct}/>, store, undefined);
             const deleteSpan = await app.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
             expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
