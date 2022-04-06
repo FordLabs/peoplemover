@@ -23,8 +23,9 @@ jobs:
       - name: Set up MySQL
         uses: mirromutth/mysql-action@v1.1
         with:
-            mysql database: 'PEOPLEMOVER_DB' # Optional, default value is "test". The specified database which will be create
-            mysql root password: 'PASSWORD' # ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql database: 'PEOPLEMOVER_DB'
+          mysql user: 'user'
+          mysql password: 'PASSWORD'
         env:
           TZ: 'America/Detroit'
       - name: Test
@@ -104,8 +105,9 @@ jobs:
       - name: Set up MySQL
         uses: mirromutth/mysql-action@v1.1
         with:
-            mysql database: 'PEOPLEMOVER_DB' # Optional, default value is "test". The specified database which will be create
-            mysql root password: 'PASSWORD' # ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql database: 'PEOPLEMOVER_DB'
+          mysql user: 'user'
+          mysql password: 'PASSWORD'
         env:
           TZ: 'America/Detroit'
       - name: Test

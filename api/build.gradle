@@ -5,13 +5,11 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
     }
 }
 
 plugins {
     id 'org.springframework.boot' version '2.1.3.RELEASE'
-    id 'com.github.pivotalservices.cf-app' version '2.3.0-rc.8'
     id 'java'
     id 'org.sonarqube' version '2.8'
     id 'jacoco'
@@ -33,9 +31,6 @@ gitProperties {
 
 repositories {
     mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
 }
 
 dependencies {
@@ -70,32 +65,6 @@ dependencies {
     testImplementation "io.mockk:mockk:1.11.0"
 }
 
-// DEPLOYMENT CONFIGURATION
-apply plugin: 'cf-app'
-cfConfig {
-    // See GettingStarted.md for information on updating these values
-    space = "FordLabs_Experiments_InternalProjects-prod"
-    org = "FordLabs_Experiments_InternalProjects_EDC1_Prod"
-
-    name = "engineeringEnvAPI"
-    host = "engineeringenvui"
-    path = "/api"
-
-    buildpack = "java_buildpack_offline"
-    filePath = file("build/libs/PeopleMover-0.0.1-SNAPSHOT.jar").absolutePath
-    environment = [
-            "spring.datasource.username": "",
-            "spring.datasource.password": "",
-            "JBP_CONFIG_OPEN_JDK_JRE": "{ jre: {version: 11.+} }"
-    ]
-    
-    cfService {
-        name = "MySQL for Pivotal Cloud Foundry v2"
-        plan = "ha-plan-30g"
-        instanceName = "PeopleMover ${project.properties['branchNameWithoutUnderscores']} Database"
-    }
-}
-
 jacoco {
     toolVersion = "0.8.5"
 }
@@ -112,25 +81,6 @@ sonarqube {
     properties {
         property "sonar.coverage.jacoco.reportPath", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
     }
-}
-
-task pushBranchAPI(type: Exec) {
-    commandLine "./gradlew",
-                "cf-push-blue-green",
-                "-Pcf.ccUser=${project.properties['peoplemoverPcfUsername']}",
-                "-Pcf.ccPassword=${project.properties['peoplemoverPcfPassword']}",
-                "-Pcf.ccHost=${project.properties['peoplemoverPcfccHost']}",
-                "-Pcf.domain=${project.properties['peoplemoverPcfdomain']}",
-                "-Pcf.filePath=${file("build/libs/api-0.0.1-SNAPSHOT.jar").absolutePath}",
-                "-PbranchNameWithoutUnderscores=Branch",
-                "-Pcf.environment.react.app.auth_enabled=true",
-                "-Pcf.environment.react.app.invite_users_to_space_enabled=true",
-                "-Pcf.environment.react.app.adfs_enabled=true",
-                "-Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=${project.properties['peoplemoverResourceserverJwtIssuer']}",
-                "-Pcf.environment.react.app.url=https://engineeringEnv.${project.properties['peoplemoverReactAppUrl']}",
-                "-Pcf.environment.react.app.adfs_url_template=${project.properties['peoplemoverAdfsUrlTemplate']}",
-                "-Pcf.environment.react.app.adfs_client_id=${project.properties['peoplemoverAdfsClientID']}",
-                "-Pcf.environment.react.app.adfs_resource=${project.properties['peoplemoverAdfsResource']}"
 }
 
 project.tasks["jacocoTestReport"].dependsOn "test"
