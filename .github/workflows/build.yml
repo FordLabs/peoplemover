@@ -64,8 +64,8 @@ jobs:
       - name: Copy version to meta.json
         run: npm run generate-build-version
         working-directory: ./ui
-      - name: NPM Install
-        run: npm install
+      - name: NPM CI Install
+        run: npm ci
         working-directory: ./ui
       - name: Lint
         run: npm run lint
