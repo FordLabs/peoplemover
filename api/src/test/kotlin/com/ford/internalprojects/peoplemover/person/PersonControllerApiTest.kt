@@ -200,16 +200,7 @@ class PersonControllerApiTest {
 
         val actualPerson: Person = objectMapper.readValue(result.response.contentAsString, Person::class.java)
 
-        assertThat(personRepository.count()).isOne()
-        val personInDb: Person = personRepository.findAllBySpaceUuid(space.uuid).first()
-
         assertThat(actualPerson.name).isEqualTo(personToCreate.name)
-        assertThat(actualPerson.spaceRole).isEqualTo(personToCreate.spaceRole)
-        assertThat(actualPerson.notes).isEqualTo(personToCreate.notes)
-        assertThat(actualPerson.newPerson).isEqualTo(personToCreate.newPerson)
-        assertThat(actualPerson.spaceUuid).isEqualTo(personToCreate.spaceUuid)
-        assertThat(actualPerson).isEqualTo(personInDb)
-        assertThat(actualPerson.tags).containsOnly(tag)
         assertThat(actualPerson.customField1).isEqualTo(null)
     }
 
@@ -278,20 +269,11 @@ class PersonControllerApiTest {
 
     @Test
     fun `POST should return 200 when archiving a person who already is archived, but not change archive date`() {
-        val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
         val requestBodyObject =
             Person(name = "archivedPerson", spaceUuid = space.uuid, archiveDate = LocalDate.ofYearDay(2020, 1))
         personRepository.save(requestBodyObject)
         val archivePersonRequest = ArchivePersonRequest(LocalDate.now())
-        val createAssignmentRequest = CreateAssignmentsRequest(
-            LocalDate.ofYearDay(2020, 1),
-            setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false))
-        )
-        val assignments = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(
-            createAssignmentRequest,
-            space.uuid,
-            requestBodyObject.id!!
-        )
+        val assignments = createAssignmentForPerson(requestBodyObject)
 
         mockMvc.perform(
             post("$basePeopleUrl/${requestBodyObject.id}/archive")
@@ -311,19 +293,10 @@ class PersonControllerApiTest {
     @Test
     fun `POST should return 200 when archiving a person who is already unassigned, but not yet archived`() {
         val today = LocalDate.now()
-        val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
         val requestBodyObject = Person(name = "archivedPerson", spaceUuid = space.uuid)
         personRepository.save(requestBodyObject)
         val archivePersonRequest = ArchivePersonRequest(today)
-        val createAssignmentRequest = CreateAssignmentsRequest(
-            LocalDate.ofYearDay(2020, 1),
-            setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false))
-        )
-        val assignments = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(
-            createAssignmentRequest,
-            space.uuid,
-            requestBodyObject.id!!
-        )
+        val assignments = createAssignmentForPerson(requestBodyObject)
 
         mockMvc.perform(
             post("$basePeopleUrl/${requestBodyObject.id}/archive")
@@ -706,5 +679,19 @@ class PersonControllerApiTest {
         )
             .andExpect(status().isBadRequest)
             .andReturn()
+    }
+
+    private fun createAssignmentForPerson(person: Person): Set<AssignmentV1> {
+        val unassignedProduct = productRepository.findProductByNameAndSpaceUuid("unassigned", space.uuid)
+        val createAssignmentRequest = CreateAssignmentsRequest(
+            LocalDate.ofYearDay(2020, 1),
+            setOf(ProductPlaceholderPair(unassignedProduct!!.id!!, false))
+        )
+
+        return assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(
+            createAssignmentRequest,
+            space.uuid,
+            person.id!!
+        )
     }
 }

@@ -17,28 +17,14 @@
 
 package com.ford.internalprojects.peoplemover.assignment
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
-import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
-import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.person.Person
-import com.ford.internalprojects.peoplemover.person.PersonRepository
-import com.ford.internalprojects.peoplemover.product.Product
-import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.space.Space
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.internal.util.collections.Sets
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
@@ -47,101 +33,14 @@ import java.time.format.DateTimeFormatter
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-class AssignmentControllerInTimeApiTest {
-    @Autowired
-    private lateinit var assignmentRepository: AssignmentRepository
-
-    @Autowired
-    private lateinit var productRepository: ProductRepository
-
-    @Autowired
-    private lateinit var personRepository: PersonRepository
-
-    @Autowired
-    private lateinit var spaceRepository: SpaceRepository
-
-    @Autowired
-    private lateinit var spaceLocationRepository: SpaceLocationRepository
-
-    @Autowired
-    private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    private lateinit var editableSpace: Space
-    private lateinit var readOnlySpace: Space
-    private lateinit var productOne: Product
-    private lateinit var productTwo: Product
-    private lateinit var productThree: Product
-    private lateinit var productFour: Product
-    private lateinit var unassignedProduct: Product
-    private lateinit var person: Person
-    private lateinit var personInReadOnlySpace: Person
-
-    val mar1 = "2019-03-01"
-    val april1 = "2019-04-01"
-    val april2 = "2019-04-02"
-    val april3 = "2019-04-03"
-    val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-
-    private fun getBaseAssignmentForPersonInSpaceUrl(spaceUuid: String, personId: Int) =
-        "/api/v2/spaces/$spaceUuid/person/$personId/assignments"
-
-    private fun getBaseAssignmentForPersonInSpaceOnDateUrl(spaceUuid: String, personId: Int, date: String) =
-        "/api/spaces/$spaceUuid/person/$personId/assignments/date/$date"
-
-    private fun getBaseAssignmentDatesUrl(spaceUuid: String) =
-        "/api/spaces/$spaceUuid/assignment/dates"
-
-    private fun getBaseCreateAssignmentUrl(spaceUuid: String, personId: Int) =
-        "/api/spaces/$spaceUuid/person/$personId/assignment/create"
-
-    private fun getBaseDeleteAssignmentUrl(spaceUuid: String, personId: Int, requestedDate: String) =
-        "/api/spaces/$spaceUuid/person/$personId/assignment/delete/$requestedDate"
-
-
-    @BeforeEach
-    fun setup() {
-        editableSpace = spaceRepository.save(Space(name = "tik"))
-        readOnlySpace = spaceRepository.save(Space(name = "tok", todayViewIsPublic = true))
-        productOne = productRepository.save(Product(name = "Justice League", spaceUuid = editableSpace.uuid))
-        productTwo = productRepository.save(Product(name = "Avengers", spaceUuid = editableSpace.uuid))
-        productThree = productRepository.save(Product(name = "Misfits", spaceUuid = editableSpace.uuid))
-        productFour = productRepository.save(Product(name = "Just a product", spaceUuid = readOnlySpace.uuid))
-        unassignedProduct = productRepository.save(Product(name = "unassigned", spaceUuid = editableSpace.uuid))
-        person =
-            personRepository.save(Person(name = "Benjamin Britten", newPerson = true, spaceUuid = editableSpace.uuid))
-        personInReadOnlySpace =
-            personRepository.save(Person(name = "Arnold Britten", newPerson = true, spaceUuid = readOnlySpace.uuid))
-        userSpaceMappingRepository.save(
-            UserSpaceMapping(
-                userId = "USER_ID",
-                spaceUuid = editableSpace.uuid,
-                permission = PERMISSION_OWNER
-            )
-        )
-    }
-
-    @AfterEach
-    fun teardown() {
-        assignmentRepository.deleteAll()
-        productRepository.deleteAll()
-        personRepository.deleteAll()
-        spaceLocationRepository.deleteAll()
-        spaceRepository.deleteAll()
-    }
-
+class AssignmentControllerInTimeApiTest : AssignmentControllerApiBaseTest() {
     @Test
     fun `GET should return all assignments for the given personId and a specific date`() {
         val oldAssignmentForPerson1: AssignmentV1 = assignmentRepository.save(
             AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(mar1),
+                effectiveDate = LocalDate.parse(march1),
                 spaceUuid = editableSpace.uuid
             )
         )
@@ -204,7 +103,7 @@ class AssignmentControllerInTimeApiTest {
             AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(mar1),
+                effectiveDate = LocalDate.parse(march1),
                 spaceUuid = editableSpace.uuid
             )
         )
@@ -259,7 +158,7 @@ class AssignmentControllerInTimeApiTest {
             placeholder = false,
             productId = productOne.id!!,
             spaceUuid = editableSpace.uuid,
-            startDate = LocalDate.parse(mar1),
+            startDate = LocalDate.parse(march1),
             endDate = null
         )
 
@@ -376,7 +275,7 @@ class AssignmentControllerInTimeApiTest {
             AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(mar1),
+                effectiveDate = LocalDate.parse(march1),
                 spaceUuid = editableSpace.uuid
             )
         )
@@ -714,7 +613,7 @@ class AssignmentControllerInTimeApiTest {
             AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(mar1),
+                effectiveDate = LocalDate.parse(march1),
                 spaceUuid = editableSpace.uuid
             )
         )
@@ -745,7 +644,7 @@ class AssignmentControllerInTimeApiTest {
             AssignmentV1(
                 person = person,
                 productId = productOne.id!!,
-                effectiveDate = LocalDate.parse(mar1),
+                effectiveDate = LocalDate.parse(march1),
                 spaceUuid = editableSpace.uuid
             )
         )
@@ -753,12 +652,12 @@ class AssignmentControllerInTimeApiTest {
         val unassignedAssignmentForPerson = AssignmentV1(
             person = person,
             productId = unassignedProduct.id!!,
-            effectiveDate = LocalDate.parse(mar1),
+            effectiveDate = LocalDate.parse(march1),
             spaceUuid = editableSpace.uuid
         )
 
         mockMvc.perform(
-            delete(getBaseDeleteAssignmentUrl(editableSpace.uuid, person.id!!, mar1))
+            delete(getBaseDeleteAssignmentUrl(editableSpace.uuid, person.id!!, march1))
                 .header("Authorization", "Bearer GOOD_TOKEN")
         )
             .andExpect(status().isOk)
@@ -774,7 +673,7 @@ class AssignmentControllerInTimeApiTest {
     @Test
     fun `DELETE for date should return 403 when trying to delete without write authorization`() {
         mockMvc.perform(
-            delete(getBaseDeleteAssignmentUrl(readOnlySpace.uuid, person.id!!, mar1))
+            delete(getBaseDeleteAssignmentUrl(readOnlySpace.uuid, person.id!!, march1))
                 .header("Authorization", "Bearer GOOD_TOKEN")
         )
             .andExpect(status().isForbidden)
@@ -783,9 +682,25 @@ class AssignmentControllerInTimeApiTest {
     @Test
     fun `DELETE  return 400 when trying to delete assignments for a person that does not belong to the space you are accessing`() {
         mockMvc.perform(
-            delete(getBaseDeleteAssignmentUrl(editableSpace.uuid, personInReadOnlySpace.id!!, mar1))
+            delete(getBaseDeleteAssignmentUrl(editableSpace.uuid, personInReadOnlySpace.id!!, march1))
                 .header("Authorization", "Bearer GOOD_TOKEN")
         )
             .andExpect(status().isBadRequest)
     }
+
+    private fun getBaseAssignmentForPersonInSpaceUrl(spaceUuid: String, personId: Int) =
+        "/api/v2/spaces/$spaceUuid/person/$personId/assignments"
+
+    private fun getBaseAssignmentForPersonInSpaceOnDateUrl(spaceUuid: String, personId: Int, date: String) =
+        "/api/spaces/$spaceUuid/person/$personId/assignments/date/$date"
+
+    private fun getBaseAssignmentDatesUrl(spaceUuid: String) =
+        "/api/spaces/$spaceUuid/assignment/dates"
+
+    private fun getBaseCreateAssignmentUrl(spaceUuid: String, personId: Int) =
+        "/api/spaces/$spaceUuid/person/$personId/assignment/create"
+
+    private fun getBaseDeleteAssignmentUrl(spaceUuid: String, personId: Int, requestedDate: String) =
+        "/api/spaces/$spaceUuid/person/$personId/assignment/delete/$requestedDate"
+
 }
