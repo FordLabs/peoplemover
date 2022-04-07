@@ -27,7 +27,12 @@ apply plugin: 'kotlin'
 group = 'com.ford'
 archivesBaseName = 'PeopleMover'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(11)
+  }
+}
 
 gitProperties {
   branch = System.getenv('HEAD_BRANCH')
