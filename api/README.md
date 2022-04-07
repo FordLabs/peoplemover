@@ -14,14 +14,16 @@ Once you have a copy of the backend up and running, head over to the [UI README]
 - [Docker](https://www.docker.com/products/docker-desktop) optional if using local MySql
 
 ### Build with Gradle
-1. Build the project with the following command: `./gradlew clean build`. This will run the backend tests.
-2. If you do not wish to run the tests and only want to build the application, use `./gradlew clean assemble`
+
+This repository uses a Gradle multi-module build. All Gradle commands should be run from the root of the repository.
+
+Build the project with the following command: `./gradlew api:build`. This will run the backend tests.
 
 ## Testing
 
 This product uses JUnit tests.
 ```
-./gradlew test
+./gradlew api:test
 ```
 
 ## Running
@@ -34,14 +36,14 @@ the `e2e-test` profile replaces it with a simplified auth system for testing.
 ### H2 In-Memory Database
 The simplest way to get the application spun up is by using the in-memory database via Gradle:
 ```
-SPRING_PROFILES_ACTIVE=e2e-test,h2 ./gradlew bootRun
+SPRING_PROFILES_ACTIVE=e2e-test,h2 ./gradlew api:bootRun
 ```
 
 ### Docker MySql Database
 ```
 docker-compose up -d
 
-SPRING_PROFILES_ACTIVE=e2e-test,mysql ./gradlew bootRun
+SPRING_PROFILES_ACTIVE=e2e-test,mysql ./gradlew api:bootRun
 ```
 
 ## License
