@@ -23,7 +23,6 @@ import {createMemoryHistory} from 'history';
 import {MemoryHistory} from 'history/createMemoryHistory';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
-import {GlobalStateProps} from '../Redux/Reducers';
 import AccountDropdown from './AccountDropdown';
 import configureStore from 'redux-mock-store';
 import {AvailableActions} from '../Redux/Actions';
@@ -122,7 +121,7 @@ describe('Account Dropdown', () => {
                         <AccountDropdown showAllDropDownOptions={true}/>
                     </Router>,
                     undefined,
-                    {currentSpace: TestUtils.space, isReadOnly: true} as GlobalStateProps
+                    {currentSpace: TestUtils.space, isReadOnly: true}
                 );
             });
         });

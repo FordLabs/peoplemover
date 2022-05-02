@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import {fireEvent, getByText, RenderResult} from '@testing-library/react';
+import {fireEvent, getByText, RenderResult, screen, within} from '@testing-library/react';
 import React from 'react';
 import AssignmentForm from '../Assignments/AssignmentForm';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
-import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
@@ -39,13 +39,12 @@ describe('AssignmentForm', () => {
             const component = <AssignmentForm products={products}
                 initiallySelectedProduct={products[0]}/>;
 
-            const app = renderWithReduxEnzyme(component);
-            const productSelect = await app.find('Select#product');
-            const options = (productSelect.instance().props as React.ComponentProps<typeof Object>).options;
-            interface Option {label: string}
-            expect(options.find((option: Option) => option.label === 'Product 1')).toBeTruthy();
-            expect(options.find((option: Option)  => option.label === 'I am archived')).toBeFalsy();
-            expect(options.find((option: Option)  => option.label === 'unassigned')).toBeFalsy();
+            renderWithRedux(component);
+            const productSelect = await screen.findByLabelText('Assign to');
+            expect(within(productSelect).getByText('Product 1')).toBeDefined();
+
+            expect(within(productSelect).queryByText('I am archived')).toBeNull();
+            expect(within(productSelect).queryByText('unassigned')).toBeNull();
         });
 
         it('submits an assignment with the given person and product', async () => {
@@ -163,7 +162,7 @@ describe('AssignmentForm', () => {
 
 const renderComponent = (store: Store|undefined = undefined): {
     viewingDate: Date;
-    initialState: GlobalStateProps;
+    initialState: Partial<GlobalStateProps>;
     app: RenderResult;
 } => {
     const products = [
@@ -176,7 +175,7 @@ const renderComponent = (store: Store|undefined = undefined): {
         viewingDate: viewingDate,
         currentSpace: TestUtils.space,
         people: TestUtils.people,
-    } as GlobalStateProps;
+    };
     const app = renderWithRedux(
         <AssignmentForm
             products={products}

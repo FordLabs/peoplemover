@@ -27,7 +27,6 @@ import {Provider} from 'react-redux';
 import React from 'react';
 import thunk from 'redux-thunk';
 import {Person} from '../People/Person';
-import {mount, ReactWrapper} from 'enzyme';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
@@ -52,13 +51,13 @@ export function createDataTestId(prefix: string, name: string): string {
 export function renderWithRedux(
     component: JSX.Element,
     store?: Store,
-    initialState?: PreloadedState<GlobalStateProps>,
+    initialState?: PreloadedState<Partial<GlobalStateProps>>,
 ): RenderResult {
     const testingStore: Store = store ? store : createStore(rootReducer, initialState, applyMiddleware(thunk));
     return render(<Provider store={testingStore}>{component}</Provider>);
 }
 
-export function getApplicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>, location?: Location): RenderResult {
+export function getApplicationSetup(store?: Store, initialState?: PreloadedState<Partial<GlobalStateProps>>, location?: Location): RenderResult {
     let history = createBrowserHistory();
     if (location) {
         history.push(location);
@@ -73,15 +72,6 @@ export function getApplicationSetup(store?: Store, initialState?: PreloadedState
         store,
         initialState
     );
-}
-
-export function renderWithReduxEnzyme(
-    component: JSX.Element,
-    store?: Store,
-    initialState?: PreloadedState<GlobalStateProps>,
-): ReactWrapper {
-    const testingStore: Store = store ? store : createStore(rootReducer, initialState);
-    return mount(<Provider store={testingStore}>{component}</Provider>);
 }
 
 export const mockDate = (expected: Date): () => void => {
