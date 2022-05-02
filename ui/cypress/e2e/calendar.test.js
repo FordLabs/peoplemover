@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,7 @@
  */
 
 /// <reference types="Cypress" />
-
-import '../support/commands';
+import moment from 'moment';
 
 describe('Calendar', () => {
     beforeEach(() => {
@@ -27,7 +26,7 @@ describe('Calendar', () => {
     });
 
     it('Calendar should show current month and day', () => {
-        const expectedCurrentDate = Cypress.moment().format('MMM D, YYYY');
+        const expectedCurrentDate = moment().format('MMM D, YYYY');
         cy.get('.calendarLabel').should('contain', 'Viewing:');
         cy.get('@calendarToggle')
             .should('contain', expectedCurrentDate);
@@ -35,10 +34,10 @@ describe('Calendar', () => {
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();
 
-        const expectedCurrentMonth = Cypress.moment().format('MMMM YYYY');
+        const expectedCurrentMonth = moment().format('MMMM YYYY');
         cy.get('.monthText').should('have.text', expectedCurrentMonth);
 
-        const expectedCurrentDay = Cypress.moment().format('D');
+        const expectedCurrentDay = moment().format('D');
         cy.get('.react-datepicker__day--today').should('have.text', expectedCurrentDay);
 
         cy.log('Close calendar');
@@ -51,7 +50,7 @@ describe('Calendar', () => {
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();
 
-        const expectedCurrentDay = Cypress.moment().format('D');
+        const expectedCurrentDay = moment().format('D');
         cy.get('.react-datepicker__day--highlighted').should('have.text', expectedCurrentDay);
     });
 });
