@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@
 
 /// <reference types="Cypress" />
 import product from '../fixtures/product';
+import moment from 'moment';
 
 describe('Product', () => {
     beforeEach(() => {
@@ -35,7 +36,7 @@ describe('Product', () => {
 
         cy.getModal().should('contain', 'Add New Product');
 
-        const todayDate = Cypress.moment().format('MM/DD/yyyy');
+        const todayDate = moment().format('MM/DD/yyyy');
         populateProductForm(product, todayDate);
 
         submitProductForm('Add');
@@ -74,8 +75,8 @@ describe('Product', () => {
             location: 'Michigan',
             archived: false,
             tags: ['Tag 1', 'Tag 2'],
-            startDate: Cypress.moment('01/02/2019'),
-            nextPhaseDate: Cypress.moment().add(1, 'days'),
+            startDate: moment('01/02/2019'),
+            nextPhaseDate: moment().add(1, 'days'),
             notes: 'Updated',
         };
         populateProductForm(updateProduct, '01/01/2019');
@@ -165,7 +166,7 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
     cy.get('@productForm')
         .find('[id=location]')
         .focus()
-        .type(location + '{enter}');
+        .type(location + '{enter}', {force: true});
 
     cy.wait('@postNewLocation');
 
@@ -182,7 +183,7 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
         .should('have.value', defaultStartDate)
         .click();
 
-    const today = defaultStartDate ? Cypress.moment(startDate) : Cypress.moment();
+    const today = defaultStartDate ? moment(startDate) : moment();
     cy.get(dateSelector(today)).click({force: true});
 
     cy.get('@calendarStartDate').should('have.value', startDate.format('MM/DD/yyyy'));
@@ -192,7 +193,7 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
         .should('have.value', '')
         .click();
 
-    const tomorrow = Cypress.moment(nextPhaseDate)
+    const tomorrow = moment(nextPhaseDate);
     cy.get(dateSelector(tomorrow)).click({force: true});
 
     cy.get('@calendarEndDate').should('have.value', nextPhaseDate.format('MM/DD/yyyy'));
