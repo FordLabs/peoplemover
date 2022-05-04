@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ export const getProductUserDroppedAssignmentOn = (
 ): ProductCardRefAndProductPair | null => {
     const listOfClientRectsForAllProducts = getListOfClientRectsForAllProducts(productRefs);
 
-    const droppedAssignmentBoundingBox: ClientRect = droppedAssignmentRef.getBoundingClientRect();
+    const droppedAssignmentBoundingBox: DOMRect = droppedAssignmentRef.getBoundingClientRect();
     hideDroppedAssignment(droppedAssignmentRef);
 
     const droppedIntoProductIndex: number = getProductWithMostOverlappingArea(
@@ -53,7 +53,7 @@ export const getProductUserDroppedAssignmentOn = (
 };
 
 export const getTopLeftOfDraggedCard = (
-    boundingBoxClientRect: ClientRect,
+    boundingBoxClientRect: DOMRect,
     mouseClickPosition: React.MouseEvent
 ): DraggedCardOffset => {
     return {
@@ -62,7 +62,7 @@ export const getTopLeftOfDraggedCard = (
     };
 };
 
-const isOverlapping = (productRect: ClientRect, assignmentRect: ClientRect): boolean => {
+const isOverlapping = (productRect: DOMRect, assignmentRect: DOMRect): boolean => {
     if (productRect && assignmentRect) {
         const isOverlapping = productRect.right >= assignmentRect.left &&
             productRect.left <= assignmentRect.right &&
@@ -75,13 +75,13 @@ const isOverlapping = (productRect: ClientRect, assignmentRect: ClientRect): boo
 };
 
 export const getProductWithMostOverlappingArea = (
-    productRects: Array<ClientRect>,
-    assignmentCardBoundingBox: ClientRect,
+    productRects: Array<DOMRect>,
+    assignmentCardBoundingBox: DOMRect,
 ): number => {
     let maxIntersectedAreaRectIndex = -1;
     let tempArea = 0;
 
-    productRects.forEach((overlappingProduct: ClientRect, index: number) => {
+    productRects.forEach((overlappingProduct: DOMRect, index: number) => {
         if (!isOverlapping(overlappingProduct, assignmentCardBoundingBox)) {
             return;
         }
@@ -103,8 +103,8 @@ export const getProductWithMostOverlappingArea = (
     return maxIntersectedAreaRectIndex;
 };
 
-const getListOfClientRectsForAllProducts = (productRefs: Array<ProductCardRefAndProductPair>): Array<ClientRect> => {
-    return productRefs.reduce((accumulator: Array<ClientRect>, productRef: ProductCardRefAndProductPair) => {
+const getListOfClientRectsForAllProducts = (productRefs: Array<ProductCardRefAndProductPair>): Array<DOMRect> => {
+    return productRefs.reduce((accumulator: Array<DOMRect>, productRef: ProductCardRefAndProductPair) => {
         const clientRect = productRef.ref.current && productRef.ref.current.getBoundingClientRect();
         if (clientRect) accumulator.push(clientRect);
         return accumulator;

@@ -34,7 +34,7 @@ describe('AssignmentForm', () => {
     });
 
     describe('in create mode', () => {
-        it('should not show the unassigned or archived products in the product list', async () => {
+        xit('should not show the unassigned or archived products in the product list', async () => {
             const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
             const component = <AssignmentForm products={products}
                 initiallySelectedProduct={products[0]}/>;

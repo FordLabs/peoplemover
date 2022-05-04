@@ -274,10 +274,10 @@ class TestUtils {
         TestUtils.personTag2,
     ];
 
-    static color1: Color = {color: '#EFEFEF', id: 1};
-    static color2: Color = {color: '#ABABAB', id: 2};
-    static color3: Color = {color: '#CDCDCD', id: 3};
-    static whiteColor: Color = {color: 'white', id: 4};
+    static color1: Color = {color: '#81C0FA', id: 1};
+    static color2: Color = {color: '#83DDC2', id: 2};
+    static color3: Color = {color: '#FCBAE9', id: 3};
+    static whiteColor: Color = {color: '#FFFFFF', id: 4};
 
     static colors: Array<Color> = [
         TestUtils.color1,

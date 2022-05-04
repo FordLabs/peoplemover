@@ -14,9 +14,9 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": ".git/hooks/pre-commit-guet && npm run test:ui",
-      "commit-msg": ".git/hooks/commit-msg-guet",
-      "post-commit": ".git/hooks/post-commit-guet"
+      "pre-commit": "npm run test:ui",
+      "commit-msg": "",
+      "post-commit": ""
     }
   },
   "devDependencies": {

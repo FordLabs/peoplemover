@@ -14,9 +14,9 @@ export function ProductCardArray({
     return (
         <>
             {products.map((product, index) => (
-                <span key={product.id} id={createProductId(index, arrayId)} className="productCardSpan" >
+                <span key={product.id} id={createProductId(index, arrayId)} className="productCardSpan" data-testid={createProductId(index, arrayId)}>
                     { index + 1 < products.length &&
-                        (<a href={`#${createProductId(index + 1, arrayId)}`} className="skipToNextProduct">
+                        (<a href={`#${createProductId(index + 1, arrayId)}`} className="skipToNextProduct" data-testid={createProductId(index + 1, arrayId)}>
                             {`Skip to ${products[index + 1].name}`}
                         </a>)
                     }

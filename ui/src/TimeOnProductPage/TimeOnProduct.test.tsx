@@ -95,15 +95,15 @@ describe('TimeOnProduct', () => {
     });
 
     describe(' redirect', () => {
-        let originalWindow: Window;
+        let location: (string | Location) & Location;
+
         beforeEach(() => {
-            originalWindow = window;
-            delete window.location;
-            (window as Window) = Object.create(window);
+            location = window.location;
+            Reflect.deleteProperty(window, 'location');
         });
 
         afterEach(() => {
-            (window as Window) = originalWindow;
+            window.location = location;
         });
 
         it('should redirect to the space page when there is no state', async () => {

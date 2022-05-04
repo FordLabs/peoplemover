@@ -58,6 +58,7 @@ function SpaceForm({
 
         if (formSpace.name.trim().length === 0) {
             setShowWarningMessage(true);
+            return
         }
 
         let spaceToSend = {...formSpace};
@@ -102,9 +103,11 @@ function SpaceForm({
                 {spaceNameLength} ({maxLength} characters max)
             </span>
             <div className="createSpaceErrorMessageContainer">
-                {showWarningMessage && <span data-testid="createSpaceErrorMessage" className="createSpaceErrorMessage">
+                {showWarningMessage && (
+                    <span data-testid="createSpaceErrorMessage" className="createSpaceErrorMessage">
                       To create or rename a space, please enter an alpha-numeric name.
-                </span>}
+                    </span>
+                )}
             </div>
             <div className="createSpaceButtonContainer">
                 <FormButton

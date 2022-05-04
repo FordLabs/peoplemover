@@ -1,24 +1,19 @@
 module.exports = {
     root: true,
-    parser: '@typescript-eslint/parser',
     plugins: [
-        '@typescript-eslint',
         'react',
         'jest',
-        'react-hooks',
+        'jsx-a11y',
         'react-redux',
         'cypress'
     ],
     extends: [
         'react-app',
         'eslint:recommended',
-        'plugin:@typescript-eslint/eslint-recommended',
-        'plugin:@typescript-eslint/recommended',
         'plugin:react/recommended',
-        'fbjs',
-        'plugin:react-redux/recommended',
         'plugin:cypress/recommended',
-        "plugin:jsx-a11y/recommended"
+        "plugin:jsx-a11y/recommended",
+        'plugin:react-redux/recommended'
     ],
     rules: {
         'react/jsx-uses-react': 'error',
@@ -28,11 +23,7 @@ module.exports = {
         'jsx-a11y/no-static-element-interactions': 0,
         'jsx-a11y/no-autofocus': 0,
         'indent': [2, 4, { "SwitchCase": 1 }],
-        '@typescript-eslint/no-use-before-define': [0, 'nofunc'],
-        'react-hooks/rules-of-hooks': 'error',
-        'react-hooks/exhaustive-deps': 0,
         'react-redux/mapDispatchToProps-prefer-shorthand': 0,
-        '@typescript-eslint/ban-ts-ignore': 0,
         'no-console': 0,
         'curly': 0
     },
@@ -43,5 +34,10 @@ module.exports = {
     },
     env: {
         'cypress/globals': true,
-    }
+    },
+    globals: {
+        React: true,
+        global: true,
+        JSX: true,
+    },
 };

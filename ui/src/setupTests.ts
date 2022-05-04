@@ -16,5 +16,3 @@
  */
 
 import '@testing-library/jest-dom';
-
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;

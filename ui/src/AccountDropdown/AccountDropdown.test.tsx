@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
+import {act, fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
 import {Router} from 'react-router-dom';
@@ -37,7 +37,6 @@ describe('Account Dropdown', () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
         history = createMemoryHistory({initialEntries: ['/teamName']});
@@ -109,13 +108,13 @@ describe('Account Dropdown', () => {
         });
 
         it('should focus the first dropdown option when opened', async () => {
-            await wait(() => expect(app.getByTestId('shareAccess')).toHaveFocus());
+            await waitFor(() => expect(app.getByTestId('shareAccess')).toHaveFocus());
         });
     });
 
     describe('Read Only', function() {
         beforeEach(async () => {
-            await wait(async () => {
+            await waitFor(async () => {
                 app = renderWithRedux(
                     <Router history={history}>
                         <AccountDropdown showAllDropDownOptions={true}/>
@@ -140,7 +139,7 @@ describe('Account Dropdown', () => {
         it('should focus the first dropdown option when opened', async () => {
             const spaceTileDropdownButton = await app.findByTestId('accountDropdownToggle');
             spaceTileDropdownButton.click();
-            await wait(() => expect(app.getByTestId('sign-out')).toHaveFocus());
+            await waitFor(() => expect(app.getByTestId('sign-out')).toHaveFocus());
         });
     });
 });

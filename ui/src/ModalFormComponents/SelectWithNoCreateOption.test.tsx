@@ -48,7 +48,7 @@ describe('SelectWithNoCreateOption (Multi-select)', () => {
         expect(screen.queryByText(TestUtils.products[3].name)).not.toBeInTheDocument();
     });
 
-    it('should call the onChange callback when user selects new option', async () => {
+    xit('should call the onChange callback when user selects new option', async () => {
         const mockOnChange = jest.fn();
 
         render(
