@@ -16,7 +16,7 @@
  */
 
 import TestUtils, {renderWithRedux} from './TestUtils';
-import PeopleMover from '../Application/PeopleMover';
+import PeopleMover from '../PeopleMover/PeopleMover';
 import {findByText, fireEvent} from '@testing-library/dom';
 import React from 'react';
 import {act, RenderResult} from '@testing-library/react';

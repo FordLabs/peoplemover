@@ -17,7 +17,7 @@
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
-import PeopleMover from '../Application/PeopleMover';
+import PeopleMover from '../PeopleMover/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {Product} from '../Products/Product';
 import {createBrowserHistory, History} from 'history';

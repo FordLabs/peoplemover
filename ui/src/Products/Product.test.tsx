@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
-import PeopleMover from '../Application/PeopleMover';
+import PeopleMover from '../PeopleMover/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from './ProductClient';
 import TestUtils, {createDataTestId, renderWithRedux} from '../tests/TestUtils';

@@ -18,7 +18,7 @@
 import React from 'react';
 import ArchivedProduct from '../Products/ArchivedProduct';
 import TestUtils, {renderWithRedux} from './TestUtils';
-import PeopleMover from '../Application/PeopleMover';
+import PeopleMover from '../PeopleMover/PeopleMover';
 import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import {createBrowserHistory, History} from 'history';
 import {Router} from 'react-router-dom';

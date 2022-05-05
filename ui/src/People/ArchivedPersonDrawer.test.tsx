@@ -22,7 +22,7 @@ import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
 import {createBrowserHistory, History} from 'history';
 import {Router} from 'react-router-dom';
-import PeopleMover from '../Application/PeopleMover';
+import PeopleMover from '../PeopleMover/PeopleMover';
 
 describe('Archived People', () => {
     let app: RenderResult;
