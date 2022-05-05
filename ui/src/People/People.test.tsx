@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {act, fireEvent, screen, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
@@ -139,6 +139,7 @@ describe('People actions', () => {
             );
         });
 
+        // @todo should be cypress or more granular unit test
         xit('creates the person specified by the PersonForm', async () => {
             fireEvent.click(screen.getByText(addPersonButtonText));
 
@@ -356,24 +357,31 @@ describe('People actions', () => {
         await screen.findByText('Product 1');
     });
 
-    xit('should not show the unassigned product or archived products in product list', async () => {
+    it('should not show the unassigned product or archived products in product list', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
-        const component = <PersonForm isEditPersonForm={false}
-            products={products}
-            initialPersonName="BRADLEY"/>;
+        renderWithRedux(
+            <PersonForm isEditPersonForm={false}
+                products={products}
+                initialPersonName="BRADLEY"/>,
+            undefined,
+            initialState
+        );
 
-        renderWithRedux(component, undefined, initialState);
+        expect(screen.getByText('unassigned')).toBeDefined();
 
-        const productSelect = await screen.findByLabelText('Assign to');
+        const productTextToSelect = 'Product 1';
+        const productsMultiSelectField = await screen.findByLabelText('Assign to');
+        await selectEvent.select(productsMultiSelectField, productTextToSelect);
 
-        await selectEvent.select(productSelect, 'Product 1');
-        expect(within(productSelect).getByText('Product 1')).toBeDefined();
+        const product1Option = screen.getByText(productTextToSelect);
+        expect(product1Option).toBeDefined();
+        expect(product1Option).toHaveClass('product__multi-value__label');
 
-        expect(within(productSelect).queryByText('I am archived')).toBeNull();
-        expect(within(productSelect).queryByText('unassigned')).toBeNull();
+        expect(screen.queryByText('I am archived')).toBeNull();
+        expect(screen.queryByText('unassigned')).toBeNull();
     });
 
-    xit('should remove the unassigned product when a product is selected from dropdown', async () => {
+    it('should remove the unassigned product when a product is selected from dropdown', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.unassignedProduct];
         const component = <PersonForm isEditPersonForm={false}
             products={products}

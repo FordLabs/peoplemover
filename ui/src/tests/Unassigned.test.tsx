@@ -214,6 +214,7 @@ describe('Unassigned Products', () => {
             expect(unassignedPersonName.value).toEqual(TestUtils.unassignedPerson.name);
         });
 
+        // @todo should be a cypress test
         xit('should close unassigned edit menu when opening an edit menu in product list', async () => {
             const unassignedDrawerCaret = await screen.findByTestId('unassignedDrawerCaret');
             fireEvent.click(unassignedDrawerCaret);
@@ -228,9 +229,9 @@ describe('Unassigned Products', () => {
             fireEvent.click(closeForm);
 
             const editProduct1Assignment = await screen.findByTestId(`editPersonIconContainer__person_1`);
-            fireEvent.click(editProduct1Assignment);
-
-            expect(await screen.findByText('Edit Person')).toBeDefined()
+            await act(async () => {
+                fireEvent.click(editProduct1Assignment);
+            });
 
             const editPerson1 = await screen.findByText('Edit Person');
             fireEvent.click(editPerson1);

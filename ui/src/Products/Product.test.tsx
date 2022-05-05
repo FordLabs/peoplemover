@@ -370,6 +370,7 @@ describe('Products', () => {
             expect(screen.queryByTestId('addPersonToProductIcon__unassigned')).not.toBeInTheDocument();
         });
 
+        // @todo should be a cypress test or more granular unit test
         xit('opens AssignmentForm component when button clicked with product populated', async () => {
             applicationSetup();
 

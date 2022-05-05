@@ -29,7 +29,7 @@ describe('the assignment form', () => {
         TestUtils.mockClientCalls();
     });
 
-    xit('renders the assignment form labels', () => {
+    it('renders the assignment form labels', () => {
         renderWithRedux(
             <AssignmentForm products={[TestUtils.unassignedProduct]}
                 initiallySelectedProduct={TestUtils.unassignedProduct}/>,
@@ -39,7 +39,7 @@ describe('the assignment form', () => {
         expect(screen.getByLabelText('Assign to')).toBeDefined();
     });
 
-    xit('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
+    it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments, TestUtils.productWithoutAssignments, TestUtils.productForHank];
         const viewingDate = new Date(2020, 5, 5);
 

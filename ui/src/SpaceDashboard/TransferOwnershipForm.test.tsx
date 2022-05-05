@@ -22,17 +22,20 @@ import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import {act} from 'react-dom/test-utils';
-import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
+import {closeModalAction} from '../Redux/Actions';
 import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
 import {fireEvent, screen} from '@testing-library/dom';
 import {AxiosResponse} from 'axios';
+import {waitFor} from '@testing-library/react';
 
 describe('Transfer Ownership Form', () => {
     let store: Store;
 
     beforeEach(async () => {
+        jest.resetAllMocks();
+
         store = createStore(rootReducer, {currentUser: 'user_id'}, applyMiddleware(thunk));
         store.dispatch = jest.fn();
         SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(TestUtils.spaceMappingsArray as UserSpaceMapping[]));
@@ -70,26 +73,37 @@ describe('Transfer Ownership Form', () => {
             await act(async () => {fireEvent.click(screen.getByText('Ok'));});
             await expect(store.dispatch).toBeCalledWith(closeModalAction());
         });
+
         it('should be able to choose a person by clicking anywhere in their row', async () => {
             fireEvent.click(screen.getByTestId('transferOwnershipFormRadioControl-user_id_2'));
             await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
             await act(async () => {fireEvent.click(screen.getByText('Ok'));});
             await expect(store.dispatch).toBeCalledWith(closeModalAction());
         });
+
         it('should use the Client to promote the selected editor to owner', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
             await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
             expect(SpaceClient.changeOwner).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[0], TestUtils.spaceMappingsArray[1]);
         });
+
         it('should use the Client to remove the current users permissions from the space', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
             await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
             expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[0]);
         });
-        xit('should refresh user spaces if a new owner is assigned', async () => {
-            fireEvent.click(screen.getByTestId('transferOwnershipFormRadioControl-user_id_2'));
-            await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
-            await expect(store.dispatch).toHaveBeenNthCalledWith(1, fetchUserSpacesAction());
+
+        it('should refresh user spaces if a new owner is assigned', async () => {
+            const user2RadioButton = screen.getByTestId('transferOwnershipFormRadioControl-user_id_2')
+            fireEvent.click(user2RadioButton);
+
+            const transferOwnershipButton = await screen.findByText('Transfer ownership')
+            fireEvent.click(transferOwnershipButton);
+
+            expect(SpaceClient.changeOwner).toHaveBeenCalled();
+            await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalled());
+
+            await waitFor(() => expect(store.dispatch).toHaveBeenCalled());
         });
     });
 });

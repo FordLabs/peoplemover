@@ -133,7 +133,7 @@ describe('Person Form', () => {
             });
         });
 
-        xit('should only display active assignable projects in the assignment dropdown', async () => {
+        it('should only display active assignable projects in the assignment dropdown', async () => {
             const assignmentDropDown = await screen.getByLabelText('Assign to');
             await waitFor(() => {
                 selectEvent.openMenu(assignmentDropDown);
@@ -255,7 +255,7 @@ describe('Person Form', () => {
             expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, expectedPerson, []);
         });
 
-        xit('should send a regular assignment request on an unarchived person', async () => {
+        it('should send a regular assignment request on an unarchived person', async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
             const updatedPerson = {...TestUtils.archivedPerson, archiveDate: null};

@@ -34,17 +34,20 @@ describe('AssignmentForm', () => {
     });
 
     describe('in create mode', () => {
-        xit('should not show the unassigned or archived products in the product list', async () => {
+        it('should not show the unassigned or archived products in the product list', async () => {
             const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
-            const component = <AssignmentForm products={products}
-                initiallySelectedProduct={products[0]}/>;
+            renderWithRedux(
+                <AssignmentForm products={products}
+                    initiallySelectedProduct={products[0]}/>
+            );
 
-            renderWithRedux(component);
-            const productSelect = await screen.findByLabelText('Assign to');
-            expect(within(productSelect).getByText('Product 1')).toBeDefined();
+            const productsMultiSelectField = await screen.findByLabelText('Assign to');
+            const product1Option = screen.getByText('Product 1');
+            expect(product1Option).toBeDefined();
+            expect(product1Option).toHaveClass('product__multi-value__label');
 
-            expect(within(productSelect).queryByText('I am archived')).toBeNull();
-            expect(within(productSelect).queryByText('unassigned')).toBeNull();
+            expect(within(productsMultiSelectField).queryByText('I am archived')).toBeNull();
+            expect(within(productsMultiSelectField).queryByText('unassigned')).toBeNull();
         });
 
         it('submits an assignment with the given person and product', async () => {
