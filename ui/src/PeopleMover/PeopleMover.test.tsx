@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {getApplicationSetup, renderWithRedux} from './TestUtils';
+import TestUtils, {getApplicationSetup, renderWithRedux} from '../Utils/TestUtils';
 import PeopleMover from '../PeopleMover/PeopleMover';
 import {screen, waitFor} from '@testing-library/react';
 import {Router} from 'react-router-dom';

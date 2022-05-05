@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from './TestUtils';
-import PeopleMover from '../PeopleMover/PeopleMover';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import PeopleMover from './PeopleMover';
 import {findByText, fireEvent} from '@testing-library/dom';
 import React from 'react';
 import {act, RenderResult} from '@testing-library/react';

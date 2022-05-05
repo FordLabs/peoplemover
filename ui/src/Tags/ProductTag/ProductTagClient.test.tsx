@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import ProductTag from './ProductTagClient';
-import TestUtils from '../../tests/TestUtils';
+import TestUtils from '../../Utils/TestUtils';
 import Cookies from 'universal-cookie';
 
 describe('Product Tags Client', function() {

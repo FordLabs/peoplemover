@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import TestUtils from '../../tests/TestUtils';
+import TestUtils from '../../Utils/TestUtils';
 import React from 'react';
 import AssignmentClient from '../AssignmentClient';
 import {AxiosResponse} from 'axios';
@@ -24,7 +24,7 @@ import {AssignmentHistory} from './AssignmentHistory';
 import ProductClient from '../../Products/ProductClient';
 import moment, {now} from 'moment';
 import {fireEvent} from '@testing-library/dom';
-import {Assignment} from "../Assignment";
+import {Assignment} from '../Assignment';
 
 describe('Assignment History', () => {
 
@@ -36,7 +36,7 @@ describe('Assignment History', () => {
         const historyLabel = await renderResult.findByText('View Assignment History');
         expect(historyLabel).toBeInTheDocument();
         fireEvent.click(historyLabel);
-    };
+    }
 
     const checkProductAndDates = (products: string[], dates: string[], container: HTMLElement, isCurrent: boolean) => {
         if (products.length === dates.length) {

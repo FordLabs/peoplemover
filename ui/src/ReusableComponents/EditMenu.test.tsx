@@ -17,8 +17,8 @@
 
 import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
-import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
-import TestUtils from './TestUtils';
+import EditMenu, {EditMenuOption} from './EditMenu';
+import TestUtils from '../Utils/TestUtils';
 
 describe('The edit menu', () => {
 

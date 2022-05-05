@@ -19,7 +19,7 @@ import React from 'react';
 import {act, fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import {axe, toHaveNoViolations} from 'jest-axe';
 import Header from './Header';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {RunConfig} from '../index';

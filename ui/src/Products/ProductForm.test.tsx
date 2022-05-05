@@ -18,7 +18,7 @@ import ProductForm from '../Products/ProductForm';
 import React from 'react';
 import configureStore from 'redux-mock-store';
 import {act, screen, fireEvent, waitFor} from '@testing-library/react';
-import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {mockCreateRange, renderWithRedux} from '../Utils/TestUtils';
 import {Space} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
 import LocationClient from '../Locations/LocationClient';

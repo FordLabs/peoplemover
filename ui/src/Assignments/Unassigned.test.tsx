@@ -18,11 +18,11 @@
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import PeopleMover from '../PeopleMover/PeopleMover';
-import TestUtils, {renderWithRedux} from './TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {Product} from '../Products/Product';
 import {createBrowserHistory, History} from 'history';
 import {Router} from 'react-router-dom';
-import UnassignedDrawer from '../Assignments/UnassignedDrawer';
+import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
 import AssignmentClient from '../Assignments/AssignmentClient';
 

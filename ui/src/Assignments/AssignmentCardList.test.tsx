@@ -16,7 +16,7 @@
  */
 import React from 'react';
 import {screen} from '@testing-library/react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';

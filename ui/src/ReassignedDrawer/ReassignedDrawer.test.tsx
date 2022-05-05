@@ -17,7 +17,7 @@
 
 import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import ReassignedDrawer from './ReassignedDrawer';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';

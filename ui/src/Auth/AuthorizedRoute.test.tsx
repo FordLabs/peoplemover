@@ -16,12 +16,12 @@
  */
 
 import {RenderResult, waitFor} from '@testing-library/react';
-import AuthorizedRoute from '../Auth/AuthorizedRoute';
+import AuthorizedRoute from './AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosError} from 'axios';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {RunConfig} from '../index';
-import {renderWithRedux} from './TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import {createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setIsReadOnlyAction} from '../Redux/Actions';

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {mockCreateRange, renderWithRedux} from '../Utils/TestUtils';
 import React from 'react';
 import {fireEvent, queryByText, waitFor} from '@testing-library/react';
 import Calendar from './Calendar';

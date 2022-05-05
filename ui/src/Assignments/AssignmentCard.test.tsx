@@ -18,7 +18,7 @@
 import {act, fireEvent, RenderResult} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from './AssignmentCard';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {Assignment} from './Assignment';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import rootReducer from '../Redux/Reducers';

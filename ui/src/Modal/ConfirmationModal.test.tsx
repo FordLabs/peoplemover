@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import ConfirmationModal from '../Modal/ConfirmationModal';
+import ConfirmationModal from './ConfirmationModal';
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react';
 import {noop} from '@babel/types';

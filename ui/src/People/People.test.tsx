@@ -21,7 +21,7 @@ import PeopleMover from '../PeopleMover/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';

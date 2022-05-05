@@ -16,7 +16,7 @@
  */
 
 import {render} from '@testing-library/react';
-import {OAuthRedirect} from '../ReusableComponents/OAuthRedirect';
+import {OAuthRedirect} from './OAuthRedirect';
 import * as React from 'react';
 import {MemoryRouter, Router} from 'react-router';
 import {createMemoryHistory} from 'history';
