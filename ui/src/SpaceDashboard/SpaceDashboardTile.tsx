@@ -20,7 +20,7 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import moment, {now} from 'moment';
 import './SpaceDashboardTile.scss';
-import LeaveIcon from '../Application/Assets/leave-icon.svg';
+import LeaveIcon from '../Assets/leave-icon.svg';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {Dispatch} from 'redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';

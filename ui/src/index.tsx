@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import './Application/Styleguide/Colors.scss';
+import './Styles/Colors.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

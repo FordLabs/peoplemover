@@ -24,7 +24,7 @@ import {fetchPeopleAction, fetchProductsAction, setCurrentModalAction} from '../
 import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import '../Application/Styleguide/Main.scss';
+import '../Styles/Main.scss';
 import './AssignmentCard.scss';
 import {Assignment, calculateDuration} from './Assignment';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
