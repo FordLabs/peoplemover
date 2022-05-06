@@ -37,7 +37,6 @@ import thunk from 'redux-thunk';
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
     const addProductModalTitle = 'Add New Product';
-    let store: Store;
 
     function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): void {
         let history = createBrowserHistory();
@@ -67,10 +66,11 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                store);
+                store
+            );
 
             await screen.findByText('Product 3');
         });
@@ -83,7 +83,7 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
                 store
@@ -100,7 +100,7 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
                 store
@@ -118,10 +118,11 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                store);
+                store
+            );
 
             await screen.findAllByText('Add a person by clicking Add Person icon above or drag them in.');
         });
@@ -136,7 +137,7 @@ describe('Products', () => {
                     currentModal: {modal: null},
                 };
 
-                store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+                const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
                 await renderWithRedux(
                     <ProductCard product={TestUtils.productWithAssignments}/>,
                     store
@@ -158,7 +159,7 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             await renderWithRedux(
                 <ProductCard product={TestUtils.productWithAssignments}/>,
                 store
@@ -268,7 +269,7 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             await renderWithRedux(
                 <ProductCard product={productWithManyAssignments}/>,
                 store);
@@ -345,10 +346,11 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                store);
+                store
+            );
 
             await screen.findByTestId('addPersonToProductIcon__product_3');
         });
@@ -361,7 +363,7 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             await renderWithRedux(
                 <ProductCard product={TestUtils.unassignedProduct}/>,
                 store
@@ -614,7 +616,7 @@ describe('Products', () => {
                 const viewingDate = new Date(2020, 6, 17);
                 const initialState = {viewingDate: viewingDate};
                 await act(async () => {
-                    store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+                    const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
                     applicationSetup(store);
 
                     const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
@@ -696,7 +698,7 @@ describe('Products', () => {
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
             await waitFor(() => {
                 renderWithRedux(
