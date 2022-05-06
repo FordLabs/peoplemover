@@ -29,7 +29,7 @@ describe('TokenProvider', function() {
     });
 
     afterEach(() => {
-        (window as MatomoWindow) = originalWindow;
+        window = originalWindow;
     });
 
     describe('getUserNameFromAccessToken', function() {
