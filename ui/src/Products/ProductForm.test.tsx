@@ -54,7 +54,7 @@ describe('ProductForm', function() {
     });
 
     it('should close the modal when you click the cancel button', async () => {
-        renderWithRedux(<ProductForm editing={false} />, store, undefined);
+        renderWithRedux(<ProductForm editing={false} />, store);
         await act(async () => {fireEvent.click(screen.getByText('Cancel'));});
         expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
         expect(LocationClient.get).toHaveBeenCalled();
@@ -65,8 +65,7 @@ describe('ProductForm', function() {
         await act(async () => {
             renderWithRedux(
                 <ProductForm editing={false} />,
-                store,
-                undefined
+                store
             );
             fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'Some Name'}});
 
@@ -113,7 +112,7 @@ describe('ProductForm', function() {
 
         await act(async () => {
             const archivedProduct = {...TestUtils.productWithoutLocation, endDate: '2020-02-02'};
-            renderWithRedux(<ProductForm editing={true} product={archivedProduct}/>, store, undefined);
+            renderWithRedux(<ProductForm editing={true} product={archivedProduct}/>, store);
             const deleteSpan = await screen.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
             expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
@@ -123,7 +122,7 @@ describe('ProductForm', function() {
 
     it('should show delete modal with archive text when a non-archived product is being deleted', async () => {
         await act(async () => {
-            renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store, undefined);
+            renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store);
             const deleteSpan = await screen.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
             expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
@@ -133,7 +132,7 @@ describe('ProductForm', function() {
 
     it('should show delete modal without archive text when an archived product is being deleted', async () => {
         await act(async () => {
-            renderWithRedux(<ProductForm editing={true} product={TestUtils.archivedProduct}/>, store, undefined);
+            renderWithRedux(<ProductForm editing={true} product={TestUtils.archivedProduct}/>, store);
             const deleteSpan = await screen.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
             expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
@@ -189,7 +188,7 @@ describe('ProductForm', function() {
         });
     });
 });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 async function createTag(label: string, createOptionText: string, option: string): Promise<void> {
     const productTagsLabelElement = await screen.findByLabelText(label);
     const containerToFindOptionsIn = {
