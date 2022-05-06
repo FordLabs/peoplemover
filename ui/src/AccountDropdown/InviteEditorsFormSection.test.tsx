@@ -22,7 +22,6 @@ import {fireEvent, screen, act, within, waitFor} from '@testing-library/react';
 import Axios from 'axios';
 import Cookies from 'universal-cookie';
 import SpaceClient from '../Space/SpaceClient';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import configureStore from 'redux-mock-store';
 import RedirectClient from '../Utils/RedirectClient';
 import {Space} from '../Space/Space';
@@ -257,67 +256,60 @@ describe('Invite Editors Form', function() {
         });
 
         it('should change owner', async () => {
-            await act(async () => {
-                renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {
-                        currentSpace: TestUtils.space,
-                        currentUser: 'USER_ID',
-                    });
-                const editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
-                const editor = editorRow.getByText(/editor/i);
-                fireEvent.keyDown(editor, {key: 'ArrowDown'});
-                const permissionButton = await editorRow.findByText(/owner/i);
-
-                SpaceClient.getUsersForSpace = jest.fn().mockReturnValueOnce(Promise.resolve(
-                    [{'userId': 'user_id', 'permission': 'editor'}, {'userId': 'user_id_2', 'permission': 'owner'}] as UserSpaceMapping[]));
-
-                await fireEvent.click(permissionButton);
-                await fireEvent.click(await screen.findByText(/yes/i));
-                expect(Axios.put).toHaveBeenCalledWith(
-                    `/api/spaces/${TestUtils.space.uuid}/users/user_id_2`,
-                    null,
-                    {headers: {Authorization: 'Bearer 123456'}},
-                );
-
-                await waitFor(async () => {
-                    const ownerRow = within(await screen.findByTestId('userListItem__user_id_2'));
-                    ownerRow.getByText(/owner/i);
-                    ownerRow.getByText(/user_id_2/i);
-
-                    const editorRow = within(await screen.findByTestId('userListItem__user_id'));
-                    editorRow.getByText(/editor/i);
-                    editorRow.getByText(/user_id/i);
+            renderWithRedux(
+                <InviteEditorsFormSection/>, undefined, {
+                    currentSpace: TestUtils.space,
+                    currentUser: 'USER_ID',
                 });
-            });
+            let editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
+            const editor = editorRow.getByText(/editor/i);
+            fireEvent.keyDown(editor, {key: 'ArrowDown'});
+            const permissionButton = await editorRow.findByText(/owner/i);
+
+            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
+                [{'userId': 'user_id', 'permission': 'editor'}, {'userId': 'user_id_2', 'permission': 'owner'}]
+            )
+
+            fireEvent.click(permissionButton);
+            fireEvent.click(await screen.findByText(/yes/i));
+            expect(Axios.put).toHaveBeenCalledWith(
+                `/api/spaces/${TestUtils.space.uuid}/users/user_id_2`,
+                null,
+                {headers: {Authorization: 'Bearer 123456'}},
+            );
+
+            const ownerRow = within(await screen.findByTestId('userListItem__user_id_2'));
+            ownerRow.getByText(/owner/i);
+            ownerRow.getByText(/user_id_2/i);
+
+            editorRow = within(await screen.findByTestId('userListItem__user_id'));
+            editorRow.getByText(/editor/i);
+            editorRow.getByText(/user_id/i);
         });
 
         it('should not change owner after cancelling', async () => {
-            await act(async () => {
-                renderWithRedux(
-                    <InviteEditorsFormSection/>, undefined, {
-                        currentSpace: TestUtils.space,
-                        currentUser: 'user_id',
-                    });
-                const editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
-                const editor = editorRow.getByText(/editor/i);
-                fireEvent.keyDown(editor, {key: 'ArrowDown'});
-                const permissionButton = await editorRow.findByText(/owner/i);
-
-                await fireEvent.click(permissionButton);
-                await fireEvent.click(await screen.findByText(/no/i));
-                expect(Axios.put).not.toHaveBeenCalled();
-                expect(SpaceClient.getUsersForSpace).toHaveBeenCalledTimes(1);
-
-                await waitFor(async () => {
-                    const editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
-                    editorRow.getByText(/editor/i);
-                    editorRow.getByText(/user_id_2/i);
-
-                    const ownerRow = within(await screen.findByTestId('userListItem__user_id'));
-                    ownerRow.getByText(/owner/i);
-                    ownerRow.getByText(/user_id/i);
+            renderWithRedux(
+                <InviteEditorsFormSection/>, undefined, {
+                    currentSpace: TestUtils.space,
+                    currentUser: 'user_id',
                 });
-            });
+            let editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
+            const editor = editorRow.getByText(/editor/i);
+            fireEvent.keyDown(editor, {key: 'ArrowDown'});
+            const permissionButton = await editorRow.findByText(/owner/i);
+
+            fireEvent.click(permissionButton);
+            fireEvent.click(await screen.findByText(/no/i));
+            expect(Axios.put).not.toHaveBeenCalled();
+            expect(SpaceClient.getUsersForSpace).toHaveBeenCalledTimes(1);
+
+            editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
+            editorRow.getByText(/editor/i);
+            editorRow.getByText(/user_id_2/i);
+
+            const ownerRow = within(await screen.findByTestId('userListItem__user_id'));
+            ownerRow.getByText(/owner/i);
+            ownerRow.getByText(/user_id/i);
         });
 
         it('should not be able to change owner', async () => {
