@@ -2,12 +2,6 @@
   "name": "peoplemover",
   "version": "1.0.0",
   "private": true,
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "proxy": "http://localhost:8080",
   "scripts": {
     "generate-build-version": "node generate-build-version",
@@ -30,7 +24,17 @@
     "build": "react-scripts build",
     "lint": "eslint src/**/*.ts src/**/*.tsx",
     "lint:fix": "eslint --fix src/**/*.ts src/**/*.tsx",
-    "analyze": "node analyze.js"
+    "analyze": "node analyze.js",
+    "tests:pre-commit": "CI=true react-scripts test --findRelatedTests",
+    "prepare": "cd .. && husky install"
+  },
+  "lint-staged": {
+    "**/*.+(spec.tsx|test.tsx)": [
+      "npm run tests:pre-commit"
+    ],
+    "**/*.+(js|ts|tsx|spec.tsx|test.tsx)": [
+      "npm run lint:fix"
+    ]
   },
   "dependencies": {
     "axios": "^0.21.2",
@@ -91,9 +95,11 @@
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-redux": "^4.0.0",
     "eslint-plugin-standard": "^4.0.1",
+    "husky": "^7.0.0",
     "jest-axe": "^4.1.0",
     "jest-dom": "^4.0.0",
     "jest-sonar-reporter": "^2.0.0",
+    "lint-staged": "^12.4.1",
     "react-scripts": "5.0.0",
     "react-select-event": "^5.5.0",
     "redux-mock-store": "^1.5.4",
@@ -106,6 +112,12 @@
   "jest": {
     "resetMocks": false
   },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "optionalDependencies": {
     "fsevents": "^2.1.3"
   },
