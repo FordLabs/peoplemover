@@ -20,12 +20,11 @@ import React from 'react';
 import PeopleMover from '../Application/PeopleMover';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import {Product} from '../Products/Product';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {createBrowserHistory, History} from 'history';
 import {Router} from 'react-router-dom';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
+import AssignmentClient from '../Assignments/AssignmentClient';
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
@@ -70,89 +69,51 @@ describe('Unassigned Products', () => {
         });
     });
 
-    describe('showing the unanssigned product, but...', () => {
+    describe('showing the unassigned product, but...', () => {
+        const renderWithUnassignedProduct = (products: Product[]) => {
+            renderWithRedux(
+                <UnassignedDrawer/>,
+                undefined,
+                {
+                    allGroupedTagFilterOptions: [
+                        { label: 'Location Tags:', options: []},
+                        { label: 'Product Tags:', options: []},
+                        { label: 'Role Tags:', options: []},
+                        { label: 'Person Tags:', options: []},
+                    ],
+                    isUnassignedDrawerOpen: true,
+                    products: products,
+                    currentSpace: TestUtils.space,
+                }
+            );
+        }
+
         it('hides the number of unassigned people when there are less than 1', async () => {
             const emptyUnassignedProduct: Product = {
                 ...TestUtils.unassignedProduct,
                 assignments: [],
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
             };
+            renderWithUnassignedProduct([emptyUnassignedProduct])
 
-            const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-                allGroupedTagFilterOptions: [
-                    { label: 'Location Tags:', options: []},
-                    { label: 'Product Tags:', options: []},
-                    { label: 'Role Tags:', options: []},
-                    { label: 'Person Tags:', options: []},
-                ],
-                isUnassignedDrawerOpen: true,
-                products: [emptyUnassignedProduct],
-                currentSpace: TestUtils.space,
-            } ;
-
-            await waitFor(() => {
-                renderWithRedux(
-                    <UnassignedDrawer/>,
-                    undefined,
-                    initialState
-                );
-            });
-
-            expect(screen.queryByTestId('countBadge')).toBeNull();
+            await waitFor(() => expect(screen.queryByTestId('countBadge')).toBeNull());
         });
 
         it('does not show archived people as unassigned', async () => {
-            const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-                allGroupedTagFilterOptions: [
-                    { label: 'Location Tags:', options: []},
-                    { label: 'Product Tags:', options: []},
-                    { label: 'Role Tags:', options: []},
-                    { label: 'Person Tags:', options: []},
-                ],
-                isUnassignedDrawerOpen: true,
-                products: [TestUtils.unassignedProduct],
-                currentSpace: TestUtils.space,
-            };
+            renderWithUnassignedProduct( [TestUtils.unassignedProduct])
 
-            await waitFor(() => {
-                renderWithRedux(
-                    <UnassignedDrawer/>,
-                    undefined,
-                    initialState
-                );
-            });
-
-            expect(screen.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
+            await waitFor(() => expect(screen.queryByText(TestUtils.archivedPerson.name)).toBeNull());
         });
 
         it('should show an archived person as unassigned if their archive date has not passed', async () => {
             const product = {...TestUtils.unassignedProduct, assignments:[TestUtils.assignmentForHank]};
-            const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-                allGroupedTagFilterOptions: [
-                    { label: 'Location Tags:', options: []},
-                    { label: 'Product Tags:', options: []},
-                    { label: 'Role Tags:', options: []},
-                    { label: 'Person Tags:', options: []},
-                ],
-                isUnassignedDrawerOpen: true,
-                products: [product],
-                currentSpace: TestUtils.space,
-            };
-
-            await waitFor(() => {
-                renderWithRedux(
-                    <UnassignedDrawer/>,
-                    undefined,
-                    initialState
-                );
-            });
-
+            renderWithUnassignedProduct( [product])
             screen.getByText(TestUtils.hank.name);
         });
     });
 
     describe('Automated linkage between modals and drawers', () => {
-        beforeEach(  () => {
+        beforeEach(  async  () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
@@ -165,6 +126,7 @@ describe('Unassigned Products', () => {
                 </Router>
             );
 
+            await waitFor(() => expect(AssignmentClient.getReassignments).toHaveBeenCalled())
         });
 
         it('opens the unassigned drawer when an unassigned person is created', async () => {
