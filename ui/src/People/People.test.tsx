@@ -22,7 +22,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import {PreloadedState, Store} from 'redux';
+import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
@@ -34,7 +34,7 @@ import ProductClient from '../Products/ProductClient';
 
 declare let window: MatomoWindow;
 
-function applicationSetup(store?: Store | undefined, initialState?: PreloadedState<Partial<GlobalStateProps>>) {
+function applicationSetup(initialState?: PreloadedState<Partial<GlobalStateProps>>) {
     let history = createBrowserHistory();
     history.push('/uuid');
 
@@ -63,7 +63,7 @@ describe('People actions', () => {
     });
 
     describe('Person Form', () => {
-        const initialState: PreloadedState<Partial<GlobalStateProps>> = {
+        const personFormInitialState: PreloadedState<Partial<GlobalStateProps>> = {
             people: TestUtils.people,
             viewingDate: new Date(2020, 5, 5),
             currentSpace: TestUtils.space,
@@ -74,7 +74,7 @@ describe('People actions', () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            applicationSetup(undefined, initialState);
+            applicationSetup(personFormInitialState);
             await screen.findByText(addPersonButtonText);
         });
 
@@ -106,12 +106,13 @@ describe('People actions', () => {
             const saveButton = screen.getByText('Save');
             fireEvent.click(saveButton);
 
-            expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
+            await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
                 .toBeCalledWith(
                     TestUtils.space.uuid,
                     TestUtils.person1.id,
                     new Date(2020, 5, 5)
-                );
+                )
+            );
         });
 
         it('should show placeholder text for the person name', async () => {
@@ -159,7 +160,7 @@ describe('People actions', () => {
                 name: 'New Bobby',
                 customField1: 'btables1',
                 newPerson: true,
-                newPersonDate: initialState.viewingDate as Date,
+                newPersonDate: personFormInitialState.viewingDate as Date,
                 tags: [{
                     id: 1337,
                     spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
@@ -187,12 +188,12 @@ describe('People actions', () => {
     describe('Roles', () => {
         const viewingDate = new Date(2020, 5, 5);
 
-        const initialState: PreloadedState<Partial<GlobalStateProps>> = {
+        const rolesInitialState: PreloadedState<Partial<GlobalStateProps>> = {
             viewingDate: viewingDate,
         };
 
         beforeEach(async () => {
-            applicationSetup(undefined, initialState);
+            applicationSetup(rolesInitialState);
 
             const createPersonButton = await screen.findByText(addPersonButtonText);
             fireEvent.click(createPersonButton);
@@ -218,7 +219,7 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'Some Name',
                     newPerson: true,
-                    newPersonDate: initialState.viewingDate as Date,
+                    newPersonDate: rolesInitialState.viewingDate as Date,
                     spaceRole: {
                         name: 'Product Manager',
                         id: 2,
@@ -306,10 +307,6 @@ describe('People actions', () => {
             newPersonDate: viewingDate,
         };
 
-        const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-            viewingDate: viewingDate,
-        };
-
         const checkForCreatedPerson = async (): Promise<void> => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
             expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestUtils.space, expectedPerson, []);
@@ -326,7 +323,9 @@ describe('People actions', () => {
         it('assigns the person created by the PersonForm', async () => {
             let history = createBrowserHistory();
             history.push('/uuid');
-            renderWithRedux(<Router history={history}><PeopleMover/></Router>, undefined, initialState);
+            renderWithRedux(<Router history={history}><PeopleMover/></Router>, undefined, {
+                viewingDate: viewingDate,
+            });
             const createPersonButton = await screen.findByText(addPersonButtonText);
             fireEvent.click(createPersonButton);
 
@@ -401,14 +400,12 @@ describe('People actions', () => {
         beforeEach(async () => {
             let history = createBrowserHistory();
             history.push('/uuid');
-            const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-                viewingDate: new Date(2019, 0, 1),
-                currentSpace: TestUtils.space,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
             await waitFor(() => {
-                renderWithRedux(<Router history={history}><PeopleMover/></Router>, undefined, initialState);
+                renderWithRedux(<Router history={history}><PeopleMover/></Router>, undefined, {
+                    viewingDate: new Date(2019, 0, 1),
+                    currentSpace: TestUtils.space,
+                    allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+                });
             })
 
             const editPersonButton = await screen.findByTestId('editPersonIconContainer__person_1');
