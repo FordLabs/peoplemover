@@ -19,7 +19,6 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import SpaceClient from '../Space/SpaceClient';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import {act} from 'react-dom/test-utils';
 import {closeModalAction} from '../Redux/Actions';
@@ -27,7 +26,6 @@ import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
 import {fireEvent, screen} from '@testing-library/dom';
-import {AxiosResponse} from 'axios';
 import {waitFor} from '@testing-library/react';
 
 describe('Transfer Ownership Form', () => {
@@ -38,9 +36,9 @@ describe('Transfer Ownership Form', () => {
 
         store = createStore(rootReducer, {currentUser: 'user_id'}, applyMiddleware(thunk));
         store.dispatch = jest.fn();
-        SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(TestUtils.spaceMappingsArray as UserSpaceMapping[]));
-        SpaceClient.changeOwner = jest.fn(() => Promise.resolve({} as AxiosResponse));
-        SpaceClient.removeUser = jest.fn(() => Promise.resolve({} as AxiosResponse));
+        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(TestUtils.spaceMappingsArray);
+        SpaceClient.changeOwner = jest.fn().mockResolvedValue({});
+        SpaceClient.removeUser = jest.fn().mockResolvedValue({});
         await act(async () => {
             renderWithRedux(<TransferOwnershipForm space={TestUtils.space}/>, store);
         });
