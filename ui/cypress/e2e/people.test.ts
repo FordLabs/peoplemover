@@ -204,29 +204,16 @@ describe('People', () => {
         cy.get('[data-testid=editPersonIconContainer__jane_smith]').should('not.exist');
     });
 
-    context('Drag and Drop', () => {
+    context.only('Drag and Drop', () => {
         beforeEach(() => {
             cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + todaysDate).as('getProducts');
         });
 
         it('Drag and drop person from one product to another product', () => {
-            cy.get('[data-testid=productCardContainer__baguette_bakery]')
-                .contains('Jane Smith')
-                .should('not.exist');
+            ensureJaneSmithDoesNotExistOnSelector('[data-testid=productCardContainer__baguette_bakery]');
 
             cy.get('[data-testid=productCardContainer__baguette_bakery]').then(element => {
-                let rect = element[0].getBoundingClientRect();
-                cy.get('[data-testid=assignmentCard__jane_smith]')
-                    .trigger('mousedown', { button: 0 })
-                    .trigger('mousemove', {
-                        clientX: rect.x,
-                        clientY: rect.y,
-                        screenX: rect.x,
-                        screenY: rect.y,
-                        pageX: rect.x,
-                        pageY: rect.y,
-                    })
-                    .trigger('mouseup', { force: true });
+                moveElement(element, '[data-testid=assignmentCard__jane_smith]');
 
                 cy.wait('@getProducts').should(() => {
                     cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Jane Smith');
@@ -237,23 +224,10 @@ describe('People', () => {
         it('Drag and drop person from a product to unassigned', () => {
             cy.get('[data-testid=unassignedDrawer]').click();
 
-            cy.get('[data-testid=productDrawerContainer__unassigned]')
-                .contains('Jane Smith')
-                .should('not.exist');
+            ensureJaneSmithDoesNotExistOnSelector('[data-testid=productDrawerContainer__unassigned]');
 
             cy.get('[data-testid=productDrawerContainer__unassigned]').then(element => {
-                let rect = element[0].getBoundingClientRect();
-                cy.get('[data-testid=assignmentCard__jane_smith]')
-                    .trigger('mousedown', { button: 0 })
-                    .trigger('mousemove', {
-                        clientX: rect.x,
-                        clientY: rect.y,
-                        screenX: rect.x,
-                        screenY: rect.y,
-                        pageX: rect.x,
-                        pageY: rect.y,
-                    })
-                    .trigger('mouseup', { force: true });
+                moveElement(element, '[data-testid=assignmentCard__jane_smith]');
 
                 cy.wait('@getProducts').should(() => {
                     cy.get('[data-testid=productDrawerContainer__unassigned]').contains('Jane Smith');
@@ -269,18 +243,7 @@ describe('People', () => {
                 .should('not.exist');
 
             cy.get('[data-testid=productCardContainer__baguette_bakery]').then(element => {
-                let rect = element[0].getBoundingClientRect();
-                cy.get('[data-testid=assignmentCard__adam_sandler]')
-                    .trigger('mousedown', { button: 0 })
-                    .trigger('mousemove', {
-                        clientX: rect.x,
-                        clientY: rect.y,
-                        screenX: rect.x,
-                        screenY: rect.y,
-                        pageX: rect.x,
-                        pageY: rect.y,
-                    })
-                    .trigger('mouseup', { force: true });
+                moveElement(element, '[data-testid=assignmentCard__adam_sandler]');
 
                 cy.wait('@getProducts').should(() => {
                     cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Adam Sandler');
@@ -389,3 +352,24 @@ const ensureUnassignedPersonIsPresentInUnassignedDrawer = (unassignedPerson: Per
         .should('contain', unassignedPerson.name)
         .should('contain', unassignedPerson.role);
 };
+
+function ensureJaneSmithDoesNotExistOnSelector(selector: string): void {
+    cy.get(selector)
+        .contains('Jane Smith')
+        .should('not.exist');
+}
+
+function moveElement(element, itemSelectorToMove: string) {
+    const rect = element[0].getBoundingClientRect();
+    cy.get(itemSelectorToMove)
+        .trigger('mousedown', { button: 0 })
+        .trigger('mousemove', {
+            clientX: rect.x,
+            clientY: rect.y,
+            screenX: rect.x,
+            screenY: rect.y,
+            pageX: rect.x,
+            pageY: rect.y,
+        })
+        .trigger('mouseup', { force: true });
+}
