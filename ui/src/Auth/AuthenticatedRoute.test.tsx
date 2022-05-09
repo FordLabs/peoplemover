@@ -54,7 +54,7 @@ describe('AuthenticatedRoute', function() {
         Axios.post = jest.fn().mockRejectedValue({});
         window.location = {href: '', origin: 'http://localhost'} as Location;
         renderComponent({authenticated: false, securityEnabled: true});
-        const route = 'http://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
+        const route = 'https://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
 
         await waitFor(() => {
             expect(window.location.href).toEqual(route);
@@ -104,7 +104,7 @@ describe('AuthenticatedRoute', function() {
 
     function setRunConfig(securityEnabled: boolean): void {
         window.runConfig = {
-            adfs_url_template: 'http://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s',
+            adfs_url_template: 'https://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s',
             adfs_client_id: 'urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa',
             adfs_resource: 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb',
             auth_enabled: securityEnabled,
