@@ -110,15 +110,18 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
             }];
         case AvailableModals.ASSIGNMENT_EXISTS_WARNING:
             return [{title: 'Uh-oh', form: <AssignmentExistsWarning/>}];
-        case AvailableModals.MY_LOCATION_TAGS:
+        case AvailableModals.MY_LOCATION_TAGS: {
             const location = FilterTypeListings.Location;
-            return [{title: location.label, form: <MyTagsForm filterType={location}/> }];
-        case AvailableModals.MY_PRODUCT_TAGS:
+            return [{title: location.label, form: <MyTagsForm filterType={location}/>}];
+        }
+        case AvailableModals.MY_PRODUCT_TAGS: {
             const productTags = FilterTypeListings.ProductTag;
-            return [{title: productTags.label, form: <MyTagsForm filterType={productTags}/> }];
-        case AvailableModals.MY_PERSON_TAGS:
+            return [{title: productTags.label, form: <MyTagsForm filterType={productTags}/>}];
+        }
+        case AvailableModals.MY_PERSON_TAGS: {
             const personTags = FilterTypeListings.PersonTag;
-            return [{title: personTags.label, form: <MyTagsForm filterType={personTags}/> }];
+            return [{title: personTags.label, form: <MyTagsForm filterType={personTags}/>}];
+        }
         case AvailableModals.MY_ROLES_MODAL:
             return [{title: 'My Roles', form: <MyRolesForm/>}];
         case AvailableModals.CREATE_SPACE:
@@ -140,12 +143,12 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
                 form: <GrantEditAccessConfirmationForm />,
             }];
         case AvailableModals.DELETE_SPACE:
-            return[{
+            return [{
                 title: "Are you sure?",
                 form: <DeleteSpaceForm space={item} spaceHasEditors={true}/>
             }];
         case AvailableModals.DELETE_SPACE_NO_EDITORS:
-            return[{
+            return [{
                 title:"Are you sure?",
                 form: <DeleteSpaceForm space={item} spaceHasEditors={false}/>
             }]

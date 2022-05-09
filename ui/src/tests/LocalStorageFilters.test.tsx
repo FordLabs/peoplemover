@@ -19,7 +19,7 @@ import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
 import {findByText, fireEvent} from '@testing-library/dom';
 import React from 'react';
-import {RenderResult} from '@testing-library/react';
+import {act, RenderResult} from '@testing-library/react';
 import {createBrowserHistory} from 'history';
 import {Router} from 'react-router-dom';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
@@ -46,7 +46,7 @@ describe('Filter products', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-        (localStorage as unknown) = new MockLocalStorage();
+        (global.localStorage as unknown) = new MockLocalStorage();
     });
 
     function applicationSetup(): RenderResult {
@@ -100,7 +100,9 @@ describe('Filter products', () => {
         fireEvent.change(editLocationTagText, {target: {value: updatedLocation}});
 
         const saveButton = await app.findByTestId('saveTagButton');
-        fireEvent.click(saveButton);
+        await act(async () => {
+            fireEvent.click(saveButton);
+        })
 
         const instancesOfSaline = await app.findAllByText(updatedLocation);
         expect(instancesOfSaline.length).toEqual(2);

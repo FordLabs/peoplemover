@@ -16,7 +16,7 @@
  */
 import * as React from 'react';
 import SelectWithHTMLOptions from './SelectWithHTMLOptions';
-import {render, RenderResult, fireEvent, wait} from '@testing-library/react';
+import {render, RenderResult, fireEvent, waitFor} from '@testing-library/react';
 
 jest.useFakeTimers();
 
@@ -58,13 +58,13 @@ describe('SelectWithHTMLOptions', () => {
     describe('onClick', () => {
         beforeEach(async () => {
             const selectDropdownButton = component.getByText('Zero');
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.click(selectDropdownButton);
                 jest.advanceTimersByTime(setTimeoutTime);
             });
 
             const selectDropdownOption = component.getByText('Two');
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.click(selectDropdownOption);
                 jest.advanceTimersByTime(setTimeoutTime);
             });
@@ -86,32 +86,32 @@ describe('SelectWithHTMLOptions', () => {
     describe('onKeyDown', () => {
         beforeEach(async () => {
             const selectDropdownButton = component.getByText('Zero');
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.keyDown(selectDropdownButton, {keyCode: enterKey});
                 jest.advanceTimersByTime(setTimeoutTime);
             });
 
             const selectedOptionZero = component.getByTestId('selectOption__0');
             expect(selectedOptionZero.className).toContain('focused');
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
             });
 
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
             });
 
             const selectedOptionTwo = component.getByTestId('selectOption__2');
             expect(selectedOptionTwo.className).toContain('focused');
 
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: upKey});
             });
 
             const selectedOptionOne = component.getByTestId('selectOption__1');
             expect(selectedOptionOne.className).toContain('focused');
 
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: enterKey});
                 jest.advanceTimersByTime(setTimeoutTime);
             });
@@ -132,7 +132,7 @@ describe('SelectWithHTMLOptions', () => {
     describe('Aria Labels', () => {
         beforeEach(async () => {
             const selectDropdownButton = component.getByText('Zero');
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.click(selectDropdownButton);
                 jest.advanceTimersByTime(setTimeoutTime);
             });

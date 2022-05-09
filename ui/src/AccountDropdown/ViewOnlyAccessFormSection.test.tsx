@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2021 Ford Motor Company
+ *  Copyright (c) 2022 Ford Motor Company
  *  All rights reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +17,8 @@
 
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
-import {fireEvent, RenderResult, wait} from '@testing-library/react';
-import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
-import {AxiosResponse} from 'axios';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
+import rootReducer from '../Redux/Reducers';
 import SpaceClient from '../Space/SpaceClient';
 import {createStore, Store} from 'redux';
 import {Space} from '../Space/Space';
@@ -38,38 +37,49 @@ Object.assign(navigator, {
 });
 
 describe('View Only Access Form Section', () => {
-    let originalWindow: Window;
     const testSpace = TestUtils.space;
     const testSpaceWithViewOnlyOn = {...testSpace, todayViewIsPublic: true};
     const testSpaceWithViewOnlyOff = {...testSpace, todayViewIsPublic: false};
     const expectedUrl = 'https://some-url';
 
+    let location: (string | Location) & Location;
+    let _paq: (string | number)[][];
+
     beforeEach(() => {
+        location = window.location;
+        _paq = window._paq
+        Reflect.deleteProperty(window, 'location');
+
+        Object.defineProperty(window, 'location', {
+            value: { href: expectedUrl },
+            writable: true,
+        });
+        Object.defineProperty(window, '_paq', {
+            value: [],
+            writable: true,
+        });
+
         jest.clearAllMocks();
-        originalWindow = window;
-        delete window.location;
-        (window as Window) = Object.create(window);
-        window.location = {href: expectedUrl} as Location;
-        window._paq = [];
     });
 
     afterEach(() => {
-        (window as Window) = originalWindow;
+        window.location = location;
+        window._paq = _paq
     });
 
     it('should show correct space URL', async () => {
-        const { component } = setupComponent(testSpaceWithViewOnlyOn);
+        setupComponent(testSpaceWithViewOnlyOn);
 
-        const actualLinkToSpace = await component.findByTestId('linkToSpace');
+        const actualLinkToSpace = await screen.findByTestId('linkToSpace');
         expect(actualLinkToSpace.getAttribute('value')).toBe(expectedUrl);
     });
 
     it('should copy the url to clipboard', async () => {
-        const { component } = setupComponent(testSpaceWithViewOnlyOn);
+        setupComponent(testSpaceWithViewOnlyOn);
         jest.spyOn(navigator.clipboard, 'writeText');
 
-        await wait(() => {
-            fireEvent.click(component.getByText('Copy link'));
+        await waitFor(() => {
+            fireEvent.click(screen.getByText('Copy link'));
         });
 
         expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl);
@@ -77,30 +87,30 @@ describe('View Only Access Form Section', () => {
     });
 
     it('should should change text on copy', async () => {
-        const { component } = setupComponent(testSpaceWithViewOnlyOn);
-        await wait(() => {
-            fireEvent.click(component.getByText('Copy link'));
+        setupComponent(testSpaceWithViewOnlyOn);
+        await waitFor(() => {
+            fireEvent.click(screen.getByText('Copy link'));
         });
 
-        expect(component.queryByText('Copy link')).toBeNull();
-        expect(component.queryByText('Copied!')).not.toBeNull();
+        expect(screen.queryByText('Copy link')).toBeNull();
+        expect(screen.queryByText('Copied!')).not.toBeNull();
     });
 
     it('should populate Enable View Only toggle with information from current space', function() {
-        const { component } = setupComponent(testSpaceWithViewOnlyOn);
-        const enableViewOnlyCheckbox = component.getByTestId('viewOnlyAccessToggle');
+        setupComponent(testSpaceWithViewOnlyOn);
+        const enableViewOnlyCheckbox = screen.getByTestId('viewOnlyAccessToggle');
         expect(enableViewOnlyCheckbox).toBeChecked();
     });
 
     it('should update the current space when the toggle is clicked', async function() {
-        const { component, store } = setupComponent(testSpaceWithViewOnlyOn);
+        const { store } = setupComponent(testSpaceWithViewOnlyOn);
 
         const expectedUpdatedSpaceData = {...testSpace, todayViewIsPublic: false};
-        SpaceClient.editSpaceReadOnlyFlag = jest.fn(() => Promise.resolve({
+        SpaceClient.editSpaceReadOnlyFlag = jest.fn().mockResolvedValue({
             data: expectedUpdatedSpaceData,
-        } as AxiosResponse));
+        });
 
-        const enableViewOnlyCheckbox = component.getByTestId('viewOnlyAccessToggle');
+        const enableViewOnlyCheckbox = screen.getByTestId('viewOnlyAccessToggle');
         expect(enableViewOnlyCheckbox).toBeChecked();
         await fireEvent.click(enableViewOnlyCheckbox);
 
@@ -113,32 +123,32 @@ describe('View Only Access Form Section', () => {
     });
 
     it('should have copy link button disabled when view only view is turned off', async function() {
-        const { component } = setupComponent(testSpaceWithViewOnlyOff);
-        const viewOnlyAccessFormCopyLinkButton = component.getByTestId('viewOnlyAccessFormCopyLinkButton');
+        setupComponent(testSpaceWithViewOnlyOff);
+        const viewOnlyAccessFormCopyLinkButton = screen.getByTestId('viewOnlyAccessFormCopyLinkButton');
         expect(viewOnlyAccessFormCopyLinkButton).toBeDisabled();
     });
 
     it('should show toggle and tooltips when form is expanded', () => {
-        const { component } = setupComponent(testSpaceWithViewOnlyOn, false);
-        expect(component.queryByTestId('viewOnlyAccessToggle')).toBeInTheDocument();
-        expect(component.queryByTestId('viewOnlyAccessTooltip')).toBeInTheDocument();
+        setupComponent(testSpaceWithViewOnlyOn, false);
+        expect(screen.queryByTestId('viewOnlyAccessToggle')).toBeInTheDocument();
+        expect(screen.queryByTestId('viewOnlyAccessTooltip')).toBeInTheDocument();
     });
 
     it('should hide toggle and tooltips when form is collapsed', () => {
-        const { component } = setupComponent(testSpaceWithViewOnlyOn, true);
-        expect(component.queryByTestId('viewOnlyAccessToggle')).toBeNull();
-        expect(component.queryByTestId('viewOnlyAccessTooltip')).toBeNull();
+        setupComponent(testSpaceWithViewOnlyOn, true);
+        expect(screen.queryByTestId('viewOnlyAccessToggle')).toBeNull();
+        expect(screen.queryByTestId('viewOnlyAccessTooltip')).toBeNull();
     });
 });
 
-const setupComponent = (currentSpace: Space, collapsed = false): { component: RenderResult; store: Store } => {
+const setupComponent = (currentSpace: Space, collapsed = false): { store: Store } => {
     let store = createStore(rootReducer,  {currentSpace});
     store.dispatch = jest.fn();
-    const component = renderWithRedux(
+    renderWithRedux(
         <ViewOnlyAccessFormSection collapsed={collapsed} />,
         store,
-        {currentSpace: currentSpace} as GlobalStateProps
+        {currentSpace: currentSpace}
     );
 
-    return { component, store };
+    return { store };
 };

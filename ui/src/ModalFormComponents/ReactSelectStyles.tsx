@@ -144,8 +144,8 @@ export const CustomIndicator = (props: IndicatorProps<OptionTypeBase, boolean>):
                 ? <i style={{display: 'none'}}/>
                 : (
                     props.selectProps.menuIsOpen
-                        ? <i className="material-icons greyIcon" data-testid={props.selectProps.name}>arrow_drop_up</i>
-                        : <i className="material-icons greyIcon" data-testid={props.selectProps.name}>arrow_drop_down</i>
+                        ? <i className="material-icons greyIcon" data-testid={`upArrow_${props.selectProps.name}`}>arrow_drop_up</i>
+                        : <i className="material-icons greyIcon" data-testid={`downArrow_${props.selectProps.name}`}>arrow_drop_down</i>
                 )
         }
     </components.DropdownIndicator>

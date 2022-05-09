@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,39 +16,41 @@
  */
 
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import {screen} from '@testing-library/react';
 import MyTagsForm from './MyTagsForm';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import React from 'react';
 import moment from 'moment';
+import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('My Tags Form', () => {
-    const initialState = {
+    const initialState: PreloadedState<Partial<GlobalStateProps>> = {
         productTags: TestUtils.productTags,
         locations: TestUtils.locations,
         allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
         viewingDate: moment().toDate(),
         productSortBy: 'name',
         currentSpace: TestUtils.space,
-    } as GlobalStateProps;
+    };
 
     it('should only display location tags when the passed-in filter type is location tags', async () => {
-        const app = renderWithRedux(<MyTagsForm filterType={FilterTypeListings.Location}/>, undefined, initialState);
+        renderWithRedux(<MyTagsForm filterType={FilterTypeListings.Location}/>, undefined, initialState);
 
         // location included in TestUtils.locations
-        await app.findByText( TestUtils.annarbor.name);
-        await app.findByText( TestUtils.detroit.name);
-        await app.findByText( TestUtils.dearborn.name);
-        await app.findByText( TestUtils.southfield.name);
+        await screen.findByText( TestUtils.annarbor.name);
+        await screen.findByText( TestUtils.detroit.name);
+        await screen.findByText( TestUtils.dearborn.name);
+        await screen.findByText( TestUtils.southfield.name);
     });
 
     it('should only display product tags when the passed-in filter type is product tags', async () => {
-        const app = renderWithRedux(<MyTagsForm filterType={FilterTypeListings.ProductTag}/>, undefined, initialState);
+        renderWithRedux(<MyTagsForm filterType={FilterTypeListings.ProductTag}/>, undefined, initialState);
 
         // product tags included in TestUtils.productTags
-        await app.findByText(TestUtils.productTag1.name);
-        await app.findByText(TestUtils.productTag2.name);
-        await app.findByText(TestUtils.productTag3.name);
-        await app.findByText(TestUtils.productTag4.name);
+        await screen.findByText(TestUtils.productTag1.name);
+        await screen.findByText(TestUtils.productTag2.name);
+        await screen.findByText(TestUtils.productTag3.name);
+        await screen.findByText(TestUtils.productTag4.name);
     });
 });

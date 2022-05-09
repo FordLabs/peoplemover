@@ -21,8 +21,7 @@ import React from 'react';
 import {renderWithRedux} from '../tests/TestUtils';
 import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
-import {fireEvent, RenderResult, wait} from '@testing-library/react';
-import {AxiosResponse} from 'axios';
+import {fireEvent, waitFor, screen, act} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import moment from 'moment';
 import {createEmptySpace} from '../Space/Space';
@@ -33,18 +32,16 @@ import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 class MockDate extends Date {
     constructor() {
-        super('2020-05-14T11:01:58.135Z'); // add whatever date you'll expect to get
+        super('2020-05-14T11:01:58.135Z');
     }
 }
-
-jest.useFakeTimers();
 
 describe('SpaceDashboard', () => {
     describe('Resetting Space Date', () => {
         let tempDate = Date;
+
         beforeEach(() => {
-            // @ts-ignore
-            global.Date = MockDate;
+            global.Date = MockDate as DateConstructor;
         });
 
         afterEach(() => {
@@ -54,12 +51,13 @@ describe('SpaceDashboard', () => {
         it('should reset current date on load', async () => {
             let store = createStore(rootReducer, {});
             store.dispatch = jest.fn();
-            await wait(() => {
-                renderWithRedux(<SpaceDashboard/>, store);
-            });
 
-            expect(store.dispatch).toHaveBeenCalledWith(
-                setViewingDateAction(new Date('Date is overwritten so anything returns the same date'))
+            renderWithRedux(<SpaceDashboard/>, store);
+
+            await waitFor(() =>
+                expect(store.dispatch).toHaveBeenCalledWith(
+                    setViewingDateAction(new Date('Date is overwritten so anything returns the same date'))
+                )
             );
         });
     });
@@ -67,21 +65,16 @@ describe('SpaceDashboard', () => {
     it('should reset currentSpace on load', async () => {
         let store = createStore(rootReducer, {});
         store.dispatch = jest.fn();
-        await wait(() => {
-            renderWithRedux(<SpaceDashboard/>, store);
-        });
+        renderWithRedux(<SpaceDashboard/>, store);
 
-        expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(createEmptySpace()));
+        await waitFor(() => expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(createEmptySpace())));
     });
 
     describe('if spaces are present', () => {
-        let component: RenderResult;
         let history: MemoryHistory;
 
         beforeEach(async () => {
-            await wait(async () => {
-                ({component, history} = await createTestComponent());
-            });
+            ({history} = await createTestComponent());
         });
 
         afterEach(() => {
@@ -89,42 +82,40 @@ describe('SpaceDashboard', () => {
         });
 
         it('should redirect to space when a space in the dashboard is clicked', async () => {
-            const space1 = await component.findByText('Space1');
-            await fireEvent.click(space1);
+            const space1 = await screen.findByText('Space1');
+            fireEvent.click(space1);
             expect(SpaceClient.getSpacesForUser).toHaveBeenCalled();
             expect(history.location.pathname).toBe('/SpaceUUID');
         });
 
         it('should display space name on a space', async () => {
-            expect(component.queryByText('Space1')).not.toBeNull();
+            expect(screen.queryByText('Space1')).not.toBeNull();
         });
 
         it('should display space last modified date and time on a space', async () => {
             const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('dddd, MMMM D, Y [at] h:mm a');
-            expect(component.getByText(`Last modified ${localTime}`)).not.toBeNull();
+            expect(screen.getByText(`Last modified ${localTime}`)).not.toBeNull();
         });
 
         it('should display today and last modified time on a space', async () => {
             Date.now = jest.fn(() => 1586887571000);
-            const {component} = await createTestComponent();
+            await createTestComponent();
             const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('h:mm a');
-            expect(component.getByText(`Last modified today at ${localTime}`)).not.toBeNull();
+            expect(await screen.findByText(`Last modified today at ${localTime}`)).not.toBeNull();
         });
 
         it('should NOT show welcome message if no spaces are present', async () => {
-            expect(component.queryByText(`Welcome to PeopleMover!`)).toBeNull();
+            expect(screen.queryByText(`Welcome to PeopleMover!`)).toBeNull();
         });
 
         it('should show "Create New Space" button', async () => {
-            await component.findByText(`Create New Space`);
+            await screen.findByText(`Create New Space`);
         });
     });
 
     describe('if no spaces are present', () => {
-        let component: RenderResult;
-
         beforeEach(async () => {
-            ({component} = await createTestComponent(false));
+            await createTestComponent(false);
         });
 
         afterEach(() => {
@@ -132,16 +123,15 @@ describe('SpaceDashboard', () => {
         });
 
         it('should show welcome message', async () => {
-            await component.findByText(`Welcome to PeopleMover!`);
+            await screen.findByText(`Welcome to PeopleMover!`);
         });
 
         it('should show "Create New Space" button', async () => {
-            await component.findByText(`Create New Space`);
+            await screen.findByText(`Create New Space`);
         });
     });
 
     const createTestComponent = async (hasSpaces = true): Promise<{
-        component: RenderResult;
         cookies: Cookies;
         history: MemoryHistory;
     }> => {
@@ -154,20 +144,17 @@ describe('SpaceDashboard', () => {
             uuid: 'SpaceUUID',
             lastModifiedDate: '2020-04-14T18:06:11.791+0000',
         }] : [];
-        SpaceClient.getSpacesForUser = jest.fn(() => Promise.resolve({data: responseData} as AxiosResponse));
-        SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve([] as Array<UserSpaceMapping>));
+        SpaceClient.getSpacesForUser = jest.fn().mockResolvedValue({data: responseData});
+        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([] as Array<UserSpaceMapping>);
 
-        // @ts-ignore
-        let component: RenderResult = null;
-
-        await wait(() => {
-            component = renderWithRedux(
+        await act(async () => {
+            renderWithRedux(
                 <Router history={history}>
                     <SpaceDashboard/>
                 </Router>
             );
-        });
+        })
 
-        return {component, cookies, history};
+        return {cookies, history};
     };
 });

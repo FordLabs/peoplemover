@@ -394,6 +394,7 @@ describe('Assignment Card', () => {
         });
 
         it('should not display person tag Icon if person has no person tags', () => {
+            // @ts-ignore
             delete assignmentToRender.person.tags;
 
             const underTest = renderWithRedux(

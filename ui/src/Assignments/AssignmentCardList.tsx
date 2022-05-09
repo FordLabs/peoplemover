@@ -156,7 +156,7 @@ function AssignmentCardList({
                         );
                         fetchProducts();
                         assignmentUpdated = true;
-                    } catch (error) {
+                    } catch (error: any) {
                         if (error.response.status === 409) {
                             setCurrentModal({modal: AvailableModals.ASSIGNMENT_EXISTS_WARNING});
                         }

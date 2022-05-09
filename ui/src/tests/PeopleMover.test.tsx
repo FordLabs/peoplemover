@@ -18,11 +18,11 @@
 import React from 'react';
 import TestUtils, {getApplicationSetup, renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
-import {queryByAttribute, RenderResult, wait} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createBrowserHistory, History, Location} from 'history';
 import SpaceClient from '../Space/SpaceClient';
-import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
+import rootReducer from '../Redux/Reducers';
 import {applyMiddleware, createStore, Store} from 'redux';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {createEmptySpace} from '../Space/Space';
@@ -34,7 +34,6 @@ declare let window: MatomoWindow;
 jest.mock('axios');
 
 describe('PeopleMover', () => {
-    let app: RenderResult;
     let history: History;
     const addProductButtonText = 'Add Product';
     let store: Store;
@@ -57,28 +56,28 @@ describe('PeopleMover', () => {
 
     describe('Read Only Mode', function() {
         beforeEach(async () => {
-            await wait(() => {
+            await waitFor(() => {
                 let initialState = {
                     isReadOnly: true,
                     products: TestUtils.products,
                     currentSpace: TestUtils.space,
                     allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                } as GlobalStateProps;
+                };
                 store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-                app = getApplicationSetup(store, initialState);
+                getApplicationSetup(store, initialState);
             });
         });
 
         it('should not show unassigned drawer', function() {
-            expect(app.queryByTestId('unassignedDrawer')).toBeNull();
-            expect(app.queryByTestId('archivedProductsDrawer')).toBeNull();
-            expect(app.queryByTestId('reassignmentDrawer')).toBeNull();
-            expect(app.queryByTestId('archivedPersonDrawer')).toBeNull();
+            expect(screen.queryByTestId('unassignedDrawer')).toBeNull();
+            expect(screen.queryByTestId('archivedProductsDrawer')).toBeNull();
+            expect(screen.queryByTestId('reassignmentDrawer')).toBeNull();
+            expect(screen.queryByTestId('archivedPersonDrawer')).toBeNull();
         });
 
         it('should display Add Person button on startup', async () => {
-            expect(await app.queryByText('Add Person')).not.toBeInTheDocument();
-            expect(await app.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
+            expect(await screen.queryByText('Add Person')).not.toBeInTheDocument();
+            expect(await screen.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
         });
 
         it('should trigger a matomo read-only visit event each time the current space changes', () => {
@@ -106,69 +105,71 @@ describe('PeopleMover', () => {
     describe('Header and Footer Content', () => {
         beforeEach(async () => {
             let location: Location = {hash: '', pathname: '/uuid', search: '', state: undefined};
-            let initialState = {viewingDate: new Date(2020, 10, 14)} as GlobalStateProps;
-            await wait(() => {
-                app = getApplicationSetup(undefined, initialState, location);
+            let initialState = {viewingDate: new Date(2020, 10, 14)};
+            await waitFor(() => {
+                getApplicationSetup(undefined, initialState, location);
             });
         });
 
         it('Should contain calendar button', async () => {
-            await app.findByText(/viewing:/i);
-            await app.findByText(/calendar_today/);
-            await app.findByText(/Nov 14, 2020/);
+            await screen.findByText(/viewing:/i);
+            await screen.findByText(/calendar_today/);
+            await screen.findByText(/Nov 14, 2020/);
         });
 
         it('should display Sort By dropdown on startup', async () => {
-            await app.findByText('Sort By:');
-            await app.findByText('Alphabetical');
+            await screen.findByText('Sort By:');
+            await screen.findByText('Alphabetical');
         });
 
         it('should display Filter option on startup', async () => {
-            await app.findByText('Filter by:');
+            await screen.findByText('Filter by:');
         });
 
         it('should show the Flabs branding on load', async () => {
-            await app.findByText('Powered by');
-            await app.findByText('FordLabs');
+            await screen.findByText('Powered by');
+            await screen.findByText('FordLabs');
         });
     });
 
     describe('Read only view Header and Footer Content', () => {
         beforeEach(async () => {
-            await wait(() => {
-                app = getApplicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+            await waitFor(() => {
+                getApplicationSetup(undefined, {isReadOnly: true});
             });
         });
 
         it('Should contains My Tags on initial load of People Mover', async () => {
-            expect(await app.queryByText('My Tags')).not.toBeInTheDocument();
-            expect(await app.queryByTestId('myTagsIcon')).not.toBeInTheDocument();
+            expect(await screen.queryByText('My Tags')).not.toBeInTheDocument();
+            expect(await screen.queryByTestId('myTagsIcon')).not.toBeInTheDocument();
         });
 
         it('should display My Roles button on startup', async () => {
-            expect(await app.queryByText('My Roles')).not.toBeInTheDocument();
-            expect(await app.queryByTestId('myRolesIcon')).not.toBeInTheDocument();
+            expect(await screen.queryByText('My Roles')).not.toBeInTheDocument();
+            expect(await screen.queryByTestId('myRolesIcon')).not.toBeInTheDocument();
         });
 
         it('should display Sort By dropdown on startup', async () => {
-            await app.findByText('Sort By:');
-            await app.findByText('Alphabetical');
+            await screen.findByText('Sort By:');
+            await screen.findByText('Alphabetical');
         });
 
         it('should display Filter option on startup', async () => {
-            await app.findByText('Filter by:');
+            await screen.findByText('Filter by:');
         });
 
         it('should show the Flabs branding on load', async () => {
-            await app.findByText('Powered by');
-            await app.findByText('FordLabs');
+            await screen.findByText('Powered by');
+            await screen.findByText('FordLabs');
         });
     });
 
     describe('Page Title', () => {
+        let unmount: () => void;
+
         beforeEach(async () => {
-            await wait(() => {
-                app = getApplicationSetup();
+            await waitFor(() => {
+                ({unmount} = getApplicationSetup());
             });
         });
 
@@ -177,26 +178,26 @@ describe('PeopleMover', () => {
         });
 
         it('should set the page title back to the default when the component is unmounted', () => {
-            app.unmount();
+            unmount();
             expect(document.title).toEqual('PeopleMover');
         });
     });
 
     describe('Products', () => {
         beforeEach(async () => {
-            await wait(() => {
-                app = getApplicationSetup();
+            await waitFor(() => {
+                getApplicationSetup();
             });
         });
 
         it('should display products', async () => {
-            await app.findAllByText(TestUtils.productWithAssignments.name);
-            await app.findAllByText(TestUtils.productWithoutAssignments.name);
-            await app.findAllByText(TestUtils.productForHank.name);
+            await screen.findAllByText(TestUtils.productWithAssignments.name);
+            await screen.findAllByText(TestUtils.productWithoutAssignments.name);
+            await screen.findAllByText(TestUtils.productForHank.name);
         });
 
         it('should sort products by name by default',  async () => {
-            const productNameElements = await app.findAllByTestId('productName');
+            const productNameElements = await screen.findAllByTestId('productName');
             const actualProductNames = productNameElements.map((element) => element.innerHTML);
             expect(actualProductNames).toEqual(
                 [
@@ -209,18 +210,18 @@ describe('PeopleMover', () => {
         });
 
         it('should include a properly formatted ID on the product cards', async () => {
-            const getById = queryByAttribute.bind(null, 'id');
-            expect(getById(app.container, 'product-card-0')).toBeTruthy();
+            const expectedId = 'product-card-0'
+            expect(screen.getByTestId(expectedId)).toHaveAttribute('id', expectedId);
         });
 
         it('should group products by location',  async () => {
-            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_location');
+            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_location');
             sortByDropdownLocation.click();
 
-            const productGroups = await app.findAllByTestId('productGroup');
+            const productGroups = await screen.findAllByTestId('productGroup');
 
             expect(productGroups.length).toBe(4);
             const productGroup1 = productGroups[0];
@@ -247,24 +248,24 @@ describe('PeopleMover', () => {
         it('should include a properly formatted ID on the product cards containing the value for the current groups sorted field', async () => {
             const expectedLocationId = 'ann-arbor';
 
-            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_location');
+            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_location');
             sortByDropdownLocation.click();
 
-            const getById = queryByAttribute.bind(null, 'id');
-            expect(getById(app.container, `product-card-${expectedLocationId}-0`)).toBeTruthy();
+            const expectedId = `product-card-${expectedLocationId}-0`
+            expect(screen.getByTestId(expectedId)).toHaveAttribute('id', expectedId);
         });
 
         it('should group products by product tag',  async () => {
-            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_product-tag');
+            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_product-tag');
             sortByDropdownLocation.click();
 
-            const productGroups = await app.findAllByTestId('productGroup');
+            const productGroups = await screen.findAllByTestId('productGroup');
 
             expect(productGroups.length).toBe(3);
             const productGroup1 = productGroups[0];
@@ -286,19 +287,19 @@ describe('PeopleMover', () => {
 
     describe('Products in read only view', () => {
         beforeEach(async () => {
-            await wait(() => {
-                app = getApplicationSetup(undefined, {isReadOnly: true} as GlobalStateProps);
+            await waitFor(() => {
+                getApplicationSetup(undefined, {isReadOnly: true});
             });
         });
 
         it('should group products by location without add product buttons',  async () => {
-            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_location');
+            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_location');
             sortByDropdownLocation.click();
 
-            const productGroups = await app.findAllByTestId('productGroup');
+            const productGroups = await screen.findAllByTestId('productGroup');
 
             expect(productGroups.length).toBe(4);
             const productGroup1 = productGroups[0];
@@ -323,13 +324,13 @@ describe('PeopleMover', () => {
         });
 
         it('should group products by product tag without add product buttons',  async () => {
-            const sortByDropdownButton = await app.findByTestId('sortByDropdownButton');
+            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await app.findByTestId('sortDropdownOption_product-tag');
+            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_product-tag');
             sortByDropdownLocation.click();
 
-            const productGroups = await app.findAllByTestId('productGroup');
+            const productGroups = await screen.findAllByTestId('productGroup');
 
             expect(productGroups.length).toBe(3);
             const productGroup1 = productGroups[0];
@@ -370,7 +371,7 @@ describe('PeopleMover', () => {
             );
 
             expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(expectedSpaceUuid);
-            await wait(() => {
+            await waitFor(() => {
                 expect(history.location.pathname).toEqual('/error/404');
             });
         });
@@ -385,7 +386,7 @@ describe('PeopleMover', () => {
             );
 
             expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(expectedSpaceUuid);
-            await wait(() => {
+            await waitFor(() => {
                 expect(history.location.pathname).toEqual('/error/403');
             });
         });
