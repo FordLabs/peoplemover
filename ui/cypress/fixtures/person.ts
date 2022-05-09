@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-interface Person {
+export interface Person {
     name: string;
     isNew: boolean;
     role: string;

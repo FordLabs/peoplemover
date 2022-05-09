@@ -14,27 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as moment from 'moment';
-import {Moment} from 'moment';
 
-export interface Product {
-    name: string;
-    location: string;
-    archived: boolean;
-    tags: Array<string>;
-    startDate: Moment;
-    nextPhaseDate: Moment;
-    notes: string;
-}
+describe('People', () => {
+    beforeEach(() => {
+        cy.visitSpace();
+    });
 
-const product: Product = {
-    name: 'Automated Test Product',
-    location: 'Michigan',
-    archived: false,
-    tags: ['Tag 1', 'Tag 2'],
-    startDate: moment(),
-    nextPhaseDate: moment().add(1, 'days'),
-    notes: 'Product note.',
-};
-
-export default product;
+    it('Keyboard usage adds focus ring to buttons and anchors', () => {
+        cy.get('body').trigger('keydown', {key: 'Tab'});
+        cy.get('body.user-is-tabbing');
+    });
+});

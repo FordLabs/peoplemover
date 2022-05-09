@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-/// <reference types="Cypress" />
-import moment from 'moment';
+import * as moment from "moment"
 
 describe('Calendar', () => {
     beforeEach(() => {

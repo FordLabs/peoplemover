@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/// <reference types="Cypress" />
-import moment from 'moment';
-import person from '../fixtures/person';
+import * as moment from 'moment';
+import person, {Person} from '../fixtures/person';
 const todaysDate = moment().format('yyyy-MM-DD');
 
 describe('People', () => {
@@ -66,7 +64,7 @@ describe('People', () => {
         submitPersonForm('Add');
 
         cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
-            .should((xhrs) => {
+            .should((xhrs: Cypress.ObjectLike[]) => {
                 const postNewPersonXhr = xhrs[0];
                 const getUpdatedProductXhr = xhrs[1];
 
@@ -122,7 +120,7 @@ describe('People', () => {
         submitPersonForm('Add');
 
         cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
-            .should((xhrs) => {
+            .should((xhrs: Cypress.ObjectLike[]) => {
                 const postNewPersonXhr = xhrs[0];
                 const getUpdatedProductXhr = xhrs[1];
 
@@ -174,7 +172,7 @@ describe('People', () => {
         submitPersonForm('Save');
 
         cy.wait('@updatePerson')
-            .should((xhr) => {
+            .should((xhr: Cypress.ObjectLike) => {
                 const personData = xhr.response.body || {};
                 expect('@updatedPersonXHR status: ' + xhr?.status).to.equal('@updatedPersonXHR status: ' + 200);
                 expect(personData.name).to.equal(editedPerson.name);
@@ -200,7 +198,7 @@ describe('People', () => {
         cy.get('[data-testid=confirmDeleteButton]').click();
 
         cy.wait('@deletePerson')
-            .should((xhr) => {
+            .should((xhr: Cypress.ObjectLike) => {
                 expect(xhr?.status).to.equal(200);
             });
         cy.get('[data-testid=editPersonIconContainer__jane_smith]').should('not.exist');
@@ -306,8 +304,7 @@ describe('People', () => {
     });
 });
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth() {
+function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth(): string {
     let closestWorkdayToMiddleOfMonthThatIsntToday;
     const firstDayOfMonth = moment().startOf('month');
     const twoWeeksIntoMonth = firstDayOfMonth.add(2, 'weeks');
@@ -324,7 +321,7 @@ function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth() {
     return closestWorkdayToMiddleOfMonthThatIsntToday;
 }
 
-const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags = [] }) => {
+const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags = [] }): void => {
     cy.get('[data-testid=personForm]').as('personForm');
     cy.get('@personForm').should('be.visible');
 
@@ -366,12 +363,12 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags =
     }
 };
 
-const submitPersonForm = (expectedSubmitButtonText) => {
+const submitPersonForm = (expectedSubmitButtonText: string): void => {
     cy.get('[data-testid=personFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
     cy.get('@personForm').should('not.exist');
 };
 
-const ensureNewAssignmentIsPresentInAssignmentDrawer = (assignedPerson) => {
+const ensureNewAssignmentIsPresentInAssignmentDrawer = (assignedPerson: Person): void => {
     cy.get('@reassignmentDrawer')
         .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
         .should('have.length', 1)
@@ -381,7 +378,7 @@ const ensureNewAssignmentIsPresentInAssignmentDrawer = (assignedPerson) => {
         .should('contain', `Assigned to ${assignedPerson.assignTo}`);
 };
 
-const ensureUnassignedPersonIsPresentInUnassignedDrawer = (unassignedPerson) => {
+const ensureUnassignedPersonIsPresentInUnassignedDrawer = (unassignedPerson: Person): void => {
     cy.get('[data-testid=unassignedDrawer]').as('unassignedDrawer');
     cy.get('@unassignedDrawer')
         .should('contain', 'Unassigned')

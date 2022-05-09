@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-/// <reference types="Cypress" />
-
 describe('Filter', () => {
     beforeEach(() => {
         cy.visitSpace();
@@ -25,7 +23,7 @@ describe('Filter', () => {
 
     it('Filter people by role', () => {
         cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')
-            .then(($container) => {
+            .then(($container: any) => {
                 cy.get($container).find('[data-testid=productPeopleContainer]').children().as('peopleCards');
                 cy.get('@peopleCards').should('have.length', 2);
                 cy.get('@peopleCards').eq(0).should('contain', 'Jane Smith');
@@ -36,7 +34,7 @@ describe('Filter', () => {
             });
 
         cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')
-            .then(($container) => {
+            .then(($container: any) => {
                 cy.get($container).find('[data-testid=productPeopleContainer]').children().as('peopleCards');
                 cy.get('@peopleCards');
                 cy.get('@peopleCards').should('have.length', 1);

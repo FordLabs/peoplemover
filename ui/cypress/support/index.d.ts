@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-/// <reference types="Cypress" />
-
 declare namespace Cypress {
-    interface Chainable<Subject = unknown> {
-        visitSpace(): Chainable;
+    interface Chainable {
+        visitSpace(mockData?: { locationData: any[]; productTagsData: any[] }): Chainable<void>;
 
-        getModal(): Chainable;
+        getModal(): Chainable<Element>;
 
         closeModal(): Chainable;
 
