@@ -23,7 +23,6 @@ describe('Branding', () => {
     const expectedUrl = 'http://url.com';
 
     beforeEach(() => {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {ford_labs_url: expectedUrl} as RunConfig;
     });
     

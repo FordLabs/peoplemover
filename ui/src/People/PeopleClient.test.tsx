@@ -20,8 +20,11 @@ import PeopleClient from './PeopleClient';
 import TestUtils from '../tests/TestUtils';
 import Cookies from 'universal-cookie';
 import {Person} from './Person';
+import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 jest.mock('axios');
+
+declare let window: MatomoWindow;
 
 describe('People Client', function() {
     const uuid = TestUtils.space.uuid || '';
@@ -107,7 +110,7 @@ describe('People Client', function() {
     });
 
     describe('Matomo', () => {
-        let originalWindow: Window;
+        let _paq: (string | number)[][];
         const expectedName = 'New Person';
         const person: Person = {
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
@@ -119,18 +122,21 @@ describe('People Client', function() {
         };
 
         beforeEach(() => {
-            originalWindow = window;
+            _paq = window._paq
+
+            Object.defineProperty(window, '_paq', {
+                value: [],
+                writable: true,
+            });
         });
 
         afterEach(() => {
-            (window as Window) = originalWindow;
+            window._paq = _paq
         });
 
         it('should send an event to matomo when a person is created', async () => {
             await PeopleClient.createPersonForSpace(TestUtils.space, person, ['bob']);
-            // @ts-ignore
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addPerson', expectedName]);
-            // @ts-ignore
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonTagToANewPerson', 'bob']);
         });
     });

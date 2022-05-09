@@ -45,8 +45,6 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
     const [me, setMe] = useState<UserSpaceMapping>();
     const [submitted, setSubmitted] = useState<boolean>(false);
 
-
-
     useEffect(() => {
         const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
             if (currentSpace.uuid) {
@@ -58,7 +56,6 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
         };
         getUsers(currentSpace, setUsersList);
     }, [currentSpace, setUsersList, currentUser]);
-
 
     const handleSubmit = (e: FormEvent): void => {
         e.preventDefault();
