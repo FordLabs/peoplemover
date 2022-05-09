@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent, RenderResult, wait} from '@testing-library/react';
+import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import ReassignedDrawer from './ReassignedDrawer';
@@ -54,7 +54,7 @@ describe('ReassignedDrawer', () => {
                 people: TestUtils.people,
             }, applyMiddleware(thunk));
 
-            await wait(async () => {
+            await waitFor(async () => {
                 app = renderWithRedux(<ReassignedDrawer/>, store);
             });
         });
@@ -76,7 +76,7 @@ describe('ReassignedDrawer', () => {
                 {data: {...TestUtils.archivedPerson, archiveDate: null}} as AxiosResponse
             ));
             const revertButton = await app.findByText('Revert');
-            await wait(() => {
+            await waitFor(() => {
                 fireEvent.click(revertButton);
             });
             expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledTimes(1);

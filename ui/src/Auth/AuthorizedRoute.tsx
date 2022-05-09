@@ -31,7 +31,7 @@ interface AuthorizedRouteProps extends RouteProps {
     setIsReadOnly(isReadOnly: boolean): boolean;
 }
 
-function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX.Element {
+function AuthorizedRoute(props: AuthorizedRouteProps): JSX.Element {
     const {children, setIsReadOnly, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 

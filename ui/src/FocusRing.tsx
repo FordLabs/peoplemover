@@ -12,7 +12,9 @@ const turnOffWhenClicking = (): void => {
     window.addEventListener('keydown', turnOnWhenTabbing);
 };
 
-export default {
+const FocusRing = {
     turnOnWhenTabbing,
     turnOffWhenClicking,
-};
+}
+
+export default FocusRing;

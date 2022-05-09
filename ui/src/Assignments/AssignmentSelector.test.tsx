@@ -17,12 +17,10 @@
 
 import React from 'react';
 import AssignmentForm from './AssignmentForm';
-import {act, fireEvent} from '@testing-library/react';
+import {act, fireEvent, screen} from '@testing-library/react';
 import AssignmentClient from './AssignmentClient';
-import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import selectEvent from 'react-select-event';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
 
 describe('the assignment form', () => {
@@ -32,13 +30,13 @@ describe('the assignment form', () => {
     });
 
     it('renders the assignment form labels', () => {
-        const wrapper = renderWithReduxEnzyme(
+        renderWithRedux(
             <AssignmentForm products={[TestUtils.unassignedProduct]}
                 initiallySelectedProduct={TestUtils.unassignedProduct}/>,
         );
-        expect(wrapper.find('label').at(0).text()).toEqual('Name');
-        expect(wrapper.find('label').at(1).text()).toEqual('Mark as Placeholder');
-        expect(wrapper.find('label').at(2).text()).toEqual('Assign to');
+        expect(screen.getByLabelText('Name')).toBeDefined();
+        expect(screen.getByLabelText('Mark as Placeholder')).toBeDefined();
+        expect(screen.getByLabelText('Assign to')).toBeDefined();
     });
 
     it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
@@ -48,16 +46,16 @@ describe('the assignment form', () => {
         await act(async () => {
             const component = <AssignmentForm products={products}
                 initiallySelectedProduct={products[2]}/>;
-            const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, currentSpace: TestUtils.space, viewingDate: viewingDate} as GlobalStateProps;
-            const wrapper = await renderWithRedux(component, undefined, initialState);
+            const initialState = {people: TestUtils.people, currentSpace: TestUtils.space, viewingDate: viewingDate};
+            await renderWithRedux(component, undefined, initialState);
 
-            const labelElement = await wrapper.findByLabelText('Name');
-            const containerToFindOptionsIn = { container: await wrapper.findByTestId('assignmentForm') };
+            const labelElement = await screen.findByLabelText('Name');
+            const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
             await selectEvent.select(labelElement, /Hank/, containerToFindOptionsIn);
 
-            const productSelect = await wrapper.findByLabelText('Assign to');
+            const productSelect = await screen.findByLabelText('Assign to');
             await selectEvent.select(productSelect, 'Product 1');
-            const assignButton = await wrapper.findByText('Assign');
+            const assignButton = await screen.findByText('Assign');
             fireEvent.click(assignButton);
 
             const spy = jest.spyOn(AssignmentClient, 'createAssignmentForDate');

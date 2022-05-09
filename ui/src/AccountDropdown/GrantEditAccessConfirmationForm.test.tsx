@@ -18,7 +18,7 @@
 import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
 import {renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
-import {fireEvent, wait} from '@testing-library/react';
+import {fireEvent, waitFor} from '@testing-library/react';
 
 Object.assign(navigator, {
     clipboard: {
@@ -28,17 +28,20 @@ Object.assign(navigator, {
 
 describe('Grant Edit Access Confirmation Form', function() {
     const expectedUrl = 'https://some-url';
-    let originalWindow: Window;
+    let location: (string | Location) & Location;
 
     beforeEach(() => {
-        originalWindow = window;
-        delete window.location;
-        (window as Window) = Object.create(window);
-        window.location = {href: expectedUrl} as Location;
+        location = window.location;
+        Reflect.deleteProperty(window, 'location');
+
+        Object.defineProperty(window, 'location', {
+            value: { href: expectedUrl },
+            writable: true,
+        });
     });
 
     afterEach(() => {
-        (window as Window) = originalWindow;
+        window.location = location;
     });
 
     it('should show correct space URL', function() {
@@ -50,7 +53,7 @@ describe('Grant Edit Access Confirmation Form', function() {
         jest.spyOn(navigator.clipboard, 'writeText');
         const component = renderWithRedux(<GrantEditAccessConfirmationForm/>);
 
-        await wait(() => {
+        await waitFor(() => {
             fireEvent.click(component.getByText('Copy link'));
         });
 
@@ -60,7 +63,7 @@ describe('Grant Edit Access Confirmation Form', function() {
     it('should should change text on copy', async () => {
         const component = renderWithRedux(<GrantEditAccessConfirmationForm/>);
 
-        await wait(() => {
+        await waitFor(() => {
             fireEvent.click(component.getByText('Copy link'));
         });
 

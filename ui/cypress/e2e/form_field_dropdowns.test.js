@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,6 +44,10 @@ describe('Form Dropdown Fields', () => {
                 .find('.location__option')
                 .should('not.exist');
         };
+        const typeIntoLocationInput = (text) => {
+            cy.get('@productLocationInput')
+                .type(text, { force: true });
+        };
 
         const newLocation1 = 'Chilton';
         const newLocation2 = 'Stars Hollow';
@@ -56,16 +60,14 @@ describe('Form Dropdown Fields', () => {
 
         locationDropdownMenuIsClosed();
 
-        cy.get('@productLocationInput')
-            .type(newLocation1);
+        typeIntoLocationInput(newLocation1);
 
         cy.get('@productForm')
             .find('.location__option')
             .should('have.length', 1)
             .should('contain', expectedCreateOptionText(newLocation1));
 
-        cy.get('@productLocationInput')
-            .type('{enter}');
+        typeIntoLocationInput('{enter}');
 
         cy.wait('@postNewLocation');
 
@@ -78,17 +80,14 @@ describe('Form Dropdown Fields', () => {
 
         locationDropdownMenuIsClosed();
 
-        cy.get('@productLocationInput')
-            .type(newLocation1.slice(0, newLocation1.length - 1));
+        typeIntoLocationInput(newLocation1.slice(0, newLocation1.length - 1));
 
         cy.get('@productForm')
             .find('.location__option')
             .should('have.length', 1)
             .should('contain', expectedCreateOptionText('Chilto'));
 
-
-        cy.get('@productLocationInput')
-            .type('n');
+        typeIntoLocationInput('n');
 
         locationDropdownMenuIsClosed();
 
@@ -102,8 +101,9 @@ describe('Form Dropdown Fields', () => {
             .should('contain', newLocation1);
 
         cy.get('@productLocationInput')
-            .clear()
-            .type(newLocation2);
+            .clear();
+
+        typeIntoLocationInput(newLocation2);
 
         cy.get('@productForm')
             .find('.location__option')
@@ -121,6 +121,10 @@ describe('Form Dropdown Fields', () => {
                 .find('.productTags__option')
                 .should('not.exist');
         };
+        const typeIntoProductTagsInput = (text) => {
+            cy.get('@productTagsInput')
+                .type(text, { force: true });
+        };
 
         const newProductTag1 = 'Chilton';
         const newProductTag2 = 'Stars Hollow';
@@ -133,16 +137,14 @@ describe('Form Dropdown Fields', () => {
 
         productTagsDropdownMenuIsClosed();
 
-        cy.get('@productTagsInput')
-            .type(newProductTag1);
+        typeIntoProductTagsInput(newProductTag1);
 
         cy.get('@productForm')
             .find('.productTags__option')
             .should('have.length', 1)
             .should('contain', expectedCreateOptionText(newProductTag1));
 
-        cy.get('@productTagsInput')
-            .type('{enter}');
+        typeIntoProductTagsInput('{enter}');
 
         cy.wait('@postNewProductTag');
 
@@ -161,16 +163,14 @@ describe('Form Dropdown Fields', () => {
             .find('.productTags__option')
             .should('have.length', 0);
 
-        cy.get('@productTagsInput')
-            .type(newProductTag2);
+        typeIntoProductTagsInput(newProductTag2);
 
         cy.get('@productForm')
             .find('.productTags__option')
             .should('have.length', 1)
             .should('contain', expectedCreateOptionText(newProductTag2));
 
-        cy.get('@productTagsInput')
-            .type('{enter}');
+        typeIntoProductTagsInput('{enter}');
 
         cy.wait('@postNewProductTag');
 

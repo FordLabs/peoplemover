@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {RenderResult, wait} from '@testing-library/react';
+import {RenderResult, waitFor} from '@testing-library/react';
 import AuthorizedRoute from '../Auth/AuthorizedRoute';
 import * as React from 'react';
 import Axios, {AxiosError} from 'axios';
@@ -28,11 +28,9 @@ import {setIsReadOnlyAction} from '../Redux/Actions';
 import {Router} from 'react-router-dom';
 
 describe('Authorized Route', () => {
-
     let store: Store;
 
     it('should redirect to login when security is enabled and you are not authenticated', async () => {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {auth_enabled: true} as RunConfig;
         Axios.post = jest.fn().mockRejectedValue({response: {status: 401}});
         let {history} = await renderComponent(true);
@@ -40,7 +38,6 @@ describe('Authorized Route', () => {
     });
 
     it('should show the child element when security is enabled and you are authenticated and authorized', async () => {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {auth_enabled: true} as RunConfig;
         Axios.post = jest.fn().mockResolvedValue({});
         let {result} = await renderComponent(true);
@@ -73,7 +70,6 @@ describe('Authorized Route', () => {
     });
 
     async function renderComponent(securityEnabled: boolean): Promise<{ result: RenderResult; history: MemoryHistory }> {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         window.runConfig = {auth_enabled: securityEnabled} as RunConfig;
         const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
 
@@ -83,7 +79,7 @@ describe('Authorized Route', () => {
         // @ts-ignore
         let result: RenderResult = null;
 
-        await wait(() => {
+        await waitFor(() => {
             result = renderWithRedux(
                 <Router history={history}>
                     <AuthorizedRoute>

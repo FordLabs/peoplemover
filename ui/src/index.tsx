@@ -17,9 +17,8 @@
 
 import './Application/Styleguide/Colors.scss';
 
-import * as React from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import axe from 'react-axe';
 import {Provider} from 'react-redux';
 import {applyMiddleware, compose, createStore, StoreEnhancer} from 'redux';
 import rootReducer from './Redux/Reducers';
@@ -35,6 +34,8 @@ import Routes from './Routes';
 import flagsmith from 'flagsmith';
 import {AvailableActions} from './Redux/Actions';
 import {simplifyFlags} from './Flags/Flags';
+
+import axe from '@axe-core/react';
 
 let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -114,6 +115,7 @@ function isUnsupportedBrowser(): boolean {
     if (isIE) browserName = 'Internet Explorer';
 
     // Edge 20+
+    // @ts-ignore
     var isEdge = !isIE && !!window.StyleMedia;
     if (isEdge) browserName = 'Edge';
 

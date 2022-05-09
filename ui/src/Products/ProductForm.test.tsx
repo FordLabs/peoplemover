@@ -1,8 +1,23 @@
+/*
+ * Copyright (c) 2022 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import ProductForm from '../Products/ProductForm';
 import React from 'react';
-import {fireEvent} from '@testing-library/dom';
 import configureStore from 'redux-mock-store';
-import {act, wait} from '@testing-library/react';
+import {act, screen, fireEvent, waitFor} from '@testing-library/react';
 import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
 import {Space} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
@@ -14,6 +29,7 @@ import {Product} from './Product';
 import {createBrowserHistory, History} from 'history';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
+import {PreloadedState} from 'redux';
 
 describe('ProductForm', function() {
     const mockStore = configureStore([]);
@@ -38,8 +54,8 @@ describe('ProductForm', function() {
     });
 
     it('should close the modal when you click the cancel button', async () => {
-        const app = renderWithRedux(<ProductForm editing={false} />, store, undefined);
-        await act(async () => {fireEvent.click(app.getByText('Cancel'));});
+        renderWithRedux(<ProductForm editing={false} />, store);
+        await act(async () => {fireEvent.click(screen.getByText('Cancel'));});
         expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
         expect(LocationClient.get).toHaveBeenCalled();
         expect(ProductTagClient.get).toHaveBeenCalled();
@@ -47,20 +63,19 @@ describe('ProductForm', function() {
 
     it('should submit new product to backend and close modal', async () => {
         await act(async () => {
-            const app = renderWithRedux(
+            renderWithRedux(
                 <ProductForm editing={false} />,
-                store,
-                undefined
+                store
             );
-            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Some Name'}});
+            fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'Some Name'}});
 
-            const locationLabelElement = await app.findByLabelText('Location');
+            const locationLabelElement = await screen.findByLabelText('Location');
             await selectEvent.select(locationLabelElement, /Ann Arbor/);
 
-            const tagsLabelElement = await app.findByLabelText('Product Tags');
+            const tagsLabelElement = await screen.findByLabelText('Product Tags');
             await selectEvent.select(tagsLabelElement, /FordX/);
 
-            fireEvent.click(app.getByText('Add'));
+            fireEvent.click(screen.getByText('Add'));
         });
 
         expect(ProductClient.createProduct).toHaveBeenCalledWith(
@@ -97,37 +112,37 @@ describe('ProductForm', function() {
 
         await act(async () => {
             const archivedProduct = {...TestUtils.productWithoutLocation, endDate: '2020-02-02'};
-            const app = renderWithRedux(<ProductForm editing={true} product={archivedProduct}/>, store, undefined);
-            const deleteSpan = await app.findByTestId('deleteProduct');
+            renderWithRedux(<ProductForm editing={true} product={archivedProduct}/>, store);
+            const deleteSpan = await screen.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
-            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
-            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeNull();
+            expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+            expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeNull();
         });
     });
 
     it('should show delete modal with archive text when a non-archived product is being deleted', async () => {
         await act(async () => {
-            const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store, undefined);
-            const deleteSpan = await app.findByTestId('deleteProduct');
+            renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store);
+            const deleteSpan = await screen.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
-            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
-            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeTruthy();
+            expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+            expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeTruthy();
         });
     });
 
     it('should show delete modal without archive text when an archived product is being deleted', async () => {
         await act(async () => {
-            const app = renderWithRedux(<ProductForm editing={true} product={TestUtils.archivedProduct}/>, store, undefined);
-            const deleteSpan = await app.findByTestId('deleteProduct');
+            renderWithRedux(<ProductForm editing={true} product={TestUtils.archivedProduct}/>, store);
+            const deleteSpan = await screen.findByTestId('deleteProduct');
             fireEvent.click(deleteSpan);
-            expect(app.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
-            expect(app.queryByText('You can also choose to archive this product to be able to access it later.')).toBeFalsy();
+            expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+            expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeFalsy();
         });
     });
 
     describe('tag dropdowns', () => {
         let history: History;
-        let initialState = {
+        let initialState: PreloadedState<Partial<GlobalStateProps>> = {
             isReadOnly: false,
             products: TestUtils.products,
             currentSpace: TestUtils.space,
@@ -135,7 +150,7 @@ describe('ProductForm', function() {
             productTags: TestUtils.productTags,
             productSortBy: 'name',
             allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-        } as GlobalStateProps;
+        };
 
         beforeEach(() => {
             jest.clearAllMocks();
@@ -144,40 +159,40 @@ describe('ProductForm', function() {
             history.push('/uuid');
         });
         it('should show filter option when new location tag is created from edit product modal', async () => {
-            const app = renderWithRedux(<ProductForm editing={false} />, undefined, initialState);
+            renderWithRedux(<ProductForm editing={false} />, undefined, initialState);
             await act(async () => {
                 const createOptionText = TestUtils.expectedCreateOptionText('Ahmedabad');
-                await createTag('Location', createOptionText, 'Ahmedabad', app);
-                const productForm = await app.findByTestId('productForm');
+                await createTag('Location', createOptionText, 'Ahmedabad');
+                const productForm = await screen.findByTestId('productForm');
 
-                await wait(() => {
+                await waitFor(() => {
                     expect(LocationClient.add).toBeCalledTimes(1);
                 });
                 expect(productForm).toHaveFormValues({location: '11'});
             });
-            await app.findByText('Ahmedabad');
+            await screen.findByText('Ahmedabad');
         });
 
         it('should show filter option when new product tag is created from edit product modal', async () => {
-            const app = renderWithRedux(<ProductForm editing={false} />, undefined, initialState);
+            renderWithRedux(<ProductForm editing={false} />, undefined, initialState);
 
             await act(async () => {
                 const expectedCreateOptionText = TestUtils.expectedCreateOptionText('Fin Tech');
-                await createTag('Product Tags', expectedCreateOptionText, 'Fin Tech', app);
+                await createTag('Product Tags', expectedCreateOptionText, 'Fin Tech');
                 expect(ProductTagClient.add).toBeCalledTimes(1);
 
-                const productForm = await app.findByTestId('productForm');
+                const productForm = await screen.findByTestId('productForm');
                 expect(productForm).toHaveFormValues({productTags: '9_Fin Tech'});
             });
-            await app.findByText('Fin Tech');
+            await screen.findByText('Fin Tech');
         });
     });
 });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function createTag(label: string, createOptionText: string, option: string, component: any): Promise<void> {
-    const productTagsLabelElement = await component.findByLabelText(label);
+
+async function createTag(label: string, createOptionText: string, option: string): Promise<void> {
+    const productTagsLabelElement = await screen.findByLabelText(label);
     const containerToFindOptionsIn = {
-        container: await component.findByTestId('productForm'),
+        container: await screen.findByTestId('productForm'),
         createOptionText,
     };
     await selectEvent.create(productTagsLabelElement, option, containerToFindOptionsIn);

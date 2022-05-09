@@ -16,13 +16,11 @@
  */
 
 import React from 'react';
-import {AxiosResponse} from 'axios';
-import {act, fireEvent, RenderResult} from '@testing-library/react';
+import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from './ProductClient';
 import TestUtils, {createDataTestId, renderWithRedux} from '../tests/TestUtils';
-import {wait} from '@testing-library/dom';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
@@ -36,19 +34,15 @@ import {Router} from 'react-router-dom';
 import ProductCard from './ProductCard';
 import thunk from 'redux-thunk';
 
-jest.mock('axios');
-
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
     const addProductModalTitle = 'Add New Product';
-    let store: Store;
 
-
-    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): RenderResult {
+    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): void {
         let history = createBrowserHistory();
         history.push('/uuid');
 
-        return renderWithRedux(
+        renderWithRedux(
             <Router history={history}>
                 <PeopleMover/>
             </Router>,
@@ -65,74 +59,77 @@ describe('Products', () => {
     describe('Home page', () => {
 
         it('displays the product names', async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = await renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                store);
+                store
+            );
 
-            await app.findByText('Product 3');
+            await screen.findByText('Product 3');
         });
 
         it('displays the product location', async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = await renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                store);
+                store
+            );
 
-            await app.findByText('Dearborn');
+            await screen.findByText('Dearborn');
         });
 
         it('displays the product tags', async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = await renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                store);
+                store
+            );
 
-            await app.findByText('AV');
-            expect(app.queryByText('FordX')).not.toBeInTheDocument();
+            await screen.findByText('AV');
+            expect(screen.queryByText('FordX')).not.toBeInTheDocument();
         });
 
         it('displays the empty product text', async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = await renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                store);
+                store
+            );
 
-            await app.findAllByText('Add a person by clicking Add Person icon above or drag them in.');
+            await screen.findAllByText('Add a person by clicking Add Person icon above or drag them in.');
         });
 
         it('should not make an update assignment call when dragging assignment card to same product', async () => {
             await act(async () => {
-
-                let initialState = {
+                const initialState = {
                     currentSpace: TestUtils.space,
                     viewingDate: new Date(2020, 4, 14),
                     isReadOnly: false,
@@ -140,33 +137,35 @@ describe('Products', () => {
                     currentModal: {modal: null},
                 };
 
-                store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-                let app = await renderWithRedux(
+                const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+                await renderWithRedux(
                     <ProductCard product={TestUtils.productWithAssignments}/>,
-                    store);
+                    store
+                );
 
-                AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({} as AxiosResponse));
+                AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({});
 
-                const person1AssignmentCard = await app.findByText('Person 1');
+                const person1AssignmentCard = await screen.findByText('Person 1');
                 fireEvent.click(person1AssignmentCard);
                 expect(AssignmentClient.createAssignmentForDate).not.toHaveBeenCalled();
             });
         });
 
         it('does not display the empty product text for a product with people', async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = await renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            await renderWithRedux(
                 <ProductCard product={TestUtils.productWithAssignments}/>,
-                store);
+                store
+            );
 
-            expect(app.queryByText('Add a person by clicking')).not.toBeInTheDocument();
+            expect(screen.queryByText('Add a person by clicking')).not.toBeInTheDocument();
         });
 
         it('orders the AssignmentCards on the product by role, then name, then id', async () => {
@@ -263,15 +262,15 @@ describe('Products', () => {
                 tags: [],
             };
 
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = await renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            await renderWithRedux(
                 <ProductCard product={productWithManyAssignments}/>,
                 store);
 
@@ -333,165 +332,167 @@ describe('Products', () => {
             const assignmentCardIds = productWithManyAssignments.assignments.map(assignment => assignment.id);
             expect(assignmentCardIds.length).toBe(4);
 
-            expectedPersonsInOrder.forEach((person, index) => {
-                const assignmentContainerDiv = app.getByTestId(createDataTestId('assignmentCard', person.name));
+            expectedPersonsInOrder.forEach((person) => {
+                const assignmentContainerDiv = screen.getByTestId(createDataTestId('assignmentCard', person.name));
                 expect(assignmentContainerDiv.textContent).toContain(person.name);
             });
         });
 
         it('displays the add person icon', async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = await renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            await renderWithRedux(
                 <ProductCard product={TestUtils.productWithoutAssignments}/>,
-                store);
+                store
+            );
 
-            await app.findByTestId('addPersonToProductIcon__product_3');
+            await screen.findByTestId('addPersonToProductIcon__product_3');
         });
 
         it('does not display the add person icon on the unassigned product', async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: false,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = await renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            await renderWithRedux(
                 <ProductCard product={TestUtils.unassignedProduct}/>,
-                store);
+                store
+            );
 
-            expect(app.queryByTestId('addPersonToProductIcon__unassigned')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('addPersonToProductIcon__unassigned')).not.toBeInTheDocument();
         });
 
-        it('opens AssignmentForm component when button clicked with product populated', async () => {
-            const app = applicationSetup();
+        // @todo should be a cypress test or more granular unit test
+        xit('opens AssignmentForm component when button clicked with product populated', async () => {
+            applicationSetup();
 
-
-            const addPersonButton = await app.findByTestId('addPersonToProductIcon__product_1');
+            const addPersonButton = await screen.findByTestId('addPersonToProductIcon__product_1');
             fireEvent.click(addPersonButton);
 
-            expect(app.getByText('Assign a Person'));
+            expect(screen.getByText('Assign a Person'));
 
-            const multiSelectContainer = await app.findByLabelText('Assign to');
+            const multiSelectContainer = await screen.findByLabelText('Assign to');
             const inputElement: HTMLInputElement = multiSelectContainer.children[1].children[0] as HTMLInputElement;
             expect(inputElement.value).toEqual('Product 1');
         });
 
         it('ProductForm allows choices of locations provided by the API', async () => {
-            const app = applicationSetup();
+            applicationSetup();
 
-            const newProductButton = await app.findByText(addProductButtonText);
+            const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByLabelText('Name');
-            const location = await app.findByLabelText('Location');
+            await screen.findByLabelText('Name');
+            const location = await screen.findByLabelText('Location');
             fireEvent.change(location, {target: {value: 'hi'}});
-            await app.findByText('hi');
-            expect(app.queryByText('Inner Sphere')).not.toBeInTheDocument();
+            await screen.findByText('hi');
+            expect(screen.queryByText('Inner Sphere')).not.toBeInTheDocument();
         });
 
         it('should allow to create new location', async () => {
-            const app = applicationSetup();
-            const newProductButton = await app.findByText(addProductButtonText);
+            applicationSetup();
+            const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByLabelText('Name');
+            await screen.findByLabelText('Name');
+
+            const locationLabelElement = await screen.findByLabelText('Location');
+            const containerToFindOptionsIn = {
+                container: await screen.findByTestId('productForm'),
+                createOptionText: TestUtils.expectedCreateOptionText('Ahmedabad'),
+            };
             await act(async () => {
-                const locationLabelElement = await app.findByLabelText('Location');
-                const containerToFindOptionsIn = {
-                    container: await app.findByTestId('productForm'),
-                    createOptionText: TestUtils.expectedCreateOptionText('Ahmedabad'),
-                };
                 await selectEvent.create(locationLabelElement, 'Ahmedabad', containerToFindOptionsIn);
-                const productForm = await app.findByTestId('productForm');
-
-                await wait(() => {
-                    expect(LocationClient.add).toBeCalledTimes(1);
-
-                });
-                expect(productForm).toHaveFormValues({location: '11'});
             });
+            const productForm = await screen.findByTestId('productForm');
+
+            await waitFor(() => expect(LocationClient.add).toBeCalledTimes(1));
+            expect(productForm).toHaveFormValues({location: '11'});
         });
 
         it('ProductForm allows choices of product tags provided by the API', async () => {
-            const app = applicationSetup();
-            const newProductButton = await app.findByText(addProductButtonText);
+            applicationSetup();
+            const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByLabelText('Name');
-            const productTags = await app.findByLabelText('Product Tags');
+            await screen.findByLabelText('Name');
+            const productTags = await screen.findByLabelText('Product Tags');
             fireEvent.change(productTags, {target: {value: ' '}});
-            await app.findByText('EV');
+            await screen.findByText('EV');
         });
 
         it('ProductForm allows to create product tag provided by user', async () => {
-            const app = applicationSetup();
-            const newProductButton = await app.findByText(addProductButtonText);
+            applicationSetup();
+            const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByLabelText('Name');
+            await screen.findByLabelText('Name');
+            const tagsLabelElement = await screen.findByLabelText('Product Tags');
+            const containerToCreateFinTech = {
+                container: await screen.findByTestId('productForm'),
+                createOptionText: 'Create "Fin Tech"',
+            };
             await act(async () => {
-                const tagsLabelElement = await app.findByLabelText('Product Tags');
-                const containerToCreateFinTech = {
-                    container: await app.findByTestId('productForm'),
-                    createOptionText: 'Create "Fin Tech"',
-                };
                 await selectEvent.create(tagsLabelElement, 'Fin Tech', containerToCreateFinTech);
-                expect(ProductTagClient.add).toBeCalledTimes(1);
+            })
 
-                ProductTagClient.add = jest.fn(() => Promise.resolve({
-                    data: {id: 10, name: 'Some tag'},
-                } as AxiosResponse));
+            expect(ProductTagClient.add).toBeCalledTimes(1);
 
-                const containerToCreateSomeTag = {
-                    container: await app.findByTestId('productForm'),
-                    createOptionText: TestUtils.expectedCreateOptionText('Some tag'),
-                };
-
-                await selectEvent.create(tagsLabelElement, 'Some tag', containerToCreateSomeTag);
-                expect(ProductTagClient.add).toBeCalledTimes(1);
-
-                const productForm = await app.findByTestId('productForm');
-
-                expect(productForm).toHaveFormValues({productTags: ['9_Fin Tech', '10_Some tag']});
+            ProductTagClient.add = jest.fn().mockResolvedValue({
+                data: {id: 10, name: 'Some tag'},
             });
+
+            const containerToCreateSomeTag = {
+                container: await screen.findByTestId('productForm'),
+                createOptionText: TestUtils.expectedCreateOptionText('Some tag'),
+            };
+
+            await act(async () => {
+                await selectEvent.create(tagsLabelElement, 'Some tag', containerToCreateSomeTag);
+            });
+            expect(ProductTagClient.add).toBeCalledTimes(1);
+
+            const productForm = await screen.findByTestId('productForm');
+            expect(productForm).toHaveFormValues({productTags: ['9_Fin Tech', '10_Some tag']});
         });
 
         it('opens ProductForm with correct placeholder text in input fields', async () => {
-            const app = applicationSetup();
-            const newProductButton = await app.findByText(addProductButtonText);
+            applicationSetup();
+            const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByLabelText('Name');
+            await screen.findByLabelText('Name');
 
-            await app.findByPlaceholderText('e.g. Product 1');
-            await app.findByText('Add product tags');
-            await app.findByText('Add a location tag');
+            await screen.findByPlaceholderText('e.g. Product 1');
+            await screen.findByText('Add product tags');
+            await screen.findByText('Add a location tag');
         });
 
         it('opens ProductForm component when button clicked', async () => {
-            const app = applicationSetup();
-            const newProductButton = await app.findByText(addProductButtonText);
+            applicationSetup();
+            const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByText(addProductModalTitle);
+            await screen.findByText(addProductModalTitle);
         });
 
         it('opens ProductForm with product tag field', async () => {
-            const app = applicationSetup();
-            const newProductButton = await app.findByText(addProductButtonText);
+            applicationSetup();
+            const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByText(addProductModalTitle);
-            await app.findByLabelText('Product Tags');
+            await screen.findByText(addProductModalTitle);
+            await screen.findByLabelText('Product Tags');
         });
 
         it('should show duplicate product name warning when user tries to create product with same name', async () => {
@@ -500,99 +501,95 @@ describe('Products', () => {
                     status: 409,
                 },
             }));
-            const app = applicationSetup();
+            applicationSetup();
 
-            const newProductButton = await app.findByText(addProductButtonText);
+            const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
-            await app.findByText(addProductModalTitle);
-            fireEvent.change(app.getByLabelText('Name'), {target: {value: 'Product 1'}});
+            await screen.findByText(addProductModalTitle);
+            fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'Product 1'}});
 
-            fireEvent.click(app.getByText('Add'));
-            await app.findByText('A product with this name already exists. Please enter a different name.');
+            fireEvent.click(screen.getByText('Add'));
+            await screen.findByText('A product with this name already exists. Please enter a different name.');
         });
 
         it('should show duplicate product name warning when user tries to edit product with same name', async () => {
-            ProductClient.editProduct = jest.fn(() => Promise.reject({
-                response: {
-                    status: 409,
-                },
-            }));
-            const app = applicationSetup();
+            ProductClient.editProduct = jest.fn().mockRejectedValue({ response: { status: 409 } });
+            applicationSetup();
 
-            const editProductMenuButton = await app.findByTestId('editProductIcon__product_1');
+            const editProductMenuButton = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
 
-            const editProductOption = await app.findByTestId('editMenuOption__edit_product');
+            const editProductOption = await screen.findByTestId('editMenuOption__edit_product');
             fireEvent.click(editProductOption);
 
-            await app.findByText('Edit Product');
+            await screen.findByText('Edit Product');
 
-            const nameInputField = await app.findByLabelText('Name');
+            const nameInputField = await screen.findByLabelText('Name');
             fireEvent.change(nameInputField, {target: {value: 'Product 3'}});
 
-            fireEvent.click(app.getByText('Save'));
-            await app.findByText('A product with this name already exists. Please enter a different name.');
+            fireEvent.click(screen.getByText('Save'));
+            await screen.findByText('A product with this name already exists. Please enter a different name.');
         });
 
         it('should show length of notes on initial render', async () => {
-            const app = applicationSetup();
-            const editProductMenuButton = await app.findByTestId('editProductIcon__product_1');
+            applicationSetup();
+            const editProductMenuButton = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
 
-            const editProductOption = await app.findByTestId('editMenuOption__edit_product');
+            const editProductOption = await screen.findByTestId('editMenuOption__edit_product');
             fireEvent.click(editProductOption);
 
-            const notesFieldText = await app.findByTestId('notesFieldText');
+            const notesFieldText = await screen.findByTestId('notesFieldText');
             const expectedNotes = TestUtils.productWithAssignments.notes || '';
-            expect(notesFieldText.innerHTML).toContain(expectedNotes.length);
+            expect(notesFieldText.innerHTML).toContain(expectedNotes.length.toString());
         });
 
         it('displays people on each product', async () => {
-            const app = applicationSetup();
-            await app.findByText('Person 1');
+            applicationSetup();
+            await screen.findByText('Person 1');
         });
 
         it('displays persons role on each assignment', async () => {
-            const app = applicationSetup();
-            await app.findByText('Person 1');
-            await app.findByText('Software Engineer');
-            expect(app.queryByText('Product Designer')).not.toBeInTheDocument();
+            applicationSetup();
+            await screen.findByText('Person 1');
+            await screen.findByText('Software Engineer');
+            expect(screen.queryByText('Product Designer')).not.toBeInTheDocument();
         });
     });
 
     describe('Deleting a product', () => {
         it('should show a delete button in the product modal', async () => {
-            const app = applicationSetup();
-            const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
+            applicationSetup();
+            const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
-            const editProductMenuOption = await app.findByText('Edit Product');
+            const editProductMenuOption = await screen.findByText('Edit Product');
             fireEvent.click(editProductMenuOption);
 
-            await app.findByText('Delete Product');
+            await screen.findByText('Delete Product');
         });
 
         it('should show the confirmation modal when a deletion is requested', async () => {
-            const app = applicationSetup();
-            const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
+            applicationSetup();
+            const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
-            const editProductMenuOption = await app.findByText('Edit Product');
+            const editProductMenuOption = await screen.findByText('Edit Product');
             fireEvent.click(editProductMenuOption);
-            fireEvent.click(app.getByText('Delete Product'));
+            fireEvent.click(screen.getByText('Delete Product'));
 
-            await app.findByText('Delete');
+            await screen.findByText('Delete');
         });
 
         it('should call the product client with the product when a deletion is requested', async () => {
             await act(async () => {
-                const app = applicationSetup();
-                const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
+                applicationSetup();
+                const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
                 fireEvent.click(editProduct3Button);
-                const editProductMenuOption = await app.findByText('Edit Product');
+                const editProductMenuOption = await screen.findByText('Edit Product');
                 fireEvent.click(editProductMenuOption);
-                const deleteProductButton = await app.findByText('Delete Product');
+                const deleteProductButton = await screen.findByText('Delete Product');
                 fireEvent.click(deleteProductButton);
-                const deleteButton = await app.findByText('Delete');
+                const deleteButton = await screen.findByText('Delete');
                 fireEvent.click(deleteButton);
             });
             expect(ProductClient.deleteProduct).toBeCalledTimes(1);
@@ -600,16 +597,16 @@ describe('Products', () => {
         });
 
         it('should not show archive button option in delete modal if product is already archived', async () => {
-            const app = applicationSetup();
-            const drawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            applicationSetup();
+            const drawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
             fireEvent.click(drawerCaret);
 
-            const archivedProductButton = await app.findByTestId('archivedProduct_4');
+            const archivedProductButton = await screen.findByTestId('archivedProduct_4');
             fireEvent.click(archivedProductButton);
-            await app.findByText('Edit Product');
-            const deleteProductButton = await app.findByText('Delete Product');
+            await screen.findByText('Edit Product');
+            const deleteProductButton = await screen.findByText('Delete Product');
             fireEvent.click(deleteProductButton);
-            expect(app.queryByText('Archive')).not.toBeInTheDocument();
+            expect(screen.queryByText('Archive')).not.toBeInTheDocument();
         });
 
         describe('Archiving a product via the delete modal', () => {
@@ -619,16 +616,16 @@ describe('Products', () => {
                 const viewingDate = new Date(2020, 6, 17);
                 const initialState = {viewingDate: viewingDate};
                 await act(async () => {
-                    store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-                    const app = applicationSetup(store);
+                    const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+                    applicationSetup(store);
 
-                    const editProduct3Button = await app.findByTestId('editProductIcon__product_3');
+                    const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
                     fireEvent.click(editProduct3Button);
-                    const editProductMenuOption = await app.findByText('Edit Product');
+                    const editProductMenuOption = await screen.findByText('Edit Product');
                     fireEvent.click(editProductMenuOption);
-                    const deleteProductButton = await app.findByText('Delete Product');
+                    const deleteProductButton = await screen.findByText('Delete Product');
                     fireEvent.click(deleteProductButton);
-                    const archiveButton = await app.findByText('Archive');
+                    const archiveButton = await screen.findByText('Archive');
                     fireEvent.click(archiveButton);
                 });
                 expect(ProductClient.editProduct).toBeCalledTimes(1);
@@ -641,23 +638,23 @@ describe('Products', () => {
 
     describe('Edit Menu for Product', () => {
         it('should pop the edit menu options', async () => {
-            const app = applicationSetup();
-            const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
+            applicationSetup();
+            const myProductElipsis = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
-            await app.findByText('Edit Product');
-            await app.findByText('Archive Product');
+            await screen.findByText('Edit Product');
+            await screen.findByText('Archive Product');
         });
 
         it('should open edit modal when click on edit product', async () => {
-            const app = applicationSetup();
-            const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
+            applicationSetup();
+            const myProductElipsis = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
-            const editProductMenuOption = await app.findByText('Edit Product');
+            const editProductMenuOption = await screen.findByText('Edit Product');
             fireEvent.click(editProductMenuOption);
-            await app.findByText('Edit Product');
-            await app.findByText('Save');
+            await screen.findByText('Edit Product');
+            await screen.findByText('Save');
         });
 
         it('should put product in archived products when clicking archive product', async () => {
@@ -670,56 +667,53 @@ describe('Products', () => {
                     updatedProduct,
                     TestUtils.unassignedProduct,
                 ];
-                ProductClient.getProductsForDate = jest.fn(() => Promise.resolve(
-                    {
-                        data: updatedProducts,
-                    } as AxiosResponse,
-                ));
+                ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: updatedProducts });
             }
 
-            const app = applicationSetup();
+            applicationSetup();
 
-            const myProductElipsis = await app.findByTestId('editProductIcon__product_1');
+            const myProductElipsis = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
-            const archiveProductMenuOption = await app.findByText('Archive Product');
+            const archiveProductMenuOption = await screen.findByText('Archive Product');
             updateGetAllProductsResponse();
             fireEvent.click(archiveProductMenuOption);
-            fireEvent.click(await app.findByText('Archive'));
-            await wait(() => {
-                expect(app.queryByText('Archive Product')).not.toBeInTheDocument();
-                expect(app.queryByText('Product 1')).not.toBeInTheDocument();
+            fireEvent.click(await screen.findByText('Archive'));
+            await waitFor(() => {
+                expect(screen.queryByText('Archive Product')).not.toBeInTheDocument();
+                expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
             });
-            const drawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            const drawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
             fireEvent.click(drawerCaret);
-            await app.findByText('Product 1');
+            await screen.findByText('Product 1');
         });
     });
 
     describe('Read only view', () => {
-        let app: RenderResult;
         beforeEach(async () => {
-            await wait(() => {
-                let initialState = {
-                    currentSpace: TestUtils.space,
-                    viewingDate: new Date(2020, 4, 14),
-                    isReadOnly: true,
-                    allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                };
+            let initialState = {
+                currentSpace: TestUtils.space,
+                viewingDate: new Date(2020, 4, 14),
+                isReadOnly: true,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            };
 
-                store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-                app = renderWithRedux(
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+
+            await waitFor(() => {
+                renderWithRedux(
                     <ProductCard product={TestUtils.productWithAssignments}/>,
-                    store);
+                    store
+                );
             });
         });
 
         it('should not show edit product icon', async () => {
-            expect(app.queryByTestId(/editProductIcon/i)).not.toBeInTheDocument();
+            expect(screen.queryByTestId(/editProductIcon/i)).not.toBeInTheDocument();
         });
 
         it('should not show add assignment icon', async () => {
-            expect(app.queryByTestId(/addPersonToProductIcon/i)).not.toBeInTheDocument();
+            expect(screen.queryByTestId(/addPersonToProductIcon/i)).not.toBeInTheDocument();
         });
     });
 });

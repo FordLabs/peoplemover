@@ -21,7 +21,7 @@ import {AvailableActions} from '../Redux/Actions';
 import Filter from './Filter';
 import {FilterTypeListings} from './FilterLibraries';
 import {createStore} from 'redux';
-import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
+import rootReducer from '../Redux/Reducers';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {RenderResult} from '@testing-library/react';
 
@@ -55,7 +55,7 @@ describe('Filter Dropdown', () => {
             };
 
             const app = renderWithRedux(<Filter
-                filterType={FilterTypeListings.Location}/>, undefined, initialState as unknown as GlobalStateProps);
+                filterType={FilterTypeListings.Location}/>, undefined, initialState);
             let locationFilterTestId = FilterTypeListings.Location.label.replace(' ', '_');
             const dropdownButton = await app.findByTestId(`dropdown_button_${locationFilterTestId}`);
             dropdownButton.click();
