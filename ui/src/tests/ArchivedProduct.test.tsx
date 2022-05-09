@@ -19,7 +19,7 @@ import React from 'react';
 import ArchivedProduct from '../Products/ArchivedProduct';
 import TestUtils, {renderWithRedux} from './TestUtils';
 import PeopleMover from '../Application/PeopleMover';
-import {fireEvent, RenderResult, wait} from '@testing-library/react';
+import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import {createBrowserHistory, History} from 'history';
 import {Router} from 'react-router-dom';
 
@@ -35,7 +35,7 @@ describe('Archive Products', () => {
             history = createBrowserHistory();
             history.push('/uuid');
 
-            await wait(() => {
+            await waitFor(() => {
                 app = renderWithRedux(
                     <Router history={history}>
                         <PeopleMover/>

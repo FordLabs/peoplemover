@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,10 +65,10 @@ describe('Share Access Form', () => {
 
             cy.get('[data-testid=userIdName]').eq(0).should('contain.text', 'USER_ID');
 
-            cy.get('[id=employeeIdTextArea]').focus().clear().type('aaaaaa#');
+            cy.get('[id=employeeIdTextArea]').focus().type('aaaaaa#', {force: true});
             cy.get('.primaryButton').should('be.disabled');
 
-            cy.get('[id=employeeIdTextArea]').focus().clear().type('Elise');
+            cy.get('[id=employeeIdTextArea]').focus().clear().type('Elise', {force: true});
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@postAddPersonToSpace')
@@ -104,7 +104,7 @@ describe('Share Access Form', () => {
                 .click();
             cy.get('[data-testid=confirmDeleteButton]').should('contain.text', 'Yes').click();
 
-            cy.get('[data-testid=userIdName]').should('have.length', 2)
+            cy.get('[data-testid=userIdName]').should('have.length', 2);
             cy.get('[data-testid=userListItem__ELISE]').should('not.exist');
         });
 
@@ -114,7 +114,7 @@ describe('Share Access Form', () => {
             cy.route('PUT', `${Cypress.env('API_USERS_PATH')}/ELISE`).as('putChangeOwner');
             cy.route('GET', Cypress.env('API_USERS_PATH')).as('getAllUsers');
 
-            cy.get('[id=employeeIdTextArea]').focus().clear().type('Elise');
+            cy.get('[id=employeeIdTextArea]').focus().type('Elise', {force: true});
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@postAddPersonToSpace')

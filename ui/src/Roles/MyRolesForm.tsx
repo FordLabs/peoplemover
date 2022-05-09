@@ -21,7 +21,7 @@ import {JSX} from '@babel/types';
 import {Dispatch} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {Color, RoleTag} from './RoleTag.interface';
+import {Color} from './RoleTag.interface';
 import ColorClient from './ColorClient';
 import RoleTags from './RoleTags';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
@@ -30,19 +30,18 @@ import {FilterOption} from '../CommonTypes/Option';
 import '../ModalFormComponents/TagRowsContainer.scss';
 
 interface Props {
-    roles: Array<RoleTag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function MyRolesForm({ roles, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
+function MyRolesForm({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
 
     useEffect(() => {
         ColorClient.getAllColors().then(response => {
             setColors(response.data);
         });
-    }, [colors.length]);
+    }, []);
 
     const getUpdatedFilterOptions = (index: number, trait: TagInterface): Array<FilterOption> => {
         let options: Array<FilterOption>;
@@ -67,10 +66,10 @@ function MyRolesForm({ roles, allGroupedTagFilterOptions, setAllGroupedTagFilter
 
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
-            <RoleTags
+            {colors.length && <RoleTags
                 colors={colors}
                 updateFilterOptions={updateFilterOptions}
-            />
+            />}
             <div className="traitWarning">
                 <i className="material-icons warningIcon">error</i>
                 <p className="warningText">Editing or deleting a role will affect any person currently assigned to it.</p>
@@ -82,7 +81,6 @@ function MyRolesForm({ roles, allGroupedTagFilterOptions, setAllGroupedTagFilter
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    roles: state.roles,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

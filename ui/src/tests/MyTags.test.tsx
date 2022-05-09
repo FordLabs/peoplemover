@@ -21,19 +21,17 @@ import {findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@t
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import MyTagsForm from '../Tags/MyTagsForm';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {AxiosResponse} from 'axios';
 
 describe('My Tags Form', () => {
     let app: RenderResult;
-    const initialState: PreloadedState<GlobalStateProps> = {
+    const initialState = {
         locations: TestUtils.locations,
         productTags: TestUtils.productTags,
         currentSpace: TestUtils.space,
         allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-    } as GlobalStateProps;
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();

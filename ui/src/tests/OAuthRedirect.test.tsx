@@ -26,19 +26,19 @@ const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 const OAUTH_REDIRECT_DEFAULT = '/user/dashboard';
 
 describe('OAuthRedirect', function() {
-    let originalWindow: Window;
+    let location: (string | Location) & Location;
 
     beforeEach(() => {
-        originalWindow = window;
-        delete window.location;
-        (window as Window) = Object.create(window);
+        location = window.location;
+        Reflect.deleteProperty(window, 'location');
+
         new Cookies().remove('accessToken');
 
         sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, '/user/dashboard');
     });
 
     afterEach(() => {
-        (window as Window) = originalWindow;
+        window.location = location;
     });
 
     it('should save access token', function() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +19,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 
-export default {
-
+const MatomoEvents = {
     pushEvent: function(category: string, action: string, name: string, value?: number): void {
         if (!window._paq) window._paq = [];
         const eventArray: Array<string | number> = ['trackEvent', category, action, name];
@@ -28,3 +27,5 @@ export default {
         window._paq.push(eventArray);
     },
 };
+
+export default MatomoEvents;

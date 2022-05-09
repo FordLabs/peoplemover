@@ -87,8 +87,9 @@ function SelectWithNoCreateOption({
 }: MultiSelectProps): JSX.Element {
     return (
         <div className="formItem">
-            <label className="formItemLabel" htmlFor={id}>{title}</label>
+            <span className="formItemLabel">{title}</span>
             <Select
+                aria-label={title}
                 name={id}
                 id={id}
                 classNamePrefix={id}

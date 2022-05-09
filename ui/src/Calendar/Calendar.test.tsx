@@ -17,7 +17,7 @@
 
 import TestUtils, {mockCreateRange, renderWithRedux} from '../tests/TestUtils';
 import React from 'react';
-import {fireEvent, queryByText, wait} from '@testing-library/react';
+import {fireEvent, queryByText, waitFor} from '@testing-library/react';
 import Calendar from './Calendar';
 import configureStore from 'redux-mock-store';
 
@@ -63,7 +63,7 @@ describe('Calendar', () => {
         fireEvent.click(datePickerOpener);
 
         const calendar = await app.findByTestId('calendar');
-        await wait(() => {
+        await waitFor(() => {
             expect(queryByText(calendar, 'May')).not.toBeInTheDocument();
         });
     });

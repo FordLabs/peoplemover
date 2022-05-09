@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,9 @@
  */
 
 /// <reference types="Cypress" />
+import moment from 'moment';
 import person from '../fixtures/person';
-const todaysDate = Cypress.moment().format('yyyy-MM-DD');
+const todaysDate = moment().format('yyyy-MM-DD');
 
 describe('People', () => {
     let notTodaysDate;
@@ -31,7 +32,7 @@ describe('People', () => {
 
         notTodaysDate = findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth();
 
-        calendarDateClass = `.react-datepicker__day--0${Cypress.moment(notTodaysDate).format('DD')}`;
+        calendarDateClass = `.react-datepicker__day--0${moment(notTodaysDate).format('DD')}`;
         highlightedLastDayOfMonth = `${calendarDateClass}.react-datepicker__day--highlighted`;
     });
 
@@ -93,7 +94,7 @@ describe('People', () => {
                 ensureNewAssignmentIsPresentInAssignmentDrawer(assignedPerson);
 
                 cy.get('@calendarToggle').click();
-                cy.get(highlightedLastDayOfMonth).should('have.text', Cypress.moment(notTodaysDate).format('D'));
+                cy.get(highlightedLastDayOfMonth).should('have.text', moment(notTodaysDate).format('D'));
             });
     });
     
@@ -308,7 +309,7 @@ describe('People', () => {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth() {
     let closestWorkdayToMiddleOfMonthThatIsntToday;
-    const firstDayOfMonth = Cypress.moment().startOf('month');
+    const firstDayOfMonth = moment().startOf('month');
     const twoWeeksIntoMonth = firstDayOfMonth.add(2, 'weeks');
     const closestWorkdayToMiddleOfMonth = twoWeeksIntoMonth.isoWeekday() <= 5 ? twoWeeksIntoMonth : twoWeeksIntoMonth.add(8 - twoWeeksIntoMonth.isoWeekday(), 'days');
     if (todaysDate === closestWorkdayToMiddleOfMonth.format('yyyy-MM-DD')) {
@@ -342,7 +343,7 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags =
     cy.get('@personForm')
         .find('[id=role]')
         .focus()
-        .type(role + '{enter}');
+        .type(role + '{enter}', {force: true});
     
     cy.wait('@postNewRole');
 
@@ -350,7 +351,7 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags =
         cy.get('@personForm')
             .find('.product__value-container input')
             .focus()
-            .type(assignTo + '{enter}');
+            .type(assignTo + '{enter}', {force: true});
     }
 
     tags.forEach((tag) => {
