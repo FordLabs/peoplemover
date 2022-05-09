@@ -204,7 +204,7 @@ describe('People', () => {
         cy.get('[data-testid=editPersonIconContainer__jane_smith]').should('not.exist');
     });
 
-    context.only('Drag and Drop', () => {
+    context('Drag and Drop', () => {
         beforeEach(() => {
             cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + todaysDate).as('getProducts');
         });

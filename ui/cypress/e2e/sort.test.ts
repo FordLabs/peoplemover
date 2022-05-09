@@ -59,14 +59,11 @@ describe('Sort', () => {
             .should('contain', 'Location')
             .should('contain', 'keyboard_arrow_down');
 
-        getProductListGroup()
-            .should('have.length', 2)
-            .eq(0)
+        getProductListGroup1()
             .should('contain', 'Baguette Bakery')
             .should('contain', 'location1');
 
-        getProductListGroup()
-            .eq(1)
+        getProductListGroup2()
             .should('contain', 'My Product')
             .should('contain', 'No Location');
     });
@@ -79,14 +76,11 @@ describe('Sort', () => {
             .should('contain', 'Product Tag')
             .should('contain', 'keyboard_arrow_down');
 
-        getProductListGroup()
-            .should('have.length', 2)
-            .eq(0)
+        getProductListGroup1()
             .should('contain', 'My Product')
             .should('contain', 'productTag1');
 
-        getProductListGroup()
-            .eq(1)
+        getProductListGroup2()
             .should('contain', 'Baguette Bakery')
             .should('contain', 'No Product Tag');
     });
@@ -107,4 +101,14 @@ function defaultSortingMenuStateShouldBeAlphabetical() {
 function getProductListGroup(): Chainable {
     return cy.get('[data-testid=productListGroupedContainer]')
         .find('[data-testid=productGroup]')
+}
+
+function getProductListGroup1(): Chainable {
+    return getProductListGroup()
+        .should('have.length', 2)
+        .eq(0)
+}
+
+function getProductListGroup2(): Chainable {
+    return getProductListGroup().eq(1)
 }
