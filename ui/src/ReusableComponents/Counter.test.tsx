@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import Counter from './Counter';
 import {RenderResult} from '@testing-library/react';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';

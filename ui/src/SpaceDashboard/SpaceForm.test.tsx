@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {renderWithRedux} from '../tests/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import {fireEvent, screen} from '@testing-library/dom';
 import SpaceForm from './SpaceForm';
 

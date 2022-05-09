@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import TestUtils, {getApplicationSetup, renderWithRedux} from './TestUtils';
-import PeopleMover from '../Application/PeopleMover';
+import TestUtils, {getApplicationSetup, renderWithRedux} from '../Utils/TestUtils';
+import PeopleMover from '../PeopleMover/PeopleMover';
 import {screen, waitFor} from '@testing-library/react';
 import {Router} from 'react-router-dom';
 import {createBrowserHistory, History, Location} from 'history';

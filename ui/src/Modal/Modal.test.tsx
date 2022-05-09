@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {fireEvent, render, RenderResult} from '@testing-library/react';
-import Modal from '../Modal/Modal';
+import Modal from './Modal';
 
 describe('Modal', () => {
     let mockedCloseFunction: jest.Mock, comp: RenderResult;

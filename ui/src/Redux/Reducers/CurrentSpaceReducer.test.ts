@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import currentSpaceReducer from '../Redux/Reducers/currentSpaceReducer';
-import {AvailableActions} from '../Redux/Actions';
-import {Space} from '../Space/Space';
+import currentSpaceReducer from './currentSpaceReducer';
+import {AvailableActions} from '../Actions';
+import {Space} from '../../Space/Space';
 
 describe('current space reducer', () => {
     const space: Space = {

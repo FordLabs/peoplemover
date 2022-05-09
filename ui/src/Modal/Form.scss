@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
-@import '../Application/Styleguide/Variables.scss';
+@import '../Styles/Colors.scss';
+@import '../Styles/Variables.scss';
 
 .form {
     display: flex;
@@ -105,7 +105,7 @@ input[type=date]::-webkit-calendar-picker-indicator {
     color: rgba(0, 0, 0, 0);
     opacity: 1;
     display: block;
-    background: url("../Application/Assets/calendar.svg") no-repeat;
+    background: url("../Assets/calendar.svg") no-repeat;
     width: 20px;
     height: 20px;
     border-width: thin;

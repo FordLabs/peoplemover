@@ -16,11 +16,11 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from './TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {findByTestId, findByText, fireEvent, queryByText, RenderResult} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
-import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import MyTagsForm from '../Tags/MyTagsForm';
+import ProductTagClient from './ProductTag/ProductTagClient';
+import MyTagsForm from './MyTagsForm';
 import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {AxiosResponse} from 'axios';
 

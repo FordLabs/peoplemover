@@ -1,4 +1,4 @@
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import * as React from 'react';
 import {act, RenderResult} from '@testing-library/react';
 import DeleteSpaceForm from './DeleteSpaceForm';

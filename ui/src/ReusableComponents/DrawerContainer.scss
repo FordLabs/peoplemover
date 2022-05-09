@@ -16,8 +16,8 @@
  */
 
 @use 'sass:math';
-@import '../Application/Styleguide/Colors.scss';
-@import '../Application/Styleguide/Breakpoints.scss';
+@import '../Styles/Colors.scss';
+@import '../Styles/Breakpoints.scss';
 
 .drawerHeader {
   display: flex;

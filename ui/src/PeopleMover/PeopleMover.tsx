@@ -17,7 +17,7 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 
-import './Styleguide/Main.scss';
+import '../Styles/Main.scss';
 import './PeopleMover.scss';
 
 import ProductList from '../Products/ProductList';

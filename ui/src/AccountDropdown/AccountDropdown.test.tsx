@@ -16,7 +16,7 @@
  */
 
 import {act, fireEvent, RenderResult, waitFor} from '@testing-library/react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import React from 'react';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';

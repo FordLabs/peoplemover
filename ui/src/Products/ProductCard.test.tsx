@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {createDataTestId, renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
 import {emptyProduct} from './Product';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';

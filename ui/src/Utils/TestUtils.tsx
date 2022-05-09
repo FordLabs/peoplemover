@@ -42,7 +42,7 @@ import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {createBrowserHistory, Location} from 'history';
 import {Router} from 'react-router-dom';
-import PeopleMover from '../Application/PeopleMover';
+import PeopleMover from '../PeopleMover/PeopleMover';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
