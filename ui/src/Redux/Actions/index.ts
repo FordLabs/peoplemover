@@ -35,6 +35,7 @@ import RoleClient from '../../Roles/RoleClient';
 import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 import PeopleClient from "../../People/PeopleClient";
 
+/* eslint-disable */
 export enum AvailableActions {
     SET_CURRENT_MODAL,
     CLOSE_MODAL,
@@ -59,6 +60,7 @@ export enum AvailableActions {
     SET_CURRENT_USER,
     GOT_FLAGS
 }
+/* eslint-enable */
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({
     type: AvailableActions.SET_CURRENT_MODAL,

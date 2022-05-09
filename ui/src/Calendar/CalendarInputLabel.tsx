@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,12 +24,12 @@ interface CustomInputProps {
     setIsOpen: (isCalendarOpen: boolean) => void;
 }
 
-function CalendarCustomInput(
+function CalendarInputLabel(
     {isReadOnly, isOpen, setIsOpen, value}: CustomInputProps,
-    forwardedRef: Ref<HTMLDivElement>
+    _forwardedRef: Ref<HTMLDivElement>
 ): JSX.Element {
     const viewingDate: Date = !value ? new Date() : new Date(value);
-    const dateFormatOptions = {
+    const dateFormatOptions: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -66,4 +66,4 @@ function CalendarCustomInput(
     );
 }
 
-export default forwardRef<HTMLDivElement, CustomInputProps>(CalendarCustomInput);
+export default forwardRef<HTMLDivElement, CustomInputProps>(CalendarInputLabel);

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent, RenderResult, wait} from '@testing-library/react';
+import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
@@ -43,7 +43,7 @@ describe('Archived People', () => {
                 people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
             });
 
-            await wait(() => {
+            await waitFor(() => {
                 app = renderWithRedux(
                     <ArchivedPersonDrawer/>, store, undefined
                 );
@@ -89,7 +89,7 @@ describe('Archived People', () => {
                 people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
             });
 
-            await wait(() => {
+            await waitFor(() => {
                 app.unmount();
                 app = renderWithRedux(
                     <ArchivedPersonDrawer/>, store, undefined
@@ -113,7 +113,7 @@ describe('Archived People', () => {
             history = createBrowserHistory();
             history.push('/uuid');
 
-            await wait(() => {
+            await waitFor(() => {
                 app = renderWithRedux(
                     <Router history={history}>
                         <PeopleMover/>

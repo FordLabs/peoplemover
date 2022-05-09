@@ -127,16 +127,14 @@ describe('Product Client', function() {
             expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'createProduct', expectedName]);
         });
 
-        it('should push createError on create with failure code', async () => {
+        it('should push createError on create with failure code', (done) => {
             const expectedResponse = { code: 417 };
             Axios.post = jest.fn().mockRejectedValue(expectedResponse);
 
-            try {
-                await ProductClient.createProduct(TestUtils.space, product);
-                fail('Did not catch an exception from the product creation');
-            } catch (err)  {
+            ProductClient.createProduct(TestUtils.space, product).catch(() => {
                 expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'createProductError', expectedName, expectedResponse.code]);
-            }
+                done()
+            });
         });
 
         it('should push delete product action on delete', async () => {

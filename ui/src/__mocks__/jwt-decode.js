@@ -1,5 +1,5 @@
-const mockJwtDecode = jest.fn(() => {
+const jwtDecoder = jest.fn(() => {
     return { sub: 'USER_ID' };
 });
 
-export default mockJwtDecode;
+export default jwtDecoder;

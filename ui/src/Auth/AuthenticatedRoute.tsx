@@ -16,17 +16,15 @@
  */
 
 import {Route, RouteProps} from 'react-router';
-import * as React from 'react';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {getToken} from './TokenProvider';
 import {setOauthRedirect} from '../ReusableComponents/OAuthRedirect';
 
-export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
+export function AuthenticatedRoute(props: RouteProps): JSX.Element {
     const {children, ...rest} = props;
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
-
 
     useOnLoad(() => {
         const authenticatedRoute = <Route {...rest}>{children}</Route>;
@@ -47,11 +45,10 @@ export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element 
 export function RedirectToADFS(): null {
     setOauthRedirect(window.location.pathname);
 
-    /* eslint-disable @typescript-eslint/camelcase */
     let oauthUri: string = window.runConfig.adfs_url_template;
     const clientId: string = window.runConfig.adfs_client_id;
     const resource: string = window.runConfig.adfs_resource;
-    /* eslint-enable @typescript-eslint/camelcase */
+
     const redirectUri = `${window.location.origin}/adfs/catch`;
 
     oauthUri = oauthUri.replace('%s', clientId);

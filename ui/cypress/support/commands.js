@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,13 +21,15 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
+import moment from 'moment';
+
 const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
 Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '') => {
     cy.server();
-    const date = Cypress.moment().format('yyyy-MM-DD');
+    const date = moment().format('yyyy-MM-DD');
     cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');
     cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
     const locationRoute = {

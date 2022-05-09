@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import moment from 'moment';
 
 export interface Product {
     name: string;
@@ -30,8 +31,8 @@ const product: Product = {
     location: 'Michigan',
     archived: false,
     tags: ['Tag 1', 'Tag 2'],
-    startDate: Cypress.moment(),
-    nextPhaseDate: Cypress.moment().add(1, 'days'),
+    startDate: moment(),
+    nextPhaseDate: moment().add(1, 'days'),
     notes: 'Product note.',
 };
 

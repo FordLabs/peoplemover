@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
+import {act, fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import {axe, toHaveNoViolations} from 'jest-axe';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../tests/TestUtils';
@@ -34,18 +34,19 @@ describe('Header', () => {
     const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, currentUser: 'bob' } as GlobalStateProps;
 
     let app: RenderResult;
-    let originalWindow: Window;
 
-    beforeEach(async () => {
-        originalWindow = window;
-        delete window.location;
-        (window as Window) = Object.create(window);
+    let location: (string | Location) & Location;
+
+    beforeEach(() => {
+        location = window.location;
+        Reflect.deleteProperty(window, 'location');
+
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
     afterEach(() => {
-        (window as Window) = originalWindow;
+        window.location = location;
     });
 
     it('should have no axe violations', async () => {
@@ -66,7 +67,7 @@ describe('Header', () => {
         expect(app.queryByTestId('sortBy')).toBeFalsy();
 
         const userIconButton = await app.findByTestId('accountDropdownToggle');
-        await wait(() => {
+        await waitFor(() => {
             fireEvent.click(userIconButton);
         });
         expect(await app.queryByTestId('shareAccess')).toBeNull();
@@ -107,7 +108,6 @@ describe('Header', () => {
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
 
             act(() => {
@@ -118,7 +118,6 @@ describe('Header', () => {
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
             act(() => {

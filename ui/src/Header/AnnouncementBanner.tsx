@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,12 +21,10 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import './AnnouncementBanner.scss';
 import {DEFAULT_BANNER_MESSAGE} from '../Flags/Flags';
 
-
 export const PREVIOUS_BANNER_MESSAGE_KEY = 'previousBannerMessage';
 const BANNER_CLOSED_BY_USER_KEY = 'bannerHasBeenClosedByUser';
 
-export default (): ReactElement => {
-
+const AnnouncementBanner = (): ReactElement => {
     const [closedByUser, setClosedByUser] = useState<string|null>(localStorage.getItem(BANNER_CLOSED_BY_USER_KEY));
     // eslint-disable-next-line
     const flags = useSelector((state: GlobalStateProps) => state.flags);
@@ -59,3 +57,5 @@ export default (): ReactElement => {
         </aside>
         : <></>;
 };
+
+export default AnnouncementBanner;
