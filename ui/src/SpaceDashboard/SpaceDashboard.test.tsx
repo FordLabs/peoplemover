@@ -18,7 +18,7 @@
 import Cookies from 'universal-cookie';
 import SpaceDashboard from './SpaceDashboard';
 import React from 'react';
-import {renderWithRedux} from '../tests/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import {Router} from 'react-router';
 import {createMemoryHistory, MemoryHistory} from 'history';
 import {fireEvent, waitFor, screen, act} from '@testing-library/react';

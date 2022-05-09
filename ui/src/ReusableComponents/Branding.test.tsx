@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import {renderWithRedux} from '../tests/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import Branding from './Branding';
 import {RunConfig} from '../index';
 

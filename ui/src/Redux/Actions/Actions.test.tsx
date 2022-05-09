@@ -21,17 +21,17 @@ import {
     fetchPersonTagsAction, fetchProductTagsAction,
     fetchRolesAction,
     setupSpaceAction,
-} from '../Redux/Actions';
+} from './index';
 import configureStore, {MockStoreCreator, MockStoreEnhanced} from 'redux-mock-store';
-import TestUtils from './TestUtils';
+import TestUtils from '../../Utils/TestUtils';
 import thunk from 'redux-thunk';
-import * as filterConstants from '../SortingAndFiltering/FilterLibraries';
-import RoleClient from '../Roles/RoleClient';
+import * as filterConstants from '../../SortingAndFiltering/FilterLibraries';
+import RoleClient from '../../Roles/RoleClient';
 import {AxiosResponse} from 'axios';
-import LocationClient from '../Locations/LocationClient';
-import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
-import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import PeopleClient from '../People/PeopleClient';
+import LocationClient from '../../Locations/LocationClient';
+import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
+import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
+import PeopleClient from '../../People/PeopleClient';
 
 
 describe('Actions', () => {

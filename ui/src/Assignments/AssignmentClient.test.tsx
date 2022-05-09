@@ -18,7 +18,7 @@
 import Axios from 'axios';
 import AssignmentClient from './AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
-import TestUtils from '../tests/TestUtils';
+import TestUtils from '../Utils/TestUtils';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';

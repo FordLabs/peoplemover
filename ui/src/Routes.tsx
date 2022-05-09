@@ -24,11 +24,11 @@ import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
 import RedirectWrapper from './ReusableComponents/RedirectWrapper';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute';
-import PeopleMover from './Application/PeopleMover';
-import ErrorPageTemplate from './Application/ErrorPageTemplate';
+import PeopleMover from './PeopleMover/PeopleMover';
+import ErrorPageTemplate from './ErrorPageTemplate/ErrorPageTemplate';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
-import AnimatedImageSrc from './Application/Assets/404.gif';
-import errorImageSrc from './Application/Assets/403.png';
+import AnimatedImageSrc from './Assets/404.gif';
+import errorImageSrc from './Assets/403.png';
 import Header from './Header/Header';
 import AnnouncementBanner from './Header/AnnouncementBanner';
 

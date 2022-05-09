@@ -17,7 +17,7 @@
 
 import Axios from 'axios';
 import PeopleClient from './PeopleClient';
-import TestUtils from '../tests/TestUtils';
+import TestUtils from '../Utils/TestUtils';
 import Cookies from 'universal-cookie';
 import {Person} from './Person';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';

@@ -19,7 +19,7 @@ import React from 'react';
 import AssignmentForm from './AssignmentForm';
 import {act, fireEvent, screen} from '@testing-library/react';
 import AssignmentClient from './AssignmentClient';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
 

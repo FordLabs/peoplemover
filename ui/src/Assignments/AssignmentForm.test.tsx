@@ -20,7 +20,7 @@ import React from 'react';
 import AssignmentForm from '../Assignments/AssignmentForm';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import moment from 'moment';

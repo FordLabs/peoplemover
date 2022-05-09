@@ -17,10 +17,10 @@
 
 import {fireEvent, waitFor} from '@testing-library/dom';
 import {RenderResult} from '@testing-library/react';
-import {renderWithRedux} from '../tests/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import React from 'react';
 import SpaceDashboardTile from './SpaceDashboardTile';
-import TestUtils from '../tests/TestUtils';
+import TestUtils from '../Utils/TestUtils';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setCurrentModalAction} from '../Redux/Actions';

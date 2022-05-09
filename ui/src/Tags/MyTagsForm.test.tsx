@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {screen} from '@testing-library/react';
 import MyTagsForm from './MyTagsForm';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';

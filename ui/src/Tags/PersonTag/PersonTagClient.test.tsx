@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import PersonTag from './PersonTagClient';
-import TestUtils from '../../tests/TestUtils';
+import TestUtils from '../../Utils/TestUtils';
 import Cookies from 'universal-cookie';
 import {MatomoWindow} from '../../CommonTypes/MatomoWindow';
 

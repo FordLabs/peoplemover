@@ -16,11 +16,11 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from './TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {findByTestId, findByText, fireEvent, screen, waitFor} from '@testing-library/react';
-import RoleClient from '../Roles/RoleClient';
-import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
-import MyRolesForm from '../Roles/MyRolesForm';
+import RoleClient from './RoleClient';
+import {RoleAddRequest} from './RoleAddRequest.interface';
+import MyRolesForm from './MyRolesForm';
 import * as Actions from '../Redux/Actions';
 import ColorClient from '../Roles/ColorClient';
 

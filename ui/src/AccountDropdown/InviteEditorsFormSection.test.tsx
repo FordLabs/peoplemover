@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {fireEvent, screen, act, within, waitFor} from '@testing-library/react';

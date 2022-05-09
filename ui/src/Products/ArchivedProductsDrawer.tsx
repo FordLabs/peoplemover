@@ -16,7 +16,7 @@
  */
 
 import React, {useState} from 'react';
-import '../Application/Styleguide/Main.scss';
+import '../Styles/Main.scss';
 import './ArchivedProductsDrawer.scss';
 import ArchivedProduct from './ArchivedProduct';
 import {isArchivedOnDate, Product} from './Product';

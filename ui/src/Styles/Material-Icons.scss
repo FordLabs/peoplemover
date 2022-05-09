@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,13 +21,13 @@
   font-weight: 400;
   src: local('Material Icons'),
   local('MaterialIcons-Regular'),
-  url('../Fonts/material-icons/MaterialIcons-Regular.woff2') format('woff2'),
-  url('../Fonts/material-icons/MaterialIcons-Regular.woff') format('woff'),
-  url('../Fonts/material-icons/MaterialIcons-Regular.ttf') format('truetype');
+  url('../Assets/Fonts/material-icons/MaterialIcons-Regular.woff2') format('woff2'),
+  url('../Assets/Fonts/material-icons/MaterialIcons-Regular.woff') format('woff'),
+  url('../Assets/Fonts/material-icons/MaterialIcons-Regular.ttf') format('truetype');
 }
 
 .material-icons {
-  font-family: 'Material Icons';
+  font-family: 'Material Icons', sans-serif;
   font-weight: normal;
   font-style: normal;
   font-size: 24px;  /* Preferred icon size */
