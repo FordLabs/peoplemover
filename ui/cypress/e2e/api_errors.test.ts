@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/// <reference types="Cypress" />
-
-import '../support/commands';
 
 const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
@@ -37,7 +33,7 @@ describe('Api Errors', () => {
         cy.route('GET', '/api/spaces/fake-path').as('getSpaces');
         cy.visit(`/fake-path`);
 
-        cy.wait('@getSpaces').then(({xhr}) => {
+        cy.wait('@getSpaces').then(({xhr}: Cypress.ObjectLike) => {
             expect(xhr.status).to.equal(BAD_REQUEST);
 
             cy.window().then((win) => {
@@ -59,7 +55,7 @@ describe('Api Errors', () => {
 
         cy.visit('/' + Cypress.env('SPACE_UUID'));
 
-        cy.wait('@getSpaces').then(({xhr}) => {
+        cy.wait('@getSpaces').then(({xhr}: Cypress.ObjectLike) => {
             expect(xhr.status).to.equal(UNAUTHORIZED);
 
             cy.getCookie('accessToken')

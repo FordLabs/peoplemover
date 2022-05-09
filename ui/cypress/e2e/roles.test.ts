@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-/// <reference types="Cypress" />
 import person from '../fixtures/person';
 
 describe('Roles', () => {
@@ -59,7 +58,7 @@ describe('Roles', () => {
 
         cy.get('[data-testid=saveTagButton]').click();
 
-        cy.wait('@postNewRole').should(xhr => {
+        cy.wait('@postNewRole').should((xhr: Cypress.ObjectLike) => {
             expect(xhr?.status).to.equal(200);
             expect(xhr?.response?.body.name).to.equal(mockRole);
             expect(xhr?.response?.body.color.color).to.equal(mockColor.color);
@@ -69,7 +68,7 @@ describe('Roles', () => {
             expect($lis).to.have.descendants('[data-testid=editIcon__role]');
             expect($lis).to.have.descendants('[data-testid=deleteIcon__role]');
             expect($lis).to.have.descendants(`[data-testid="myRolesCircle__${mockRole}"]`);
-        }).then(($lis) => {
+        }).then(($lis: any) => {
             cy.get($lis).find(`[data-testid="myRolesCircle__${mockRole}"]`).should('have.css', 'background-color', pink);
         });
 

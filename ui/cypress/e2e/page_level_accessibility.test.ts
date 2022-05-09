@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/// <reference types="Cypress" />
 
 describe('Page Level Accessibility', () => {
     it('Landing Page', () => {
@@ -38,7 +36,7 @@ describe('Page Level Accessibility', () => {
         cy.checkA11y();
     });
 
-    // @todo figure out how to be able to visit this page in Cypress
+    // figure out how to be able to visit this page in Cypress
     xit('Dashboard Page', () => {
         cy.visit('/user/dashboard');
         cy.injectAxe();

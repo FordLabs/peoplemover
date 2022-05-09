@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/// <reference types="Cypress" />
 import product from '../fixtures/product';
-import moment from 'moment';
+import * as moment from 'moment';
+import {Moment} from 'moment';
 
 describe('Product', () => {
     beforeEach(() => {
@@ -41,7 +40,7 @@ describe('Product', () => {
 
         submitProductForm('Add');
 
-        cy.wait('@postNewProduct').should(xhr => {
+        cy.wait('@postNewProduct').should((xhr: Cypress.ObjectLike) => {
             expect(xhr?.status).to.equal(200);
             const body = xhr?.response?.body;
             expect(body.name).to.equal(product.name);
@@ -83,7 +82,7 @@ describe('Product', () => {
 
         submitProductForm('Save');
 
-        cy.wait('@updateProduct').should(xhr => {
+        cy.wait('@updateProduct').should((xhr: Cypress.ObjectLike) => {
             expect(xhr?.status).to.equal(200);
             const body = xhr?.response?.body;
             expect(body.name).to.equal(updateProduct.name);
@@ -113,7 +112,7 @@ describe('Product', () => {
         cy.get('[data-testid=deleteProduct]').click();
         cy.get('[data-testid=confirmDeleteButton]').click();
 
-        cy.wait('@deleteProduct').should(xhr => {
+        cy.wait('@deleteProduct').should((xhr: Cypress.ObjectLike) => {
             expect(xhr?.status).to.equal(200);
         });
 
@@ -155,7 +154,7 @@ describe('Product', () => {
     });
 });
 
-const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}, defaultStartDate) => {
+const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}, defaultStartDate): void => {
     cy.log('Populate Product Form');
 
     cy.get('[data-testid=productForm]').as('productForm');
@@ -204,12 +203,12 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
         .should('have.value', notes);
 };
 
-const dateSelector = (moment) => {
-    const dateLabel = moment.format( 'dddd, MMMM Do, yyyy');
+const dateSelector = (momentInstance: Moment): string => {
+    const dateLabel = momentInstance.format( 'dddd, MMMM Do, yyyy');
     return `[aria-label="Choose ${dateLabel}"]`;
 };
 
-const submitProductForm = (expectedSubmitButtonText) => {
+const submitProductForm = (expectedSubmitButtonText: string): void => {
     cy.get('[data-testid=productFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
     cy.get('@productForm').should('not.exist');
 };

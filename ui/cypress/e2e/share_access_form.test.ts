@@ -72,8 +72,8 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@postAddPersonToSpace')
-                .should((xhrs) => {
-                    expect(xhrs.status).to.equal(200);
+                .should((xhr: Cypress.ObjectLike) => {
+                    expect(xhr.status).to.equal(200);
                 });
 
             cy.get('[data-testid=modalCard]')
@@ -118,8 +118,8 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
             cy.wait('@postAddPersonToSpace')
-                .should((xhrs) => {
-                    expect(xhrs.status).to.equal(200);
+                .should((xhr: Cypress.ObjectLike) => {
+                    expect(xhr.status).to.equal(200);
                 });
 
             cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
@@ -142,13 +142,13 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=confirmDeleteButton]').should('contain.text', 'Yes').click();
 
             cy.wait('@putChangeOwner')
-                .should((xhrs) => {
-                    expect(xhrs.status).to.equal(200);
+                .should((xhr: Cypress.ObjectLike) => {
+                    expect(xhr.status).to.equal(200);
                 });
 
             cy.wait('@getAllUsers')
-                .should((xhrs) => {
-                    expect(xhrs.status).to.equal(200);
+                .should((xhr: Cypress.ObjectLike) => {
+                    expect(xhr.status).to.equal(200);
                 });
 
             cy.get('[data-testid=userListItem__USER_ID]')
@@ -163,21 +163,21 @@ describe('Share Access Form', () => {
     });
 });
 
-const openShareAccessForm = () => {
+const openShareAccessForm = (): void => {
     cy.get('[data-testid=accountDropdownToggle]').click();
     cy.get('[data-testid=shareAccess]').click();
     cy.get('[data-testid=modalContainer]').should('exist');
 };
 
-const expandInviteToViewModalCard = () => {
+const expandInviteToViewModalCard = (): void => {
     cy.get('@inviteToViewModalCard').click();
 };
 
-const expandInviteToEditModalCard = () => {
+const expandInviteToEditModalCard = (): void => {
     cy.get('@inviteToEditModalCard').click();
 };
 
-const inviteToViewModalCardShouldBeExpanded = () => {
+const inviteToViewModalCardShouldBeExpanded = (): void => {
     cy.get('@inviteToViewModalCard')
         .should('have.attr', 'aria-expanded', 'true')
         .should('not.have.attr', 'hidden');
@@ -186,7 +186,7 @@ const inviteToViewModalCardShouldBeExpanded = () => {
         .should('have.attr', 'hidden');
 };
 
-const inviteToEditModalCardShouldBeExpanded = () => {
+const inviteToEditModalCardShouldBeExpanded = (): void => {
     cy.get('@inviteToViewModalCard')
         .should('have.attr', 'aria-expanded', 'false')
         .should('have.attr', 'hidden');

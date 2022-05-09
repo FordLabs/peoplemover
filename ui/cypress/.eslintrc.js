@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/// <reference types="Cypress" />
-
-describe('People', () => {
-    beforeEach(() => {
-        cy.visitSpace();
-    });
-
-    it('Keyboard usage adds focus ring to buttons and anchors', () => {
-        cy.get('body').trigger('keydown', {key: 'Tab'});
-        cy.get('body.user-is-tabbing');
-    });
-});
+module.exports = {
+    extends: ['plugin:cypress/recommended']
+};
