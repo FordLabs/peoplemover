@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
@@ -25,7 +25,8 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
-    fetchLocationsAction, fetchPeopleAction,
+    fetchLocationsAction,
+    fetchPeopleAction,
     fetchPersonTagsAction,
     fetchProductsAction,
     fetchProductTagsAction,
@@ -39,7 +40,7 @@ import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
-import {Redirect} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
 import {Product} from '../Products/Product';
@@ -105,7 +106,7 @@ function PeopleMover({
     setPeople,
     setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
-    const [redirect, setRedirect] = useState<JSX.Element>();
+    const navigate = useNavigate();
 
     function hasProductsAndFilters(): boolean {
         return Boolean(products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0);
@@ -113,15 +114,15 @@ function PeopleMover({
 
     const handleErrors = useCallback((error: AxiosError): Error | null => {
         if (error?.response?.status === BAD_REQUEST) {
-            setRedirect(<Redirect to="/error/404"/>);
+            navigate("/error/404");
             return null;
         } else if (error?.response?.status === FORBIDDEN) {
-            setRedirect(<Redirect to="/error/403"/>);
+            navigate("/error/403");
             return null;
         } else {
             return error;
         }
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         if (currentSpace) {
@@ -174,10 +175,6 @@ function PeopleMover({
     }, [viewingDate, currentSpace]);
     /* eslint-enable */
 
-    if (redirect) {
-        return redirect;
-    }
-
     return (
         !hasProductsAndFilters()
             ? <></>
@@ -196,7 +193,7 @@ function PeopleMover({
                                 <div className="accordionHeaderContainer">
                                     <button
                                         type="button"
-                                        className={`addPersonButton`}
+                                        className="addPersonButton"
                                         data-testid="addPersonButton"
                                         onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
                                         <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>

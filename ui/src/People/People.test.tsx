@@ -28,7 +28,7 @@ import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-import {Router} from 'react-router-dom';
+import {MemoryRouter} from 'react-router-dom';
 import {createBrowserHistory} from 'history';
 import ProductClient from '../Products/ProductClient';
 
@@ -39,9 +39,9 @@ function applicationSetup(initialState?: PreloadedState<Partial<GlobalStateProps
     history.push('/uuid');
 
     renderWithRedux(
-        <Router history={history}>
+        <MemoryRouter>
             <PeopleMover/>
-        </Router>,
+        </MemoryRouter>,
         undefined,
         initialState
     );
@@ -323,7 +323,7 @@ describe('People actions', () => {
         it('assigns the person created by the PersonForm', async () => {
             let history = createBrowserHistory();
             history.push('/uuid');
-            renderWithRedux(<Router history={history}><PeopleMover/></Router>, undefined, {
+            renderWithRedux(<MemoryRouter ><PeopleMover/></MemoryRouter>, undefined, {
                 viewingDate: viewingDate,
             });
             const createPersonButton = await screen.findByText(addPersonButtonText);
@@ -401,7 +401,7 @@ describe('People actions', () => {
             let history = createBrowserHistory();
             history.push('/uuid');
             await waitFor(() => {
-                renderWithRedux(<Router history={history}><PeopleMover/></Router>, undefined, {
+                renderWithRedux(<MemoryRouter><PeopleMover/></MemoryRouter>, undefined, {
                     viewingDate: new Date(2019, 0, 1),
                     currentSpace: TestUtils.space,
                     allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,

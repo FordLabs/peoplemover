@@ -21,14 +21,13 @@ import {findByText, fireEvent} from '@testing-library/dom';
 import React from 'react';
 import {act, RenderResult} from '@testing-library/react';
 import {createBrowserHistory} from 'history';
-import {Router} from 'react-router-dom';
+import {MemoryRouter} from 'react-router-dom';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
 
 describe('Filter products', () => {
     class MockLocalStorage {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         store: any = {};
 
         setItem(key: string, value: string): void {
@@ -54,9 +53,9 @@ describe('Filter products', () => {
         history.push('/uuid');
 
         return renderWithRedux(
-            <Router history={history}>
+            <MemoryRouter initialEntries={['/uuid']}>
                 <PeopleMover/>
-            </Router>,
+            </MemoryRouter>,
         );
     }
 

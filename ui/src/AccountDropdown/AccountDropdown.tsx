@@ -36,14 +36,11 @@ interface Props {
 }
 
 function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentUser, showAllDropDownOptions}: Props): JSX.Element {
-    const [redirect, setRedirect] = useState<JSX.Element>();
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     useEffect(() => {
         setCurrentUser(getUserNameFromAccessToken());
     }, [setCurrentUser]);
-
-    if (redirect) return redirect;
 
     const openDropdown = (event: React.KeyboardEvent): void => {
         if (event.key === 'ArrowDown' && !dropdownToggle) {
@@ -71,10 +68,10 @@ function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentU
                     <>
                         {(showAllDropDownOptions) && <ShareAccessButton focusOnRender={true} />}
                         {(showAllDropDownOptions) && <DownloadReportButton/>}
-                        <SignOutButton setRedirect={setRedirect}/>
+                        <SignOutButton />
                     </>
                 ) : (
-                    <SignOutButton setRedirect={setRedirect} focusOnRender={true}/>
+                    <SignOutButton focusOnRender={true}/>
                 )}
             </AccessibleDropdownContainer>
         );

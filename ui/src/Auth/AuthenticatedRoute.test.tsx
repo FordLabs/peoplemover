@@ -15,67 +15,73 @@
  * limitations under the License.
  */
 
-import {Router} from 'react-router';
 import React from 'react';
-import {render, RenderResult, screen, waitFor} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import {AuthenticatedRoute} from './AuthenticatedRoute';
-import {createMemoryHistory, MemoryHistory} from 'history';
 import Cookies from 'universal-cookie';
-import Axios, {AxiosResponse} from 'axios';
 import {RunConfig} from '../index';
+import { MemoryRouter, Routes } from 'react-router-dom';
+import {Route} from 'react-router';
+import {AccessTokenClient} from '../Login/AccessTokenClient';
 
 const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
+const accessToken = 'TOTALLY_REAL_ACCESS_TOKEN';
 
-describe('AuthenticatedRoute', function() {
+jest.mock('../Login/AccessTokenClient');
+
+describe('AuthenticatedRoute.test.tsx', function() {
     let location: (string | Location) & Location;
+    const childComponentText = 'Hello, Secured World!'
 
     beforeEach(() => {
         location = window.location;
         Reflect.deleteProperty(window, 'location');
 
         new Cookies().remove('accessToken');
+
+        AccessTokenClient.validateAccessToken = jest.fn().mockResolvedValue({})
     });
 
     afterEach(() => {
         window.location = location;
     });
 
-    it('should display content when authenticated', async () => {
-        Axios.post = jest.fn().mockResolvedValue({});
-        const component = renderComponent({authenticated: true, securityEnabled: true}).component;
+    describe('AuthenticatedRoute', () => {
+        it('should display content when authenticated', async () => {
+            renderComponent({authenticated: true, securityEnabled: true});
+            await waitFor(() => expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(accessToken))
 
-        await waitFor(() => {
-            const result = component.queryByText('Hello, Secured World!');
-            expect(result).not.toBeNull();
+            expect(await screen.findByText(childComponentText)).toBeDefined();
         });
-    });
 
-    it('should redirect to Auth provider when not Authenticated', async () => {
-        Axios.post = jest.fn().mockRejectedValue({});
-        window.location = {href: '', origin: 'http://localhost'} as Location;
-        renderComponent({authenticated: false, securityEnabled: true});
-        const route = 'https://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
+        it('should redirect to Auth provider when not Authenticated', async () => {
+            window.location = {href: '', origin: 'http://localhost'} as Location;
+            AccessTokenClient.validateAccessToken = jest.fn().mockRejectedValue({})
 
-        await waitFor(() => {
+            renderComponent({authenticated: false, securityEnabled: true});
+            await waitFor(() => expect(AccessTokenClient.validateAccessToken).toHaveBeenCalledWith(undefined))
+
+            const route = 'https://totallyreal.endpoint/oauth/thing?client_id=urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa&resource=urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb&response_type=token&redirect_uri=http://localhost/adfs/catch';
             expect(window.location.href).toEqual(route);
         });
+
+        it('should display content when security is disabled', async () => {
+            renderComponent({authenticated: false, securityEnabled: false});
+            expect(AccessTokenClient.validateAccessToken).not.toHaveBeenCalled();
+
+            expect(await screen.findByText(childComponentText)).toBeDefined()
+        });
     });
 
-    it('should display content when security is disabled', async () => {
-        renderComponent({authenticated: false, securityEnabled: false});
-
-        expect(await screen.findByText('Hello, Secured World!')).toBeDefined()
-    });
-
-    describe('set redirect pathname variable', () => {
+    describe('set oauth redirect pathname variable', () => {
         beforeEach(() => {
             sessionStorage.clear();
-            Axios.post = jest.fn(() => Promise.reject({} as AxiosResponse));
+            AccessTokenClient.validateAccessToken = jest.fn().mockRejectedValue({})
             setRunConfig(true);
         });
 
         it('should set the appropriate space UUID in the ADFS redirect session storage variable', async () => {
-            let pathname = '/01234567-0123-0123-0123-0123456789ab';
+            const pathname = '/01234567-0123-0123-0123-0123456789ab';
             setWindowHistoryAndRender(pathname);
 
             await waitFor(() => expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toEqual(pathname));
@@ -95,51 +101,47 @@ describe('AuthenticatedRoute', function() {
 
             await waitFor(() => expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toEqual(expectedRedirect));
         });
-
-        function setWindowHistoryAndRender(pathname: string): void {
-            window.location = {href: '', origin: 'http://localhost', pathname: pathname} as Location;
-            renderAuthRoute(createMemoryHistory(), pathname);
-        }
     });
-
-    function setRunConfig(securityEnabled: boolean): void {
-        window.runConfig = {
-            adfs_url_template: 'https://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s',
-            adfs_client_id: 'urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa',
-            adfs_resource: 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb',
-            auth_enabled: securityEnabled,
-        } as RunConfig;
-    }
-
-    function renderAuthRoute(history: MemoryHistory, path: string):  RenderResult {
-        return render(
-            <Router history={history}>
-                <AuthenticatedRoute exact path={path}>
-                    <div>Hello, Secured World!</div>
-                </AuthenticatedRoute>
-            </Router>,
-        );
-    }
-
-    function renderComponent({authenticated, securityEnabled}: ComponentState): RenderedComponent {
-        const history = createMemoryHistory({ initialEntries: ['/secure'] });
-        setRunConfig(securityEnabled);
-        if (authenticated) {
-            new Cookies().set('accessToken', 'TOTALLY_REAL_ACCESS_TOKEN', {path: '/'});
-        }
-
-        const component = renderAuthRoute(history, '/secure');
-
-        return {history, component};
-    }
-
-    interface ComponentState {
-        authenticated: boolean;
-        securityEnabled: boolean;
-    }
-
-    interface RenderedComponent {
-        history: MemoryHistory;
-        component: RenderResult;
-    }
 });
+
+function setWindowHistoryAndRender(pathname: string): void {
+    window.location = {href: '', origin: 'http://localhost', pathname: pathname} as Location;
+    renderAuthRoute(pathname);
+}
+
+function setRunConfig(securityEnabled: boolean): void {
+    window.runConfig = {
+        adfs_url_template: 'https://totallyreal.endpoint/oauth/thing?client_id=%s&resource=%s&response_type=token&redirect_uri=%s',
+        adfs_client_id: 'urn:aaaaa_aaaaaa_aaaaaa:aaa:aaaa',
+        adfs_resource: 'urn:bbbbbb_bbbb_bbbbbb:bbb:bbbb',
+        auth_enabled: securityEnabled,
+    } as RunConfig;
+}
+
+function renderAuthRoute(path: string): void {
+    render(
+        <MemoryRouter initialEntries={[path]}>
+            <Routes>
+                <Route path={path} element={
+                    <AuthenticatedRoute>
+                        <div>Hello, Secured World!</div>
+                    </AuthenticatedRoute>
+                } />
+            </Routes>
+        </MemoryRouter>,
+    );
+}
+
+function renderComponent({authenticated, securityEnabled}: ComponentState): void {
+    setRunConfig(securityEnabled);
+    if (authenticated) {
+        new Cookies().set('accessToken', accessToken, {path: '/'});
+    }
+
+    renderAuthRoute('/secure');
+}
+
+interface ComponentState {
+    authenticated: boolean;
+    securityEnabled: boolean;
+}

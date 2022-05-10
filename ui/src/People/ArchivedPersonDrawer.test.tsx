@@ -21,7 +21,7 @@ import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
 import {createBrowserHistory, History} from 'history';
-import {Router} from 'react-router-dom';
+import {MemoryRouter} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
 
 describe('Archived People', () => {
@@ -115,9 +115,9 @@ describe('Archived People', () => {
 
             await waitFor(() => {
                 app = renderWithRedux(
-                    <Router history={history}>
+                    <MemoryRouter >
                         <PeopleMover/>
-                    </Router>
+                    </MemoryRouter>
                 );
             });
         });

@@ -15,15 +15,19 @@
  * limitations under the License.
  */
 
-import {render} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 import {OAuthRedirect} from './OAuthRedirect';
-import * as React from 'react';
-import {MemoryRouter, Router} from 'react-router';
-import {createMemoryHistory} from 'history';
+import React from 'react';
+import {MemoryRouter} from 'react-router';
 import Cookies from 'universal-cookie';
 
 const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 const OAUTH_REDIRECT_DEFAULT = '/user/dashboard';
+
+jest.mock('react-router-dom', () => ({
+    ...(jest.requireActual('react-router-dom') as any),
+    Navigate: ({to}:{to: string}) => <div>Navigated to: {to}</div>
+}));
 
 describe('OAuthRedirect', function() {
     let location: (string | Location) & Location;
@@ -56,7 +60,7 @@ describe('OAuthRedirect', function() {
         expect(new Cookies().get('accessToken')).toEqual(expectedToken);
     });
 
-    it('should redirect to a default fallback page if no session storage redirect has been set', function() {
+    it('should redirect to a default fallback page if no session storage redirect has been set', async () => {
         sessionStorage.clear();
         const expectedPathname = OAUTH_REDIRECT_DEFAULT;
         const expectedToken = 'EXPECTED_TOKEN';
@@ -65,17 +69,15 @@ describe('OAuthRedirect', function() {
             hash: `#access_token=${expectedToken}`,
         } as Location;
 
-        const history = createMemoryHistory({ initialEntries: ['/login'] });
-
         render(
-            <Router history={history}>
+            <MemoryRouter initialEntries={['/login']}>
                 <OAuthRedirect/>
-            </Router>
+            </MemoryRouter>
         );
-        expect(history.location.pathname).toEqual(expectedPathname);
+        expect(await screen.findByText(`Navigated to: ${expectedPathname}`)).toBeDefined();
     });
 
-    it('should redirect to a provided space when the space is set in session storage', () => {
+    it('should redirect to a provided space when the space is set in session storage', async () => {
         const expectedPathname = '/CAFE8441-CAFE-ADEC-FADE-ABBAEDDABABE';
         const expectedToken = 'EXPECTED_TOKEN';
         window.location = {
@@ -85,14 +87,12 @@ describe('OAuthRedirect', function() {
 
         sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, expectedPathname);
 
-        const history = createMemoryHistory({ initialEntries: ['/login'] });
-
         render(
-            <Router history={history}>
+            <MemoryRouter initialEntries={['/login']}>
                 <OAuthRedirect/>
-            </Router>
+            </MemoryRouter>
         );
-        expect(history.location.pathname).toEqual(expectedPathname);
+        expect(await screen.findByText(`Navigated to: ${expectedPathname}`)).toBeDefined();
         expect(sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY)).toBeFalsy();
     });
 });

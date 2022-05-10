@@ -21,7 +21,7 @@ import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import PeopleMover from './PeopleMover';
 import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import {createBrowserHistory, History} from 'history';
-import {Router} from 'react-router-dom';
+import {MemoryRouter} from 'react-router-dom';
 
 describe('Archive Products', () => {
     describe('integration tests', () => {
@@ -37,9 +37,9 @@ describe('Archive Products', () => {
 
             await waitFor(() => {
                 app = renderWithRedux(
-                    <Router history={history}>
+                    <MemoryRouter >
                         <PeopleMover/>
-                    </Router>
+                    </MemoryRouter>
                 );
             });
         });

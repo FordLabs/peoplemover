@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {Redirect} from 'react-router';
+import { Navigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 
 const OAUTH_REDIRECT_DEFAULT = '/user/dashboard';
@@ -31,7 +31,7 @@ function OAuthRedirect(): JSX.Element {
     const redirectUrl = getOauthRedirect();
     sessionStorage.removeItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
 
-    return (<Redirect to={redirectUrl}/>);
+    return <Navigate to={redirectUrl}/>;
 }
 
 function getOauthRedirect(): string {

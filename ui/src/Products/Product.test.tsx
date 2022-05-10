@@ -30,9 +30,9 @@ import LocationClient from '../Locations/LocationClient';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {createBrowserHistory} from 'history';
-import {Router} from 'react-router-dom';
 import ProductCard from './ProductCard';
 import thunk from 'redux-thunk';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
@@ -43,9 +43,9 @@ describe('Products', () => {
         history.push('/uuid');
 
         renderWithRedux(
-            <Router history={history}>
+            <MemoryRouter>
                 <PeopleMover/>
-            </Router>,
+            </MemoryRouter>,
             store,
             initialState
         );

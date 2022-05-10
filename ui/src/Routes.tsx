@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import {BrowserRouter as Router, Redirect} from 'react-router-dom';
-import {Route, Switch} from 'react-router';
+import {BrowserRouter as Router, Navigate, Routes as ReactRoutes} from 'react-router-dom';
+import {Route} from 'react-router';
 import LandingPage from './LandingPage/LandingPage';
 import {OAuthRedirect} from './ReusableComponents/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
@@ -41,43 +41,49 @@ function Routes(): JSX.Element {
         <Router>
             <AnnouncementBanner/>
             <Header/>
-            <Switch>
-                <Route exact path="/">
-                    <LandingPage/>
-                </Route>
-
-                <Route exact path="/adfs/catch">
-                    <OAuthRedirect/>
-                </Route>
-
-                <AuthenticatedRoute exact path="/user/login">
-                    <RedirectWrapper redirectUrl={dashboardUrl}/>
-                </AuthenticatedRoute>
-
-                <AuthenticatedRoute exact path={dashboardUrl}>
-                    <SpaceDashboard/>
-                </AuthenticatedRoute>
-
-                <AuthorizedRoute exact path="/:teamName">
-                    <PeopleMover/>
-                </AuthorizedRoute>
-
-                <AuthorizedRoute exact path="/:teamName/timeonproduct">
-                    <TimeOnProduct/>
-                </AuthorizedRoute>
-
-                <Route path={notFoundUrl}>
-                    <ErrorPageTemplate errorGraphic={AnimatedImageSrc} errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."/>
-                </Route>
-
-                <Route path={forbiddenUrl}>
-                    <ErrorPageTemplate errorGraphic={errorImageSrc} errorText="You don&apos;t have access to this page. Please request access."/>
-                </Route>
-
-                <Route>
-                    <Redirect to={notFoundUrl}/>
-                </Route>
-            </Switch>
+            <ReactRoutes>
+                <Route path="/" element={<LandingPage/>} />
+                <Route path="/adfs/catch" element={<OAuthRedirect/>} />
+                <Route path="/user/login" element={
+                    <AuthenticatedRoute>
+                        <RedirectWrapper redirectUrl={dashboardUrl}/>
+                    </AuthenticatedRoute>
+                } />
+                <Route path={dashboardUrl} element={
+                    <AuthenticatedRoute>
+                        <SpaceDashboard/>
+                    </AuthenticatedRoute>
+                } />
+                <Route path="/:teamUUID" element={
+                    <AuthorizedRoute>
+                        <PeopleMover/>
+                    </AuthorizedRoute>
+                } />
+                <Route path="/:teamUUID/timeonproduct" element={
+                    <AuthorizedRoute>
+                        <TimeOnProduct/>
+                    </AuthorizedRoute>
+                } />
+                <Route
+                    path={notFoundUrl}
+                    element={
+                        <ErrorPageTemplate
+                            errorGraphic={AnimatedImageSrc}
+                            errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."
+                        />
+                    }
+                />
+                <Route
+                    path={forbiddenUrl}
+                    element={
+                        <ErrorPageTemplate
+                            errorGraphic={errorImageSrc}
+                            errorText="You don&apos;t have access to this page. Please request access."
+                        />
+                    }
+                />
+                <Route element={<Navigate replace to={notFoundUrl} />} />
+            </ReactRoutes>
         </Router>
     );
 }
