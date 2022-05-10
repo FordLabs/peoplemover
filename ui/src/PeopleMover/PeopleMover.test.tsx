@@ -15,12 +15,8 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
-import PeopleMover from '../PeopleMover/PeopleMover';
+import TestUtils from '../Utils/TestUtils';
 import {screen, waitFor} from '@testing-library/react';
-import {MemoryRouter} from 'react-router-dom';
-import {History} from 'history';
 import SpaceClient from '../Space/SpaceClient';
 import rootReducer from '../Redux/Reducers';
 import {applyMiddleware, createStore, Store} from 'redux';
@@ -31,8 +27,16 @@ import thunk from 'redux-thunk';
 
 declare let window: MatomoWindow;
 
-xdescribe('PeopleMover', () => {
-    let history: History;
+jest.mock('../Space/SpaceClient');
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+    ...(jest.requireActual('react-router-dom') as any),
+    useNavigate: () => mockedUsedNavigate,
+}));
+
+describe('PeopleMover', () => {
     const addProductButtonText = 'Add Product';
     let store: Store;
 
@@ -44,23 +48,15 @@ xdescribe('PeopleMover', () => {
 
     describe('Read Only Mode', function() {
         beforeEach(async () => {
-            await waitFor(() => {
-                const initialState = {
-                    isReadOnly: true,
-                    products: TestUtils.products,
-                    currentSpace: TestUtils.space,
-                    allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                };
-                store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const initialState = {
+                isReadOnly: true,
+                products: TestUtils.products,
+                currentSpace: TestUtils.space,
+                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            };
+            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
-                renderWithRedux(
-                    <MemoryRouter>
-                        <PeopleMover/>
-                    </MemoryRouter>,
-                    store,
-                    initialState
-                );
-            });
+            await TestUtils.renderPeopleMoverComponent(store, initialState);
         });
 
         it('should not show unassigned drawer', function() {
@@ -99,15 +95,10 @@ xdescribe('PeopleMover', () => {
 
     describe('Header and Footer Content', () => {
         beforeEach(async () => {
-            await waitFor(() => {
-                renderWithRedux(
-                    <MemoryRouter initialEntries={['/uuid']}>
-                        <PeopleMover/>
-                    </MemoryRouter>,
-                    undefined,
-                    {viewingDate: new Date(2020, 10, 14)}
-                );
-            });
+            await TestUtils.renderPeopleMoverComponent(
+                undefined,
+                {viewingDate: new Date(2020, 10, 14)}
+            );
         });
 
         it('Should contain calendar button', async () => {
@@ -133,15 +124,10 @@ xdescribe('PeopleMover', () => {
 
     describe('Read only view Header and Footer Content', () => {
         beforeEach(async () => {
-            await waitFor(() => {
-                renderWithRedux(
-                    <MemoryRouter>
-                        <PeopleMover/>
-                    </MemoryRouter>,
-                    undefined,
-                    {isReadOnly: true}
-                );
-            });
+            await TestUtils.renderPeopleMoverComponent(
+                undefined,
+                {isReadOnly: true}
+            );
         });
 
         it('Should contains My Tags on initial load of People Mover', async () => {
@@ -173,13 +159,7 @@ xdescribe('PeopleMover', () => {
         let unmount: () => void;
 
         beforeEach(async () => {
-            await waitFor(() => {
-                ({unmount} = renderWithRedux(
-                    <MemoryRouter>
-                        <PeopleMover/>
-                    </MemoryRouter>
-                ));
-            });
+            ({unmount} = await TestUtils.renderPeopleMoverComponent());
         });
 
         it('should update the page title with the space name', () => {
@@ -194,13 +174,7 @@ xdescribe('PeopleMover', () => {
 
     describe('Products', () => {
         beforeEach(async () => {
-            await waitFor(() => {
-                renderWithRedux(
-                    <MemoryRouter>
-                        <PeopleMover/>
-                    </MemoryRouter>
-                )
-            });
+            await TestUtils.renderPeopleMoverComponent();
         });
 
         it('should display products', async () => {
@@ -300,15 +274,7 @@ xdescribe('PeopleMover', () => {
 
     describe('Products in read only view', () => {
         beforeEach(async () => {
-            await waitFor(() => {
-                renderWithRedux(
-                    <MemoryRouter>
-                        <PeopleMover/>
-                    </MemoryRouter>,
-                    undefined,
-                    {isReadOnly: true}
-                )
-            });
+            await TestUtils.renderPeopleMoverComponent(undefined, {isReadOnly: true});
         });
 
         it('should group products by location without add product buttons',  async () => {
@@ -381,32 +347,14 @@ xdescribe('PeopleMover', () => {
 
         it('should route to 404 page when bad space name is provided',  async () => {
             SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: BAD_REQUEST}});
-
-            renderWithRedux(
-                <MemoryRouter initialEntries={[spaceUuidPath]}>
-                    <PeopleMover/>
-                </MemoryRouter>
-            )
-
-            expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(expectedSpaceUuid);
-            await waitFor(() => {
-                expect(window.location.pathname).toEqual('/error/404');
-            });
+            await TestUtils.renderPeopleMoverComponent(undefined, undefined, spaceUuidPath);
+            await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/404'));
         });
 
         it('should route to 403 page when user does not have access to a space', async () => {
             SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: FORBIDDEN}});
-
-            renderWithRedux(
-                <MemoryRouter initialEntries={[spaceUuidPath]}>
-                    <PeopleMover/>
-                </MemoryRouter>
-            )
-
-            expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(expectedSpaceUuid);
-            await waitFor(() => {
-                expect(history.location.pathname).toEqual('/error/403');
-            });
+            await TestUtils.renderPeopleMoverComponent(undefined, undefined, spaceUuidPath);
+            await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/403'));
         });
     });
 });
@@ -414,9 +362,7 @@ xdescribe('PeopleMover', () => {
 function getEventCount(eventString: string): number {
     let returnValue = 0;
     window._paq.forEach((event) => {
-        if (event.includes(eventString)) {
-            returnValue++;
-        }
+        if (event.includes(eventString)) returnValue++;
     });
     return returnValue;
 }

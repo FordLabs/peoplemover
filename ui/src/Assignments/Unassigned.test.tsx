@@ -17,16 +17,12 @@
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
-import PeopleMover from '../PeopleMover/PeopleMover';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {Product} from '../Products/Product';
-import {MemoryRouter} from 'react-router-dom';
 import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 
-xdescribe('Unassigned Products', () => {
+describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
 
     describe('Showing the unassigned product', () => {
@@ -34,13 +30,7 @@ xdescribe('Unassigned Products', () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            renderWithRedux(
-                <MemoryRouter initialEntries={['/uuid']}>
-                    <PeopleMover/>
-                </MemoryRouter>
-            );
-
-            await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
+            await TestUtils.renderPeopleMoverComponent();
         });
         it('has the unassigned product drawer closed by default', async () => {
             expect(screen.queryByText(/unassigned/)).toBeNull();
@@ -113,13 +103,7 @@ xdescribe('Unassigned Products', () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            renderWithRedux(
-                <MemoryRouter initialEntries={['/uuid']}>
-                    <PeopleMover/>
-                </MemoryRouter>
-            );
-
-            await waitFor(() => expect(AssignmentClient.getReassignments).toHaveBeenCalled())
+            await TestUtils.renderPeopleMoverComponent();
         });
 
         it('opens the unassigned drawer when an unassigned person is created', async () => {
@@ -144,15 +128,7 @@ xdescribe('Unassigned Products', () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            await waitFor( () => {
-                renderWithRedux(
-                    <MemoryRouter initialEntries={['/uuid']}>
-                        <PeopleMover/>
-                    </MemoryRouter>,
-                    undefined,
-                    initialState
-                );
-            });
+            await TestUtils.renderPeopleMoverComponent(undefined, initialState);
         });
 
         it('should open edit person dialog when clicking on ellipsis', async () => {

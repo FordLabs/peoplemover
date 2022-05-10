@@ -20,7 +20,7 @@ import LocationClient from '../Locations/LocationClient';
 import PeopleClient from '../People/PeopleClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from '../Products/ProductClient';
-import {render, RenderResult} from '@testing-library/react';
+import {render, RenderResult, waitFor} from '@testing-library/react';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {Provider} from 'react-redux';
@@ -40,6 +40,8 @@ import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
+import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import PeopleMover from '../PeopleMover/PeopleMover';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
@@ -213,6 +215,25 @@ class TestUtils {
         } as AxiosResponse));
         PersonTagClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
     }
+
+    static async renderPeopleMoverComponent(
+        store?: Store,
+        initialState?: PreloadedState<Partial<GlobalStateProps>>,
+        initialPath: string = '/uuid'
+    ): Promise<RenderResult> {
+        const result = renderWithRedux(
+            <MemoryRouter initialEntries={[initialPath]}>
+                <Routes>
+                    <Route path="/:teamUUID" element={<PeopleMover/>} />
+                </Routes>
+            </MemoryRouter>,
+            store,
+            initialState
+        );
+        await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(initialPath.replace('/', '')))
+        return result;
+    }
+
 
     static async waitForHomePageToLoad(app: RenderResult): Promise<void> {
         await app.findByText(/PeopleMover/i);

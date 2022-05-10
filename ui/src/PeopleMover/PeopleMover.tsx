@@ -40,7 +40,7 @@ import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Person} from '../People/Person';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
 import {Product} from '../Products/Product';
@@ -68,25 +68,15 @@ export interface PeopleMoverProps {
     products: Array<Product>;
     isReadOnly: boolean;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-
     fetchProducts(): Array<Product>;
-
     fetchPeople(): Array<Person>;
-
     fetchProductTags(): Array<Tag>;
-
     fetchPersonTags(): Array<Tag>;
-
     fetchLocations(): Array<LocationTag>;
-
     fetchRoles(): Array<RoleTag>;
-
     setPeople(people: Array<Person>): Array<Person>;
-
     setCurrentModal(modalState: CurrentModalState): void;
-
     setSpace(space: Space): void;
-
 }
 
 function PeopleMover({
@@ -107,6 +97,7 @@ function PeopleMover({
     setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
     const navigate = useNavigate();
+    const { teamUUID = '' } = useParams<{ teamUUID: string }>()
 
     function hasProductsAndFilters(): boolean {
         return Boolean(products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0);
@@ -137,16 +128,15 @@ function PeopleMover({
     }, [currentSpace, isReadOnly]);
 
     useEffect(() => {
-        const uuid = window.location.pathname.replace('/', '');
-        if (currentModal.modal === null && uuid) {
-            SpaceClient.getSpaceFromUuid(uuid)
+        if (currentModal.modal === null && teamUUID) {
+            SpaceClient.getSpaceFromUuid(teamUUID)
                 .then((response) => {
                     const space = response.data;
                     setSpace(space);
                 })
                 .catch(handleErrors);
         }
-    }, [currentModal, setSpace, handleErrors]);
+    }, [currentModal, setSpace, handleErrors, teamUUID]);
 
     useEffect(() => {
         if (currentSpace && currentSpace.uuid) {

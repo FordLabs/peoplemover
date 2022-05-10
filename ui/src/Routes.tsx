@@ -16,8 +16,7 @@
  */
 
 import React from 'react';
-import {BrowserRouter as Router, Navigate, Routes as ReactRoutes} from 'react-router-dom';
-import {Route} from 'react-router';
+import {BrowserRouter as Router, Navigate, Routes as ReactRoutes, Route} from 'react-router-dom';
 import LandingPage from './LandingPage/LandingPage';
 import {OAuthRedirect} from './ReusableComponents/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
