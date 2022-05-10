@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - stage
+      - main
   pull_request:
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
       - name: Build
         run: ./gradlew assemble
         env:
-          HEAD_BRANCH: stage
+          HEAD_BRANCH: main
         working-directory: ./api
         if: github.event_name == 'push'
       - name: Release artifact
