@@ -70,13 +70,12 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, fetchUser
 
     const renderOption = (person: UserSpaceMapping): JSX.Element => {
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-        return <div key={person.id} className={'transferOwnershipFormRadioControl'}
-            data-testid={'transferOwnershipFormRadioControl-' + person.userId}
-            onClick={(): void => setSelectedUser(person)}>
+        return <label key={person.id} className={'transferOwnershipFormRadioControl'}
+            data-testid={'transferOwnershipFormRadioControl-' + person.userId}>
             <i className={'material-icons'} aria-hidden>account_circle</i>
             <span className={'personRadioUserId'}>{person.userId.toLowerCase()}</span>
             <input type={'radio'} name={'newOwner'} value={person.userId} checked={selectedUser ? selectedUser.id === person.id : false} onChange={() => {setSelectedUser(person)}}/>
-        </div>;
+        </label>;
     };
 
     const notificationModalProps = {content:<span>{'Ownership has been transferred to ' + selectedUser?.userId +
