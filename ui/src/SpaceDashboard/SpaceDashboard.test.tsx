@@ -18,9 +18,7 @@
 import Cookies from 'universal-cookie';
 import SpaceDashboard from './SpaceDashboard';
 import React from 'react';
-import {renderWithRedux} from '../tests/TestUtils';
-import {Router} from 'react-router';
-import {createMemoryHistory, MemoryHistory} from 'history';
+import {renderWithRedux} from '../Utils/TestUtils';
 import {fireEvent, waitFor, screen, act} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import moment from 'moment';
@@ -29,12 +27,20 @@ import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setCurrentSpaceAction, setViewingDateAction} from '../Redux/Actions';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
+import { MemoryRouter } from 'react-router-dom';
 
 class MockDate extends Date {
     constructor() {
         super('2020-05-14T11:01:58.135Z');
     }
 }
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+    ...(jest.requireActual('react-router-dom') as any),
+    useNavigate: () => mockedUsedNavigate,
+}));
 
 describe('SpaceDashboard', () => {
     describe('Resetting Space Date', () => {
@@ -52,7 +58,12 @@ describe('SpaceDashboard', () => {
             let store = createStore(rootReducer, {});
             store.dispatch = jest.fn();
 
-            renderWithRedux(<SpaceDashboard/>, store);
+            renderWithRedux(
+                <MemoryRouter>
+                    <SpaceDashboard/>
+                </MemoryRouter>,
+                store
+            );
 
             await waitFor(() =>
                 expect(store.dispatch).toHaveBeenCalledWith(
@@ -65,16 +76,19 @@ describe('SpaceDashboard', () => {
     it('should reset currentSpace on load', async () => {
         let store = createStore(rootReducer, {});
         store.dispatch = jest.fn();
-        renderWithRedux(<SpaceDashboard/>, store);
+        renderWithRedux(
+            <MemoryRouter>
+                <SpaceDashboard/>
+            </MemoryRouter>,
+            store
+        );
 
         await waitFor(() => expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(createEmptySpace())));
     });
 
     describe('if spaces are present', () => {
-        let history: MemoryHistory;
-
         beforeEach(async () => {
-            ({history} = await createTestComponent());
+            await createTestComponent();
         });
 
         afterEach(() => {
@@ -85,7 +99,7 @@ describe('SpaceDashboard', () => {
             const space1 = await screen.findByText('Space1');
             fireEvent.click(space1);
             expect(SpaceClient.getSpacesForUser).toHaveBeenCalled();
-            expect(history.location.pathname).toBe('/SpaceUUID');
+            expect(mockedUsedNavigate).toHaveBeenCalledWith('/SpaceUUID');
         });
 
         it('should display space name on a space', async () => {
@@ -131,14 +145,10 @@ describe('SpaceDashboard', () => {
         });
     });
 
-    const createTestComponent = async (hasSpaces = true): Promise<{
-        cookies: Cookies;
-        history: MemoryHistory;
-    }> => {
+    const createTestComponent = async (hasSpaces = true): Promise<{ cookies: Cookies; }> => {
         const fakeAccessToken = 'FAKE_TOKEN123';
         const cookies = new Cookies();
         cookies.set('accessToken', fakeAccessToken);
-        const history = createMemoryHistory({initialEntries: ['/user/dashboard']});
         const responseData = hasSpaces ? [{
             name: 'Space1',
             uuid: 'SpaceUUID',
@@ -149,12 +159,12 @@ describe('SpaceDashboard', () => {
 
         await act(async () => {
             renderWithRedux(
-                <Router history={history}>
+                <MemoryRouter initialEntries={['/user/dashboard']}>
                     <SpaceDashboard/>
-                </Router>
+                </MemoryRouter>
             );
         })
 
-        return {cookies, history};
+        return {cookies};
     };
 });

@@ -19,7 +19,7 @@ import {render, screen} from '@testing-library/react';
 import SelectWithNoCreateOption from './SelectWithNoCreateOption';
 import React from 'react';
 import {Product} from '../Products/Product';
-import TestUtils from '../tests/TestUtils';
+import TestUtils from '../Utils/TestUtils';
 import {noop} from '@babel/types';
 import selectEvent from 'react-select-event';
 

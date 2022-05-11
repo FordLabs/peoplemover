@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import moment from 'moment';
+import * as moment from 'moment';
+import {Moment} from 'moment';
 
 export interface Product {
     name: string;
     location: string;
     archived: boolean;
     tags: Array<string>;
-    startDate: unknown;
-    nextPhaseDate: unknown;
+    startDate: Moment;
+    nextPhaseDate: Moment;
     notes: string;
 }
 

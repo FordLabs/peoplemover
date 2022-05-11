@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {AxiosResponse} from 'axios';
 import ProductClient from './ProductClient';
 import ProductList from './ProductList';

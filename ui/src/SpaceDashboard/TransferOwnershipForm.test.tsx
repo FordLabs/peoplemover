@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import SpaceClient from '../Space/SpaceClient';
 

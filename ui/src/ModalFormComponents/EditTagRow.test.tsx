@@ -17,7 +17,7 @@
 
 import React from 'react';
 import EditTagRow from './EditTagRow';
-import {renderWithRedux} from '../tests/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import {act, fireEvent} from '@testing-library/react';
 
 describe('EditTagRow', () => {

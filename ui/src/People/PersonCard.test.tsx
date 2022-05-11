@@ -17,7 +17,7 @@
 
 import {fireEvent} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import rootReducer from '../Redux/Reducers';
 import {createStore, Store} from 'redux';
 import PersonCard from './PersonCard';

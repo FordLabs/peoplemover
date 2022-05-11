@@ -20,7 +20,7 @@ import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {createEmptySpace} from './Space';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-import TestUtils from '../tests/TestUtils';
+import TestUtils from '../Utils/TestUtils';
 import {UserSpaceMapping} from './UserSpaceMapping';
 
 declare let window: MatomoWindow;

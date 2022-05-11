@@ -17,7 +17,7 @@
 
 import React from 'react';
 import './Branding.scss';
-import FordLabsLogo from '../Application/Assets/fordlabs_logo.svg';
+import FordLabsLogo from '../Assets/fordlabs_logo.svg';
 
 function Branding(): JSX.Element {
     const fordLabsUrl = window?.runConfig?.ford_labs_url || '';

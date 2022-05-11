@@ -17,20 +17,17 @@
 
 import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
-import PeopleMover from '../Application/PeopleMover';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from './ProductClient';
-import TestUtils, {createDataTestId, renderWithRedux} from '../tests/TestUtils';
-import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
-import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
+import TestUtils, {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
+import {applyMiddleware, createStore} from 'redux';
+import rootReducer from '../Redux/Reducers';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import {Product} from './Product';
 import {Person} from '../People/Person';
 import LocationClient from '../Locations/LocationClient';
 import selectEvent from 'react-select-event';
-import moment from 'moment';
-import {createBrowserHistory} from 'history';
-import {Router} from 'react-router-dom';
+import moment from 'moment'
 import ProductCard from './ProductCard';
 import thunk from 'redux-thunk';
 
@@ -38,26 +35,12 @@ describe('Products', () => {
     const addProductButtonText = 'Add Product';
     const addProductModalTitle = 'Add New Product';
 
-    function applicationSetup(store?: Store, initialState?: PreloadedState<GlobalStateProps>): void {
-        let history = createBrowserHistory();
-        history.push('/uuid');
-
-        renderWithRedux(
-            <Router history={history}>
-                <PeopleMover/>
-            </Router>,
-            store,
-            initialState
-        );
-    }
-
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
     describe('Home page', () => {
-
         it('displays the product names', async () => {
             const initialState = {
                 currentSpace: TestUtils.space,
@@ -374,7 +357,7 @@ describe('Products', () => {
 
         // @todo should be a cypress test or more granular unit test
         xit('opens AssignmentForm component when button clicked with product populated', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
 
             const addPersonButton = await screen.findByTestId('addPersonToProductIcon__product_1');
             fireEvent.click(addPersonButton);
@@ -387,7 +370,7 @@ describe('Products', () => {
         });
 
         it('ProductForm allows choices of locations provided by the API', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
 
             const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
@@ -400,7 +383,7 @@ describe('Products', () => {
         });
 
         it('should allow to create new location', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -421,7 +404,7 @@ describe('Products', () => {
         });
 
         it('ProductForm allows choices of product tags provided by the API', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -432,7 +415,7 @@ describe('Products', () => {
         });
 
         it('ProductForm allows to create product tag provided by user', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -467,7 +450,7 @@ describe('Products', () => {
         });
 
         it('opens ProductForm with correct placeholder text in input fields', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -479,7 +462,7 @@ describe('Products', () => {
         });
 
         it('opens ProductForm component when button clicked', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -487,7 +470,7 @@ describe('Products', () => {
         });
 
         it('opens ProductForm with product tag field', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
 
@@ -501,7 +484,7 @@ describe('Products', () => {
                     status: 409,
                 },
             }));
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
 
             const newProductButton = await screen.findByText(addProductButtonText);
             fireEvent.click(newProductButton);
@@ -515,7 +498,7 @@ describe('Products', () => {
 
         it('should show duplicate product name warning when user tries to edit product with same name', async () => {
             ProductClient.editProduct = jest.fn().mockRejectedValue({ response: { status: 409 } });
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
 
             const editProductMenuButton = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
@@ -533,7 +516,7 @@ describe('Products', () => {
         });
 
         it('should show length of notes on initial render', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const editProductMenuButton = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(editProductMenuButton);
 
@@ -546,12 +529,12 @@ describe('Products', () => {
         });
 
         it('displays people on each product', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             await screen.findByText('Person 1');
         });
 
         it('displays persons role on each assignment', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             await screen.findByText('Person 1');
             await screen.findByText('Software Engineer');
             expect(screen.queryByText('Product Designer')).not.toBeInTheDocument();
@@ -560,7 +543,7 @@ describe('Products', () => {
 
     describe('Deleting a product', () => {
         it('should show a delete button in the product modal', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
             const editProductMenuOption = await screen.findByText('Edit Product');
@@ -570,7 +553,7 @@ describe('Products', () => {
         });
 
         it('should show the confirmation modal when a deletion is requested', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
             fireEvent.click(editProduct3Button);
             const editProductMenuOption = await screen.findByText('Edit Product');
@@ -582,7 +565,7 @@ describe('Products', () => {
 
         it('should call the product client with the product when a deletion is requested', async () => {
             await act(async () => {
-                applicationSetup();
+                await TestUtils.renderPeopleMoverComponent();
                 const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
                 fireEvent.click(editProduct3Button);
                 const editProductMenuOption = await screen.findByText('Edit Product');
@@ -597,7 +580,7 @@ describe('Products', () => {
         });
 
         it('should not show archive button option in delete modal if product is already archived', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const drawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
             fireEvent.click(drawerCaret);
 
@@ -617,7 +600,7 @@ describe('Products', () => {
                 const initialState = {viewingDate: viewingDate};
                 await act(async () => {
                     const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-                    applicationSetup(store);
+                    await TestUtils.renderPeopleMoverComponent(store);
 
                     const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
                     fireEvent.click(editProduct3Button);
@@ -638,7 +621,7 @@ describe('Products', () => {
 
     describe('Edit Menu for Product', () => {
         it('should pop the edit menu options', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const myProductElipsis = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
@@ -647,7 +630,7 @@ describe('Products', () => {
         });
 
         it('should open edit modal when click on edit product', async () => {
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
             const myProductElipsis = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);
 
@@ -670,7 +653,7 @@ describe('Products', () => {
                 ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: updatedProducts });
             }
 
-            applicationSetup();
+            await TestUtils.renderPeopleMoverComponent();
 
             const myProductElipsis = await screen.findByTestId('editProductIcon__product_1');
             fireEvent.click(myProductElipsis);

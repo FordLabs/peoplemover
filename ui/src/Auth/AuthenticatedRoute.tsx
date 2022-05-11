@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,31 +15,27 @@
  * limitations under the License.
  */
 
-import {Route, RouteProps} from 'react-router';
-import React, {useState} from 'react';
+import React, {ReactNode, useState} from 'react';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {getToken} from './TokenProvider';
 import {setOauthRedirect} from '../ReusableComponents/OAuthRedirect';
 
-export function AuthenticatedRoute(props: RouteProps): JSX.Element {
-    const {children, ...rest} = props;
+export function AuthenticatedRoute({ children }: { children: ReactNode }): JSX.Element {
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     useOnLoad(() => {
-        const authenticatedRoute = <Route {...rest}>{children}</Route>;
         if (!window.runConfig.auth_enabled) {
-            setRenderedElement(authenticatedRoute);
+            setRenderedElement(<>{children}</>);
         } else {
             const accessToken = getToken();
-
             AccessTokenClient.validateAccessToken(accessToken)
-                .then(() => setRenderedElement(authenticatedRoute))
+                .then(() => setRenderedElement(<>{children}</>))
                 .catch(() => setRenderedElement(<RedirectToADFS/>));
         }
     });
 
-    return <>{renderedElement}</>;
+    return renderedElement;
 }
 
 export function RedirectToADFS(): null {

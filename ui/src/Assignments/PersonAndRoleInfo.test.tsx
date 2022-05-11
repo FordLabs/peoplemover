@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {fireEvent, RenderResult} from '@testing-library/react';
 import {createStore} from 'redux';

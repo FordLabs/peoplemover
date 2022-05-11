@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {
@@ -26,13 +26,13 @@ import {
 } from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
-import {Redirect} from 'react-router';
 import SpaceDashboardTile from './SpaceDashboardTile';
 import {GlobalStateProps} from '../Redux/Reducers';
 
 import './SpaceDashboard.scss';
 import Branding from '../ReusableComponents/Branding';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {useNavigate} from 'react-router-dom';
 
 interface SpaceDashboardProps {
     currentSpace: Space;
@@ -52,16 +52,16 @@ function SpaceDashboard({
     setCurrentDateOnState,
 }: SpaceDashboardProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [redirectPage, setRedirectPage] = useState<JSX.Element | null>(null);
+    const navigate = useNavigate();
     setCurrentDateOnState();
 
     function onCreateNewSpaceButtonClicked(): void {
         setCurrentModal({modal: AvailableModals.CREATE_SPACE});
     }
 
-    function onSpaceClicked(space: Space): void {
-        setRedirectPage(<Redirect to={`/${space.uuid}`}/>);
-    }
+    const onSpaceClicked = useCallback((space: Space): void => {
+        navigate(`/${space.uuid}`)
+    }, [navigate])
 
     useEffect(() => {
         async function populateUserSpaces(): Promise<void> {
@@ -77,10 +77,8 @@ function SpaceDashboard({
     }, [fetchUserSpaces, setCurrentSpace]);
 
     useEffect(() => {
-        if (currentSpace?.uuid) {
-            onSpaceClicked(currentSpace);
-        }
-    }, [currentSpace]);
+        if (currentSpace?.uuid) onSpaceClicked(currentSpace);
+    }, [currentSpace, onSpaceClicked]);
 
     function WelcomeMessage(): JSX.Element {
         return (
@@ -99,13 +97,12 @@ function SpaceDashboard({
     function SpaceTileGrid(): JSX.Element {
         return (
             <div className="userSpaceItemContainer">
-                {
-                    userSpaces.map((space, index) => {
-                        return <SpaceDashboardTile
-                            key={index} space={space}
-                            onClick={onSpaceClicked}/>;
-                    })
-                }
+                {userSpaces.map((space, index) => (
+                    <SpaceDashboardTile
+                        key={index} space={space}
+                        onClick={onSpaceClicked}
+                    />
+                ))}
                 <NewSpaceButton/>
             </div>
         );
@@ -123,8 +120,6 @@ function SpaceDashboard({
             </div>
         );
     }
-
-    if (redirectPage) return redirectPage;
 
     return (
         <div className="spaceDashboard">

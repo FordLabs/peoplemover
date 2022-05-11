@@ -16,18 +16,19 @@
  */
 
 import {removeToken} from '../Auth/TokenProvider';
-import {Redirect} from 'react-router-dom';
 import React from 'react';
+import {useNavigate} from 'react-router-dom';
 
 interface Props {
-    setRedirect: (redirectElement: JSX.Element) => void;
     focusOnRender?: boolean;
 }
 
-function SignOutButton({ setRedirect, focusOnRender = false }: Props): JSX.Element {
+function SignOutButton({ focusOnRender = false }: Props): JSX.Element {
+    const navigate = useNavigate();
+
     const clearAccessTokenCookie = (): void => {
         removeToken();
-        setRedirect(<Redirect to="/"/>);
+        navigate('/', {replace: true})
     };
 
     return (

@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {renderWithRedux} from '../tests/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import {AvailableActions} from '../Redux/Actions';
 import Filter from './Filter';
 import {FilterTypeListings} from './FilterLibraries';
