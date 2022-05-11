@@ -20,7 +20,7 @@ import LocationClient from '../Locations/LocationClient';
 import PeopleClient from '../People/PeopleClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from '../Products/ProductClient';
-import {render, RenderResult} from '@testing-library/react';
+import {render, RenderResult, waitFor} from '@testing-library/react';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {Provider} from 'react-redux';
@@ -40,8 +40,7 @@ import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
-import {createBrowserHistory, Location} from 'history';
-import {Router} from 'react-router-dom';
+import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
 
 export function createDataTestId(prefix: string, name: string): string {
@@ -55,23 +54,6 @@ export function renderWithRedux(
 ): RenderResult {
     const testingStore: Store = store ? store : createStore(rootReducer, initialState, applyMiddleware(thunk));
     return render(<Provider store={testingStore}>{component}</Provider>);
-}
-
-export function getApplicationSetup(store?: Store, initialState?: PreloadedState<Partial<GlobalStateProps>>, location?: Location): RenderResult {
-    let history = createBrowserHistory();
-    if (location) {
-        history.push(location);
-    } else {
-        history.push('/uuid');
-    }
-
-    return renderWithRedux(
-        <Router history={history}>
-            <PeopleMover/>
-        </Router>,
-        store,
-        initialState
-    );
 }
 
 export const mockDate = (expected: Date): () => void => {
@@ -233,6 +215,25 @@ class TestUtils {
         } as AxiosResponse));
         PersonTagClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
     }
+
+    static async renderPeopleMoverComponent(
+        store?: Store,
+        initialState?: PreloadedState<Partial<GlobalStateProps>>,
+        initialPath: string = '/uuid'
+    ): Promise<RenderResult> {
+        const result = renderWithRedux(
+            <MemoryRouter initialEntries={[initialPath]}>
+                <Routes>
+                    <Route path="/:teamUUID" element={<PeopleMover/>} />
+                </Routes>
+            </MemoryRouter>,
+            store,
+            initialState
+        );
+        await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(initialPath.replace('/', '')))
+        return result;
+    }
+
 
     static async waitForHomePageToLoad(app: RenderResult): Promise<void> {
         await app.findByText(/PeopleMover/i);

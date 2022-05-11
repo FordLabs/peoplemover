@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 
-import {act, fireEvent, RenderResult, waitFor} from '@testing-library/react';
+import {act, fireEvent, waitFor, screen} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import React from 'react';
-import {Router} from 'react-router-dom';
-import {createMemoryHistory} from 'history';
-import {MemoryHistory} from 'history/createMemoryHistory';
+import {MemoryRouter} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
 import AccountDropdown from './AccountDropdown';
@@ -30,20 +28,14 @@ import ReportClient from '../Reports/ReportClient';
 import {AvailableModals} from '../Modal/AvailableModals';
 
 describe('Account Dropdown', () => {
-    let app: RenderResult;
-    let history: MemoryHistory;
-
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
-
-        history = createMemoryHistory({initialEntries: ['/teamName']});
     });
 
     describe('Dropdown Options', () => {
-        let app: RenderResult;
         const mockStore = configureStore([]);
         const expectedCurrentSpace = TestUtils.space;
         const expectedViewingDate = new Date(2020, 4, 14);
@@ -56,20 +48,20 @@ describe('Account Dropdown', () => {
             ReportClient.getReportsWithNames = jest.fn().mockResolvedValue({});
 
             store.dispatch = jest.fn();
-            app = renderWithRedux(
-                <Router history={history}>
+            renderWithRedux(
+                <MemoryRouter initialEntries={['/teamName']}>
                     <AccountDropdown showAllDropDownOptions={true}/>
-                </Router>,
+                </MemoryRouter>,
                 store,
             );
-            const userIconButton = await app.findByTestId('userIcon');
+            const userIconButton = await screen.findByTestId('userIcon');
             fireEvent.click(userIconButton);
         });
 
         describe('Share Access', () => {
             it('should trigger edit contributors modal on "Share Access" click', async () => {
                 await act(async () => {
-                    fireEvent.click(await app.findByText('Share Access'));
+                    fireEvent.click(await screen.findByText('Share Access'));
                 });
                 expect(store.dispatch).toHaveBeenCalledWith({
                     type: AvailableActions.SET_CURRENT_MODAL,
@@ -82,7 +74,7 @@ describe('Account Dropdown', () => {
         describe('Download Report', () => {
             it('should trigger a report download on "Download Report" click', async () => {
                 await act(async () => {
-                    fireEvent.click(await app.findByText('Download Report'));
+                    fireEvent.click(await screen.findByText('Download Report'));
                 });
                 expect(ReportClient.getReportsWithNames).toHaveBeenCalledWith(
                     expectedCurrentSpace.name,
@@ -100,25 +92,25 @@ describe('Account Dropdown', () => {
 
                     expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
 
-                    fireEvent.click(await app.findByText('Sign Out'));
+                    fireEvent.click(await screen.findByText('Sign Out'));
                 });
                 expect(cookies.get('accessToken')).toBeUndefined();
-                expect(history.location.pathname).toEqual('/');
+                expect(window.location.pathname).toEqual('/');
             });
         });
 
         it('should focus the first dropdown option when opened', async () => {
-            await waitFor(() => expect(app.getByTestId('shareAccess')).toHaveFocus());
+            await waitFor(() => expect(screen.getByTestId('shareAccess')).toHaveFocus());
         });
     });
 
     describe('Read Only', function() {
         beforeEach(async () => {
             await waitFor(async () => {
-                app = renderWithRedux(
-                    <Router history={history}>
+                renderWithRedux(
+                    <MemoryRouter initialEntries={['/teamName']}>
                         <AccountDropdown showAllDropDownOptions={true}/>
-                    </Router>,
+                    </MemoryRouter>,
                     undefined,
                     {currentSpace: TestUtils.space, isReadOnly: true}
                 );
@@ -126,20 +118,20 @@ describe('Account Dropdown', () => {
         });
         it('should not display Download Report and Share Access when it is in Read Only mode', async () => {
             await act(async () => {
-                const userIconButton = await app.findByTestId('accountDropdownToggle');
+                const userIconButton = await screen.findByTestId('accountDropdownToggle');
                 fireEvent.click(userIconButton);
             });
 
             await act(async () => {
-                expect(await app.queryByTestId('shareAccess')).toBeNull();
-                expect(await app.queryByTestId('downloadReport')).toBeNull();
+                expect(await screen.queryByTestId('shareAccess')).toBeNull();
+                expect(await screen.queryByTestId('downloadReport')).toBeNull();
             });
         });
 
         it('should focus the first dropdown option when opened', async () => {
-            const spaceTileDropdownButton = await app.findByTestId('accountDropdownToggle');
+            const spaceTileDropdownButton = await screen.findByTestId('accountDropdownToggle');
             spaceTileDropdownButton.click();
-            await waitFor(() => expect(app.getByTestId('sign-out')).toHaveFocus());
+            await waitFor(() => expect(screen.getByTestId('sign-out')).toHaveFocus());
         });
     });
 });

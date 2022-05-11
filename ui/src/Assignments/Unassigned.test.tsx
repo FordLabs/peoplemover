@@ -17,34 +17,20 @@
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
-import PeopleMover from '../PeopleMover/PeopleMover';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {Product} from '../Products/Product';
-import {createBrowserHistory, History} from 'history';
-import {Router} from 'react-router-dom';
 import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
-import AssignmentClient from '../Assignments/AssignmentClient';
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
-    let history: History;
 
     describe('Showing the unassigned product', () => {
         beforeEach(  async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            history = createBrowserHistory();
-            history.push('/uuid');
-
-            await waitFor(() => {
-                renderWithRedux(
-                    <Router history={history}>
-                        <PeopleMover/>
-                    </Router>
-                );
-            });
+            await TestUtils.renderPeopleMoverComponent();
         });
         it('has the unassigned product drawer closed by default', async () => {
             expect(screen.queryByText(/unassigned/)).toBeNull();
@@ -117,16 +103,7 @@ describe('Unassigned Products', () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            history = createBrowserHistory();
-            history.push('/uuid');
-
-            renderWithRedux(
-                <Router history={history}>
-                    <PeopleMover/>
-                </Router>
-            );
-
-            await waitFor(() => expect(AssignmentClient.getReassignments).toHaveBeenCalled())
+            await TestUtils.renderPeopleMoverComponent();
         });
 
         it('opens the unassigned drawer when an unassigned person is created', async () => {
@@ -148,21 +125,10 @@ describe('Unassigned Products', () => {
         const initialState = {people: TestUtils.people, productTags: [TestUtils.productTag1]};
 
         beforeEach(async () => {
-            history = createBrowserHistory();
-            history.push('/uuid');
-
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            await waitFor( () => {
-                renderWithRedux(
-                    <Router history={history}>
-                        <PeopleMover/>
-                    </Router>,
-                    undefined,
-                    initialState
-                );
-            });
+            await TestUtils.renderPeopleMoverComponent(undefined, initialState);
         });
 
         it('should open edit person dialog when clicking on ellipsis', async () => {

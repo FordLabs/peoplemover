@@ -15,18 +15,13 @@
  * limitations under the License.
  */
 
-import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
+import {fireEvent, RenderResult, waitFor, screen} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
-import {createBrowserHistory, History} from 'history';
-import {Router} from 'react-router-dom';
-import PeopleMover from '../PeopleMover/PeopleMover';
-
 describe('Archived People', () => {
     let app: RenderResult;
-    let history: History;
 
     const mayFourteen2020: Date = new Date(2020, 4, 14);
     const mayFourteen1999: Date = new Date(1999, 4, 14);
@@ -110,20 +105,11 @@ describe('Archived People', () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            history = createBrowserHistory();
-            history.push('/uuid');
-
-            await waitFor(() => {
-                app = renderWithRedux(
-                    <Router history={history}>
-                        <PeopleMover/>
-                    </Router>
-                );
-            });
+            await TestUtils.renderPeopleMoverComponent();
         });
 
         it('should show the archived people drawer', () => {
-            expect(app.getByText('Archived People')).toBeInTheDocument();
+            expect(screen.getByText('Archived People')).toBeInTheDocument();
         });
     });
 });

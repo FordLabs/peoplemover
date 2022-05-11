@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,80 +18,66 @@
 import React from 'react';
 import ArchivedProduct from '../Products/ArchivedProduct';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
-import PeopleMover from './PeopleMover';
-import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
-import {createBrowserHistory, History} from 'history';
-import {Router} from 'react-router-dom';
+import {fireEvent, screen} from '@testing-library/react';
+
+jest.mock('../Space/SpaceClient');
 
 describe('Archive Products', () => {
     describe('integration tests', () => {
-        let app: RenderResult;
-        let history: History;
-
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            history = createBrowserHistory();
-            history.push('/uuid');
-
-            await waitFor(() => {
-                app = renderWithRedux(
-                    <Router history={history}>
-                        <PeopleMover/>
-                    </Router>
-                );
-            });
+            await TestUtils.renderPeopleMoverComponent();
         });
 
         it('has the archived products drawer closed by default', async () => {
-            expect(app.queryByText('I am archived')).not.toBeInTheDocument();
+            expect(screen.queryByText('I am archived')).not.toBeInTheDocument();
         });
     
         it('shows the archived product drawer when the handle is clicked', async () => {
-            const productArchivedDrawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            const productArchivedDrawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
             fireEvent.click(productArchivedDrawerCaret);
-            await app.findByText('I am archived');
+            await screen.findByText('I am archived');
         });
     
         it('hides the archived product drawer when the handle is clicked again', async () => {
-            const drawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            const drawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
             fireEvent.click(drawerCaret);
-            await app.findByText('I am archived');
+            await screen.findByText('I am archived');
 
             fireEvent.click(drawerCaret);
-            expect(app.queryByText('I am archived')).toBeNull();
+            expect(screen.queryByText('I am archived')).toBeNull();
         });
     
         it('should open the edit product modal if you click an archived product', async () => {
-            const drawerCaret = await app.findByTestId('archivedProductsDrawerCaret');
+            const drawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
             fireEvent.click(drawerCaret);
-            fireEvent.click(app.getByTestId('archivedProduct_4'));
+            fireEvent.click(screen.getByTestId('archivedProduct_4'));
 
-            await app.findByText('Edit Product');
-            // @ts-ignore
-            expect(app.getByLabelText('Name').value).toEqual('I am archived');
+            await screen.findByText('Edit Product');
+            expect(screen.getByLabelText('Name')).toHaveValue('I am archived');
         });
 
         it('displays a badge with the number of archived products', async () => {
-            expect((await app.findByTestId('archivedProductsDrawerCountBadge')).innerHTML).toEqual('1');
+            expect((await screen.findByTestId('archivedProductsDrawerCountBadge')).innerHTML).toEqual('1');
         });
     });
     
     describe('component that summarizes a product in the graveyard', () => {
         it('should render the number of people on the product', () => {
-            const component = renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
-            expect(component.getByText('1')).toBeInTheDocument();
+            renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
+            expect(screen.getByText('1')).toBeInTheDocument();
         });
     
         it('should render the product name', () => {
-            const component = renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
-            expect(component.getByText('Product 1')).toBeInTheDocument();
+            renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
+            expect(screen.getByText('Product 1')).toBeInTheDocument();
         });
     
         it('should render the product type', () => {
-            const component = renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
-            expect(component.getByText('Southfield')).toBeInTheDocument();
+            renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
+            expect(screen.getByText('Southfield')).toBeInTheDocument();
         });
     });
 });

@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-import {Redirect, Route, RouteProps} from 'react-router';
+import {RouteProps} from 'react-router';
 import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {AxiosError} from 'axios';
 import {setIsReadOnlyAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
+import {useNavigate, useParams} from 'react-router-dom';
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_NOT_FOUND = 404;
@@ -32,14 +33,11 @@ interface AuthorizedRouteProps extends RouteProps {
 }
 
 function AuthorizedRoute(props: AuthorizedRouteProps): JSX.Element {
-    const {children, setIsReadOnly, ...rest} = props;
+    const {children, setIsReadOnly} = props;
+    const { teamUUID = '' } = useParams<{ teamUUID: string }>()
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
+    const navigate = useNavigate();
 
-    function extractUuidFromUrl(): string {
-        return window.location.pathname.split('/')[1];
-    }
-
-    /* eslint-disable */
     useEffect(() => {
         setIsReadOnly(false);
 
@@ -49,33 +47,30 @@ function AuthorizedRoute(props: AuthorizedRouteProps): JSX.Element {
             const cookie = new Cookies();
             const accessToken = cookie.get('accessToken');
 
-            const uuid = extractUuidFromUrl();
-
-            AccessTokenClient.userCanAccessSpace(accessToken, uuid)
+            AccessTokenClient.userCanAccessSpace(accessToken, teamUUID)
                 .then(() => {
-                    setRenderedElement(<Route {...rest}>{children}</Route>);
+                    setRenderedElement(<>{children}</>)
                 })
                 .catch((error: AxiosError) => {
                     setIsReadOnly(true);
                     if (!error.response) return;
                     switch (error.response.status) {
                         case HTTP_FORBIDDEN: {
-                            setRenderedElement(<Route {...rest}>{children}</Route>);
+                            setRenderedElement(<>{children}</>);
                             break;
                         }
                         case HTTP_NOT_FOUND: {
-                            setRenderedElement(<Redirect to="/error/404"/>);
+                            navigate("/error/404");
                             break;
                         }
                         case HTTP_UNAUTHORIZED:
                         default: {
-                            setRenderedElement(<Redirect to="/user/login"/>);
+                            navigate("/user/login");
                         }
                     }
                 });
         }
-    }, [children, setIsReadOnly, rest.path]);
-    /* eslint-enable */
+    }, [setIsReadOnly, teamUUID, children, navigate]);
 
     return <>{renderedElement}</>;
 }
