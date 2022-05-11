@@ -25,8 +25,7 @@ describe('Modal', () => {
     beforeEach(() => {
         mockedCloseFunction = jest.fn();
 
-        const ModalForm = (props: { setShouldShowConfirmCloseModal: Function }): JSX.Element => {
-            props.setShouldShowConfirmCloseModal();
+        const ModalForm = (): JSX.Element => {
             return <p>Hello</p>;
         };
 
@@ -34,7 +33,7 @@ describe('Modal', () => {
             <Modal
                 modalMetadata={[{
                     title:'Test Modal',
-                    form:<ModalForm setShouldShowConfirmCloseModal={jest.fn()} />,
+                    form:<ModalForm/>,
                 }]}
                 closeModal={mockedCloseFunction}
             />

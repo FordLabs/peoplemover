@@ -18,8 +18,7 @@
 import React, {FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {connect} from 'react-redux';
-import {closeModalAction, fetchUserSpacesAction, setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
@@ -31,7 +30,6 @@ interface TransferOwnershipFormProps {
     currentSpace: Space;
     currentUser: string;
     closeModal(): void;
-    setCurrentModal(modalState: CurrentModalState): void;
     fetchUserSpaces(): void;
 }
 
@@ -39,7 +37,7 @@ interface TransferOwnershipFormOwnProps {
     space?: Space;
 }
 
-function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurrentModal, fetchUserSpaces}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
+function TransferOwnershipForm({currentSpace, currentUser, closeModal, fetchUserSpaces}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
     const [selectedUser, setSelectedUser] = useState<UserSpaceMapping | null>(null);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
     const [me, setMe] = useState<UserSpaceMapping>();
@@ -72,13 +70,12 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
 
     const renderOption = (person: UserSpaceMapping): JSX.Element => {
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-        return <div key={person.id} className={'transferOwnershipFormRadioControl'}
-            data-testid={'transferOwnershipFormRadioControl-' + person.userId}
-            onClick={(): void => setSelectedUser(person)}>
+        return <label key={person.id} className={'transferOwnershipFormRadioControl'}
+            data-testid={'transferOwnershipFormRadioControl-' + person.userId}>
             <i className={'material-icons'} aria-hidden>account_circle</i>
             <span className={'personRadioUserId'}>{person.userId.toLowerCase()}</span>
-            <input type={'radio'} name={'newOwner'} value={person.userId} checked={selectedUser ? selectedUser.id === person.id : false}/>
-        </div>;
+            <input type={'radio'} name={'newOwner'} value={person.userId} checked={selectedUser ? selectedUser.id === person.id : false} onChange={() => {setSelectedUser(person)}}/>
+        </label>;
     };
 
     const notificationModalProps = {content:<span>{'Ownership has been transferred to ' + selectedUser?.userId +
@@ -123,7 +120,6 @@ function TransferOwnershipForm({currentSpace, currentUser, closeModal, setCurren
 /* eslint-disable */
 const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
