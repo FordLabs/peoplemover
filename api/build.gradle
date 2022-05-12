@@ -1,147 +1,99 @@
 buildscript {
-    ext.kotlin_version = '1.3.70'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-    }
+  ext.kotlin_version = '1.6.10'
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
 }
 
 plugins {
-    id 'org.springframework.boot' version '2.1.3.RELEASE'
-    id 'com.github.pivotalservices.cf-app' version '2.3.0-rc.8'
-    id 'java'
-    id 'org.sonarqube' version '2.8'
-    id 'jacoco'
-    id 'org.jetbrains.kotlin.plugin.jpa' version '1.3.61'
-    id "org.jetbrains.kotlin.plugin.spring" version "1.3.71"
-    id "com.gorylenko.gradle-git-properties" version "2.2.4"
+  id 'java'
+  id 'org.springframework.boot' version '2.6.6'
+
+  id 'org.jetbrains.kotlin.plugin.jpa' version "$kotlin_version"
+  id "org.jetbrains.kotlin.plugin.spring" version "$kotlin_version"
+
+  id 'com.gorylenko.gradle-git-properties' version "2.4.0"
+
+  id 'org.sonarqube' version '2.8'
+  id 'jacoco'
 }
 
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'kotlin'
 
 group = 'com.ford'
+archivesBaseName = 'PeopleMover'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(11)
+  }
+}
 
 gitProperties {
-    branch = System.getenv('HEAD_BRANCH')
+  branch = System.getenv('HEAD_BRANCH')
 }
 
 repositories {
-    mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
+  mavenCentral()
 }
 
 dependencies {
-    compile 'com.google.guava:guava:28.2-jre'
-    compile 'org.springframework.cloud:spring-cloud-spring-service-connector:2.0.7.RELEASE'
-    compile 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.7.RELEASE'
-    compile 'com.microsoft.sqlserver:mssql-jdbc:7.2.2.jre11'
-    compile 'org.flywaydb:flyway-maven-plugin:6.2.1'
-    compile 'org.springframework.boot:spring-boot-starter-actuator:2.4.0'
-    compileOnly 'org.projectlombok:lombok:1.18.10'
+  annotationProcessor 'org.projectlombok:lombok:1.18.10'
+  compileOnly 'org.projectlombok:lombok:1.18.10'
 
-    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.2.4.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.2.4.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-security:2.2.4.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
-    implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.30'
-    implementation 'com.auth0:java-jwt:3.10.0'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+  implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  implementation 'org.flywaydb:flyway-core:5.2.4'
+  implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+  implementation 'io.jsonwebtoken:jjwt:0.9.1'
+  implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    runtimeOnly 'mysql:mysql-connector-java:8.0.25'
-    runtimeOnly 'com.h2database:h2:1.4.200'
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.2.41'
+  runtimeOnly 'mysql:mysql-connector-java:8.0.25'
+  runtimeOnly 'com.h2database:h2:1.4.200'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-
-    annotationProcessor 'org.projectlombok:lombok:1.18.10'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    testImplementation "io.mockk:mockk:1.11.0"
-}
-
-// DEPLOYMENT CONFIGURATION
-apply plugin: 'cf-app'
-cfConfig {
-    // See GettingStarted.md for information on updating these values
-    space = "FordLabs_Experiments_InternalProjects-prod"
-    org = "FordLabs_Experiments_InternalProjects_EDC1_Prod"
-
-    name = "engineeringEnvAPI"
-    host = "engineeringenvui"
-    path = "/api"
-
-    buildpack = "java_buildpack_offline"
-    filePath = file("build/libs/PeopleMover-0.0.1-SNAPSHOT.jar").absolutePath
-    environment = [
-            "spring.datasource.username": "",
-            "spring.datasource.password": "",
-            "JBP_CONFIG_OPEN_JDK_JRE": "{ jre: {version: 11.+} }"
-    ]
-    
-    cfService {
-        name = "MySQL for Pivotal Cloud Foundry v2"
-        plan = "ha-plan-30g"
-        instanceName = "PeopleMover ${project.properties['branchNameWithoutUnderscores']} Database"
-    }
-}
-
-jacoco {
-    toolVersion = "0.8.5"
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.springframework.security:spring-security-test'
+  testImplementation "io.mockk:mockk:1.11.0"
 }
 
 jacocoTestReport {
-    reports {
-        xml.enabled true
-        csv.enabled false
-        html.enabled false
-    }
+  dependsOn test
+  reports {
+    xml.required = true
+    csv.required = false
+    html.required = false
+  }
 }
 
 sonarqube {
-    properties {
-        property "sonar.coverage.jacoco.reportPath", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-    }
+  properties {
+    property "sonar.coverage.jacoco.reportPath", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+  }
 }
 
-task pushBranchAPI(type: Exec) {
-    commandLine "./gradlew",
-                "cf-push-blue-green",
-                "-Pcf.ccUser=${project.properties['peoplemoverPcfUsername']}",
-                "-Pcf.ccPassword=${project.properties['peoplemoverPcfPassword']}",
-                "-Pcf.ccHost=${project.properties['peoplemoverPcfccHost']}",
-                "-Pcf.domain=${project.properties['peoplemoverPcfdomain']}",
-                "-Pcf.filePath=${file("build/libs/api-0.0.1-SNAPSHOT.jar").absolutePath}",
-                "-PbranchNameWithoutUnderscores=Branch",
-                "-Pcf.environment.react.app.auth_enabled=true",
-                "-Pcf.environment.react.app.invite_users_to_space_enabled=true",
-                "-Pcf.environment.react.app.adfs_enabled=true",
-                "-Pcf.environment.spring.security.oauth2.resourceserver.jwt.issuer-uri=${project.properties['peoplemoverResourceserverJwtIssuer']}",
-                "-Pcf.environment.react.app.url=https://engineeringEnv.${project.properties['peoplemoverReactAppUrl']}",
-                "-Pcf.environment.react.app.adfs_url_template=${project.properties['peoplemoverAdfsUrlTemplate']}",
-                "-Pcf.environment.react.app.adfs_client_id=${project.properties['peoplemoverAdfsClientID']}",
-                "-Pcf.environment.react.app.adfs_resource=${project.properties['peoplemoverAdfsResource']}"
+test {
+  useJUnitPlatform()
 }
 
-project.tasks["jacocoTestReport"].dependsOn "test"
-project.tasks["sonarqube"].dependsOn "jacocoTestReport"
 compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+  kotlinOptions {
+    freeCompilerArgs = ["-Xjsr305=strict"]
+    jvmTarget = "11"
+  }
 }
 compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+  kotlinOptions {
+    freeCompilerArgs = ["-Xjsr305=strict"]
+    jvmTarget = "11"
+  }
 }

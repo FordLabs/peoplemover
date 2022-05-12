@@ -1,10 +1,13 @@
 package com.ford.internalprojects.peoplemover.utilities
 
-import com.ford.internalprojects.peoplemover.assignment.*
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV2
+import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
+import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
 import com.ford.internalprojects.peoplemover.person.Person
-import org.junit.Test
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 internal class AssignmentV1ToAssignmentV2ConverterTest {
 

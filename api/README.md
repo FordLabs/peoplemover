@@ -11,18 +11,35 @@ Once you have a copy of the backend up and running, head over to the [UI README]
 
 ### Dependencies
 - [Java 11](https://openjdk.java.net/projects/jdk/11/)
-- [Docker](https://www.docker.com/products/docker-desktop) optional if using local MySql
+- [Docker](https://www.docker.com/products/docker-desktop) or [Podman](https://podman.io/) (along with [podman-compose](https://github.com/containers/podman-compose)), if using local MySql
+
+### Starting the local instance of the database
+
+In the `./api` directory, run the command to start up the database instance specified in the docker-compose.yml file. This command will depend on if you are using Docker or Podman
+```
+docker compose up
+```
+or
+```
+podman-compose up
+```
+
+The database needs to be running in order for the unit tests to fully pass. 
 
 ### Build with Gradle
-1. Build the project with the following command: `./gradlew clean build`. This will run the backend tests.
-2. If you do not wish to run the tests and only want to build the application, use `./gradlew clean assemble`
+
+This repository uses a Gradle multi-module build. All Gradle commands should be run from the root of the repository.
+
+Build the project with the following command: `./gradlew api:build`. This will run the backend tests.
 
 ## Testing
 
 This product uses JUnit tests.
 ```
-./gradlew test
+./gradlew api:test
 ```
+
+Note: The database needs to be running in order for the unit tests to fully pass. 
 
 ## Running
 Running the application locally can be done with either an [H2](https://www.h2database.com/html/main.html) in-memory 
@@ -34,14 +51,14 @@ the `e2e-test` profile replaces it with a simplified auth system for testing.
 ### H2 In-Memory Database
 The simplest way to get the application spun up is by using the in-memory database via Gradle:
 ```
-SPRING_PROFILES_ACTIVE=e2e-test,h2 ./gradlew bootRun
+SPRING_PROFILES_ACTIVE=e2e-test,h2 ./gradlew api:bootRun
 ```
 
 ### Docker MySql Database
 ```
-docker-compose up -d
+docker compose up -d
 
-SPRING_PROFILES_ACTIVE=e2e-test,mysql ./gradlew bootRun
+SPRING_PROFILES_ACTIVE=e2e-test,mysql ./gradlew api:bootRun
 ```
 
 ## License

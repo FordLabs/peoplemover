@@ -28,24 +28,20 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.TagRequest
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
-import com.google.common.collect.Sets.newHashSet
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @SpringBootTest
 class LocationControllerApiTest {
@@ -75,17 +71,16 @@ class LocationControllerApiTest {
 
     private fun getBaseLocationsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/locations"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
 
         baseLocationsUrl = getBaseLocationsUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
-
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         spaceLocationRepository.deleteAll()
         productRepository.deleteAll()
@@ -94,7 +89,7 @@ class LocationControllerApiTest {
 
     @Test
     fun `GET should get Locations`() {
-        val expectedLocations: Set<SpaceLocation> = newHashSet(
+        val expectedLocations: Set<SpaceLocation> = setOf(
                 spaceLocationRepository.save(SpaceLocation(name = "Mars", spaceUuid = space.uuid)),
                 spaceLocationRepository.save(SpaceLocation(name = "Venus", spaceUuid = space.uuid))
         )
@@ -111,7 +106,6 @@ class LocationControllerApiTest {
 
         assertThat(actualSpaceLocations).isEqualTo(expectedLocations)
     }
-
 
     @Test
     fun `GET should return 403 when valid token does not have editor access and the space's read-only flag is off`() {
@@ -257,7 +251,7 @@ class LocationControllerApiTest {
     fun `PUT should return 409 when updating name to existing space location in space with different case (name check is case insensitive)`() {
         val spaceLocation1: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "Germany", spaceUuid = space.uuid))
         val spaceLocation2: SpaceLocation = spaceLocationRepository.save(SpaceLocation(name = "France", spaceUuid = space.uuid))
-        val locationEditRequest = TagRequest(spaceLocation1.name.toLowerCase())
+        val locationEditRequest = TagRequest(spaceLocation1.name.lowercase())
         mockMvc.perform(put("$baseLocationsUrl/${spaceLocation2.id}")
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)

@@ -41,7 +41,7 @@ class UserService(
 
     fun addUsersToSpace(userIds: List<String>, uuid: String): List<String> =
             userIds.mapNotNull { rawUserId ->
-                val userId = rawUserId.toUpperCase().trim()
+                val userId = rawUserId.uppercase().trim()
                 try {
                     userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceUuid = uuid, permission = PERMISSION_EDITOR))
                     null
