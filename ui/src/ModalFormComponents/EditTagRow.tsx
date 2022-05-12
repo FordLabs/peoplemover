@@ -52,7 +52,7 @@ function EditTagRow({
     const [showDuplicatedTagErrorMessage, setShowDuplicatedTagErrorMessage] = useState<boolean>(false);
 
     const saveTag = (): void => {
-        let newTag = tagInputValue as RoleEditRequest;
+        const newTag = tagInputValue as RoleEditRequest;
         newTag.name = newTag.name.trim();
         if (colors && !(tagInputValue as RoleEditRequest).colorId) {
             newTag.colorId = colors[colors.length - 1].id;

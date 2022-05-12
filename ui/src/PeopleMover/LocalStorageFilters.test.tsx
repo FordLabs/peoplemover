@@ -23,6 +23,7 @@ import LocationClient from '../Locations/LocationClient';
 
 describe('Filter products', () => {
     class MockLocalStorage {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         store: any = {};
 
         setItem(key: string, value: string): void {

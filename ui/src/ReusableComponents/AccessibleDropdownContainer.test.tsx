@@ -1,6 +1,5 @@
-
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 
 import {fireEvent, render, RenderResult} from '@testing-library/react';
 import AccessibleDropdownContainer from './AccessibleDropdownContainer';
@@ -41,21 +39,21 @@ describe('Accessibility Dropdown Container', () => {
 
     it('should allow user to change the focused option using the arrow down key and wrap to top when pressed on last element', async () => {
         fireEvent.keyUp(button2, {key: 'ArrowDown'});
-        let button3 =  dropdownContainer.getByText('Button 3');
+        const button3 =  dropdownContainer.getByText('Button 3');
         expect(button3).toHaveFocus();
 
         fireEvent.keyUp(button3, {key: 'ArrowDown'});
-        let button1 =  dropdownContainer.getByText('Button 1');
+        const button1 =  dropdownContainer.getByText('Button 1');
         expect(button1).toHaveFocus();
     });
 
     it('should allow user to change the focused option using the arrow up key and wrap to bottom when pressed on first element', async () => {
         fireEvent.keyUp(button2, {key: 'ArrowUp'});
-        let button1 =  dropdownContainer.getByText('Button 1');
+        const button1 =  dropdownContainer.getByText('Button 1');
         expect(button1).toHaveFocus();
 
         fireEvent.keyUp(button1, {key: 'ArrowUp'});
-        let button3 =  dropdownContainer.getByText('Button 3');
+        const button3 =  dropdownContainer.getByText('Button 3');
         expect(button3).toHaveFocus();
     });
 });

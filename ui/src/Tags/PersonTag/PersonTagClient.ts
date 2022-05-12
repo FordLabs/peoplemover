@@ -41,8 +41,7 @@ class PersonTagClient implements TagClient {
     }
 
     async add(personTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBasePersonTagsUrl(space.uuid!!);
+        const url = this.getBasePersonTagsUrl(space.uuid!);
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -60,8 +59,7 @@ class PersonTagClient implements TagClient {
     }
 
     async edit(personTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = `${this.getBasePersonTagsUrl(space.uuid!!)}/${personTagEditRequest.id}`;
+        const url = `${this.getBasePersonTagsUrl(space.uuid!)}/${personTagEditRequest.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -79,8 +77,7 @@ class PersonTagClient implements TagClient {
     }
 
     async delete(personTagId: number, space: Space): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBasePersonTagsUrl(space.uuid!!) + `/${personTagId}`;
+        const url = this.getBasePersonTagsUrl(space.uuid!) + `/${personTagId}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',

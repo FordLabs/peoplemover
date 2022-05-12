@@ -95,11 +95,13 @@ function ProductForm({
             return;
         }
 
-        let productToSend = {...currentProduct};
-        productToSend.name = productToSend.name.trim();
-        productToSend.url = productToSend.url?.trim();
-        productToSend.notes = productToSend.notes?.trim();
-        productToSend.tags = selectedProductTags;
+        const productToSend = {
+            ...currentProduct,
+            name: currentProduct.name.trim(),
+            url: currentProduct.url?.trim(),
+            notes: currentProduct.notes?.trim(),
+            tags: selectedProductTags
+        };
 
         if (editing) {
             ProductClient.editProduct(currentSpace, productToSend)

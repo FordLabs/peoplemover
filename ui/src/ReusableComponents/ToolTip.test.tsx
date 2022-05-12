@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +29,8 @@ describe('ToolTip', () => {
     });
     
     it('should show the tip on mouse hover',  async () => {
-        let button = await app.findByText('What\'s this?');
-        let tip = await app.findByTestId('toolTipText');
+        const button = await app.findByText('What\'s this?');
+        const tip = await app.findByTestId('toolTipText');
 
         app.findByText('something ');
 
@@ -46,8 +46,8 @@ describe('ToolTip', () => {
     });
 
     it('should show the tip on focus',  async () => {
-        let button = await app.findByText('What\'s this?');
-        let tip = await app.findByTestId('toolTipText');
+        const button = await app.findByText('What\'s this?');
+        const tip = await app.findByTestId('toolTipText');
 
         app.findByText('something ');
 

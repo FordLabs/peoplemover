@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -674,7 +674,7 @@ describe('Products', () => {
 
     describe('Read only view', () => {
         beforeEach(async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 4, 14),
                 isReadOnly: true,

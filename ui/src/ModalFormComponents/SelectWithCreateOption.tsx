@@ -23,6 +23,7 @@ import {Option} from '../CommonTypes/Option';
 import {components, ControlProps, OptionProps, OptionTypeBase, StylesConfig} from 'react-select';
 import {OptionType} from './SelectWithHTMLOptions';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const ReactSelectDropdownStyles: StylesConfig<OptionType, boolean> = {
     ...reactSelectStyles,
@@ -209,6 +210,7 @@ function SelectWithCreateOption({
                 placeholder={placeholder}
                 value={value || values}
                 options={options}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 styles={useColorBadge ? reactSelectStyles : ReactSelectDropdownStyles}
                 components={components}

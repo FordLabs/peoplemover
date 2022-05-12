@@ -38,13 +38,13 @@ class MockDate extends Date {
 const mockedUsedNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
-    ...(jest.requireActual('react-router-dom') as any),
+    ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockedUsedNavigate,
 }));
 
 describe('SpaceDashboard', () => {
     describe('Resetting Space Date', () => {
-        let tempDate = Date;
+        const tempDate = Date;
 
         beforeEach(() => {
             global.Date = MockDate as DateConstructor;
@@ -55,7 +55,7 @@ describe('SpaceDashboard', () => {
         });
 
         it('should reset current date on load', async () => {
-            let store = createStore(rootReducer, {});
+            const store = createStore(rootReducer, {});
             store.dispatch = jest.fn();
 
             renderWithRedux(
@@ -74,7 +74,7 @@ describe('SpaceDashboard', () => {
     });
 
     it('should reset currentSpace on load', async () => {
-        let store = createStore(rootReducer, {});
+        const store = createStore(rootReducer, {});
         store.dispatch = jest.fn();
         renderWithRedux(
             <MemoryRouter>

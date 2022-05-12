@@ -109,10 +109,9 @@ describe('Space Client', function() {
     it('should get all the users for a space with the owner first', function(done) {
         const expectedUrl = baseSpaceUrl + '/uuidbob/users';
 
-        // @ts-ignore
-        Axios.get = jest.fn(() => Promise.resolve({
+        Axios.get = jest.fn().mockResolvedValue({
             data: [{'userId': 'user_id_2', 'permission': 'editor'}, {'userId': 'user_id', 'permission': 'owner'}],
-        } as AxiosResponse));
+        });
 
         SpaceClient.getUsersForSpace('uuidbob').then((users) => {
             expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
@@ -165,7 +164,7 @@ describe('Space Client', function() {
 
     it('should delete a space by uuid', (done) => {
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        SpaceClient.deleteSpaceByUuid(TestUtils.space.uuid!!).then(() => {
+        SpaceClient.deleteSpaceByUuid(TestUtils.space.uuid!).then(() => {
             expect(Axios.delete).toHaveBeenCalledWith(
                 `/api/spaces/${TestUtils.space.uuid}`,
                 {headers: {Authorization: 'Bearer 123456'}}

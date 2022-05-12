@@ -83,8 +83,7 @@ function MyTagsForm({
 }: Props): JSX.Element {
 
     const getUpdatedFilterOptions = (index: number, tag: TagInterface): Array<FilterOption> => {
-        let options: Array<FilterOption>;
-        options = allGroupedTagFilterOptions[index].options.map(val =>
+        return allGroupedTagFilterOptions[index].options.map(val =>
             !val.value.includes(tag.id.toString() + '_') ?
                 val :
                 {
@@ -93,7 +92,6 @@ function MyTagsForm({
                     selected: val.selected,
                 }
         );
-        return options;
     };
 
     function updateFilterOptions(optionIndex: number, tag: TagInterface): void {

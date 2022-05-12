@@ -56,7 +56,7 @@ function DeleteSpaceForm({
                 testId="confirmationModalLeaveAndDeleteSpace"
                 onClick={(): void => {
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    SpaceClient.deleteSpaceByUuid(space.uuid!!).then(() => {
+                    SpaceClient.deleteSpaceByUuid(space.uuid!).then(() => {
                         fetchUserSpaces();
                         setSubmitted(true);
                     });
@@ -81,9 +81,8 @@ function DeleteSpaceForm({
         </>,
         submitButtonLabel: 'Delete Space',
         primaryButtonStyle: 'redalert',
-        submit(item?: unknown): void | Promise<void> {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            SpaceClient.deleteSpaceByUuid(space.uuid!!).then(() => {
+        submit(): void | Promise<void> {
+            SpaceClient.deleteSpaceByUuid(space.uuid!).then(() => {
                 fetchUserSpaces();
                 setSubmitted(true);
             });

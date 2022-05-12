@@ -30,7 +30,7 @@ class RoleClient implements TagClient {
 
     async get(spaceUuid: string): Promise<AxiosResponse> {
         const url = this.getBaseRolesUrl(spaceUuid);
-        let config = {
+        const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
@@ -42,8 +42,8 @@ class RoleClient implements TagClient {
 
     async add(role: RoleAddRequest, space: Space): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseRolesUrl(space.uuid!!);
-        let config = {
+        const url = this.getBaseRolesUrl(space.uuid!);
+        const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
@@ -61,8 +61,8 @@ class RoleClient implements TagClient {
 
     async edit(role: RoleEditRequest, space: Space): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = `${this.getBaseRolesUrl(space.uuid!!)}/${role.id}`;
-        let config = {
+        const url = `${this.getBaseRolesUrl(space.uuid!)}/${role.id}`;
+        const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
@@ -79,9 +79,8 @@ class RoleClient implements TagClient {
     }
 
     async delete(roleId: number, space: Space): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseRolesUrl(space.uuid!!) + `/${roleId}`;
-        let config = {
+        const url = this.getBaseRolesUrl(space.uuid!) + `/${roleId}`;
+        const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,

@@ -29,7 +29,7 @@ export const removeToken = (): void => {
     cookie.remove('accessToken', {path: '/'});
 };
 
-export const getDecodedToken = (): unknown | null => {
+export const getDecodedToken = (): { sub: string; } | null => {
     const accessToken = getToken();
     return jwtDecoder(accessToken);
 };
@@ -37,8 +37,7 @@ export const getDecodedToken = (): unknown | null => {
 export const getUserNameFromAccessToken = (): string => {
     try {
         const decodedAccessToken = getDecodedToken();
-        // @ts-ignore
-        const userName = decodedAccessToken.sub;
+        const userName = decodedAccessToken?.sub || '';
         addUserToMatomo(userName);
 
         return userName;

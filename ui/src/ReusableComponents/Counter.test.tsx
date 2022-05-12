@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,9 +24,9 @@ import {Product} from '../Products/Product';
 
 describe('counter', () => {
     let app: RenderResult;
-    let viewingDate = new Date(2021, 4, 13);
+    const viewingDate = new Date(2021, 4, 13);
 
-    let noFilter: Array<AllGroupedTagFilterOptions>  = [
+    const noFilter: Array<AllGroupedTagFilterOptions>  = [
         {
             label:'Location Tags:',
             options: [],
@@ -51,15 +51,15 @@ describe('counter', () => {
 
 
     it('should display the number of products and people when no filter are applied and ignore archived products', async () => {
-        let expectedString = 'Results - Products: 4, People: 3 (Unassigned: 1)';
+        const expectedString = 'Results - Products: 4, People: 3 (Unassigned: 1)';
         app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={noFilter} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });
 
     it('should not count product that are ended before today', async () => {
-        let expectedString = 'Results - Products: 0, People: 1 (Unassigned: 1)';
-        let finishedProduct = {
+        const expectedString = 'Results - Products: 0, People: 1 (Unassigned: 1)';
+        const finishedProduct = {
             id: 5,
             name: 'Awesome Product',
             spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
@@ -76,8 +76,8 @@ describe('counter', () => {
     });
 
     it('should display the number of products and people when role filters are applied', async () => {
-        let expectedString = 'Results - Products: 4, People: 2 (Unassigned: 1)';
-        let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
+        const expectedString = 'Results - Products: 4, People: 2 (Unassigned: 1)';
+        const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
                 options: [],
@@ -111,15 +111,15 @@ describe('counter', () => {
     });
 
     it('should display the number of products and people when location filters are applied', async () => {
-        let expectedString = 'Results - Products: 1, People: 2 (Unassigned: 1)';
+        const expectedString = 'Results - Products: 1, People: 2 (Unassigned: 1)';
         app = renderWithRedux(<Counter products={TestUtils.products} allGroupedTagFilterOptions={TestUtils.allGroupedTagFilterOptions} viewingDate={viewingDate}/>);
         const counter = await app.findByTestId('counter');
         expect(counter).toContainHTML(expectedString);
     });
 
     it('should display the number of products and people when all filters are applied', async () => {
-        let expectedString = 'Results - Products: 1, People: 1 (Unassigned: 0)';
-        let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
+        const expectedString = 'Results - Products: 1, People: 1 (Unassigned: 0)';
+        const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
                 options: [{
@@ -168,8 +168,8 @@ describe('counter', () => {
     });
 
     it('should display the number of products and people when one person tag filter is applied', async () => {
-        let expectedString = 'Results - Products: 1, People: 1 (Unassigned: 0)';
-        let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
+        const expectedString = 'Results - Products: 1, People: 1 (Unassigned: 0)';
+        const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
                 options: [],
@@ -197,8 +197,8 @@ describe('counter', () => {
     });
 
     it('should display the number of products and people when people are in multiple products', async () => {
-        let expectedString = 'Results - Products: 2, People: 3 (Unassigned: 0)';
-        let allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
+        const expectedString = 'Results - Products: 2, People: 3 (Unassigned: 0)';
+        const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>  = [
             {
                 label:'Location Tags:',
                 options: [],

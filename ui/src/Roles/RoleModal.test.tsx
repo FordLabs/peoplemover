@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -163,7 +163,7 @@ describe('My Roles Form', () => {
         });
 
         it('should show edit section when clicking the pencil', async () => {
-            let roleEditIcons = await screen.findAllByTestId('editIcon__role');
+            const roleEditIcons = await screen.findAllByTestId('editIcon__role');
             expect(roleEditIcons.length).toEqual(3);
 
             const myFirstPencil = roleEditIcons[0];
@@ -185,8 +185,8 @@ describe('My Roles Form', () => {
         });
 
         it('should not allow saving empty role', async () => {
-            let roleEditIcons = await screen.findAllByTestId('editIcon__role');
-            let myFirstPencil = roleEditIcons[0];
+            const roleEditIcons = await screen.findAllByTestId('editIcon__role');
+            const myFirstPencil = roleEditIcons[0];
             fireEvent.click(myFirstPencil);
 
             const saveButton = await screen.findByTestId('saveTagButton');

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,10 +36,12 @@ describe('SpaceDashboardTile tests', () => {
 
     beforeEach(async () => {
         jest.clearAllMocks();
-        SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping, {id: '2', userId: 'USER_IDDQD', permission: 'editor', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping]
-        ));
+        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
+            [
+                {id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestUtils.space.uuid!} as UserSpaceMapping,
+                {id: '2', userId: 'USER_IDDQD', permission: 'editor', spaceUuid: TestUtils.space.uuid!} as UserSpaceMapping
+            ]
+        );
         store = createStore(rootReducer, {currentUser: 'USER_ID'});
         store.dispatch = jest.fn();
         onClick = jest.fn();
@@ -71,10 +73,9 @@ describe('SpaceDashboardTile tests', () => {
 
     describe('deleting a space', () => {
         it('should not show Delete Space menu item if user is not owner of the space', async () => {
-            SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping]
-            ));
+            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
+                [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestUtils.space.uuid!} as UserSpaceMapping]
+            );
             await act(async () => {
                 component.unmount();
                 component = renderWithRedux(
@@ -104,10 +105,9 @@ describe('SpaceDashboardTile tests', () => {
     describe('leaving a space', () => {
 
         it('should not show Leave Space menu item if user is not owner of the space', async () => {
-            SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping]
-            ));
+            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
+                [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestUtils.space.uuid!} as UserSpaceMapping]
+            );
             await act(async () => {
                 component.unmount();
                 component = renderWithRedux(
@@ -121,10 +121,9 @@ describe('SpaceDashboardTile tests', () => {
         });
 
         it('should not show Leave Space menu item if space has no editors', async () => {
-            SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestUtils.space.uuid!!} as UserSpaceMapping]
-            ));
+            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
+                [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestUtils.space.uuid!} as UserSpaceMapping]
+            );
             await act(async () => {
                 component.unmount();
                 component = renderWithRedux(

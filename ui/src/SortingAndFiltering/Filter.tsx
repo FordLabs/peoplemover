@@ -94,13 +94,7 @@ function Filter({
             if (index === filterIndex) {
                 return {
                     ...aGroupOfTagFilterOptions, options: aGroupOfTagFilterOptions.options.map(anOption => {
-                        if (anOption.selected) {
-                            let option = anOption;
-                            option.selected = false;
-                            return option;
-                        } else {
-                            return anOption;
-                        }
+                        return (anOption.selected) ? {...anOption, selected: false } : anOption;
                     }),
                 };
             } else {

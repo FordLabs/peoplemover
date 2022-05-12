@@ -61,8 +61,7 @@ function SpaceForm({
             return
         }
 
-        let spaceToSend = {...formSpace};
-        spaceToSend.name = spaceToSend.name.trim();
+        const spaceToSend = {...formSpace, name:  formSpace.name.trim() };
 
         if (!!space && formSpace.uuid) {
             SpaceClient.editSpaceName(formSpace.uuid, spaceToSend, space.name)
@@ -82,7 +81,7 @@ function SpaceForm({
         });
     }
 
-    let spaceNameLength = formSpace.name.length;
+    const spaceNameLength = formSpace.name.length;
 
     return (
         <form className="createSpaceContainer" onSubmit={handleSubmit}>
