@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,7 +56,7 @@ describe('Filter Dropdown', () => {
 
             const app = renderWithRedux(<Filter
                 filterType={FilterTypeListings.Location}/>, undefined, initialState);
-            let locationFilterTestId = FilterTypeListings.Location.label.replace(' ', '_');
+            const locationFilterTestId = FilterTypeListings.Location.label.replace(' ', '_');
             const dropdownButton = await app.findByTestId(`dropdown_button_${locationFilterTestId}`);
             dropdownButton.click();
             expect(app.queryByTestId(`open_${locationFilterTestId}_modal_button`)).toBeNull();

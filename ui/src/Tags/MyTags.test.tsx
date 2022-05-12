@@ -158,8 +158,7 @@ describe('My Tags Form', () => {
                 const updatedProductTag = 'Finance';
 
                 const editProductTagText = await app.findByTestId('tagNameInput');
-                // @ts-ignore
-                expect(editProductTagText.value).toBe('AV');
+                expect(editProductTagText).toHaveValue('AV');
                 fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
 
                 const saveButton = await app.findByTestId('saveTagButton');

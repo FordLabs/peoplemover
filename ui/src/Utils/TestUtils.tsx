@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -219,7 +219,7 @@ class TestUtils {
     static async renderPeopleMoverComponent(
         store?: Store,
         initialState?: PreloadedState<Partial<GlobalStateProps>>,
-        initialPath: string = '/uuid'
+        initialPath = '/uuid'
     ): Promise<RenderResult> {
         const result = renderWithRedux(
             <MemoryRouter initialEntries={[initialPath]}>
@@ -637,10 +637,8 @@ class TestUtils {
     }
 
     static spaceMappingsArray: UserSpaceMapping[] = [
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        {id: '1', spaceUuid: TestUtils.space.uuid!!, userId: 'user_id', permission: 'owner'},
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        {id: '2', spaceUuid: TestUtils.space.uuid!!, userId: 'user_id_2', permission: 'editor'},
+        {id: '1', spaceUuid: TestUtils.space.uuid!, userId: 'user_id', permission: 'owner'},
+        {id: '2', spaceUuid: TestUtils.space.uuid!, userId: 'user_id_2', permission: 'editor'},
     ];
 
 

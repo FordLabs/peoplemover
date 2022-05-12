@@ -203,7 +203,7 @@ function PersonForm({
         } else {
             setIsPersonNameInvalid(false);
 
-            let personTagModified = getAddedPersonTag();
+            const personTagModified = getAddedPersonTag();
 
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
@@ -217,11 +217,13 @@ function PersonForm({
                 }
             }
 
-            let personToSend = {...person};
-            personToSend.name = personToSend.name.trim();
-            personToSend.customField1 = personToSend.customField1?.trim();
-            personToSend.notes = personToSend.notes?.trim();
-            personToSend.tags = selectedPersonTags;
+            const personToSend = {
+                ...person,
+                name: person.name.trim(),
+                customField1: person.customField1?.trim(),
+                notes:  person.notes?.trim(),
+                tags: selectedPersonTags
+            };
 
             if (isEditPersonForm) {
                 const response = await PeopleClient.updatePerson(currentSpace, personToSend, personTagModified);

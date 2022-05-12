@@ -94,7 +94,7 @@ describe('AuthenticatedRoute.test.tsx', function() {
         });
 
         it('should not reset the redirect URL to dashboard if the redirect URL has already been set', async () => {
-            let expectedRedirect = '/expected-redirect';
+            const expectedRedirect = '/expected-redirect';
             sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, expectedRedirect);
 
             setWindowHistoryAndRender('/if-this-is-put-in-session-storage-the-test-should-fail');

@@ -25,7 +25,7 @@ const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 const OAUTH_REDIRECT_DEFAULT = '/user/dashboard';
 
 jest.mock('react-router-dom', () => ({
-    ...(jest.requireActual('react-router-dom') as any),
+    ...jest.requireActual('react-router-dom'),
     Navigate: ({to}:{to: string}) => <div>Navigated to: {to}</div>
 }));
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* eslint-disable */
+
 export enum AvailableModals {
     CREATE_PRODUCT,
     CREATE_PRODUCT_OF_PRODUCT_TAG,
@@ -36,4 +36,3 @@ export enum AvailableModals {
     TRANSFER_OWNERSHIP,
     DELETE_SPACE_NO_EDITORS
 }
-/* eslint-enable */

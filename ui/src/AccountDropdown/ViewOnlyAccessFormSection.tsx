@@ -57,7 +57,7 @@ function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: P
         ).then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
     };
 
-    let viewAccessEnabledMessage = `View only access is ${enableViewOnly ? 'enabled' : 'disabled'}`;
+    const viewAccessEnabledMessage = `View only access is ${enableViewOnly ? 'enabled' : 'disabled'}`;
     return (
         <div className="viewOnlyAccessForm form">
             <div className="viewOnlyToggleContainer">

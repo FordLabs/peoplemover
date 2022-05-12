@@ -324,7 +324,7 @@ describe('Person Form', () => {
         it('newPerson box goes from checked to unchecked, call matomo event for newPersonUnchecked action',  async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
-            let newHank: Person = {...TestUtils.hank, newPerson: true, newPersonDate: new Date(2019, 4, 14)};
+            const newHank: Person = {...TestUtils.hank, newPerson: true, newPersonDate: new Date(2019, 4, 14)};
 
             await act( async () => {
                 renderWithRedux(
@@ -347,7 +347,7 @@ describe('Person Form', () => {
         it('newPerson box goes from checked to unchecked to checked, DO NOT call any matomo event',  async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
-            let newHank: Person = {...TestUtils.hank, name: 'XXXX', newPerson: true, newPersonDate: new Date(2019, 4, 14)};
+            const newHank: Person = {...TestUtils.hank, name: 'XXXX', newPerson: true, newPersonDate: new Date(2019, 4, 14)};
 
             await act( async () => {
                 renderWithRedux(
@@ -389,6 +389,5 @@ describe('Person Form', () => {
 
             expect(window._paq).toEqual([]);
         });
-
     });
 });

@@ -44,8 +44,7 @@ function MyRolesForm({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
     }, []);
 
     const getUpdatedFilterOptions = (index: number, trait: TagInterface): Array<FilterOption> => {
-        let options: Array<FilterOption>;
-        options = allGroupedTagFilterOptions[index].options.map(val =>
+        return allGroupedTagFilterOptions[index].options.map(val =>
             !val.value.includes(trait.id.toString() + '_') ?
                 val :
                 {
@@ -54,7 +53,6 @@ function MyRolesForm({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
                     selected: val.selected,
                 }
         );
-        return options;
     };
 
     function updateFilterOptions(optionIndex: number, tag: TagInterface): void {

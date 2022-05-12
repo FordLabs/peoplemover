@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,7 +48,7 @@ describe('TimeOnProduct', () => {
         let app: RenderResult;
 
         beforeEach(() => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 1),
                 products: [TestUtils.productForHank],
@@ -67,7 +67,7 @@ describe('TimeOnProduct', () => {
 
         it('should show the number of days on the project since selected viewingDate', async () => {
             cleanup();
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 10),
                 products: [TestUtils.productForHank],
@@ -119,7 +119,7 @@ describe('TimeOnProduct', () => {
 
     describe('generateTimeOnProductItems', () => {
         it('should return an array of TimeOnProductItem objects', () => {
-            let unassignedProduct: Product = {
+            const unassignedProduct: Product = {
                 id: 999,
                 name: UNASSIGNED,
                 spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
@@ -220,11 +220,11 @@ describe('TimeOnProduct', () => {
 
     describe('Loading', () => {
         it('should show loading', async () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
             };
-            let store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = renderWithRedux(<TimeOnProduct/>, store);
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const app = renderWithRedux(<TimeOnProduct/>, store);
             act(() => {
                 store.dispatch(setViewingDateAction(new Date(2020, 0, 1)));
             });
@@ -234,14 +234,14 @@ describe('TimeOnProduct', () => {
 
     describe('View Only', () => {
         it('person name button should be disabled', () => {
-            let initialState = {
+            const initialState = {
                 currentSpace: TestUtils.space,
                 viewingDate: new Date(2020, 0, 1),
                 products: [TestUtils.productForHank],
                 isReadOnly: true,
             };
-            let store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let app = renderWithRedux(<TimeOnProduct/>, store);
+            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            const app = renderWithRedux(<TimeOnProduct/>, store);
             const hank = app.getByText(TestUtils.hank.name);
             expect(hank).toBeDisabled();
         });

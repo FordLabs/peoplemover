@@ -40,6 +40,7 @@ export const multiSelectStyles = {
         padding: '0px 17px',
         height: '30px',
         margin: '3px 0px',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
@@ -96,6 +97,7 @@ function SelectWithNoCreateOption({
                 placeholder={placeholder}
                 value={values}
                 options={options}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 styles={multiSelectStyles}
                 components={{DropdownIndicator: CustomIndicator}}

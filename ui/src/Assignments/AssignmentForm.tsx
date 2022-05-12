@@ -94,7 +94,7 @@ function AssignmentForm({
     }
 
     function getProductPairsForPerson(): ProductPlaceholderPair[] {
-        let allProductPairs: ProductPlaceholderPair [] = [];
+        const allProductPairs: ProductPlaceholderPair [] = [];
 
         const selectedProductPairs: ProductPlaceholderPair[] = getSelectedProductPairs();
         const selectedProductIds: number[] = Array.from(selectedProductPairs.map(selectedProductPairs => {

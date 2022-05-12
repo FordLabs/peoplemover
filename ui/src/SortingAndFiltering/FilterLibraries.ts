@@ -110,7 +110,7 @@ export function addGroupedTagFilterOptions(
         ],
     };
 
-    let groupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [...allGroupedTagFilterOptions];
+    const groupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [...allGroupedTagFilterOptions];
     groupedTagFilterOptions[tagFilterIndex] = updatedTagFilterOptions;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions);
 }

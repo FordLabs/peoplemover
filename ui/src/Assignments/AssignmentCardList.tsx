@@ -60,7 +60,6 @@ function AssignmentCardList({
     setCurrentModal,
     setIsDragging,
 }: AssignmentCardListProps): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
@@ -156,6 +155,7 @@ function AssignmentCardList({
                         );
                         fetchProducts();
                         assignmentUpdated = true;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     } catch (error: any) {
                         if (error.response.status === 409) {
                             setCurrentModal({modal: AvailableModals.ASSIGNMENT_EXISTS_WARNING});

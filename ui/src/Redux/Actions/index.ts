@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,6 @@ import RoleClient from '../../Roles/RoleClient';
 import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 import PeopleClient from "../../People/PeopleClient";
 
-/* eslint-disable */
 export enum AvailableActions {
     SET_CURRENT_MODAL,
     CLOSE_MODAL,
@@ -60,7 +59,6 @@ export enum AvailableActions {
     SET_CURRENT_USER,
     GOT_FLAGS
 }
-/* eslint-enable */
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({
     type: AvailableActions.SET_CURRENT_MODAL,
@@ -202,7 +200,7 @@ export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, n
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return ProductTagClient.get(getState().currentSpace.uuid!,)
             .then(result => {
-                let productTags: Array<Tag> = result.data || [];
+                const productTags: Array<Tag> = result.data || [];
                 sortTagsAlphabetically(productTags);
                 dispatch(setProductTagsAction(productTags));
             });
@@ -213,7 +211,7 @@ export const fetchPersonTagsAction: ActionCreator<ThunkAction<void, Function, nu
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return PersonTagClient.get(getState().currentSpace.uuid!,)
             .then(result => {
-                let personTags: Array<Tag> = result.data || [];
+                const personTags: Array<Tag> = result.data || [];
                 sortTagsAlphabetically(personTags);
                 dispatch(setPersonTagsAction(personTags));
             });
@@ -223,7 +221,7 @@ export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, nul
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return LocationClient.get(getState().currentSpace.uuid,)
             .then(result => {
-                let locations: Array<LocationTag> = result.data || [];
+                const locations: Array<LocationTag> = result.data || [];
                 sortTagsAlphabetically(locations);
                 dispatch(setLocationsAction(locations));
             });
@@ -233,7 +231,7 @@ export const fetchRolesAction: ActionCreator<ThunkAction<void, Function, null, A
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return RoleClient.get(getState().currentSpace.uuid,)
             .then(result => {
-                let roles: Array<RoleTag> = result.data || [];
+                const roles: Array<RoleTag> = result.data || [];
                 sortTagsAlphabetically(roles);
                 dispatch(setRolesAction(roles));
             });
@@ -242,7 +240,6 @@ export const fetchRolesAction: ActionCreator<ThunkAction<void, Function, null, A
 export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (space: Space) =>
     (dispatch: Dispatch): Promise<void> => {
         dispatch(setCurrentSpaceAction(space));
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return getFilterOptionsForSpace(space.uuid!).then((filterOptions: Array<AllGroupedTagFilterOptions>) => {
             dispatch(setAllGroupedTagFilterOptionsAction(filterOptions));
         });

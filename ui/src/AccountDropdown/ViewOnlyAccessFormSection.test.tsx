@@ -142,7 +142,7 @@ describe('View Only Access Form Section', () => {
 });
 
 const setupComponent = (currentSpace: Space, collapsed = false): { store: Store } => {
-    let store = createStore(rootReducer,  {currentSpace});
+    const store = createStore(rootReducer,  {currentSpace});
     store.dispatch = jest.fn();
     renderWithRedux(
         <ViewOnlyAccessFormSection collapsed={collapsed} />,

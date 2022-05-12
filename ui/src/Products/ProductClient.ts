@@ -47,8 +47,7 @@ class ProductClient {
     }
 
     static async editProduct(space: Space, product: Product, isArchive = false): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseProductsUrl(space.uuid!!) + `/${product.id}`;
+        const url = this.getBaseProductsUrl(space.uuid!) + `/${product.id}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',

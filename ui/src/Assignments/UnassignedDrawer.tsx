@@ -39,18 +39,15 @@ function UnassignedDrawer({
     product,
     viewingDate,
 }: UnassignedDrawerProps): JSX.Element {
+    const productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(product, viewingDate);
 
-    let productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(product, viewingDate);
-
-    const containee =
-        <ProductCard product={productWithoutArchivedPeople} />;
     return (
         <DrawerContainer
             drawerIcon="supervisor_account"
             testId="unassignedDrawer"
             numberForCountBadge={productWithoutArchivedPeople.assignments ? productWithoutArchivedPeople.assignments.length : 0}
             containerTitle="Unassigned"
-            containee={containee}
+            containee={<ProductCard product={productWithoutArchivedPeople} />}
             isDrawerOpen={isUnassignedDrawerOpen}
             setIsDrawerOpen={setIsUnassignedDrawerOpen}/>
     );

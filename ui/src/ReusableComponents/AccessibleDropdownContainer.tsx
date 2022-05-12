@@ -47,6 +47,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
 
         const isArrowKeyFunctionalitySetup = (): boolean => {
             const childrenWithUndefinedId = React.Children.toArray(children).filter(child => (child as ReactElement).props.id === undefined);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const childrenWithNullRef = React.Children.toArray(children).filter(child => (child as ReactElement).ref === null);
 
@@ -62,7 +63,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         };
 
         const setFocusState = (e: { target: EventTarget | null; key?: string }, movementDirection: number): void => {
-            let target = e.target as HTMLElement;
+            const target = e.target as HTMLElement;
 
             const totalNumberOfChildren = React.Children.count(children);
             const childIndex = React.Children.toArray(children).findIndex(child => (child as ReactElement).props.id === target.id);
@@ -78,6 +79,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
         };
 
         const focusChild = (index: number): void => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             React.Children.toArray(children)[index].ref.current.focus();
         };

@@ -56,8 +56,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
     }
 
     useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        SpaceClient.getUsersForSpace(space.uuid!!).then((result) => {
+        SpaceClient.getUsersForSpace(space.uuid!).then((result) => {
             setIsUserOwner(result.some(userSpaceMapping =>
                 (currentUser && userSpaceMapping.userId.toUpperCase() === currentUser.toUpperCase() &&
                     userSpaceMapping.permission.toUpperCase() === 'OWNER')

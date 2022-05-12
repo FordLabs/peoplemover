@@ -48,6 +48,7 @@ const inviteEditorsStyle = {
         width: '100%',
         height: '100%',
         backgroundColor: '#F2F2F2',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
@@ -81,8 +82,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
     const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
     const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const components: any = {
+    const components = {
         DropdownIndicator: null,
     };
 
@@ -156,6 +156,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeMo
                         <Creatable
                             className="employeeIdTextArea"
                             inputId="employeeIdTextArea"
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                             // @ts-ignore
                             styles={inviteEditorsStyle}
                             placeholder="Enter CDSID of your editors"

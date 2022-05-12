@@ -36,12 +36,13 @@ import {AvailableActions} from './Redux/Actions';
 import {simplifyFlags} from './Flags/Flags';
 
 import axe from '@axe-core/react';
-
-let reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
+/* eslint-disable */
+const reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
 if (reduxDevToolsExtension) {
     reduxDevToolsEnhancer = (window as any).__REDUX_DEVTOOLS_EXTENSION__();
 }
+/* eslint-enable */
 
 let composedEnhancers: StoreEnhancer;
 if (reduxDevToolsEnhancer) {
@@ -93,7 +94,7 @@ Axios.interceptors.response.use(
             removeToken();
             RedirectToADFS();
         } else {
-            let conventionizedErrorName = `${statusText} - ${status}`;
+            const conventionizedErrorName = `${statusText} - ${status}`;
             MatomoEvents.pushEvent(conventionizedErrorName, config.method, config.url, status);
         }
         return Promise.reject(error);
@@ -101,26 +102,26 @@ Axios.interceptors.response.use(
 );
 
 let browserName = '';
+/* eslint-disable */
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
-    /* eslint-disable */
     // @ts-ignore
-    var isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean { return p.toString() === '[object SafariRemoteNotification]'; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+    const isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean { return p.toString() === '[object SafariRemoteNotification]'; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
     if(isSafari) browserName = 'Safari';
-    /* eslint-enable */
 
     // Internet Explorer 6-11
     // @ts-ignore
-    var isIE = /*@cc_on!@*/!!document.documentMode;
+    const isIE = /*@cc_on!@*/!!document.documentMode;
     if (isIE) browserName = 'Internet Explorer';
 
     // Edge 20+
     // @ts-ignore
-    var isEdge = !isIE && !!window.StyleMedia;
+    const isEdge = !isIE && !!window.StyleMedia;
     if (isEdge) browserName = 'Edge';
 
     return isSafari || isIE || isEdge;
 }
+/* eslint-enable */
 
 interface CacheBusterProps {
     loading: boolean;

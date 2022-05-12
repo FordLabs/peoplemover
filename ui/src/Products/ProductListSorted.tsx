@@ -28,7 +28,7 @@ interface Props {
 }
 
 function SortedByList({ products, productSortBy}: Props): JSX.Element {
-    let sortedProducts: Product [] = sortBy(products, productSortBy);
+    const sortedProducts: Product [] = sortBy(products, productSortBy);
 
     function sortBy(products: Array<Product>, productSortBy: string):  Array<Product> {
         switch (productSortBy) {
