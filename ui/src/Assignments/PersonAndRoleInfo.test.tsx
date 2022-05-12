@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,8 +30,8 @@ describe('the tooltip behavior on hover', () => {
     };
 
     it('should show the notes of the person being hovered over', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        let app = renderWithRedux(<PersonAndRoleInfo
+        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
+        const app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.hank}
             isUnassignedProduct={false}
             duration={parseInt('dontcare', 1)}/>, store);
@@ -44,8 +44,8 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should not show the notes of the person being hovered over if they have none', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        let app = renderWithRedux(<PersonAndRoleInfo
+        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
+        const app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.person2}
             isUnassignedProduct={false}
             duration={parseInt('dontcare', 1)}/>, store);
@@ -56,8 +56,8 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should show the time on product of the person being hovered over', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false, viewingDate: moment('2021-01-01').toDate()});
-        let app = renderWithRedux(<PersonAndRoleInfo
+        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false, viewingDate: moment('2021-01-01').toDate()});
+        const app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.hank}
             isUnassignedProduct={false}
             duration={367}/>, store);
@@ -70,8 +70,8 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should show the person tags of the person being hovered over', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        let app = renderWithRedux(<PersonAndRoleInfo
+        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
+        const app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.person2}
             isUnassignedProduct={false}
             duration={parseInt('dontcare', 1)}/>, store);
@@ -85,8 +85,8 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should not show the person tags of the person being hovered over if they have none', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        let app = renderWithRedux(<PersonAndRoleInfo
+        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
+        const app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.unassignedPerson}
             isUnassignedProduct={false}
             duration={parseInt('dontcare', 1)}/>, store);
@@ -96,8 +96,8 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should not show the hover if the space is read only', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
-        let app = renderWithRedux(<PersonAndRoleInfo
+        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+        const app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.hank} duration={0}
             isUnassignedProduct={false}/>, store);
         expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
@@ -107,8 +107,8 @@ describe('the tooltip behavior on hover', () => {
     });
 
     it('should not show the hover if it is part of the Unassigned product', async () => {
-        let store = createStore(rootReducer, {currentSpace: TestUtils.space});
-        let app = renderWithRedux(<PersonAndRoleInfo
+        const store = createStore(rootReducer, {currentSpace: TestUtils.space});
+        const app = renderWithRedux(<PersonAndRoleInfo
             person={TestUtils.hank} duration={0}
             isUnassignedProduct={true}/>, store);
         expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();

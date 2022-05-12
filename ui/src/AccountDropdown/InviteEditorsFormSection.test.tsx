@@ -207,7 +207,7 @@ describe('Invite Editors Form', function() {
                     expect(screen.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
                     await screen.findByText('Enter CDSID of your editors');
                     await act( async () => {
-                        await fireEvent.change(screen.getByLabelText(/People with this permission can edit/),
+                        fireEvent.change(screen.getByLabelText(/People with this permission can edit/),
                             {target: {value: 'hford1, bford'}});
                     });
                     expect(screen.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
@@ -218,7 +218,7 @@ describe('Invite Editors Form', function() {
                     // Delete bford
                     inputField = screen.getByLabelText(/People with this permission can edit/);
                     await act( async () => {
-                        await fireEvent.keyDown(inputField, {key: 'Backspace' });
+                        fireEvent.keyDown(inputField, {key: 'Backspace' });
                     });
                     expect(screen.queryByText('Enter CDSID of your editors')).not.toBeInTheDocument();
                     expect(screen.getByTestId('inviteEditorsFormSubmitButton')).toBeEnabled();
@@ -228,7 +228,7 @@ describe('Invite Editors Form', function() {
                     // Delete hford1
                     inputField = screen.getByLabelText(/People with this permission can edit/);
                     await act( async () => {
-                        await fireEvent.keyDown(inputField, {key: 'Backspace' });
+                        fireEvent.keyDown(inputField, {key: 'Backspace' });
                     });
                     expect(screen.queryByText('hford1')).not.toBeInTheDocument();
                     expect(screen.queryByText('bford')).not.toBeInTheDocument();
@@ -330,7 +330,7 @@ describe('Invite Editors Form', function() {
 
         it('should show a confirmation modal when removing self', async () => {
             await act(async () => {
-                let currentUser = 'USER_ID_2';
+                const currentUser = 'USER_ID_2';
                 const mockStore = configureStore([]);
                 const store = mockStore({
                     currentSpace: TestUtils.space,
@@ -359,7 +359,7 @@ describe('Invite Editors Form', function() {
 
         it('should show a confirmation modal when removing editor access', async () => {
             await act(async () => {
-                let currentUser = 'USER_ID';
+                const currentUser = 'USER_ID';
                 const mockStore = configureStore([]);
                 const store = mockStore({
                     currentSpace: TestUtils.space,

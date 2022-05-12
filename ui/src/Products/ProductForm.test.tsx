@@ -142,7 +142,7 @@ describe('ProductForm', function() {
 
     describe('tag dropdowns', () => {
         let history: History;
-        let initialState: PreloadedState<Partial<GlobalStateProps>> = {
+        const initialState: PreloadedState<Partial<GlobalStateProps>> = {
             isReadOnly: false,
             products: TestUtils.products,
             currentSpace: TestUtils.space,

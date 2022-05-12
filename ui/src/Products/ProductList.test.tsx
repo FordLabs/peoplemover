@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +53,7 @@ describe('Product List tests', () => {
                 tags: [TestUtils.productTag2],
                 notes: '',
             };
-            let products: Array<Product> = Object.assign([], TestUtils.products);
+            const products: Array<Product> = Object.assign([], TestUtils.products);
             products.push(productWithAnnArborLocation);
 
             const initialState = {
@@ -66,7 +66,7 @@ describe('Product List tests', () => {
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<ProductList/>, store);
             await component.findByText(TestUtils.productForHank.name);
             await component.findByText(productWithAnnArborLocation.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(3);
@@ -85,7 +85,7 @@ describe('Product List tests', () => {
                 tags: [TestUtils.productTag2],
                 notes: '',
             };
-            let products: Array<Product> = Object.assign([], TestUtils.products);
+            const products: Array<Product> = Object.assign([], TestUtils.products);
             products.push(productWithAnnArborLocation);
 
             const initialState = {
@@ -99,7 +99,7 @@ describe('Product List tests', () => {
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<ProductList/>, store);
             await component.findByText(TestUtils.productForHank.name);
             await component.findByText(productWithAnnArborLocation.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
@@ -140,7 +140,7 @@ describe('Product List tests', () => {
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<ProductList/>, store);
             await component.findByText(TestUtils.productWithAssignments.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
@@ -180,7 +180,7 @@ describe('Product List tests', () => {
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<ProductList/>, store);
             await component.findByText(TestUtils.productWithAssignments.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(1);
             expect(component.queryByTestId('newProductButton')).not.toBeInTheDocument();
@@ -220,7 +220,7 @@ describe('Product List tests', () => {
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<ProductList/>, store);
             await component.findByText(TestUtils.productWithoutAssignments.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
