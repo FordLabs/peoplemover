@@ -29,20 +29,17 @@ import com.ford.internalprojects.peoplemover.tag.TagRequest
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -70,7 +67,7 @@ class PersonTagControllerTest {
     private lateinit var space: Space
     private fun getBasePersonTagsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/person-tags"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         personTagRepository.deleteAll()
         spaceRepository.deleteAll()

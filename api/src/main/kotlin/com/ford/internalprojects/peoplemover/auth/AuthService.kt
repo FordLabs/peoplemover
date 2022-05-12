@@ -23,7 +23,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.stereotype.Service
-import java.lang.ClassCastException
 
 @Service
 class AuthService (
@@ -40,8 +39,8 @@ class AuthService (
     }
 
     fun requestIsAuthorizedFromReportProperties(authentication: Authentication): Boolean {
-        val authorizedUsers = users.toLowerCase().split(",")
-        return authorizedUsers.contains(authentication.name.toLowerCase())
+        val authorizedUsers = users.lowercase().split(",")
+        return authorizedUsers.contains(authentication.name.lowercase())
     }
 }
 
@@ -49,7 +48,7 @@ fun getUsernameOrAppName(auth: Authentication): String? {
     return try {
         if ((auth.name != null) && auth.name.isNotEmpty()) auth.name
         else (auth.credentials as Jwt).claims["appid"]?.toString()
-    } catch(e: ClassCastException) {
+    } catch(e: Exception) {
         null
     }
 }

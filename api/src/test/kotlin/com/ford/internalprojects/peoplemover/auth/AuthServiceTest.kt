@@ -2,8 +2,8 @@ package com.ford.internalprojects.peoplemover.auth
 
 import com.ford.internalprojects.peoplemover.auth.exceptions.InvalidTokenException
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -11,11 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtException
-import org.springframework.test.context.junit4.SpringRunner
 import java.time.Instant
-import java.util.*
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 class AuthServiceTest {
     @Autowired
@@ -27,7 +24,13 @@ class AuthServiceTest {
     @Test
     fun `validateToken - should return token if valid in ADFS`() {
         val fakeJwt = createMockJwt(true)
-        val authVerifyResponse = OAuthVerifyResponse("USER_ID", emptyList(), fakeJwt.expiresAt!!.toEpochMilli(), "https://localhost", "USER_ID")
+        val authVerifyResponse = OAuthVerifyResponse(
+            "USER_ID",
+            emptyList(),
+            fakeJwt.expiresAt!!.toEpochMilli(),
+            "https://localhost",
+            "USER_ID"
+        )
         `when`(jwtDecoder.decode("token")).thenReturn(fakeJwt)
 
         val actual = authservice.validateToken("token")
@@ -35,12 +38,13 @@ class AuthServiceTest {
         assertThat(actual).isEqualTo(authVerifyResponse)
     }
 
-    @Test(expected = InvalidTokenException::class)
+    @Test
     fun `validateToken - should throw token exception if not valid in any provider`() {
         val accessToken = "valid_Token"
         `when`(jwtDecoder.decode(accessToken)).thenThrow(JwtException("INVALID JWT"))
 
-        authservice.validateToken(accessToken)
+        assertThatThrownBy { this.authservice.validateToken(accessToken) }
+            .isInstanceOf(InvalidTokenException::class.java)
     }
 }
 
@@ -48,7 +52,7 @@ fun createMockJwt(isUserToken: Boolean): Jwt {
     val headers = HashMap<String, Any>()
     headers["typ"] = "JWT"
     val claims = HashMap<String, Any>()
-    if(isUserToken) {
+    if (isUserToken) {
         claims["sub"] = "USER_ID"
     } else {
         claims["appid"] = "APP_ID"

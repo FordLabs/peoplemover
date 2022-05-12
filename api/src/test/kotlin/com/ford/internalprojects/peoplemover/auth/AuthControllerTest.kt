@@ -20,22 +20,19 @@ package com.ford.internalprojects.peoplemover.auth
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.jwt.JwtException
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class AuthControllerTest {
@@ -57,7 +54,7 @@ class AuthControllerTest {
 
     final var uuid: String = "spaceUUID"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         userSpaceMappingRepository.deleteAll()
         spaceRepository.deleteAll()
@@ -79,10 +76,8 @@ class AuthControllerTest {
     fun `POST validate access token - should return UNAUTHORIZED if access token is invalid in validator`() {
         val request = ValidateTokenRequest(accessToken = "INVALID_ACCESS_TOKEN")
 
-        `when`(jwtDecoder.decode(request.accessToken)).thenThrow(JwtException("INVALID JWT"))
-
         mockMvc.perform(post("/api/access_token/validate")
-                .header("Authorization", "Bearer INVALID_ACCESS_TOKEN")
+                .with(jwt().jwt { it.tokenValue("INVALID_ACCESS_TOKEN") })
                 .content(objectMapper.writeValueAsString(request))
                 .contentType("application/json"))
                 .andExpect(status().isUnauthorized)

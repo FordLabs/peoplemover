@@ -43,10 +43,10 @@ class E2ETestController(
 
         val builder: JwtBuilder = Jwts.builder().setId(jwt.id)
                 .setIssuedAt(Date(jwt.issuedAt?.toEpochMilli() ?: 0))
-                .setSubject(jwt.subject.toUpperCase())
+                .setSubject(jwt.subject.uppercase())
                 .setIssuer(jwt.issuer.toString())
                 .signWith(signatureAlgorithm, "sig".toByteArray())
-                .setExpiration(Date(jwt.expiresAt?.toEpochMilli() ?: Date().time + 6000))
+                .setExpiration(Date(jwt.expiresAt?.toEpochMilli() ?: (Date().time + 6000)))
 
         return builder.compact()
     }

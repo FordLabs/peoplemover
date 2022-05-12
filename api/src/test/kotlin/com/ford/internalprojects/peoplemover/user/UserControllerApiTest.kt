@@ -24,9 +24,8 @@ import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.assertj.core.api.Assertions
-import org.junit.After
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -39,7 +38,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @SpringBootTest
 internal class UserControllerApiTest {
@@ -63,7 +61,7 @@ internal class UserControllerApiTest {
 
     var baseSpaceUrl: String = "/api/spaces"
 
-    @After
+    @AfterEach
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()

@@ -23,10 +23,9 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.times
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,9 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 class SpaceServiceTest {
@@ -47,12 +44,12 @@ class SpaceServiceTest {
     @MockBean
     lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
-    @Before
+    @BeforeEach
     fun before() {
         mockkStatic(SecurityContextHolder::class)
     }
 
-    @After
+    @AfterEach
     fun after() {
         unmockkStatic(SecurityContextHolder::class)
         Mockito.clearInvocations(userSpaceMappingRepository)

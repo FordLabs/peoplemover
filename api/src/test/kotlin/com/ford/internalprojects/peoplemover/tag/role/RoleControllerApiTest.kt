@@ -30,23 +30,20 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @SpringBootTest
 class RoleControllerApiTest {
@@ -79,7 +76,7 @@ class RoleControllerApiTest {
 
     fun getBaseRolesUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/roles"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
@@ -88,7 +85,7 @@ class RoleControllerApiTest {
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         personRepository.deleteAll()
         spaceRolesRepository.deleteAll()
