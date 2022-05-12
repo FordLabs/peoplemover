@@ -39,6 +39,8 @@ This product uses JUnit tests.
 ./gradlew api:test
 ```
 
+Note: The database needs to be running in order for the unit tests to fully pass. 
+
 ## Running
 Running the application locally can be done with either an [H2](https://www.h2database.com/html/main.html) in-memory 
 database or a [MySQL](https://www.mysql.com/) database.
