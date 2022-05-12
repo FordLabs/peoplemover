@@ -25,8 +25,7 @@ export enum ProductSortBy {
 
 const getSortState = (): ProductSortBy => {
     const savedSort = localStorage.getItem('sortBy');
-    const valueExists = savedSort !== null && savedSort !== undefined;
-    return valueExists ? savedSort as ProductSortBy : ProductSortBy.NAME;
+    return savedSort ? savedSort as ProductSortBy : ProductSortBy.NAME;
 }
 
 export const ProductSortByState = atom<ProductSortBy>({
