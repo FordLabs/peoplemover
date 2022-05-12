@@ -48,12 +48,12 @@ function Counter(props: CounterProps): JSX.Element {
         productCount: 0,
     };
 
-    let filteredProducts: Array<Product> = [];
+    const filteredProducts: Array<Product> = [];
     let unassignedProduct: Product;
 
     const filterProductsAndFindUnassignedProduct = (): void => {
-        let locationFilter = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.Location.index].options);
-        let productTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.ProductTag.index].options);
+        const locationFilter = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.Location.index].options);
+        const productTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.ProductTag.index].options);
 
         props.products.forEach(product => {
             if (product.name === 'unassigned') {
@@ -70,14 +70,14 @@ function Counter(props: CounterProps): JSX.Element {
     };
 
     const getPeopleCount = (): void => {
-        let peopleSet = new Set<number>();
+        const peopleSet = new Set<number>();
         let unassignedPeopleSet = new Set<number>();
         const unassignedWithoutArchived = stripAssignmentsForArchivedPeople(unassignedProduct, props.viewingDate);
         unassignedPeopleSet = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(unassignedWithoutArchived);
         productAndPeopleCount.unassignedPeopleCount = unassignedPeopleSet.size;
 
         filteredProducts.forEach(product => {
-            let productPeopleCount = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(product);
+            const productPeopleCount = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(product);
             productPeopleCount.forEach(entry => {
                 peopleSet.add(entry);
             });
@@ -88,9 +88,9 @@ function Counter(props: CounterProps): JSX.Element {
     };
 
     const getSetOfPersonIdsForAProductByRoleAndPersonTagFilters = (product: Product): Set<number> => {
-        let selectedRoleFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
-        let selectedPersonTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
-        let peopleSet = new Set<number>();
+        const selectedRoleFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
+        const selectedPersonTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
+        const peopleSet = new Set<number>();
 
         product.assignments.forEach(assignment => {
             if (isPersonMatchingSelectedFilters(assignment.person, selectedRoleFilters, selectedPersonTagFilters)) {

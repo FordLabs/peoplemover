@@ -29,7 +29,7 @@ class ReportClient {
     static async getReportsWithNames(spaceName: string, spaceUuid: string, date: Date): Promise<void> {
         const dateAsString = moment(date).format('YYYY-MM-DD');
         const url = `${baseReportsUrl}/people?spaceUuid=${spaceUuid}&requestedDate=${dateAsString}`;
-        let config = {
+        const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,

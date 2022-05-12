@@ -95,7 +95,7 @@ describe('Assignment Card', () => {
                 <AssignmentCard assignment={assignmentToRender}
                     isUnassignedProduct={false}/>, store);
 
-            let editPersonButton = underTest.getByTestId('editPersonIconContainer__billiam_handy');
+            const editPersonButton = underTest.getByTestId('editPersonIconContainer__billiam_handy');
             editPersonButton.click();
             expect(underTest.queryByTestId('editMenu')).toBeNull();
             expect(editPersonButton.childElementCount).toEqual(0);
@@ -394,8 +394,7 @@ describe('Assignment Card', () => {
         });
 
         it('should not display person tag Icon if person has no person tags', () => {
-            // @ts-ignore
-            delete assignmentToRender.person.tags;
+            assignmentToRender.person.tags = [];
 
             const underTest = renderWithRedux(
                 <AssignmentCard

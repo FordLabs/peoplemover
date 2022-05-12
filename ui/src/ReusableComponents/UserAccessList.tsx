@@ -83,8 +83,7 @@ function UserAccessList({
     const [displayRevokeSelfEditorStatusConfirmationModal, setDisplayRevokeSelfEditorStatusConfirmationModal] = useState(false);
     const [displayRemokeEditorStatusToAnotherUserConfirmationModal, setDisplayRevokeEditorStatusToAnotherUserConfirmationModal] = useState(false);
 
-    // @ts-ignore
-    const onChangeEvent = (value): void => {
+    const onChangeEvent = (value: unknown): void => {
         switch ((value as PermissionType).value) {
             case 'remove':
                 if (currentUser.toUpperCase() === user.userId.toUpperCase()) {
@@ -152,6 +151,7 @@ function UserAccessList({
                             </div>}/>
             }
             <Select
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 styles={userAccessStyle}
                 id="userAccess-dropdown"
@@ -177,6 +177,7 @@ const userAccessStyle = {
         border: '1px solid transparent',
         backgroundColor: 'transparent',
         boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
             boxShadow: 'none !important',

@@ -20,6 +20,7 @@ import {AvailableModals} from '../../Modal/AvailableModals';
 
 export interface CurrentModalState {
     modal: AvailableModals | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     item?: any;
 }
 
@@ -30,6 +31,7 @@ const initialState: CurrentModalState = {
 
 const currentModalReducer = (
     state: CurrentModalState = initialState,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     action: { type: AvailableActions; modal: AvailableModals; item?: any }
 ): CurrentModalState => {
     switch (action.type) {

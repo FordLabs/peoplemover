@@ -39,7 +39,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             setProducts(result.data);
         });
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
-            let data = result.data.filter((item: Assignment) => {
+            const data = result.data.filter((item: Assignment) => {
                 return item !== null && isValidDate(new Date(item.startDate!)) && moment(item.startDate).isBefore(moment());
             });
             data.sort((a: Assignment, b: Assignment) => {
@@ -69,7 +69,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
 
     const getProductName = (assignment: Assignment): string => {
         let productName = 'Unknown Product';
-        let product = products.find((product) => product.id === assignment.productId);
+        const product = products.find((product) => product.id === assignment.productId);
         if (product) {
             productName = product.name;
         }

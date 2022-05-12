@@ -20,8 +20,6 @@ import {act, fireEvent, RenderResult, waitFor} from '@testing-library/react';
 import {axe, toHaveNoViolations} from 'jest-axe';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {RunConfig} from '../index';
 import {BrowserRouter as Router} from 'react-router-dom';
 import flagsmith from 'flagsmith';
@@ -30,8 +28,7 @@ const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
-    // @ts-ignore
-    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, currentUser: 'bob' } as GlobalStateProps;
+    const initialState = {currentSpace: TestUtils.space, currentUser: 'bob' };
 
     let app: RenderResult;
 
