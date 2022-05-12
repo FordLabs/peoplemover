@@ -33,7 +33,7 @@ import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 import {RoleTag} from '../../Roles/RoleTag.interface';
 import RoleClient from '../../Roles/RoleClient';
 import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
-import PeopleClient from "../../People/PeopleClient";
+import PeopleClient from '../../People/PeopleClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -52,7 +52,6 @@ export enum AvailableActions {
     SET_PERSON_TAGS,
     SET_LOCATIONS,
     SET_ROLES,
-    SET_PRODUCT_SORT_BY,
     SET_USER_SPACES,
     SET_IS_READ_ONLY,
     SET_IS_DRAGGING,
@@ -145,11 +144,6 @@ export const setRolesAction = (roles: Array<RoleTag>) => ({
     roles,
 });
 
-export const setProductSortByAction = (productSortBy: string) => ({
-    type: AvailableActions.SET_PRODUCT_SORT_BY,
-    productSortBy,
-});
-
 export const setUserSpacesAction = (userSpaces: Array<Space>) => ({
     type: AvailableActions.SET_USER_SPACES,
     userSpaces,
@@ -182,10 +176,6 @@ export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null
         ).then(result => {
             const products: Array<Product> = result.data || [];
             dispatch(setProductsAction(products));
-
-            const savedSort = localStorage.getItem('sortBy');
-            const sort = savedSort !== null && savedSort !== undefined ? savedSort : 'name';
-            dispatch(setProductSortByAction(sort));
         });
     };
 

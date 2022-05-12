@@ -42,6 +42,7 @@ import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
+import {RecoilRoot} from 'recoil';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
@@ -223,9 +224,11 @@ class TestUtils {
     ): Promise<RenderResult> {
         const result = renderWithRedux(
             <MemoryRouter initialEntries={[initialPath]}>
-                <Routes>
-                    <Route path="/:teamUUID" element={<PeopleMover/>} />
-                </Routes>
+                <RecoilRoot>
+                    <Routes>
+                        <Route path="/:teamUUID" element={<PeopleMover/>} />
+                    </Routes>
+                </RecoilRoot>
             </MemoryRouter>,
             store,
             initialState
