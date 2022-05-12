@@ -57,7 +57,7 @@ function ProductSortBySelector({ currentSpace }: Props): JSX.Element {
     }, [productSortBy, stringToOption]);
 
     const dropdownContent = (
-        <>{sortByOptions.map((option, index) => (
+        <>{sortByOptions.map((option) => (
             <button
                 key={option.value}
                 id={`sortDropdownOption_${option.value}`}

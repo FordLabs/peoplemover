@@ -31,9 +31,9 @@ interface Props {
 function SortedByList({ products }: Props): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);
 
-    const sortedProducts: Product [] = sortBy(products, productSortBy);
+    const sortedProducts: Product [] = sortBy();
 
-    function sortBy(products: Array<Product>, productSortBy: ProductSortBy):  Array<Product> {
+    function sortBy():  Array<Product> {
         switch (productSortBy) {
             case ProductSortBy.LOCATION: return [...products].sort(sortByLocation);
             case ProductSortBy.NAME: return [...products].sort(sortByProductName);
