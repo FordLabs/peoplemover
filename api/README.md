@@ -11,7 +11,20 @@ Once you have a copy of the backend up and running, head over to the [UI README]
 
 ### Dependencies
 - [Java 11](https://openjdk.java.net/projects/jdk/11/)
-- [Docker](https://www.docker.com/products/docker-desktop) optional if using local MySql
+- [Docker](https://www.docker.com/products/docker-desktop) or [Podman](https://podman.io/) (along with [podman-compose](https://github.com/containers/podman-compose)), if using local MySql
+
+### Starting the local instance of the database
+
+In the `./api` directory, run the command to start up the database instance specified in the docker-compose.yml file. This command will depend on if you are using Docker or Podman
+```
+docker compose up
+```
+or
+```
+podman-compose up
+```
+
+The database needs to be running in order for the unit tests to fully pass. 
 
 ### Build with Gradle
 
@@ -41,7 +54,7 @@ SPRING_PROFILES_ACTIVE=e2e-test,h2 ./gradlew api:bootRun
 
 ### Docker MySql Database
 ```
-docker-compose up -d
+docker compose up -d
 
 SPRING_PROFILES_ACTIVE=e2e-test,mysql ./gradlew api:bootRun
 ```
