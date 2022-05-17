@@ -17,7 +17,7 @@
 import ProductForm from '../Products/ProductForm';
 import React from 'react';
 import configureStore from 'redux-mock-store';
-import {act, screen, fireEvent, waitFor} from '@testing-library/react';
+import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import TestUtils, {mockCreateRange, renderWithRedux} from '../Utils/TestUtils';
 import {Space} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
@@ -148,7 +148,6 @@ describe('ProductForm', function() {
             currentSpace: TestUtils.space,
             viewingDate: moment().toDate(),
             productTags: TestUtils.productTags,
-            productSortBy: 'name',
             allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
         };
 

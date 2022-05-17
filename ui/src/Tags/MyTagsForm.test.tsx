@@ -30,7 +30,6 @@ describe('My Tags Form', () => {
         locations: TestUtils.locations,
         allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
         viewingDate: moment().toDate(),
-        productSortBy: 'name',
         currentSpace: TestUtils.space,
     };
 

@@ -54,6 +54,7 @@
     "react-select": "^3.0.8",
     "react-switch": "^6.0.0",
     "react-text-mask": "^5.4.3",
+    "recoil": "^0.7.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "universal-cookie": "^4.0.3"

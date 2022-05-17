@@ -17,7 +17,6 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
-import {AxiosResponse} from 'axios';
 import ProductClient from './ProductClient';
 import ProductList from './ProductList';
 import rootReducer from '../Redux/Reducers';
@@ -26,6 +25,7 @@ import {Product} from './Product';
 import {applyMiddleware, createStore, Store} from 'redux';
 import thunk from 'redux-thunk';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {RecoilRoot} from 'recoil';
 
 describe('Product List tests', () => {
     let store: Store;
@@ -34,9 +34,7 @@ describe('Product List tests', () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        ProductClient.getProductsForDate = jest.fn(() =>
-            Promise.resolve({ data: TestUtils.products } as AxiosResponse)
-        );
+        ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: TestUtils.products });
     });
 
     describe('Product list test filtering', () => {
@@ -61,12 +59,11 @@ describe('Product List tests', () => {
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
-                productSortBy: 'name',
                 currentSpace: TestUtils.space,
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            const component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<RecoilRoot><ProductList/></RecoilRoot>, store);
             await component.findByText(TestUtils.productForHank.name);
             await component.findByText(productWithAnnArborLocation.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(3);
@@ -93,13 +90,12 @@ describe('Product List tests', () => {
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
-                productSortBy: 'name',
                 currentSpace: TestUtils.space,
                 isReadOnly: true,
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            const component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<RecoilRoot><ProductList/></RecoilRoot>, store);
             await component.findByText(TestUtils.productForHank.name);
             await component.findByText(productWithAnnArborLocation.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
@@ -135,12 +131,11 @@ describe('Product List tests', () => {
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
-                productSortBy: 'name',
                 currentSpace: TestUtils.space,
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            const component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<RecoilRoot><ProductList/></RecoilRoot>, store);
             await component.findByText(TestUtils.productWithAssignments.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
@@ -174,13 +169,12 @@ describe('Product List tests', () => {
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
-                productSortBy: 'name',
                 currentSpace: TestUtils.space,
                 isReadOnly: true,
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            const component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<RecoilRoot><ProductList/></RecoilRoot>, store);
             await component.findByText(TestUtils.productWithAssignments.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(1);
             expect(component.queryByTestId('newProductButton')).not.toBeInTheDocument();
@@ -215,12 +209,11 @@ describe('Product List tests', () => {
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 viewingDate: moment().toDate(),
-                productSortBy: 'name',
                 currentSpace: TestUtils.space,
             };
 
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            const component = await renderWithRedux(<ProductList/>, store);
+            const component = await renderWithRedux(<RecoilRoot><ProductList/></RecoilRoot>, store);
             await component.findByText(TestUtils.productWithoutAssignments.name);
             expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });

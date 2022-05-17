@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,6 @@ import isUnassignedDrawerOpenReducer from './isUnassignedDrawerOpenReducer';
 import {Person} from '../../People/Person';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
-import productSortByReducer from './productSortByReducer';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
 import {viewingDateReducer} from './viewingDateReducer';
@@ -43,16 +42,11 @@ import {Flags, flagsReducer} from '../../Flags/Flags';
 import {RoleTag} from '../../Roles/RoleTag.interface';
 import rolesReducer from './rolesReducer';
 
-export type SortByType = 'location' | 'product-tag' | 'name'
-
-
-
 export default combineReducers({
     currentModal: currentModalReducer,
     people: peopleReducer,
     isUnassignedDrawerOpen: isUnassignedDrawerOpenReducer,
     productRefs: productRefsReducer,
-    productSortBy: productSortByReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
     currentSpace: currentSpaceReducer,
     viewingDate: viewingDateReducer,
@@ -68,13 +62,11 @@ export default combineReducers({
     flags: flagsReducer,
 });
 
-
 export interface GlobalStateProps {
     currentModal: CurrentModalState;
     people: Array<Person>;
     isUnassignedDrawerOpen: boolean;
     productRefs: Array<ProductCardRefAndProductPair>;
-    productSortBy: SortByType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;
     viewingDate: Date;

@@ -20,18 +20,20 @@ import {Product} from './Product';
 import NewProductButton from './NewProductButton';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {TagInterface} from '../Tags/Tag.interface';
-import {GlobalStateProps, SortByType} from '../Redux/Reducers';
+import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Tag} from '../Tags/Tag';
 import {LocationTag} from '../Locations/LocationTag.interface';
+import {useRecoilValue} from 'recoil';
 
-import './ProductListGrouped.scss';
 import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
+
+import './ProductListGrouped.scss';
 
 interface GroupedByListProps {
     products: Array<Product>;
-    productSortBy: SortByType;
     productTags: Array<Tag>;
     locations: Array<LocationTag>;
 }
@@ -52,15 +54,15 @@ interface ProductGroupProps {
 }
 
 function GroupedByList({
-    productSortBy,
     products,
     productTags,
     locations,
 }: GroupedByListProps): JSX.Element {
+    const productSortBy = useRecoilValue(ProductSortByState);
     const productGroupList = sortProducts();
 
     function sortProducts(): GroupedListDataProps {
-        if (productSortBy === 'location') {
+        if (productSortBy === ProductSortBy.LOCATION) {
             return ({
                 traitTitle: 'Location',
                 traits: [...locations],

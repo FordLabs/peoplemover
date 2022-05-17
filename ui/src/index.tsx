@@ -36,6 +36,8 @@ import {AvailableActions} from './Redux/Actions';
 import {simplifyFlags} from './Flags/Flags';
 
 import axe from '@axe-core/react';
+import {RecoilRoot} from 'recoil';
+
 /* eslint-disable */
 const reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
 let reduxDevToolsEnhancer: Function | undefined;
@@ -159,7 +161,9 @@ if (isUnsupportedBrowser()) {
 
                         return (
                             <Provider store={store}>
-                                <Routes />
+                                <RecoilRoot>
+                                    <Routes />
+                                </RecoilRoot>
                             </Provider>
                         );
                     }}

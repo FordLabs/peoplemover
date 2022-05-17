@@ -18,25 +18,26 @@
 import React, {useEffect, useState} from 'react';
 import {isActiveProduct, isProductMatchingSelectedFilters, Product} from './Product';
 import {connect} from 'react-redux';
-import {GlobalStateProps, SortByType} from '../Redux/Reducers';
+import {GlobalStateProps} from '../Redux/Reducers';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {useRecoilValue} from 'recoil';
+import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 
 interface ProductListProps {
     products: Array<Product>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     viewingDate: Date;
-    productSortBy: SortByType;
 }
 
 function ProductList({
     products,
     allGroupedTagFilterOptions,
     viewingDate,
-    productSortBy,
 }: ProductListProps): JSX.Element {
+    const productSortBy = useRecoilValue(ProductSortByState);
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
     const [filteredProductsLoaded, setFilteredProductsLoaded] = useState<boolean>(false);
 
@@ -59,15 +60,11 @@ function ProductList({
                 .filter(prod => isActiveProduct(prod, viewingDate));
 
             switch (productSortBy) {
-                case 'name' : {
-                    return <SortedByList
-                        products={filteredAndActiveProduct}
-                        productSortBy={productSortBy}/>;
+                case ProductSortBy.NAME : {
+                    return <SortedByList products={filteredAndActiveProduct} />;
                 }
                 default:
-                    return <GroupedByList
-                        products={filteredAndActiveProduct}
-                        productSortBy={productSortBy}/>;
+                    return <GroupedByList products={filteredAndActiveProduct} />;
             }
         } else {
             return <></>;
@@ -83,7 +80,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     productTags: state.productTags,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
     viewingDate: state.viewingDate,
-    productSortBy: state.productSortBy,
 });
 
 export default connect(mapStateToProps)(ProductList);

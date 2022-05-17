@@ -21,7 +21,7 @@ import {connect} from 'react-redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
 import {GlobalStateProps} from '../Redux/Reducers';
-import ProductSortBy from '../SortingAndFiltering/ProductSortBy';
+import ProductSortBy from '../SortingAndFiltering/ProductSortBySelector';
 import Filter from '../SortingAndFiltering/Filter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
