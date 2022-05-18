@@ -31,7 +31,6 @@ import {fireEvent} from '@testing-library/dom';
 import {applyMiddleware, createStore, Store} from 'redux';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {AvailableModals} from '../Modal/AvailableModals';
-import {act} from 'react-dom/test-utils';
 import thunk from 'redux-thunk';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
@@ -231,16 +230,13 @@ describe('TimeOnProduct', () => {
     });
 
     describe('Loading', () => {
-        xit('should show loading', async () => {
+        xit('should show loading state', async () => {
             const initialState = {
                 currentSpace: TestUtils.space,
             };
             const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            const app = renderWithRedux(<RecoilRoot><TimeOnProduct/></RecoilRoot>, store);
-            act(() => {
-                // store.dispatch(setViewingDateAction(new Date(2020, 0, 1)));
-            });
-            await app.findByText(LOADING);
+            renderWithRedux(<RecoilRoot><TimeOnProduct/></RecoilRoot>, store);
+            await screen.findByText(LOADING);
         });
     });
 
