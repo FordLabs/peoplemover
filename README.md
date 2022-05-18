@@ -14,5 +14,5 @@ well suited for the product at hand – because we understand that a great team 
 
 
 # Running the project
-- Start with the [backend](./api/Readme.md)
+- Start with the [backend](./api/README.md)
 - After the backend is running start the [frontend](./ui/README.md)
