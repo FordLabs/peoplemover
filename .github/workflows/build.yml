@@ -41,7 +41,6 @@ jobs:
         run: ./gradlew api:assemble
         env:
           HEAD_BRANCH: main
-        working-directory: ./api
         if: github.event_name == 'push'
       - name: Release artifact
         uses: actions/upload-artifact@v2
