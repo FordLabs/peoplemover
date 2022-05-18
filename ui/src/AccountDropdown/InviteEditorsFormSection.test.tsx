@@ -323,7 +323,7 @@ describe('Invite Editors Form', function() {
                 currentUser: currentUser,
             });
 
-            renderWithRedux(<InviteEditorsFormSection/>, store, undefined);
+            renderWithRedux(<InviteEditorsFormSection/>, store);
 
             const editorRow = within(await screen.findByTestId(`userListItem__user_id_2`));
             const editor = editorRow.getByText(/editor/i);
