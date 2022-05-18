@@ -44,103 +44,29 @@ describe('Products', () => {
 
     describe('Home page', () => {
         it('displays the product names', async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={TestUtils.productWithoutAssignments}/>
-                </RecoilRoot>,
-                store
-            );
-
+            renderProductCard();
             await screen.findByText('Product 3');
         });
 
         it('displays the product location', async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={TestUtils.productWithoutAssignments}/>
-                </RecoilRoot>,
-                store
-            );
-
+            renderProductCard();
             await screen.findByText('Dearborn');
         });
 
         it('displays the product tags', async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={TestUtils.productWithoutAssignments}/>
-                </RecoilRoot>,
-                store
-            );
+            renderProductCard();
 
             await screen.findByText('AV');
             expect(screen.queryByText('FordX')).not.toBeInTheDocument();
         });
 
         it('displays the empty product text', async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={TestUtils.productWithoutAssignments}/>
-                </RecoilRoot>,
-                store
-            );
-
+            renderProductCard();
             await screen.findAllByText('Add a person by clicking Add Person icon above or drag them in.');
         });
 
         it('should not make an update assignment call when dragging assignment card to same product', async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                currentModal: {modal: null},
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={TestUtils.productWithAssignments}/>
-                </RecoilRoot>,
-                store
-            );
+            renderProductCard({ product: TestUtils.productWithAssignments });
 
             AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({});
 
@@ -150,22 +76,7 @@ describe('Products', () => {
         });
 
         it('does not display the empty product text for a product with people', async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={TestUtils.productWithoutAssignments}/>
-                </RecoilRoot>,
-                store
-            );
-
+            renderProductCard();
             expect(screen.queryByText('Add a person by clicking')).not.toBeInTheDocument();
         });
 
@@ -263,21 +174,7 @@ describe('Products', () => {
                 tags: [],
             };
 
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={productWithManyAssignments}/>
-                </RecoilRoot>,
-                store
-            );
+            renderProductCard({ product: productWithManyAssignments });
 
             const expectedPersonsInOrder: Array<Person> = [
                 {
@@ -344,42 +241,12 @@ describe('Products', () => {
         });
 
         it('displays the add person icon', async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={TestUtils.productWithoutAssignments}/>
-                </RecoilRoot>,
-                store
-            );
-
+            renderProductCard();
             await screen.findByTestId('addPersonToProductIcon__product_3');
         });
 
-        it('does not display the add person icon on the unassigned product', async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: false,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 4, 14))
-                }}>
-                    <ProductCard product={TestUtils.productWithoutAssignments}/>
-                </RecoilRoot>,
-                store
-            );
-
+        it('does not display the add person icon on the unassigned product', () => {
+            renderProductCard();
             expect(screen.queryByTestId('addPersonToProductIcon__unassigned')).not.toBeInTheDocument();
         });
 
@@ -699,25 +566,8 @@ describe('Products', () => {
     });
 
     describe('Read only view', () => {
-        beforeEach(async () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                isReadOnly: true,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-            };
-
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-
-            await waitFor(() => {
-                renderWithRedux(
-                    <RecoilRoot initializeState={({set}) => {
-                        set(ViewingDateState, new Date(2020, 4, 14))
-                    }}>
-                        <ProductCard product={TestUtils.productWithAssignments}/>
-                    </RecoilRoot>,
-                    store
-                );
-            });
+        beforeEach(() => {
+            renderProductCard({ product: TestUtils.productWithAssignments, isReadOnly: true})
         });
 
         it('should not show edit product icon', async () => {
@@ -729,3 +579,24 @@ describe('Products', () => {
         });
     });
 });
+
+function renderProductCard(params?: { product?: Product, isReadOnly?: boolean}) {
+    const { product = TestUtils.productWithoutAssignments, isReadOnly = false } = params || {}
+
+    const initialState = {
+        currentSpace: TestUtils.space,
+        isReadOnly: isReadOnly,
+        allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+        currentModal: {modal: null},
+    };
+
+    const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+    renderWithRedux(
+        <RecoilRoot initializeState={({set}) => {
+            set(ViewingDateState, new Date(2020, 4, 14))
+        }}>
+            <ProductCard product={product}/>
+        </RecoilRoot>,
+        store
+    );
+}
