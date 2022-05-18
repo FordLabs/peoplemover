@@ -19,26 +19,20 @@ import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {fireEvent, screen} from '@testing-library/react';
-import {createStore} from 'redux';
-import rootReducer from '../Redux/Reducers';
+import {createStore, PreloadedState} from 'redux';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 
 describe('Tooltip behavior on hover', () => {
     it('should show the notes of the person being hovered over', async () => {
-        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1));
-            }}>
-                <PersonAndRoleInfo
-                    person={TestUtils.hank}
-                    isUnassignedProduct={false}
-                    duration={parseInt('dontcare', 1)}
-                />
-            </RecoilRoot>,
-            store
+        renderWithRecoilAndRedux(
+            <PersonAndRoleInfo
+                person={TestUtils.hank}
+                isUnassignedProduct={false}
+                duration={parseInt('dontcare', 1)}
+            />,
+            {currentSpace: TestUtils.space, isReadOnly: false}
         );
 
         expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
@@ -50,19 +44,13 @@ describe('Tooltip behavior on hover', () => {
     });
 
     it('should not show the notes of the person being hovered over if they have none', async () => {
-        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1));
-            }}>
-                <PersonAndRoleInfo
-                    person={TestUtils.person2}
-                    isUnassignedProduct={false}
-                    duration={parseInt('dontcare', 1)}
-                />
-            </RecoilRoot>,
-            store
+        renderWithRecoilAndRedux(
+            <PersonAndRoleInfo
+                person={TestUtils.person2}
+                isUnassignedProduct={false}
+                duration={parseInt('dontcare', 1)}
+            />,
+            {currentSpace: TestUtils.space, isReadOnly: false}
         );
 
         expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
@@ -72,19 +60,13 @@ describe('Tooltip behavior on hover', () => {
     });
 
     it('should show the time on product of the person being hovered over', async () => {
-        const store = createStore(rootReducer, { currentSpace: TestUtils.space });
-
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1));
-            }}>
-                <PersonAndRoleInfo
-                    person={TestUtils.hank}
-                    isUnassignedProduct={false}
-                    duration={367}
-                />
-            </RecoilRoot>,
-            store
+        renderWithRecoilAndRedux(
+            <PersonAndRoleInfo
+                person={TestUtils.hank}
+                isUnassignedProduct={false}
+                duration={367}
+            />,
+            { currentSpace: TestUtils.space }
         );
 
         expect(screen.queryByText('Time on Product:')).not.toBeInTheDocument();
@@ -96,20 +78,14 @@ describe('Tooltip behavior on hover', () => {
     });
 
     it('should show the person tags of the person being hovered over', async () => {
-        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1));
-            }}>
-                <PersonAndRoleInfo
-                    person={TestUtils.person2}
-                    isUnassignedProduct={false}
-                    duration={parseInt('dontcare', 1)}
-                />
-            </RecoilRoot>,
-            store
-        );
+        renderWithRecoilAndRedux(
+            <PersonAndRoleInfo
+                person={TestUtils.person2}
+                isUnassignedProduct={false}
+                duration={parseInt('dontcare', 1)}
+            />,
+            {currentSpace: TestUtils.space, isReadOnly: false}
+        )
 
         expect(screen.queryByText('Person Tags:')).not.toBeInTheDocument();
         expect(screen.queryByTestId('local_offer-icon')).not.toBeInTheDocument();
@@ -121,20 +97,14 @@ describe('Tooltip behavior on hover', () => {
     });
 
     it('should not show the person tags of the person being hovered over if they have none', async () => {
-        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1));
-            }}>
-                <PersonAndRoleInfo
-                    person={TestUtils.unassignedPerson}
-                    isUnassignedProduct={false}
-                    duration={parseInt('dontcare', 1)}
-                />
-            </RecoilRoot>,
-            store
-        );
+        renderWithRecoilAndRedux(
+            <PersonAndRoleInfo
+                person={TestUtils.unassignedPerson}
+                isUnassignedProduct={false}
+                duration={parseInt('dontcare', 1)}
+            />,
+            {currentSpace: TestUtils.space, isReadOnly: false}
+        )
 
         expect(screen.queryByText('Person Tags:')).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
@@ -142,20 +112,14 @@ describe('Tooltip behavior on hover', () => {
     });
 
     it('should not show the hover if the space is read only', async () => {
-        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
-
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1));
-            }}>
-                <PersonAndRoleInfo
-                    person={TestUtils.hank}
-                    duration={0}
-                    isUnassignedProduct={false}
-                />
-            </RecoilRoot>,
-            store
-        );
+        renderWithRecoilAndRedux(
+            <PersonAndRoleInfo
+                person={TestUtils.hank}
+                duration={0}
+                isUnassignedProduct={false}
+            />,
+            {currentSpace: TestUtils.space, isReadOnly: true}
+        )
 
         expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
@@ -164,20 +128,14 @@ describe('Tooltip behavior on hover', () => {
     });
 
     it('should not show the hover if it is part of the Unassigned product', async () => {
-        const store = createStore(rootReducer, {currentSpace: TestUtils.space});
-
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1));
-            }}>
-                <PersonAndRoleInfo
-                    person={TestUtils.hank}
-                    duration={0}
-                    isUnassignedProduct={true}
-                />
-            </RecoilRoot>,
-            store
-        );
+        renderWithRecoilAndRedux(
+            <PersonAndRoleInfo
+                person={TestUtils.hank}
+                duration={0}
+                isUnassignedProduct={true}
+            />,
+            {currentSpace: TestUtils.space}
+        )
 
         expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
@@ -189,3 +147,15 @@ describe('Tooltip behavior on hover', () => {
 const getItemAndFireMouseOverEvent = (testId: string): void => {
     fireEvent.mouseOver(screen.getByTestId(testId));
 };
+
+const renderWithRecoilAndRedux = (personAndRoleInfoComponent: JSX.Element, preloadedReduxState: PreloadedState<Partial<GlobalStateProps>>) => {
+    const store = createStore(rootReducer, preloadedReduxState);
+    renderWithRedux(
+        <RecoilRoot initializeState={({set}) => {
+            set(ViewingDateState, new Date(2020, 0, 1));
+        }}>
+            {personAndRoleInfoComponent}
+        </RecoilRoot>,
+        store
+    );
+}
