@@ -17,7 +17,6 @@
 
 import React, {useEffect, useState} from 'react';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
-import './ReassignedDrawer.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Reassignment} from './Reassignment';
@@ -28,25 +27,28 @@ import {isArchived, Person} from '../People/Person';
 import {fetchPeopleAction, fetchProductsAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import PeopleClient from '../People/PeopleClient';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
-interface ReassignedDrawerProps {
+import './ReassignedDrawer.scss';
+
+interface Props {
     products: Array<Product>;
-    viewingDate: Date;
     currentSpace: Space;
-
-    fetchProducts(): Array<Product>;
+    fetchProducts(viewingDate: Date): Array<Product>;
     fetchPeople(): Array<Person>;
 }
 
 function ReassignedDrawer({
     products,
-    viewingDate,
     currentSpace,
     fetchProducts,
     fetchPeople,
-}: ReassignedDrawerProps): JSX.Element {
+}: Props): JSX.Element {
     const [showDrawer, setShowDrawer] = useState(true);
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
+
+    const viewingDate = useRecoilValue(ViewingDateState);
 
     /* eslint-disable */
     useEffect(() => {
@@ -61,20 +63,18 @@ function ReassignedDrawer({
         mapsReassignments(reassignment, index)
     ));
 
-    const containee: JSX.Element = (
-        <div
-            className="reassignmentContainer"
-            data-testid="reassignmentContainer">
-            {listOfHTMLReassignments}
-        </div>
-    );
-
     return (
         <DrawerContainer
             drawerIcon="how_to_reg"
             testId="reassignmentDrawer"
             containerTitle="Reassigned"
-            containee={containee}
+            containee={(
+                <div
+                    className="reassignmentContainer"
+                    data-testid="reassignmentContainer">
+                    {listOfHTMLReassignments}
+                </div>
+            )}
             isDrawerOpen={showDrawer}
             setIsDrawerOpen={setShowDrawer}
             numberForCountBadge={reassignments.length}/>
@@ -120,7 +120,7 @@ function ReassignedDrawer({
         }
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
-                fetchProducts();
+                fetchProducts(viewingDate);
                 fetchPeople();
                 MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`);
             }).catch(err => {
@@ -133,12 +133,11 @@ function ReassignedDrawer({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
-    viewingDate: state.viewingDate,
     currentSpace: state.currentSpace,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchProducts: () => dispatch(fetchProductsAction()),
+    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     fetchPeople: () => dispatch(fetchPeopleAction()),
 });
 

@@ -34,7 +34,6 @@ import moment from 'moment';
 import {Space} from '../Space/Space';
 import {createDataTestId} from '../Utils/ReactUtils';
 
-import './Product.scss';
 import {AvailableModals} from '../Modal/AvailableModals';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
@@ -42,29 +41,28 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {getAssignments, Person} from '../People/Person';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
+
+import './Product.scss';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
 interface ProductCardProps {
     product: Product;
     currentSpace: Space;
-    viewingDate: Date;
     isReadOnly: boolean;
     products: Array<Product>;
 
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
-
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
-
-    fetchProducts(): void;
+    fetchProducts(viewingDate: Date): void;
 }
 
 function ProductCard({
     product,
     currentSpace,
-    viewingDate,
     isReadOnly,
     products,
     registerProductRef,
@@ -76,23 +74,16 @@ function ProductCard({
     const [modal, setModal] = useState<JSX.Element | null>(null);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
-    /* eslint-disable */
+    const viewingDate = useRecoilValue(ViewingDateState);
+
     useEffect(() => {
         registerProductRef({ref: productRef, product});
 
-        return () => {
-            unregisterProductRef({ref: productRef, product});
-        };
-    }, []);
-
-    /* eslint-enable */
+        return () => unregisterProductRef({ref: productRef, product});
+    }, [product, registerProductRef, unregisterProductRef]);
 
     function toggleEditMenu(): void {
-        if (isEditMenuOpen) {
-            setIsEditMenuOpen(false);
-        } else {
-            setIsEditMenuOpen(true);
-        }
+        setIsEditMenuOpen(!isEditMenuOpen);
     }
 
     function getMenuOptionList(): Array<EditMenuOption> {
@@ -123,14 +114,11 @@ function ProductCard({
         toggleEditMenu();
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: archiveProduct,
-            close: () => {
-                setModal(null);
-            },
+            close: () => setModal(null),
             secondaryButton: undefined,
             content: (
                 <>
                     <div>Archiving this product will move any people assigned to this product to Unassigned (unless they have already been assigned to another product).</div>
-
                     <div><br/>You can access these people from the Unassigned drawer.</div>
                 </>
             ),
@@ -150,7 +138,9 @@ function ProductCard({
             AssignmentClient.createAssignmentForDate(assignmentEndDate, getRemainingAssignments(assignment.person), currentSpace, assignment.person);
         });
         const archivedProduct = {...product, endDate: productEndDate};
-        ProductClient.editProduct(currentSpace, archivedProduct, true).then(fetchProducts);
+        ProductClient.editProduct(currentSpace, archivedProduct, true).then(() => {
+            fetchProducts(viewingDate);
+        });
     }
 
     const getRemainingAssignments = (person: Person): Array<ProductPlaceholderPair> => {
@@ -238,7 +228,8 @@ function ProductCard({
                                                 data-testid="productUrl">open_in_new</i>
                                         </div>
                                     </button> :
-                                    <div data-testid="productName" className="productName">{product.name}</div>}
+                                    <div data-testid="productName" className="productName">{product.name}</div>
+                                }
                                 {!isReadOnly && (
                                     <div className={'productControlsContainer'}>
                                         <button
@@ -262,11 +253,12 @@ function ProductCard({
                                 )}
                             </div>
                             <TagList/>
-                            {
-                                isEditMenuOpen &&
-                                <EditMenu idToPass={generateIdName()} menuOptionList={getMenuOptionList()}
+                            {isEditMenuOpen && (
+                                <EditMenu
+                                    idToPass={generateIdName()}
+                                    menuOptionList={getMenuOptionList()}
                                     onClosed={toggleEditMenu}/>
-                            }
+                            )}
                         </div>
                         {!isReadOnly && product.assignments.length === 0 && (
                             <div className="emptyProductText">
@@ -287,14 +279,13 @@ function ProductCard({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly,
     products: state.products,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchProducts: () => dispatch(fetchProductsAction()),
+    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     registerProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(registerProductRefAction(productRef)),
     unregisterProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(unregisterProductRefAction(productRef)),
 });

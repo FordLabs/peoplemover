@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,20 +25,21 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface UnassignedDrawerProps {
     isUnassignedDrawerOpen: boolean;
     setIsUnassignedDrawerOpen(isOpen: boolean): void;
     product: Product;
-    viewingDate: Date;
 }
 
 function UnassignedDrawer({
     isUnassignedDrawerOpen,
     setIsUnassignedDrawerOpen,
     product,
-    viewingDate,
 }: UnassignedDrawerProps): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
     const productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(product, viewingDate);
 
     return (
@@ -65,7 +66,6 @@ const getUnassignedProduct = (products: Array<Product>): Product => {
 const mapStateToProps = (state: GlobalStateProps) => ({
     isUnassignedDrawerOpen: state.isUnassignedDrawerOpen,
     product: getUnassignedProduct(state.products ? state.products : []),
-    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

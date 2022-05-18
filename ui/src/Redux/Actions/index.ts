@@ -46,7 +46,6 @@ export enum AvailableActions {
     UNREGISTER_PRODUCT_REF,
     SET_ALL_FILTER_OPTIONS,
     SET_CURRENT_SPACE,
-    SET_VIEWING_DATE,
     SET_PRODUCTS,
     SET_PRODUCT_TAGS,
     SET_PERSON_TAGS,
@@ -114,11 +113,6 @@ export const setCurrentUserAction = (currentUser: string) => ({
     currentUser,
 });
 
-export const setViewingDateAction = (date: Date) => ({
-    type: AvailableActions.SET_VIEWING_DATE,
-    date,
-});
-
 export const setProductsAction = (products: Array<Product>) => ({
     type: AvailableActions.SET_PRODUCTS,
     products,
@@ -168,15 +162,13 @@ export const fetchUserSpacesAction: ActionCreator<ThunkAction<void, Function, nu
             });
     };
 
-export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
+export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (viewingDate: Date) =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return ProductClient.getProductsForDate(
-            getState().currentSpace.uuid,
-            getState().viewingDate
-        ).then(result => {
-            const products: Array<Product> = result.data || [];
-            dispatch(setProductsAction(products));
-        });
+        return ProductClient.getProductsForDate(getState().currentSpace.uuid, viewingDate)
+            .then(result => {
+                const products: Array<Product> = result.data || [];
+                dispatch(setProductsAction(products));
+            });
     };
 
 export const fetchPeopleAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () => (dispatch: Dispatch, getState: Function): Promise<void> => {

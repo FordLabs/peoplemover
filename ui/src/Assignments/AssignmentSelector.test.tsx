@@ -17,11 +17,13 @@
 
 import React from 'react';
 import AssignmentForm from './AssignmentForm';
-import {act, fireEvent, screen} from '@testing-library/react';
+import {fireEvent, screen} from '@testing-library/react';
 import AssignmentClient from './AssignmentClient';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 describe('the assignment form', () => {
     beforeEach(() => {
@@ -31,8 +33,12 @@ describe('the assignment form', () => {
 
     it('renders the assignment form labels', () => {
         renderWithRedux(
-            <AssignmentForm products={[TestUtils.unassignedProduct]}
-                initiallySelectedProduct={TestUtils.unassignedProduct}/>,
+            <RecoilRoot>
+                <AssignmentForm
+                    products={[TestUtils.unassignedProduct]}
+                    initiallySelectedProduct={TestUtils.unassignedProduct}
+                />,
+            </RecoilRoot>
         );
         expect(screen.getByLabelText('Name')).toBeDefined();
         expect(screen.getByLabelText('Mark as Placeholder')).toBeDefined();
@@ -42,45 +48,49 @@ describe('the assignment form', () => {
     it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
         const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments, TestUtils.productWithoutAssignments, TestUtils.productForHank];
         const viewingDate = new Date(2020, 5, 5);
+        const initialState = {people: TestUtils.people, currentSpace: TestUtils.space};
+        renderWithRedux(
+            <RecoilRoot initializeState={(({set}) => {
+                set(ViewingDateState, viewingDate)
+            })}>
+                <AssignmentForm
+                    products={products}
+                    initiallySelectedProduct={products[2]}
+                />,
+            </RecoilRoot>,
+            undefined,
+            initialState
+        );
 
-        await act(async () => {
-            const component = <AssignmentForm products={products}
-                initiallySelectedProduct={products[2]}/>;
-            const initialState = {people: TestUtils.people, currentSpace: TestUtils.space, viewingDate: viewingDate};
-            await renderWithRedux(component, undefined, initialState);
+        const labelElement = await screen.findByLabelText('Name');
+        const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
+        await selectEvent.select(labelElement, /Hank/, containerToFindOptionsIn);
 
-            const labelElement = await screen.findByLabelText('Name');
-            const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
-            await selectEvent.select(labelElement, /Hank/, containerToFindOptionsIn);
+        const productSelect = await screen.findByLabelText('Assign to');
+        await selectEvent.select(productSelect, 'Product 1');
+        const assignButton = await screen.findByText('Assign');
+        fireEvent.click(assignButton);
 
-            const productSelect = await screen.findByLabelText('Assign to');
-            await selectEvent.select(productSelect, 'Product 1');
-            const assignButton = await screen.findByText('Assign');
-            fireEvent.click(assignButton);
-
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentForDate');
-            expect(spy).toBeCalledTimes(1);
+        expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             
-            expect(spy).toBeCalledWith(
-                moment(viewingDate).format('YYYY-MM-DD'),
-                [
-                    {
-                        productId: TestUtils.productWithoutAssignments.id,
-                        placeholder: false,
-                    },
-                    {
-                        productId: TestUtils.productWithAssignments.id,
-                        placeholder: false,
-                    },
-                    {
-                        productId: TestUtils.productForHank.id,
-                        placeholder: TestUtils.assignmentForHank.placeholder,
-                    },
-                ],
-                TestUtils.space,
-                TestUtils.hank
-            );
-            
-        });
+        expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+            moment(viewingDate).format('YYYY-MM-DD'),
+            [
+                {
+                    productId: TestUtils.productWithoutAssignments.id,
+                    placeholder: false,
+                },
+                {
+                    productId: TestUtils.productWithAssignments.id,
+                    placeholder: false,
+                },
+                {
+                    productId: TestUtils.productForHank.id,
+                    placeholder: TestUtils.assignmentForHank.placeholder,
+                },
+            ],
+            TestUtils.space,
+            TestUtils.hank
+        );
     });
 });

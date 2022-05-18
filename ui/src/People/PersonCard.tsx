@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,15 +20,15 @@ import {connect} from 'react-redux';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import '../Styles/Main.scss';
 import {createDataTestId} from '../Utils/ReactUtils';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {Person} from './Person';
 import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
+
+import '../Styles/Main.scss';
 import './PersonCard.scss';
 
 interface PersonCardProps {
-    viewingDate: Date;
     isReadOnly: boolean;
     person: Person;
 
@@ -36,12 +36,10 @@ interface PersonCardProps {
 }
 
 function PersonCard({
-    viewingDate,
     isReadOnly,
     person,
     setCurrentModal,
 }: PersonCardProps): JSX.Element {
-
     function toggleModal(): void {
         if (!isReadOnly) {
             const newModalState: CurrentModalState = {
@@ -89,7 +87,6 @@ function PersonCard({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly,
 });
 

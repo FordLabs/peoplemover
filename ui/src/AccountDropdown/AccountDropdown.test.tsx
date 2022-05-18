@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {act, fireEvent, waitFor, screen} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
@@ -26,6 +26,8 @@ import configureStore from 'redux-mock-store';
 import {AvailableActions} from '../Redux/Actions';
 import ReportClient from '../Reports/ReportClient';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 describe('Account Dropdown', () => {
     beforeEach(async () => {
@@ -41,7 +43,6 @@ describe('Account Dropdown', () => {
         const expectedViewingDate = new Date(2020, 4, 14);
         const store = mockStore({
             currentSpace: expectedCurrentSpace,
-            viewingDate: expectedViewingDate,
         });
 
         beforeEach(async () => {
@@ -50,7 +51,11 @@ describe('Account Dropdown', () => {
             store.dispatch = jest.fn();
             renderWithRedux(
                 <MemoryRouter initialEntries={['/teamName']}>
-                    <AccountDropdown showAllDropDownOptions={true}/>
+                    <RecoilRoot initializeState={({set}) => {
+                        set(ViewingDateState, expectedViewingDate)
+                    }}>
+                        <AccountDropdown showAllDropDownOptions={true}/>
+                    </RecoilRoot>
                 </MemoryRouter>,
                 store,
             );
@@ -60,9 +65,7 @@ describe('Account Dropdown', () => {
 
         describe('Share Access', () => {
             it('should trigger edit contributors modal on "Share Access" click', async () => {
-                await act(async () => {
-                    fireEvent.click(await screen.findByText('Share Access'));
-                });
+                fireEvent.click(await screen.findByText('Share Access'));
                 expect(store.dispatch).toHaveBeenCalledWith({
                     type: AvailableActions.SET_CURRENT_MODAL,
                     modal: AvailableModals.SHARE_SPACE_ACCESS,
@@ -73,9 +76,8 @@ describe('Account Dropdown', () => {
 
         describe('Download Report', () => {
             it('should trigger a report download on "Download Report" click', async () => {
-                await act(async () => {
-                    fireEvent.click(await screen.findByText('Download Report'));
-                });
+                fireEvent.click(await screen.findByText('Download Report'));
+
                 expect(ReportClient.getReportsWithNames).toHaveBeenCalledWith(
                     expectedCurrentSpace.name,
                     expectedCurrentSpace.uuid,
@@ -87,13 +89,10 @@ describe('Account Dropdown', () => {
         describe('Sign Out', () => {
             it('should remove accessToken from cookies and redirect to homepage on click of sign out', async () => {
                 const cookies = new Cookies();
-                await act(async () => {
-                    cookies.set('accessToken', 'FAKE_TOKEN');
+                cookies.set('accessToken', 'FAKE_TOKEN');
+                expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
 
-                    expect(cookies.get('accessToken')).toEqual('FAKE_TOKEN');
-
-                    fireEvent.click(await screen.findByText('Sign Out'));
-                });
+                fireEvent.click(await screen.findByText('Sign Out'));
                 expect(cookies.get('accessToken')).toBeUndefined();
                 expect(window.location.pathname).toEqual('/');
             });
@@ -106,26 +105,20 @@ describe('Account Dropdown', () => {
 
     describe('Read Only', function() {
         beforeEach(async () => {
-            await waitFor(async () => {
-                renderWithRedux(
-                    <MemoryRouter initialEntries={['/teamName']}>
-                        <AccountDropdown showAllDropDownOptions={true}/>
-                    </MemoryRouter>,
-                    undefined,
-                    {currentSpace: TestUtils.space, isReadOnly: true}
-                );
-            });
+            renderWithRedux(
+                <MemoryRouter initialEntries={['/teamName']}>
+                    <AccountDropdown showAllDropDownOptions={true}/>
+                </MemoryRouter>,
+                undefined,
+                {currentSpace: TestUtils.space, isReadOnly: true}
+            );
         });
         it('should not display Download Report and Share Access when it is in Read Only mode', async () => {
-            await act(async () => {
-                const userIconButton = await screen.findByTestId('accountDropdownToggle');
-                fireEvent.click(userIconButton);
-            });
+            const userIconButton = await screen.findByTestId('accountDropdownToggle');
+            fireEvent.click(userIconButton);
 
-            await act(async () => {
-                expect(await screen.queryByTestId('shareAccess')).toBeNull();
-                expect(await screen.queryByTestId('downloadReport')).toBeNull();
-            });
+            expect(await screen.queryByTestId('shareAccess')).toBeNull();
+            expect(await screen.queryByTestId('downloadReport')).toBeNull();
         });
 
         it('should focus the first dropdown option when opened', async () => {

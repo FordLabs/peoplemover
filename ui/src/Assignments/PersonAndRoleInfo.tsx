@@ -19,7 +19,9 @@ import React, {ReactElement, useState} from 'react';
 import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Person, isArchived} from '../People/Person';
+import {isArchived, Person} from '../People/Person';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface HoverInfo {
     title: string;
@@ -27,11 +29,10 @@ interface HoverInfo {
     icon: string;
 }
 
-interface PersonAndRoleInfoProps {
+interface Props {
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
     isDragging: boolean;
-    viewingDate: Date;
     person: Person;
     duration: number;
 }
@@ -40,10 +41,10 @@ const PersonAndRoleInfo = ({
     isReadOnly,
     isUnassignedProduct,
     isDragging,
-    viewingDate,
     duration,
     person,
-}: PersonAndRoleInfoProps): ReactElement => {
+}: Props): ReactElement => {
+    const viewingDate = useRecoilValue(ViewingDateState);
 
     const [isHoverBoxOpen, setHoverBoxIsOpened] = useState<boolean>(false);
 
@@ -145,7 +146,6 @@ const PersonAndRoleInfo = ({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
-    viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly
 });
 

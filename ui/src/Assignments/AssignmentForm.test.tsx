@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent, getByText, RenderResult, screen, within} from '@testing-library/react';
+import {fireEvent, getByText, screen, within} from '@testing-library/react';
 import React from 'react';
 import AssignmentForm from '../Assignments/AssignmentForm';
 import AssignmentClient from '../Assignments/AssignmentClient';
@@ -26,6 +26,8 @@ import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 describe('AssignmentForm', () => {
     beforeEach(() => {
@@ -37,8 +39,12 @@ describe('AssignmentForm', () => {
         it('should not show the unassigned or archived products in the product list', async () => {
             const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
             renderWithRedux(
-                <AssignmentForm products={products}
-                    initiallySelectedProduct={products[0]}/>
+                <RecoilRoot>
+                    <AssignmentForm
+                        products={products}
+                        initiallySelectedProduct={products[0]}
+                    />
+                </RecoilRoot>
             );
 
             const productsMultiSelectField = await screen.findByLabelText('Assign to');
@@ -51,12 +57,12 @@ describe('AssignmentForm', () => {
         });
 
         it('submits an assignment with the given person and product', async () => {
-            const { viewingDate, app } = renderComponent();
-            const labelElement = await app.findByLabelText('Name');
-            const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
+            const { viewingDate } = renderComponent();
+            const labelElement = await screen.findByLabelText('Name');
+            const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
 
-            fireEvent.click(app.getByText('Assign'));
+            fireEvent.click(screen.getByText('Assign'));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
@@ -70,11 +76,11 @@ describe('AssignmentForm', () => {
         });
 
         it('submits an assignment when submit event fires', async () => {
-            const { viewingDate, app } = renderComponent();
-            const labelElement = await app.findByLabelText('Name');
-            const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
+            const { viewingDate } = renderComponent();
+            const labelElement = await screen.findByLabelText('Name');
+            const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
-            fireEvent.submit(app.getByTestId('assignmentForm'));
+            fireEvent.submit(screen.getByTestId('assignmentForm'));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
@@ -88,13 +94,13 @@ describe('AssignmentForm', () => {
         });
 
         it('submits an assignment with the given placeholder status', async () => {
-            const { viewingDate, app } = renderComponent();
-            const labelElement = await app.findByLabelText('Name');
-            const containerToFindOptionsIn = { container: await app.findByTestId('assignmentForm') };
+            const { viewingDate } = renderComponent();
+            const labelElement = await screen.findByLabelText('Name');
+            const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
 
-            fireEvent.click(app.getByLabelText('Mark as Placeholder'));
-            fireEvent.click(app.getByText('Assign'));
+            fireEvent.click(screen.getByLabelText('Mark as Placeholder'));
+            fireEvent.click(screen.getByText('Assign'));
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
@@ -109,35 +115,35 @@ describe('AssignmentForm', () => {
         });
 
         it('does not assign if person does not exist', async () => {
-            const { app } = renderComponent();
-            await prefillReactSelectField(app, 'Name', 'John');
-            fireEvent.click(app.getByText('Assign'));
+            renderComponent();
+            await prefillReactSelectField( 'Name', 'John');
+            fireEvent.click(screen.getByText('Assign'));
 
             expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
         });
 
         it('does not assign if person field is empty', async () => {
-            const { app } = renderComponent();
-            const labelElement = await app.findByLabelText('Name');
+            renderComponent();
+            const labelElement = await screen.findByLabelText('Name');
             fireEvent.change(labelElement, {target: {value: ''}});
-            const assignButton = app.getByText('Assign');
+            const assignButton = screen.getByText('Assign');
             expect(assignButton.hasAttribute('disabled')).toBeTruthy();
 
             expect(AssignmentClient.createAssignmentForDate).not.toBeCalled();
         });
 
         it('is not dismissed if Assign is clicked with invalid person name', async () => {
-            const { app } = renderComponent();
-            await prefillReactSelectField(app, 'Name', 'Bobberta');
-            fireEvent.click(app.getByText('Assign'));
-            await app.findByText('Assign to');
+            renderComponent();
+            await prefillReactSelectField('Name', 'Bobberta');
+            fireEvent.click(screen.getByText('Assign'));
+            await screen.findByText('Assign to');
         });
 
         it('should populate dropdown to create new person with whatever is typed in input field', async () => {
-            const { app } = renderComponent();
-            const labelElement = await app.findByLabelText('Name');
+            renderComponent();
+            const labelElement = await screen.findByLabelText('Name');
             fireEvent.change(labelElement, {target: {value: 'Barbara Jordan'}});
-            await app.findByText( TestUtils.expectedCreateOptionText('Barbara Jordan'));
+            await screen.findByText( TestUtils.expectedCreateOptionText('Barbara Jordan'));
         });
 
         it('populates the person name field of the Create Person modal on open', async () => {
@@ -145,12 +151,12 @@ describe('AssignmentForm', () => {
             const store = createStore(rootReducer, state);
             store.dispatch = jest.fn();
 
-            const { app } = renderComponent(store);
-            const labelElement = await app.findByLabelText('Name');
+            renderComponent(store);
+            const labelElement = await screen.findByLabelText('Name');
             await selectEvent.openMenu(labelElement);
-            await prefillReactSelectField(app, 'Name', 'XYZ ABC 123');
+            await prefillReactSelectField('Name', 'XYZ ABC 123');
             const createOptionText = TestUtils.expectedCreateOptionText('XYZ ABC 123');
-            fireEvent.click(getByText(await app.findByTestId('assignmentForm'),  createOptionText));
+            fireEvent.click(getByText(await screen.findByTestId('assignmentForm'),  createOptionText));
 
             expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
                 modal: AvailableModals.CREATE_PERSON,
@@ -163,11 +169,7 @@ describe('AssignmentForm', () => {
     });
 });
 
-const renderComponent = (store: Store|undefined = undefined): {
-    viewingDate: Date;
-    initialState: Partial<GlobalStateProps>;
-    app: RenderResult;
-} => {
+const renderComponent = (store: Store|undefined = undefined): { viewingDate: Date; initialState: Partial<GlobalStateProps>; } => {
     const products = [
         TestUtils.productWithAssignments,
         TestUtils.archivedProduct,
@@ -175,22 +177,26 @@ const renderComponent = (store: Store|undefined = undefined): {
     ];
     const viewingDate = new Date(2020, 5, 5);
     const initialState = {
-        viewingDate: viewingDate,
         currentSpace: TestUtils.space,
         people: TestUtils.people,
     };
-    const app = renderWithRedux(
-        <AssignmentForm
-            products={products}
-            initiallySelectedProduct={products[0]}/>,
+    renderWithRedux(
+        <RecoilRoot initializeState={({set}) => {
+            set(ViewingDateState, viewingDate)
+        }}>
+            <AssignmentForm
+                products={products}
+                initiallySelectedProduct={products[0]}
+            />
+        </RecoilRoot>,
         store,
         initialState
     );
 
-    return {viewingDate, initialState, app};
+    return {viewingDate, initialState};
 };
 
-const prefillReactSelectField = async (app: RenderResult, label: string, prefillText: string): Promise<void> => {
-    const labelElement = await app.findByLabelText(label);
+const prefillReactSelectField = async (label: string, prefillText: string): Promise<void> => {
+    const labelElement = await screen.findByLabelText(label);
     fireEvent.change(labelElement, {target: {value: prefillText}});
 };

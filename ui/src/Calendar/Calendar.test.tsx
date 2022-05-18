@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,18 +17,14 @@
 
 import TestUtils, {mockCreateRange, renderWithRedux} from '../Utils/TestUtils';
 import React from 'react';
-import {fireEvent, queryByText, waitFor} from '@testing-library/react';
+import {fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
 import Calendar from './Calendar';
 import configureStore from 'redux-mock-store';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;
-
-    const mockStore = configureStore([]);
-    const store = mockStore({
-        viewingDate: new Date(2020, 10, 14),
-        currentSpace: TestUtils.space,
-    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -41,40 +37,54 @@ describe('Calendar', () => {
     });
 
     it('should have Viewing label and calendar icon',  () => {
-        const app = renderWithRedux(<Calendar/>, store);
-        app.getByText(/viewing:/i);
-        app.getByText(/calendar_today/i);
+        setupCalenderComponent()
+        screen.getByText(/viewing:/i);
+        screen.getByText(/calendar_today/i);
     });
 
     it('should display current date on initial load', async () => {
-        const app = renderWithRedux(<Calendar/>, store);
-        const dateViewElement = await app.findByTestId('calendarToggle');
+        setupCalenderComponent()
+        const dateViewElement = await screen.findByTestId('calendarToggle');
         expect(dateViewElement.innerHTML).toContain('Nov 14, 2020');
     });
 
     it('should have down caret when closed and up arrow when open', async () => {
-        const app = renderWithRedux(<Calendar/>, store);
-        const datePickerOpener = await app.findByTestId('calendarToggle');
+        setupCalenderComponent()
+        const datePickerOpener = await screen.findByTestId('calendarToggle');
 
-        await app.findByTestId('calendar_down-arrow');
+        await screen.findByTestId('calendar_down-arrow');
 
         fireEvent.click(datePickerOpener);
-        await app.findByTestId('calendar_up-arrow');
+        await screen.findByTestId('calendar_up-arrow');
         fireEvent.click(datePickerOpener);
 
-        const calendar = await app.findByTestId('calendar');
-        await waitFor(() => {
-            expect(queryByText(calendar, 'May')).not.toBeInTheDocument();
-        });
+        const calendar = await screen.findByTestId('calendar');
+        await waitFor(() => expect(queryByText(calendar, 'May')).not.toBeInTheDocument());
     });
 
     it('should show month and year in the header when opened', async () => {
-        const app = renderWithRedux(<Calendar/>, store);
-        const datePickerOpener = await app.findByTestId('calendarToggle');
+        setupCalenderComponent()
+        const datePickerOpener = await screen.findByTestId('calendarToggle');
 
-        await app.findByTestId('calendar_down-arrow');
+        await screen.findByTestId('calendar_down-arrow');
         fireEvent.click(datePickerOpener);
 
-        await app.findByText('November 2020');
+        await screen.findByText('November 2020');
     });
+
+    function setupCalenderComponent() {
+        const mockStore = configureStore([]);
+        const reduxStore = mockStore({
+            currentSpace: TestUtils.space,
+        });
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 10, 14))
+            }}>
+                <Calendar/>
+            </RecoilRoot>,
+            reduxStore
+        )
+    }
 });

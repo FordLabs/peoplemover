@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,56 +15,56 @@
  * limitations under the License.
  */
 
-import {fireEvent} from '@testing-library/react';
+import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
-import rootReducer from '../Redux/Reducers';
-import {createStore, Store} from 'redux';
+import {Store} from 'redux';
 import PersonCard from './PersonCard';
 import {Person} from './Person';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
+import configureStore from 'redux-mock-store';
 
 describe('Person Card', () => {
-    let personToRender: Person;
+    const personToRender: Person = {
+        newPerson: false,
+        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+        id: 1,
+        name: 'Billiam Handy',
+        spaceRole: TestUtils.softwareEngineer,
+        notes: 'This is a note',
+        tags: TestUtils.personTags,
+        archiveDate: new Date(2000, 0, 1),
+    }
     let store: Store;
+    const viewingDate = new Date(2020, 0, 1);
+    let initialState: unknown;
 
     beforeEach(() => {
         jest.clearAllMocks();
-        personToRender = {
-            newPerson: false,
-            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            id: 1,
-            name: 'Billiam Handy',
-            spaceRole: TestUtils.softwareEngineer,
-            notes: 'This is a note',
-            tags: TestUtils.personTags,
-            archiveDate: new Date(2000, 0, 1),
-        };
 
-        store = createStore(rootReducer, {currentSpace: TestUtils.space, viewingDate: new Date(2020, 0, 1)});
-        store.dispatch = jest.fn();
-    });
-
-    afterEach(() => {
-        jest.clearAllMocks();
+        initialState = {currentSpace: TestUtils.space}
     });
 
     it('should render the assigned persons name', () => {
-        const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
-        expect(underTest.getByText('Billiam Handy')).toBeInTheDocument();
+        renderPersonCard(initialState, viewingDate);
+        expect(screen.getByText('Billiam Handy')).toBeInTheDocument();
     });
 
     it('should render the assigned persons role if they have one', () => {
-        const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
-        expect(underTest.getByText('Software Engineer')).toBeInTheDocument();
+        renderPersonCard(initialState, viewingDate);
+        expect(screen.getByText('Software Engineer')).toBeInTheDocument();
     });
 
     it('should make the call to open the Edit Person modal when person name is clicked', async () => {
-        const app = renderWithRedux(<PersonCard person={personToRender}/>, store);
-        const billiam = app.getByText(personToRender.name);
-        expect(billiam).toBeEnabled();
-        fireEvent.click(billiam);
+        renderPersonCard(initialState, viewingDate);
+        const william = screen.getByText(personToRender.name);
+        expect(william).toBeEnabled();
+
+        fireEvent.click(william);
+
         expect(store.dispatch).toHaveBeenCalledWith(
             setCurrentModalAction({
                 modal: AvailableModals.EDIT_PERSON,
@@ -74,30 +74,42 @@ describe('Person Card', () => {
     });
 
     it('should not show any icons (note, tag)', () => {
-        const app = renderWithRedux(<PersonCard person={personToRender}/>, store);
-        expect(app.queryByText('note')).toBeNull();
-        expect(app.queryByText('local_offer')).toBeNull();
+        renderPersonCard(initialState, viewingDate);
+        expect(screen.queryByText('note')).toBeNull();
+        expect(screen.queryByText('local_offer')).toBeNull();
     });
 
     it('should not have the hover box on mouseover', async () => {
-        const app = renderWithRedux(<PersonCard person={personToRender}/>, store);
-        fireEvent.mouseEnter(await app.getByText(personToRender.name));
-        expect(await app.queryByText('note')).toBeNull();
-        expect(app.queryByText('local_offer')).toBeNull();
+        renderPersonCard(initialState, viewingDate);
+        fireEvent.mouseEnter(await screen.getByText(personToRender.name));
+        expect(await screen.queryByText('note')).toBeNull();
+        expect(screen.queryByText('local_offer')).toBeNull();
     });
 
     describe('Read-Only Functionality', function() {
-
-        beforeEach(function() {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
-            store.dispatch = jest.fn();
+        beforeEach(() => {
+            initialState = {currentSpace: TestUtils.space, isReadOnly: true};
         });
 
         it('should not display Edit Person Modal if in read only mode', function() {
-            const underTest = renderWithRedux(<PersonCard person={personToRender}/>, store);
-            const billiam = underTest.getByText(personToRender.name);
-            fireEvent.click(billiam);
+            renderPersonCard(initialState);
+            const william = screen.getByText(personToRender.name);
+            fireEvent.click(william);
             expect(store.dispatch).not.toHaveBeenCalled();
         });
     });
+
+    function renderPersonCard(preloadedReduxState: unknown, initialViewingDate: Date =  new Date()): void {
+        const mockStore = configureStore([]);
+        store = mockStore(preloadedReduxState);
+        store.dispatch = jest.fn();
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, initialViewingDate)
+            }}>
+                <PersonCard person={personToRender}/>
+            </RecoilRoot>,
+            store
+        )
+    }
 });

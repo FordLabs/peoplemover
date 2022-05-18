@@ -24,7 +24,6 @@ import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
-import {viewingDateReducer} from './viewingDateReducer';
 import productsReducer from './productsReducer';
 import productTagsReducer from './productTagsReducer';
 import personTagsReducer from './personTagsReducer';
@@ -49,7 +48,6 @@ export default combineReducers({
     productRefs: productRefsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
     currentSpace: currentSpaceReducer,
-    viewingDate: viewingDateReducer,
     products: productsReducer,
     productTags: productTagsReducer,
     personTags: personTagsReducer,

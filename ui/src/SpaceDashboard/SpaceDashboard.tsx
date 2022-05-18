@@ -18,12 +18,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
 import CurrentModal from '../Redux/Containers/CurrentModal';
-import {
-    fetchUserSpacesAction,
-    setCurrentModalAction,
-    setCurrentSpaceAction,
-    setViewingDateAction,
-} from '../Redux/Actions';
+import {fetchUserSpacesAction, setCurrentModalAction, setCurrentSpaceAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
 import SpaceDashboardTile from './SpaceDashboardTile';
@@ -33,14 +28,15 @@ import './SpaceDashboard.scss';
 import Branding from '../ReusableComponents/Branding';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {useNavigate} from 'react-router-dom';
+import {useSetRecoilState} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface SpaceDashboardProps {
     currentSpace: Space;
+    userSpaces: Array<Space>;
     setCurrentModal(modalState: CurrentModalState): void;
     fetchUserSpaces(): void;
-    userSpaces: Array<Space>;
     setCurrentSpace(space: Space): Space;
-    setCurrentDateOnState(): void;
 }
 
 function SpaceDashboard({
@@ -49,11 +45,11 @@ function SpaceDashboard({
     fetchUserSpaces,
     userSpaces,
     setCurrentSpace,
-    setCurrentDateOnState,
 }: SpaceDashboardProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const navigate = useNavigate();
-    setCurrentDateOnState();
+
+    const setViewingDate = useSetRecoilState(ViewingDateState);
 
     function onCreateNewSpaceButtonClicked(): void {
         setCurrentModal({modal: AvailableModals.CREATE_SPACE});
@@ -77,8 +73,10 @@ function SpaceDashboard({
     }, [fetchUserSpaces, setCurrentSpace]);
 
     useEffect(() => {
+        setViewingDate(new Date())
+
         if (currentSpace?.uuid) onSpaceClicked(currentSpace);
-    }, [currentSpace, onSpaceClicked]);
+    }, [currentSpace, onSpaceClicked, setViewingDate]);
 
     function WelcomeMessage(): JSX.Element {
         return (
@@ -140,7 +138,6 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
-    setCurrentDateOnState: () => dispatch(setViewingDateAction(new Date())),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboard);

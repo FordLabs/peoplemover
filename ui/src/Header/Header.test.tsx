@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +16,20 @@
  */
 
 import React from 'react';
-import {act, fireEvent, RenderResult, waitFor} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
 import {axe, toHaveNoViolations} from 'jest-axe';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {RunConfig} from '../index';
-import {BrowserRouter as Router} from 'react-router-dom';
+import {MemoryRouter} from 'react-router-dom';
 import flagsmith from 'flagsmith';
+import {RecoilRoot} from 'recoil';
 
 const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
     const initialState = {currentSpace: TestUtils.space, currentUser: 'bob' };
-
-    let app: RenderResult;
-
     let location: (string | Location) & Location;
 
     beforeEach(() => {
@@ -48,80 +46,105 @@ describe('Header', () => {
 
     it('should have no axe violations', async () => {
         window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
-        const app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
-        const results = await axe(app.container);
+        const {container} = renderWithRedux(
+            <MemoryRouter>
+                <RecoilRoot>
+                    <Header/>
+                </RecoilRoot>
+            </MemoryRouter>,
+            undefined,
+            initialState
+        );
+        const results = await axe(container);
         expect(results).toHaveNoViolations();
     });
 
     it('should hide space buttons', async () => {
         window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
-        app = renderWithRedux(
-            <Router>
-                <Header hideSpaceButtons={true}/>
-            </Router>, undefined, initialState
+        renderWithRedux(
+            <MemoryRouter>
+                <RecoilRoot>
+                    <Header hideSpaceButtons={true}/>
+                </RecoilRoot>
+            </MemoryRouter>,
+            undefined,
+            initialState
         );
-        expect(app.queryByTestId('filters')).toBeFalsy();
-        expect(app.queryByTestId('sortBy')).toBeFalsy();
+        expect(screen.queryByTestId('filters')).toBeFalsy();
+        expect(screen.queryByTestId('sortBy')).toBeFalsy();
 
-        const userIconButton = await app.findByTestId('accountDropdownToggle');
+        const userIconButton = await screen.findByTestId('accountDropdownToggle');
         await waitFor(() => {
             fireEvent.click(userIconButton);
         });
-        expect(await app.queryByTestId('shareAccess')).toBeNull();
-        expect(await app.queryByTestId('downloadReport')).toBeNull();
+        expect(await screen.queryByTestId('shareAccess')).toBeNull();
+        expect(await screen.queryByTestId('downloadReport')).toBeNull();
     });
 
     it('should not show the account dropdown when user is on the error page', () => {
         window.location = {origin: 'https://localhost', pathname: '/error/404'} as Location;
-        app = renderWithRedux(
-            <Router>
-                <Header hideSpaceButtons={true}/>
-            </Router>, undefined, initialState
+        renderWithRedux(
+            <MemoryRouter>
+                <RecoilRoot>
+                    <Header hideSpaceButtons={true}/>
+                </RecoilRoot>
+            </MemoryRouter>,
+            undefined,
+            initialState
         );
 
-        expect(app.queryByText('bob')).toBeNull();
+        expect(screen.queryByText('bob')).toBeNull();
     });
 
     describe('Account Dropdown', () => {
-        let app: RenderResult;
+
         beforeEach(async () => {
             jest.useFakeTimers();
             flagsmith.hasFeature = jest.fn().mockReturnValue(true);
             window.location = {origin: 'https://localhost', pathname: '/aaaaaaaaaaaaaa'} as Location;
-            app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
+
+            renderWithRedux(
+                <MemoryRouter>
+                    <RecoilRoot>
+                        <Header/>
+                    </RecoilRoot>
+                </MemoryRouter>,
+                undefined,
+                initialState
+            );
+
+            await screen.findByTestId('accountDropdownToggle');
         });
 
         it('should show username', async () => {
-            expect(app.queryByText('USER_ID')).not.toBeNull();
+            expect(screen.queryByText('USER_ID')).not.toBeNull();
         });
 
         it('should show time On Product Link when user is in a space', async () => {
-            expect(await app.getByText('Time On Product >'));
+            expect(await screen.getByText('Time On Product >'));
         });
 
         it('should show Back to Space Link when user is in time on product page', async () => {
-            fireEvent.click( await app.getByText('Time On Product >'));
-            expect(await app.getByText('< Back'));
+            fireEvent.click( await screen.getByText('Time On Product >'));
+            expect(await screen.getByText('< Back'));
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
             window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
+            
+            screen.getByTestId('accountDropdownToggle').click();
+            jest.advanceTimersByTime(debounceTimeToWait);
 
-            act(() => {
-                app.getByTestId('accountDropdownToggle').click();
-                jest.advanceTimersByTime(debounceTimeToWait);
-            });
-            expect(app.queryByTestId('shareAccess')).toBeNull();
+            expect(screen.queryByTestId('shareAccess')).toBeNull();
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
             window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
-            act(() => {
-                app.getByTestId('accountDropdownToggle').click();
-                jest.advanceTimersByTime(debounceTimeToWait);
-            });
-            expect(app.queryByTestId('shareAccess')).not.toBeNull();
+            screen.getByTestId('accountDropdownToggle').click();
+            jest.advanceTimersByTime(debounceTimeToWait);
+
+            expect(await screen.findByTestId('shareAccess')).toBeDefined();
         });
     });
 });

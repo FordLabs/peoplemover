@@ -21,6 +21,8 @@ import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import {Product} from '../Products/Product';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 const product: Product = {
     id: 1,
@@ -77,11 +79,18 @@ describe('Assignment card list', () => {
 });
 
 const setupComponent = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => {
-    renderWithRedux(<AssignmentCardList product={product}/>, undefined, {
-        allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-        viewingDate: moment().toDate(),
-        currentSpace: TestUtils.space,
-    });
+    renderWithRedux(
+        <RecoilRoot initializeState={({set}) => {
+            set(ViewingDateState, moment().toDate())
+        }}>
+            <AssignmentCardList product={product}/>
+        </RecoilRoot>,
+        undefined,
+        {
+            allGroupedTagFilterOptions: allGroupedTagFilterOptions,
+            currentSpace: TestUtils.space,
+        }
+    );
 }
 
 const getAllGroupedTagFilterOptions = (roleTagIsSelected: boolean, personTagIsSelected: boolean): Array<AllGroupedTagFilterOptions> => {

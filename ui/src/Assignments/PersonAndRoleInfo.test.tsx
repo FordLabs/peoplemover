@@ -18,102 +18,174 @@
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
-import {fireEvent, RenderResult} from '@testing-library/react';
+import {fireEvent, screen} from '@testing-library/react';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import moment from 'moment';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
-describe('the tooltip behavior on hover', () => {
-
-    const getItemAndFireMouseOverEvent = async (renderResult: RenderResult, item: string): Promise<void> => {
-        fireEvent.mouseOver(renderResult.getByTestId(item));
-    };
-
+describe('Tooltip behavior on hover', () => {
     it('should show the notes of the person being hovered over', async () => {
         const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        const app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.hank}
-            isUnassignedProduct={false}
-            duration={parseInt('dontcare', 1)}/>, store);
-        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
-        expect(app.queryByTestId('note-icon')).not.toBeInTheDocument();
-        await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
-        expect(app.getByText('Notes:')).toBeInTheDocument();
-        expect(app.getByTestId('note-icon')).toBeInTheDocument();
-        expect(app.getByText("Don't forget the WD-40!")).toBeInTheDocument();
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+            }}>
+                <PersonAndRoleInfo
+                    person={TestUtils.hank}
+                    isUnassignedProduct={false}
+                    duration={parseInt('dontcare', 1)}
+                />
+            </RecoilRoot>,
+            store
+        );
+
+        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(screen.queryByTestId('note-icon')).not.toBeInTheDocument();
+        getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
+        expect(screen.getByText('Notes:')).toBeInTheDocument();
+        expect(screen.getByTestId('note-icon')).toBeInTheDocument();
+        expect(screen.getByText("Don't forget the WD-40!")).toBeInTheDocument();
     });
 
     it('should not show the notes of the person being hovered over if they have none', async () => {
         const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        const app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.person2}
-            isUnassignedProduct={false}
-            duration={parseInt('dontcare', 1)}/>, store);
-        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
-        await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
-        expect(app.queryByText('Notes:')).not.toBeInTheDocument();
-        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+            }}>
+                <PersonAndRoleInfo
+                    person={TestUtils.person2}
+                    isUnassignedProduct={false}
+                    duration={parseInt('dontcare', 1)}
+                />
+            </RecoilRoot>,
+            store
+        );
+
+        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
+        expect(screen.queryByText('Notes:')).not.toBeInTheDocument();
+        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
     });
 
     it('should show the time on product of the person being hovered over', async () => {
-        const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false, viewingDate: moment('2021-01-01').toDate()});
-        const app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.hank}
-            isUnassignedProduct={false}
-            duration={367}/>, store);
-        expect(app.queryByText('Time on Product:')).not.toBeInTheDocument();
-        expect(app.queryByText('367 Days')).not.toBeInTheDocument();
-        await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
-        expect(app.getByText('Time on Product:')).toBeInTheDocument();
-        expect(app.getByTestId('timer-icon')).toBeInTheDocument();
-        expect(app.getByText('367 Days')).toBeInTheDocument();
+        const store = createStore(rootReducer, { currentSpace: TestUtils.space });
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+            }}>
+                <PersonAndRoleInfo
+                    person={TestUtils.hank}
+                    isUnassignedProduct={false}
+                    duration={367}
+                />
+            </RecoilRoot>,
+            store
+        );
+
+        expect(screen.queryByText('Time on Product:')).not.toBeInTheDocument();
+        expect(screen.queryByText('367 Days')).not.toBeInTheDocument();
+        getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
+        expect(screen.getByText('Time on Product:')).toBeInTheDocument();
+        expect(screen.getByTestId('timer-icon')).toBeInTheDocument();
+        expect(screen.getByText('367 Days')).toBeInTheDocument();
     });
 
     it('should show the person tags of the person being hovered over', async () => {
         const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        const app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.person2}
-            isUnassignedProduct={false}
-            duration={parseInt('dontcare', 1)}/>, store);
-        expect(app.queryByText('Person Tags:')).not.toBeInTheDocument();
-        expect(app.queryByTestId('local_offer-icon')).not.toBeInTheDocument();
-        expect(app.queryByText('The lil boss, The big boss')).not.toBeInTheDocument();
-        await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
-        expect(app.getByText('Person Tags:')).toBeInTheDocument();
-        expect(app.getByTestId('local_offer-icon')).toBeInTheDocument();
-        expect(app.getByText('The lil boss, The big boss')).toBeInTheDocument();
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+            }}>
+                <PersonAndRoleInfo
+                    person={TestUtils.person2}
+                    isUnassignedProduct={false}
+                    duration={parseInt('dontcare', 1)}
+                />
+            </RecoilRoot>,
+            store
+        );
+
+        expect(screen.queryByText('Person Tags:')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('local_offer-icon')).not.toBeInTheDocument();
+        expect(screen.queryByText('The lil boss, The big boss')).not.toBeInTheDocument();
+        getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
+        expect(screen.getByText('Person Tags:')).toBeInTheDocument();
+        expect(screen.getByTestId('local_offer-icon')).toBeInTheDocument();
+        expect(screen.getByText('The lil boss, The big boss')).toBeInTheDocument();
     });
 
     it('should not show the person tags of the person being hovered over if they have none', async () => {
         const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: false});
-        const app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.unassignedPerson}
-            isUnassignedProduct={false}
-            duration={parseInt('dontcare', 1)}/>, store);
-        expect(app.queryByText('Person Tags:')).not.toBeInTheDocument();
-        await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
-        expect(app.queryByText('Person Tags: ')).not.toBeInTheDocument();
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+            }}>
+                <PersonAndRoleInfo
+                    person={TestUtils.unassignedPerson}
+                    isUnassignedProduct={false}
+                    duration={parseInt('dontcare', 1)}
+                />
+            </RecoilRoot>,
+            store
+        );
+
+        expect(screen.queryByText('Person Tags:')).not.toBeInTheDocument();
+        getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
+        expect(screen.queryByText('Person Tags: ')).not.toBeInTheDocument();
     });
 
     it('should not show the hover if the space is read only', async () => {
         const store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
-        const app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.hank} duration={0}
-            isUnassignedProduct={false}/>, store);
-        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
-        await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
-        expect(app.queryByText('Notes:')).not.toBeInTheDocument();
-        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+            }}>
+                <PersonAndRoleInfo
+                    person={TestUtils.hank}
+                    duration={0}
+                    isUnassignedProduct={false}
+                />
+            </RecoilRoot>,
+            store
+        );
+
+        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
+        expect(screen.queryByText('Notes:')).not.toBeInTheDocument();
+        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
     });
 
     it('should not show the hover if it is part of the Unassigned product', async () => {
         const store = createStore(rootReducer, {currentSpace: TestUtils.space});
-        const app = renderWithRedux(<PersonAndRoleInfo
-            person={TestUtils.hank} duration={0}
-            isUnassignedProduct={true}/>, store);
-        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
-        await getItemAndFireMouseOverEvent(app, 'assignmentCardPersonInfo');
-        expect(app.queryByText('Notes:')).not.toBeInTheDocument();
-        expect(app.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+            }}>
+                <PersonAndRoleInfo
+                    person={TestUtils.hank}
+                    duration={0}
+                    isUnassignedProduct={true}
+                />
+            </RecoilRoot>,
+            store
+        );
+
+        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
+        expect(screen.queryByText('Notes:')).not.toBeInTheDocument();
+        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
     });
 });
+
+const getItemAndFireMouseOverEvent = (testId: string): void => {
+    fireEvent.mouseOver(screen.getByTestId(testId));
+};

@@ -43,12 +43,13 @@ import {
 import {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import FormTagsField from '../ReusableComponents/FormTagsField';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
     currentSpace: Space;
-    viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -59,23 +60,28 @@ function ProductForm({
     editing,
     product,
     currentSpace,
-    viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     closeModal,
 }: ProductFormProps): JSX.Element {
-    const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct());
+    const viewingDate = useRecoilValue(ViewingDateState);
+
+    const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct(viewingDate));
     const [selectedProductTags, setSelectedProductTags] = useState<Array<Tag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
+
 
     const duplicateProductNameWarningMessage = 'A product with this name already exists. Please enter a different name.';
     const emptyProductNameWarningMessage = 'Please enter a product name.';
     const [nameWarningMessage, setNameWarningMessage] = useState<string>('');
 
-    function initializeProduct(): Product {
+    function initializeProduct(startDate = new Date()): Product {
         if (product == null) {
-            return {...emptyProduct(currentSpace.uuid), startDate: viewingDate};
+            return {
+                ...emptyProduct(currentSpace.uuid),
+                startDate: moment(startDate).format('YYYY-MM-DD')
+            };
         }
         return product;
     }
@@ -272,7 +278,6 @@ function ProductForm({
 /* eslint-disable  */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

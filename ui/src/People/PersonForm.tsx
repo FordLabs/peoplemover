@@ -59,6 +59,8 @@ import {
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -67,7 +69,6 @@ interface PersonFormProps {
     initialPersonName?: string;
     personEdited?: Person;
     currentSpace: Space;
-    viewingDate: Date;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     roles: Array<RoleTag>;
 
@@ -85,7 +86,6 @@ function PersonForm({
     initiallySelectedProduct,
     initialPersonName,
     currentSpace,
-    viewingDate,
     personEdited,
     closeModal,
     addPerson,
@@ -96,7 +96,6 @@ function PersonForm({
     roles,
     fetchRoles,
 }: PersonFormProps): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
     const { ROLE_TAGS } = MetadataReactSelectProps;
     const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
@@ -111,6 +110,8 @@ function PersonForm({
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
     const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
+
+    const viewingDate = useRecoilValue(ViewingDateState);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -458,7 +459,6 @@ function PersonForm({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
     roles: state.roles,
 });

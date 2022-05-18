@@ -15,67 +15,65 @@
  * limitations under the License.
  */
 
-import {fireEvent, RenderResult, waitFor} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import ReassignedDrawer from './ReassignedDrawer';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
-import {AxiosResponse} from 'axios';
 import thunk from 'redux-thunk';
 import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import ProductClient from '../Products/ProductClient';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 describe('ReassignedDrawer', () => {
-    let app: RenderResult;
     let store: Store;
     const mayFourteen2020: Date = new Date(2020, 4, 14);
     const fromProductName = 'Product 1';
 
     describe('archived people', () => {
-
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
-            AssignmentClient.getReassignments = jest.fn(() => Promise.resolve(
-                {
-                    data: [{
-                        person: TestUtils.archivedPerson,
-                        originProductName: fromProductName,
-                        destinationProductName: 'unassigned',
-                    }],
-                } as AxiosResponse
-            ));
+            AssignmentClient.getReassignments = jest.fn().mockResolvedValue( {
+                data: [{
+                    person: TestUtils.archivedPerson,
+                    originProductName: fromProductName,
+                    destinationProductName: 'unassigned',
+                }],
+            });
 
             store = createStore(rootReducer, {
                 currentSpace: TestUtils.space,
-                viewingDate: mayFourteen2020,
                 people: TestUtils.people,
             }, applyMiddleware(thunk));
 
             await waitFor(async () => {
-                app = renderWithRedux(<ReassignedDrawer/>, store);
+                renderWithRedux(
+                    <RecoilRoot initializeState={({set}) => {
+                        set(ViewingDateState, mayFourteen2020)
+                    }}>
+                        <ReassignedDrawer/>
+                    </RecoilRoot>,
+                    store
+                );
             });
         });
 
         it('should show that they have been archived', async () => {
-            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            expect(await app.findByText(TestUtils.archivedPerson.spaceRole!.name)).toBeInTheDocument();
-            expect(await app.findByText(/Product 1/)).toBeInTheDocument();
-            expect(await app.queryByText(/unassigned/)).not.toBeInTheDocument();
-            expect(await app.findByText(/archived/)).toBeInTheDocument();
+            expect(await screen.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
+            expect(await screen.findByText(TestUtils.archivedPerson.spaceRole!.name)).toBeInTheDocument();
+            expect(await screen.findByText(/Product 1/)).toBeInTheDocument();
+            expect(await screen.queryByText(/unassigned/)).not.toBeInTheDocument();
+            expect(await screen.findByText(/archived/)).toBeInTheDocument();
         });
 
         it('should unarchive an archived person that gets reverted', async () => {
-            AssignmentClient.deleteAssignmentForDate = jest.fn(() => Promise.resolve(
-                { data: []} as AxiosResponse
-            ));
-            PeopleClient.updatePerson = jest.fn(() => Promise.resolve(
-                {data: {...TestUtils.archivedPerson, archiveDate: null}} as AxiosResponse
-            ));
-            const revertButton = await app.findByText('Revert');
+            AssignmentClient.deleteAssignmentForDate = jest.fn().mockResolvedValue({ data: []});
+            PeopleClient.updatePerson = jest.fn().mockResolvedValue({data: {...TestUtils.archivedPerson, archiveDate: null}});
+            const revertButton = await screen.findByText('Revert');
             await waitFor(() => {
                 fireEvent.click(revertButton);
             });

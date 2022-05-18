@@ -19,10 +19,7 @@ import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import {connect} from 'react-redux';
-import {
-    closeModalAction,
-    setCurrentModalAction,
-} from '../Redux/Actions';
+import {closeModalAction, setCurrentModalAction} from '../Redux/Actions';
 import {Person} from '../People/Person';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Product} from '../Products/Product';
@@ -35,15 +32,16 @@ import {Assignment} from './Assignment';
 import moment from 'moment';
 import FormButton from '../ModalFormComponents/FormButton';
 import {Space} from '../Space/Space';
-import SelectWithCreateOption, { MetadataReactSelectProps } from '../ModalFormComponents/SelectWithCreateOption';
+import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface AssignmentFormProps {
     products: Array<Product>;
     initiallySelectedProduct: Product;
     people: Array<Person>;
     currentSpace: Space;
-    viewingDate: Date;
 
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
@@ -54,7 +52,6 @@ function AssignmentForm({
     initiallySelectedProduct,
     people,
     currentSpace,
-    viewingDate,
     closeModal,
     setCurrentModal,
 }: AssignmentFormProps): JSX.Element {
@@ -64,6 +61,8 @@ function AssignmentForm({
     const [selectedPerson, setSelectedPerson] = useState<Person>(defaultPerson);
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>(getSelectedProduct());
     const [placeholder, setPlaceholder] = useState<boolean>(false);
+
+    const viewingDate = useRecoilValue(ViewingDateState);
 
     function getSelectedProductPairs(): ProductPlaceholderPair[] {
         return selectedProducts.map((product) => {
@@ -246,7 +245,6 @@ function AssignmentForm({
 const mapStateToProps = (state: GlobalStateProps) => ({
     people: state.people,
     currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({

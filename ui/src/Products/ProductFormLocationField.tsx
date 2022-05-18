@@ -48,7 +48,6 @@ function ProductFormLocationField({
     currentSpace,
     addGroupedTagFilterOptions,
 }: Props): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const uuid = currentSpace.uuid!;
     const { LOCATION_TAGS } = MetadataReactSelectProps;
     const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
