@@ -26,7 +26,6 @@ import {
     editPersonAction,
     fetchRolesAction,
     setAllGroupedTagFilterOptionsAction,
-    setIsUnassignedDrawerOpenAction,
 } from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
@@ -59,8 +58,9 @@ import {
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
 
 interface PersonFormProps {
     isEditPersonForm: boolean;
@@ -75,7 +75,6 @@ interface PersonFormProps {
     closeModal(): void;
     addPerson(person: Person): void;
     editPerson(person: Person): void;
-    setIsUnassignedDrawerOpen(isUnassignedDrawerOpen: boolean): void;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     fetchRoles(): Array<RoleTag>;
 }
@@ -90,7 +89,6 @@ function PersonForm({
     closeModal,
     addPerson,
     editPerson,
-    setIsUnassignedDrawerOpen,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     roles,
@@ -112,6 +110,7 @@ function PersonForm({
     const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
 
     const viewingDate = useRecoilValue(ViewingDateState);
+    const setIsUnassignedDrawerOpen = useSetRecoilState(IsUnassignedDrawerOpenState);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -467,7 +466,6 @@ const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
     addPerson: (person: Person) => dispatch(addPersonAction(person)),
     editPerson: (person: Person) => dispatch(editPersonAction(person)),
-    setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
     fetchRoles: () => dispatch(fetchRolesAction()),
