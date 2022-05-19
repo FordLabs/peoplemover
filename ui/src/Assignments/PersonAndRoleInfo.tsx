@@ -16,12 +16,11 @@
  */
 
 import React, {ReactElement, useState} from 'react';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
 import {isArchived, Person} from '../People/Person';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {IsDraggingState} from '../State/IsDraggingState';
 
 import './PersonAndRoleInfo.scss';
 
@@ -33,19 +32,14 @@ interface HoverInfo {
 
 interface Props {
     isUnassignedProduct: boolean;
-    isDragging: boolean;
     person: Person;
     duration: number;
 }
 
-const PersonAndRoleInfo = ({
-    isUnassignedProduct,
-    isDragging,
-    duration,
-    person,
-}: Props): ReactElement => {
+const PersonAndRoleInfo = ({ isUnassignedProduct, duration, person }: Props): ReactElement => {
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
+    const isDragging = useRecoilValue(IsDraggingState);
 
     const [isHoverBoxOpen, setHoverBoxIsOpened] = useState<boolean>(false);
 
@@ -90,16 +84,20 @@ const PersonAndRoleInfo = ({
         return (
             <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
                 {content.map(hoverInfo => {
-                    return (<div key={hoverInfo.title} className={'flex-row'}>
-                        <i className={`material-icons tooltip-icon`}
-                            data-testid={hoverInfo.icon + '-icon'}>{hoverInfo.icon}</i>
-                        <div className={'flex-col'}>
-                            <div className="hoverBoxTitle">{hoverInfo.title}:</div>
-                            <div className="hoverBoxText">
-                                {hoverInfo.text}
+                    return (
+                        <div key={hoverInfo.title} className="flex-row">
+                            <i className="material-icons tooltip-icon"
+                                data-testid={hoverInfo.icon + '-icon'}>
+                                {hoverInfo.icon}
+                            </i>
+                            <div className="flex-col">
+                                <div className="hoverBoxTitle">{hoverInfo.title}:</div>
+                                <div className="hoverBoxText">
+                                    {hoverInfo.text}
+                                </div>
                             </div>
                         </div>
-                    </div>);
+                    );
                 })}
             </div>
         );
@@ -144,10 +142,4 @@ const PersonAndRoleInfo = ({
     );
 };
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    isDragging: state.isDragging,
-});
-
-export default connect(mapStateToProps)(PersonAndRoleInfo);
-/* eslint-enable */
+export default PersonAndRoleInfo;

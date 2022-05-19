@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 import React, {RefObject} from 'react';
 import '../Products/Product.scss';
 import {connect} from 'react-redux';
-import {fetchProductsAction, setCurrentModalAction, setIsDragging} from '../Redux/Actions';
+import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import {
     AssignmentCardRefAndAssignmentPair,
     getProductUserDroppedAssignmentOn,
@@ -38,8 +38,9 @@ import {Space} from '../Space/Space';
 import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {isPersonMatchingSelectedFilters} from '../People/Person';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsDraggingState} from '../State/IsDraggingState';
 
 interface AssignmentCardListProps {
     product: Product;
@@ -48,7 +49,6 @@ interface AssignmentCardListProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     fetchProducts(viewingDate: Date): void;
     setCurrentModal(modalState: CurrentModalState): void;
-    setIsDragging(isDragging: boolean): void;
 }
 
 function AssignmentCardList({
@@ -58,7 +58,6 @@ function AssignmentCardList({
     allGroupedTagFilterOptions,
     fetchProducts,
     setCurrentModal,
-    setIsDragging,
 }: AssignmentCardListProps): JSX.Element {
     const spaceUuid = currentSpace.uuid!;
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
@@ -68,6 +67,7 @@ function AssignmentCardList({
     const getSelectedPersonTagFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
 
     const viewingDate = useRecoilValue(ViewingDateState);
+    const setIsDragging = useSetRecoilState(IsDraggingState);
 
     function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
         const assignments: Array<Assignment> = product.assignments;
@@ -247,7 +247,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    setIsDragging: (isDragging: boolean) => dispatch(setIsDragging(isDragging)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCardList);

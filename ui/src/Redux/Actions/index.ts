@@ -52,7 +52,6 @@ export enum AvailableActions {
     SET_LOCATIONS,
     SET_ROLES,
     SET_USER_SPACES,
-    SET_IS_DRAGGING,
     SET_CURRENT_USER,
     GOT_FLAGS
 }
@@ -140,11 +139,6 @@ export const setRolesAction = (roles: Array<RoleTag>) => ({
 export const setUserSpacesAction = (userSpaces: Array<Space>) => ({
     type: AvailableActions.SET_USER_SPACES,
     userSpaces,
-});
-
-export const setIsDragging = (isDragging: boolean) => ({
-    type: AvailableActions.SET_IS_DRAGGING,
-    isDragging,
 });
 
 export const fetchUserSpacesAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
