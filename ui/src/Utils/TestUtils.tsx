@@ -555,6 +555,9 @@ class TestUtils {
         assignments: [],
         archived: false,
         tags: [TestUtils.productTag1],
+        dorf: '',
+        notes: '',
+        url: '',
     };
 
     static productForHank: Product = {

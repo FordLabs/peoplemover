@@ -67,7 +67,6 @@ export interface GlobalStateProps {
     productRefs: Array<ProductCardRefAndProductPair>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;
-    viewingDate: Date;
     products: Array<Product>;
     productTags: Array<Tag>;
     personTags: Array<Tag>;

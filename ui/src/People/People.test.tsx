@@ -54,13 +54,14 @@ describe('People actions', () => {
             currentSpace: TestUtils.space,
             allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
         };
+        const viewingDate = new Date(2020, 5, 5)
 
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
             await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState, ({set}) => {
-                set(ViewingDateState, new Date(2020, 5, 5))
+                set(ViewingDateState, viewingDate)
             });
             await screen.findByText(addPersonButtonText);
         });
@@ -127,8 +128,7 @@ describe('People actions', () => {
             );
         });
 
-        // @todo should be cypress or more granular unit test
-        xit('creates the person specified by the PersonForm', async () => {
+        it('creates the person specified by the PersonForm', async () => {
             fireEvent.click(screen.getByText(addPersonButtonText));
 
             fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'New Bobby'}});
@@ -136,8 +136,8 @@ describe('People actions', () => {
             fireEvent.change(screen.getByLabelText('CDSID'), {target: {value: 'btables1'}});
             fireEvent.click(screen.getByLabelText('Mark as New'));
 
-            await selectEvent.create(screen.getByLabelText('Person Tags'), 'Low Achiever');
-            await screen.findByDisplayValue('Low Achiever')
+            await selectEvent.create(await screen.findByLabelText('Person Tags'), 'Low Achiever');
+            await screen.findByText('Low Achiever')
 
             fireEvent.click(screen.getByText(submitFormButtonText));
 
@@ -147,14 +147,14 @@ describe('People actions', () => {
                 name: 'New Bobby',
                 customField1: 'btables1',
                 newPerson: true,
-                newPersonDate: personFormInitialState.viewingDate as Date,
+                newPersonDate: viewingDate,
                 tags: [{
                     id: 1337,
                     spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
                     name: 'Low Achiever',
                 }],
             };
-            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith([TestUtils.space, expectedPerson, ['Low Achiever']]);
+            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestUtils.space, expectedPerson, ['Low Achiever']);
         });
 
         it('should not create person with empty value and display proper error message', async () => {
