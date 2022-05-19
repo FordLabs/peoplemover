@@ -25,21 +25,19 @@ import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsRed
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import {useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
+import {ViewingDateState} from '../State/ViewingDateState';
 
-interface ProductListProps {
+interface Props {
     products: Array<Product>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    viewingDate: Date;
 }
 
-function ProductList({
-    products,
-    allGroupedTagFilterOptions,
-    viewingDate,
-}: ProductListProps): JSX.Element {
+function ProductList({ products, allGroupedTagFilterOptions }: Props): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
     const [filteredProductsLoaded, setFilteredProductsLoaded] = useState<boolean>(false);
+
+    const viewingDate = useRecoilValue(ViewingDateState);
 
     useEffect(() => {
         if (allGroupedTagFilterOptions.length > 0) {
@@ -79,7 +77,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     products: state.products,
     productTags: state.productTags,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-    viewingDate: state.viewingDate,
 });
 
 export default connect(mapStateToProps)(ProductList);

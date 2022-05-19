@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,21 +19,20 @@ import React, {useState} from 'react';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
-import {Dispatch} from 'redux';
 import {Person} from './Person';
 import moment from 'moment';
 import PersonCard from './PersonCard';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
-interface ArchivedPersonDrawerProps {
+interface Props {
     people: Array<Person>;
-    viewingDate: Date;
 }
 
-function ArchivedPersonDrawer({
-    people,
-    viewingDate,
-}: ArchivedPersonDrawerProps): JSX.Element {
+function ArchivedPersonDrawer({ people }: Props): JSX.Element {
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+
+    const viewingDate = useRecoilValue(ViewingDateState);
 
     const getArchivedPeople = (): Array<Person> => {
         return people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment(viewingDate)));
@@ -64,11 +63,7 @@ function ArchivedPersonDrawer({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     people: state.people,
-    viewingDate: state.viewingDate,
 });
 
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ArchivedPersonDrawer);
+export default connect(mapStateToProps)(ArchivedPersonDrawer);
 /* eslint-enable */

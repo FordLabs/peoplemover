@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,17 +19,18 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import MaskedInput from 'react-text-mask';
 import React, {useState} from 'react';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
 import {Product} from './Product';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface Props {
     currentProduct: Product;
     updateProductField: (fieldName: string, fieldValue: string) => void;
-    viewingDate: string;
 }
 
-function ProductFormStartDateField({ currentProduct, viewingDate, updateProductField }: Props): JSX.Element {
+function ProductFormStartDateField({ currentProduct, updateProductField }: Props): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+
     const [startDate, setStartDate] = useState<Date>(
         currentProduct.startDate ? moment(currentProduct.startDate).toDate() : moment(viewingDate).toDate()
     );
@@ -84,10 +85,4 @@ function ProductFormStartDateField({ currentProduct, viewingDate, updateProductF
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
-});
-
-export default connect(mapStateToProps)(ProductFormStartDateField);
-/* eslint-enable */
+export default ProductFormStartDateField;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
-import {AvailableActions} from '../Actions';
+import {useEffect} from 'react';
+import {RecoilValue, useRecoilValue} from 'recoil';
 
-export const viewingDateReducer = (
-    state: Date = new Date(),
-    action: {type: AvailableActions; date: Date},
-): Date => {
-    if (action.type === AvailableActions.SET_VIEWING_DATE) {
-        return action.date;
-    }
-    return state;
+export const RecoilObserver = ({
+    recoilState,
+    onChange,
+}: {
+    recoilState: RecoilValue<unknown>;
+    onChange: Function;
+}) => {
+    const value = useRecoilValue(recoilState);
+    useEffect(() => onChange(value), [onChange, value]);
+    return null;
 };

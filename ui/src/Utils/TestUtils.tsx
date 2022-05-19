@@ -42,7 +42,7 @@ import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
-import {RecoilRoot} from 'recoil';
+import {MutableSnapshot, RecoilRoot} from 'recoil';
 
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
@@ -219,19 +219,20 @@ class TestUtils {
 
     static async renderPeopleMoverComponent(
         store?: Store,
-        initialState?: PreloadedState<Partial<GlobalStateProps>>,
+        initialReduxState?: PreloadedState<Partial<GlobalStateProps>>,
+        initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,
         initialPath = '/uuid'
     ): Promise<RenderResult> {
         const result = renderWithRedux(
             <MemoryRouter initialEntries={[initialPath]}>
-                <RecoilRoot>
+                <RecoilRoot initializeState={initializedRecoilState}>
                     <Routes>
                         <Route path="/:teamUUID" element={<PeopleMover/>} />
                     </Routes>
                 </RecoilRoot>
             </MemoryRouter>,
             store,
-            initialState
+            initialReduxState
         );
         await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(initialPath.replace('/', '')))
         return result;
@@ -554,6 +555,9 @@ class TestUtils {
         assignments: [],
         archived: false,
         tags: [TestUtils.productTag1],
+        dorf: '',
+        notes: '',
+        url: '',
     };
 
     static productForHank: Product = {

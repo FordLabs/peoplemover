@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,10 @@
 
 import {
     AvailableActions,
-    fetchLocationsAction, fetchPeopleAction,
-    fetchPersonTagsAction, fetchProductTagsAction,
+    fetchLocationsAction,
+    fetchPeopleAction,
+    fetchPersonTagsAction,
+    fetchProductTagsAction,
     fetchRolesAction,
     setupSpaceAction,
 } from './index';
@@ -35,7 +37,6 @@ import PeopleClient from '../../People/PeopleClient';
 
 
 describe('Actions', () => {
-
     let mockStore: MockStoreCreator<unknown, {}>;
     let store: MockStoreEnhanced<unknown, {}>;
 
@@ -43,7 +44,6 @@ describe('Actions', () => {
         mockStore = configureStore([thunk]);
         store = mockStore({
             currentSpace: TestUtils.space,
-            viewingDate: new Date(2020, 4, 14),
         });
     });
 

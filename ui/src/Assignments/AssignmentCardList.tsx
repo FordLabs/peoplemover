@@ -38,14 +38,15 @@ import {Space} from '../Space/Space';
 import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {isPersonMatchingSelectedFilters} from '../People/Person';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface AssignmentCardListProps {
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
     currentSpace: Space;
-    viewingDate: Date;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    fetchProducts(): void;
+    fetchProducts(viewingDate: Date): void;
     setCurrentModal(modalState: CurrentModalState): void;
     setIsDragging(isDragging: boolean): void;
 }
@@ -54,7 +55,6 @@ function AssignmentCardList({
     product,
     productRefs,
     currentSpace,
-    viewingDate,
     allGroupedTagFilterOptions,
     fetchProducts,
     setCurrentModal,
@@ -66,6 +66,8 @@ function AssignmentCardList({
     let assignmentCardRectHeight  = 0;
     const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
     const getSelectedPersonTagFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
+
+    const viewingDate = useRecoilValue(ViewingDateState);
 
     function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
         const assignments: Array<Assignment> = product.assignments;
@@ -153,7 +155,7 @@ function AssignmentCardList({
                             currentSpace,
                             oldAssignment.person
                         );
-                        fetchProducts();
+                        fetchProducts(viewingDate);
                         assignmentUpdated = true;
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     } catch (error: any) {
@@ -239,12 +241,11 @@ function AssignmentCardList({
 const mapStateToProps = (state: GlobalStateProps) => ({
     productRefs: state.productRefs,
     currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchProducts: () => dispatch(fetchProductsAction()),
+    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setIsDragging: (isDragging: boolean) => dispatch(setIsDragging(isDragging)),
 });

@@ -20,13 +20,16 @@ import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import ReportClient from '../Reports/ReportClient';
 import {Space} from '../Space/Space';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface Props {
     currentSpace: Space;
-    viewingDate: Date;
 }
 
-function DownloadReportButton({ currentSpace, viewingDate }: Props): JSX.Element {
+function DownloadReportButton({ currentSpace }: Props): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+
     const handleDownloadReport = async (): Promise<void> => {
         const { uuid, name } = currentSpace;
         if (uuid) await ReportClient.getReportsWithNames(name, uuid, viewingDate);
@@ -47,7 +50,6 @@ function DownloadReportButton({ currentSpace, viewingDate }: Props): JSX.Element
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
 });
 
 export default connect(mapStateToProps, {})(DownloadReportButton);

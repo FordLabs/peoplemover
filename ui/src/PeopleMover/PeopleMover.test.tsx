@@ -24,6 +24,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {createEmptySpace} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
 import thunk from 'redux-thunk';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 declare let window: MatomoWindow;
 
@@ -97,7 +98,10 @@ describe('PeopleMover', () => {
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(
                 undefined,
-                {viewingDate: new Date(2020, 10, 14)}
+                undefined,
+                (({set}) => {
+                    set(ViewingDateState, new Date(2020, 10, 14))
+                })
             );
         });
 
@@ -347,13 +351,13 @@ describe('PeopleMover', () => {
 
         it('should route to 404 page when bad space name is provided',  async () => {
             SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: BAD_REQUEST}});
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, spaceUuidPath);
+            await TestUtils.renderPeopleMoverComponent(undefined, undefined, undefined, spaceUuidPath);
             await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/404'));
         });
 
         it('should route to 403 page when user does not have access to a space', async () => {
             SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: FORBIDDEN}});
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, spaceUuidPath);
+            await TestUtils.renderPeopleMoverComponent(undefined, undefined, undefined, spaceUuidPath);
             await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/403'));
         });
     });

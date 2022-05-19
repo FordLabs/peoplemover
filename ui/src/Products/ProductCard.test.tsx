@@ -17,19 +17,19 @@
 
 import React from 'react';
 import TestUtils, {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
-import {emptyProduct} from './Product';
+import {emptyProduct, Product} from './Product';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-import {act} from 'react-dom/test-utils';
-import {fireEvent, RenderResult} from '@testing-library/react';
+import {fireEvent, screen} from '@testing-library/react';
 import ProductClient from './ProductClient';
-import {AxiosResponse} from 'axios';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import moment from 'moment';
 import rootReducer from '../Redux/Reducers';
 import {applyMiddleware, createStore, Store} from 'redux';
 import thunk from 'redux-thunk';
 import AssignmentClient from '../Assignments/AssignmentClient';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 declare let window: MatomoWindow;
 
@@ -46,10 +46,12 @@ describe('ProductCard', () => {
     let store: Store;
 
     beforeEach(() => {
+        jest.clearAllMocks();
+        TestUtils.mockClientCalls();
+
         store = createStore(rootReducer, 
             {
                 currentSpace: TestUtils.space,
-                viewingDate: mayFourteenth2020,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 products: [TestUtils.unassignedProduct,
                     TestUtils.productWithoutAssignments,
@@ -71,30 +73,20 @@ describe('ProductCard', () => {
     });
 
     it('should not show the product link icon when there is no url', () => {
-        const testProduct = {...emptyProduct(), name: 'testProduct'};
-        const app = renderWithRedux(<ProductCard product={testProduct}/>, store, undefined);
-        expect(app.queryAllByTestId('productUrl').length).toEqual(0);
+        renderProductCard({...emptyProduct(), name: 'testProduct'});
+        expect(screen.queryAllByTestId('productUrl').length).toEqual(0);
     });
 
     it('should show the product link icon when there is a url', () => {
-        const testProduct = {...emptyProduct(), name: 'testProduct', url: 'any old url'};
-        const app = renderWithRedux(<ProductCard product={testProduct}/>, store, undefined);
-        expect(app.queryAllByTestId('productUrl').length).toEqual(1);
+        renderProductCard({...emptyProduct(), name: 'testProduct', url: 'any old url'});
+        expect(screen.queryAllByTestId('productUrl').length).toEqual(1);
     });
 
     it('when a url is followed, generate a matomo event', async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
         window.open = jest.fn();
-        const testProduct = {...emptyProduct(), name: 'testProduct', url: 'any old url'};
-        let productCard: RenderResult;
-        await act(async () => {
-            productCard = renderWithRedux(<ProductCard product={testProduct}/>, store, undefined);
-        });
+        renderProductCard({...emptyProduct(), name: 'testProduct', url: 'any old url'});
 
-        await act(async () => {
-            fireEvent.click(await productCard.findByTestId('productName'));
-        });
+        fireEvent.click(await screen.findByTestId('productName'));
 
         expect(window.open).toHaveBeenCalledTimes(1);
         expect(window.open).toHaveBeenCalledWith('any old url');
@@ -102,18 +94,19 @@ describe('ProductCard', () => {
     });
 
     it('archiving a product sets the appropriate fields in the product and moves all people to unassigned', async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
         const may13String = moment(mayFourteenth2020).subtract(1, 'day').format('YYYY-MM-DD');
         const may14String = moment(mayFourteenth2020).format('YYYY-MM-DD');
         const testProduct = {...TestUtils.productWithAssignments, assignments: [TestUtils.assignmentForPerson1, TestUtils.assignmentForPerson2, TestUtils.assignmentForPerson3]};
-        const expectedProduct = {...testProduct, endDate: may13String};
-        ProductClient.editProduct = jest.fn(() => Promise.resolve({data: expectedProduct} as AxiosResponse));
+
+        ProductClient.editProduct = jest.fn().mockResolvedValue({data: {...testProduct, endDate: may13String}});
+
         store.dispatch = jest.fn();
-        const productCard = renderWithRedux(<ProductCard product={testProduct}/>, store);
-        fireEvent.click(await productCard.findByTestId(createDataTestId('editProductIcon', TestUtils.productWithAssignments.name)));
-        fireEvent.click(await productCard.findByText('Archive Product'));
-        fireEvent.click(productCard.getByText('Archive'));
+
+        renderProductCard(testProduct);
+
+        fireEvent.click(await screen.findByTestId(createDataTestId('editProductIcon', TestUtils.productWithAssignments.name)));
+        fireEvent.click(await screen.findByText('Archive Product'));
+        fireEvent.click(screen.getByText('Archive'));
 
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(3);
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [{productId: TestUtils.productForHank.id, placeholder: false}], TestUtils.space, TestUtils.person1);
@@ -125,27 +118,38 @@ describe('ProductCard', () => {
     });
 
     it('should show a confirmation modal when Archive Person is clicked, and be able to close it', async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-        const productCard = renderWithRedux(<ProductCard product={TestUtils.productWithAssignments}/>, store);
-        expectEditMenuContents(false, productCard);
-        fireEvent.click(productCard.getByTestId(createDataTestId('editProductIcon', TestUtils.productWithAssignments.name)));
-        expectEditMenuContents(true, productCard);
-        fireEvent.click(productCard.getByText('Archive Product'));
-        expect(await productCard.findByText('Are you sure?')).toBeInTheDocument();
-        fireEvent.click(productCard.getByText('Cancel'));
-        expect(await productCard.queryByText('Are you sure?')).not.toBeInTheDocument();
+        renderProductCard(TestUtils.productWithAssignments);
+        expectEditMenuContents(false);
+
+        const editProductSelector = createDataTestId('editProductIcon', TestUtils.productWithAssignments.name)
+        fireEvent.click(screen.getByTestId(editProductSelector));
+        expectEditMenuContents(true);
+
+        fireEvent.click(screen.getByText('Archive Product'));
+        expect(await screen.findByText('Are you sure?')).toBeInTheDocument();
+
+        fireEvent.click(screen.getByText('Cancel'));
+        expect(await screen.queryByText('Are you sure?')).not.toBeInTheDocument();
     });
 
-    const expectEditMenuContents = (shown: boolean, elementUnderTest: RenderResult): void => {
-        if (shown) {
-            expect(elementUnderTest.getByText('Edit Product')).toBeInTheDocument();
-            expect(elementUnderTest.getByText('Archive Product')).toBeInTheDocument();
-        } else {
-            expect(elementUnderTest.queryByText('Edit Product')).not.toBeInTheDocument();
-            expect(elementUnderTest.queryByText('Archive Product')).not.toBeInTheDocument();
-        }
-    };
-
-
+    function renderProductCard(product: Product) {
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, mayFourteenth2020)
+            }}>
+                <ProductCard product={product}/>
+            </RecoilRoot>,
+            store
+        );
+    }
 });
+
+const expectEditMenuContents = (shown: boolean): void => {
+    if (shown) {
+        expect(screen.getByText('Edit Product')).toBeInTheDocument();
+        expect(screen.getByText('Archive Product')).toBeInTheDocument();
+    } else {
+        expect(screen.queryByText('Edit Product')).not.toBeInTheDocument();
+        expect(screen.queryByText('Archive Product')).not.toBeInTheDocument();
+    }
+};

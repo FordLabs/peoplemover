@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,18 @@
  * limitations under the License.
  */
 
-import {fireEvent, RenderResult, waitFor, screen} from '@testing-library/react';
+import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
-describe('Archived People', () => {
-    let app: RenderResult;
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
+describe('Archived People', () => {
     const mayFourteen2020: Date = new Date(2020, 4, 14);
     const mayFourteen1999: Date = new Date(1999, 4, 14);
+    let unmount: () => void;
 
     describe('Showing archived people', () => {
         beforeEach(async () => {
@@ -34,43 +36,45 @@ describe('Archived People', () => {
             const mockStore = configureStore([]);
             const store = mockStore({
                 currentSpace: TestUtils.space,
-                viewingDate: mayFourteen2020,
                 people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
             });
 
-            await waitFor(() => {
-                app = renderWithRedux(
-                    <ArchivedPersonDrawer/>, store, undefined
-                );
-            });
+            ({unmount} = renderWithRedux(
+                <RecoilRoot initializeState={({set}) => {
+                    set(ViewingDateState, mayFourteen2020)
+                }}>
+                    <ArchivedPersonDrawer/>
+                </RecoilRoot>,
+                store
+            ));
         });
 
         it('has the Archived Person drawer', async () => {
-            expect(app.queryByText(/Archived People/)).toBeInTheDocument();
+            expect(screen.getByText(/Archived People/)).toBeInTheDocument();
         });
 
         it('shows the names of two archived people but not one unarchived person', async () => {
-            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
-            expect(await app.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
-            expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
-            expect(app.container.getElementsByClassName('archivedPersonCard').length).toEqual(2);
-            expect((await app.findByTestId('archivedPersonDrawerCountBadge')).innerHTML).toEqual('2');
+            expect(await screen.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
+            expect(await screen.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
+            expect(screen.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
+            expect(screen.getAllByTestId(/archivedPersonCard__*/)).toHaveLength(2);
+            expect((await screen.findByTestId('archivedPersonDrawerCountBadge')).innerHTML).toEqual('2');
         });
 
         it('should not show people who have not passed their archived date', async () => {
-            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(app.queryByText(TestUtils.hank.name)).not.toBeInTheDocument();
+            expect(screen.queryByText(TestUtils.hank.name)).not.toBeInTheDocument();
         });
 
         it('can be closed and opened again', async () => {
-            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await app.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
+            expect(await screen.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
             fireEvent.click(drawerCaret);
-            expect(await app.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
+            expect(await screen.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
         });
 
         it('should not show an archived person if the viewing date is before their archive date', async () => {
@@ -80,23 +84,26 @@ describe('Archived People', () => {
             const mockStore = configureStore([]);
             const store = mockStore({
                 currentSpace: TestUtils.space,
-                viewingDate: mayFourteen1999,
                 people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
             });
 
-            await waitFor(() => {
-                app.unmount();
-                app = renderWithRedux(
-                    <ArchivedPersonDrawer/>, store, undefined
-                );
-            });
+            unmount();
 
-            const drawerCaret = await app.findByTestId('archivedPersonDrawerCaret');
+            renderWithRedux(
+                <RecoilRoot initializeState={({set}) => {
+                    set(ViewingDateState, mayFourteen1999)
+                }}>
+                    <ArchivedPersonDrawer/>
+                </RecoilRoot>,
+                store
+            );
+
+            const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await app.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
-            expect(await app.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
-            expect(app.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
-            expect(app.container.getElementsByClassName('archivedPersonCard').length).toEqual(1);
+            expect(await screen.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
+            expect(await screen.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
+            expect(screen.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
+            expect(screen.getAllByTestId(/archivedPersonCard__*/)).toHaveLength(1);
         });
     });
 

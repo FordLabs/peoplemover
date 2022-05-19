@@ -28,6 +28,8 @@ import {emptyPerson, Person} from './Person';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import ProductClient from '../Products/ProductClient';
+import {ViewingDateState} from '../State/ViewingDateState';
+import {RecoilRoot} from 'recoil';
 
 declare let window: MatomoWindow;
 
@@ -49,16 +51,18 @@ describe('People actions', () => {
     describe('Person Form', () => {
         const personFormInitialState: PreloadedState<Partial<GlobalStateProps>> = {
             people: TestUtils.people,
-            viewingDate: new Date(2020, 5, 5),
             currentSpace: TestUtils.space,
             allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
         };
+        const viewingDate = new Date(2020, 5, 5)
 
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState);
+            await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState, ({set}) => {
+                set(ViewingDateState, viewingDate)
+            });
             await screen.findByText(addPersonButtonText);
         });
 
@@ -124,8 +128,7 @@ describe('People actions', () => {
             );
         });
 
-        // @todo should be cypress or more granular unit test
-        xit('creates the person specified by the PersonForm', async () => {
+        it('creates the person specified by the PersonForm', async () => {
             fireEvent.click(screen.getByText(addPersonButtonText));
 
             fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'New Bobby'}});
@@ -133,8 +136,8 @@ describe('People actions', () => {
             fireEvent.change(screen.getByLabelText('CDSID'), {target: {value: 'btables1'}});
             fireEvent.click(screen.getByLabelText('Mark as New'));
 
-            await selectEvent.create(screen.getByLabelText('Person Tags'), 'Low Achiever');
-            await screen.findByDisplayValue('Low Achiever')
+            await selectEvent.create(await screen.findByLabelText('Person Tags'), 'Low Achiever');
+            await screen.findByText('Low Achiever')
 
             fireEvent.click(screen.getByText(submitFormButtonText));
 
@@ -144,14 +147,14 @@ describe('People actions', () => {
                 name: 'New Bobby',
                 customField1: 'btables1',
                 newPerson: true,
-                newPersonDate: personFormInitialState.viewingDate as Date,
+                newPersonDate: viewingDate,
                 tags: [{
                     id: 1337,
                     spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
                     name: 'Low Achiever',
                 }],
             };
-            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith([TestUtils.space, expectedPerson, ['Low Achiever']]);
+            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestUtils.space, expectedPerson, ['Low Achiever']);
         });
 
         it('should not create person with empty value and display proper error message', async () => {
@@ -170,14 +173,12 @@ describe('People actions', () => {
     });
 
     describe('Roles', () => {
-        const viewingDate = new Date(2020, 5, 5);
-
-        const rolesInitialState: PreloadedState<Partial<GlobalStateProps>> = {
-            viewingDate: viewingDate,
-        };
+        const viewingDate: Date = new Date(2020, 5, 5)
 
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, rolesInitialState);
+            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
+                set(ViewingDateState, viewingDate)
+            });
 
             const createPersonButton = await screen.findByText(addPersonButtonText);
             fireEvent.click(createPersonButton);
@@ -203,7 +204,7 @@ describe('People actions', () => {
                     ...emptyPerson(),
                     name: 'Some Name',
                     newPerson: true,
-                    newPersonDate: rolesInitialState.viewingDate as Date,
+                    newPersonDate: viewingDate,
                     spaceRole: {
                         name: 'Product Manager',
                         id: 2,
@@ -305,8 +306,8 @@ describe('People actions', () => {
         };
 
         it('assigns the person created by the PersonForm', async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined,{
-                viewingDate: viewingDate,
+            await TestUtils.renderPeopleMoverComponent(undefined,undefined, ({set}) => {
+                set(ViewingDateState, viewingDate)
             })
             const createPersonButton = await screen.findByText(addPersonButtonText);
             fireEvent.click(createPersonButton);
@@ -329,11 +330,14 @@ describe('People actions', () => {
 
     it('should have initially selected product selected', async () => {
         renderWithRedux(
-            <PersonForm isEditPersonForm={false}
-                products={[]}
-                initialPersonName="BRADLEY"
-                initiallySelectedProduct={TestUtils.productWithAssignments}
-            />,
+            <RecoilRoot>
+                <PersonForm
+                    isEditPersonForm={false}
+                    products={[]}
+                    initialPersonName="BRADLEY"
+                    initiallySelectedProduct={TestUtils.productWithAssignments}
+                />
+            </RecoilRoot>,
             undefined,
             initialState
         );
@@ -343,9 +347,13 @@ describe('People actions', () => {
     it('should not show the unassigned product or archived products in product list', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
         renderWithRedux(
-            <PersonForm isEditPersonForm={false}
-                products={products}
-                initialPersonName="BRADLEY"/>,
+            <RecoilRoot>
+                <PersonForm
+                    isEditPersonForm={false}
+                    products={products}
+                    initialPersonName="BRADLEY"
+                />
+            </RecoilRoot>,
             undefined,
             initialState
         );
@@ -367,9 +375,13 @@ describe('People actions', () => {
     it('should remove the unassigned product when a product is selected from dropdown', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.unassignedProduct];
         renderWithRedux(
-            <PersonForm isEditPersonForm={false}
-                products={products}
-                initialPersonName="BRADLEY"/>,
+            <RecoilRoot>
+                <PersonForm
+                    isEditPersonForm={false}
+                    products={products}
+                    initialPersonName="BRADLEY"
+                />
+            </RecoilRoot>,
             undefined,
             initialState
         );
@@ -385,9 +397,10 @@ describe('People actions', () => {
 
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(undefined,{
-                viewingDate: new Date(2019, 0, 1),
                 currentSpace: TestUtils.space,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            }, ({set}) => {
+                set(ViewingDateState, new Date(2019, 0, 1))
             })
 
             const editPersonButton = await screen.findByTestId('editPersonIconContainer__person_1');

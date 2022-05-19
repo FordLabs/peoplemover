@@ -21,6 +21,7 @@ import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import {Product} from '../Products/Product';
 import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
+import {RecoilRoot} from 'recoil';
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
@@ -58,7 +59,9 @@ describe('Unassigned Products', () => {
     describe('showing the unassigned product, but...', () => {
         const renderWithUnassignedProduct = (products: Product[]) => {
             renderWithRedux(
-                <UnassignedDrawer/>,
+                <RecoilRoot>
+                    <UnassignedDrawer/>
+                </RecoilRoot>,
                 undefined,
                 {
                     allGroupedTagFilterOptions: [

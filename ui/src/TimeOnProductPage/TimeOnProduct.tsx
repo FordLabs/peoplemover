@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,13 +22,16 @@ import {connect} from 'react-redux';
 import {calculateDuration} from '../Assignments/Assignment';
 import {Space} from '../Space/Space';
 import RedirectClient from '../Utils/RedirectClient';
-import './TimeOnProduct.scss';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import HeaderContainer from '../Header/HeaderContainer';
 import SubHeader from '../Header/SubHeader';
 import {AvailableModals} from '../Modal/AvailableModals';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
+
+import './TimeOnProduct.scss';
 
 export const LOADING = 'Loading...';
 
@@ -75,17 +78,18 @@ export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductIte
 
 export interface TimeOnProductProps {
     currentSpace: Space;
-    viewingDate: Date;
     products: Array<Product>;
     currentModal: CurrentModalState;
     isReadOnly: boolean;
 
-    fetchProducts(): Array<Product>;
+    fetchProducts(viewingDate: Date): Array<Product>;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function TimeOnProduct({currentSpace, viewingDate, products, currentModal, isReadOnly, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, products, currentModal, isReadOnly, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const viewingDate = useRecoilValue(ViewingDateState)
 
     const extractUuidFromUrl = (): string => {
         return window.location.pathname.split('/')[1];
@@ -101,7 +105,7 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, isRea
     useEffect(() => {
         if (currentSpace && currentModal.modal === null) {
             setIsLoading(true);
-            fetchProducts();
+            fetchProducts(viewingDate);
         }
     }, [currentModal, currentSpace, fetchProducts, viewingDate]);
 
@@ -183,7 +187,6 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, isRea
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
     products: state.products,
     currentModal: state.currentModal,
     isReadOnly: state.isReadOnly,
@@ -191,7 +194,7 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchProducts: () => dispatch(fetchProductsAction()),
+    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimeOnProduct);

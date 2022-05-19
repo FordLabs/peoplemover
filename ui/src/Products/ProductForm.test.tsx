@@ -17,7 +17,7 @@
 import ProductForm from '../Products/ProductForm';
 import React from 'react';
 import configureStore from 'redux-mock-store';
-import {act, fireEvent, screen, waitFor} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
 import TestUtils, {mockCreateRange, renderWithRedux} from '../Utils/TestUtils';
 import {Space} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
@@ -30,12 +30,15 @@ import {createBrowserHistory, History} from 'history';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
 import {PreloadedState} from 'redux';
+import {RecoilRoot} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
+
+jest.mock('');
 
 describe('ProductForm', function() {
     const mockStore = configureStore([]);
     const store = mockStore({
         currentSpace: TestUtils.space,
-        viewingDate: new Date(2020, 4, 14),
     });
 
     let resetCreateRange: () => void;
@@ -54,31 +57,43 @@ describe('ProductForm', function() {
     });
 
     it('should close the modal when you click the cancel button', async () => {
-        renderWithRedux(<ProductForm editing={false} />, store);
-        await act(async () => {fireEvent.click(screen.getByText('Cancel'));});
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 4, 14))
+            }}>
+                <ProductForm editing={false} />
+            </RecoilRoot>,
+            store
+        );
+        await waitFor(() => expect(LocationClient.get).toHaveBeenCalled());
+
+        fireEvent.click(screen.getByText('Cancel'));
         expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
         expect(LocationClient.get).toHaveBeenCalled();
         expect(ProductTagClient.get).toHaveBeenCalled();
     });
 
     it('should submit new product to backend and close modal', async () => {
-        await act(async () => {
-            renderWithRedux(
-                <ProductForm editing={false} />,
-                store
-            );
-            fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'Some Name'}});
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 4, 14))
+            }}>
+                <ProductForm editing={false} />
+            </RecoilRoot>,
+            store
+        );
 
-            const locationLabelElement = await screen.findByLabelText('Location');
-            await selectEvent.select(locationLabelElement, /Ann Arbor/);
+        fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'Some Name'}});
 
-            const tagsLabelElement = await screen.findByLabelText('Product Tags');
-            await selectEvent.select(tagsLabelElement, /FordX/);
+        const locationLabelElement = await screen.findByLabelText('Location');
+        await selectEvent.select(locationLabelElement, /Ann Arbor/);
 
-            fireEvent.click(screen.getByText('Add'));
-        });
+        const tagsLabelElement = await screen.findByLabelText('Product Tags');
+        await selectEvent.select(tagsLabelElement, /FordX/);
 
-        expect(ProductClient.createProduct).toHaveBeenCalledWith(
+        fireEvent.click(screen.getByText('Add'));
+
+        await waitFor(() => expect(ProductClient.createProduct).toHaveBeenCalledWith(
             TestUtils.space,
             {
                 id: -1,
@@ -93,7 +108,7 @@ describe('ProductForm', function() {
                 url: '',
                 tags: [TestUtils.productTag2],
                 assignments: [],
-            } as Product);
+            } as Product));
 
         expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
         expect(LocationClient.get).toHaveBeenCalled();
@@ -107,37 +122,58 @@ describe('ProductForm', function() {
                 id: 1,
                 name: 'Test Space',
             } as Space,
-            viewingDate: new Date(2022, 3, 14),
         });
 
-        await act(async () => {
-            const archivedProduct = {...TestUtils.productWithoutLocation, endDate: '2020-02-02'};
-            renderWithRedux(<ProductForm editing={true} product={archivedProduct}/>, store);
-            const deleteSpan = await screen.findByTestId('deleteProduct');
-            fireEvent.click(deleteSpan);
-            expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
-            expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeNull();
-        });
+        const archivedProduct = {...TestUtils.productWithoutLocation, endDate: '2020-02-02'};
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2022, 3, 14))
+            }}>
+                <ProductForm
+                    editing={true}
+                    product={archivedProduct}
+                />
+            </RecoilRoot>,
+            store
+        );
+        const deleteSpan = await screen.findByTestId('deleteProduct');
+        fireEvent.click(deleteSpan);
+        expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+        expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeNull();
     });
 
     it('should show delete modal with archive text when a non-archived product is being deleted', async () => {
-        await act(async () => {
-            renderWithRedux(<ProductForm editing={true} product={TestUtils.productWithoutLocation}/>, store);
-            const deleteSpan = await screen.findByTestId('deleteProduct');
-            fireEvent.click(deleteSpan);
-            expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
-            expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeTruthy();
-        });
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2022, 3, 14))
+            }}>
+                <ProductForm
+                    editing={true}
+                    product={TestUtils.productWithoutLocation}
+                />
+            </RecoilRoot>,
+            store
+        );
+        const deleteSpan = await screen.findByTestId('deleteProduct');
+        fireEvent.click(deleteSpan);
+        expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+        expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeTruthy();
     });
 
     it('should show delete modal without archive text when an archived product is being deleted', async () => {
-        await act(async () => {
-            renderWithRedux(<ProductForm editing={true} product={TestUtils.archivedProduct}/>, store);
-            const deleteSpan = await screen.findByTestId('deleteProduct');
-            fireEvent.click(deleteSpan);
-            expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
-            expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeFalsy();
-        });
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(ViewingDateState, new Date(2020, 4, 14))
+            }}>
+                <ProductForm editing={true} product={TestUtils.archivedProduct} />
+            </RecoilRoot>,
+            store
+        );
+
+        const deleteSpan = await screen.findByTestId('deleteProduct');
+        fireEvent.click(deleteSpan);
+        expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
+        expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeFalsy();
     });
 
     describe('tag dropdowns', () => {
@@ -146,7 +182,6 @@ describe('ProductForm', function() {
             isReadOnly: false,
             products: TestUtils.products,
             currentSpace: TestUtils.space,
-            viewingDate: moment().toDate(),
             productTags: TestUtils.productTags,
             allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
         };
@@ -157,32 +192,45 @@ describe('ProductForm', function() {
             history = createBrowserHistory();
             history.push('/uuid');
         });
-        it('should show filter option when new location tag is created from edit product modal', async () => {
-            renderWithRedux(<ProductForm editing={false} />, undefined, initialState);
-            await act(async () => {
-                const createOptionText = TestUtils.expectedCreateOptionText('Ahmedabad');
-                await createTag('Location', createOptionText, 'Ahmedabad');
-                const productForm = await screen.findByTestId('productForm');
 
-                await waitFor(() => {
-                    expect(LocationClient.add).toBeCalledTimes(1);
-                });
-                expect(productForm).toHaveFormValues({location: '11'});
+        it('should show filter option when new location tag is created from edit product modal', async () => {
+            renderWithRedux(
+                <RecoilRoot initializeState={({set}) => {
+                    set(ViewingDateState, moment().toDate())
+                }}>
+                    <ProductForm editing={false} />
+                </RecoilRoot>,
+                undefined,
+                initialState
+            );
+            const createOptionText = TestUtils.expectedCreateOptionText('Ahmedabad');
+            await createTag('Location', createOptionText, 'Ahmedabad');
+            const productForm = await screen.findByTestId('productForm');
+
+            await waitFor(() => {
+                expect(LocationClient.add).toBeCalledTimes(1);
             });
+            expect(productForm).toHaveFormValues({location: '11'});
             await screen.findByText('Ahmedabad');
         });
 
         it('should show filter option when new product tag is created from edit product modal', async () => {
-            renderWithRedux(<ProductForm editing={false} />, undefined, initialState);
+            renderWithRedux(
+                <RecoilRoot initializeState={({set}) => {
+                    set(ViewingDateState, moment().toDate())
+                }}>
+                    <ProductForm editing={false} />
+                </RecoilRoot>,
+                undefined,
+                initialState
+            );
 
-            await act(async () => {
-                const expectedCreateOptionText = TestUtils.expectedCreateOptionText('Fin Tech');
-                await createTag('Product Tags', expectedCreateOptionText, 'Fin Tech');
-                expect(ProductTagClient.add).toBeCalledTimes(1);
+            const expectedCreateOptionText = TestUtils.expectedCreateOptionText('Fin Tech');
+            await createTag('Product Tags', expectedCreateOptionText, 'Fin Tech');
+            expect(ProductTagClient.add).toBeCalledTimes(1);
 
-                const productForm = await screen.findByTestId('productForm');
-                expect(productForm).toHaveFormValues({productTags: '9_Fin Tech'});
-            });
+            const productForm = await screen.findByTestId('productForm');
+            expect(productForm).toHaveFormValues({productTags: '9_Fin Tech'});
             await screen.findByText('Fin Tech');
         });
     });

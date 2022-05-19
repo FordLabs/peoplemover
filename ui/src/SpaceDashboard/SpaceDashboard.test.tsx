@@ -19,15 +19,18 @@ import Cookies from 'universal-cookie';
 import SpaceDashboard from './SpaceDashboard';
 import React from 'react';
 import {renderWithRedux} from '../Utils/TestUtils';
-import {fireEvent, waitFor, screen, act} from '@testing-library/react';
+import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import moment from 'moment';
 import {createEmptySpace} from '../Space/Space';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import {setCurrentSpaceAction, setViewingDateAction} from '../Redux/Actions';
+import {setCurrentSpaceAction} from '../Redux/Actions';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import { MemoryRouter } from 'react-router-dom';
+import {MemoryRouter} from 'react-router-dom';
+import {RecoilRoot} from 'recoil';
+import {RecoilObserver} from '../Utils/RecoilObserver';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 class MockDate extends Date {
     constructor() {
@@ -57,18 +60,25 @@ describe('SpaceDashboard', () => {
         it('should reset current date on load', async () => {
             const store = createStore(rootReducer, {});
             store.dispatch = jest.fn();
+            let actualViewingDate: Date;
 
             renderWithRedux(
                 <MemoryRouter>
-                    <SpaceDashboard/>
+                    <RecoilRoot>
+                        <RecoilObserver
+                            recoilState={ViewingDateState}
+                            onChange={(value: Date) => {
+                                actualViewingDate = value;
+                            }}
+                        />
+                        <SpaceDashboard/>
+                    </RecoilRoot>
                 </MemoryRouter>,
                 store
             );
 
             await waitFor(() =>
-                expect(store.dispatch).toHaveBeenCalledWith(
-                    setViewingDateAction(new Date('Date is overwritten so anything returns the same date'))
-                )
+                expect(actualViewingDate).toEqual(new Date('Date is overwritten so anything returns the same date'))
             );
         });
     });
@@ -78,7 +88,9 @@ describe('SpaceDashboard', () => {
         store.dispatch = jest.fn();
         renderWithRedux(
             <MemoryRouter>
-                <SpaceDashboard/>
+                <RecoilRoot>
+                    <SpaceDashboard/>
+                </RecoilRoot>
             </MemoryRouter>,
             store
         );
@@ -160,7 +172,9 @@ describe('SpaceDashboard', () => {
         await act(async () => {
             renderWithRedux(
                 <MemoryRouter initialEntries={['/user/dashboard']}>
-                    <SpaceDashboard/>
+                    <RecoilRoot>
+                        <SpaceDashboard/>
+                    </RecoilRoot>
                 </MemoryRouter>
             );
         })

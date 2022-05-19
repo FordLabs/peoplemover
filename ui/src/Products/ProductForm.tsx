@@ -43,12 +43,13 @@ import {
 import {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import FormTagsField from '../ReusableComponents/FormTagsField';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
 
 interface ProductFormProps {
     editing: boolean;
     product?: Product;
     currentSpace: Space;
-    viewingDate: string;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -59,12 +60,13 @@ function ProductForm({
     editing,
     product,
     currentSpace,
-    viewingDate,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     closeModal,
 }: ProductFormProps): JSX.Element {
-    const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct());
+    const viewingDate = useRecoilValue(ViewingDateState);
+
+    const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct(viewingDate));
     const [selectedProductTags, setSelectedProductTags] = useState<Array<Tag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
@@ -73,11 +75,15 @@ function ProductForm({
     const emptyProductNameWarningMessage = 'Please enter a product name.';
     const [nameWarningMessage, setNameWarningMessage] = useState<string>('');
 
-    function initializeProduct(): Product {
-        if (product == null) {
-            return {...emptyProduct(currentSpace.uuid), startDate: viewingDate};
+    function initializeProduct(startDate = new Date()): Product {
+        const returnProduct = {
+            ...emptyProduct(currentSpace.uuid),
+            ...product,
         }
-        return product;
+        if(returnProduct.startDate === '') {
+            returnProduct.startDate = moment(startDate).format('YYYY-MM-DD');
+        }
+        return returnProduct;
     }
 
     function handleSubmit(event: FormEvent): void {
@@ -196,11 +202,11 @@ function ProductForm({
                         value={currentProduct.name}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('name', e.target.value)}
                         placeholder="e.g. Product 1"/>
-                    {nameWarningMessage &&
-                    <span data-testid="productNameWarningMessage" className="productNameWarning">
-                        {nameWarningMessage}
-                    </span>
-                    }
+                    {nameWarningMessage && (
+                        <span data-testid="productNameWarningMessage" className="productNameWarning">
+                            {nameWarningMessage}
+                        </span>
+                    )}
                 </div>
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="url">Product Page URL</label>
@@ -272,7 +278,6 @@ function ProductForm({
 /* eslint-disable  */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

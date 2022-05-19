@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useState} from 'react';
+import React, {RefObject, useRef, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
@@ -24,8 +24,6 @@ import {fetchPeopleAction, fetchProductsAction, setCurrentModalAction} from '../
 import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import '../Styles/Main.scss';
-import './AssignmentCard.scss';
 import {Assignment, calculateDuration} from './Assignment';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
@@ -37,26 +35,26 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import PeopleClient from '../People/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
+
+import '../Styles/Main.scss';
+import './AssignmentCard.scss';
 
 interface AssignmentCardProps {
     currentSpace: Space;
-    viewingDate: Date;
     assignment: Assignment;
     isUnassignedProduct: boolean;
     isReadOnly: boolean;
 
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
-
-    fetchProducts(): void;
-
+    fetchProducts(viewingDate: Date): void;
     fetchPeople(): void;
 }
 
 function AssignmentCard({
     currentSpace,
-    viewingDate,
     assignment = {id: 0} as Assignment,
     isUnassignedProduct,
     isReadOnly,
@@ -65,39 +63,32 @@ function AssignmentCard({
     fetchProducts,
     fetchPeople,
 }: AssignmentCardProps): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spaceUuid = currentSpace.uuid!;
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const [modal, setModal] = useState<JSX.Element | null>(null);
-    const assignmentRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
+    const assignmentRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-    function onEditMenuClosed(): void {
-        setEditMenuIsOpened(false);
-    }
+    const viewingDate = useRecoilValue(ViewingDateState);
+
+    const onEditMenuClosed = (): void => setEditMenuIsOpened(false);
 
     function toggleEditMenu(): void {
         if (!isUnassignedProduct) {
-            if (editMenuIsOpened) {
-                setEditMenuIsOpened(false);
-            } else {
-                setEditMenuIsOpened(true);
-            }
+            setEditMenuIsOpened(!editMenuIsOpened)
         } else {
-            const newModalState: CurrentModalState = {
+            setCurrentModal({
                 modal: AvailableModals.EDIT_PERSON,
                 item: assignment.person,
-            };
-            setCurrentModal(newModalState);
+            });
         }
     }
 
     function editPersonAndCloseEditMenu(): void {
         toggleEditMenu();
-        const newModalState: CurrentModalState = {
+        setCurrentModal({
             modal: AvailableModals.EDIT_PERSON,
             item: assignment.person,
-        };
-        setCurrentModal(newModalState);
+        });
     }
 
     async function markAsPlaceholderAndCloseEditMenu(): Promise<void> {
@@ -121,14 +112,10 @@ function AssignmentCard({
             assignment.person,
             false)
             .then(() => {
-                if (markedAsPlaceholder) {
-                    MatomoEvents.pushEvent(currentSpace.name, 'markAsPlaceholder', assignment.person.name);
-                } else {
-                    MatomoEvents.pushEvent(currentSpace.name, 'unmarkAsPlaceholder', assignment.person.name);
-                }
-                if (fetchProducts) {
-                    fetchProducts();
-                }
+                const matomoAction = markedAsPlaceholder ? 'markAsPlaceholder' : 'unmarkAsPlaceholder';
+                MatomoEvents.pushEvent(currentSpace.name, matomoAction, assignment.person.name);
+
+                if (fetchProducts) fetchProducts(viewingDate);
             }).catch((error) => {
                 MatomoEvents.pushEvent(currentSpace.name, 'placeholderError', assignment.person.name, error.code);
                 return Promise.reject(error);
@@ -155,9 +142,7 @@ function AssignmentCard({
             false
         ).then(() => {
             MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignment', assignment.person.name);
-            if (fetchProducts) {
-                fetchProducts();
-            }
+            if (fetchProducts) fetchProducts(viewingDate);
         }).catch((error) => {
             MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignmentError', assignment.person.name, error.code);
             return Promise.reject(error);
@@ -166,12 +151,8 @@ function AssignmentCard({
 
     async function doArchivePerson(): Promise<void> {
         PeopleClient.archivePerson(currentSpace, assignment.person, viewingDate).then(() => {
-            if (fetchProducts) {
-                fetchProducts();
-            }
-            if (fetchPeople) {
-                fetchPeople();
-            }
+            if (fetchProducts) fetchProducts(viewingDate);
+            if (fetchPeople) fetchPeople();
         });
     }
 
@@ -179,14 +160,11 @@ function AssignmentCard({
         toggleEditMenu();
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: doArchivePerson,
-            close: () => {
-                setModal(null);
-            },
+            close: () => setModal(null),
             secondaryButton: undefined,
             content: (
                 <>
-                    <div>Archiving this person will remove them from all current assigments.</div>
-
+                    <div>Archiving this person will remove them from all current assignments.</div>
                     <div><br/>You can later access this person from the Archived Person drawer.</div>
                 </>
             ),
@@ -247,9 +225,14 @@ function AssignmentCard({
                 }
             }}
         >
-            {assignment.person.newPerson && assignment.person.newPersonDate &&
-            <div className="newPersonBadge"><NewBadge newPersonDate={assignment.person.newPersonDate}
-                viewingDate={viewingDate}/></div>}
+            {assignment.person.newPerson && assignment.person.newPersonDate && (
+                <div className="newPersonBadge">
+                    <NewBadge
+                        newPersonDate={assignment.person.newPersonDate}
+                        viewingDate={viewingDate}
+                    />
+                </div>
+            )}
             <PersonAndRoleInfo
                 person={assignment.person}
                 duration={calculateDuration(assignment, viewingDate)}
@@ -260,21 +243,20 @@ function AssignmentCard({
                 disabled={isReadOnly}
                 style={{backgroundColor: cssRoleColor}}
                 data-testid={createDataTestId('editPersonIconContainer', assignment.person.name)}
-                onClick={toggleEditMenu}
-            >
-                {!isReadOnly &&
-                <i className="material-icons personEditIcon greyIcon" aria-hidden>
-                    more_vert
-                </i>
-                }
+                onClick={toggleEditMenu}>
+                {!isReadOnly && (
+                    <i className="material-icons personEditIcon greyIcon" aria-hidden>
+                        more_vert
+                    </i>
+                )}
             </button>
-            {editMenuIsOpened &&
-            <EditMenu
-                menuOptionList={getMenuOptionList()}
-                onClosed={onEditMenuClosed}
-                testId={createDataTestId('editMenu', assignment.person.name)}
-            />
-            }
+            {editMenuIsOpened && (
+                <EditMenu
+                    menuOptionList={getMenuOptionList()}
+                    onClosed={onEditMenuClosed}
+                    testId={createDataTestId('editMenu', assignment.person.name)}
+                />
+            )}
             {modal}
         </div>
     );
@@ -283,13 +265,12 @@ function AssignmentCard({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
     isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchProducts: () => dispatch(fetchProductsAction()),
+    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     fetchPeople: () => dispatch(fetchPeopleAction()),
 });
 

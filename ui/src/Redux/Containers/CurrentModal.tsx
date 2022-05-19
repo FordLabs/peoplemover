@@ -20,7 +20,6 @@ import {closeModalAction} from '../Actions';
 import Modal from '../../Modal/Modal';
 import {Dispatch} from 'redux';
 import React from 'react';
-import moment from 'moment';
 import ProductForm from '../../Products/ProductForm';
 import PersonForm from '../../People/PersonForm';
 import AssignmentForm from '../../Assignments/AssignmentForm';
@@ -37,15 +36,15 @@ import InviteEditorsFormSection from '../../AccountDropdown/InviteEditorsFormSec
 import ViewOnlyAccessFormSection from '../../AccountDropdown/ViewOnlyAccessFormSection';
 import {FilterTypeListings} from '../../SortingAndFiltering/FilterLibraries';
 import {AvailableModals} from '../../Modal/AvailableModals';
-import DeleteSpaceForm from "../../SpaceDashboard/DeleteSpaceForm";
-import TransferOwnershipForm from "../../SpaceDashboard/TransferOwnershipForm";
+import DeleteSpaceForm from '../../SpaceDashboard/DeleteSpaceForm';
+import TransferOwnershipForm from '../../SpaceDashboard/TransferOwnershipForm';
 
 export interface ModalMetadataItem {
     title: string;
     form: JSX.Element;
 }
 
-const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space, viewingDate: Date): Array<ModalMetadataItem> | null => {
+const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space): Array<ModalMetadataItem> | null => {
     const {modal, item} = currentModal;
 
     switch (modal) {
@@ -54,7 +53,6 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
         case AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG: {
             const newProduct = {
                 ...emptyProduct(currentSpace.uuid),
-                startDate: moment(viewingDate).format('YYYY-MM-DD'),
                 productTags: [item],
             };
             return [{
@@ -67,7 +65,6 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
         case AvailableModals.CREATE_PRODUCT_OF_LOCATION: {
             const newProduct = {
                 ...emptyProduct(currentSpace.uuid),
-                startDate: moment(viewingDate).format('YYYY-MM-DD'),
                 spaceLocation: {...item},
             };
             return [{
@@ -158,7 +155,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
 };
 
 const mapStateToProps = (state: GlobalStateProps) => ({
-    modalMetadata: getCurrentModalMetadata(state.currentModal, state.products, state.currentSpace, state.viewingDate),
+    modalMetadata: getCurrentModalMetadata(state.currentModal, state.products, state.currentSpace),
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({
