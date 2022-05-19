@@ -25,6 +25,8 @@ import './FilterOrSortBy.scss';
 import Dropdown from '../ReusableComponents/Dropdown';
 import {AllGroupedTagFilterOptions, FilterType} from './FilterLibraries';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import {useRecoilValue} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 function toggleOption(option: FilterOption): FilterOption {
     return {...option, selected: !option.selected};
@@ -33,7 +35,6 @@ function toggleOption(option: FilterOption): FilterOption {
 interface FilterProps {
     filterType: FilterType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    isReadOnly: boolean;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
@@ -41,10 +42,10 @@ interface FilterProps {
 function Filter({
     filterType,
     allGroupedTagFilterOptions,
-    isReadOnly,
     setAllGroupedTagFilterOptions,
     setCurrentModal,
 }: FilterProps): JSX.Element {
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const filterIndex = filterType.index;
 
@@ -125,7 +126,7 @@ function Filter({
                     (option) => {
                         return (
                         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-                            <div key={option.value} onClick={(event): void => {
+                            <div key={option.value} onClick={(): void => {
                                 updateFilters(toggleOption(option));
                             }} className="sortby-option">
                                 <input
@@ -134,7 +135,7 @@ function Filter({
                                     id={option.value}
                                     value={option.value}
                                     checked={option.selected}
-                                    onChange={(event): void => {
+                                    onChange={(): void => {
                                         updateFilters(toggleOption(option));
                                     }}
                                 />
@@ -150,13 +151,15 @@ function Filter({
                         );
                     })}
             </div>
-            {!isReadOnly && <button className="add-edit-tags-dropdown-button"
-                data-testid={`open_${formattedFilterTypeValue}_modal_button`}
-                onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}
-            >
-                <span>{`Add/Edit your ${filterType.label}`}</span>
-                <i className="material-icons">keyboard_arrow_right</i>
-            </button>}
+            {!isReadOnly && (
+                <button className="add-edit-tags-dropdown-button"
+                    data-testid={`open_${formattedFilterTypeValue}_modal_button`}
+                    onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}
+                >
+                    <span>{`Add/Edit your ${filterType.label}`}</span>
+                    <i className="material-icons">keyboard_arrow_right</i>
+                </button>
+            )}
         </>;
 
     const dropdownButtonContent =
@@ -192,7 +195,6 @@ function Filter({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-    isReadOnly: state.isReadOnly
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

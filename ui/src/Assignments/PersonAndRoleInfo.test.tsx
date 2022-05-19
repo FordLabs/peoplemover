@@ -23,6 +23,7 @@ import {createStore, PreloadedState} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('Tooltip behavior on hover', () => {
     it('should show the notes of the person being hovered over', async () => {
@@ -32,7 +33,7 @@ describe('Tooltip behavior on hover', () => {
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />,
-            {currentSpace: TestUtils.space, isReadOnly: false}
+            {currentSpace: TestUtils.space}
         );
 
         expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
@@ -50,7 +51,7 @@ describe('Tooltip behavior on hover', () => {
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />,
-            {currentSpace: TestUtils.space, isReadOnly: false}
+            {currentSpace: TestUtils.space}
         );
 
         expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
@@ -84,7 +85,7 @@ describe('Tooltip behavior on hover', () => {
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />,
-            {currentSpace: TestUtils.space, isReadOnly: false}
+            {currentSpace: TestUtils.space}
         )
 
         expect(screen.queryByText('Person Tags:')).not.toBeInTheDocument();
@@ -103,7 +104,7 @@ describe('Tooltip behavior on hover', () => {
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />,
-            {currentSpace: TestUtils.space, isReadOnly: false}
+            {currentSpace: TestUtils.space}
         )
 
         expect(screen.queryByText('Person Tags:')).not.toBeInTheDocument();
@@ -118,7 +119,8 @@ describe('Tooltip behavior on hover', () => {
                 duration={0}
                 isUnassignedProduct={false}
             />,
-            {currentSpace: TestUtils.space, isReadOnly: true}
+            {currentSpace: TestUtils.space},
+            true
         )
 
         expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
@@ -148,11 +150,16 @@ const getItemAndFireMouseOverEvent = (testId: string): void => {
     fireEvent.mouseOver(screen.getByTestId(testId));
 };
 
-const renderWithRecoilAndRedux = (personAndRoleInfoComponent: JSX.Element, preloadedReduxState: PreloadedState<Partial<GlobalStateProps>>) => {
+const renderWithRecoilAndRedux = (
+    personAndRoleInfoComponent: JSX.Element,
+    preloadedReduxState: PreloadedState<Partial<GlobalStateProps>>,
+    isReadOnly = false
+) => {
     const store = createStore(rootReducer, preloadedReduxState);
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
             set(ViewingDateState, new Date(2020, 0, 1));
+            set(IsReadOnlyState, isReadOnly)
         }}>
             {personAndRoleInfoComponent}
         </RecoilRoot>,

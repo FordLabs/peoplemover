@@ -18,28 +18,25 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {setCurrentModalAction} from '../Redux/Actions';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {createDataTestId} from '../Utils/ReactUtils';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {Person} from './Person';
 import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
+import {useRecoilValue} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 import '../Styles/Main.scss';
 import './PersonCard.scss';
 
-interface PersonCardProps {
-    isReadOnly: boolean;
+interface Props {
     person: Person;
-
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function PersonCard({
-    isReadOnly,
-    person,
-    setCurrentModal,
-}: PersonCardProps): JSX.Element {
+function PersonCard({ person, setCurrentModal }: Props): JSX.Element {
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
+
     function toggleModal(): void {
         if (!isReadOnly) {
             const newModalState: CurrentModalState = {
@@ -86,13 +83,9 @@ function PersonCard({
 }
 
 /* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    isReadOnly: state.isReadOnly,
-});
-
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PersonCard);
+export default connect(null, mapDispatchToProps)(PersonCard);
 /* eslint-enable */

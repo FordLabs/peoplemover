@@ -19,11 +19,13 @@ import React from 'react';
 import {renderWithRedux} from '../Utils/TestUtils';
 import {AvailableActions} from '../Redux/Actions';
 import Filter from './Filter';
-import {FilterTypeListings} from './FilterLibraries';
-import {createStore} from 'redux';
+import {FilterType, FilterTypeListings} from './FilterLibraries';
+import {createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {RenderResult} from '@testing-library/react';
+import {RecoilRoot} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('Filter Dropdown', () => {
     let store: import('redux').Store<import('redux').AnyAction>;
@@ -35,7 +37,7 @@ describe('Filter Dropdown', () => {
 
     describe('Add new filter button', () => {
         it('opens the location modal when handling location tags and the add/edit tags button is clicked', async () => {
-            const app = renderWithRedux(<Filter filterType={FilterTypeListings.Location}/>, store, undefined);
+            const app = renderFilter(FilterTypeListings.Location, store);
             const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
             dropdownButton.click();
             const addLocationButton = await app.findByText('Add/Edit your Product Location');
@@ -49,13 +51,7 @@ describe('Filter Dropdown', () => {
 
     describe('Read-only', () => {
         it('should not display the add new filter button', async () => {
-            const initialState = {
-                isReadOnly: true,
-                allGroupedTagFilterOptions: [],
-            };
-
-            const app = renderWithRedux(<Filter
-                filterType={FilterTypeListings.Location}/>, undefined, initialState);
+            const app = renderFilter(FilterTypeListings.Location, store, true);
             const locationFilterTestId = FilterTypeListings.Location.label.replace(' ', '_');
             const dropdownButton = await app.findByTestId(`dropdown_button_${locationFilterTestId}`);
             dropdownButton.click();
@@ -77,7 +73,7 @@ describe('Filter Dropdown', () => {
                 ],
             });
 
-            const app = renderWithRedux(<Filter filterType={FilterTypeListings.Location}/>, store, undefined);
+            const app = renderFilter(FilterTypeListings.Location, store);
             const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
             dropdownButton.click();
             const secondCheckbox = await app.findByLabelText('bar');
@@ -110,8 +106,8 @@ describe('Filter Dropdown', () => {
                     {label: 'Person Tags:', options: []},
                 ],
             });
-            appLocation = renderWithRedux(<Filter filterType={FilterTypeListings.Location}/>, store, undefined);
-            appRole = renderWithRedux(<Filter filterType={FilterTypeListings.Role}/>, store, undefined);
+            appLocation = renderFilter(FilterTypeListings.Location, store);
+            appRole = renderFilter(FilterTypeListings.Role, store);
         });
 
         it('should show the right number of filters that are selected', async () => {
@@ -153,3 +149,14 @@ describe('Filter Dropdown', () => {
         });
     });
 });
+
+function renderFilter(filterType: FilterType, store: Store, isReadOnly = false) {
+    return renderWithRedux(
+        <RecoilRoot initializeState={({set}) => {
+            set(IsReadOnlyState, isReadOnly)
+        }}>
+            <Filter filterType={filterType}/>
+        </RecoilRoot>,
+        store
+    )
+}

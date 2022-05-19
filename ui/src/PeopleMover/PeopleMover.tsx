@@ -59,6 +59,7 @@ import {RoleTag} from '../Roles/RoleTag.interface';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -67,7 +68,6 @@ export interface PeopleMoverProps {
     currentModal: CurrentModalState;
     currentSpace: Space;
     products: Array<Product>;
-    isReadOnly: boolean;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     fetchProducts(viewingDate: Date): Array<Product>;
     fetchPeople(): Array<Person>;
@@ -84,7 +84,6 @@ function PeopleMover({
     currentModal,
     currentSpace,
     products,
-    isReadOnly,
     allGroupedTagFilterOptions,
     fetchProducts,
     fetchPeople,
@@ -100,6 +99,7 @@ function PeopleMover({
     const navigate = useNavigate();
 
     const viewingDate = useRecoilValue(ViewingDateState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     function hasProductsAndFilters(): boolean {
         return Boolean(products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0);
@@ -206,7 +206,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentModal: state.currentModal,
     currentSpace: state.currentSpace,
     products: state.products,
-    isReadOnly: state.isReadOnly,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

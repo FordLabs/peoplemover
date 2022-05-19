@@ -22,6 +22,7 @@ import Calendar from './Calendar';
 import configureStore from 'redux-mock-store';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;
@@ -44,13 +45,13 @@ describe('Calendar', () => {
 
     it('should display current date on initial load', async () => {
         setupCalenderComponent()
-        const dateViewElement = await screen.findByTestId('calendarToggle');
+        const dateViewElement = getCalendarToggleButton();
         expect(dateViewElement.innerHTML).toContain('Nov 14, 2020');
     });
 
     it('should have down caret when closed and up arrow when open', async () => {
         setupCalenderComponent()
-        const datePickerOpener = await screen.findByTestId('calendarToggle');
+        const datePickerOpener = getCalendarToggleButton();
 
         await screen.findByTestId('calendar_down-arrow');
 
@@ -64,27 +65,35 @@ describe('Calendar', () => {
 
     it('should show month and year in the header when opened', async () => {
         setupCalenderComponent()
-        const datePickerOpener = await screen.findByTestId('calendarToggle');
-
         await screen.findByTestId('calendar_down-arrow');
-        fireEvent.click(datePickerOpener);
+        fireEvent.click(getCalendarToggleButton());
 
         await screen.findByText('November 2020');
     });
 
-    function setupCalenderComponent() {
-        const mockStore = configureStore([]);
-        const reduxStore = mockStore({
-            currentSpace: TestUtils.space,
-        });
-
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 10, 14))
-            }}>
-                <Calendar/>
-            </RecoilRoot>,
-            reduxStore
-        )
-    }
+    it('should calendar toggle should be disabled when in read only mode', () => {
+        setupCalenderComponent(true)
+        expect(getCalendarToggleButton()).toBeDisabled();
+    });
 });
+
+function setupCalenderComponent(isReadOnly = false) {
+    const mockStore = configureStore([]);
+    const reduxStore = mockStore({
+        currentSpace: TestUtils.space,
+    });
+
+    renderWithRedux(
+        <RecoilRoot initializeState={({set}) => {
+            set(ViewingDateState, new Date(2020, 10, 14))
+            set(IsReadOnlyState, isReadOnly)
+        }}>
+            <Calendar/>
+        </RecoilRoot>,
+        reduxStore
+    )
+}
+
+function getCalendarToggleButton() {
+    return screen.getByTestId('calendarToggle')
+}

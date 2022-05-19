@@ -22,8 +22,9 @@ import ProductClient from './ProductClient';
 import ProductList from './ProductList';
 import {Product} from './Product';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
-import {RecoilRoot} from 'recoil';
+import {MutableSnapshot, RecoilRoot} from 'recoil';
 import configureStore from 'redux-mock-store';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('Product List', () => {
     beforeEach(async () => {
@@ -84,9 +85,10 @@ describe('Product List', () => {
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 currentSpace: TestUtils.space,
-                isReadOnly: true,
             };
-            renderProductList(initialState);
+            renderProductList(initialState, ({set}) => {
+                set(IsReadOnlyState, true)
+            });
 
             await screen.findByText(TestUtils.productForHank.name);
             await screen.findByText(productWithAnnArborLocation.name);
@@ -159,9 +161,10 @@ describe('Product List', () => {
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 currentSpace: TestUtils.space,
-                isReadOnly: true,
             };
-            renderProductList(initialState);
+            renderProductList(initialState, ({set}) => {
+                set(IsReadOnlyState, true)
+            });
 
             await screen.findByText(TestUtils.productWithAssignments.name);
             expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(1);
@@ -206,11 +209,11 @@ describe('Product List', () => {
     });
 });
 
-function renderProductList(preloadedReduxState: unknown) {
+function renderProductList(preloadedReduxState: unknown, initializeState?: (mutableSnapshot: MutableSnapshot) => void) {
     const mockStore = configureStore([]);
     const store = mockStore(preloadedReduxState);
     renderWithRedux(
-        <RecoilRoot>
+        <RecoilRoot initializeState={initializeState}>
             <ProductList/>
         </RecoilRoot>,
         store

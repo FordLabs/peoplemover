@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,20 +23,24 @@ import ShareAccessButton from './ShareAccessButton';
 import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
 
-import './AccountDropdown.scss';
 import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
-import { setCurrentUserAction} from '../Redux/Actions';
+import {setCurrentUserAction} from '../Redux/Actions';
+import {useRecoilValue} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
+
+import './AccountDropdown.scss';
 
 interface Props {
     hideSpaceButtons?: boolean;
-    isReadOnly: boolean;
     currentUser: string;
     showAllDropDownOptions: boolean;
     setCurrentUser(user: string): string;
 }
 
-function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentUser, showAllDropDownOptions}: Props): JSX.Element {
+function AccountDropdown({hideSpaceButtons, currentUser, setCurrentUser, showAllDropDownOptions}: Props): JSX.Element {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
+
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     useEffect(() => {
         setCurrentUser(getUserNameFromAccessToken());
@@ -108,7 +112,6 @@ function AccountDropdown({hideSpaceButtons, isReadOnly, currentUser, setCurrentU
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    isReadOnly: state.isReadOnly,
     currentUser: state.currentUser,
 });
 

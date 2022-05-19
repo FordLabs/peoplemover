@@ -25,6 +25,7 @@ import {createEmptySpace} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
 import thunk from 'redux-thunk';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 declare let window: MatomoWindow;
 
@@ -50,14 +51,15 @@ describe('PeopleMover', () => {
     describe('Read Only Mode', function() {
         beforeEach(async () => {
             const initialState = {
-                isReadOnly: true,
                 products: TestUtils.products,
                 currentSpace: TestUtils.space,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
-            await TestUtils.renderPeopleMoverComponent(store, initialState);
+            await TestUtils.renderPeopleMoverComponent(store, initialState, ({set}) => {
+                set(IsReadOnlyState, true);
+            });
         });
 
         it('should not show unassigned drawer', function() {
@@ -130,7 +132,10 @@ describe('PeopleMover', () => {
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(
                 undefined,
-                {isReadOnly: true}
+                undefined,
+                ({set}) => {
+                    set(IsReadOnlyState, true);
+                }
             );
         });
 
@@ -278,7 +283,9 @@ describe('PeopleMover', () => {
 
     describe('Products in read only view', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, {isReadOnly: true});
+            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
+                set(IsReadOnlyState, true);
+            });
         });
 
         it('should group products by location without add product buttons',  async () => {

@@ -40,13 +40,12 @@ import {ViewingDateState} from '../State/ViewingDateState';
 
 import '../Styles/Main.scss';
 import './AssignmentCard.scss';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 interface AssignmentCardProps {
     currentSpace: Space;
     assignment: Assignment;
     isUnassignedProduct: boolean;
-    isReadOnly: boolean;
-
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
     setCurrentModal(modalState: CurrentModalState): void;
     fetchProducts(viewingDate: Date): void;
@@ -57,7 +56,6 @@ function AssignmentCard({
     currentSpace,
     assignment = {id: 0} as Assignment,
     isUnassignedProduct,
-    isReadOnly,
     startDraggingAssignment,
     setCurrentModal,
     fetchProducts,
@@ -69,6 +67,7 @@ function AssignmentCard({
     const assignmentRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
     const viewingDate = useRecoilValue(ViewingDateState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const onEditMenuClosed = (): void => setEditMenuIsOpened(false);
 
@@ -265,7 +264,6 @@ function AssignmentCard({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
