@@ -18,7 +18,6 @@
 import {combineReducers} from 'redux';
 import currentModalReducer, {CurrentModalState} from './currentModalReducer';
 import peopleReducer from './peopleReducer';
-import isUnassignedDrawerOpenReducer from './isUnassignedDrawerOpenReducer';
 import {Person} from '../../People/Person';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
@@ -42,7 +41,6 @@ import rolesReducer from './rolesReducer';
 export default combineReducers({
     currentModal: currentModalReducer,
     people: peopleReducer,
-    isUnassignedDrawerOpen: isUnassignedDrawerOpenReducer,
     productRefs: productRefsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
     currentSpace: currentSpaceReducer,
@@ -59,7 +57,6 @@ export default combineReducers({
 export interface GlobalStateProps {
     currentModal: CurrentModalState;
     people: Array<Person>;
-    isUnassignedDrawerOpen: boolean;
     productRefs: Array<ProductCardRefAndProductPair>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;

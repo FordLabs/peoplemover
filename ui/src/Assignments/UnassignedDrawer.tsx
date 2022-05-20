@@ -22,24 +22,19 @@ import {Product, stripAssignmentsForArchivedPeople} from '../Products/Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import ProductCard from '../Products/ProductCard';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {Dispatch} from 'redux';
-import {setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
-import {useRecoilValue} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
 
-interface UnassignedDrawerProps {
-    isUnassignedDrawerOpen: boolean;
-    setIsUnassignedDrawerOpen(isOpen: boolean): void;
+interface Props {
     product: Product;
 }
 
-function UnassignedDrawer({
-    isUnassignedDrawerOpen,
-    setIsUnassignedDrawerOpen,
-    product,
-}: UnassignedDrawerProps): JSX.Element {
+function UnassignedDrawer({ product }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
+    const [isUnassignedDrawerOpen, setIsUnassignedDrawerOpen] = useRecoilState(IsUnassignedDrawerOpenState);
+
     const productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(product, viewingDate);
 
     return (
@@ -64,13 +59,8 @@ const getUnassignedProduct = (products: Array<Product>): Product => {
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    isUnassignedDrawerOpen: state.isUnassignedDrawerOpen,
     product: getUnassignedProduct(state.products ? state.products : []),
 });
 
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
-    setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UnassignedDrawer);
+export default connect(mapStateToProps)(UnassignedDrawer);
 /* eslint-enable */
