@@ -22,6 +22,7 @@ import {Product} from '../Products/Product';
 import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
 import {RecoilRoot} from 'recoil';
+import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
@@ -59,7 +60,9 @@ describe('Unassigned Products', () => {
     describe('showing the unassigned product, but...', () => {
         const renderWithUnassignedProduct = (products: Product[]) => {
             renderWithRedux(
-                <RecoilRoot>
+                <RecoilRoot initializeState={({set}) => {
+                    set(IsUnassignedDrawerOpenState, true)
+                }}>
                     <UnassignedDrawer/>
                 </RecoilRoot>,
                 undefined,
@@ -70,7 +73,6 @@ describe('Unassigned Products', () => {
                         { label: 'Role Tags:', options: []},
                         { label: 'Person Tags:', options: []},
                     ],
-                    isUnassignedDrawerOpen: true,
                     products: products,
                     currentSpace: TestUtils.space,
                 }

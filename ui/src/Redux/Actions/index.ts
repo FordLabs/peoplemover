@@ -38,7 +38,6 @@ import PeopleClient from '../../People/PeopleClient';
 export enum AvailableActions {
     SET_CURRENT_MODAL,
     CLOSE_MODAL,
-    SET_IS_UNASSIGNED_DRAWER_OPEN,
     ADD_PERSON,
     EDIT_PERSON,
     SET_PEOPLE,
@@ -63,11 +62,6 @@ export const setCurrentModalAction = (modalState: CurrentModalState) => ({
 
 export const closeModalAction = () => ({
     type: AvailableActions.CLOSE_MODAL,
-});
-
-export const setIsUnassignedDrawerOpenAction = (open: boolean) => ({
-    type: AvailableActions.SET_IS_UNASSIGNED_DRAWER_OPEN,
-    open,
 });
 
 export const addPersonAction = (person: Person) => ({
