@@ -106,28 +106,28 @@ function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: Props)
                     <i className="material-icons">edit</i>
                 Edit
                 </button>
-                {isUserOwner && spaceHasEditors &&
-                <button
-                    data-testid="leaveSpace"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={openLeaveModal}
-                >
-                    <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
-                    Leave Space
-                </button>
-                }
-                {isUserOwner &&
-                <button
-                    data-testid="deleteSpace"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={spaceHasEditors ? openDeleteModal : openDeleteNoEditorsModal}
-                >
-                    <i className="material-icons">delete</i>
-                    Delete Space
-                </button>
-                }
+                {isUserOwner && spaceHasEditors && (
+                    <button
+                        data-testid="leaveSpace"
+                        className="dropdownOptions"
+                        role="menuitem"
+                        onClick={openLeaveModal}
+                    >
+                        <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
+                        Leave Space
+                    </button>
+                )}
+                {isUserOwner && (
+                    <button
+                        data-testid="deleteSpace"
+                        className="dropdownOptions"
+                        role="menuitem"
+                        onClick={spaceHasEditors ? openDeleteModal : openDeleteNoEditorsModal}
+                    >
+                        <i className="material-icons">delete</i>
+                        Delete Space
+                    </button>
+                )}
             </AccessibleDropdownContainer>
         );
     };
