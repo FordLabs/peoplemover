@@ -31,12 +31,11 @@ import MatomoEvents from './Matomo/MatomoEvents';
 import CacheBuster from './CacheBuster';
 import {removeToken} from './Auth/TokenProvider';
 import Routes from './Routes';
-import flagsmith from 'flagsmith';
-import {AvailableActions} from './Redux/Actions';
-import {simplifyFlags} from './Flags/Flags';
+import flagsmith, {IFlags} from 'flagsmith';
 
 import axe from '@axe-core/react';
 import {RecoilRoot} from 'recoil';
+import {FlagsState, simplifyFlags} from './State/FlagsState';
 
 /* eslint-disable */
 const reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
@@ -54,7 +53,7 @@ if (reduxDevToolsEnhancer) {
     );
 } else {
     composedEnhancers = compose(
-        applyMiddleware(thunk)
+        applyMiddleware(thunk),
     );
 }
 
@@ -100,16 +99,20 @@ Axios.interceptors.response.use(
             MatomoEvents.pushEvent(conventionizedErrorName, config.method, config.url, status);
         }
         return Promise.reject(error);
-    }
+    },
 );
 
 let browserName = '';
+
 /* eslint-disable */
 function isUnsupportedBrowser(): boolean {
     // Safari 3.0+ "[object HTMLElementConstructor]"
     // @ts-ignore
-    const isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean { return p.toString() === '[object SafariRemoteNotification]'; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
-    if(isSafari) browserName = 'Safari';
+    const isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean {
+        return p.toString() === '[object SafariRemoteNotification]';
+    // @ts-ignore
+    })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+    if (isSafari) browserName = 'Safari';
 
     // Internet Explorer 6-11
     // @ts-ignore
@@ -134,23 +137,19 @@ interface CacheBusterProps {
 if (isUnsupportedBrowser()) {
     ReactDOM.render(
         <UnsupportedBrowserPage browserName={browserName}/>,
-        document.getElementById('root')
+        document.getElementById('root'),
     );
 } else {
-    const url = '/api/config';
-    const config = {headers: {'Content-Type': 'application/json'}};
-    Axios.get(url, config)
+    Axios.get( '/api/config', {headers: {'Content-Type': 'application/json'}})
         .then(async (response) => {
             window.runConfig = Object.freeze(response.data);
-            flagsmith.init(
-                {
-                    environmentID : window.runConfig.flagsmith_environment_id,
-                    api: window.runConfig.flagsmith_url,
-                }
-            ).then(() =>
-                store.dispatch({type:AvailableActions.GOT_FLAGS, flags : simplifyFlags(flagsmith.getAllFlags())})
-            , () => console.log('Flagsmith client failed to initialize')
-            );
+            let flags: IFlags;
+
+            flagsmith.init({
+                environmentID : window.runConfig.flagsmith_environment_id,
+                api: window.runConfig.flagsmith_url,
+            }).then(() => { flags = flagsmith.getAllFlags() }, () => console.log('Flagsmith client failed to initialize'));
+
             ReactDOM.render(
                 <CacheBuster>
                     {({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {
@@ -161,7 +160,9 @@ if (isUnsupportedBrowser()) {
 
                         return (
                             <Provider store={store}>
-                                <RecoilRoot>
+                                <RecoilRoot initializeState={({set}) => {
+                                    set(FlagsState, simplifyFlags(flags))
+                                }}>
                                     <Routes />
                                 </RecoilRoot>
                             </Provider>

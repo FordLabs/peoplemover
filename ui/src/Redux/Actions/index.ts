@@ -51,8 +51,7 @@ export enum AvailableActions {
     SET_LOCATIONS,
     SET_ROLES,
     SET_USER_SPACES,
-    SET_CURRENT_USER,
-    GOT_FLAGS
+    SET_CURRENT_USER
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({

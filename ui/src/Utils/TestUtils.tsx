@@ -57,8 +57,8 @@ export function renderWithRedux(
     return render(<Provider store={testingStore}>{component}</Provider>);
 }
 
-export function renderWithRecoil(component: JSX.Element, initializeState?: (mutableSnapshot: MutableSnapshot) => void): void {
-    render(<RecoilRoot initializeState={initializeState}>{component}</RecoilRoot>)
+export function renderWithRecoil(component: JSX.Element, initializeState?: (mutableSnapshot: MutableSnapshot) => void): RenderResult {
+    return render(<RecoilRoot initializeState={initializeState}>{component}</RecoilRoot>)
 }
 
 export const mockDate = (expected: Date): () => void => {
