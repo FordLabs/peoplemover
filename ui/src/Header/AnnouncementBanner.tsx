@@ -16,24 +16,22 @@
  */
 
 import React, {ReactElement, useState} from 'react';
-import {useSelector} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {useRecoilValue} from 'recoil';
+import {DEFAULT_BANNER_MESSAGE, FlagsState} from '../State/FlagsState';
+
 import './AnnouncementBanner.scss';
-import {DEFAULT_BANNER_MESSAGE} from '../Flags/Flags';
 
 export const PREVIOUS_BANNER_MESSAGE_KEY = 'previousBannerMessage';
 const BANNER_CLOSED_BY_USER_KEY = 'bannerHasBeenClosedByUser';
 
 const AnnouncementBanner = (): ReactElement => {
+    const flags = useRecoilValue(FlagsState);
+
     const [closedByUser, setClosedByUser] = useState<string|null>(localStorage.getItem(BANNER_CLOSED_BY_USER_KEY));
-    // eslint-disable-next-line
-    const flags = useSelector((state: GlobalStateProps) => state.flags);
 
     const flagsNotReceived = flags.announcementBannerMessage === DEFAULT_BANNER_MESSAGE;
 
-    if (flagsNotReceived) {
-        return <></>;
-    }
+    if (flagsNotReceived) return <></>;
 
     const bannerIsNew = localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY) == null ||
         flags.announcementBannerMessage !== localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY);
@@ -45,7 +43,8 @@ const AnnouncementBanner = (): ReactElement => {
     }
 
     return !closedByUser  && flags.announcementBannerEnabled ?
-        <aside className="announcementBanner"><div className="bannerSpacing">{flags ? flags.announcementBannerMessage : ''}</div>
+        <aside className="announcementBanner">
+            <div className="bannerSpacing">{flags ? flags.announcementBannerMessage : ''}</div>
             <button
                 onClick={(): void => {
                     setClosedByUser('true');
