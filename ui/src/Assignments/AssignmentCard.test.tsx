@@ -25,9 +25,10 @@ import rootReducer from '../Redux/Reducers';
 import {applyMiddleware, createStore, Store} from 'redux';
 import PeopleClient from '../People/PeopleClient';
 import thunk from 'redux-thunk';
-import {RecoilRoot} from 'recoil';
+import {MutableSnapshot, RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {IsDraggingState} from '../State/IsDraggingState';
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
@@ -89,7 +90,9 @@ describe('Assignment Card', () => {
         });
 
         it('should not display edit Menu if in read only mode', function() {
-            renderAssignmentCard(assignmentToRender, false, true);
+            renderAssignmentCard(assignmentToRender, false, ({set}) => {
+                set(IsReadOnlyState, true);
+            });
             const editPersonButton = screen.getByTestId('editPersonIconContainer__billiam_handy');
             editPersonButton.click();
             expect(screen.queryByTestId('editMenu')).toBeNull();
@@ -120,7 +123,9 @@ describe('Assignment Card', () => {
                 ...assignmentToRender,
                 placeholder: true,
             };
-            renderAssignmentCard(placeholderAssignment, false, true);
+            renderAssignmentCard(placeholderAssignment, false, ({set}) => {
+                set(IsReadOnlyState, true);
+            });
 
             const assignmentCard = screen.getByTestId('assignmentCard__billiam_handy');
             expect(assignmentCard).toHaveClass('NotPlaceholder');
@@ -286,7 +291,7 @@ describe('Assignment Card', () => {
 
     describe('Hoverable Notes', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
         });
 
         it('should display hover notes icon if person has valid notes', () => {
@@ -329,8 +334,10 @@ describe('Assignment Card', () => {
         });
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: true});
-            renderAssignmentCard(assignmentToRender);
+            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            renderAssignmentCard(assignmentToRender, false, ({set}) => {
+                set(IsDraggingState, true);
+            });
 
             expect(screen.queryByText('This is a note')).toBeNull();
             expect(screen.getByText('note')).toBeInTheDocument();
@@ -344,7 +351,7 @@ describe('Assignment Card', () => {
 
     describe('Hoverable Person tag', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
         });
 
         it('should display person tag Icon if person has valid notes', () => {
@@ -353,8 +360,10 @@ describe('Assignment Card', () => {
         });
 
         it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
-            renderAssignmentCard(assignmentToRender, false, true);
+            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            renderAssignmentCard(assignmentToRender, false, ({set}) => {
+                set(IsReadOnlyState, true);
+            });
             expect(screen.queryByText('local_offer')).toBeNull();
         });
 
@@ -376,11 +385,9 @@ describe('Assignment Card', () => {
         });
     });
 
-    function renderAssignmentCard(assignment: Assignment, isUnassignedProduct = false, isReadOnly = false): void {
+    function renderAssignmentCard(assignment: Assignment, isUnassignedProduct = false, initializeRecoilState?: (mutableSnapshot: MutableSnapshot) => void): void {
         renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(IsReadOnlyState, isReadOnly);
-            }}>
+            <RecoilRoot initializeState={initializeRecoilState}>
                 <AssignmentCard
                     assignment={assignment}
                     isUnassignedProduct={isUnassignedProduct}
