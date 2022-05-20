@@ -18,6 +18,8 @@
 import {removeToken} from '../Auth/TokenProvider';
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
+import {useSetRecoilState} from 'recoil';
+import {CurrentUserState} from '../State/CurrentUserState';
 
 interface Props {
     focusOnRender?: boolean;
@@ -25,9 +27,11 @@ interface Props {
 
 function SignOutButton({ focusOnRender = false }: Props): JSX.Element {
     const navigate = useNavigate();
+    const setCurrentUser = useSetRecoilState(CurrentUserState);
 
     const clearAccessTokenCookie = (): void => {
         removeToken();
+        setCurrentUser('');
         navigate('/', {replace: true})
     };
 

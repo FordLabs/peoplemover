@@ -38,6 +38,19 @@ describe('Account Dropdown', () => {
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
     });
 
+    it('should show current user\'s name', () => {
+        renderWithRedux(
+            <MemoryRouter>
+                <RecoilRoot>
+                    <AccountDropdown showAllDropDownOptions={true}/>
+                </RecoilRoot>
+            </MemoryRouter>,
+        );
+
+        const expectedCurrentUser = 'USER_ID'
+        expect(screen.getByTestId('currentUserMessage')).toHaveTextContent(`Welcome, ${expectedCurrentUser}`)
+    });
+
     describe('Dropdown Options', () => {
         const mockStore = configureStore([]);
         const expectedCurrentSpace = TestUtils.space;
@@ -51,7 +64,7 @@ describe('Account Dropdown', () => {
 
             store.dispatch = jest.fn();
             renderWithRedux(
-                <MemoryRouter initialEntries={['/teamName']}>
+                <MemoryRouter>
                     <RecoilRoot initializeState={({set}) => {
                         set(ViewingDateState, expectedViewingDate)
                     }}>
@@ -107,7 +120,7 @@ describe('Account Dropdown', () => {
     describe('Read Only', function() {
         beforeEach(async () => {
             renderWithRedux(
-                <MemoryRouter initialEntries={['/teamName']}>
+                <MemoryRouter>
                     <RecoilRoot initializeState={({set}) => {
                         set(IsReadOnlyState, true)
                     }}>

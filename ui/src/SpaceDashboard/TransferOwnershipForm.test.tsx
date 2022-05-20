@@ -27,6 +27,8 @@ import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
 import {fireEvent, screen} from '@testing-library/dom';
 import {waitFor} from '@testing-library/react';
+import {RecoilRoot} from 'recoil';
+import {CurrentUserState} from '../State/CurrentUserState';
 
 describe('Transfer Ownership Form', () => {
     let store: Store;
@@ -34,13 +36,20 @@ describe('Transfer Ownership Form', () => {
     beforeEach(async () => {
         jest.resetAllMocks();
 
-        store = createStore(rootReducer, {currentUser: 'user_id'}, applyMiddleware(thunk));
+        store = createStore(rootReducer, {}, applyMiddleware(thunk));
         store.dispatch = jest.fn();
         SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(TestUtils.spaceMappingsArray);
         SpaceClient.changeOwner = jest.fn().mockResolvedValue({});
         SpaceClient.removeUser = jest.fn().mockResolvedValue({});
         await act(async () => {
-            renderWithRedux(<TransferOwnershipForm space={TestUtils.space}/>, store);
+            renderWithRedux(
+                <RecoilRoot initializeState={({set}) => {
+                    set(CurrentUserState,  'user_id')
+                }}>
+                    <TransferOwnershipForm space={TestUtils.space}/>
+                </RecoilRoot>,
+                store
+            );
         });
     });
 
