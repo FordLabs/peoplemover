@@ -17,10 +17,9 @@
 
 import {fireEvent, waitFor} from '@testing-library/dom';
 import {RenderResult} from '@testing-library/react';
-import {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import React from 'react';
 import SpaceDashboardTile from './SpaceDashboardTile';
-import TestUtils from '../Utils/TestUtils';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setCurrentModalAction} from '../Redux/Actions';
@@ -28,6 +27,10 @@ import {act} from 'react-dom/test-utils';
 import {AvailableModals} from '../Modal/AvailableModals';
 import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
+import {RecoilRoot} from 'recoil';
+import {CurrentUserState} from '../State/CurrentUserState';
+
+jest.mock('')
 
 describe('SpaceDashboardTile tests', () => {
     let component: RenderResult;
@@ -42,12 +45,17 @@ describe('SpaceDashboardTile tests', () => {
                 {id: '2', userId: 'USER_IDDQD', permission: 'editor', spaceUuid: TestUtils.space.uuid!} as UserSpaceMapping
             ]
         );
-        store = createStore(rootReducer, {currentUser: 'USER_ID'});
+        store = createStore(rootReducer, {});
         store.dispatch = jest.fn();
         onClick = jest.fn();
         await act(async () => {
             component = renderWithRedux(
-                <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>, store, undefined
+                <RecoilRoot initializeState={({set}) => {
+                    set(CurrentUserState, 'USER_ID')
+                }}>
+                    <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>
+                </RecoilRoot>,
+                store
             );
         });
     });
@@ -79,7 +87,12 @@ describe('SpaceDashboardTile tests', () => {
             await act(async () => {
                 component.unmount();
                 component = renderWithRedux(
-                    <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>, store, undefined
+                    <RecoilRoot initializeState={({set}) => {
+                        set(CurrentUserState, 'USER_ID')
+                    }}>
+                        <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>
+                    </RecoilRoot>,
+                    store
                 );
                 const spaceEllipsis = await component.findByTestId('ellipsisButton');
                 fireEvent.click(spaceEllipsis);
@@ -111,7 +124,12 @@ describe('SpaceDashboardTile tests', () => {
             await act(async () => {
                 component.unmount();
                 component = renderWithRedux(
-                    <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>, store, undefined
+                    <RecoilRoot initializeState={({set}) => {
+                        set(CurrentUserState, 'USER_ID')
+                    }}>
+                        <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>
+                    </RecoilRoot>,
+                    store
                 );
                 const spaceEllipsis = await component.findByTestId('ellipsisButton');
                 fireEvent.click(spaceEllipsis);
@@ -127,7 +145,12 @@ describe('SpaceDashboardTile tests', () => {
             await act(async () => {
                 component.unmount();
                 component = renderWithRedux(
-                    <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>, store, undefined
+                    <RecoilRoot initializeState={({set}) => {
+                        set(CurrentUserState, 'USER_ID')
+                    }}>
+                        <SpaceDashboardTile space={TestUtils.space} onClick={onClick}/>
+                    </RecoilRoot>,
+                    store
                 );
                 const spaceEllipsis = await component.findByTestId('ellipsisButton');
                 fireEvent.click(spaceEllipsis);

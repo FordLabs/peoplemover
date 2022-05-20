@@ -25,10 +25,11 @@ import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import './TransferOwnershipForm.scss';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
+import {useRecoilValue} from 'recoil';
+import {CurrentUserState} from '../State/CurrentUserState';
 
 interface TransferOwnershipFormProps {
     currentSpace: Space;
-    currentUser: string;
     closeModal(): void;
     fetchUserSpaces(): void;
 }
@@ -37,7 +38,9 @@ interface TransferOwnershipFormOwnProps {
     space?: Space;
 }
 
-function TransferOwnershipForm({currentSpace, currentUser, closeModal, fetchUserSpaces}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
+function TransferOwnershipForm({currentSpace, closeModal, fetchUserSpaces}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
+    const currentUser = useRecoilValue(CurrentUserState);
+
     const [selectedUser, setSelectedUser] = useState<UserSpaceMapping | null>(null);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
     const [me, setMe] = useState<UserSpaceMapping>();
@@ -124,8 +127,7 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 const mapStateToProps = (state: GlobalStateProps, ownProps?: TransferOwnershipFormOwnProps) => ({
-    currentSpace: ownProps?.space || state.currentSpace,
-    currentUser: state.currentUser,
+    currentSpace: ownProps?.space || state.currentSpace
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TransferOwnershipForm);

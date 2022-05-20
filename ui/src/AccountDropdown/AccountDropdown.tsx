@@ -16,31 +16,29 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
 import ShareAccessButton from './ShareAccessButton';
 import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
 
 import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
-import {setCurrentUserAction} from '../Redux/Actions';
-import {useRecoilValue} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {CurrentUserState} from '../State/CurrentUserState';
 
 import './AccountDropdown.scss';
 
 interface Props {
     hideSpaceButtons?: boolean;
-    currentUser: string;
     showAllDropDownOptions: boolean;
-    setCurrentUser(user: string): string;
 }
 
-function AccountDropdown({hideSpaceButtons, currentUser, setCurrentUser, showAllDropDownOptions}: Props): JSX.Element {
+function AccountDropdown({hideSpaceButtons, showAllDropDownOptions}: Props): JSX.Element {
+    const [currentUser, setCurrentUser] = useRecoilState(CurrentUserState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
+
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
-    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     useEffect(() => {
         setCurrentUser(getUserNameFromAccessToken());
@@ -97,8 +95,8 @@ function AccountDropdown({hideSpaceButtons, currentUser, setCurrentUser, showAll
                     person
                 </i>
                 {currentUser && (
-                    <div className="welcomeUser" id={'accountDropdownToggle-welcome'}>
-                        Welcome, <span id={'accountDropdownToggle-name'} className="userName">{currentUser}</span>
+                    <div className="welcomeUser" id="accountDropdownToggle-welcome" data-testid="currentUserMessage">
+                        Welcome, <span id="accountDropdownToggle-name" className="userName">{currentUser}</span>
                     </div>
                 )}
                 <i className="material-icons selectDropdownArrow" id={'accountDropdownToggle-arrow'}>
@@ -110,14 +108,4 @@ function AccountDropdown({hideSpaceButtons, currentUser, setCurrentUser, showAll
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentUser: state.currentUser,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentUser: (currentUser: string) => dispatch(setCurrentUserAction(currentUser)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AccountDropdown);
-/* eslint-enable */
+export default AccountDropdown;

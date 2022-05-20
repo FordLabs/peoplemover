@@ -22,9 +22,10 @@ import {fireEvent, screen, waitFor, within} from '@testing-library/react';
 import Axios from 'axios';
 import Cookies from 'universal-cookie';
 import SpaceClient from '../Space/SpaceClient';
-import configureStore from 'redux-mock-store';
 import RedirectClient from '../Utils/RedirectClient';
 import {Space} from '../Space/Space';
+import {RecoilRoot} from 'recoil';
+import {CurrentUserState} from '../State/CurrentUserState';
 
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();
@@ -205,11 +206,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should show owners and editors for the space', async () => {
-            renderWithRedux(
-                <InviteEditorsFormSection/>,
-                undefined,
-                {currentSpace: TestUtils.space, currentUser: 'User_id'}
-            );
+            renderComponent( 'User_id');
 
             const ownerRow = within(await screen.findByTestId('userListItem__user_id'));
             ownerRow.getByText(/owner/i);
@@ -221,12 +218,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should change owner', async () => {
-            renderWithRedux(
-                <InviteEditorsFormSection/>, undefined, {
-                    currentSpace: TestUtils.space,
-                    currentUser: 'USER_ID',
-                }
-            );
+            renderComponent( 'USER_ID');
             let editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
             const editor = editorRow.getByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -254,12 +246,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should not change owner after cancelling', async () => {
-            renderWithRedux(
-                <InviteEditorsFormSection/>, undefined, {
-                    currentSpace: TestUtils.space,
-                    currentUser: 'user_id',
-                }
-            );
+            renderComponent( 'user_id');
             let editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
             const editor = editorRow.getByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -280,12 +267,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should not be able to change owner', async () => {
-            renderWithRedux(
-                <InviteEditorsFormSection/>, undefined, {
-                    currentSpace: TestUtils.space,
-                    currentUser: 'user_id_2',
-                }
-            );
+            renderComponent( 'user_id_2');
             const editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
             const editor = editorRow.getByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -294,12 +276,7 @@ describe('Invite Editors Form', function() {
 
         it('should show a confirmation modal when removing self', async () => {
             const currentUser = 'USER_ID_2';
-            const mockStore = configureStore([]);
-            const store = mockStore({
-                currentSpace: TestUtils.space,
-                currentUser: currentUser,
-            });
-            renderWithRedux(<InviteEditorsFormSection/>, store);
+            renderComponent(currentUser);
             const editorRow = within(await screen.findByTestId(`userListItem__user_id_2`));
             const editor = editorRow.getByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -317,13 +294,7 @@ describe('Invite Editors Form', function() {
 
         it('should show a confirmation modal when removing editor access', async () => {
             const currentUser = 'USER_ID';
-            const mockStore = configureStore([]);
-            const store = mockStore({
-                currentSpace: TestUtils.space,
-                currentUser: currentUser,
-            });
-
-            renderWithRedux(<InviteEditorsFormSection/>, store);
+            renderComponent(currentUser);
 
             const editorRow = within(await screen.findByTestId(`userListItem__user_id_2`));
             const editor = editorRow.getByText(/editor/i);
@@ -340,11 +311,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should not open UserAccessList popup', async () => {
-            renderWithRedux(
-                <InviteEditorsFormSection/>,
-                undefined,
-                {currentSpace: TestUtils.space, currentUser: 'User_id'}
-            );
+            renderComponent();
 
             await waitFor(() => {
                 expect(screen.queryByTestId('userAccess')).not.toBeInTheDocument();
@@ -353,11 +320,15 @@ describe('Invite Editors Form', function() {
     });
 });
 
-function renderComponent(): void {
+function renderComponent(currentUser = 'User_id'): void {
     renderWithRedux(
-        <InviteEditorsFormSection collapsed={false}/>,
+        <RecoilRoot initializeState={({set}) => {
+            set(CurrentUserState, currentUser)
+        }}>
+            <InviteEditorsFormSection collapsed={false}/>,
+        </RecoilRoot>,
         undefined,
-        {currentSpace: TestUtils.space, currentUser: 'User_id'}
+        {currentSpace: TestUtils.space}
     );
 }
 
@@ -371,9 +342,13 @@ function renderComponentWithSpaceFromProps(): void {
     };
 
     renderWithRedux(
-        <InviteEditorsFormSection collapsed={false} space={space}/>,
+        <RecoilRoot initializeState={({set}) => {
+            set(CurrentUserState, 'User_id')
+        }}>
+            <InviteEditorsFormSection collapsed={false} space={space}/>,
+        </RecoilRoot>,
         undefined,
-        {currentSpace: TestUtils.space, currentUser: 'User_id'}
+        {currentSpace: TestUtils.space}
     );
 }
 
