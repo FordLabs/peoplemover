@@ -28,17 +28,18 @@ import {connect} from 'react-redux';
 import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
 import {AvailableModals} from '../Modal/AvailableModals';
 import SpaceClient from '../Space/SpaceClient';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {useRecoilValue} from 'recoil';
+import {CurrentUserState} from '../State/CurrentUserState';
 
-interface SpaceDashboardTileProps {
+interface Props {
     space: Space;
     onClick: (space: Space) => void;
-    currentUser: string;
-
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
+function SpaceDashboardTile({space, onClick: openSpace, setCurrentModal}: Props): JSX.Element {
+    const currentUser = useRecoilValue(CurrentUserState);
+
     const spaceHtmlElementId = space.name.replace(' ', '-');
     const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
 
@@ -105,28 +106,28 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
                     <i className="material-icons">edit</i>
                 Edit
                 </button>
-                {isUserOwner && spaceHasEditors &&
-                <button
-                    data-testid="leaveSpace"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={openLeaveModal}
-                >
-                    <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
-                    Leave Space
-                </button>
-                }
-                {isUserOwner &&
-                <button
-                    data-testid="deleteSpace"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={spaceHasEditors ? openDeleteModal : openDeleteNoEditorsModal}
-                >
-                    <i className="material-icons">delete</i>
-                    Delete Space
-                </button>
-                }
+                {isUserOwner && spaceHasEditors && (
+                    <button
+                        data-testid="leaveSpace"
+                        className="dropdownOptions"
+                        role="menuitem"
+                        onClick={openLeaveModal}
+                    >
+                        <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
+                        Leave Space
+                    </button>
+                )}
+                {isUserOwner && (
+                    <button
+                        data-testid="deleteSpace"
+                        className="dropdownOptions"
+                        role="menuitem"
+                        onClick={spaceHasEditors ? openDeleteModal : openDeleteNoEditorsModal}
+                    >
+                        <i className="material-icons">delete</i>
+                        Delete Space
+                    </button>
+                )}
             </AccessibleDropdownContainer>
         );
     };
@@ -167,13 +168,9 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
 }
 
 /* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentUser: state.currentUser
-});
-
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboardTile);
+export default connect(null, mapDispatchToProps)(SpaceDashboardTile);
 /* eslint-enable */

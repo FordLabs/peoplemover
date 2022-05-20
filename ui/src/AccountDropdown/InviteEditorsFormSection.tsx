@@ -33,7 +33,9 @@ import Creatable from 'react-select/creatable';
 import {reactSelectStyles} from '../ModalFormComponents/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';
 import {Option} from '../CommonTypes/Option';
-import {validate, nameSplitPattern, userIdPattern} from '../Utils/UserIdValidator';
+import {nameSplitPattern, userIdPattern, validate} from '../Utils/UserIdValidator';
+import {useRecoilValue} from 'recoil';
+import {CurrentUserState} from '../State/CurrentUserState';
 
 const inviteEditorsStyle = {
     ...reactSelectStyles,
@@ -60,7 +62,6 @@ const inviteEditorsStyle = {
 interface InviteEditorsFormReduxProps {
     collapsed?: boolean;
     currentSpace: Space;
-    currentUser: string;
     closeModal(): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
@@ -75,7 +76,9 @@ const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMappin
     }
 };
 
-function InviteEditorsFormSection({collapsed, currentSpace, currentUser, closeModal, setCurrentModal}: InviteEditorsFormReduxProps, {space}: InviteEditorsFormOwnProps): JSX.Element {
+function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurrentModal}: InviteEditorsFormReduxProps, {space}: InviteEditorsFormOwnProps): JSX.Element {
+    const currentUser = useRecoilValue(CurrentUserState);
+
     const isExpanded = !collapsed;
     const [invitedUserIds, setInvitedUserIds] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
@@ -226,7 +229,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
 const mapStateToProps = (state: GlobalStateProps, ownProps?: InviteEditorsFormOwnProps) => ({
     currentSpace: ownProps?.space || state.currentSpace,
-    currentUser: state.currentUser,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(InviteEditorsFormSection);

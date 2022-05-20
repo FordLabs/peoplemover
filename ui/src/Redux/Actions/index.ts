@@ -51,7 +51,6 @@ export enum AvailableActions {
     SET_LOCATIONS,
     SET_ROLES,
     SET_USER_SPACES,
-    SET_CURRENT_USER
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({
@@ -97,11 +96,6 @@ export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: 
 export const setCurrentSpaceAction = (space: Space) => ({
     type: AvailableActions.SET_CURRENT_SPACE,
     space,
-});
-
-export const setCurrentUserAction = (currentUser: string) => ({
-    type: AvailableActions.SET_CURRENT_USER,
-    currentUser,
 });
 
 export const setProductsAction = (products: Array<Product>) => ({

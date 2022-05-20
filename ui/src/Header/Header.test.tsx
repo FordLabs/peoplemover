@@ -29,7 +29,7 @@ const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
-    const initialState = {currentSpace: TestUtils.space, currentUser: 'bob' };
+    const initialState = {currentSpace: TestUtils.space };
     let location: (string | Location) & Location;
 
     beforeEach(() => {
