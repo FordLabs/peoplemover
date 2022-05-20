@@ -26,6 +26,7 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import configureStore from 'redux-mock-store';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('Person Card', () => {
     const personToRender: Person = {
@@ -88,24 +89,25 @@ describe('Person Card', () => {
 
     describe('Read-Only Functionality', function() {
         beforeEach(() => {
-            initialState = {currentSpace: TestUtils.space, isReadOnly: true};
+            initialState = {currentSpace: TestUtils.space};
         });
 
         it('should not display Edit Person Modal if in read only mode', function() {
-            renderPersonCard(initialState);
+            renderPersonCard(initialState, new Date(), true);
             const william = screen.getByText(personToRender.name);
             fireEvent.click(william);
             expect(store.dispatch).not.toHaveBeenCalled();
         });
     });
 
-    function renderPersonCard(preloadedReduxState: unknown, initialViewingDate: Date =  new Date()): void {
+    function renderPersonCard(preloadedReduxState: unknown, initialViewingDate: Date =  new Date(), isReadOnly = false): void {
         const mockStore = configureStore([]);
         store = mockStore(preloadedReduxState);
         store.dispatch = jest.fn();
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, initialViewingDate)
+                set(ViewingDateState, initialViewingDate);
+                set(IsReadOnlyState, isReadOnly);
             }}>
                 <PersonCard person={personToRender}/>
             </RecoilRoot>,

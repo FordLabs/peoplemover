@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,23 +20,20 @@ import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
 import {AxiosError} from 'axios';
-import {setIsReadOnlyAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
 import {useNavigate, useParams} from 'react-router-dom';
+import {useSetRecoilState} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_NOT_FOUND = 404;
 const HTTP_FORBIDDEN = 403;
 
-interface AuthorizedRouteProps extends RouteProps {
-    setIsReadOnly(isReadOnly: boolean): boolean;
-}
-
-function AuthorizedRoute(props: AuthorizedRouteProps): JSX.Element {
-    const {children, setIsReadOnly} = props;
+function AuthorizedRoute({children}: RouteProps): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>()
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
     const navigate = useNavigate();
+
+    const setIsReadOnly = useSetRecoilState(IsReadOnlyState);
 
     useEffect(() => {
         setIsReadOnly(false);
@@ -48,9 +45,7 @@ function AuthorizedRoute(props: AuthorizedRouteProps): JSX.Element {
             const accessToken = cookie.get('accessToken');
 
             AccessTokenClient.userCanAccessSpace(accessToken, teamUUID)
-                .then(() => {
-                    setRenderedElement(<>{children}</>)
-                })
+                .then(() => setRenderedElement(<>{children}</>))
                 .catch((error: AxiosError) => {
                     setIsReadOnly(true);
                     if (!error.response) return;
@@ -75,10 +70,4 @@ function AuthorizedRoute(props: AuthorizedRouteProps): JSX.Element {
     return <>{renderedElement}</>;
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: any) => ({
-    setIsReadOnly: (isReadOnly: boolean) => dispatch(setIsReadOnlyAction(isReadOnly)),
-});
-
-export default connect(null, mapDispatchToProps)(AuthorizedRoute);
-/* eslint-enable */
+export default AuthorizedRoute;

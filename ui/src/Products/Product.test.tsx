@@ -32,6 +32,7 @@ import ProductCard from './ProductCard';
 import thunk from 'redux-thunk';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {RecoilRoot} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
@@ -580,12 +581,11 @@ describe('Products', () => {
     });
 });
 
-function renderProductCard(params?: { product?: Product, isReadOnly?: boolean}) {
+function renderProductCard(params?: { product?: Product, isReadOnly?: boolean }) {
     const { product = TestUtils.productWithoutAssignments, isReadOnly = false } = params || {}
 
     const initialState = {
         currentSpace: TestUtils.space,
-        isReadOnly: isReadOnly,
         allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
         currentModal: {modal: null},
     };
@@ -593,7 +593,8 @@ function renderProductCard(params?: { product?: Product, isReadOnly?: boolean}) 
     const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
-            set(ViewingDateState, new Date(2020, 4, 14))
+            set(ViewingDateState, new Date(2020, 4, 14));
+            set(IsReadOnlyState, isReadOnly)
         }}>
             <ProductCard product={product}/>
         </RecoilRoot>,

@@ -1,13 +1,12 @@
 import React, {ReactNode} from 'react';
 
-interface NavigationSectionProps {
+interface Props {
     label: string;
     icon: string;
     children?: ReactNode;
 }
 
-export default function NavigationSection(
-    {label, icon, children}: NavigationSectionProps): JSX.Element {
+function NavigationSection({label, icon, children}: Props): JSX.Element {
     return (
         <div className="dropdownContainer">
             <i className="material-icons indicator-icon" aria-hidden>{icon}</i>
@@ -16,3 +15,5 @@ export default function NavigationSection(
         </div>
     );
 }
+
+export default NavigationSection;

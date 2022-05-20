@@ -32,7 +32,6 @@ import {Product} from '../../Products/Product';
 import {Tag} from '../../Tags/Tag';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import userSpacesReducer from './userSpacesReducer';
-import isReadOnlyReducer from './isReadOnlyReducer';
 import isDraggingReducer from './isDraggingReducer';
 import currentUserReducer from './currentUserReducer';
 import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
@@ -52,7 +51,6 @@ export default combineReducers({
     locations: locationsReducer,
     roles: rolesReducer,
     userSpaces: userSpacesReducer,
-    isReadOnly: isReadOnlyReducer,
     isDragging: isDraggingReducer,
     currentUser: currentUserReducer,
     flags: flagsReducer,
@@ -70,7 +68,6 @@ export interface GlobalStateProps {
     locations: Array<LocationTag>;
     roles: Array<RoleTag>;
     userSpaces: Array<Space>;
-    isReadOnly: boolean;
     isDragging: boolean;
     currentUser: string;
     flags: Flags;

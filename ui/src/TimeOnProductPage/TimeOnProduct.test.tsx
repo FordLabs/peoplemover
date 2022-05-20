@@ -34,6 +34,7 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import thunk from 'redux-thunk';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('TimeOnProduct', () => {
     beforeEach(() => {
@@ -48,13 +49,13 @@ describe('TimeOnProduct', () => {
             const initialState = {
                 currentSpace: TestUtils.space,
                 products: [TestUtils.productForHank],
-                isReadOnly: false,
             };
             store = createStore(rootReducer, initialState);
             store.dispatch = jest.fn();
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, new Date(2020, 0, 1))
+                    set(IsReadOnlyState, false)
                 }}>
                     <TimeOnProduct/>
                 </RecoilRoot>,
@@ -245,12 +246,12 @@ describe('TimeOnProduct', () => {
             const initialState = {
                 currentSpace: TestUtils.space,
                 products: [TestUtils.productForHank],
-                isReadOnly: true,
             };
             const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, new Date(2020, 0, 1))
+                    set(IsReadOnlyState, true)
                 }}>
                     <TimeOnProduct/>
                 </RecoilRoot>,

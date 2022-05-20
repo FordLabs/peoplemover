@@ -20,11 +20,10 @@ import AuthorizedRoute from './AuthorizedRoute';
 import React from 'react';
 import Axios from 'axios';
 import {RunConfig} from '../index';
-import {renderWithRedux} from '../Utils/TestUtils';
-import {createStore, Store} from 'redux';
-import rootReducer from '../Redux/Reducers';
-import {setIsReadOnlyAction} from '../Redux/Actions';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
 
 const mockedUsedNavigate = jest.fn();
 
@@ -34,7 +33,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('Authorized Route', () => {
-    let store: Store;
+    let isReadOnly = false;
 
     it('should redirect to login when security is enabled and you are not authenticated', async () => {
         window.runConfig = {auth_enabled: true} as RunConfig;
@@ -48,21 +47,21 @@ describe('Authorized Route', () => {
         Axios.post = jest.fn().mockResolvedValue({});
         await renderComponent(true);
         expect(screen.getByText('I am so secure!')).toBeInTheDocument();
-        expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(false));
+        expect(isReadOnly).toBeFalsy();
     });
 
     it('should show the child element when security is enabled and you are authenticated but not authorized (read only)', async () => {
         Axios.post = jest.fn().mockRejectedValue({response: {status: 403}});
         await renderComponent(true);
         expect(screen.getByText('I am so secure!')).toBeInTheDocument();
-        expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(true));
+        expect(isReadOnly).toBeTruthy();
     });
 
     it('should show 404 page when security is enabled and space uuid does not exist', async () => {
         Axios.post = jest.fn().mockRejectedValue({response: {status: 404}});
         await renderComponent(true);
         expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/404');
-        expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(true));
+        expect(isReadOnly).toBeTruthy();
     });
 
 
@@ -70,24 +69,29 @@ describe('Authorized Route', () => {
         Axios.post = jest.fn().mockRejectedValue({});
         await renderComponent(false);
         expect(screen.getByText('I am so secure!')).toBeInTheDocument();
-        expect(store.dispatch).toHaveBeenCalledWith(setIsReadOnlyAction(false));
+        expect(isReadOnly).toBeFalsy();
         expect(Axios.post).toHaveBeenCalledTimes(0)
     });
 
-    async function renderComponent(securityEnabled: boolean): Promise<void> {
+    async function renderComponent(securityEnabled: boolean, isReadOnlyDefaultState = false): Promise<void> {
         window.runConfig = {auth_enabled: securityEnabled} as RunConfig;
 
-        store = createStore(rootReducer, {});
-        store.dispatch = jest.fn();
-
         await waitFor(() => {
-            renderWithRedux(
+            renderWithRecoil(
                 <MemoryRouter initialEntries={['/user/dashboard']}>
                     <AuthorizedRoute>
+                        <RecoilObserver
+                            recoilState={IsReadOnlyState}
+                            onChange={(value: boolean) => {
+                                isReadOnly = value;
+                            }}
+                        />
                         <TestComponent/>
                     </AuthorizedRoute>
                 </MemoryRouter>,
-                store
+                ({set}) => {
+                    set(IsReadOnlyState, isReadOnlyDefaultState)
+                }
             );
         });
     }

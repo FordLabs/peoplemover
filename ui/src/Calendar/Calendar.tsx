@@ -25,23 +25,24 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
 import moment from 'moment';
-import {useRecoilState} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 import './Calendar.scss';
 
-interface CalendarProps {
+interface Props {
     currentSpace: Space;
-    isReadOnly: boolean;
 }
 
-function Calendar({ currentSpace, isReadOnly}: CalendarProps): JSX.Element {
+function Calendar({ currentSpace}: Props): JSX.Element {
     const { uuid = '' } = currentSpace;
 
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     const [daysHighlighted, setDaysHighlighted] = useState<Array<Date>>([]);
 
     const [viewingDate, setViewingDate] = useRecoilState(ViewingDateState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const calendarRef = createRef<ReactDatePicker>();
 
@@ -100,7 +101,6 @@ function Calendar({ currentSpace, isReadOnly}: CalendarProps): JSX.Element {
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    isReadOnly: state.isReadOnly,
 });
 
 export default connect(mapStateToProps)(Calendar);

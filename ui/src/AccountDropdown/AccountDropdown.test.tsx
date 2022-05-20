@@ -28,6 +28,7 @@ import ReportClient from '../Reports/ReportClient';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('Account Dropdown', () => {
     beforeEach(async () => {
@@ -107,10 +108,14 @@ describe('Account Dropdown', () => {
         beforeEach(async () => {
             renderWithRedux(
                 <MemoryRouter initialEntries={['/teamName']}>
-                    <AccountDropdown showAllDropDownOptions={true}/>
+                    <RecoilRoot initializeState={({set}) => {
+                        set(IsReadOnlyState, true)
+                    }}>
+                        <AccountDropdown showAllDropDownOptions={true}/>
+                    </RecoilRoot>
                 </MemoryRouter>,
                 undefined,
-                {currentSpace: TestUtils.space, isReadOnly: true}
+                {currentSpace: TestUtils.space}
             );
         });
         it('should not display Download Report and Share Access when it is in Read Only mode', async () => {
