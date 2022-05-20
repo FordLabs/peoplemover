@@ -27,6 +27,7 @@ import PeopleClient from '../People/PeopleClient';
 import thunk from 'redux-thunk';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
@@ -84,11 +85,11 @@ describe('Assignment Card', () => {
 
     describe('Read-Only Functionality', function() {
         beforeEach(function() {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isReadOnly: true});
+            store = createStore(rootReducer, {currentSpace: TestUtils.space});
         });
 
         it('should not display edit Menu if in read only mode', function() {
-            renderAssignmentCard(assignmentToRender);
+            renderAssignmentCard(assignmentToRender, false, true);
             const editPersonButton = screen.getByTestId('editPersonIconContainer__billiam_handy');
             editPersonButton.click();
             expect(screen.queryByTestId('editMenu')).toBeNull();
@@ -98,7 +99,9 @@ describe('Assignment Card', () => {
         it('should not allow drag and drop if in read only mode', function() {
             const startDraggingAssignment = jest.fn();
             renderWithRedux(
-                <RecoilRoot>
+                <RecoilRoot initializeState={({set}) => {
+                    set(IsReadOnlyState, true);
+                }}>
                     <AssignmentCard
                         assignment={assignmentToRender}
                         isUnassignedProduct={false}
@@ -117,7 +120,7 @@ describe('Assignment Card', () => {
                 ...assignmentToRender,
                 placeholder: true,
             };
-            renderAssignmentCard(placeholderAssignment);
+            renderAssignmentCard(placeholderAssignment, false, true);
 
             const assignmentCard = screen.getByTestId('assignmentCard__billiam_handy');
             expect(assignmentCard).toHaveClass('NotPlaceholder');
@@ -350,8 +353,8 @@ describe('Assignment Card', () => {
         });
 
         it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false, isReadOnly: true});
-            renderAssignmentCard(assignmentToRender);
+            store = createStore(rootReducer, {currentSpace: TestUtils.space, isDragging: false});
+            renderAssignmentCard(assignmentToRender, false, true);
             expect(screen.queryByText('local_offer')).toBeNull();
         });
 
@@ -373,9 +376,11 @@ describe('Assignment Card', () => {
         });
     });
 
-    function renderAssignmentCard(assignment: Assignment,isUnassignedProduct = false): void {
+    function renderAssignmentCard(assignment: Assignment, isUnassignedProduct = false, isReadOnly = false): void {
         renderWithRedux(
-            <RecoilRoot>
+            <RecoilRoot initializeState={({set}) => {
+                set(IsReadOnlyState, isReadOnly);
+            }}>
                 <AssignmentCard
                     assignment={assignment}
                     isUnassignedProduct={isUnassignedProduct}

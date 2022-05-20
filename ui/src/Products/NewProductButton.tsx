@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,21 +20,21 @@ import {setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
+import {AvailableModals} from '../Modal/AvailableModals';
+import {useRecoilValue} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 import './NewProductButton.scss';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {AvailableModals} from '../Modal/AvailableModals';
 
 interface Props {
-  isReadOnly: boolean;
   setCurrentModal(modalState: CurrentModalState): void;
   modalState?: CurrentModalState;
 }
 
-function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: Props): JSX.Element {
-    const openModal = (): void => {
-        setCurrentModal(modalState);
-    };
+function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: Props): JSX.Element {
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
+
+    const openModal = (): void => setCurrentModal(modalState);
 
     return isReadOnly ? <></> : (
         <button
@@ -48,13 +48,9 @@ function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CRE
 }
 
 /* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    isReadOnly: state.isReadOnly,
-});
-
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewProductButton);
+export default connect(null, mapDispatchToProps)(NewProductButton);
 /* eslint-enable */

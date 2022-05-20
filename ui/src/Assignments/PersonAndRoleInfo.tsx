@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,12 +16,14 @@
  */
 
 import React, {ReactElement, useState} from 'react';
-import './PersonAndRoleInfo.scss';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {isArchived, Person} from '../People/Person';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
+
+import './PersonAndRoleInfo.scss';
 
 interface HoverInfo {
     title: string;
@@ -31,20 +33,19 @@ interface HoverInfo {
 
 interface Props {
     isUnassignedProduct: boolean;
-    isReadOnly: boolean;
     isDragging: boolean;
     person: Person;
     duration: number;
 }
 
 const PersonAndRoleInfo = ({
-    isReadOnly,
     isUnassignedProduct,
     isDragging,
     duration,
     person,
 }: Props): ReactElement => {
     const viewingDate = useRecoilValue(ViewingDateState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const [isHoverBoxOpen, setHoverBoxIsOpened] = useState<boolean>(false);
 
@@ -146,7 +147,6 @@ const PersonAndRoleInfo = ({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     isDragging: state.isDragging,
-    isReadOnly: state.isReadOnly
 });
 
 export default connect(mapStateToProps)(PersonAndRoleInfo);

@@ -30,6 +30,7 @@ import SubHeader from '../Header/SubHeader';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 import './TimeOnProduct.scss';
 
@@ -80,16 +81,16 @@ export interface TimeOnProductProps {
     currentSpace: Space;
     products: Array<Product>;
     currentModal: CurrentModalState;
-    isReadOnly: boolean;
 
     fetchProducts(viewingDate: Date): Array<Product>;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function TimeOnProduct({currentSpace, products, currentModal, isReadOnly, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace, products, currentModal, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const viewingDate = useRecoilValue(ViewingDateState)
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const extractUuidFromUrl = (): string => {
         return window.location.pathname.split('/')[1];
@@ -189,7 +190,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     products: state.products,
     currentModal: state.currentModal,
-    isReadOnly: state.isReadOnly,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

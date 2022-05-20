@@ -45,15 +45,14 @@ import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 
 import './Product.scss';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
 interface ProductCardProps {
     product: Product;
     currentSpace: Space;
-    isReadOnly: boolean;
     products: Array<Product>;
-
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
     setCurrentModal(modalState: CurrentModalState): void;
@@ -63,7 +62,6 @@ interface ProductCardProps {
 function ProductCard({
     product,
     currentSpace,
-    isReadOnly,
     products,
     registerProductRef,
     unregisterProductRef,
@@ -75,6 +73,7 @@ function ProductCard({
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
 
     const viewingDate = useRecoilValue(ViewingDateState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     useEffect(() => {
         registerProductRef({ref: productRef, product});
@@ -279,7 +278,6 @@ function ProductCard({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    isReadOnly: state.isReadOnly,
     products: state.products,
 });
 

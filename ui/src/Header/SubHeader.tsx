@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,24 +16,26 @@
  */
 
 import React from 'react';
-import './SubHeader.scss';
-import {connect} from 'react-redux';
-import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from '../Calendar/Calendar';
-import {GlobalStateProps} from '../Redux/Reducers';
 import ProductSortBy from '../SortingAndFiltering/ProductSortBySelector';
 import Filter from '../SortingAndFiltering/Filter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {useRecoilValue} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
+
+import 'react-datepicker/dist/react-datepicker.css';
+import './SubHeader.scss';
 
 interface Props {
-    isReadOnly: boolean;
     showFilters?: boolean;
     showSortBy?: boolean;
     message?: JSX.Element;
 }
 
-function SubHeader({ isReadOnly, showFilters = true, showSortBy = true, message = undefined}: Props): JSX.Element {
+function SubHeader({ showFilters = true, showSortBy = true, message = undefined}: Props): JSX.Element {
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
+
     return (
         <section className="newSpaceSelectionContainer" aria-label="Filters">
             <div className="leftContent">
@@ -47,22 +49,18 @@ function SubHeader({ isReadOnly, showFilters = true, showSortBy = true, message 
                 {message && <>{message}</>}
             </div>
             <div className="rightContent">
-                {showFilters && <NavigationSection label="Filter by" icon="filter_list">
-                    <Filter filterType={FilterTypeListings.Location}/>
-                    <Filter filterType={FilterTypeListings.ProductTag}/>
-                    <Filter filterType={FilterTypeListings.PersonTag}/>
-                    <Filter filterType={FilterTypeListings.Role}/>
-                </NavigationSection>}
+                {showFilters && (
+                    <NavigationSection label="Filter by" icon="filter_list">
+                        <Filter filterType={FilterTypeListings.Location}/>
+                        <Filter filterType={FilterTypeListings.ProductTag}/>
+                        <Filter filterType={FilterTypeListings.PersonTag}/>
+                        <Filter filterType={FilterTypeListings.Role}/>
+                    </NavigationSection>
+                )}
                 {showSortBy && <ProductSortBy/>}
             </div>
         </section>
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    isReadOnly: state.isReadOnly,
-});
-
-export default connect(mapStateToProps)(SubHeader);
-/* eslint-enable */
+export default SubHeader;

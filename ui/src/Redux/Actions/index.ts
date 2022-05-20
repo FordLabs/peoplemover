@@ -52,7 +52,6 @@ export enum AvailableActions {
     SET_LOCATIONS,
     SET_ROLES,
     SET_USER_SPACES,
-    SET_IS_READ_ONLY,
     SET_IS_DRAGGING,
     SET_CURRENT_USER,
     GOT_FLAGS
@@ -141,11 +140,6 @@ export const setRolesAction = (roles: Array<RoleTag>) => ({
 export const setUserSpacesAction = (userSpaces: Array<Space>) => ({
     type: AvailableActions.SET_USER_SPACES,
     userSpaces,
-});
-
-export const setIsReadOnlyAction = (isReadOnly: boolean) => ({
-    type: AvailableActions.SET_IS_READ_ONLY,
-    isReadOnly,
 });
 
 export const setIsDragging = (isDragging: boolean) => ({
