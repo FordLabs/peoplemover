@@ -19,10 +19,14 @@ import React from 'react';
 import {renderWithRedux} from '../Utils/TestUtils';
 import {fireEvent, screen} from '@testing-library/dom';
 import SpaceForm from './SpaceForm';
+import {RecoilRoot} from 'recoil';
 
 describe('Space Form', () => {
+    beforeEach(() => {
+        renderSpaceForm();
+    })
+
     it('should update the count for number of characters and have max input of 40', () => {
-        renderWithRedux(<SpaceForm/>);
         const spaceCount = screen.getByTestId('createSpaceFieldText');
         const spaceInput = screen.getByTestId('createSpaceInputField');
         expect(spaceCount.textContent).toBe('0 (40 characters max)');
@@ -32,7 +36,6 @@ describe('Space Form', () => {
     });
 
     it('should show an error message if space name is only empty space', () => {
-        renderWithRedux(<SpaceForm/>);
         const spaceInput = screen.getByTestId('createSpaceInputField');
         const createSpaceButton = screen.getByTestId('createSpaceButton');
         fireEvent.change(spaceInput, {target: {value: '   '}});
@@ -41,3 +44,11 @@ describe('Space Form', () => {
     });
 });
 
+
+function renderSpaceForm () {
+    renderWithRedux(
+        <RecoilRoot>
+            <SpaceForm/>
+        </RecoilRoot>
+    );
+}

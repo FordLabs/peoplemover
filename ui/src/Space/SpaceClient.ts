@@ -42,10 +42,9 @@ class SpaceClient {
 
     }
 
-    static async getSpacesForUser(): Promise<AxiosResponse<Space[]>> {
+    static async getSpacesForUser(): Promise<Space[]> {
         const url = baseSpaceUrl + '/user';
-
-        return Axios.get(url, SpaceClient.getConfig());
+        return Axios.get(url, SpaceClient.getConfig()).then(res => res.data);
     }
 
     static async getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
@@ -105,10 +104,7 @@ class SpaceClient {
 
     private static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
         const url = `${baseSpaceUrl}/${uuid}`;
-        const data = editedSpace;
-
-
-        return Axios.put(url, data, SpaceClient.getConfig());
+        return Axios.put(url, editedSpace, SpaceClient.getConfig());
     }
 
     static async inviteUsersToSpace(space: Space, userIds: string[]): Promise<AxiosResponse<void>> {

@@ -18,38 +18,34 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
 import CurrentModal from '../Redux/Containers/CurrentModal';
-import {fetchUserSpacesAction, setCurrentModalAction, setCurrentSpaceAction} from '../Redux/Actions';
+import {setCurrentModalAction, setCurrentSpaceAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {connect} from 'react-redux';
 import SpaceDashboardTile from './SpaceDashboardTile';
 import {GlobalStateProps} from '../Redux/Reducers';
 
-import './SpaceDashboard.scss';
 import Branding from '../ReusableComponents/Branding';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {useNavigate} from 'react-router-dom';
 import {useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 
-interface SpaceDashboardProps {
+import './SpaceDashboard.scss';
+import useFetchUserSpaces from '../Hooks/useFetchUserSpaces';
+
+interface Props {
     currentSpace: Space;
-    userSpaces: Array<Space>;
     setCurrentModal(modalState: CurrentModalState): void;
-    fetchUserSpaces(): void;
     setCurrentSpace(space: Space): Space;
 }
 
-function SpaceDashboard({
-    currentSpace,
-    setCurrentModal,
-    fetchUserSpaces,
-    userSpaces,
-    setCurrentSpace,
-}: SpaceDashboardProps): JSX.Element {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+function SpaceDashboard({ currentSpace, setCurrentModal, setCurrentSpace }: Props): JSX.Element {
     const navigate = useNavigate();
 
     const setViewingDate = useSetRecoilState(ViewingDateState);
+    const { userSpaces, fetchUserSpaces } = useFetchUserSpaces();
+
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     function onCreateNewSpaceButtonClicked(): void {
         setCurrentModal({modal: AvailableModals.CREATE_SPACE});
@@ -60,16 +56,12 @@ function SpaceDashboard({
     }, [navigate])
 
     useEffect(() => {
-        async function populateUserSpaces(): Promise<void> {
-            await fetchUserSpaces();
-        }
-
         window.history.pushState([], 'User Dashboard', '/user/dashboard');
         setCurrentSpace(createEmptySpace());
 
-        populateUserSpaces().then(() => {
-            setIsLoading(false);
-        });
+        fetchUserSpaces().then(() => {
+            setIsLoading(false)
+        })
     }, [fetchUserSpaces, setCurrentSpace]);
 
     useEffect(() => {
@@ -130,12 +122,10 @@ function SpaceDashboard({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    userSpaces: state.userSpaces,
     currentSpace: state.currentSpace,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
 });

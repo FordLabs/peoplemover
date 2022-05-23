@@ -27,7 +27,6 @@ import {Tag} from '../../Tags/Tag';
 import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
-import SpaceClient from '../../Space/SpaceClient';
 import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
 import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 import {RoleTag} from '../../Roles/RoleTag.interface';
@@ -50,7 +49,6 @@ export enum AvailableActions {
     SET_PERSON_TAGS,
     SET_LOCATIONS,
     SET_ROLES,
-    SET_USER_SPACES,
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({
@@ -122,20 +120,6 @@ export const setRolesAction = (roles: Array<RoleTag>) => ({
     type: AvailableActions.SET_ROLES,
     roles,
 });
-
-export const setUserSpacesAction = (userSpaces: Array<Space>) => ({
-    type: AvailableActions.SET_USER_SPACES,
-    userSpaces,
-});
-
-export const fetchUserSpacesAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
-    (dispatch: Dispatch): Promise<void> => {
-        return SpaceClient.getSpacesForUser()
-            .then(result => {
-                const spaces: Array<Space> = result.data || [];
-                dispatch(setUserSpacesAction(spaces));
-            });
-    };
 
 export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (viewingDate: Date) =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
