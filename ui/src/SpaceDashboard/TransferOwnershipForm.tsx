@@ -18,28 +18,31 @@
 import React, {FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {connect} from 'react-redux';
-import {closeModalAction, fetchUserSpacesAction} from '../Redux/Actions';
+import {closeModalAction} from '../Redux/Actions';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import './TransferOwnershipForm.scss';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
 import {useRecoilValue} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
+import useFetchUserSpaces from '../Hooks/useFetchUserSpaces';
+
+import './TransferOwnershipForm.scss';
 
 interface TransferOwnershipFormProps {
     currentSpace: Space;
     closeModal(): void;
-    fetchUserSpaces(): void;
 }
 
 interface TransferOwnershipFormOwnProps {
     space?: Space;
 }
 
-function TransferOwnershipForm({currentSpace, closeModal, fetchUserSpaces}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
+function TransferOwnershipForm({currentSpace, closeModal}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
     const currentUser = useRecoilValue(CurrentUserState);
+
+    const { fetchUserSpaces } = useFetchUserSpaces();
 
     const [selectedUser, setSelectedUser] = useState<UserSpaceMapping | null>(null);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
@@ -65,7 +68,7 @@ function TransferOwnershipForm({currentSpace, closeModal, fetchUserSpaces}: Tran
         if (!currentOwner || !newOwner) return;
         SpaceClient.changeOwner(currentSpace, currentOwner, newOwner).then(() => {
             SpaceClient.removeUser(currentSpace, currentOwner).then(() => {
-                fetchUserSpaces();
+                fetchUserSpaces().catch();
                 setSubmitted(true);
             });
         });
@@ -123,7 +126,6 @@ function TransferOwnershipForm({currentSpace, closeModal, fetchUserSpaces}: Tran
 /* eslint-disable */
 const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
-    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
 const mapStateToProps = (state: GlobalStateProps, ownProps?: TransferOwnershipFormOwnProps) => ({

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,31 +30,29 @@ import {waitFor} from '@testing-library/react';
 import {RecoilRoot} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
 
+jest.mock('../Space/SpaceClient');
+
 describe('Transfer Ownership Form', () => {
     let store: Store;
 
     beforeEach(async () => {
-        jest.resetAllMocks();
-
         store = createStore(rootReducer, {}, applyMiddleware(thunk));
         store.dispatch = jest.fn();
-        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(TestUtils.spaceMappingsArray);
-        SpaceClient.changeOwner = jest.fn().mockResolvedValue({});
-        SpaceClient.removeUser = jest.fn().mockResolvedValue({});
-        await act(async () => {
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(CurrentUserState,  'user_id')
-                }}>
-                    <TransferOwnershipForm space={TestUtils.space}/>
-                </RecoilRoot>,
-                store
-            );
-        });
+
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(CurrentUserState,  'user_id')
+            }}>
+                <TransferOwnershipForm space={TestUtils.space}/>
+            </RecoilRoot>,
+            store
+        );
+
+        await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled());
     });
 
-    it('Should prompt the choice with the space name', () => {
-        screen.getByText('Please choose who you would like to be the new owner of ' + TestUtils.space.name);
+    it('should prompt the choice with the space name', () => {
+        expect(screen.getByText('Please choose who you would like to be the new owner of ' + TestUtils.space.name)).toBeDefined();
     });
 
     it('should show each editors name', () => {
@@ -72,7 +70,7 @@ describe('Transfer Ownership Form', () => {
         expect(store.dispatch).toBeCalledWith(closeModalAction());
     });
 
-    describe('the happy path', () => {
+    describe('The happy path', () => {
         it('should close the modal when a persons name is clicked and Transfer button, then OK is pressed on the confirmation', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
             await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
@@ -83,9 +81,9 @@ describe('Transfer Ownership Form', () => {
 
         it('should be able to choose a person by clicking anywhere in their row', async () => {
             fireEvent.click(screen.getByTestId('transferOwnershipFormRadioControl-user_id_2'));
-            await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
-            await act(async () => {fireEvent.click(screen.getByText('Ok'));});
-            await expect(store.dispatch).toBeCalledWith(closeModalAction());
+            fireEvent.click(screen.getByText('Transfer ownership'));
+            fireEvent.click(await screen.findByText('Ok'));
+            await waitFor(() => expect(store.dispatch).toBeCalledWith(closeModalAction()));
         });
 
         it('should use the Client to promote the selected editor to owner', async () => {
@@ -110,7 +108,7 @@ describe('Transfer Ownership Form', () => {
             expect(SpaceClient.changeOwner).toHaveBeenCalled();
             await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalled());
 
-            await waitFor(() => expect(store.dispatch).toHaveBeenCalled());
+            await waitFor(() => expect(SpaceClient.getSpacesForUser).toHaveBeenCalled());
         });
     });
 });

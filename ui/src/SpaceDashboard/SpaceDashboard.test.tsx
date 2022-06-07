@@ -26,7 +26,6 @@ import {createEmptySpace} from '../Space/Space';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import {setCurrentSpaceAction} from '../Redux/Actions';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {MemoryRouter} from 'react-router-dom';
 import {RecoilRoot} from 'recoil';
 import {RecoilObserver} from '../Utils/RecoilObserver';
@@ -44,6 +43,8 @@ jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockedUsedNavigate,
 }));
+
+jest.mock('../Space/SpaceClient');
 
 describe('SpaceDashboard', () => {
     describe('Resetting Space Date', () => {
@@ -101,10 +102,6 @@ describe('SpaceDashboard', () => {
     describe('if spaces are present', () => {
         beforeEach(async () => {
             await createTestComponent();
-        });
-
-        afterEach(() => {
-            jest.clearAllMocks();
         });
 
         it('should redirect to space when a space in the dashboard is clicked', async () => {
@@ -166,8 +163,8 @@ describe('SpaceDashboard', () => {
             uuid: 'SpaceUUID',
             lastModifiedDate: '2020-04-14T18:06:11.791+0000',
         }] : [];
-        SpaceClient.getSpacesForUser = jest.fn().mockResolvedValue({data: responseData});
-        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([] as Array<UserSpaceMapping>);
+        SpaceClient.getSpacesForUser = jest.fn().mockResolvedValue(responseData);
+        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([]);
 
         await act(async () => {
             renderWithRedux(

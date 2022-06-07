@@ -31,7 +31,6 @@ import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
 import {Tag} from '../../Tags/Tag';
 import {LocationTag} from '../../Locations/LocationTag.interface';
-import userSpacesReducer from './userSpacesReducer';
 import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
 import {RoleTag} from '../../Roles/RoleTag.interface';
 import rolesReducer from './rolesReducer';
@@ -47,7 +46,6 @@ export default combineReducers({
     personTags: personTagsReducer,
     locations: locationsReducer,
     roles: rolesReducer,
-    userSpaces: userSpacesReducer,
 });
 
 export interface GlobalStateProps {
@@ -61,7 +59,6 @@ export interface GlobalStateProps {
     personTags: Array<Tag>;
     locations: Array<LocationTag>;
     roles: Array<RoleTag>;
-    userSpaces: Array<Space>;
 }
 
 

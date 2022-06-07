@@ -15,31 +15,25 @@
  * limitations under the License.
  */
 
-import React, {FormEvent, useState, useEffect, createRef} from 'react';
-import {closeModalAction, fetchUserSpacesAction, setCurrentSpaceAction} from '../Redux/Actions';
+import React, {createRef, FormEvent, useEffect, useState} from 'react';
+import {closeModalAction, setCurrentSpaceAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import SpaceClient from '../Space/SpaceClient';
 import {createEmptySpace, Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
+import useFetchUserSpaces from '../Hooks/useFetchUserSpaces';
 
 import './SpaceForm.scss';
 
-interface SpaceFormProps {
+interface Props {
     space?: Space;
-
     closeModal(): void;
-
-    fetchUserSpaces(): void;
-
     setCurrentSpace(space: Space): void;
 }
 
-function SpaceForm({
-    space,
-    closeModal,
-    fetchUserSpaces,
-    setCurrentSpace,
-}: SpaceFormProps): JSX.Element {
+function SpaceForm({ space, closeModal, setCurrentSpace }: Props): JSX.Element {
+    const { fetchUserSpaces } = useFetchUserSpaces();
+
     const maxLength = 40;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
     const spaceNameInputRef = createRef<HTMLInputElement>();
@@ -131,7 +125,6 @@ function SpaceForm({
 /* eslint-disable */
 const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
-    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
 });
 

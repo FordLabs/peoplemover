@@ -3,23 +3,19 @@ import {useState} from 'react';
 import {Space} from '../Space/Space';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import SpaceClient from '../Space/SpaceClient';
-import {closeModalAction, fetchUserSpacesAction, setCurrentModalAction} from '../Redux/Actions';
+import {closeModalAction, setCurrentModalAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {AvailableModals} from '../Modal/AvailableModals';
 import FormButton from '../ModalFormComponents/FormButton';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
 import './DeleteSpaceForm.scss';
+import useFetchUserSpaces from '../Hooks/useFetchUserSpaces';
 
 interface DeleteSpaceFormProps {
     space: Space;
-
     closeModal(): void;
-
     setCurrentModal(modalState: CurrentModalState): void;
-
-    fetchUserSpaces(): void;
-
     spaceHasEditors?: boolean;
 }
 
@@ -27,9 +23,10 @@ function DeleteSpaceForm({
     space,
     closeModal,
     setCurrentModal,
-    fetchUserSpaces,
     spaceHasEditors,
 }: DeleteSpaceFormProps): JSX.Element {
+    const { fetchUserSpaces } = useFetchUserSpaces();
+
     const [submitted, setSubmitted] = useState<boolean>(false);
 
     const notificationModalProps = {
@@ -57,13 +54,13 @@ function DeleteSpaceForm({
                 onClick={(): void => {
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     SpaceClient.deleteSpaceByUuid(space.uuid!).then(() => {
-                        fetchUserSpaces();
+                        fetchUserSpaces().catch();
                         setSubmitted(true);
                     });
                 }}>
                 Delete space
             </FormButton>),
-        submit(item?: unknown): void | Promise<void> {
+        submit(): void | Promise<void> {
             setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
         },
         close() {
@@ -106,7 +103,6 @@ function DeleteSpaceForm({
 const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
 });
 
 export default connect(null, mapDispatchToProps)(DeleteSpaceForm);
