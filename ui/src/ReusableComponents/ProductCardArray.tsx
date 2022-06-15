@@ -1,6 +1,7 @@
 import {Product} from '../Products/Product';
 import ProductCard from '../Products/ProductCard';
 import React from 'react';
+import DragAndDrop from '../DragAndDrop/DragAndDropContext';
 
 interface ProductCardArrayProps {
     products: Array<Product>;
@@ -12,7 +13,7 @@ export function ProductCardArray({
     arrayId,
 }: ProductCardArrayProps): JSX.Element {
     return (
-        <>
+        <DragAndDrop>
             {products.map((product, index) => (
                 <span key={product.id} id={createProductId(index, arrayId)} className="productCardSpan" data-testid={createProductId(index, arrayId)}>
                     { index + 1 < products.length &&
@@ -23,7 +24,7 @@ export function ProductCardArray({
                     <ProductCard product={product} />
                 </span>
             ))}
-        </>
+        </DragAndDrop>
     );
 }
 

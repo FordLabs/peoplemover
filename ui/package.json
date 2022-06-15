@@ -37,6 +37,7 @@
     ]
   },
   "dependencies": {
+    "@types/react-beautiful-dnd": "^13.1.2",
     "axios": "^0.21.2",
     "env-cmd": "^8.0.2",
     "flagsmith": "^1.6.0",
@@ -47,6 +48,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.28",
     "react": "^17.0.0",
+    "react-beautiful-dnd": "^13.1.0",
     "react-a11y-dialog": "^6.1.5",
     "react-datepicker": "^2.14.1",
     "react-dom": "^17.0.0",

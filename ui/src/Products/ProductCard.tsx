@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {registerProductRefAction, unregisterProductRefAction} from '../Redux/Actions';
+import React, {RefObject, useEffect, useRef, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
-import {ProductCardRefAndProductPair} from './ProductDnDHelper';
 import {isUnassignedProduct, Product} from './Product';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
+
 import moment from 'moment';
 import {createDataTestId} from '../Utils/ReactUtils';
 import MatomoEvents from '../Matomo/MatomoEvents';
@@ -39,6 +37,8 @@ import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from '../State/ModalContentsState';
 import ProductForm from './ProductForm';
 import AssignmentForm from '../Assignments/AssignmentForm';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {ProductRefsState} from '../State/ProductRefsState';
 
 import './Product.scss';
 
@@ -46,11 +46,9 @@ export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
 interface Props {
     product: Product;
-    registerProductRef(productRef: ProductCardRefAndProductPair): void;
-    unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
 }
 
-function ProductCard({ product, registerProductRef, unregisterProductRef }: Props): JSX.Element {
+function ProductCard({ product }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const setModalContents = useSetRecoilState(ModalContentsState);
@@ -60,13 +58,17 @@ function ProductCard({ product, registerProductRef, unregisterProductRef }: Prop
 
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const [modal, setModal] = useState<JSX.Element | null>(null);
-    const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
+    const productRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
+    const setProductRefs = useSetRecoilState(ProductRefsState);
 
     useEffect(() => {
-        registerProductRef({ref: productRef, product});
+        setProductRefs(currentState => [...currentState, {ref: productRef, product: {...product}}]);
 
-        return () => unregisterProductRef({ref: productRef, product});
-    }, [product, registerProductRef, unregisterProductRef]);
+        return () => setProductRefs(currentState => currentState.filter(
+            _productRef => _productRef.ref !== productRef && _productRef.ref.current !== null
+        ));
+    }, [product, setProductRefs]);
 
     function toggleEditMenu(): void {
         setIsEditMenuOpen(!isEditMenuOpen);
@@ -245,27 +247,14 @@ function ProductCard({ product, registerProductRef, unregisterProductRef }: Prop
                                     onClosed={toggleEditMenu}/>
                             )}
                         </div>
-                        {!isReadOnly && product.assignments.length === 0 && (
-                            <div className="emptyProductText">
-                                <div className="emptyProductTextHint">
-                                    <p>Add a person by clicking Add Person icon above or drag them in.</p>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 )}
-                <AssignmentCardList product={product}/>
+                <AssignmentCardList product={product} isReadOnly={isReadOnly} />
             </div>
             {modal}
         </div>
     );
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: any) => ({
-    registerProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(registerProductRefAction(productRef)),
-    unregisterProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(unregisterProductRefAction(productRef)),
-});
+export default ProductCard;
 
-export default connect(null, mapDispatchToProps)(ProductCard);
-/* eslint-enable */

@@ -16,63 +16,39 @@
  */
 
 import React, {RefObject, useCallback, useRef, useState} from 'react';
-import {connect} from 'react-redux';
-import {
-    AssignmentCardRefAndAssignmentPair,
-    getProductUserDroppedAssignmentOn,
-    getTopLeftOfDraggedCard,
-    ProductCardRefAndProductPair,
-} from 'Products/ProductDnDHelper';
 import AssignmentCard from 'Assignments/AssignmentCard';
 import {isUnassignedProduct, Product} from 'Products/Product';
-import {GlobalStateProps} from 'Redux/Reducers';
 import {Assignment} from './Assignment';
-import AssignmentClient from './AssignmentClient';
-import {ProductPlaceholderPair} from './CreateAssignmentRequest';
-import moment from 'moment';
 import {
     getLocalStorageFiltersByType,
     personTagsFilterKey,
     roleTagsFilterKey,
 } from '../SortingAndFiltering/FilterLibraries';
 import {isPersonMatchingSelectedFilters} from 'People/Person';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsDraggingState} from 'State/IsDraggingState';
-import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
-import {ModalContentsState} from 'State/ModalContentsState';
-import AssignmentExistsWarning from './AssignmentExistsWarning';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
+import {Draggable, Droppable} from 'react-beautiful-dnd';
+import {useRecoilValue} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 import '../Products/Product.scss';
 
 interface Props {
     product: Product;
-    productRefs: Array<ProductCardRefAndProductPair>;
 }
 
-function AssignmentCardList({product, productRefs }: Props): JSX.Element {
-    const viewingDate = useRecoilValue(ViewingDateState);
-    const setIsDragging = useSetRecoilState(IsDraggingState);
-    const setModalContents = useSetRecoilState(ModalContentsState);
-    const currentSpace = useRecoilValue(CurrentSpaceState);
+function AssignmentCardList({product }: Props): JSX.Element {
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);
 
-    const spaceUuid = currentSpace.uuid!;
-    const { fetchProducts } = useFetchProducts(spaceUuid);
-
-    let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-    let assignmentCardRectHeight  = 0;
 
     const getFilteredAssignments = useCallback(() => {
+        const roleFilters = getLocalStorageFiltersByType(roleTagsFilterKey);
+        const personTagFilters = getLocalStorageFiltersByType(personTagsFilterKey);
         const _filteredAssignments = [...product.assignments]
             .sort(sortAssignmentsByPersonRole)
             .filter((assignment: Assignment) => {
-                const roleFilters = getLocalStorageFiltersByType(roleTagsFilterKey);
-                const personTagFilters = getLocalStorageFiltersByType(personTagsFilterKey);
                 return isPersonMatchingSelectedFilters(assignment.person, roleFilters, personTagFilters);
             })
 
@@ -89,158 +65,182 @@ function AssignmentCardList({product, productRefs }: Props): JSX.Element {
         return 0;
     }
 
-    function startDraggingAssignment(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void {
-        if (ref.current) {
-            const rect = ref.current.getBoundingClientRect();
-            draggingAssignmentRef = {
-                ref,
-                assignment,
-                draggedCardOffset: getTopLeftOfDraggedCard(rect, e),
-            };
-            assignmentCardRectHeight = rect.bottom - rect.top;
+    // function startDraggingAssignment(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void {
+    //     if (ref.current) {
+    //         const rect = ref.current.getBoundingClientRect();
+    //         draggingAssignmentRef = {
+    //             ref,
+    //             assignment,
+    //             draggedCardOffset: getTopLeftOfDraggedCard(rect, e),
+    //         };
+    //         assignmentCardRectHeight = rect.bottom - rect.top;
+    //
+    //         window.addEventListener('mousemove', makeAssignmentCardDraggable);
+    //         window.addEventListener('mouseup', stopDraggingAssignment);
+    //     }
+    // }
 
-            window.addEventListener('mousemove', makeAssignmentCardDraggable);
-            window.addEventListener('mouseup', stopDraggingAssignment);
-        }
-    }
+    // function setAntiHighlightCoverDisplay(display: string): void {
+    //     if (antiHighlightCoverRef.current) {
+    //         antiHighlightCoverRef.current.style.display = display;
+    //     }
+    // }
 
-    function setAntiHighlightCoverDisplay(display: string): void {
-        if (antiHighlightCoverRef.current) {
-            antiHighlightCoverRef.current.style.display = display;
-        }
-    }
+    // function stopDraggingAssignment(): void {
+    //     window.removeEventListener('mousemove', makeAssignmentCardDraggable);
+    //     window.removeEventListener('mouseup', stopDraggingAssignment);
+    //
+    //     setAntiHighlightCoverDisplay('none');
+    //     setIsDragging(false);
+    //
+    //     onDrop().then();
+    // }
 
-    function stopDraggingAssignment(): void {
-        window.removeEventListener('mousemove', makeAssignmentCardDraggable);
-        window.removeEventListener('mouseup', stopDraggingAssignment);
+    // async function onDrop(): Promise<void> {
+    //     if (draggingAssignmentRef && draggingAssignmentRef.ref.current) {
+    //         const productUserDroppedAssignmentOn: ProductCardRefAndProductPair | null = getProductUserDroppedAssignmentOn(
+    //             productRefs,
+    //             draggingAssignmentRef.ref.current,
+    //         );
+    //
+    //         let assignmentUpdated = false;
+    //
+    //         if (productUserDroppedAssignmentOn) {
+    //
+    //             const oldAssignment = draggingAssignmentRef.assignment;
+    //             const newProductId = productUserDroppedAssignmentOn.product.id;
+    //             const isDifferentProduct = oldAssignment.productId !== newProductId;
+    //
+    //             if (isDifferentProduct) {
+    //                 const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, oldAssignment.person.id, viewingDate)).data;
+    //                 const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
+    //                     .map(existingAssignment => {
+    //                         return ({
+    //                             productId: existingAssignment.productId,
+    //                             placeholder: existingAssignment.placeholder,
+    //                         });
+    //                     })
+    //                     .filter(existingAssignment => existingAssignment.productId !== oldAssignment.productId)
+    //                     .concat({
+    //                         productId: newProductId,
+    //                         placeholder: oldAssignment.placeholder,
+    //                     });
+    //
+    //                 try {
+    //                     await AssignmentClient.createAssignmentForDate(
+    //                         moment(viewingDate).format('YYYY-MM-DD'),
+    //                         productPlaceholderPairs,
+    //                         currentSpace,
+    //                         oldAssignment.person
+    //                     );
+    //                     fetchProducts(viewingDate);
+    //                     assignmentUpdated = true;
+    //                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //                 } catch (error: any) {
+    //                     if (error.response.status === 409) {
+    //                         setCurrentModal({modal: AvailableModals.ASSIGNMENT_EXISTS_WARNING});
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         if (!assignmentUpdated) {
+    //             makeAssignmentCardNoLongerDraggable();
+    //         }
+    //     }
+    // }
 
-        setAntiHighlightCoverDisplay('none');
-        setIsDragging(false);
+    // function scrollWindowIfNeeded(top: number): void {
+    //     const height: number = window.innerHeight;
+    //     const midpointOfRef = top + assignmentCardRectHeight;
+    //
+    //     if (midpointOfRef >= height) {
+    //         window.scrollBy(0, 10);
+    //     }
+    //     if (midpointOfRef <= 120) {
+    //         window.scrollBy(0, -10);
+    //     }
+    // }
 
-        onDrop().then();
-    }
+    // function makeAssignmentCardDraggable(e: MouseEvent): void {
+    //     if (draggingAssignmentRef != null && draggingAssignmentRef.ref.current != null) {
+    //         setAntiHighlightCoverDisplay('block');
+    //         const top = e.clientY - draggingAssignmentRef.draggedCardOffset.y;
+    //         const left = e.clientX - draggingAssignmentRef.draggedCardOffset.x;
+    //         scrollWindowIfNeeded(top);
+    //
+    //         const ref: HTMLDivElement = draggingAssignmentRef.ref.current;
+    //         const rect: DOMRect = ref.getBoundingClientRect();
+    //         ref.style.width = `${rect.width}px`;
+    //         ref.style.position = 'fixed';
+    //         ref.style.zIndex = '11';
+    //         ref.style.top = `${top}px`;
+    //         ref.style.left = `${left}px`;
+    //
+    //         setIsDragging(true);
+    //     } else {
+    //         console.log('Issue with dragging assignment.');
+    //     }
+    // }
 
-    async function onDrop(): Promise<void> {
-        if (draggingAssignmentRef && draggingAssignmentRef.ref.current) {
-            const productUserDroppedAssignmentOn: ProductCardRefAndProductPair | null = getProductUserDroppedAssignmentOn(
-                productRefs,
-                draggingAssignmentRef.ref.current,
-            );
-
-            let assignmentUpdated = false;
-
-            if (productUserDroppedAssignmentOn) {
-
-                const oldAssignment = draggingAssignmentRef.assignment;
-                const newProductId = productUserDroppedAssignmentOn.product.id;
-                const isDifferentProduct = oldAssignment.productId !== newProductId;
-
-                if (isDifferentProduct) {
-                    const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, oldAssignment.person.id, viewingDate)).data;
-                    const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
-                        .map(existingAssignment => {
-                            return ({
-                                productId: existingAssignment.productId,
-                                placeholder: existingAssignment.placeholder,
-                            });
-                        })
-                        .filter(existingAssignment => existingAssignment.productId !== oldAssignment.productId)
-                        .concat({
-                            productId: newProductId,
-                            placeholder: oldAssignment.placeholder,
-                        });
-
-                    try {
-                        await AssignmentClient.createAssignmentForDate(
-                            moment(viewingDate).format('YYYY-MM-DD'),
-                            productPlaceholderPairs,
-                            currentSpace,
-                            oldAssignment.person
-                        );
-                        fetchProducts();
-                        assignmentUpdated = true;
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    } catch (error: any) {
-                        if (error.response.status === 409) {
-                            setModalContents({
-                                title: 'Uh-oh', component: <AssignmentExistsWarning/>
-                            });
-                        }
-                    }
-                }
-            }
-            if (!assignmentUpdated) {
-                makeAssignmentCardNoLongerDraggable();
-            }
-        }
-    }
-
-    function scrollWindowIfNeeded(top: number): void {
-        const height: number = window.innerHeight;
-        const midpointOfRef = top + assignmentCardRectHeight;
-
-        if (midpointOfRef >= height) {
-            window.scrollBy(0, 10);
-        }
-        if (midpointOfRef <= 120) {
-            window.scrollBy(0, -10);
-        }
-    }
-
-    function makeAssignmentCardDraggable(e: MouseEvent): void {
-        if (draggingAssignmentRef != null && draggingAssignmentRef.ref.current != null) {
-            setAntiHighlightCoverDisplay('block');
-            const top = e.clientY - draggingAssignmentRef.draggedCardOffset.y;
-            const left = e.clientX - draggingAssignmentRef.draggedCardOffset.x;
-            scrollWindowIfNeeded(top);
-
-            const ref: HTMLDivElement = draggingAssignmentRef.ref.current;
-            const rect: DOMRect = ref.getBoundingClientRect();
-            ref.style.width = `${rect.width}px`;
-            ref.style.position = 'fixed';
-            ref.style.zIndex = '11';
-            ref.style.top = `${top}px`;
-            ref.style.left = `${left}px`;
-
-            setIsDragging(true);
-        } else {
-            console.log('Issue with dragging assignment.');
-        }
-    }
-
-    function makeAssignmentCardNoLongerDraggable(): void {
-        if (draggingAssignmentRef && draggingAssignmentRef.ref.current) {
-            draggingAssignmentRef.ref.current.style.display = 'flex';
-            draggingAssignmentRef.ref.current.style.top = 'unset';
-            draggingAssignmentRef.ref.current.style.left = 'unset';
-            draggingAssignmentRef.ref.current.style.zIndex = 'unset';
-            draggingAssignmentRef.ref.current.style.position = 'relative';
-            draggingAssignmentRef = undefined;
-        }
-    }
+    // function makeAssignmentCardNoLongerDraggable(): void {
+    //     if (draggingAssignmentRef && draggingAssignmentRef.ref.current) {
+    //         draggingAssignmentRef.ref.current.style.display = 'flex';
+    //         draggingAssignmentRef.ref.current.style.top = 'unset';
+    //         draggingAssignmentRef.ref.current.style.left = 'unset';
+    //         draggingAssignmentRef.ref.current.style.zIndex = 'unset';
+    //         draggingAssignmentRef.ref.current.style.position = 'relative';
+    //         draggingAssignmentRef = undefined;
+    //     }
+    // }
 
     const classNameAndDataTestId = isUnassignedProduct(product) ? 'unassignedPeopleContainer' : 'productPeopleContainer';
 
     return (
         <>
             <div className="antiHighlightCover" ref={antiHighlightCoverRef}/>
-            <div className={classNameAndDataTestId} data-testid={classNameAndDataTestId}>
-                {filteredAssignments.map((assignment: Assignment) =>
-                    <AssignmentCard assignment={assignment}
-                        isUnassignedProduct={isUnassignedProduct(product)}
-                        startDraggingAssignment={startDraggingAssignment}
-                        key={assignment.id}
-                    />
+            <Droppable droppableId={`product-${product.id}`} type="ASSIGNMENT_CARD">
+                {(provided) => (
+                    <div
+                        className={classNameAndDataTestId}
+                        data-testid={classNameAndDataTestId}
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                    >
+                        {!isReadOnly && product.assignments.length === 0 ? (
+                            <div className="emptyProductText">
+                                <div className="emptyProductTextHint">
+                                    <p>Add a person by clicking Add Person icon above or drag them in.</p>
+                                </div>
+                            </div>
+                        ) : filteredAssignments.map((assignment: Assignment, index: number) => (
+                            <Draggable
+                                key={assignment.id}
+                                draggableId={`assignment-${assignment.id}`}
+                                index={index}
+                                disableInteractiveElementBlocking
+                                isDragDisabled={false}
+                            >
+                                {(provided) => (
+                                    <div ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}>
+                                        <AssignmentCard assignment={assignment}
+                                            isUnassignedProduct={isUnassignedProduct(product)}
+                                            // startDraggingAssignment={startDraggingAssignment}
+                                            key={assignment.id}
+                                        />
+                                    </div>
+
+                                )}
+                            </Draggable>
+                        ))}
+                        {provided.placeholder}
+                    </div>
                 )}
-            </div>
+            </Droppable>
         </>
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    productRefs: state.productRefs,
-});
+export default AssignmentCardList;
 
-export default connect(mapStateToProps)(AssignmentCardList);
-/* eslint-enable */
