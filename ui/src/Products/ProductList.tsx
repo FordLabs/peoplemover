@@ -16,7 +16,7 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {isActiveProduct, isProductMatchingSelectedFilters, Product} from './Product';
+import {isActiveProduct, isProductMatchingSelectedFilters} from './Product';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import GroupedByList from './ProductListGrouped';
@@ -26,18 +26,20 @@ import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries
 import {useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
 
 interface Props {
-    products: Array<Product>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 }
 
-function ProductList({ products, allGroupedTagFilterOptions }: Props): JSX.Element {
+function ProductList({ allGroupedTagFilterOptions }: Props): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const products = useRecoilValue(ProductsState);
+
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
     const [filteredProductsLoaded, setFilteredProductsLoaded] = useState<boolean>(false);
 
-    const viewingDate = useRecoilValue(ViewingDateState);
 
     useEffect(() => {
         if (allGroupedTagFilterOptions.length > 0) {
@@ -74,7 +76,6 @@ function ProductList({ products, allGroupedTagFilterOptions }: Props): JSX.Eleme
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    products: state.products,
     productTags: state.productTags,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });

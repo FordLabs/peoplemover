@@ -18,24 +18,21 @@
 import React from 'react';
 import './PersonDrawer.scss';
 import './UnassignedDrawer.scss';
-import {Product, stripAssignmentsForArchivedPeople} from '../Products/Product';
+import {stripAssignmentsForArchivedPeople} from '../Products/Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import ProductCard from '../Products/ProductCard';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
+import {UnassignedProductSelector} from '../State/ProductsState';
 
-interface Props {
-    product: Product;
-}
+function UnassignedDrawer(): JSX.Element {
+    const unassignedProduct = useRecoilValue(UnassignedProductSelector);
 
-function UnassignedDrawer({ product }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const [isUnassignedDrawerOpen, setIsUnassignedDrawerOpen] = useRecoilState(IsUnassignedDrawerOpenState);
 
-    const productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(product, viewingDate);
+    const productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(unassignedProduct, viewingDate);
 
     return (
         <DrawerContainer
@@ -49,18 +46,4 @@ function UnassignedDrawer({ product }: Props): JSX.Element {
     );
 }
 
-const getUnassignedProduct = (products: Array<Product>): Product => {
-    if (products == null) {
-        return {} as Product;
-    }
-    const unassignedProducts = products.filter(product => product.name === 'unassigned');
-    return unassignedProducts.length === 1 ? unassignedProducts[0] : {} as Product;
-};
-
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    product: getUnassignedProduct(state.products ? state.products : []),
-});
-
-export default connect(mapStateToProps)(UnassignedDrawer);
-/* eslint-enable */
+export default UnassignedDrawer;

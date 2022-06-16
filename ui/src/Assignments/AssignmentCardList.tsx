@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-import React, {RefObject} from 'react';
-import '../Products/Product.scss';
+import React, {RefObject, useRef} from 'react';
 import {connect} from 'react-redux';
-import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {
     AssignmentCardRefAndAssignmentPair,
     getProductUserDroppedAssignmentOn,
@@ -41,13 +40,15 @@ import {isPersonMatchingSelectedFilters} from '../People/Person';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsDraggingState} from '../State/IsDraggingState';
+import useFetchProducts from '../Hooks/useFetchProducts';
 
-interface AssignmentCardListProps {
+import '../Products/Product.scss';
+
+interface Props {
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    fetchProducts(viewingDate: Date): void;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
@@ -56,21 +57,22 @@ function AssignmentCardList({
     productRefs,
     currentSpace,
     allGroupedTagFilterOptions,
-    fetchProducts,
     setCurrentModal,
-}: AssignmentCardListProps): JSX.Element {
+}: Props): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const setIsDragging = useSetRecoilState(IsDraggingState);
+
+    const { fetchProducts } = useFetchProducts();
+
     const spaceUuid = currentSpace.uuid!;
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
-    const antiHighlightCoverRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
+    const antiHighlightCoverRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
     const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
     const getSelectedPersonTagFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
 
-    const viewingDate = useRecoilValue(ViewingDateState);
-    const setIsDragging = useSetRecoilState(IsDraggingState);
-
     function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
-        const assignments: Array<Assignment> = product.assignments;
+        const assignments: Array<Assignment> = [...product.assignments];
         return assignments.sort(({person: person1}, {person: person2}) => {
             const spaceRole1 = person1.spaceRole ? person1.spaceRole.name : 'ZZZZZZZ';
             const spaceRole2 = person2.spaceRole ? person2.spaceRole.name : 'ZZZZZZZ';
@@ -155,7 +157,7 @@ function AssignmentCardList({
                             currentSpace,
                             oldAssignment.person
                         );
-                        fetchProducts(viewingDate);
+                        fetchProducts();
                         assignmentUpdated = true;
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     } catch (error: any) {
@@ -245,7 +247,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 

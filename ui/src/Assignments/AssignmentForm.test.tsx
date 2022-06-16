@@ -28,6 +28,7 @@ import {setCurrentModalAction} from '../Redux/Actions';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
 
 describe('AssignmentForm', () => {
     beforeEach(() => {
@@ -39,11 +40,10 @@ describe('AssignmentForm', () => {
         it('should not show the unassigned or archived products in the product list', async () => {
             const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
             renderWithRedux(
-                <RecoilRoot>
-                    <AssignmentForm
-                        products={products}
-                        initiallySelectedProduct={products[0]}
-                    />
+                <RecoilRoot initializeState={({set}) => {
+                    set(ProductsState, products);
+                }}>
+                    <AssignmentForm initiallySelectedProduct={products[0]} />
                 </RecoilRoot>
             );
 
@@ -182,12 +182,10 @@ const renderComponent = (store: Store|undefined = undefined): { viewingDate: Dat
     };
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
-            set(ViewingDateState, viewingDate)
+            set(ViewingDateState, viewingDate);
+            set(ProductsState, products);
         }}>
-            <AssignmentForm
-                products={products}
-                initiallySelectedProduct={products[0]}
-            />
+            <AssignmentForm initiallySelectedProduct={products[0]} />
         </RecoilRoot>,
         store,
         initialState

@@ -24,6 +24,7 @@ import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
 
 describe('the assignment form', () => {
     beforeEach(() => {
@@ -33,11 +34,10 @@ describe('the assignment form', () => {
 
     it('renders the assignment form labels', () => {
         renderWithRedux(
-            <RecoilRoot>
-                <AssignmentForm
-                    products={[TestUtils.unassignedProduct]}
-                    initiallySelectedProduct={TestUtils.unassignedProduct}
-                />,
+            <RecoilRoot initializeState={(({set}) => {
+                set(ProductsState, [TestUtils.unassignedProduct])
+            })}>
+                <AssignmentForm initiallySelectedProduct={TestUtils.unassignedProduct} />,
             </RecoilRoot>
         );
         expect(screen.getByLabelText('Name')).toBeDefined();
@@ -52,11 +52,9 @@ describe('the assignment form', () => {
         renderWithRedux(
             <RecoilRoot initializeState={(({set}) => {
                 set(ViewingDateState, viewingDate)
+                set(ProductsState, products)
             })}>
-                <AssignmentForm
-                    products={products}
-                    initiallySelectedProduct={products[2]}
-                />,
+                <AssignmentForm initiallySelectedProduct={products[2]} />,
             </RecoilRoot>,
             undefined,
             initialState

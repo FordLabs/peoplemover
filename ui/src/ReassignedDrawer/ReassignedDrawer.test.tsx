@@ -27,6 +27,7 @@ import rootReducer from '../Redux/Reducers';
 import ProductClient from '../Products/ProductClient';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
 describe('ReassignedDrawer', () => {
     let store: Store;
@@ -55,7 +56,11 @@ describe('ReassignedDrawer', () => {
                     <RecoilRoot initializeState={({set}) => {
                         set(ViewingDateState, mayFourteen2020)
                     }}>
-                        <ReassignedDrawer/>
+                        <MemoryRouter initialEntries={['/bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']}>
+                            <Routes>
+                                <Route path="/:teamUUID" element={<ReassignedDrawer/>} />
+                            </Routes>
+                        </MemoryRouter>
                     </RecoilRoot>,
                     store
                 );

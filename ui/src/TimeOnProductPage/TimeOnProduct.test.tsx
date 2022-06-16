@@ -23,44 +23,43 @@ import TimeOnProduct, {
     sortTimeOnProductItems,
     TimeOnProductItem,
 } from './TimeOnProduct';
-import {MemoryRouter} from 'react-router-dom';
-import rootReducer from '../Redux/Reducers';
+import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {Product, UNASSIGNED} from '../Products/Product';
-import {cleanup, screen} from '@testing-library/react';
+import {cleanup, screen, waitFor} from '@testing-library/react';
 import {fireEvent} from '@testing-library/dom';
-import {applyMiddleware, createStore, Store} from 'redux';
+import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import {setCurrentModalAction} from '../Redux/Actions';
 import {AvailableModals} from '../Modal/AvailableModals';
 import thunk from 'redux-thunk';
-import {RecoilRoot} from 'recoil';
+import {MutableSnapshot, RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ProductsState} from '../State/ProductsState';
+import ProductClient from '../Products/ProductClient';
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: () => mockedUsedNavigate,
+}));
 
 describe('TimeOnProduct', () => {
+    let store: Store;
+
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
     describe('calculation', () => {
-        let store: Store;
-
-        beforeEach(() => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                products: [TestUtils.productForHank],
-            };
-            store = createStore(rootReducer, initialState);
-            store.dispatch = jest.fn();
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 0, 1))
-                    set(IsReadOnlyState, false)
-                }}>
-                    <TimeOnProduct/>
-                </RecoilRoot>,
-                store
-            );
+        beforeEach(async () => {
+            await renderTimeOnProduct({currentSpace: TestUtils.space }, ({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1))
+                set(IsReadOnlyState, false)
+                set(ProductsState, [TestUtils.productForHank])
+            })
         });
 
         it('should show 1 day spend on the project when viewingDate equal start date', async () => {
@@ -73,18 +72,23 @@ describe('TimeOnProduct', () => {
             cleanup();
             const initialState = {
                 currentSpace: TestUtils.space,
-                products: [TestUtils.productForHank],
             };
             store = createStore(rootReducer, initialState);
             store.dispatch = jest.fn();
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, new Date(2020, 0, 10))
+                    set(ProductsState, [TestUtils.productForHank])
                 }}>
-                    <TimeOnProduct/>
+                    <MemoryRouter initialEntries={['/team-uuid']}>
+                        <Routes>
+                            <Route path="/:teamUUID" element={<TimeOnProduct/>} />
+                        </Routes>
+                    </MemoryRouter>
                 </RecoilRoot>,
                 store
             );
+            await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalled())
 
             const list = await screen.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
             expect(list).toContainHTML('Hank');
@@ -105,27 +109,17 @@ describe('TimeOnProduct', () => {
     });
 
     describe(' redirect', () => {
-        let location: (string | Location) & Location;
-
-        beforeEach(() => {
-            location = window.location;
-            Reflect.deleteProperty(window, 'location');
-        });
-
-        afterEach(() => {
-            window.location = location;
-        });
-
         it('should redirect to the space page when there is no state', async () => {
-            window.location = {origin: 'https://localhost', pathname: '/uuid/timeonproduct'} as Location;
-            await renderWithRedux(
-                <MemoryRouter>
-                    <RecoilRoot>
-                        <TimeOnProduct/>
-                    </RecoilRoot>
-                </MemoryRouter>);
-
-            expect(window.location.href).toBe('https://localhost/uuid');
+            renderWithRedux(
+                <RecoilRoot>
+                    <MemoryRouter initialEntries={[`/${TestUtils.space.uuid}/timeonproduct`]}>
+                        <Routes>
+                            <Route path="/:teamUUID/timeonproduct" element={<TimeOnProduct/>} />
+                        </Routes>
+                    </MemoryRouter>
+                </RecoilRoot>
+            );
+            expect(mockedUsedNavigate).toHaveBeenCalledWith(`/${TestUtils.space.uuid}`);
         });
     });
 
@@ -231,7 +225,7 @@ describe('TimeOnProduct', () => {
     });
 
     describe('Loading', () => {
-        xit('should show loading state', async () => {
+        it('should show loading state', async () => {
             const initialState = {
                 currentSpace: TestUtils.space,
             };
@@ -242,23 +236,31 @@ describe('TimeOnProduct', () => {
     });
 
     describe('View Only', () => {
-        it('person name button should be disabled', () => {
-            const initialState = {
-                currentSpace: TestUtils.space,
-                products: [TestUtils.productForHank],
-            };
-            const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, new Date(2020, 0, 1))
-                    set(IsReadOnlyState, true)
-                }}>
-                    <TimeOnProduct/>
-                </RecoilRoot>,
-                store
-            );
+        it('person name button should be disabled', async () => {
+            ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: [TestUtils.productForHank] })
+            await renderTimeOnProduct({ currentSpace: TestUtils.space }, ({set}) => {
+                set(ViewingDateState, new Date(2020, 0, 1))
+                set(IsReadOnlyState, true)
+            })
+            await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalled())
             const hank = screen.getByText(TestUtils.hank.name);
             expect(hank).toBeDisabled();
         });
     });
+
+    async function renderTimeOnProduct(initialState?:  PreloadedState<Partial<GlobalStateProps>>, initializeState?: (mutableSnapshot: MutableSnapshot) => void) {
+        store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+        store.dispatch = jest.fn()
+        renderWithRedux(
+            <RecoilRoot initializeState={initializeState}>
+                <MemoryRouter initialEntries={[`/${TestUtils.space.uuid}/timeonproduct`]}>
+                    <Routes>
+                        <Route path="/:teamUUID/timeonproduct" element={<TimeOnProduct/>} />
+                    </Routes>
+                </MemoryRouter>
+            </RecoilRoot>,
+            store
+        );
+        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalled())
+    }
 });

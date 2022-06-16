@@ -25,6 +25,7 @@ import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries
 import {MutableSnapshot, RecoilRoot} from 'recoil';
 import configureStore from 'redux-mock-store';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ProductsState} from '../State/ProductsState';
 
 describe('Product List', () => {
     beforeEach(async () => {
@@ -52,12 +53,13 @@ describe('Product List', () => {
             products.push(productWithAnnArborLocation);
 
             const initialState = {
-                products: products,
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 currentSpace: TestUtils.space,
             };
-            renderProductList(initialState);
+            renderProductList(initialState, ({set}) => {
+                set(ProductsState, products)
+            });
 
             await screen.findByText(TestUtils.productForHank.name);
             await screen.findByText(productWithAnnArborLocation.name);
@@ -81,13 +83,13 @@ describe('Product List', () => {
             products.push(productWithAnnArborLocation);
 
             const initialState = {
-                products: products,
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
                 currentSpace: TestUtils.space,
             };
             renderProductList(initialState, ({set}) => {
                 set(IsReadOnlyState, true)
+                set(ProductsState, products)
             });
 
             await screen.findByText(TestUtils.productForHank.name);
@@ -121,12 +123,13 @@ describe('Product List', () => {
             ];
 
             const initialState = {
-                products: TestUtils.products,
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 currentSpace: TestUtils.space,
             };
-            renderProductList(initialState);
+            renderProductList(initialState, ({set}) => {
+                set(ProductsState, TestUtils.products)
+            });
 
             await screen.findByText(TestUtils.productWithAssignments.name);
             expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
@@ -157,13 +160,13 @@ describe('Product List', () => {
             ];
 
             const initialState = {
-                products: TestUtils.products,
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 currentSpace: TestUtils.space,
             };
             renderProductList(initialState, ({set}) => {
                 set(IsReadOnlyState, true)
+                set(ProductsState, TestUtils.products)
             });
 
             await screen.findByText(TestUtils.productWithAssignments.name);
@@ -196,12 +199,13 @@ describe('Product List', () => {
             ];
 
             const initialState = {
-                products: TestUtils.products,
                 productTags: TestUtils.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
                 currentSpace: TestUtils.space,
             };
-            renderProductList(initialState);
+            renderProductList(initialState, ({set}) => {
+                set(ProductsState, TestUtils.products)
+            });
 
             await screen.findByText(TestUtils.productWithoutAssignments.name);
             expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);

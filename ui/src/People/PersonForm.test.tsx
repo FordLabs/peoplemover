@@ -30,6 +30,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import moment from 'moment';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
 
 declare let window: MatomoWindow;
 
@@ -53,11 +54,9 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products)
                 }}>
-                    <PersonForm
-                        isEditPersonForm={false}
-                        products={TestUtils.products}
-                    />
+                    <PersonForm isEditPersonForm={false}/>
                 </RecoilRoot>,
                 store
             );
@@ -102,21 +101,22 @@ describe('Person Form', () => {
             ({unmount} = renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, [
+                        ...TestUtils.products,
+                        {
+                            id: 500,
+                            name: 'Already Closed Product',
+                            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                            startDate: '2011-01-01',
+                            endDate: '2011-02-02',
+                            assignments: [],
+                            archived: false,
+                            tags: [],
+                        }
+                    ]);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={[...TestUtils.products,
-                            {
-                                id: 500,
-                                name: 'Already Closed Product',
-                                spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-                                startDate: '2011-01-01',
-                                endDate: '2011-02-02',
-                                assignments: [],
-                                archived: false,
-                                tags: [],
-                            }]
-                        }
                         initiallySelectedProduct={TestUtils.productForHank}
                         initialPersonName={TestUtils.hank.name}
                         personEdited={TestUtils.hank}
@@ -156,10 +156,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         personEdited={TestUtils.unassignedPerson}
                     />
                 </RecoilRoot>,
@@ -176,10 +176,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         personEdited={TestUtils.archivedPerson}
                     />
                 </RecoilRoot>,
@@ -194,10 +194,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         personEdited={TestUtils.hank}
                     />
@@ -218,10 +218,10 @@ describe('Person Form', () => {
             const personForm =  renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         initialPersonName={TestUtils.hank.name}
                         personEdited={TestUtils.hank}
@@ -245,10 +245,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         initialPersonName={TestUtils.hank.name}
                         personEdited={TestUtils.hank}
@@ -276,10 +276,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, [TestUtils.unassignedProduct, TestUtils.productWithoutAssignments]);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={[TestUtils.unassignedProduct, TestUtils.productWithoutAssignments]}
                         personEdited={TestUtils.archivedPerson}
                     />
                 </RecoilRoot>,
@@ -314,10 +314,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         personEdited={TestUtils.hank}
                     />
@@ -337,10 +337,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         personEdited={newHank}
                     />
@@ -360,10 +360,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         personEdited={newHank}
                     />
@@ -382,10 +382,10 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
+                    set(ProductsState, TestUtils.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        products={TestUtils.products}
                         initiallySelectedProduct={TestUtils.productForHank}
                         personEdited={TestUtils.hank}
                     />
