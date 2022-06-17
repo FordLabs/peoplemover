@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import RoleClient from './RoleClient';
-import TestUtils from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import Cookies from 'universal-cookie';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 
@@ -38,20 +38,11 @@ describe('Role Client', function() {
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-        Axios.post = jest.fn(x => Promise.resolve({
-            data: 'Created Role',
-        } as AxiosResponse)) as any;
-        Axios.put = jest.fn(x => Promise.resolve({
-            data: 'Updated Role',
-        } as AxiosResponse)) as any;
-        Axios.delete = jest.fn(x => Promise.resolve({
-            data: 'Deleted Role',
-        } as AxiosResponse)) as any;
-        Axios.get = jest.fn(x => Promise.resolve({
-            data: 'Get Roles',
-        } as AxiosResponse)) as any;
-        /* eslint-enable */
+
+        Axios.post = jest.fn().mockResolvedValue({ data: 'Created Role' });
+        Axios.put = jest.fn().mockResolvedValue({ data: 'Updated Role' });
+        Axios.delete = jest.fn().mockResolvedValue({ data: 'Deleted Role' });
+        Axios.get = jest.fn().mockResolvedValue({ data: 'Get Roles' });
     });
 
     afterEach(function() {
@@ -70,10 +61,10 @@ describe('Role Client', function() {
     });
 
     it('should create a role and send matomo event and return that role', function(done) {
-        const expectedRoleAddRequest = { name: TestUtils.softwareEngineer.name };
-        RoleClient.add(expectedRoleAddRequest, TestUtils.space)
+        const expectedRoleAddRequest = { name: TestData.softwareEngineer.name };
+        RoleClient.add(expectedRoleAddRequest, TestData.space)
             .then((response) => {
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addRole', TestUtils.softwareEngineer.name]);
+                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'addRole', TestData.softwareEngineer.name]);
                 expect(Axios.post).toHaveBeenCalledWith(
                     baseRolesUrl, expectedRoleAddRequest, expectedConfig
                 );
@@ -84,13 +75,13 @@ describe('Role Client', function() {
 
     it('should edit a role and event and return that role', function(done) {
         const expectedRoleEditRequest = {
-            id: TestUtils.softwareEngineer.id,
-            name: TestUtils.softwareEngineer.name,
+            id: TestData.softwareEngineer.id,
+            name: TestData.softwareEngineer.name,
         };
-        RoleClient.edit(expectedRoleEditRequest, TestUtils.space)
+        RoleClient.edit(expectedRoleEditRequest, TestData.space)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(
-                    `${baseRolesUrl}/${TestUtils.softwareEngineer.id}`, expectedRoleEditRequest, expectedConfig
+                    `${baseRolesUrl}/${TestData.softwareEngineer.id}`, expectedRoleEditRequest, expectedConfig
                 );
                 expect(response.data).toBe('Updated Role');
                 done();
@@ -98,8 +89,8 @@ describe('Role Client', function() {
     });
 
     it('should delete a role', function(done) {
-        const expectedUrl = `${baseRolesUrl}/${TestUtils.softwareEngineer.id}`;
-        RoleClient.delete(TestUtils.softwareEngineer.id, TestUtils.space)
+        const expectedUrl = `${baseRolesUrl}/${TestData.softwareEngineer.id}`;
+        RoleClient.delete(TestData.softwareEngineer.id, TestData.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Role');

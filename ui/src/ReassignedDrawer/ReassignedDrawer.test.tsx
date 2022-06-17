@@ -18,6 +18,7 @@
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import ReassignedDrawer from './ReassignedDrawer';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
@@ -40,15 +41,15 @@ describe('ReassignedDrawer', () => {
             TestUtils.mockClientCalls();
             AssignmentClient.getReassignments = jest.fn().mockResolvedValue( {
                 data: [{
-                    person: TestUtils.archivedPerson,
+                    person: TestData.archivedPerson,
                     originProductName: fromProductName,
                     destinationProductName: 'unassigned',
                 }],
             });
 
             store = createStore(rootReducer, {
-                currentSpace: TestUtils.space,
-                people: TestUtils.people,
+                currentSpace: TestData.space,
+                people: TestData.people,
             }, applyMiddleware(thunk));
 
             await waitFor(async () => {
@@ -68,8 +69,8 @@ describe('ReassignedDrawer', () => {
         });
 
         it('should show that they have been archived', async () => {
-            expect(await screen.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
-            expect(await screen.findByText(TestUtils.archivedPerson.spaceRole!.name)).toBeInTheDocument();
+            expect(await screen.findByText(TestData.archivedPerson.name)).toBeInTheDocument();
+            expect(await screen.findByText(TestData.archivedPerson.spaceRole!.name)).toBeInTheDocument();
             expect(await screen.findByText(/Product 1/)).toBeInTheDocument();
             expect(await screen.queryByText(/unassigned/)).not.toBeInTheDocument();
             expect(await screen.findByText(/archived/)).toBeInTheDocument();
@@ -77,19 +78,19 @@ describe('ReassignedDrawer', () => {
 
         it('should unarchive an archived person that gets reverted', async () => {
             AssignmentClient.deleteAssignmentForDate = jest.fn().mockResolvedValue({ data: []});
-            PeopleClient.updatePerson = jest.fn().mockResolvedValue({data: {...TestUtils.archivedPerson, archiveDate: null}});
+            PeopleClient.updatePerson = jest.fn().mockResolvedValue({data: {...TestData.archivedPerson, archiveDate: null}});
             const revertButton = await screen.findByText('Revert');
             await waitFor(() => {
                 fireEvent.click(revertButton);
             });
             expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledTimes(1);
-            expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledWith(mayFourteen2020, TestUtils.archivedPerson);
+            expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledWith(mayFourteen2020, TestData.archivedPerson);
             expect(PeopleClient.updatePerson).toHaveBeenCalledTimes(1);
-            expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, {...TestUtils.archivedPerson, archiveDate: undefined}, []);
+            expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestData.space, {...TestData.archivedPerson, archiveDate: undefined}, []);
             expect(ProductClient.getProductsForDate).toHaveBeenCalledTimes(1);
-            expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestUtils.space.uuid, mayFourteen2020);
+            expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestData.space.uuid, mayFourteen2020);
             expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledTimes(1);
-            expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(TestUtils.space.uuid);
+            expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(TestData.space.uuid);
         });
     });
 });

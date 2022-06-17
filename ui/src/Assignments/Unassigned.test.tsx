@@ -18,6 +18,7 @@
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {Product} from '../Products/Product';
 import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
@@ -75,14 +76,14 @@ describe('Unassigned Products', () => {
                         { label: 'Role Tags:', options: []},
                         { label: 'Person Tags:', options: []},
                     ],
-                    currentSpace: TestUtils.space,
+                    currentSpace: TestData.space,
                 }
             );
         }
 
         it('hides the number of unassigned people when there are less than 1', async () => {
             const emptyUnassignedProduct: Product = {
-                ...TestUtils.unassignedProduct,
+                ...TestData.unassignedProduct,
                 assignments: [],
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
             };
@@ -92,15 +93,15 @@ describe('Unassigned Products', () => {
         });
 
         it('does not show archived people as unassigned', async () => {
-            renderWithUnassignedProduct( [TestUtils.unassignedProduct])
+            renderWithUnassignedProduct( [TestData.unassignedProduct])
 
-            await waitFor(() => expect(screen.queryByText(TestUtils.archivedPerson.name)).toBeNull());
+            await waitFor(() => expect(screen.queryByText(TestData.archivedPerson.name)).toBeNull());
         });
 
         it('should show an archived person as unassigned if their archive date has not passed', async () => {
-            const product = {...TestUtils.unassignedProduct, assignments:[TestUtils.assignmentForHank]};
+            const product = {...TestData.unassignedProduct, assignments:[TestData.assignmentForHank]};
             renderWithUnassignedProduct( [product])
-            screen.getByText(TestUtils.hank.name);
+            screen.getByText(TestData.hank.name);
         });
     });
 
@@ -128,7 +129,7 @@ describe('Unassigned Products', () => {
     });
 
     describe('Edit menus', () => {
-        const initialState = {people: TestUtils.people, productTags: [TestUtils.productTag1]};
+        const initialState = {people: TestData.people, productTags: [TestData.productTag1]};
 
         beforeEach(async () => {
             jest.clearAllMocks();
@@ -145,7 +146,7 @@ describe('Unassigned Products', () => {
             fireEvent.click(editUnassignment);
 
             const unassignedPersonName: HTMLInputElement = await screen.findByLabelText('Name') as HTMLInputElement;
-            expect(unassignedPersonName.value).toEqual(TestUtils.unassignedPerson.name);
+            expect(unassignedPersonName.value).toEqual(TestData.unassignedPerson.name);
         });
 
         // @todo should be a cypress test
@@ -157,7 +158,7 @@ describe('Unassigned Products', () => {
             fireEvent.click(editUnassignment);
 
             const unassignedPersonName = await screen.findByLabelText('Name');
-            expect(unassignedPersonName).toHaveValue(TestUtils.unassignedPerson.name);
+            expect(unassignedPersonName).toHaveValue(TestData.unassignedPerson.name);
 
             const closeForm = await screen.findByTestId('modalCloseButton');
             fireEvent.click(closeForm);
@@ -171,7 +172,7 @@ describe('Unassigned Products', () => {
             fireEvent.click(editPerson1);
 
             const person1Name = await screen.findByLabelText('Name');
-            expect(person1Name).toHaveValue(TestUtils.assignmentForPerson1.person.name);
+            expect(person1Name).toHaveValue(TestData.assignmentForPerson1.person.name);
         });
     });
 });

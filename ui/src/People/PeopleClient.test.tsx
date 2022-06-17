@@ -17,7 +17,7 @@
 
 import Axios from 'axios';
 import PeopleClient from './PeopleClient';
-import TestUtils from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import Cookies from 'universal-cookie';
 import {Person} from './Person';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
@@ -27,7 +27,7 @@ jest.mock('axios');
 declare let window: MatomoWindow;
 
 describe('People Client', function() {
-    const uuid = TestUtils.space.uuid || '';
+    const uuid = TestData.space.uuid || '';
     const basePeopleUrl = `/api/spaces/${uuid}/people`;
     const cookies = new Cookies();
 
@@ -69,8 +69,8 @@ describe('People Client', function() {
     });
 
     it('should create a person and return that person', function(done) {
-        const newPerson = TestUtils.person1;
-        PeopleClient.createPersonForSpace(TestUtils.space, newPerson, [])
+        const newPerson = TestData.person1;
+        PeopleClient.createPersonForSpace(TestData.space, newPerson, [])
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(basePeopleUrl, newPerson, expectedConfig);
                 expect(response.data).toBe('Created Person');
@@ -79,9 +79,9 @@ describe('People Client', function() {
     });
 
     it('should edit a person and return that person', function(done) {
-        const updatedPerson = TestUtils.person1;
+        const updatedPerson = TestData.person1;
         const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
-        PeopleClient.updatePerson(TestUtils.space, updatedPerson, [])
+        PeopleClient.updatePerson(TestData.space, updatedPerson, [])
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson, expectedConfig);
                 expect(response.data).toBe('Updated Person');
@@ -90,18 +90,18 @@ describe('People Client', function() {
     });
 
     it('should archive a person on today', function(done) {
-        const archivedPerson = TestUtils.person1;
+        const archivedPerson = TestData.person1;
         const archiveDate = new Date(2020, 0, 2);
         const expectedUrl = basePeopleUrl + `/${archivedPerson.id}/archive`;
-        PeopleClient.archivePerson(TestUtils.space, archivedPerson, archiveDate).then((response) => {
+        PeopleClient.archivePerson(TestData.space, archivedPerson, archiveDate).then(() => {
             expect(Axios.post).toHaveBeenCalledWith(expectedUrl, {archiveDate: archiveDate}, expectedConfig);
             done();
         });
     });
 
     it('should delete a person', function(done) {
-        const expectedUrl = basePeopleUrl + `/${TestUtils.person1.id}`;
-        PeopleClient.removePerson(uuid, TestUtils.person1.id)
+        const expectedUrl = basePeopleUrl + `/${TestData.person1.id}`;
+        PeopleClient.removePerson(uuid, TestData.person1.id)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Person');
@@ -116,7 +116,7 @@ describe('People Client', function() {
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
             id: -1,
             name: expectedName,
-            spaceRole: TestUtils.softwareEngineer,
+            spaceRole: TestData.softwareEngineer,
             newPerson: false,
             tags: [],
         };
@@ -135,9 +135,9 @@ describe('People Client', function() {
         });
 
         it('should send an event to matomo when a person is created', async () => {
-            await PeopleClient.createPersonForSpace(TestUtils.space, person, ['bob']);
-            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addPerson', expectedName]);
-            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPersonTagToANewPerson', 'bob']);
+            await PeopleClient.createPersonForSpace(TestData.space, person, ['bob']);
+            expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'addPerson', expectedName]);
+            expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'assignPersonTagToANewPerson', 'bob']);
         });
     });
 });

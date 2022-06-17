@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import PersonTag from './PersonTagClient';
-import TestUtils from '../../Utils/TestUtils';
+import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
 import {MatomoWindow} from '../../CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 
 describe('Person Tags Client', function() {
-    const spaceUuid = TestUtils.space.uuid;
+    const spaceUuid = TestData.space.uuid || '';
     const basePersonTagsUrl = `/api/spaces/${spaceUuid}/person-tags`;
     const expectedConfig = {
         headers: {
@@ -34,27 +34,15 @@ describe('Person Tags Client', function() {
     };
     const cookies = new Cookies();
 
-    let originalWindow: Window;
+    let originalWindow: MatomoWindow;
 
     beforeEach(() => {
         cookies.set('accessToken', '123456');
 
-        // @ts-ignore
-        Axios.post = jest.fn(x => Promise.resolve({
-            data: 'Created Person Tag',
-        } as AxiosResponse));
-        // @ts-ignore
-        Axios.put = jest.fn(x => Promise.resolve({
-            data: 'Updated Person Tag',
-        } as AxiosResponse));
-        // @ts-ignore
-        Axios.delete = jest.fn(x => Promise.resolve({
-            data: 'Deleted Person Tag',
-        } as AxiosResponse));
-        // @ts-ignore
-        Axios.get = jest.fn(x => Promise.resolve({
-            data: 'Get Person Tags',
-        } as AxiosResponse));
+        Axios.post = jest.fn().mockResolvedValue({ data: 'Created Person Tag' });
+        Axios.put = jest.fn().mockResolvedValue({ data: 'Updated Person Tag' });
+        Axios.delete = jest.fn().mockResolvedValue({ data: 'Deleted Person Tag' });
+        Axios.get = jest.fn().mockResolvedValue({ data: 'Get Person Tags' });
 
         originalWindow = window;
         window._paq = [];
@@ -62,11 +50,11 @@ describe('Person Tags Client', function() {
 
     afterEach(() => {
         cookies.remove('accessToken');
+        window = originalWindow;
     });
 
     it('should return all person tags for space', function(done) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        PersonTag.get(spaceUuid!)
+        PersonTag.get(spaceUuid)
             .then((response) => {
                 expect(Axios.get).toHaveBeenCalledWith(basePersonTagsUrl, expectedConfig);
                 expect(response.data).toBe('Get Person Tags');
@@ -76,11 +64,11 @@ describe('Person Tags Client', function() {
     });
 
     it('should create a person tag, return that person tag, and send a `person tag created` event to Matomo', function(done) {
-        const expectedPersonAddRequest = { name: TestUtils.personTag1.name };
-        PersonTag.add(expectedPersonAddRequest, TestUtils.space)
+        const expectedPersonAddRequest = { name: TestData.personTag1.name };
+        PersonTag.add(expectedPersonAddRequest, TestData.space)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(basePersonTagsUrl, expectedPersonAddRequest, expectedConfig);
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'addPersonTag', TestUtils.personTag1.name]);
+                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'addPersonTag', TestData.personTag1.name]);
                 expect(response.data).toBe('Created Person Tag');
                 done();
             });
@@ -88,20 +76,20 @@ describe('Person Tags Client', function() {
 
     it('should edit a person tag and return that person tag', function(done) {
         const expectedPersonEditRequest = {
-            id: TestUtils.personTag1.id,
-            name: TestUtils.personTag1.name,
+            id: TestData.personTag1.id,
+            name: TestData.personTag1.name,
         };
-        PersonTag.edit(expectedPersonEditRequest, TestUtils.space)
+        PersonTag.edit(expectedPersonEditRequest, TestData.space)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(`${basePersonTagsUrl}/${TestUtils.personTag1.id}`, expectedPersonEditRequest, expectedConfig);
+                expect(Axios.put).toHaveBeenCalledWith(`${basePersonTagsUrl}/${TestData.personTag1.id}`, expectedPersonEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Person Tag');
                 done();
             });
     });
 
     it('should delete a person tag', function(done) {
-        const expectedUrl = `${basePersonTagsUrl}/${TestUtils.personTag1.id}`;
-        PersonTag.delete(TestUtils.personTag1.id, TestUtils.space)
+        const expectedUrl = `${basePersonTagsUrl}/${TestData.personTag1.id}`;
+        PersonTag.delete(TestData.personTag1.id, TestData.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Person Tag');

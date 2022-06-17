@@ -17,6 +17,7 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import TimeOnProduct, {
     generateTimeOnProductItems,
     LOADING,
@@ -55,15 +56,15 @@ describe('TimeOnProduct', () => {
 
     describe('calculation', () => {
         beforeEach(async () => {
-            await renderTimeOnProduct({currentSpace: TestUtils.space }, ({set}) => {
+            await renderTimeOnProduct({currentSpace: TestData.space }, ({set}) => {
                 set(ViewingDateState, new Date(2020, 0, 1))
                 set(IsReadOnlyState, false)
-                set(ProductsState, [TestUtils.productForHank])
+                set(ProductsState, [TestData.productForHank])
             })
         });
 
         it('should show 1 day spend on the project when viewingDate equal start date', async () => {
-            const list = await screen.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
+            const list = await screen.getByTestId(TestData.productForHank.assignments[0].id.toString());
             expect(list).toContainHTML('Hank');
             expect(list).toContainHTML('1 day');
         });
@@ -71,14 +72,14 @@ describe('TimeOnProduct', () => {
         it('should show the number of days on the project since selected viewingDate', async () => {
             cleanup();
             const initialState = {
-                currentSpace: TestUtils.space,
+                currentSpace: TestData.space,
             };
             store = createStore(rootReducer, initialState);
             store.dispatch = jest.fn();
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, new Date(2020, 0, 10))
-                    set(ProductsState, [TestUtils.productForHank])
+                    set(ProductsState, [TestData.productForHank])
                 }}>
                     <MemoryRouter initialEntries={['/team-uuid']}>
                         <Routes>
@@ -90,19 +91,19 @@ describe('TimeOnProduct', () => {
             );
             await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalled())
 
-            const list = await screen.getByTestId(TestUtils.productForHank.assignments[0].id.toString());
+            const list = await screen.getByTestId(TestData.productForHank.assignments[0].id.toString());
             expect(list).toContainHTML('Hank');
             expect(list).toContainHTML('10 days');
         });
 
         it('should make the call to open the Edit Person modal when person name is clicked', async () => {
-            const hank = screen.getByText(TestUtils.hank.name);
+            const hank = screen.getByText(TestData.hank.name);
             expect(hank).toBeEnabled();
             fireEvent.click(hank);
             expect(store.dispatch).toHaveBeenCalledWith(
                 setCurrentModalAction({
                     modal: AvailableModals.EDIT_PERSON,
-                    item: TestUtils.hank,
+                    item: TestData.hank,
                 })
             );
         });
@@ -112,14 +113,14 @@ describe('TimeOnProduct', () => {
         it('should redirect to the space page when there is no state', async () => {
             renderWithRedux(
                 <RecoilRoot>
-                    <MemoryRouter initialEntries={[`/${TestUtils.space.uuid}/timeonproduct`]}>
+                    <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
                         <Routes>
                             <Route path="/:teamUUID/timeonproduct" element={<TimeOnProduct/>} />
                         </Routes>
                     </MemoryRouter>
                 </RecoilRoot>
             );
-            expect(mockedUsedNavigate).toHaveBeenCalledWith(`/${TestUtils.space.uuid}`);
+            expect(mockedUsedNavigate).toHaveBeenCalledWith(`/${TestData.space.uuid}`);
         });
     });
 
@@ -129,13 +130,13 @@ describe('TimeOnProduct', () => {
                 id: 999,
                 name: UNASSIGNED,
                 spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-                assignments: [TestUtils.assignmentForUnassigned, TestUtils.assignmentForUnassignedNoRole],
+                assignments: [TestData.assignmentForUnassigned, TestData.assignmentForUnassignedNoRole],
                 startDate: '',
                 endDate: '',
                 archived: false,
                 tags: [],
             };
-            const products = [TestUtils.productForHank, unassignedProduct];
+            const products = [TestData.productForHank, unassignedProduct];
             const viewingDate = new Date(2020, 0, 10);
             const timeOnProductItems = generateTimeOnProductItems(products, viewingDate);
 
@@ -227,7 +228,7 @@ describe('TimeOnProduct', () => {
     describe('Loading', () => {
         it('should show loading state', async () => {
             const initialState = {
-                currentSpace: TestUtils.space,
+                currentSpace: TestData.space,
             };
             const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
             renderWithRedux(<RecoilRoot><TimeOnProduct/></RecoilRoot>, store);
@@ -237,13 +238,13 @@ describe('TimeOnProduct', () => {
 
     describe('View Only', () => {
         it('person name button should be disabled', async () => {
-            ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: [TestUtils.productForHank] })
-            await renderTimeOnProduct({ currentSpace: TestUtils.space }, ({set}) => {
+            ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: [TestData.productForHank] })
+            await renderTimeOnProduct({ currentSpace: TestData.space }, ({set}) => {
                 set(ViewingDateState, new Date(2020, 0, 1))
                 set(IsReadOnlyState, true)
             })
             await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalled())
-            const hank = screen.getByText(TestUtils.hank.name);
+            const hank = screen.getByText(TestData.hank.name);
             expect(hank).toBeDisabled();
         });
     });
@@ -253,7 +254,7 @@ describe('TimeOnProduct', () => {
         store.dispatch = jest.fn()
         renderWithRedux(
             <RecoilRoot initializeState={initializeState}>
-                <MemoryRouter initialEntries={[`/${TestUtils.space.uuid}/timeonproduct`]}>
+                <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
                     <Routes>
                         <Route path="/:teamUUID/timeonproduct" element={<TimeOnProduct/>} />
                     </Routes>

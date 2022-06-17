@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-import TestUtils from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {findByText, fireEvent} from '@testing-library/dom';
 import {act, screen} from '@testing-library/react';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 import LocationClient from '../Locations/LocationClient';
+import TestUtils from '../Utils/TestUtils';
 
 describe('Filter products', () => {
     class MockLocalStorage {
@@ -32,10 +33,10 @@ describe('Filter products', () => {
     }
 
     const filters: LocalStorageFilters = {
-        locationTagsFilters: [TestUtils.annarbor.name],
-        productTagsFilters: [TestUtils.productTag1.name],
-        roleTagsFilters: [TestUtils.roles[0].name],
-        personTagsFilters: [TestUtils.personTag1.name],
+        locationTagsFilters: [TestData.annarbor.name],
+        productTagsFilters: [TestData.productTag1.name],
+        roleTagsFilters: [TestData.roles[0].name],
+        personTagsFilters: [TestData.personTag1.name],
     };
 
     beforeEach(() => {
@@ -57,7 +58,7 @@ describe('Filter products', () => {
     });
 
     it('should show unedited location tags in the filter as checked from local storage', async () => {
-        filters.locationTagsFilters.push(TestUtils.detroit.name);
+        filters.locationTagsFilters.push(TestData.detroit.name);
         localStorage.setItem('filters', JSON.stringify(filters));
 
         await TestUtils.renderPeopleMoverComponent();
@@ -74,7 +75,7 @@ describe('Filter products', () => {
         LocationClient.get = jest.fn().mockResolvedValue({
             data: [
                 {id: 1, name: 'Saline', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'},
-                TestUtils.detroit, TestUtils.dearborn, TestUtils.southfield,
+                TestData.detroit, TestData.dearborn, TestData.southfield,
             ],
         })
 
@@ -91,8 +92,8 @@ describe('Filter products', () => {
         expect(instancesOfSaline.length).toEqual(2);
 
         const tagFiltersAfterUpdate = JSON.parse(localStorage.getItem('filters') || '');
-        expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(TestUtils.detroit.name);
+        expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(TestData.detroit.name);
         expect(tagFiltersAfterUpdate.locationTagsFilters).toContain(updatedLocation);
-        expect(tagFiltersAfterUpdate.locationTagsFilters).not.toContain(TestUtils.annarbor.name);
+        expect(tagFiltersAfterUpdate.locationTagsFilters).not.toContain(TestData.annarbor.name);
     });
 });

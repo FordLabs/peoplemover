@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {screen} from '@testing-library/react';
 import MyTagsForm from './MyTagsForm';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
@@ -25,27 +26,27 @@ import {GlobalStateProps} from '../Redux/Reducers';
 
 describe('My Tags Form', () => {
     const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-        productTags: TestUtils.productTags,
-        locations: TestUtils.locations,
-        allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-        currentSpace: TestUtils.space,
+        productTags: TestData.productTags,
+        locations: TestData.locations,
+        allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
+        currentSpace: TestData.space,
     };
 
     it('should only display location tags when the passed-in filter type is location tags', async () => {
         renderWithRedux(<MyTagsForm filterType={FilterTypeListings.Location}/>, undefined, initialState);
 
-        await screen.findByText( TestUtils.annarbor.name);
-        await screen.findByText( TestUtils.detroit.name);
-        await screen.findByText( TestUtils.dearborn.name);
-        await screen.findByText( TestUtils.southfield.name);
+        await screen.findByText( TestData.annarbor.name);
+        await screen.findByText( TestData.detroit.name);
+        await screen.findByText( TestData.dearborn.name);
+        await screen.findByText( TestData.southfield.name);
     });
 
     it('should only display product tags when the passed-in filter type is product tags', async () => {
         renderWithRedux(<MyTagsForm filterType={FilterTypeListings.ProductTag}/>, undefined, initialState);
 
-        await screen.findByText(TestUtils.productTag1.name);
-        await screen.findByText(TestUtils.productTag2.name);
-        await screen.findByText(TestUtils.productTag3.name);
-        await screen.findByText(TestUtils.productTag4.name);
+        await screen.findByText(TestData.productTag1.name);
+        await screen.findByText(TestData.productTag2.name);
+        await screen.findByText(TestData.productTag3.name);
+        await screen.findByText(TestData.productTag4.name);
     });
 });

@@ -20,6 +20,7 @@ import {fireEvent, screen, waitFor} from '@testing-library/react';
 import {axe, toHaveNoViolations} from 'jest-axe';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {RunConfig} from '../index';
 import {MemoryRouter} from 'react-router-dom';
 import flagsmith from 'flagsmith';
@@ -29,7 +30,7 @@ const debounceTimeToWait = 100;
 expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
-    const initialState = {currentSpace: TestUtils.space };
+    const initialState = {currentSpace: TestData.space };
     let location: (string | Location) & Location;
 
     beforeEach(() => {

@@ -16,7 +16,8 @@
  */
 import React from 'react';
 import {screen} from '@testing-library/react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
@@ -30,8 +31,8 @@ const product: Product = {
     spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
     startDate: '2011-01-01',
     endDate: '2022-02-02',
-    spaceLocation: TestUtils.southfield,
-    assignments: TestUtils.assignmentsFilterTest,
+    spaceLocation: TestData.southfield,
+    assignments: TestData.assignmentsFilterTest,
     archived: false,
     tags: [],
     notes: '',
@@ -88,7 +89,7 @@ const setupComponent = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOpt
         undefined,
         {
             allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-            currentSpace: TestUtils.space,
+            currentSpace: TestData.space,
         }
     );
 }

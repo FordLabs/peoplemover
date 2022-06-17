@@ -15,7 +15,8 @@
  *  limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import rootReducer from '../Redux/Reducers';
@@ -37,7 +38,7 @@ Object.assign(navigator, {
 });
 
 describe('View Only Access Form Section', () => {
-    const testSpace = TestUtils.space;
+    const testSpace = TestData.space;
     const testSpaceWithViewOnlyOn = {...testSpace, todayViewIsPublic: true};
     const testSpaceWithViewOnlyOff = {...testSpace, todayViewIsPublic: false};
     const expectedUrl = 'https://some-url';
@@ -83,7 +84,7 @@ describe('View Only Access Form Section', () => {
         });
 
         expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl);
-        expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'readOnlyLinkCopied', '']);
+        expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'readOnlyLinkCopied', '']);
     });
 
     it('should should change text on copy', async () => {

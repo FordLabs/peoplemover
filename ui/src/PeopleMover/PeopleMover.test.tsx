@@ -16,6 +16,7 @@
  */
 
 import TestUtils from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import rootReducer from '../Redux/Reducers';
@@ -52,14 +53,14 @@ describe('PeopleMover', () => {
     describe('Read Only Mode', function() {
         beforeEach(async () => {
             const initialState = {
-                currentSpace: TestUtils.space,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+                currentSpace: TestData.space,
+                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
             };
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
             await TestUtils.renderPeopleMoverComponent(store, initialState, ({set}) => {
                 set(IsReadOnlyState, true);
-                set(ProductsState, TestUtils.products);
+                set(ProductsState, TestData.products);
             });
         });
 
@@ -78,7 +79,7 @@ describe('PeopleMover', () => {
         it('should trigger a matomo read-only visit event each time the current space changes', () => {
             const nextSpace = {...createEmptySpace(), name: 'newSpace'};
 
-            expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'viewOnlyVisit', '']);
+            expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'viewOnlyVisit', '']);
             expect(window._paq).not.toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
             expect(getEventCount('viewOnlyVisit')).toEqual(1);
 
@@ -188,9 +189,9 @@ describe('PeopleMover', () => {
         });
 
         it('should display products', async () => {
-            await screen.findAllByText(TestUtils.productWithAssignments.name);
-            await screen.findAllByText(TestUtils.productWithoutAssignments.name);
-            await screen.findAllByText(TestUtils.productForHank.name);
+            await screen.findAllByText(TestData.productWithAssignments.name);
+            await screen.findAllByText(TestData.productWithoutAssignments.name);
+            await screen.findAllByText(TestData.productForHank.name);
         });
 
         it('should sort products by name by default',  async () => {
@@ -198,10 +199,10 @@ describe('PeopleMover', () => {
             const actualProductNames = productNameElements.map((element) => element.innerHTML);
             expect(actualProductNames).toEqual(
                 [
-                    TestUtils.productWithoutLocation.name,
-                    TestUtils.productForHank.name,
-                    TestUtils.productWithAssignments.name,
-                    TestUtils.productWithoutAssignments.name,
+                    TestData.productWithoutLocation.name,
+                    TestData.productForHank.name,
+                    TestData.productWithAssignments.name,
+                    TestData.productWithoutAssignments.name,
                 ]
             );
         });

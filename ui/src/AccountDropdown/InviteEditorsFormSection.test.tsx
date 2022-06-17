@@ -16,6 +16,7 @@
  */
 
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {fireEvent, screen, waitFor, within} from '@testing-library/react';
@@ -231,7 +232,7 @@ describe('Invite Editors Form', function() {
             fireEvent.click(permissionButton);
             fireEvent.click(await screen.findByText(/yes/i));
             expect(Axios.put).toHaveBeenCalledWith(
-                `/api/spaces/${TestUtils.space.uuid}/users/user_id_2`,
+                `/api/spaces/${TestData.space.uuid}/users/user_id_2`,
                 null,
                 {headers: {Authorization: 'Bearer 123456'}},
             );
@@ -287,7 +288,7 @@ describe('Invite Editors Form', function() {
             const confirmDeleteButton = await screen.findByTestId('confirmDeleteButton');
             fireEvent.click(confirmDeleteButton);
 
-            await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]));
+            await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[1]));
             expect(screen.queryByText('Are you sure?')).not.toBeInTheDocument();
             expect(RedirectClient.redirect).toHaveBeenCalledWith('/user/dashboard');
         });
@@ -306,7 +307,7 @@ describe('Invite Editors Form', function() {
             const confirmDeleteButton = await screen.findByText('Yes');
             fireEvent.click(confirmDeleteButton);
 
-            await waitFor(async () => expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[1]));
+            await waitFor(async () => expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[1]));
             expect(screen.queryByText('Are you sure?')).not.toBeInTheDocument();
         });
 
@@ -328,7 +329,7 @@ function renderComponent(currentUser = 'User_id'): void {
             <InviteEditorsFormSection collapsed={false}/>,
         </RecoilRoot>,
         undefined,
-        {currentSpace: TestUtils.space}
+        {currentSpace: TestData.space}
     );
 }
 
@@ -337,7 +338,7 @@ function renderComponentWithSpaceFromProps(): void {
         id: 2,
         uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         name: 'local testSpace',
-        lastModifiedDate: TestUtils.originDateString,
+        lastModifiedDate: TestData.originDateString,
         todayViewIsPublic: true,
     };
 
@@ -348,13 +349,13 @@ function renderComponentWithSpaceFromProps(): void {
             <InviteEditorsFormSection collapsed={false} space={space}/>,
         </RecoilRoot>,
         undefined,
-        {currentSpace: TestUtils.space}
+        {currentSpace: TestData.space}
     );
 }
 
 function validateApiCall(userIds: string[]): void {
     expect(Axios.post).toHaveBeenCalledWith(
-        `/api/spaces/${TestUtils.space.uuid}/users`,
+        `/api/spaces/${TestData.space.uuid}/users`,
         {userIds: userIds},
         {
             headers: {

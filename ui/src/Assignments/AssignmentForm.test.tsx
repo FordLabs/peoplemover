@@ -21,6 +21,7 @@ import AssignmentForm from '../Assignments/AssignmentForm';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
@@ -38,7 +39,7 @@ describe('AssignmentForm', () => {
 
     describe('in create mode', () => {
         it('should not show the unassigned or archived products in the product list', async () => {
-            const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
+            const products = [TestData.productWithAssignments, TestData.archivedProduct, TestData.unassignedProduct];
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ProductsState, products);
@@ -67,11 +68,11 @@ describe('AssignmentForm', () => {
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
                 [{
-                    productId: TestUtils.assignmentForPerson1.productId,
-                    placeholder: TestUtils.assignmentForPerson1.placeholder,
+                    productId: TestData.assignmentForPerson1.productId,
+                    placeholder: TestData.assignmentForPerson1.placeholder,
                 }],
-                TestUtils.space,
-                TestUtils.person1
+                TestData.space,
+                TestData.person1
             );
         });
 
@@ -85,11 +86,11 @@ describe('AssignmentForm', () => {
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
                 [{
-                    productId: TestUtils.assignmentForPerson1.productId,
-                    placeholder: TestUtils.assignmentForPerson1.placeholder,
+                    productId: TestData.assignmentForPerson1.productId,
+                    placeholder: TestData.assignmentForPerson1.placeholder,
                 }],
-                TestUtils.space,
-                TestUtils.person1
+                TestData.space,
+                TestData.person1
             );
         });
 
@@ -106,11 +107,11 @@ describe('AssignmentForm', () => {
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
                 [{
-                    productId: TestUtils.assignmentForPerson1.productId,
+                    productId: TestData.assignmentForPerson1.productId,
                     placeholder: true,
                 }],
-                TestUtils.space,
-                TestUtils.person1
+                TestData.space,
+                TestData.person1
             );
         });
 
@@ -147,7 +148,7 @@ describe('AssignmentForm', () => {
         });
 
         it('populates the person name field of the Create Person modal on open', async () => {
-            const state = { people: TestUtils.people };
+            const state = { people: TestData.people };
             const store = createStore(rootReducer, state);
             store.dispatch = jest.fn();
 
@@ -161,7 +162,7 @@ describe('AssignmentForm', () => {
             expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
                 modal: AvailableModals.CREATE_PERSON,
                 item: {
-                    initiallySelectedProduct: TestUtils.productWithAssignments,
+                    initiallySelectedProduct: TestData.productWithAssignments,
                     initialPersonName: 'XYZ ABC 123',
                 },
             }));
@@ -171,14 +172,14 @@ describe('AssignmentForm', () => {
 
 const renderComponent = (store: Store|undefined = undefined): { viewingDate: Date; initialState: Partial<GlobalStateProps>; } => {
     const products = [
-        TestUtils.productWithAssignments,
-        TestUtils.archivedProduct,
-        TestUtils.unassignedProduct,
+        TestData.productWithAssignments,
+        TestData.archivedProduct,
+        TestData.unassignedProduct,
     ];
     const viewingDate = new Date(2020, 5, 5);
     const initialState = {
-        currentSpace: TestUtils.space,
-        people: TestUtils.people,
+        currentSpace: TestData.space,
+        people: TestData.people,
     };
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {

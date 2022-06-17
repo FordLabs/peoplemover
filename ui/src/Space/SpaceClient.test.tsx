@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {createEmptySpace} from './Space';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-import TestUtils from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {UserSpaceMapping} from './UserSpaceMapping';
 
 declare let window: MatomoWindow;
@@ -35,16 +35,14 @@ describe('Space Client', function() {
         },
     };
 
-    let originalWindow: Window;
+    let originalWindow: MatomoWindow;
 
     beforeEach(function() {
         cookies.set('accessToken', '123456');
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-        Axios.post = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
-        Axios.put = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
-        Axios.get = jest.fn(x => Promise.resolve({} as AxiosResponse)) as any;
-        Axios.delete = jest.fn( x => Promise.resolve({} as AxiosResponse)) as any;
-        /* eslint-enable */
+        Axios.post = jest.fn().mockResolvedValue({});
+        Axios.put = jest.fn().mockResolvedValue({});
+        Axios.get = jest.fn().mockResolvedValue({});
+        Axios.delete = jest.fn().mockResolvedValue({});
         originalWindow = window;
         window._paq = [];
     });
@@ -121,52 +119,52 @@ describe('Space Client', function() {
     });
 
     it('should invite users to a space and send event to matomo', function(done) {
-        const expectedUrl = `/api/spaces/${TestUtils.space.uuid}/users`;
+        const expectedUrl = `/api/spaces/${TestData.space.uuid}/users`;
         const expectedData = {
             userIds: ['cdsid1', 'cdsid2'],
         };
 
-        SpaceClient.inviteUsersToSpace(TestUtils.space, expectedData.userIds)
+        SpaceClient.inviteUsersToSpace(TestData.space, expectedData.userIds)
             .then(() => {
                 expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'inviteUser', expectedData.userIds.join(', ')]);
+                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'inviteUser', expectedData.userIds.join(', ')]);
                 done();
             });
     });
 
     it('should remove users from space', (done) => {
-        const user: UserSpaceMapping = {id: 'blah', userId: 'user1', spaceUuid: `${TestUtils.space.uuid}`, permission: 'fakePermission'};
-        SpaceClient.removeUser(TestUtils.space, user)
+        const user: UserSpaceMapping = {id: 'blah', userId: 'user1', spaceUuid: `${TestData.space.uuid}`, permission: 'fakePermission'};
+        SpaceClient.removeUser(TestData.space, user)
             .then(() => {
                 expect(Axios.delete).toHaveBeenCalledWith(
-                    `/api/spaces/${TestUtils.space.uuid}/users/${user.userId}`,
+                    `/api/spaces/${TestData.space.uuid}/users/${user.userId}`,
                     {headers: {Authorization: 'Bearer 123456'}}
                 );
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'removeUser', user.userId]);
+                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'removeUser', user.userId]);
                 done();
             });
     });
 
     it('should assign owner permission to specified user from space', (done) => {
-        const newOwner: UserSpaceMapping = {id: 'blah', userId: 'newOwner', spaceUuid: `${TestUtils.space.uuid}`, permission: 'editor'};
-        const currentOwner: UserSpaceMapping = {id: 'blah', userId: 'currentOwner', spaceUuid: `${TestUtils.space.uuid}`, permission: 'owner'};
-        SpaceClient.changeOwner(TestUtils.space, currentOwner, newOwner)
+        const newOwner: UserSpaceMapping = {id: 'blah', userId: 'newOwner', spaceUuid: `${TestData.space.uuid}`, permission: 'editor'};
+        const currentOwner: UserSpaceMapping = {id: 'blah', userId: 'currentOwner', spaceUuid: `${TestData.space.uuid}`, permission: 'owner'};
+        SpaceClient.changeOwner(TestData.space, currentOwner, newOwner)
             .then(() => {
                 expect(Axios.put).toHaveBeenCalledWith(
-                    `/api/spaces/${TestUtils.space.uuid}/users/${newOwner.userId}`,
+                    `/api/spaces/${TestData.space.uuid}/users/${newOwner.userId}`,
                     null,
                     {headers: {Authorization: 'Bearer 123456'}}
                 );
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`]);
+                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`]);
                 done();
             });
     });
 
     it('should delete a space by uuid', (done) => {
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        SpaceClient.deleteSpaceByUuid(TestUtils.space.uuid!).then(() => {
+        SpaceClient.deleteSpaceByUuid(TestData.space.uuid!).then(() => {
             expect(Axios.delete).toHaveBeenCalledWith(
-                `/api/spaces/${TestUtils.space.uuid}`,
+                `/api/spaces/${TestData.space.uuid}`,
                 {headers: {Authorization: 'Bearer 123456'}}
             );
             done();

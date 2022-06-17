@@ -25,7 +25,7 @@ import {
     setupSpaceAction,
 } from './index';
 import configureStore, {MockStoreCreator, MockStoreEnhanced} from 'redux-mock-store';
-import TestUtils from '../../Utils/TestUtils';
+import TestData from '../../Utils/TestData';
 import thunk from 'redux-thunk';
 import * as filterConstants from '../../SortingAndFiltering/FilterLibraries';
 import RoleClient from '../../Roles/RoleClient';
@@ -35,7 +35,6 @@ import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import PeopleClient from '../../People/PeopleClient';
 
-
 describe('Actions', () => {
     let mockStore: MockStoreCreator<unknown, {}>;
     let store: MockStoreEnhanced<unknown, {}>;
@@ -43,7 +42,7 @@ describe('Actions', () => {
     beforeEach(() => {
         mockStore = configureStore([thunk]);
         store = mockStore({
-            currentSpace: TestUtils.space,
+            currentSpace: TestData.space,
         });
     });
 
@@ -53,16 +52,16 @@ describe('Actions', () => {
 
     describe('setupSpaceAction', () => {
         it('should update the current space and filters', () => {
-            const mock = jest.spyOn(filterConstants, 'getFilterOptionsForSpace');  // spy on otherFn
-            mock.mockReturnValueOnce(Promise.resolve(TestUtils.allGroupedTagFilterOptions));  // mock the return value
+            const mock = jest.spyOn(filterConstants, 'getFilterOptionsForSpace');
+            mock.mockResolvedValueOnce(TestData.allGroupedTagFilterOptions);
 
             const expectedActions = [
-                {type: AvailableActions.SET_CURRENT_SPACE, space: TestUtils.space },
-                {type: AvailableActions.SET_ALL_FILTER_OPTIONS, allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions},
+                {type: AvailableActions.SET_CURRENT_SPACE, space: TestData.space },
+                {type: AvailableActions.SET_ALL_FILTER_OPTIONS, allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions},
             ];
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return store.dispatch<any>(setupSpaceAction(TestUtils.space)).then(() => {
+            return store.dispatch<any>(setupSpaceAction(TestData.space)).then(() => {
                 expect(store.getActions()).toEqual(expectedActions);
             });
         });
@@ -71,16 +70,16 @@ describe('Actions', () => {
     describe('fetchProductTagsAction', () => {
         it('should invoke ProductTagClient.get and fire the setProductTag Action', () => {
             const mock = jest.spyOn(ProductTagClient, 'get');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestUtils.productTags} as AxiosResponse));
+            mock.mockReturnValueOnce(Promise.resolve({data: TestData.productTags} as AxiosResponse));
 
             const expectedActions = [
-                {type: AvailableActions.SET_PRODUCT_TAGS, productTags: TestUtils.productTags},
+                {type: AvailableActions.SET_PRODUCT_TAGS, productTags: TestData.productTags},
             ];
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(fetchProductTagsAction()).then(() => {
                 expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestUtils.space.uuid);
+                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);
             });
         });
@@ -89,16 +88,16 @@ describe('Actions', () => {
     describe('fetchPersonTagsAction', () => {
         it('should invoke PersonTagClient.get and fire the setPersonTags Action', () => {
             const mock = jest.spyOn(PersonTagClient, 'get');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestUtils.personTags} as AxiosResponse));
+            mock.mockReturnValueOnce(Promise.resolve({data: TestData.personTags} as AxiosResponse));
 
             const expectedActions = [
-                {type: AvailableActions.SET_PERSON_TAGS, personTags: TestUtils.personTags},
+                {type: AvailableActions.SET_PERSON_TAGS, personTags: TestData.personTags},
             ];
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(fetchPersonTagsAction()).then(() => {
                 expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestUtils.space.uuid);
+                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);
             });
         });
@@ -107,16 +106,16 @@ describe('Actions', () => {
     describe('fetchLocationsAction', () => {
         it('should invoke LocationClient.get and fire the setLocations Action', () => {
             const mock = jest.spyOn(LocationClient, 'get');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestUtils.locations} as AxiosResponse));
+            mock.mockReturnValueOnce(Promise.resolve({data: TestData.locations} as AxiosResponse));
 
             const expectedActions = [
-                {type: AvailableActions.SET_LOCATIONS, locations: TestUtils.locations},
+                {type: AvailableActions.SET_LOCATIONS, locations: TestData.locations},
             ];
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(fetchLocationsAction()).then(() => {
                 expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestUtils.space.uuid);
+                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);
             });
         });
@@ -125,16 +124,16 @@ describe('Actions', () => {
     describe('fetchRolesAction', () => {
         it('should invoke RoleClient.get and fire the setRoles Action', () => {
             const mock = jest.spyOn(RoleClient, 'get');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestUtils.roles} as AxiosResponse));
+            mock.mockReturnValueOnce(Promise.resolve({data: TestData.roles} as AxiosResponse));
 
             const expectedActions = [
-                {type: AvailableActions.SET_ROLES, roles: TestUtils.roles},
+                {type: AvailableActions.SET_ROLES, roles: TestData.roles},
             ];
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(fetchRolesAction()).then(() => {
                 expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestUtils.space.uuid);
+                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);
             });
         });
@@ -143,16 +142,16 @@ describe('Actions', () => {
     describe('fetchPeopleAction', () => {
         it('should invoke PeopleClient.getforspace and fire the setPeople action', () => {
             const mock = jest.spyOn(PeopleClient, 'getAllPeopleInSpace');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestUtils.people} as AxiosResponse));
+            mock.mockReturnValueOnce(Promise.resolve({data: TestData.people} as AxiosResponse));
 
             const expectedActions = [
-                {type: AvailableActions.SET_PEOPLE, people: TestUtils.people},
+                {type: AvailableActions.SET_PEOPLE, people: TestData.people},
             ];
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(fetchPeopleAction()).then(() => {
                 expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestUtils.space.uuid);
+                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);
             });
         });

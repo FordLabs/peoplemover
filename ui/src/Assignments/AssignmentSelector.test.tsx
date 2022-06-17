@@ -20,6 +20,7 @@ import AssignmentForm from './AssignmentForm';
 import {fireEvent, screen} from '@testing-library/react';
 import AssignmentClient from './AssignmentClient';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {RecoilRoot} from 'recoil';
@@ -35,9 +36,9 @@ describe('the assignment form', () => {
     it('renders the assignment form labels', () => {
         renderWithRedux(
             <RecoilRoot initializeState={(({set}) => {
-                set(ProductsState, [TestUtils.unassignedProduct])
+                set(ProductsState, [TestData.unassignedProduct])
             })}>
-                <AssignmentForm initiallySelectedProduct={TestUtils.unassignedProduct} />,
+                <AssignmentForm initiallySelectedProduct={TestData.unassignedProduct} />,
             </RecoilRoot>
         );
         expect(screen.getByLabelText('Name')).toBeDefined();
@@ -46,9 +47,9 @@ describe('the assignment form', () => {
     });
 
     it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
-        const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments, TestUtils.productWithoutAssignments, TestUtils.productForHank];
+        const products = [TestData.unassignedProduct, TestData.productWithAssignments, TestData.productWithoutAssignments, TestData.productForHank];
         const viewingDate = new Date(2020, 5, 5);
-        const initialState = {people: TestUtils.people, currentSpace: TestUtils.space};
+        const initialState = {people: TestData.people, currentSpace: TestData.space};
         renderWithRedux(
             <RecoilRoot initializeState={(({set}) => {
                 set(ViewingDateState, viewingDate)
@@ -75,20 +76,20 @@ describe('the assignment form', () => {
             moment(viewingDate).format('YYYY-MM-DD'),
             [
                 {
-                    productId: TestUtils.productWithoutAssignments.id,
+                    productId: TestData.productWithoutAssignments.id,
                     placeholder: false,
                 },
                 {
-                    productId: TestUtils.productWithAssignments.id,
+                    productId: TestData.productWithAssignments.id,
                     placeholder: false,
                 },
                 {
-                    productId: TestUtils.productForHank.id,
-                    placeholder: TestUtils.assignmentForHank.placeholder,
+                    productId: TestData.productForHank.id,
+                    placeholder: TestData.assignmentForHank.placeholder,
                 },
             ],
-            TestUtils.space,
-            TestUtils.hank
+            TestData.space,
+            TestData.hank
         );
     });
 });

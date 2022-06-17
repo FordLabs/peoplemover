@@ -19,14 +19,14 @@ import {render, screen} from '@testing-library/react';
 import SelectWithNoCreateOption from './SelectWithNoCreateOption';
 import React from 'react';
 import {Product} from '../Products/Product';
-import TestUtils from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {noop} from '@babel/types';
 import selectEvent from 'react-select-event';
 
 describe('SelectWithNoCreateOption (Multi-select)', () => {
     const initiallySelectedProducts: Product[] = [
-        TestUtils.products[0],
-        TestUtils.products[1],
+        TestData.products[0],
+        TestData.products[1],
     ];
 
     it('should render initial select options', () => {
@@ -38,14 +38,14 @@ describe('SelectWithNoCreateOption (Multi-select)', () => {
                     placeholder: 'Select a product',
                 }}
                 values={initiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
-                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                options={TestData.products.map(x => {return {value:x.name, label:x.name};})}
                 onChange={noop}
             />
         );
         expect(screen.getByText(initiallySelectedProducts[0].name)).toBeInTheDocument();
         expect(screen.getByText(initiallySelectedProducts[1].name)).toBeInTheDocument();
-        expect(screen.queryByText(TestUtils.products[2].name)).not.toBeInTheDocument();
-        expect(screen.queryByText(TestUtils.products[3].name)).not.toBeInTheDocument();
+        expect(screen.queryByText(TestData.products[2].name)).not.toBeInTheDocument();
+        expect(screen.queryByText(TestData.products[3].name)).not.toBeInTheDocument();
     });
 
     it('should call the onChange callback when user selects new option', async () => {
@@ -59,13 +59,13 @@ describe('SelectWithNoCreateOption (Multi-select)', () => {
                     placeholder: 'Select a product',
                 }}
                 values={initiallySelectedProducts.map(x => ({value: x.name, label: x.name}))}
-                options={TestUtils.products.map(x => ({value: x.name, label: x.name}))}
+                options={TestData.products.map(x => ({value: x.name, label: x.name}))}
                 onChange={mockOnChange}
             />
         );
 
         const SelectElement = screen.getByLabelText('Title');
-        await selectEvent.select(SelectElement, [TestUtils.productForHank.name]);
+        await selectEvent.select(SelectElement, [TestData.productForHank.name]);
         expect(mockOnChange).toHaveBeenCalled();
     });
 
@@ -78,7 +78,7 @@ describe('SelectWithNoCreateOption (Multi-select)', () => {
                     placeholder: 'Select a product',
                 }}
                 values={[]}
-                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                options={TestData.products.map(x => {return {value:x.name, label:x.name};})}
                 onChange={noop}
             />
         );
@@ -95,7 +95,7 @@ describe('SelectWithNoCreateOption (Multi-select)', () => {
                     placeholder: 'Select a product',
                 }}
                 values={initiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
-                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                options={TestData.products.map(x => {return {value:x.name, label:x.name};})}
                 onChange={noop}
             />
         );

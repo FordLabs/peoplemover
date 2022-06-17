@@ -16,7 +16,8 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {fireEvent, screen} from '@testing-library/react';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
@@ -25,7 +26,7 @@ describe('Tooltip behavior on hover', () => {
     it('should show the notes of the person being hovered over', async () => {
         renderWithRecoil(
             <PersonAndRoleInfo
-                person={TestUtils.hank}
+                person={TestData.hank}
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />
@@ -42,7 +43,7 @@ describe('Tooltip behavior on hover', () => {
     it('should not show the notes of the person being hovered over if they have none', async () => {
         renderWithRecoil(
             <PersonAndRoleInfo
-                person={TestUtils.person2}
+                person={TestData.person2}
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />
@@ -57,7 +58,7 @@ describe('Tooltip behavior on hover', () => {
     it('should show the time on product of the person being hovered over', async () => {
         renderWithRecoil(
             <PersonAndRoleInfo
-                person={TestUtils.hank}
+                person={TestData.hank}
                 isUnassignedProduct={false}
                 duration={367}
             />
@@ -74,7 +75,7 @@ describe('Tooltip behavior on hover', () => {
     it('should show the person tags of the person being hovered over', async () => {
         renderWithRecoil(
             <PersonAndRoleInfo
-                person={TestUtils.person2}
+                person={TestData.person2}
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />
@@ -92,7 +93,7 @@ describe('Tooltip behavior on hover', () => {
     it('should not show the person tags of the person being hovered over if they have none', async () => {
         renderWithRecoil(
             <PersonAndRoleInfo
-                person={TestUtils.unassignedPerson}
+                person={TestData.unassignedPerson}
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />
@@ -106,7 +107,7 @@ describe('Tooltip behavior on hover', () => {
     it('should not show the hover if the space is read only', async () => {
         renderWithRecoil(
             <PersonAndRoleInfo
-                person={TestUtils.hank}
+                person={TestData.hank}
                 duration={0}
                 isUnassignedProduct={false}
             />,
@@ -124,7 +125,7 @@ describe('Tooltip behavior on hover', () => {
     it('should not show the hover if it is part of the Unassigned product', async () => {
         renderWithRecoil(
             <PersonAndRoleInfo
-                person={TestUtils.hank}
+                person={TestData.hank}
                 duration={0}
                 isUnassignedProduct={true}
             />

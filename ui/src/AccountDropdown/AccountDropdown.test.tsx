@@ -17,6 +17,7 @@
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import Cookies from 'universal-cookie';
@@ -53,7 +54,7 @@ describe('Account Dropdown', () => {
 
     describe('Dropdown Options', () => {
         const mockStore = configureStore([]);
-        const expectedCurrentSpace = TestUtils.space;
+        const expectedCurrentSpace = TestData.space;
         const expectedViewingDate = new Date(2020, 4, 14);
         const store = mockStore({
             currentSpace: expectedCurrentSpace,
@@ -128,7 +129,7 @@ describe('Account Dropdown', () => {
                     </RecoilRoot>
                 </MemoryRouter>,
                 undefined,
-                {currentSpace: TestUtils.space}
+                {currentSpace: TestData.space}
             );
         });
         it('should not display Download Report and Share Access when it is in Read Only mode', async () => {

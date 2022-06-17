@@ -18,6 +18,7 @@
 import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
 import {RecoilRoot} from 'recoil';
@@ -35,8 +36,8 @@ describe('Archived People', () => {
 
             const mockStore = configureStore([]);
             const store = mockStore({
-                currentSpace: TestUtils.space,
-                people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
+                currentSpace: TestData.space,
+                people: [...TestData.people, TestData.unassignedBigBossSE],
             });
 
             ({unmount} = renderWithRedux(
@@ -56,9 +57,9 @@ describe('Archived People', () => {
         it('shows the names of two archived people but not one unarchived person', async () => {
             const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await screen.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
-            expect(await screen.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
-            expect(screen.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
+            expect(await screen.findByText(TestData.archivedPerson.name)).toBeInTheDocument();
+            expect(await screen.findByText(TestData.unassignedBigBossSE.name)).toBeInTheDocument();
+            expect(screen.queryByText(TestData.person1.name)).not.toBeInTheDocument();
             expect(screen.getAllByTestId(/archivedPersonCard__*/)).toHaveLength(2);
             expect((await screen.findByTestId('archivedPersonDrawerCountBadge')).innerHTML).toEqual('2');
         });
@@ -66,15 +67,15 @@ describe('Archived People', () => {
         it('should not show people who have not passed their archived date', async () => {
             const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(screen.queryByText(TestUtils.hank.name)).not.toBeInTheDocument();
+            expect(screen.queryByText(TestData.hank.name)).not.toBeInTheDocument();
         });
 
         it('can be closed and opened again', async () => {
             const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await screen.findByText(TestUtils.archivedPerson.name)).toBeInTheDocument();
+            expect(await screen.findByText(TestData.archivedPerson.name)).toBeInTheDocument();
             fireEvent.click(drawerCaret);
-            expect(await screen.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
+            expect(await screen.queryByText(TestData.archivedPerson.name)).not.toBeInTheDocument();
         });
 
         it('should not show an archived person if the viewing date is before their archive date', async () => {
@@ -83,8 +84,8 @@ describe('Archived People', () => {
 
             const mockStore = configureStore([]);
             const store = mockStore({
-                currentSpace: TestUtils.space,
-                people: [...TestUtils.people, TestUtils.unassignedBigBossSE],
+                currentSpace: TestData.space,
+                people: [...TestData.people, TestData.unassignedBigBossSE],
             });
 
             unmount();
@@ -100,9 +101,9 @@ describe('Archived People', () => {
 
             const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
             fireEvent.click(drawerCaret);
-            expect(await screen.queryByText(TestUtils.archivedPerson.name)).not.toBeInTheDocument();
-            expect(await screen.findByText(TestUtils.unassignedBigBossSE.name)).toBeInTheDocument();
-            expect(screen.queryByText(TestUtils.person1.name)).not.toBeInTheDocument();
+            expect(await screen.queryByText(TestData.archivedPerson.name)).not.toBeInTheDocument();
+            expect(await screen.findByText(TestData.unassignedBigBossSE.name)).toBeInTheDocument();
+            expect(screen.queryByText(TestData.person1.name)).not.toBeInTheDocument();
             expect(screen.getAllByTestId(/archivedPersonCard__*/)).toHaveLength(1);
         });
     });
