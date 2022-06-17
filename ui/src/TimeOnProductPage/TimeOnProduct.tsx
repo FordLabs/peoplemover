@@ -21,9 +21,8 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {calculateDuration} from '../Assignments/Assignment';
 import {Space} from '../Space/Space';
-import RedirectClient from '../Utils/RedirectClient';
 import CurrentModal from '../Redux/Containers/CurrentModal';
-import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import HeaderContainer from '../Header/HeaderContainer';
 import SubHeader from '../Header/SubHeader';
@@ -33,6 +32,8 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 import './TimeOnProduct.scss';
+import useFetchProducts from '../Hooks/useFetchProducts';
+import {useNavigate, useParams} from 'react-router-dom';
 
 export const LOADING = 'Loading...';
 
@@ -79,39 +80,35 @@ export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductIte
 
 export interface TimeOnProductProps {
     currentSpace: Space;
-    products: Array<Product>;
     currentModal: CurrentModalState;
-
-    fetchProducts(viewingDate: Date): Array<Product>;
     setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function TimeOnProduct({currentSpace, products, currentModal, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+function TimeOnProduct({currentSpace, currentModal, setCurrentModal}: TimeOnProductProps): JSX.Element {
+    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+    const navigate = useNavigate();
 
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
-    const extractUuidFromUrl = (): string => {
-        return window.location.pathname.split('/')[1];
-    };
+    const { fetchProducts, products } = useFetchProducts();
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!currentSpace) {
-            const uuid = extractUuidFromUrl();
-            RedirectClient.redirect(`/${uuid}`);
-        }
-    }, [currentSpace]);
+        // @todo fetch space if no space is present
+        if (!currentSpace) navigate(`/${teamUUID}`);
+    }, [currentSpace, navigate, teamUUID]);
 
     useEffect(() => {
         if (currentSpace && currentModal.modal === null) {
             setIsLoading(true);
-            fetchProducts(viewingDate);
+            fetchProducts();
         }
-    }, [currentModal, currentSpace, fetchProducts, viewingDate]);
+    }, [currentModal, currentSpace, fetchProducts]);
 
     useEffect(() => {
-        setIsLoading(false);
+        if (products.length) setIsLoading(false);
     }, [products]);
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
@@ -188,13 +185,11 @@ function TimeOnProduct({currentSpace, products, currentModal, fetchProducts, set
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    products: state.products,
     currentModal: state.currentModal,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimeOnProduct);

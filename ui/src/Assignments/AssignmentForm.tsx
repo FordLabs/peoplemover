@@ -36,9 +36,9 @@ import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComp
 import {AvailableModals} from '../Modal/AvailableModals';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
 
 interface AssignmentFormProps {
-    products: Array<Product>;
     initiallySelectedProduct: Product;
     people: Array<Person>;
     currentSpace: Space;
@@ -48,7 +48,6 @@ interface AssignmentFormProps {
 }
 
 function AssignmentForm({
-    products,
     initiallySelectedProduct,
     people,
     currentSpace,
@@ -63,6 +62,7 @@ function AssignmentForm({
     const [placeholder, setPlaceholder] = useState<boolean>(false);
 
     const viewingDate = useRecoilValue(ViewingDateState);
+    const products = useRecoilValue(ProductsState);
 
     function getSelectedProductPairs(): ProductPlaceholderPair[] {
         return selectedProducts.map((product) => {

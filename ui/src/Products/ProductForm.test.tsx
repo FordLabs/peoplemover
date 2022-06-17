@@ -32,6 +32,7 @@ import moment from 'moment';
 import {PreloadedState} from 'redux';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
 
 describe('ProductForm', function() {
     const mockStore = configureStore([]);
@@ -177,7 +178,6 @@ describe('ProductForm', function() {
     describe('tag dropdowns', () => {
         let history: History;
         const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-            products: TestUtils.products,
             currentSpace: TestUtils.space,
             productTags: TestUtils.productTags,
             allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
@@ -194,6 +194,7 @@ describe('ProductForm', function() {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, moment().toDate())
+                    set(ProductsState, TestUtils.products)
                 }}>
                     <ProductForm editing={false} />
                 </RecoilRoot>,

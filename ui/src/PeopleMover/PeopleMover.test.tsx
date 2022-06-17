@@ -26,6 +26,7 @@ import {AvailableActions} from '../Redux/Actions';
 import thunk from 'redux-thunk';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ProductsState} from '../State/ProductsState';
 
 declare let window: MatomoWindow;
 
@@ -51,7 +52,6 @@ describe('PeopleMover', () => {
     describe('Read Only Mode', function() {
         beforeEach(async () => {
             const initialState = {
-                products: TestUtils.products,
                 currentSpace: TestUtils.space,
                 allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
             };
@@ -59,6 +59,7 @@ describe('PeopleMover', () => {
 
             await TestUtils.renderPeopleMoverComponent(store, initialState, ({set}) => {
                 set(IsReadOnlyState, true);
+                set(ProductsState, TestUtils.products);
             });
         });
 

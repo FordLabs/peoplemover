@@ -23,12 +23,10 @@ import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
-import productsReducer from './productsReducer';
 import productTagsReducer from './productTagsReducer';
 import personTagsReducer from './personTagsReducer';
 import locationsReducer from './locationsReducer';
 import {Space} from '../../Space/Space';
-import {Product} from '../../Products/Product';
 import {Tag} from '../../Tags/Tag';
 import {LocationTag} from '../../Locations/LocationTag.interface';
 import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
@@ -41,7 +39,6 @@ export default combineReducers({
     productRefs: productRefsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
     currentSpace: currentSpaceReducer,
-    products: productsReducer,
     productTags: productTagsReducer,
     personTags: personTagsReducer,
     locations: locationsReducer,
@@ -54,7 +51,6 @@ export interface GlobalStateProps {
     productRefs: Array<ProductCardRefAndProductPair>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;
-    products: Array<Product>;
     productTags: Array<Tag>;
     personTags: Array<Tag>;
     locations: Array<LocationTag>;

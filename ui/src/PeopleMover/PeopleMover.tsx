@@ -28,7 +28,6 @@ import {
     fetchLocationsAction,
     fetchPeopleAction,
     fetchPersonTagsAction,
-    fetchProductsAction,
     fetchProductTagsAction,
     fetchRolesAction,
     setCurrentModalAction,
@@ -43,7 +42,6 @@ import {Person} from '../People/Person';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
-import {Product} from '../Products/Product';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import {Tag} from '../Tags/Tag';
 import {LocationTag} from '../Locations/LocationTag.interface';
@@ -60,6 +58,7 @@ import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import useFetchProducts from '../Hooks/useFetchProducts';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -67,9 +66,7 @@ const FORBIDDEN = 403;
 export interface PeopleMoverProps {
     currentModal: CurrentModalState;
     currentSpace: Space;
-    products: Array<Product>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    fetchProducts(viewingDate: Date): Array<Product>;
     fetchPeople(): Array<Person>;
     fetchProductTags(): Array<Tag>;
     fetchPersonTags(): Array<Tag>;
@@ -83,9 +80,7 @@ export interface PeopleMoverProps {
 function PeopleMover({
     currentModal,
     currentSpace,
-    products,
     allGroupedTagFilterOptions,
-    fetchProducts,
     fetchPeople,
     fetchProductTags,
     fetchPersonTags,
@@ -101,9 +96,9 @@ function PeopleMover({
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
-    function hasProductsAndFilters(): boolean {
-        return Boolean(products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0);
-    }
+    const { fetchProducts, products } = useFetchProducts();
+
+    const hasProductsAndFilters: boolean = products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0;
 
     const handleErrors = useCallback((error: AxiosError): Error | null => {
         if (error?.response?.status === BAD_REQUEST) {
@@ -142,23 +137,17 @@ function PeopleMover({
 
     useEffect(() => {
         if (currentSpace && currentSpace.uuid) {
-            fetchProducts(viewingDate);
+            fetchProducts();
             fetchProductTags();
             fetchPersonTags();
             fetchLocations();
             fetchRoles();
             fetchPeople();
         }
-    }, [currentSpace, setPeople, fetchProducts, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, handleErrors, viewingDate]);
-
-    /* eslint-disable */
-    useEffect(() => {
-        if (currentSpace && hasProductsAndFilters()) fetchProducts(viewingDate);
-    }, [viewingDate, currentSpace]);
-    /* eslint-enable */
+    }, [currentSpace, setPeople, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, handleErrors, fetchProducts]);
 
     return (
-        !hasProductsAndFilters()
+        !hasProductsAndFilters
             ? <></>
             : <div className="App">
                 <HeaderContainer>
@@ -205,12 +194,10 @@ function PeopleMover({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentModal: state.currentModal,
     currentSpace: state.currentSpace,
-    products: state.products,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
     fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
     fetchLocations: () => dispatch(fetchLocationsAction()),

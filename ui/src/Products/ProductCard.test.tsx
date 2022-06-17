@@ -20,7 +20,7 @@ import TestUtils, {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
 import {emptyProduct, Product} from './Product';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-import {fireEvent, screen} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
 import ProductClient from './ProductClient';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import moment from 'moment';
@@ -30,6 +30,7 @@ import thunk from 'redux-thunk';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
 
 declare let window: MatomoWindow;
 
@@ -44,6 +45,16 @@ describe('ProductCard', () => {
     ];
     const mayFourteenth2020 = new Date(2020, 4, 14);
     let store: Store;
+    const products = [TestUtils.unassignedProduct,
+        TestUtils.productWithoutAssignments,
+        TestUtils.archivedProduct,
+        TestUtils.productWithoutLocation,
+        TestUtils.productWithAssignments,
+        {...TestUtils.productForHank, assignments: [
+            TestUtils.assignmentForHank,
+            {...TestUtils.assignmentForPerson1, productId: TestUtils.productForHank.id},
+        ]},
+    ];
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -53,16 +64,6 @@ describe('ProductCard', () => {
             {
                 currentSpace: TestUtils.space,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                products: [TestUtils.unassignedProduct,
-                    TestUtils.productWithoutAssignments,
-                    TestUtils.archivedProduct,
-                    TestUtils.productWithoutLocation,
-                    TestUtils.productWithAssignments,
-                    {...TestUtils.productForHank, assignments: [
-                        TestUtils.assignmentForHank,
-                        {...TestUtils.assignmentForPerson1, productId: TestUtils.productForHank.id},
-                    ]},
-                ],
             },
             applyMiddleware(thunk));
     });
@@ -108,7 +109,7 @@ describe('ProductCard', () => {
         fireEvent.click(await screen.findByText('Archive Product'));
         fireEvent.click(screen.getByText('Archive'));
 
-        expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(3);
+        await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(3));
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [{productId: TestUtils.productForHank.id, placeholder: false}], TestUtils.space, TestUtils.person1);
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person2);
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestUtils.space, TestUtils.person3);
@@ -135,7 +136,8 @@ describe('ProductCard', () => {
     function renderProductCard(product: Product) {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, mayFourteenth2020)
+                set(ViewingDateState, mayFourteenth2020);
+                set(ProductsState, products);
             }}>
                 <ProductCard product={product}/>
             </RecoilRoot>,

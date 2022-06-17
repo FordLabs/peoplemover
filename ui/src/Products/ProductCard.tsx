@@ -17,12 +17,7 @@
 
 import React, {RefObject, useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {
-    fetchProductsAction,
-    registerProductRefAction,
-    setCurrentModalAction,
-    unregisterProductRefAction,
-} from '../Redux/Actions';
+import {registerProductRefAction, setCurrentModalAction, unregisterProductRefAction} from '../Redux/Actions';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
 import {ProductCardRefAndProductPair} from './ProductDnDHelper';
@@ -46,34 +41,33 @@ import {ViewingDateState} from '../State/ViewingDateState';
 
 import './Product.scss';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import useFetchProducts from '../Hooks/useFetchProducts';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
 interface ProductCardProps {
     product: Product;
     currentSpace: Space;
-    products: Array<Product>;
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
     setCurrentModal(modalState: CurrentModalState): void;
-    fetchProducts(viewingDate: Date): void;
 }
 
 function ProductCard({
     product,
     currentSpace,
-    products,
     registerProductRef,
     unregisterProductRef,
     setCurrentModal,
-    fetchProducts,
 }: ProductCardProps): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
+
+    const { fetchProducts, products } = useFetchProducts();
+
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const [modal, setModal] = useState<JSX.Element | null>(null);
     const productRef: RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>(null);
-
-    const viewingDate = useRecoilValue(ViewingDateState);
-    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     useEffect(() => {
         registerProductRef({ref: productRef, product});
@@ -137,9 +131,7 @@ function ProductCard({
             AssignmentClient.createAssignmentForDate(assignmentEndDate, getRemainingAssignments(assignment.person), currentSpace, assignment.person);
         });
         const archivedProduct = {...product, endDate: productEndDate};
-        ProductClient.editProduct(currentSpace, archivedProduct, true).then(() => {
-            fetchProducts(viewingDate);
-        });
+        ProductClient.editProduct(currentSpace, archivedProduct, true).then(fetchProducts);
     }
 
     const getRemainingAssignments = (person: Person): Array<ProductPlaceholderPair> => {
@@ -278,12 +270,10 @@ function ProductCard({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    products: state.products,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     registerProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(registerProductRefAction(productRef)),
     unregisterProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(unregisterProductRefAction(productRef)),
 });

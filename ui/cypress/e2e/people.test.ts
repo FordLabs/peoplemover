@@ -16,6 +16,7 @@
  */
 import * as moment from 'moment';
 import person, {Person} from '../fixtures/person';
+
 const todaysDate = moment().format('yyyy-MM-DD');
 
 describe('People', () => {
@@ -263,6 +264,20 @@ describe('People', () => {
             cy.get('[data-testid=editPersonIconContainer__bob_barker]').click();
             cy.get('[data-testid=editMenu__jane_smith]').should('not.exist');
             cy.get('[data-testid=editMenu__bob_barker]').should('exist');
+        });
+
+        it('Make and unmark a person as a placeholder', () => {
+            cy.get('[data-testid=assignmentCard__jane_smith]').should('not.have.class', 'placeholder');
+
+            cy.get('[data-testid=editPersonIconContainer__jane_smith]').click();
+            cy.contains('Mark as Placeholder').click();
+
+            cy.get('[data-testid=assignmentCard__jane_smith]').should('have.class', 'placeholder');
+
+            cy.get('[data-testid=editPersonIconContainer__jane_smith]').click();
+            cy.contains('Unmark as Placeholder').click();
+
+            cy.get('[data-testid=assignmentCard__jane_smith]').should('not.have.class', 'placeholder');
         });
     });
 });

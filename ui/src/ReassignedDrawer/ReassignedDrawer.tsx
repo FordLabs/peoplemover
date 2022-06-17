@@ -20,35 +20,33 @@ import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Reassignment} from './Reassignment';
-import {Product} from '../Products/Product';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
 import {isArchived, Person} from '../People/Person';
-import {fetchPeopleAction, fetchProductsAction} from '../Redux/Actions';
+import {fetchPeopleAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import PeopleClient from '../People/PeopleClient';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import useFetchProducts from '../Hooks/useFetchProducts';
 
 import './ReassignedDrawer.scss';
 
 interface Props {
-    products: Array<Product>;
     currentSpace: Space;
-    fetchProducts(viewingDate: Date): Array<Product>;
     fetchPeople(): Array<Person>;
 }
 
 function ReassignedDrawer({
-    products,
     currentSpace,
-    fetchProducts,
     fetchPeople,
 }: Props): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+
+    const { fetchProducts, products } = useFetchProducts();
+
     const [showDrawer, setShowDrawer] = useState(true);
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
-
-    const viewingDate = useRecoilValue(ViewingDateState);
 
     /* eslint-disable */
     useEffect(() => {
@@ -120,7 +118,7 @@ function ReassignedDrawer({
         }
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
-                fetchProducts(viewingDate);
+                fetchProducts();
                 fetchPeople();
                 MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`);
             }).catch(err => {
@@ -132,12 +130,10 @@ function ReassignedDrawer({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    products: state.products,
     currentSpace: state.currentSpace,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchProducts: (viewingDate: Date) => dispatch(fetchProductsAction(viewingDate)),
     fetchPeople: () => dispatch(fetchPeopleAction()),
 });
 

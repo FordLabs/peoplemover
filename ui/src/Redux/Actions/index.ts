@@ -22,7 +22,6 @@ import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
 import {Space} from '../../Space/Space';
 import {Product} from '../../Products/Product';
-import ProductClient from '../../Products/ProductClient';
 import {Tag} from '../../Tags/Tag';
 import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
@@ -120,15 +119,6 @@ export const setRolesAction = (roles: Array<RoleTag>) => ({
     type: AvailableActions.SET_ROLES,
     roles,
 });
-
-export const fetchProductsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (viewingDate: Date) =>
-    (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return ProductClient.getProductsForDate(getState().currentSpace.uuid, viewingDate)
-            .then(result => {
-                const products: Array<Product> = result.data || [];
-                dispatch(setProductsAction(products));
-            });
-    };
 
 export const fetchPeopleAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () => (dispatch: Dispatch, getState: Function): Promise<void> => {
     return PeopleClient.getAllPeopleInSpace(getState().currentSpace.uuid).then(result => {

@@ -49,12 +49,12 @@
     }
   }
 
-  &.Placeholder {
+  &.placeholder {
     border: 2px solid transparent;
     border-right: none;
   }
 
-  &.Placeholder:hover {
+  &.placeholder:hover {
     border-color: white !important;
 
     .personRoleColor {
@@ -65,7 +65,7 @@
   }
 }
 
-.NotPlaceholder {
+.notPlaceholder {
   .personRoleColor {
     width: 20px;
     display: flex;
@@ -106,7 +106,7 @@ div.DefaultColor {
   border-radius: 2px;
 }
 
-div.Placeholder {
+div.placeholder {
   background-color: $white;
 }
 

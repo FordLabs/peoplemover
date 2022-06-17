@@ -61,10 +61,10 @@ import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
+import {ProductsState} from '../State/ProductsState';
 
 interface PersonFormProps {
-    isEditPersonForm: boolean;
-    products: Array<Product>;
+    isEditPersonForm: boolean
     initiallySelectedProduct?: Product;
     initialPersonName?: string;
     personEdited?: Person;
@@ -81,7 +81,6 @@ interface PersonFormProps {
 
 function PersonForm({
     isEditPersonForm,
-    products,
     initiallySelectedProduct,
     initialPersonName,
     currentSpace,
@@ -109,6 +108,7 @@ function PersonForm({
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
     const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
 
+    const products = useRecoilValue(ProductsState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const setIsUnassignedDrawerOpen = useSetRecoilState(IsUnassignedDrawerOpenState);
 

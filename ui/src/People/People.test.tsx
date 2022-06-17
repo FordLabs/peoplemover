@@ -30,6 +30,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import ProductClient from '../Products/ProductClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {RecoilRoot} from 'recoil';
+import {ProductsState} from '../State/ProductsState';
 
 declare let window: MatomoWindow;
 
@@ -333,7 +334,6 @@ describe('People actions', () => {
             <RecoilRoot>
                 <PersonForm
                     isEditPersonForm={false}
-                    products={[]}
                     initialPersonName="BRADLEY"
                     initiallySelectedProduct={TestUtils.productWithAssignments}
                 />
@@ -347,10 +347,11 @@ describe('People actions', () => {
     it('should not show the unassigned product or archived products in product list', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
         renderWithRedux(
-            <RecoilRoot>
+            <RecoilRoot  initializeState={({set}) => {
+                set(ProductsState, products)
+            }}>
                 <PersonForm
                     isEditPersonForm={false}
-                    products={products}
                     initialPersonName="BRADLEY"
                 />
             </RecoilRoot>,
@@ -375,10 +376,11 @@ describe('People actions', () => {
     it('should remove the unassigned product when a product is selected from dropdown', async () => {
         const products = [TestUtils.productWithAssignments, TestUtils.unassignedProduct];
         renderWithRedux(
-            <RecoilRoot>
+            <RecoilRoot initializeState={({set}) => {
+                set(ProductsState, products)
+            }}>
                 <PersonForm
                     isEditPersonForm={false}
-                    products={products}
                     initialPersonName="BRADLEY"
                 />
             </RecoilRoot>,
@@ -420,55 +422,6 @@ describe('People actions', () => {
             fireEvent.click(editPersonButton);
 
             await screen.findByText('Save');
-        });
-
-        describe('toggle placeholder from edit menu', () => {
-            const markAsPlaceHolder = async (): Promise<void> => {
-                await act(async () => {
-                    const markAsPlaceholderButton = await screen.findByText('Mark as Placeholder');
-                    fireEvent.click(markAsPlaceholderButton);
-                });
-
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'markAsPlaceholder', TestUtils.person1.name]);
-            };
-
-            it('should update an assignment to toggle placeholder when you click on Mark/Unmark as Placeholder option', async () => {
-                await markAsPlaceHolder();
-
-                let person1Card = await screen.findByTestId('assignmentCard__person_1');
-                expect(person1Card).toHaveClass('Placeholder');
-
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
-                    TestUtils.originDateString,
-                    [{
-                        productId: TestUtils.productWithAssignments.id,
-                        placeholder: true,
-                    }],
-                    TestUtils.space,
-                    TestUtils.person1,
-                    false
-                );
-
-                const editPersonButton = await screen.findByTestId('editPersonIconContainer__person_1');
-                fireEvent.click(editPersonButton);
-
-                const unmarkAsPlaceholderButton = await screen.findByText('Unmark as Placeholder');
-                fireEvent.click(unmarkAsPlaceholderButton);
-
-                person1Card = await screen.findByTestId('assignmentCard__person_1');
-                expect(person1Card).toHaveClass('NotPlaceholder');
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
-                    TestUtils.originDateString,
-                    [{
-                        productId: TestUtils.productWithAssignments.id,
-                        placeholder: false,
-                    }],
-                    TestUtils.space,
-                    TestUtils.person1,
-                    false
-                );
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'unmarkAsPlaceholder', TestUtils.person1.name]);
-            });
         });
 
         it('should cancel an assignment when you click on Cancel Assignment option', async () => {

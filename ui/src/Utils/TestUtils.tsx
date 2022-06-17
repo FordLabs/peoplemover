@@ -137,9 +137,7 @@ class TestUtils {
         AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({
             data: [TestUtils.assignmentForPerson1],
         } as AxiosResponse));
-        AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn(() => Promise.resolve({
-            data: [TestUtils.assignmentForPerson1],
-        } as AxiosResponse));
+        AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestUtils.assignmentForPerson1}] });
         AssignmentClient.getAssignmentEffectiveDates = jest.fn(() => Promise.resolve({
             data: [
                 new Date(2020, 4, 15),

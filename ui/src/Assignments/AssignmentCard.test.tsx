@@ -29,6 +29,12 @@ import {MutableSnapshot, RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {IsDraggingState} from '../State/IsDraggingState';
+import AssignmentClient from './AssignmentClient';
+import moment from 'moment';
+import ProductClient from '../Products/ProductClient';
+import {MemoryRouter, Route, Routes} from 'react-router-dom';
+
+jest.mock('axios');
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
@@ -36,18 +42,18 @@ describe('Assignment Card', () => {
 
     beforeEach(() => {
         assignmentToRender =  {
-            id: 1,
+            id: 6555,
             person: {
                 newPerson: false,
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                id: 1,
+                id: 445,
                 name: 'Billiam Handy',
                 spaceRole: TestUtils.softwareEngineer,
                 notes: 'This is a note',
                 tags: TestUtils.personTags,
             },
             placeholder: false,
-            productId: 0,
+            productId: 1,
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         };
 
@@ -73,15 +79,44 @@ describe('Assignment Card', () => {
         expect(screen.getByText('Software Engineer')).toBeInTheDocument();
     });
 
-    it('should show unmark placeholder when assignment is a placeholder', () => {
+    it('should mark person as placeholder', async () => {
+        const placeholderAssignment = {
+            ...assignmentToRender,
+            placeholder: false,
+        };
+        renderAssignmentCard(placeholderAssignment);
+        expect(screen.getByTestId('assignmentCard__billiam_handy')).not.toHaveClass('placeholder');
+
+        fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+
+        (await screen.getByText('Mark as Placeholder')).click();
+        await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
+            .toHaveBeenCalledWith(assignmentToRender.spaceUuid, assignmentToRender.person.id, expect.any(Date))
+        )
+        await waitFor(() => expect(AssignmentClient.createAssignmentForDate)
+            .toHaveBeenCalledWith(moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": true, "productId": 1}], TestUtils.space, assignmentToRender.person, false)
+        )
+        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith('uuid', expect.any(Date)))
+    });
+
+    it('should unmark person as placeholder', async () => {
         const placeholderAssignment = {
             ...assignmentToRender,
             placeholder: true,
         };
         renderAssignmentCard(placeholderAssignment);
+        expect(screen.getByTestId('assignmentCard__billiam_handy')).toHaveClass('placeholder');
 
         fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
-        expect(screen.getByText('Unmark as Placeholder')).toBeInTheDocument();
+        (await screen.getByText('Unmark as Placeholder')).click();
+
+        await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toHaveBeenCalledWith(
+            assignmentToRender.spaceUuid, assignmentToRender.person.id, expect.any(Date)
+        ))
+        await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
+            moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": false, "productId": 1}], TestUtils.space, assignmentToRender.person, false
+        ))
+        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith('uuid', expect.any(Date)));
     });
 
     describe('Read-Only Functionality', function() {
@@ -128,8 +163,8 @@ describe('Assignment Card', () => {
             });
 
             const assignmentCard = screen.getByTestId('assignmentCard__billiam_handy');
-            expect(assignmentCard).toHaveClass('NotPlaceholder');
-            expect(assignmentCard).not.toHaveClass('Placeholder');
+            expect(assignmentCard).toHaveClass('notPlaceholder');
+            expect(assignmentCard).not.toHaveClass('placeholder');
         });
 
     });
@@ -252,9 +287,8 @@ describe('Assignment Card', () => {
             expectEditMenuContents(true);
             fireEvent.click(screen.getByText('Archive Person'));
             fireEvent.click(await screen.findByText('Archive'));
-            expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestUtils.space, assignmentToRender.person, new Date(2020, 0, 1));
+            await waitFor(() =>expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestUtils.space, assignmentToRender.person, new Date(2020, 0, 1)));
         });
-
     });
 
     describe('New Person Badge', () => {
@@ -388,10 +422,14 @@ describe('Assignment Card', () => {
     function renderAssignmentCard(assignment: Assignment, isUnassignedProduct = false, initializeRecoilState?: (mutableSnapshot: MutableSnapshot) => void): void {
         renderWithRedux(
             <RecoilRoot initializeState={initializeRecoilState}>
-                <AssignmentCard
-                    assignment={assignment}
-                    isUnassignedProduct={isUnassignedProduct}
-                />
+                <MemoryRouter initialEntries={['/uuid']}>
+                    <Routes>
+                        <Route path="/:teamUUID" element={<AssignmentCard
+                            assignment={{...assignment}}
+                            isUnassignedProduct={isUnassignedProduct}
+                        />} />
+                    </Routes>
+                </MemoryRouter>
             </RecoilRoot>,
             store
         );

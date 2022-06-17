@@ -19,20 +19,17 @@ import React, {useState} from 'react';
 import ArchivedProduct from './ArchivedProduct';
 import {isArchivedOnDate, Product} from './Product';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
 
 import '../Styles/Main.scss';
 import './ArchivedProductsDrawer.scss';
 
-interface Props {
-    products: Array<Product>;
-}
-
-function ArchivedProductsDrawer({products }: Props ): JSX.Element {
+function ArchivedProductsDrawer(): JSX.Element {
+    const products = useRecoilValue(ProductsState);
     const viewingDate = useRecoilValue(ViewingDateState);
+
     const [showDrawer, setShowDrawer] = useState(false);
 
     const getArchivedProducts = (): Array<Product> => {
@@ -60,10 +57,4 @@ function ArchivedProductsDrawer({products }: Props ): JSX.Element {
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    products: state.products,
-});
-
-export default connect(mapStateToProps)(ArchivedProductsDrawer);
-/* eslint-enable */
+export default ArchivedProductsDrawer;

@@ -28,7 +28,7 @@ import {GlobalStateProps} from '../Reducers';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
 import MyTagsForm from '../../Tags/MyTagsForm';
 import MyRolesForm from '../../Roles/MyRolesForm';
-import {emptyProduct, Product} from '../../Products/Product';
+import {emptyProduct} from '../../Products/Product';
 import {Space} from '../../Space/Space';
 import SpaceForm from '../../SpaceDashboard/SpaceForm';
 import GrantEditAccessConfirmationForm from '../../AccountDropdown/GrantEditAccessConfirmationForm';
@@ -44,7 +44,7 @@ export interface ModalMetadataItem {
     form: JSX.Element;
 }
 
-const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Array<Product>, currentSpace: Space): Array<ModalMetadataItem> | null => {
+const getCurrentModalMetadata = (currentModal: CurrentModalState, currentSpace: Space): Array<ModalMetadataItem> | null => {
     const {modal, item} = currentModal;
 
     switch (modal) {
@@ -86,7 +86,6 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
                 title:`Add New Person`,
                 form: <PersonForm
                     isEditPersonForm={false}
-                    products={products}
                     initiallySelectedProduct={item ? item.initiallySelectedProduct : undefined}
                     initialPersonName={item ? item.initialPersonName : ''}/>,
             }];
@@ -96,14 +95,12 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
                 form: <PersonForm
                     isEditPersonForm
                     personEdited={item}
-                    products={products}/>,
+                />,
             }];
         case AvailableModals.CREATE_ASSIGNMENT:
             return [{
                 title: 'Assign a Person',
-                form: <AssignmentForm
-                    products={products}
-                    initiallySelectedProduct={item}/>,
+                form: <AssignmentForm initiallySelectedProduct={item}/>,
             }];
         case AvailableModals.ASSIGNMENT_EXISTS_WARNING:
             return [{title: 'Uh-oh', form: <AssignmentExistsWarning/>}];
@@ -155,7 +152,7 @@ const getCurrentModalMetadata = (currentModal: CurrentModalState, products: Arra
 };
 
 const mapStateToProps = (state: GlobalStateProps) => ({
-    modalMetadata: getCurrentModalMetadata(state.currentModal, state.products, state.currentSpace),
+    modalMetadata: getCurrentModalMetadata(state.currentModal, state.currentSpace),
 });
 
 const mapDispatchToProps = (dispatch:  Dispatch) => ({
