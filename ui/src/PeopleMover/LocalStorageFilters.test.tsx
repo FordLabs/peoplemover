@@ -23,6 +23,7 @@ import LocationClient from '../Locations/LocationClient';
 import TestUtils from '../Utils/TestUtils';
 
 jest.mock('../Products/ProductClient');
+jest.mock('../Space/SpaceClient');
 
 describe('Filter products', () => {
     class MockLocalStorage {

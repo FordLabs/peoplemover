@@ -20,7 +20,6 @@ import TestData from '../Utils/TestData';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {fireEvent, screen, waitFor, within} from '@testing-library/react';
-import Axios from 'axios';
 import Cookies from 'universal-cookie';
 import SpaceClient from '../Space/SpaceClient';
 import RedirectClient from '../Utils/RedirectClient';
@@ -28,14 +27,17 @@ import {Space} from '../Space/Space';
 import {RecoilRoot} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
 
+jest.mock('../Space/SpaceClient');
+
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();
 
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-        Axios.put = jest.fn().mockResolvedValue({});
-        Axios.post = jest.fn().mockResolvedValue({});
+
+        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(TestData.spaceMappingsArray);
+
         cookies.set('accessToken', '123456');
         RedirectClient.redirect = jest.fn();
     });
@@ -54,16 +56,7 @@ describe('Invite Editors Form', function() {
 
                 fireEvent.click(screen.getByTestId('inviteEditorsFormSubmitButton'));
 
-                expect(Axios.post).toHaveBeenCalledWith(
-                    `/api/spaces/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa/users`,
-                    {userIds: ['hford1']},
-                    {
-                        headers: {
-                            Authorization: 'Bearer 123456',
-                            'Content-Type': 'application/json',
-                        },
-                    },
-                );
+                expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(space, ['hford1']);
             });
 
             it('should add users as editors', async function() {
@@ -97,7 +90,7 @@ describe('Invite Editors Form', function() {
                 expect(screen.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
 
                 fireEvent.click(submitButton);
-                expect(Axios.post).not.toHaveBeenCalled();
+                expect(SpaceClient.inviteUsersToSpace).not.toHaveBeenCalled();
             });
 
             it('should not add invalid cdsid user as editor (on Enter)', async function() {
@@ -118,7 +111,7 @@ describe('Invite Editors Form', function() {
                 expect(screen.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
                 fireEvent.click(submitButton);
 
-                expect(Axios.post).not.toHaveBeenCalled();
+                expect(SpaceClient.changeOwner).not.toHaveBeenCalled();
             });
 
             it('should not add users as editors when one of them is invalid', async function() {
@@ -137,7 +130,7 @@ describe('Invite Editors Form', function() {
                 expect(submitButton).toHaveAttribute('disabled');
                 expect(screen.queryByTestId('inviteEditorsFormErrorMessage')).toBeInTheDocument();
                 fireEvent.click(submitButton);
-                expect(Axios.post).not.toHaveBeenCalled();
+                expect(SpaceClient.changeOwner).not.toHaveBeenCalled();
             });
 
             it('should add two users as editors when both are valid', async function() {
@@ -225,17 +218,16 @@ describe('Invite Editors Form', function() {
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
             const permissionButton = await editorRow.findByText(/owner/i);
 
-            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
-                [{'userId': 'user_id', 'permission': 'editor'}, {'userId': 'user_id_2', 'permission': 'owner'}]
-            )
+            const user1 = {'userId': 'user_id', 'permission': 'editor'};
+            const user2 = {'userId': 'user_id_2', 'permission': 'owner'};
+            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([user1, user2])
 
             fireEvent.click(permissionButton);
             fireEvent.click(await screen.findByText(/yes/i));
-            expect(Axios.put).toHaveBeenCalledWith(
-                `/api/spaces/${TestData.space.uuid}/users/user_id_2`,
-                null,
-                {headers: {Authorization: 'Bearer 123456'}},
-            );
+
+            const expectedOwner = TestData.spaceMappingsArray[0];
+            const expectedNewOwner = TestData.spaceMappingsArray[1];
+            expect(SpaceClient.changeOwner).toHaveBeenCalledWith(TestData.space, expectedOwner, expectedNewOwner);
 
             const ownerRow = within(await screen.findByTestId('userListItem__user_id_2'));
             ownerRow.getByText(/owner/i);
@@ -249,13 +241,13 @@ describe('Invite Editors Form', function() {
         it('should not change owner after cancelling', async () => {
             renderComponent( 'user_id');
             let editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
-            const editor = editorRow.getByText(/editor/i);
+            const editor = await editorRow.findByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
             const permissionButton = await editorRow.findByText(/owner/i);
 
             fireEvent.click(permissionButton);
             fireEvent.click(await screen.findByText(/no/i));
-            expect(Axios.put).not.toHaveBeenCalled();
+            expect(SpaceClient.changeOwner).not.toHaveBeenCalled();
             expect(SpaceClient.getUsersForSpace).toHaveBeenCalledTimes(1);
 
             editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
@@ -333,15 +325,15 @@ function renderComponent(currentUser = 'User_id'): void {
     );
 }
 
-function renderComponentWithSpaceFromProps(): void {
-    const space: Space = {
-        id: 2,
-        uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        name: 'local testSpace',
-        lastModifiedDate: TestData.originDateString,
-        todayViewIsPublic: true,
-    };
+const space: Space = {
+    id: 2,
+    uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    name: 'local testSpace',
+    lastModifiedDate: TestData.originDateString,
+    todayViewIsPublic: true,
+};
 
+function renderComponentWithSpaceFromProps(): void {
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
             set(CurrentUserState, 'User_id')
@@ -354,14 +346,5 @@ function renderComponentWithSpaceFromProps(): void {
 }
 
 function validateApiCall(userIds: string[]): void {
-    expect(Axios.post).toHaveBeenCalledWith(
-        `/api/spaces/${TestData.space.uuid}/users`,
-        {userIds: userIds},
-        {
-            headers: {
-                Authorization: 'Bearer 123456',
-                'Content-Type': 'application/json',
-            },
-        },
-    );
+    expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(TestData.space, userIds);
 }

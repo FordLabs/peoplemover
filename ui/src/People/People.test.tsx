@@ -35,6 +35,7 @@ import {ProductsState} from '../State/ProductsState';
 declare let window: MatomoWindow;
 
 jest.mock('../Products/ProductClient');
+jest.mock('../Space/SpaceClient');
 
 describe('People actions', () => {
     const initialState: PreloadedState<Partial<GlobalStateProps>> = {currentSpace: TestData.space};

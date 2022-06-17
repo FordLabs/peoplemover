@@ -25,6 +25,7 @@ import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 
 jest.mock('../Products/ProductClient');
+jest.mock('../Space/SpaceClient');
 
 describe('Archived People', () => {
     const mayFourteen2020: Date = new Date(2020, 4, 14);

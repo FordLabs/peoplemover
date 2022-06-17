@@ -15,28 +15,16 @@
  * limitations under the License.
  */
 
-import {UserSpaceMapping} from '../UserSpaceMapping';
-import {Space} from '../Space';
-
-const space: Space = {
-    id: 1,
-    uuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    name: 'testSpace',
-    lastModifiedDate:  '2019-01-01',
-    todayViewIsPublic: true,
-}
-
-const spaceMappingsArray: UserSpaceMapping[] = [
-    {id: '1', spaceUuid: space.uuid!, userId: 'user_id', permission: 'owner'},
-    {id: '2', spaceUuid: space.uuid!, userId: 'user_id_2', permission: 'editor'},
-];
+import TestData from '../../Utils/TestData';
 
 const SpaceClient = {
-    getSpacesForUser: jest.fn().mockResolvedValue([]),
-    getUsersForSpace:  jest.fn().mockResolvedValue(spaceMappingsArray),
+    getSpacesForUser: jest.fn().mockResolvedValue([TestData.space]),
+    getUsersForSpace:  jest.fn().mockResolvedValue(TestData.spaceMappingsArray),
     changeOwner: jest.fn().mockResolvedValue({}),
-    removeUser: jest.fn().mockResolvedValue({}),
-    deleteSpaceByUuid: jest.fn().mockResolvedValue({})
+    removeUser: jest.fn().mockResolvedValue({data: {}}),
+    deleteSpaceByUuid: jest.fn().mockResolvedValue({}),
+    getSpaceFromUuid: jest.fn().mockResolvedValue({data: TestData.space}),
+    inviteUsersToSpace: jest.fn().mockResolvedValue({})
 }
 
 export default SpaceClient;

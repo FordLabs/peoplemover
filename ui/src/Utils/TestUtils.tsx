@@ -42,10 +42,6 @@ function mockClientCalls(): void {
     PeopleClient.updatePerson = jest.fn().mockResolvedValue({data: {}});
     PeopleClient.removePerson = jest.fn().mockResolvedValue({data: {}});
 
-    SpaceClient.removeUser = jest.fn().mockResolvedValue({data: {}});
-    SpaceClient.getSpaceFromUuid = jest.fn().mockResolvedValue({data: TestData.space});
-    SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(TestData.spaceMappingsArray);
-
     AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({ data: [TestData.assignmentForPerson1] });
     AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
     AssignmentClient.getAssignmentEffectiveDates = jest.fn().mockResolvedValue({

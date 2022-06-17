@@ -27,6 +27,7 @@ import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState'
 import {ProductsState} from '../State/ProductsState';
 
 jest.mock('../Products/ProductClient');
+jest.mock('../Space/SpaceClient');
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
