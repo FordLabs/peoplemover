@@ -28,7 +28,6 @@ import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-import ProductClient from '../Products/ProductClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {RecoilRoot} from 'recoil';
 import {ProductsState} from '../State/ProductsState';
@@ -44,8 +43,6 @@ describe('People actions', () => {
     const submitFormButtonText = 'Add';
 
     beforeEach(() => {
-        ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: [] })
-
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
@@ -59,9 +56,6 @@ describe('People actions', () => {
         const viewingDate = new Date(2020, 5, 5)
 
         beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState, ({set}) => {
                 set(ViewingDateState, viewingDate)
             });

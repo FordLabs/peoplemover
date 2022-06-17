@@ -45,6 +45,7 @@ jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockedUsedNavigate,
 }));
+jest.mock('../Products/ProductClient');
 
 describe('TimeOnProduct', () => {
     let store: Store;

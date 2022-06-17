@@ -35,6 +35,8 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {RecoilRoot} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
+jest.mock('./ProductClient');
+
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
     const addProductModalTitle = 'Add New Product';

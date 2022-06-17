@@ -30,6 +30,8 @@ import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
+jest.mock('../Products/ProductClient');
+
 describe('ReassignedDrawer', () => {
     let store: Store;
     const mayFourteen2020: Date = new Date(2020, 4, 14);

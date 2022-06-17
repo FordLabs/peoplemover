@@ -36,6 +36,7 @@ import ProductClient from '../Products/ProductClient';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
 jest.mock('axios');
+jest.mock('../Products/ProductClient');
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;

@@ -32,6 +32,7 @@ import {ProductsState} from '../State/ProductsState';
 declare let window: MatomoWindow;
 
 jest.mock('../Space/SpaceClient');
+jest.mock('../Products/ProductClient');
 
 const mockedUsedNavigate = jest.fn();
 

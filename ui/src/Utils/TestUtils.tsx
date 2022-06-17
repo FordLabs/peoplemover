@@ -22,7 +22,6 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import ColorClient from '../Roles/ColorClient';
 import LocationClient from '../Locations/LocationClient';
-import ProductClient from '../Products/ProductClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
@@ -79,15 +78,6 @@ function mockClientCalls(): void {
     LocationClient.add = jest.fn().mockResolvedValue({ data: { id: 11, name: 'Ahmedabad' } });
     LocationClient.edit = jest.fn().mockResolvedValue({ data: { id: 1, name: 'Saline' } });
     LocationClient.delete = jest.fn().mockResolvedValue({ data: {} });
-
-    // @todo DELETE THESE 4 ME ON FRIDAY
-    ProductClient.createProduct = jest.fn().mockResolvedValue({ data: {} });
-    ProductClient.deleteProduct = jest.fn().mockResolvedValue({ data: {} });
-    ProductClient.editProduct = jest.fn().mockResolvedValue({ data: {} });
-    ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: TestData.products });
-
-
-
 
     ProductTagClient.get = jest.fn().mockResolvedValue({ data: TestData.productTags });
     ProductTagClient.add = jest.fn().mockResolvedValue({ data: {id: 9, name: 'Fin Tech'} });

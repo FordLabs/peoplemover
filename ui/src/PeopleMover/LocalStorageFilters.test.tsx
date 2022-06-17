@@ -22,6 +22,8 @@ import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 import LocationClient from '../Locations/LocationClient';
 import TestUtils from '../Utils/TestUtils';
 
+jest.mock('../Products/ProductClient');
+
 describe('Filter products', () => {
     class MockLocalStorage {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

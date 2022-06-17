@@ -26,6 +26,8 @@ import {RecoilRoot} from 'recoil';
 import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
 import {ProductsState} from '../State/ProductsState';
 
+jest.mock('../Products/ProductClient');
+
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
 

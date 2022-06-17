@@ -26,6 +26,8 @@ import {fireEvent} from '@testing-library/dom';
 import {Assignment} from '../Assignment';
 import TestUtils from '../../Utils/TestUtils';
 
+jest.mock('../../Products/ProductClient');
+
 describe('Assignment History', () => {
 
     const daysBetweenStartAndToday = (assignment: Assignment): number  => {

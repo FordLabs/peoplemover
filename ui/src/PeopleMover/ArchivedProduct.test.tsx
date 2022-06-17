@@ -22,6 +22,7 @@ import TestData from '../Utils/TestData';
 import {fireEvent, screen} from '@testing-library/react';
 
 jest.mock('../Space/SpaceClient');
+jest.mock('../Products/ProductClient');
 
 describe('Archive Products', () => {
     describe('integration tests', () => {
