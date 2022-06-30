@@ -27,7 +27,7 @@ interface UseFetchPeople {
     fetchPeople(): void
 }
 
-function useFetchProducts(): UseFetchPeople {
+function useFetchPeople(): UseFetchPeople {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
     const [people, setPeople] = useRecoilState(PeopleState);
 
@@ -42,4 +42,4 @@ function useFetchProducts(): UseFetchPeople {
     };
 }
 
-export default useFetchProducts;
+export default useFetchPeople;
