@@ -63,9 +63,7 @@ function DrawerContainer({
                     {isDrawerOpen ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </i>
             </button>
-            {isDrawerOpen && (
-                <React.Fragment>{containee}</React.Fragment>
-            )}
+            {isDrawerOpen && (<>{containee}</>)}
         </div>
     );
 }

@@ -25,6 +25,7 @@ import {act} from 'react-dom/test-utils';
 import {RecoilRoot} from 'recoil';
 import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
 import {ProductsState} from '../State/ProductsState';
+import {PeopleState} from '../State/PeopleState';
 
 jest.mock('../Products/ProductClient');
 jest.mock('../Space/SpaceClient');
@@ -132,13 +133,15 @@ describe('Unassigned Products', () => {
     });
 
     describe('Edit menus', () => {
-        const initialState = {people: TestData.people, productTags: [TestData.productTag1]};
+        const initialState = {productTags: [TestData.productTag1]};
 
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            await TestUtils.renderPeopleMoverComponent(undefined, initialState);
+            await TestUtils.renderPeopleMoverComponent(undefined, initialState, ({set}) => {
+                set(PeopleState, TestData.people)
+            });
         });
 
         it('should open edit person dialog when clicking on ellipsis', async () => {

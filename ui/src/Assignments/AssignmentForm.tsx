@@ -37,10 +37,10 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
+import {PeopleState} from '../State/PeopleState';
 
 interface AssignmentFormProps {
     initiallySelectedProduct: Product;
-    people: Array<Person>;
     currentSpace: Space;
 
     closeModal(): void;
@@ -49,20 +49,20 @@ interface AssignmentFormProps {
 
 function AssignmentForm({
     initiallySelectedProduct,
-    people,
     currentSpace,
     closeModal,
     setCurrentModal,
 }: AssignmentFormProps): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const products = useRecoilValue(ProductsState);
+    const people = useRecoilValue(PeopleState);
+
     const { ASSIGNMENT_NAME } = MetadataReactSelectProps;
     const { ASSIGNMENT_ASSIGN_TO } = MetadataMultiSelectProps;
     const defaultPerson: Person = {id: -1, name: ''} as Person;
     const [selectedPerson, setSelectedPerson] = useState<Person>(defaultPerson);
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>(getSelectedProduct());
     const [placeholder, setPlaceholder] = useState<boolean>(false);
-
-    const viewingDate = useRecoilValue(ViewingDateState);
-    const products = useRecoilValue(ProductsState);
 
     function getSelectedProductPairs(): ProductPlaceholderPair[] {
         return selectedProducts.map((product) => {
@@ -243,7 +243,6 @@ function AssignmentForm({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    people: state.people,
     currentSpace: state.currentSpace,
 });
 

@@ -31,7 +31,6 @@ import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 import {RoleTag} from '../../Roles/RoleTag.interface';
 import RoleClient from '../../Roles/RoleClient';
 import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
-import PeopleClient from '../../People/PeopleClient';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -119,13 +118,6 @@ export const setRolesAction = (roles: Array<RoleTag>) => ({
     type: AvailableActions.SET_ROLES,
     roles,
 });
-
-export const fetchPeopleAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () => (dispatch: Dispatch, getState: Function): Promise<void> => {
-    return PeopleClient.getAllPeopleInSpace(getState().currentSpace.uuid).then(result => {
-        const people: Array<Person> = result.data || [];
-        dispatch(setPeopleAction(people));
-    })
-}
 
 export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {

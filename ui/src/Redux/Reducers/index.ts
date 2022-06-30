@@ -17,8 +17,6 @@
 
 import {combineReducers} from 'redux';
 import currentModalReducer, {CurrentModalState} from './currentModalReducer';
-import peopleReducer from './peopleReducer';
-import {Person} from '../../People/Person';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
@@ -35,7 +33,6 @@ import rolesReducer from './rolesReducer';
 
 export default combineReducers({
     currentModal: currentModalReducer,
-    people: peopleReducer,
     productRefs: productRefsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
     currentSpace: currentSpaceReducer,
@@ -47,7 +44,6 @@ export default combineReducers({
 
 export interface GlobalStateProps {
     currentModal: CurrentModalState;
-    people: Array<Person>;
     productRefs: Array<ProductCardRefAndProductPair>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;

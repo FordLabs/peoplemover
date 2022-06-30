@@ -30,6 +30,7 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
+import {PeopleState} from '../State/PeopleState';
 
 describe('AssignmentForm', () => {
     beforeEach(() => {
@@ -148,8 +149,7 @@ describe('AssignmentForm', () => {
         });
 
         it('populates the person name field of the Create Person modal on open', async () => {
-            const state = { people: TestData.people };
-            const store = createStore(rootReducer, state);
+            const store = createStore(rootReducer);
             store.dispatch = jest.fn();
 
             renderComponent(store);
@@ -179,12 +179,12 @@ const renderComponent = (store: Store|undefined = undefined): { viewingDate: Dat
     const viewingDate = new Date(2020, 5, 5);
     const initialState = {
         currentSpace: TestData.space,
-        people: TestData.people,
     };
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
             set(ViewingDateState, viewingDate);
             set(ProductsState, products);
+            set(PeopleState,  TestData.people);
         }}>
             <AssignmentForm initiallySelectedProduct={products[0]} />
         </RecoilRoot>,

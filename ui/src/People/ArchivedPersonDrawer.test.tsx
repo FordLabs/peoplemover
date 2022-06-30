@@ -23,6 +23,7 @@ import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import configureStore from 'redux-mock-store';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {PeopleState} from '../State/PeopleState';
 
 jest.mock('../Products/ProductClient');
 jest.mock('../Space/SpaceClient');
@@ -40,12 +41,12 @@ describe('Archived People', () => {
             const mockStore = configureStore([]);
             const store = mockStore({
                 currentSpace: TestData.space,
-                people: [...TestData.people, TestData.unassignedBigBossSE],
             });
 
             ({unmount} = renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen2020)
+                    set(PeopleState, [...TestData.people, TestData.unassignedBigBossSE])
                 }}>
                     <ArchivedPersonDrawer/>
                 </RecoilRoot>,
@@ -88,7 +89,6 @@ describe('Archived People', () => {
             const mockStore = configureStore([]);
             const store = mockStore({
                 currentSpace: TestData.space,
-                people: [...TestData.people, TestData.unassignedBigBossSE],
             });
 
             unmount();
@@ -96,6 +96,7 @@ describe('Archived People', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen1999)
+                    set(PeopleState, [...TestData.people, TestData.unassignedBigBossSE])
                 }}>
                     <ArchivedPersonDrawer/>
                 </RecoilRoot>,

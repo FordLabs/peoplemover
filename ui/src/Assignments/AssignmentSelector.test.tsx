@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,7 @@ import moment from 'moment';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
+import {PeopleState} from '../State/PeopleState';
 
 describe('the assignment form', () => {
     beforeEach(() => {
@@ -49,11 +50,12 @@ describe('the assignment form', () => {
     it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
         const products = [TestData.unassignedProduct, TestData.productWithAssignments, TestData.productWithoutAssignments, TestData.productForHank];
         const viewingDate = new Date(2020, 5, 5);
-        const initialState = {people: TestData.people, currentSpace: TestData.space};
+        const initialState = {currentSpace: TestData.space};
         renderWithRedux(
             <RecoilRoot initializeState={(({set}) => {
                 set(ViewingDateState, viewingDate)
                 set(ProductsState, products)
+                set(PeopleState, TestData.people)
             })}>
                 <AssignmentForm initiallySelectedProduct={products[2]} />,
             </RecoilRoot>,

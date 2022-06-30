@@ -29,6 +29,7 @@ import ProductClient from '../Products/ProductClient';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import {PeopleState} from '../State/PeopleState';
 
 jest.mock('../Products/ProductClient');
 
@@ -51,13 +52,13 @@ describe('ReassignedDrawer', () => {
 
             store = createStore(rootReducer, {
                 currentSpace: TestData.space,
-                people: TestData.people,
             }, applyMiddleware(thunk));
 
             await waitFor(async () => {
                 renderWithRedux(
                     <RecoilRoot initializeState={({set}) => {
                         set(ViewingDateState, mayFourteen2020)
+                        set(PeopleState, TestData.people)
                     }}>
                         <MemoryRouter initialEntries={['/bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']}>
                             <Routes>

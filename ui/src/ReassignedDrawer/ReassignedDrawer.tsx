@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@ import {Reassignment} from './Reassignment';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import {Space} from '../Space/Space';
 import {isArchived, Person} from '../People/Person';
-import {fetchPeopleAction} from '../Redux/Actions';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import PeopleClient from '../People/PeopleClient';
 import {useRecoilValue} from 'recoil';
@@ -31,19 +30,17 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import useFetchProducts from '../Hooks/useFetchProducts';
 
 import './ReassignedDrawer.scss';
+import useFetchPeople from '../Hooks/useFetchPeople';
 
 interface Props {
     currentSpace: Space;
-    fetchPeople(): Array<Person>;
 }
 
-function ReassignedDrawer({
-    currentSpace,
-    fetchPeople,
-}: Props): JSX.Element {
+function ReassignedDrawer({ currentSpace }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
 
     const { fetchProducts, products } = useFetchProducts();
+    const { fetchPeople } = useFetchPeople();
 
     const [showDrawer, setShowDrawer] = useState(true);
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
@@ -133,9 +130,5 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    fetchPeople: () => dispatch(fetchPeopleAction()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReassignedDrawer);
+export default connect(mapStateToProps)(ReassignedDrawer);
 /* eslint-enable */

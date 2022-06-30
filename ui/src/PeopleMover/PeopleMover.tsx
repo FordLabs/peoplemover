@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,28 +17,21 @@
 
 import React, {useCallback, useEffect} from 'react';
 
-import '../Styles/Main.scss';
-import './PeopleMover.scss';
-
 import ProductList from '../Products/ProductList';
 import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
     fetchLocationsAction,
-    fetchPeopleAction,
     fetchPersonTagsAction,
     fetchProductTagsAction,
     fetchRolesAction,
     setCurrentModalAction,
-    setPeopleAction,
     setupSpaceAction,
 } from '../Redux/Actions';
-
 import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Person} from '../People/Person';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
@@ -59,6 +52,10 @@ import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import useFetchProducts from '../Hooks/useFetchProducts';
+import useFetchPeople from '../Hooks/useFetchPeople';
+
+import '../Styles/Main.scss';
+import './PeopleMover.scss';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -67,12 +64,10 @@ export interface PeopleMoverProps {
     currentModal: CurrentModalState;
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    fetchPeople(): Array<Person>;
     fetchProductTags(): Array<Tag>;
     fetchPersonTags(): Array<Tag>;
     fetchLocations(): Array<LocationTag>;
     fetchRoles(): Array<RoleTag>;
-    setPeople(people: Array<Person>): Array<Person>;
     setCurrentModal(modalState: CurrentModalState): void;
     setSpace(space: Space): void;
 }
@@ -81,13 +76,11 @@ function PeopleMover({
     currentModal,
     currentSpace,
     allGroupedTagFilterOptions,
-    fetchPeople,
     fetchProductTags,
     fetchPersonTags,
     fetchLocations,
     fetchRoles,
     setSpace,
-    setPeople,
     setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
@@ -96,6 +89,7 @@ function PeopleMover({
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
+    const { fetchPeople } = useFetchPeople();
     const { fetchProducts, products } = useFetchProducts();
 
     const hasProductsAndFilters: boolean = products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0;
@@ -144,7 +138,7 @@ function PeopleMover({
             fetchRoles();
             fetchPeople();
         }
-    }, [currentSpace, setPeople, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, handleErrors, fetchProducts]);
+    }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, handleErrors, fetchProducts]);
 
     return (
         !hasProductsAndFilters
@@ -201,9 +195,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
     fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
     fetchLocations: () => dispatch(fetchLocationsAction()),
-    fetchPeople: () => dispatch(fetchPeopleAction()),
     fetchRoles: () => dispatch(fetchRolesAction()),
-    setPeople: (people: Array<Person>) => dispatch(setPeopleAction(people)),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
