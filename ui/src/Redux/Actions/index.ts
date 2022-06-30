@@ -26,8 +26,6 @@ import {LocationTag} from '../../Locations/LocationTag.interface';
 import LocationClient from '../../Locations/LocationClient';
 import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
 import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
-import {RoleTag} from '../../Roles/RoleTag.interface';
-import RoleClient from '../../Roles/RoleClient';
 import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 
 export enum AvailableActions {
@@ -40,7 +38,6 @@ export enum AvailableActions {
     SET_PRODUCT_TAGS,
     SET_PERSON_TAGS,
     SET_LOCATIONS,
-    SET_ROLES,
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({
@@ -88,11 +85,6 @@ export const setLocationsAction = (locations: Array<LocationTag>) => ({
     locations,
 });
 
-export const setRolesAction = (roles: Array<RoleTag>) => ({
-    type: AvailableActions.SET_ROLES,
-    roles,
-});
-
 export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return ProductTagClient.get(getState().currentSpace.uuid!,)
@@ -121,16 +113,6 @@ export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, nul
                 const locations: Array<LocationTag> = result.data || [];
                 sortTagsAlphabetically(locations);
                 dispatch(setLocationsAction(locations));
-            });
-    };
-
-export const fetchRolesAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
-    (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return RoleClient.get(getState().currentSpace.uuid,)
-            .then(result => {
-                const roles: Array<RoleTag> = result.data || [];
-                sortTagsAlphabetically(roles);
-                dispatch(setRolesAction(roles));
             });
     };
 

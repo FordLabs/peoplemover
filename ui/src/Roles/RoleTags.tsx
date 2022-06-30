@@ -30,17 +30,18 @@ import {connect} from 'react-redux';
 import {Space} from '../Space/Space';
 import {INACTIVE_EDIT_STATE_INDEX} from '../Tags/MyTagsForm';
 import {RoleEditRequest} from './RoleEditRequest.interface';
-import {fetchRolesAction, setupSpaceAction} from '../Redux/Actions';
+import {setupSpaceAction} from '../Redux/Actions';
+import useFetchRoles from '../Hooks/useFetchRoles';
 
 interface Props {
     colors: Array<Color>;
-    roles: Array<RoleTag>;
-    fetchRoles(): Array<RoleTag>;
     updateFilterOptions(index: number, tag: TagInterface): void;
     currentSpace: Space;
 }
 
-const RoleTags = ({ colors, roles, fetchRoles, updateFilterOptions, currentSpace }: Props): JSX.Element => {
+const RoleTags = ({ colors, updateFilterOptions, currentSpace }: Props): JSX.Element => {
+    const { fetchRoles, roles } = useFetchRoles();
+
     const tagType = 'role';
     const roleFiltersIndex = 2;
     const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
@@ -77,7 +78,7 @@ const RoleTags = ({ colors, roles, fetchRoles, updateFilterOptions, currentSpace
             colorId: role.colorId,
         };
         return await RoleClient.add(newRole, currentSpace)
-            .then((response) => {
+            .then(() => {
                 fetchRoles();
                 returnToViewState();
             });
@@ -158,11 +159,9 @@ const RoleTags = ({ colors, roles, fetchRoles, updateFilterOptions, currentSpace
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    roles: state.roles,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchRoles: () => dispatch(fetchRolesAction()),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
 });
 

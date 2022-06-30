@@ -20,14 +20,12 @@ import {
     fetchLocationsAction,
     fetchPersonTagsAction,
     fetchProductTagsAction,
-    fetchRolesAction,
     setupSpaceAction,
 } from './index';
 import configureStore, {MockStoreCreator, MockStoreEnhanced} from 'redux-mock-store';
 import TestData from '../../Utils/TestData';
 import thunk from 'redux-thunk';
 import * as filterConstants from '../../SortingAndFiltering/FilterLibraries';
-import RoleClient from '../../Roles/RoleClient';
 import {AxiosResponse} from 'axios';
 import LocationClient from '../../Locations/LocationClient';
 import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
@@ -112,24 +110,6 @@ describe('Actions', () => {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(fetchLocationsAction()).then(() => {
-                expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
-                expect(store.getActions()).toEqual(expectedActions);
-            });
-        });
-    });
-
-    describe('fetchRolesAction', () => {
-        it('should invoke RoleClient.get and fire the setRoles Action', () => {
-            const mock = jest.spyOn(RoleClient, 'get');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestData.roles} as AxiosResponse));
-
-            const expectedActions = [
-                {type: AvailableActions.SET_ROLES, roles: TestData.roles},
-            ];
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return store.dispatch<any>(fetchRolesAction()).then(() => {
                 expect(mock).toHaveBeenCalledTimes(1);
                 expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);

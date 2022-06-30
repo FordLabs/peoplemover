@@ -25,7 +25,6 @@ import {
     fetchLocationsAction,
     fetchPersonTagsAction,
     fetchProductTagsAction,
-    fetchRolesAction,
     setCurrentModalAction,
     setupSpaceAction,
 } from '../Redux/Actions';
@@ -46,7 +45,6 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import HeaderContainer from '../Header/HeaderContainer';
-import {RoleTag} from '../Roles/RoleTag.interface';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
@@ -56,6 +54,7 @@ import useFetchPeople from '../Hooks/useFetchPeople';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
+import useFetchRoles from '../Hooks/useFetchRoles';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -67,7 +66,6 @@ export interface PeopleMoverProps {
     fetchProductTags(): Array<Tag>;
     fetchPersonTags(): Array<Tag>;
     fetchLocations(): Array<LocationTag>;
-    fetchRoles(): Array<RoleTag>;
     setCurrentModal(modalState: CurrentModalState): void;
     setSpace(space: Space): void;
 }
@@ -79,7 +77,6 @@ function PeopleMover({
     fetchProductTags,
     fetchPersonTags,
     fetchLocations,
-    fetchRoles,
     setSpace,
     setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
@@ -90,6 +87,7 @@ function PeopleMover({
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const { fetchPeople } = useFetchPeople();
+    const { fetchRoles } = useFetchRoles();
     const { fetchProducts, products } = useFetchProducts();
 
     const hasProductsAndFilters: boolean = products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0;
@@ -195,7 +193,6 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
     fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
     fetchLocations: () => dispatch(fetchLocationsAction()),
-    fetchRoles: () => dispatch(fetchRolesAction()),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });

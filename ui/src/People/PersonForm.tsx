@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import {connect} from 'react-redux';
-import {closeModalAction, fetchRolesAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {closeModalAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived, Person} from './Person';
@@ -57,6 +57,7 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
+import useFetchRoles from '../Hooks/useFetchRoles';
 
 interface Props {
     isEditPersonForm: boolean
@@ -65,11 +66,9 @@ interface Props {
     personEdited?: Person;
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    roles: Array<RoleTag>;
 
     closeModal(): void;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-    fetchRoles(): Array<RoleTag>;
 }
 
 function PersonForm({
@@ -81,13 +80,13 @@ function PersonForm({
     closeModal,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
-    roles,
-    fetchRoles,
 }: Props): JSX.Element {
     const products = useRecoilValue(ProductsState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const setIsUnassignedDrawerOpen = useSetRecoilState(IsUnassignedDrawerOpenState);
     const setPeople = useSetRecoilState(PeopleState);
+
+    const { fetchRoles, roles } = useFetchRoles();
 
     const spaceUuid = currentSpace.uuid!;
     const { ROLE_TAGS } = MetadataReactSelectProps;
@@ -454,14 +453,12 @@ function PersonForm({
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-    roles: state.roles,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-    fetchRoles: () => dispatch(fetchRolesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PersonForm);
