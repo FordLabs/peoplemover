@@ -15,37 +15,81 @@
  * limitations under the License.
  */
 
-import RoleClient from '../Roles/RoleClient';
-import LocationClient from '../Locations/LocationClient';
+import React from 'react';
 import PeopleClient from '../People/PeopleClient';
+import SpaceClient from '../Space/SpaceClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import ProductClient from '../Products/ProductClient';
-import {render, RenderResult, waitFor} from '@testing-library/react';
+import RoleClient from '../Roles/RoleClient';
+import ColorClient from '../Roles/ColorClient';
+import LocationClient from '../Locations/LocationClient';
+import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
+import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
-import {Provider} from 'react-redux';
-import React from 'react';
-import thunk from 'redux-thunk';
-import {Person} from '../People/Person';
-import {Assignment} from '../Assignments/Assignment';
-import {Product} from '../Products/Product';
-import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import {Tag} from '../Tags/Tag';
-import ColorClient from '../Roles/ColorClient';
-import {Color, RoleTag} from '../Roles/RoleTag.interface';
-import {LocationTag} from '../Locations/LocationTag.interface';
-import {AxiosResponse} from 'axios';
-import SpaceClient from '../Space/SpaceClient';
-import {Space} from '../Space/Space';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
-import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
+import {MutableSnapshot, RecoilRoot} from 'recoil';
+import {render, RenderResult, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
-import {MutableSnapshot, RecoilRoot} from 'recoil';
+import thunk from 'redux-thunk';
+import {Provider} from 'react-redux';
+import TestData from '../Utils/TestData';
+import {AxiosResponse} from 'axios';
 
-export function createDataTestId(prefix: string, name: string): string {
-    return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
+// @todo replace this with jest manual mocks
+function mockClientCalls(): void {
+    PeopleClient.createPersonForSpace = jest.fn((space, person) => Promise.resolve({ data: person } as AxiosResponse));
+    PeopleClient.getAllPeopleInSpace = jest.fn().mockResolvedValue({ data: TestData.people });
+    PeopleClient.updatePerson = jest.fn().mockResolvedValue({data: {}});
+    PeopleClient.removePerson = jest.fn().mockResolvedValue({data: {}});
+
+    AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({ data: [TestData.assignmentForPerson1] });
+    AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
+    AssignmentClient.getAssignmentEffectiveDates = jest.fn().mockResolvedValue({
+        data: [
+            new Date(2020, 4, 15),
+            new Date(2020, 5, 1),
+            new Date(2020, 6, 1),
+        ],
+    });
+    AssignmentClient.getReassignments = jest.fn().mockResolvedValue({ data: [] });
+    AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn().mockResolvedValue({ data: [] });
+
+
+    RoleClient.get = jest.fn().mockResolvedValue({ data: [
+        {id: 1, name: 'Software Engineer', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color1},
+        {id: 2, name: 'Product Manager', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color2},
+        {id: 3, name: 'Product Designer', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color3},
+    ]});
+    RoleClient.add = jest.fn().mockResolvedValue({
+        data: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: {color: '1', id: 2}},
+    });
+    RoleClient.edit = jest.fn().mockResolvedValue({
+        data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color3},
+    });
+    RoleClient.delete = jest.fn().mockResolvedValue({ data: {} });
+
+    ColorClient.getAllColors = jest.fn().mockResolvedValue({ data: TestData.colors });
+
+    LocationClient.get = jest.fn().mockResolvedValue({ data: TestData.locations });
+    LocationClient.add = jest.fn().mockResolvedValue({ data: { id: 11, name: 'Ahmedabad' } });
+    LocationClient.edit = jest.fn().mockResolvedValue({ data: { id: 1, name: 'Saline' } });
+    LocationClient.delete = jest.fn().mockResolvedValue({ data: {} });
+
+    ProductTagClient.get = jest.fn().mockResolvedValue({ data: TestData.productTags });
+    ProductTagClient.add = jest.fn().mockResolvedValue({ data: {id: 9, name: 'Fin Tech'} });
+    ProductTagClient.edit = jest.fn().mockResolvedValue({
+        data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+    });
+    ProductTagClient.delete = jest.fn().mockResolvedValue({ data: {} });
+
+    PersonTagClient.get = jest.fn().mockResolvedValue({ data: TestData.personTags });
+    PersonTagClient.add = jest.fn().mockResolvedValue({
+        data: {id: 1337, name: 'Low Achiever', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+    });
+    PersonTagClient.edit = jest.fn().mockResolvedValue({
+        data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+    });
+    PersonTagClient.delete = jest.fn().mockResolvedValue({ data: {} });
 }
 
 export function renderWithRedux(
@@ -57,36 +101,34 @@ export function renderWithRedux(
     return render(<Provider store={testingStore}>{component}</Provider>);
 }
 
+async function renderPeopleMoverComponent(
+    store?: Store,
+    initialReduxState?: PreloadedState<Partial<GlobalStateProps>>,
+    initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,
+    initialPath = '/uuid'
+): Promise<RenderResult> {
+    const result = renderWithRedux(
+        <MemoryRouter initialEntries={[initialPath]}>
+            <RecoilRoot initializeState={initializedRecoilState}>
+                <Routes>
+                    <Route path="/:teamUUID" element={<PeopleMover/>} />
+                </Routes>
+            </RecoilRoot>
+        </MemoryRouter>,
+        store,
+        initialReduxState
+    );
+    await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(initialPath.replace('/', '')))
+    return result;
+}
+
 export function renderWithRecoil(component: JSX.Element, initializeState?: (mutableSnapshot: MutableSnapshot) => void): RenderResult {
     return render(<RecoilRoot initializeState={initializeState}>{component}</RecoilRoot>)
 }
 
-export const mockDate = (expected: Date): () => void => {
-    const _Date = Date;
-
-    // If any Date or number is passed to the constructor
-    // use that instead of our mocked date
-    function MockDate(mockOverride?: Date | number): Date {
-        return new _Date(mockOverride || expected);
-    }
-
-    MockDate.UTC = _Date.UTC;
-    MockDate.parse = _Date.parse;
-    MockDate.now = (): number => expected.getTime();
-    // Give our mock Date has the same prototype as Date
-    // Some libraries rely on this to identify Date objects
-    MockDate.prototype = _Date.prototype;
-
-    // Our mock is not a full implementation of Date
-    // Types will not match but it's good enough for our tests
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    global.Date = MockDate as any;
-
-    // Callback function to remove the Date mock
-    return (): void => {
-        global.Date = _Date;
-    };
-};
+export function createDataTestId(prefix: string, name: string): string {
+    return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
+}
 
 export function mockCreateRange(): () => void {
     if (window.document) {
@@ -113,570 +155,18 @@ export function mockCreateRange(): () => void {
     }
 }
 
-class TestUtils {
-
-    static mockClientCalls(): void {
-        PeopleClient.createPersonForSpace = jest.fn((space, person) => Promise.resolve({
-            data: person,
-        } as AxiosResponse));
-        PeopleClient.getAllPeopleInSpace = jest.fn(() => Promise.resolve({
-            data: TestUtils.people,
-        } as AxiosResponse));
-        PeopleClient.updatePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-        PeopleClient.removePerson = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-
-        SpaceClient.removeUser = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-
-        SpaceClient.getSpaceFromUuid = jest.fn(() => Promise.resolve({
-            data: TestUtils.space,
-        } as AxiosResponse));
-
-        SpaceClient.getUsersForSpace = jest.fn(() => Promise.resolve(
-            TestUtils.spaceMappingsArray as UserSpaceMapping[]));
-
-        AssignmentClient.createAssignmentForDate = jest.fn(() => Promise.resolve({
-            data: [TestUtils.assignmentForPerson1],
-        } as AxiosResponse));
-        AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestUtils.assignmentForPerson1}] });
-        AssignmentClient.getAssignmentEffectiveDates = jest.fn(() => Promise.resolve({
-            data: [
-                new Date(2020, 4, 15),
-                new Date(2020, 5, 1),
-                new Date(2020, 6, 1),
-            ],
-        } as AxiosResponse));
-        AssignmentClient.getReassignments = jest.fn(() => Promise.resolve({
-            data: [],
-        } as AxiosResponse));
-        AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn(() => Promise.resolve({
-            data: [],
-        } as AxiosResponse));
-
-
-        RoleClient.get = jest.fn(() => Promise.resolve({
-            data: [
-                {id: 1, name: 'Software Engineer', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color1},
-                {id: 2, name: 'Product Manager', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color2},
-                {id: 3, name: 'Product Designer', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color3},
-            ],
-        } as AxiosResponse));
-        RoleClient.add = jest.fn(() => Promise.resolve({
-            data: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: {color: '1', id: 2}},
-        } as AxiosResponse));
-        RoleClient.edit = jest.fn(() => Promise.resolve({
-            data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestUtils.color3},
-        } as AxiosResponse));
-        RoleClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-
-        ColorClient.getAllColors = jest.fn(() => Promise.resolve({
-            data: TestUtils.colors,
-        } as AxiosResponse));
-
-        LocationClient.get = jest.fn(() => Promise.resolve({
-            data: TestUtils.locations,
-        } as AxiosResponse));
-        LocationClient.add = jest.fn(() => Promise.resolve({
-            data: {
-                id: 11,
-                name: 'Ahmedabad',
-            },
-        } as AxiosResponse));
-        LocationClient.edit = jest.fn(() => Promise.resolve({
-            data: {
-                id: 1,
-                name: 'Saline',
-            },
-        } as AxiosResponse));
-        LocationClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-
-        ProductClient.createProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-        ProductClient.deleteProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-        ProductClient.editProduct = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-        ProductClient.getProductsForDate = jest.fn(() => Promise.resolve({
-            data: TestUtils.products,
-        } as AxiosResponse));
-
-        ProductTagClient.get = jest.fn(() => Promise.resolve({
-            data: TestUtils.productTags,
-        } as AxiosResponse));
-        ProductTagClient.add = jest.fn(() => Promise.resolve({
-            data: {id: 9, name: 'Fin Tech'},
-        } as AxiosResponse));
-        ProductTagClient.edit = jest.fn(() => Promise.resolve({
-            data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
-        } as AxiosResponse));
-        ProductTagClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-
-        PersonTagClient.get = jest.fn(() => Promise.resolve({
-            data: TestUtils.personTags,
-        } as AxiosResponse));
-        PersonTagClient.add = jest.fn(() => Promise.resolve({
-            data: {id: 1337, name: 'Low Achiever', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
-        } as AxiosResponse));
-        PersonTagClient.edit = jest.fn(() => Promise.resolve({
-            data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
-        } as AxiosResponse));
-        PersonTagClient.delete = jest.fn(() => Promise.resolve({data: {}} as AxiosResponse));
-    }
-
-    static async renderPeopleMoverComponent(
-        store?: Store,
-        initialReduxState?: PreloadedState<Partial<GlobalStateProps>>,
-        initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,
-        initialPath = '/uuid'
-    ): Promise<RenderResult> {
-        const result = renderWithRedux(
-            <MemoryRouter initialEntries={[initialPath]}>
-                <RecoilRoot initializeState={initializedRecoilState}>
-                    <Routes>
-                        <Route path="/:teamUUID" element={<PeopleMover/>} />
-                    </Routes>
-                </RecoilRoot>
-            </MemoryRouter>,
-            store,
-            initialReduxState
-        );
-        await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(initialPath.replace('/', '')))
-        return result;
-    }
-
-
-    static async waitForHomePageToLoad(app: RenderResult): Promise<void> {
-        await app.findByText(/PeopleMover/i);
-    }
-
-    static dummyCallback: () => void = () => null;
-
-    static originDateString = '2019-01-01';
-
-    static annarbor = {id: 1, name: 'Ann Arbor', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
-    static detroit = {id: 2, name: 'Detroit', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static dearborn = {id: 3, name: 'Dearborn', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static southfield = {id: 4, name: 'Southfield', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-
-    static locations: LocationTag[] = [
-        TestUtils.annarbor,
-        TestUtils.detroit,
-        TestUtils.dearborn,
-        TestUtils.southfield,
-    ];
-
-    static productTag1: Tag = {id: 5, name: 'AV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static productTag2: Tag = {id: 6, name: 'FordX', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
-    static productTag3: Tag = {id: 7, name: 'EV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static productTag4: Tag = {id: 8, name: 'Mache', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-
-    static productTags: Array<Tag> = [
-        TestUtils.productTag1,
-        TestUtils.productTag2,
-        TestUtils.productTag3,
-        TestUtils.productTag4,
-    ];
-
-    static personTag1: Tag = {id: 5, name: 'The lil boss', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-    static personTag2: Tag = {id: 6, name: 'The big boss', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
-
-    static personTags: Array<Tag> = [
-        TestUtils.personTag1,
-        TestUtils.personTag2,
-    ];
-
-    static color1: Color = {color: '#81C0FA', id: 1};
-    static color2: Color = {color: '#83DDC2', id: 2};
-    static color3: Color = {color: '#FCBAE9', id: 3};
-    static whiteColor: Color = {color: '#FFFFFF', id: 4};
-
-    static colors: Array<Color> = [
-        TestUtils.color1,
-        TestUtils.color2,
-        TestUtils.color3,
-        TestUtils.whiteColor,
-    ];
-
-    static softwareEngineer = {name: 'Software Engineer', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color1};
-    static productManager = {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color2};
-    static productDesigner = {name: 'Product Designer', id: 3, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: TestUtils.color3};
-
-    static roles: RoleTag[] = [
-        TestUtils.productDesigner,
-        TestUtils.productManager,
-        TestUtils.softwareEngineer,
-    ];
-
-    static person1: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 100,
-        name: 'Person 1',
-        spaceRole: TestUtils.softwareEngineer,
-        notes: 'I love the theater',
-        newPerson: false,
-        tags: [TestUtils.personTag1],
-    };
-
-    static hank: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 200,
-        name: 'Hank',
-        spaceRole: TestUtils.productManager,
-        notes: "Don't forget the WD-40!",
-        newPerson: false,
-        tags: [TestUtils.personTag1],
-        archiveDate: new Date(2200, 0, 1),
-    };
-
-    static archivedPerson: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 1010,
-        name: 'Unassigned Person 77',
-        spaceRole: TestUtils.softwareEngineer,
-        newPerson: false,
-        tags: [],
-        archiveDate: new Date(2001, 10, 10),
-    };
-
-    static unassignedPerson: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 101,
-        name: 'Unassigned Person 7',
-        spaceRole: TestUtils.softwareEngineer,
-        newPerson: false,
-        tags: [],
-    };
-
-    static unassignedPersonNoRole: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 106,
-        name: 'Unassigned Person No Role',
-        newPerson: false,
-        tags: [],
-    };
-
-    static unassignedBigBossSE: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 102,
-        name: 'Unassigned Big Boss SE',
-        spaceRole: TestUtils.softwareEngineer,
-        newPerson: false,
-        tags: [TestUtils.personTag2],
-        archiveDate: new Date(1993, 8, 1),
-    };
-
-    static person2: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 103,
-        name: 'bob se',
-        spaceRole: TestUtils.softwareEngineer,
-        newPerson: false,
-        tags: TestUtils.personTags,
-    };
-
-    static person3: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 104,
-        name: 'bob pm',
-        spaceRole: TestUtils.productManager,
-        newPerson: false,
-        tags: [TestUtils.personTag1],
-    };
-
-    static personNoRoleNoTag: Person = {
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        id: 105,
-        name: 'bob norole notag',
-        newPerson: false,
-        tags: [],
-    };
-
-    static people: Array<Person> = [
-        TestUtils.person1,
-        TestUtils.hank,
-        TestUtils.archivedPerson,
-        TestUtils.unassignedPerson,
-    ];
-
-    static assignmentForPerson1: Assignment = {
-        id: 1,
-        productId: 1,
-        placeholder: false,
-        person: TestUtils.person1,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 5, 1),
-    };
-
-    static assignmentForHank: Assignment = {
-        id: 3,
-        productId: 102,
-        placeholder: true,
-        person: TestUtils.hank,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 6, 1),
-        startDate: new Date(2020, 0, 1),
-    };
-
-    static assignmentVacationForHank: Assignment = {
-        id: 20,
-        productId: 999,
-        person: TestUtils.hank,
-        placeholder: false,
-        spaceUuid: TestUtils.hank.spaceUuid,
-        startDate: new Date(2019, 11, 1),
-        endDate: new Date(2020, 0, 1),
-    };
-
-    static previousAssignmentForHank: Assignment = {
-        id: 21,
-        productId: 3,
-        person: TestUtils.hank,
-        placeholder: false,
-        spaceUuid: TestUtils.hank.spaceUuid,
-        startDate: new Date(2019, 9, 1),
-        endDate: new Date(2019, 11, 1),
-    };
-
-    static assignmentForUnassigned: Assignment = {
-        id: 11,
-        productId: 999,
-        person: TestUtils.unassignedPerson,
-        placeholder: false,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 4, 15),
-        startDate: new Date(2020, 0, 2),
-    };
-
-    static assignmentForArchived: Assignment = {
-        id: 111,
-        productId: 999,
-        person: TestUtils.archivedPerson,
-        placeholder: false,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 4, 15),
-        startDate: new Date(2020, 0, 2),
-    };
-
-    static assignmentForUnassignedNoRole: Assignment = {
-        id: 14,
-        productId: 999,
-        person: TestUtils.unassignedPersonNoRole,
-        placeholder: false,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 4, 15),
-        startDate: new Date(2020, 0, 2),
-    };
-
-    static assignmentForUnassignedBigBossSE: Assignment = {
-        id: 12,
-        productId: 999,
-        person: TestUtils.unassignedBigBossSE,
-        placeholder: false,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 4, 15),
-    };
-
-    static assignmentForPerson2: Assignment = {
-        id: 15,
-        productId: 1,
-        person: TestUtils.person2,
-        placeholder: false,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 4, 15),
-    };
-
-    static assignmentForPerson3: Assignment = {
-        id: 17,
-        productId: 1,
-        person: TestUtils.person3,
-        placeholder: false,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 4, 15),
-    };
-
-    static assignmentForPersonNoRoleNoTag: Assignment = {
-        id: 19,
-        productId: 1,
-        person: TestUtils.personNoRoleNoTag,
-        placeholder: false,
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        effectiveDate: new Date(2020, 4, 15),
-    };
-
-    static assignments: Array<Assignment> = [
-        TestUtils.assignmentForPerson1,
-        TestUtils.assignmentForHank,
-        TestUtils.assignmentForUnassigned,
-    ];
-
-    static assignmentsFilterTest: Array<Assignment> = [
-        TestUtils.assignmentForPerson1,
-        TestUtils.assignmentForPerson2,
-        TestUtils.assignmentForPerson3,
-        TestUtils.assignmentForPersonNoRoleNoTag,
-    ];
-
-    static unassignedProduct: Product = {
-        id: 999,
-        name: 'unassigned',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        assignments: [TestUtils.assignmentForUnassigned, TestUtils.assignmentForArchived],
-        startDate: '',
-        endDate: undefined,
-        archived: false,
-        tags: [],
-    };
-
-    static unassignedProductForBigBossSE: Product = {
-        id: 998,
-        name: 'unassigned',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        assignments: [TestUtils.assignmentForUnassignedBigBossSE],
-        startDate: '',
-        endDate: '',
-        archived: false,
-        tags: [],
-    };
-
-    static productWithAssignments: Product = {
-        id: 1,
-        name: 'Product 1',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        startDate: '2011-01-01',
-        endDate: '9999-02-02',
-        spaceLocation: TestUtils.southfield,
-        assignments: [TestUtils.assignmentForPerson1],
-        archived: false,
-        tags: [TestUtils.productTag2],
-        notes: 'note',
-    };
-
-    static productWithoutAssignments: Product = {
-        id: 3,
-        name: 'Product 3',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        startDate: '2011-01-01',
-        endDate: '9999-02-02',
-        spaceLocation: TestUtils.dearborn,
-        assignments: [],
-        archived: false,
-        tags: [TestUtils.productTag1],
-        dorf: '',
-        notes: '',
-        url: '',
-    };
-
-    static productForHank: Product = {
-        id: 102,
-        name: 'Hanky Product',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        startDate: '2011-01-01',
-        endDate: '9999-02-02',
-        spaceLocation: TestUtils.annarbor,
-        assignments: [TestUtils.assignmentForHank],
-        archived: false,
-        tags: [],
-    };
-
-    static productWithoutLocation: Product = {
-        id: 5,
-        name: 'Awesome Product',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        startDate: '2011-01-01',
-        endDate: '9999-02-02',
-        assignments: [],
-        archived: false,
-        tags: [],
-    };
-
-    static archivedProduct: Product = {
-        id: 4,
-        name: 'I am archived',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        startDate: '',
-        endDate: '2019-11-02',
-        spaceLocation: TestUtils.detroit,
-        assignments: [],
-        archived: true,
-        tags: [],
-    };
-
-    static productWithTags: Product = {
-        id: 6,
-        name: 'Product 6',
-        spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        startDate: '2011-01-01',
-        endDate: '9999-02-02',
-        spaceLocation: TestUtils.southfield,
-        assignments: TestUtils.assignmentsFilterTest,
-        archived: false,
-        tags: [TestUtils.productTag2],
-        notes: 'note',
-    };
-
-    static products: Array<Product> = [
-        TestUtils.unassignedProduct,
-        TestUtils.productWithAssignments,
-        TestUtils.productForHank,
-        TestUtils.productWithoutAssignments,
-        TestUtils.archivedProduct,
-        TestUtils.productWithoutLocation,
-    ];
-
-    static notEmptyProducts: Array<Product> = [
-        TestUtils.productWithAssignments,
-    ];
-
-    static productsForBoard2: Array<Product> = [
-        {
-            id: 2,
-            name: 'Product 2',
-            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-            startDate: '',
-            endDate: '',
-            spaceLocation: TestUtils.detroit,
-            assignments: [],
-            archived: false,
-            tags: [],
-        },
-    ];
-
-    static space: Space = {
-        id: 1,
-        uuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        name: 'testSpace',
-        lastModifiedDate: TestUtils.originDateString,
-        todayViewIsPublic: true,
-    }
-
-    static spaceMappingsArray: UserSpaceMapping[] = [
-        {id: '1', spaceUuid: TestUtils.space.uuid!, userId: 'user_id', permission: 'owner'},
-        {id: '2', spaceUuid: TestUtils.space.uuid!, userId: 'user_id_2', permission: 'editor'},
-    ];
-
-
-    static allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-        {
-            label:'Location Tags:',
-            options: [{
-                label: 'Ann Arbor',
-                value: '1_Ann Arbor',
-                selected: true,
-            }],
-        },
-        {
-            label:'Product Tags:',
-            options: [],
-        },
-        {
-            label:'Role Tags:',
-            options: [],
-        },
-        {
-            label:'Person Tags:',
-            options: [],
-        },
-    ]
-
-    static expectedCreateOptionText(expectedCreationString: string): string {
-        return `Create "${expectedCreationString}"`;
-    }
+function expectedCreateOptionText(expectedCreationString: string): string {
+    return `Create "${expectedCreationString}"`;
+}
+
+const TestUtils = {
+    mockClientCalls,
+    renderPeopleMoverComponent,
+    renderWithRecoil,
+    renderWithRedux,
+    createDataTestId,
+    mockCreateRange,
+    expectedCreateOptionText
 }
 
 export default TestUtils;

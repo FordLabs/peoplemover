@@ -18,9 +18,11 @@
 import React from 'react';
 import ArchivedProduct from '../Products/ArchivedProduct';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {fireEvent, screen} from '@testing-library/react';
 
 jest.mock('../Space/SpaceClient');
+jest.mock('../Products/ProductClient');
 
 describe('Archive Products', () => {
     describe('integration tests', () => {
@@ -66,17 +68,17 @@ describe('Archive Products', () => {
     
     describe('component that summarizes a product in the graveyard', () => {
         it('should render the number of people on the product', () => {
-            renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
+            renderWithRedux(<ArchivedProduct product={TestData.productWithAssignments}/>);
             expect(screen.getByText('1')).toBeInTheDocument();
         });
     
         it('should render the product name', () => {
-            renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
+            renderWithRedux(<ArchivedProduct product={TestData.productWithAssignments}/>);
             expect(screen.getByText('Product 1')).toBeInTheDocument();
         });
     
         it('should render the product type', () => {
-            renderWithRedux(<ArchivedProduct product={TestUtils.productWithAssignments}/>);
+            renderWithRedux(<ArchivedProduct product={TestData.productWithAssignments}/>);
             expect(screen.getByText('Southfield')).toBeInTheDocument();
         });
     });

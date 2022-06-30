@@ -17,6 +17,7 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {findByTestId, findByText, fireEvent, screen, waitFor} from '@testing-library/react';
 import RoleClient from './RoleClient';
 import {RoleAddRequest} from './RoleAddRequest.interface';
@@ -25,7 +26,7 @@ import * as Actions from '../Redux/Actions';
 import ColorClient from '../Roles/ColorClient';
 
 describe('My Roles Form', () => {
-    const initialState = {currentSpace: TestUtils.space, allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions, roles: TestUtils.roles};
+    const initialState = {currentSpace: TestData.space, allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions, roles: TestData.roles};
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -48,9 +49,9 @@ describe('My Roles Form', () => {
     });
 
     it('should show existing roles with color-circle', async () => {
-        expect(await screen.findByTestId(`myRolesCircle__${TestUtils.roles[0].name}`)).toHaveStyle(`background-color: ${TestUtils.color3.color}`);
-        expect(await screen.findByTestId(`myRolesCircle__${TestUtils.roles[1].name}`)).toHaveStyle(`background-color: ${TestUtils.color2.color}`);
-        expect(await screen.findByTestId(`myRolesCircle__${TestUtils.roles[2].name}`)).toHaveStyle(`background-color: ${TestUtils.color1.color}`);
+        expect(await screen.findByTestId(`myRolesCircle__${TestData.roles[0].name}`)).toHaveStyle(`background-color: ${TestData.color3.color}`);
+        expect(await screen.findByTestId(`myRolesCircle__${TestData.roles[1].name}`)).toHaveStyle(`background-color: ${TestData.color2.color}`);
+        expect(await screen.findByTestId(`myRolesCircle__${TestData.roles[2].name}`)).toHaveStyle(`background-color: ${TestData.color1.color}`);
     });
 
     describe('adding roles', () => {
@@ -110,7 +111,7 @@ describe('My Roles Form', () => {
 
             const expectedRoleAddRequest: RoleAddRequest = {
                 name: expectedNewRoleName,
-                colorId: TestUtils.whiteColor.id,
+                colorId: TestData.whiteColor.id,
             };
             expect(RoleClient.add).toHaveBeenCalledTimes(1);
             expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace);
@@ -224,7 +225,7 @@ describe('My Roles Form', () => {
             const confirmDeleteButton = await screen.findByTestId('confirmDeleteButton');
             fireEvent.click(confirmDeleteButton);
 
-            expect(RoleClient.delete).toHaveBeenCalledWith(TestUtils.productManager.id, initialState.currentSpace);
+            expect(RoleClient.delete).toHaveBeenCalledWith(TestData.productManager.id, initialState.currentSpace);
             await waitFor(() => {
                 expect(screen.queryByText(deleteWarning)).not.toBeInTheDocument();
             });

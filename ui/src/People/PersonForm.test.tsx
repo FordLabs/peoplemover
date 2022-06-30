@@ -16,6 +16,7 @@
  */
 
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import PersonForm from './PersonForm';
 import configureStore from 'redux-mock-store';
 import React from 'react';
@@ -39,9 +40,9 @@ describe('Person Form', () => {
 
     const mockStore = configureStore([]);
     const store = mockStore({
-        currentSpace: TestUtils.space,
-        allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-        roles: TestUtils.roles,
+        currentSpace: TestData.space,
+        allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
+        roles: TestData.roles,
     });
 
     beforeEach(() => {
@@ -54,7 +55,7 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products)
+                    set(ProductsState, TestData.products)
                 }}>
                     <PersonForm isEditPersonForm={false}/>
                 </RecoilRoot>,
@@ -68,7 +69,7 @@ describe('Person Form', () => {
             const personTagsLabel = await screen.findByLabelText('Person Tags');
             await selectEvent.create(personTagsLabel, 'Low Achiever');
             const expectedPersonTagAddRequest: TagRequest = {name: 'Low Achiever'};
-            await expect(PersonTagClient.add).toHaveBeenCalledWith(expectedPersonTagAddRequest, TestUtils.space);
+            await expect(PersonTagClient.add).toHaveBeenCalledWith(expectedPersonTagAddRequest, TestData.space);
             const form = await screen.findByTestId('personForm');
             expect(form).toHaveFormValues({personTags: '1337_Low Achiever'});
         });
@@ -84,7 +85,7 @@ describe('Person Form', () => {
                 newPerson: true,
                 newPersonDate: mayFourteen,
             };
-            await waitFor(() => expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestUtils.space, expectedPerson, []));
+            await waitFor(() => expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson, []));
         });
     });
 
@@ -93,16 +94,16 @@ describe('Person Form', () => {
 
         beforeEach(async () => {
             AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn().mockResolvedValue({
-                data: [{...TestUtils.assignmentForHank, endDate: null},
-                    TestUtils.assignmentVacationForHank,
-                    TestUtils.previousAssignmentForHank],
+                data: [{...TestData.assignmentForHank, endDate: null},
+                    TestData.assignmentVacationForHank,
+                    TestData.previousAssignmentForHank],
             });
 
             ({unmount} = renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
                     set(ProductsState, [
-                        ...TestUtils.products,
+                        ...TestData.products,
                         {
                             id: 500,
                             name: 'Already Closed Product',
@@ -117,9 +118,9 @@ describe('Person Form', () => {
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        initiallySelectedProduct={TestUtils.productForHank}
-                        initialPersonName={TestUtils.hank.name}
-                        personEdited={TestUtils.hank}
+                        initiallySelectedProduct={TestData.productForHank}
+                        initialPersonName={TestData.hank.name}
+                        personEdited={TestData.hank}
                     />
                 </RecoilRoot>,
                 store
@@ -139,28 +140,28 @@ describe('Person Form', () => {
         it('should only display active assignable projects in the assignment dropdown', async () => {
             const assignmentDropDown = await screen.getByLabelText('Assign to');
             await selectEvent.openMenu(assignmentDropDown);
-            expect(screen.queryByText(TestUtils.unassignedProduct.name)).not.toBeInTheDocument();
-            await screen.findByText(TestUtils.productWithAssignments.name);
-            await screen.findByText(TestUtils.productForHank.name);
-            await screen.findByText(TestUtils.productWithoutAssignments.name);
-            expect(screen.queryByText(TestUtils.archivedProduct.name)).not.toBeInTheDocument();
-            await screen.findByText(TestUtils.productWithoutLocation.name);
+            expect(screen.queryByText(TestData.unassignedProduct.name)).not.toBeInTheDocument();
+            await screen.findByText(TestData.productWithAssignments.name);
+            await screen.findByText(TestData.productForHank.name);
+            await screen.findByText(TestData.productWithoutAssignments.name);
+            expect(screen.queryByText(TestData.archivedProduct.name)).not.toBeInTheDocument();
+            await screen.findByText(TestData.productWithoutLocation.name);
             expect(screen.queryByText('Already Closed Product')).not.toBeInTheDocument();
         });
 
         it('should show unassigned in the AssignTo field for an unassigned person', async () => {
             AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({
-                data: [TestUtils.assignmentForUnassigned],
+                data: [TestData.assignmentForUnassigned],
             });
             unmount();
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        personEdited={TestUtils.unassignedPerson}
+                        personEdited={TestData.unassignedPerson}
                     />
                 </RecoilRoot>,
                 store
@@ -170,17 +171,17 @@ describe('Person Form', () => {
 
         it('should show Archived in the AssignTo field for an archived person', async () => {
             AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({
-                data: [TestUtils.assignmentForArchived],
+                data: [TestData.assignmentForArchived],
             });
             unmount();
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        personEdited={TestUtils.archivedPerson}
+                        personEdited={TestData.archivedPerson}
                     />
                 </RecoilRoot>,
                 store
@@ -194,12 +195,12 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        initiallySelectedProduct={TestUtils.productForHank}
-                        personEdited={TestUtils.hank}
+                        initiallySelectedProduct={TestData.productForHank}
+                        personEdited={TestData.hank}
                     />
                 </RecoilRoot>,
                 store
@@ -213,18 +214,18 @@ describe('Person Form', () => {
         });
 
         it('should call createAssignmentForDate when assignment has been deliberately changed to unassigned', async () => {
-            PeopleClient.updatePerson = jest.fn().mockResolvedValue({data: TestUtils.hank});
+            PeopleClient.updatePerson = jest.fn().mockResolvedValue({data: TestData.hank});
 
             const personForm =  renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        initiallySelectedProduct={TestUtils.productForHank}
-                        initialPersonName={TestUtils.hank.name}
-                        personEdited={TestUtils.hank}
+                        initiallySelectedProduct={TestData.productForHank}
+                        initialPersonName={TestData.hank.name}
+                        personEdited={TestData.hank}
                     />
                 </RecoilRoot>,
                 store
@@ -245,13 +246,13 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        initiallySelectedProduct={TestUtils.productForHank}
-                        initialPersonName={TestUtils.hank.name}
-                        personEdited={TestUtils.hank}
+                        initiallySelectedProduct={TestData.productForHank}
+                        initialPersonName={TestData.hank.name}
+                        personEdited={TestData.hank}
                     />
                 </RecoilRoot>,
                 store
@@ -261,42 +262,42 @@ describe('Person Form', () => {
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
             fireEvent.click(await screen.findByText('Save'));
 
-            const expectedPerson: Person =  {...TestUtils.hank, newPerson: true, newPersonDate: mayFourteen};
-            await waitFor(() => expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestUtils.space, expectedPerson, []));
+            const expectedPerson: Person =  {...TestData.hank, newPerson: true, newPersonDate: mayFourteen};
+            await waitFor(() => expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestData.space, expectedPerson, []));
         });
 
         it('should send a regular assignment request on an unarchived person', async () => {
-            const updatedPerson = {...TestUtils.archivedPerson, archiveDate: null};
+            const updatedPerson = {...TestData.archivedPerson, archiveDate: null};
             PeopleClient.updatePerson = jest.fn().mockResolvedValue({ data: updatedPerson });
             AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({
-                data: [ {...TestUtils.assignmentForUnassigned, productId: TestUtils.productWithoutAssignments.id} ]
+                data: [ {...TestData.assignmentForUnassigned, productId: TestData.productWithoutAssignments.id} ]
             })
-            AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [TestUtils.assignmentForArchived] });
+            AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [TestData.assignmentForArchived] });
 
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, [TestUtils.unassignedProduct, TestUtils.productWithoutAssignments]);
+                    set(ProductsState, [TestData.unassignedProduct, TestData.productWithoutAssignments]);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        personEdited={TestUtils.archivedPerson}
+                        personEdited={TestData.archivedPerson}
                     />
                 </RecoilRoot>,
                 store
             );
 
             await selectEvent.openMenu(await screen.findByLabelText('Assign to'));
-            await screen.findByText(TestUtils.productWithoutAssignments.name);
-            await selectEvent.select(await screen.findByLabelText('Assign to'), TestUtils.productWithoutAssignments.name);
+            await screen.findByText(TestData.productWithoutAssignments.name);
+            await selectEvent.select(await screen.findByLabelText('Assign to'), TestData.productWithoutAssignments.name);
 
             fireEvent.click(await screen.findByText('Save'));
 
             await waitFor( async () => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(1));
             await waitFor( async () => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
                 moment(mayFourteen).format('YYYY-MM-DD'),
-                [{'placeholder': false, 'productId': TestUtils.productWithoutAssignments.id}],
-                TestUtils.space,
+                [{'placeholder': false, 'productId': TestData.productWithoutAssignments.id}],
+                TestData.space,
                 updatedPerson
             ));
         });
@@ -314,12 +315,12 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        initiallySelectedProduct={TestUtils.productForHank}
-                        personEdited={TestUtils.hank}
+                        initiallySelectedProduct={TestData.productForHank}
+                        personEdited={TestData.hank}
                     />
                 </RecoilRoot>,
                 store
@@ -328,20 +329,20 @@ describe('Person Form', () => {
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
             fireEvent.click(await screen.findByText('Save'));
 
-            await waitFor(() => expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'newPersonChecked', TestUtils.hank.name]));
+            await waitFor(() => expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'newPersonChecked', TestData.hank.name]));
         });
 
         it('newPerson box goes from checked to unchecked, call matomo event for newPersonUnchecked action',  async () => {
-            const newHank: Person = {...TestUtils.hank, newPerson: true, newPersonDate: new Date(2019, 4, 14)};
+            const newHank: Person = {...TestData.hank, newPerson: true, newPersonDate: new Date(2019, 4, 14)};
 
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        initiallySelectedProduct={TestUtils.productForHank}
+                        initiallySelectedProduct={TestData.productForHank}
                         personEdited={newHank}
                     />
                 </RecoilRoot>,
@@ -351,20 +352,20 @@ describe('Person Form', () => {
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
             fireEvent.click(await screen.findByText('Save'));
 
-            await waitFor(() => expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'newPersonUnchecked', newHank.name + ', 366 day(s)']));
+            await waitFor(() => expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'newPersonUnchecked', newHank.name + ', 366 day(s)']));
         });
 
         it('newPerson box goes from checked to unchecked to checked, DO NOT call any matomo event',  async () => {
-            const newHank: Person = {...TestUtils.hank, name: 'XXXX', newPerson: true, newPersonDate: new Date(2019, 4, 14)};
+            const newHank: Person = {...TestData.hank, name: 'XXXX', newPerson: true, newPersonDate: new Date(2019, 4, 14)};
 
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        initiallySelectedProduct={TestUtils.productForHank}
+                        initiallySelectedProduct={TestData.productForHank}
                         personEdited={newHank}
                     />
                 </RecoilRoot>,
@@ -382,12 +383,12 @@ describe('Person Form', () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestUtils.products);
+                    set(ProductsState, TestData.products);
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
-                        initiallySelectedProduct={TestUtils.productForHank}
-                        personEdited={TestUtils.hank}
+                        initiallySelectedProduct={TestData.productForHank}
+                        personEdited={TestData.hank}
                     />
                 </RecoilRoot>,
                 store

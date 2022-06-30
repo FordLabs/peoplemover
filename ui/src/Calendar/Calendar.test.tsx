@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-import TestUtils, {mockCreateRange, renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import React from 'react';
 import {fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
 import Calendar from './Calendar';
@@ -30,7 +31,7 @@ describe('Calendar', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-        resetCreateRange = mockCreateRange();
+        resetCreateRange = TestUtils.mockCreateRange();
     });
 
     afterEach(() => {
@@ -80,7 +81,7 @@ describe('Calendar', () => {
 function setupCalenderComponent(isReadOnly = false) {
     const mockStore = configureStore([]);
     const reduxStore = mockStore({
-        currentSpace: TestUtils.space,
+        currentSpace: TestData.space,
     });
 
     renderWithRedux(

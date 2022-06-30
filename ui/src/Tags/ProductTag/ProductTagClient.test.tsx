@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
+import Axios from 'axios';
 import ProductTag from './ProductTagClient';
-import TestUtils from '../../Utils/TestUtils';
+import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
 
 describe('Product Tags Client', function() {
@@ -34,22 +34,10 @@ describe('Product Tags Client', function() {
     beforeEach(() => {
         cookies.set('accessToken', '123456');
 
-        // @ts-ignore
-        Axios.post = jest.fn(x => Promise.resolve({
-            data: 'Created Product Tag',
-        } as AxiosResponse));
-        // @ts-ignore
-        Axios.put = jest.fn(x => Promise.resolve({
-            data: 'Updated Product Tag',
-        } as AxiosResponse));
-        // @ts-ignore
-        Axios.delete = jest.fn(x => Promise.resolve({
-            data: 'Deleted Product Tag',
-        } as AxiosResponse));
-        // @ts-ignore
-        Axios.get = jest.fn(x => Promise.resolve({
-            data: 'Get Product Tags',
-        } as AxiosResponse));
+        Axios.post = jest.fn().mockResolvedValue({ data: 'Created Product Tag' });
+        Axios.put = jest.fn().mockResolvedValue({ data: 'Updated Product Tag' });
+        Axios.delete = jest.fn().mockResolvedValue({ data: 'Deleted Product Tag' });
+        Axios.get = jest.fn().mockResolvedValue({ data: 'Get Product Tags' });
     });
 
     afterEach(() => {
@@ -67,8 +55,8 @@ describe('Product Tags Client', function() {
     });
 
     it('should create a product tag and return that product tag', function(done) {
-        const expectedProductAddRequest = { name: TestUtils.productTag1.name };
-        ProductTag.add(expectedProductAddRequest, TestUtils.space)
+        const expectedProductAddRequest = { name: TestData.productTag1.name };
+        ProductTag.add(expectedProductAddRequest, TestData.space)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(baseProductTagsUrl, expectedProductAddRequest, expectedConfig);
                 expect(response.data).toBe('Created Product Tag');
@@ -78,20 +66,20 @@ describe('Product Tags Client', function() {
 
     it('should edit a product tag and return that product tag', function(done) {
         const expectedProductEditRequest = {
-            id: TestUtils.productTag1.id,
-            name: TestUtils.productTag1.name,
+            id: TestData.productTag1.id,
+            name: TestData.productTag1.name,
         };
-        ProductTag.edit(expectedProductEditRequest, TestUtils.space)
+        ProductTag.edit(expectedProductEditRequest, TestData.space)
             .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(`${baseProductTagsUrl}/${TestUtils.productTag1.id}`, expectedProductEditRequest, expectedConfig);
+                expect(Axios.put).toHaveBeenCalledWith(`${baseProductTagsUrl}/${TestData.productTag1.id}`, expectedProductEditRequest, expectedConfig);
                 expect(response.data).toBe('Updated Product Tag');
                 done();
             });
     });
 
     it('should delete a product tag', function(done) {
-        const expectedUrl = `${baseProductTagsUrl}/${TestUtils.productTag1.id}`;
-        ProductTag.delete(TestUtils.productTag1.id, TestUtils.space)
+        const expectedUrl = `${baseProductTagsUrl}/${TestData.productTag1.id}`;
+        ProductTag.delete(TestData.productTag1.id, TestData.space)
             .then((response) => {
                 expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
                 expect(response.data).toBe('Deleted Product Tag');

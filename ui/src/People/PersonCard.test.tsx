@@ -17,7 +17,8 @@
 
 import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {Store} from 'redux';
 import PersonCard from './PersonCard';
 import {Person} from './Person';
@@ -34,9 +35,9 @@ describe('Person Card', () => {
         spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         id: 1,
         name: 'Billiam Handy',
-        spaceRole: TestUtils.softwareEngineer,
+        spaceRole: TestData.softwareEngineer,
         notes: 'This is a note',
-        tags: TestUtils.personTags,
+        tags: TestData.personTags,
         archiveDate: new Date(2000, 0, 1),
     }
     let store: Store;
@@ -46,7 +47,7 @@ describe('Person Card', () => {
     beforeEach(() => {
         jest.clearAllMocks();
 
-        initialState = {currentSpace: TestUtils.space}
+        initialState = {currentSpace: TestData.space}
     });
 
     it('should render the assigned persons name', () => {
@@ -89,7 +90,7 @@ describe('Person Card', () => {
 
     describe('Read-Only Functionality', function() {
         beforeEach(() => {
-            initialState = {currentSpace: TestUtils.space};
+            initialState = {currentSpace: TestData.space};
         });
 
         it('should not display Edit Person Modal if in read only mode', function() {

@@ -17,6 +17,7 @@
 
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {findByTestId, findByText, fireEvent, queryByText, screen} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from './ProductTag/ProductTagClient';
@@ -25,10 +26,10 @@ import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibra
 
 describe('My Tags Form', () => {
     const initialState = {
-        locations: TestUtils.locations,
-        productTags: TestUtils.productTags,
-        currentSpace: TestUtils.space,
-        allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+        locations: TestData.locations,
+        productTags: TestData.productTags,
+        currentSpace: TestData.space,
+        allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
     };
 
     beforeEach(() => {
@@ -47,10 +48,10 @@ describe('My Tags Form', () => {
             const locationTags: Array<HTMLSpanElement> = await screen.findAllByTestId('tagName__location');
             expect(locationTags).toHaveLength(4);
 
-            expect(locationTags[0].innerHTML).toEqual(TestUtils.annarbor.name);
-            expect(locationTags[1].innerHTML).toEqual(TestUtils.detroit.name);
-            expect(locationTags[2].innerHTML).toEqual(TestUtils.dearborn.name);
-            expect(locationTags[3].innerHTML).toEqual(TestUtils.southfield.name);
+            expect(locationTags[0].innerHTML).toEqual(TestData.annarbor.name);
+            expect(locationTags[1].innerHTML).toEqual(TestData.detroit.name);
+            expect(locationTags[2].innerHTML).toEqual(TestData.dearborn.name);
+            expect(locationTags[3].innerHTML).toEqual(TestData.southfield.name);
         });
 
         it('Should contain all product tags available in the space', async () => {
@@ -58,7 +59,7 @@ describe('My Tags Form', () => {
             const myTagsModal = await screen.findByTestId('myTagsModal');
             const productTags: Array<HTMLSpanElement> = await screen.findAllByTestId('tagName__product_tag');
             expect(productTags).toHaveLength(4);
-            for (const productTag of TestUtils.productTags) {
+            for (const productTag of TestData.productTags) {
                 await findByText(myTagsModal, productTag.name);
             }
         });
@@ -72,7 +73,7 @@ describe('My Tags Form', () => {
                 LocationClient.get = jest.fn().mockResolvedValue({
                     data: [
                         {id: 1, name: 'Saline', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'},
-                        TestUtils.detroit, TestUtils.dearborn, TestUtils.southfield
+                        TestData.detroit, TestData.dearborn, TestData.southfield
                     ],
                 });
                 renderMyTagsForm(FilterTypeListings.Location);
@@ -138,7 +139,7 @@ describe('My Tags Form', () => {
                 ProductTagClient.get = jest.fn().mockResolvedValue({
                     data: [
                         {id: 5, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
-                        TestUtils.productTag2, TestUtils.productTag3, TestUtils.productTag4
+                        TestData.productTag2, TestData.productTag3, TestData.productTag4
                     ],
                 });
                 renderMyTagsForm(FilterTypeListings.ProductTag);
@@ -167,7 +168,7 @@ describe('My Tags Form', () => {
 
             it('should display error message only for corresponding edit product tag section', async () => {
                 const editProductTagText = await screen.findByTestId('tagNameInput');
-                fireEvent.change(editProductTagText, {target: {value: TestUtils.productTag2.name}});
+                fireEvent.change(editProductTagText, {target: {value: TestData.productTag2.name}});
                 const saveButton = await screen.findByTestId('saveTagButton');
                 expect(saveButton).toBeDisabled();
 
@@ -184,7 +185,7 @@ describe('My Tags Form', () => {
 
             beforeEach(async () => {
                 LocationClient.get = jest.fn().mockResolvedValue({
-                    data: [TestUtils.detroit, TestUtils.dearborn, TestUtils.southfield],
+                    data: [TestData.detroit, TestData.dearborn, TestData.southfield],
                 });
                 renderMyTagsForm(FilterTypeListings.Location);
                 const deleteIcons = await screen.findAllByTestId('deleteIcon__location');
@@ -217,7 +218,7 @@ describe('My Tags Form', () => {
 
             beforeEach(async () => {
                 ProductTagClient.get = jest.fn().mockResolvedValue({
-                    data: [TestUtils.productTag2, TestUtils.productTag3, TestUtils.productTag4],
+                    data: [TestData.productTag2, TestData.productTag3, TestData.productTag4],
                 });
                 renderMyTagsForm(FilterTypeListings.ProductTag);
                 const deleteIcons = await screen.findAllByTestId('deleteIcon__product_tag');
@@ -252,7 +253,7 @@ describe('My Tags Form', () => {
             beforeEach(async () => {
                 LocationClient.get = jest.fn().mockResolvedValue({
                     data: [
-                        ...TestUtils.locations,
+                        ...TestData.locations,
                         {id: 5, name: 'Ahmedabad', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'}
                     ],
                 });
@@ -308,7 +309,7 @@ describe('My Tags Form', () => {
             beforeEach(async () => {
                 ProductTagClient.get = jest.fn().mockResolvedValue({
                     data: [
-                        ...TestUtils.productTags,
+                        ...TestData.productTags,
                         {id: 5, name: 'Fin Tech', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'}
                     ],
                 });

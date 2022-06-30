@@ -18,6 +18,7 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import ProductClient from './ProductClient';
 import ProductList from './ProductList';
 import {Product} from './Product';
@@ -32,7 +33,7 @@ describe('Product List', () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: TestUtils.products });
+        ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: TestData.products });
     });
 
     describe('Product list test filtering', () => {
@@ -43,25 +44,25 @@ describe('Product List', () => {
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 startDate: '2011-01-01',
                 endDate: undefined,
-                spaceLocation: TestUtils.annarbor,
+                spaceLocation: TestData.annarbor,
                 assignments: [],
                 archived: false,
-                tags: [TestUtils.productTag2],
+                tags: [TestData.productTag2],
                 notes: '',
             };
-            const products: Array<Product> = Object.assign([], TestUtils.products);
+            const products: Array<Product> = Object.assign([], TestData.products);
             products.push(productWithAnnArborLocation);
 
             const initialState = {
-                productTags: TestUtils.productTags,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                currentSpace: TestUtils.space,
+                productTags: TestData.productTags,
+                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
+                currentSpace: TestData.space,
             };
             renderProductList(initialState, ({set}) => {
                 set(ProductsState, products)
             });
 
-            await screen.findByText(TestUtils.productForHank.name);
+            await screen.findByText(TestData.productForHank.name);
             await screen.findByText(productWithAnnArborLocation.name);
             expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(3);
         });
@@ -73,26 +74,26 @@ describe('Product List', () => {
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 startDate: '2011-01-01',
                 endDate: undefined,
-                spaceLocation: TestUtils.annarbor,
+                spaceLocation: TestData.annarbor,
                 assignments: [],
                 archived: false,
-                tags: [TestUtils.productTag2],
+                tags: [TestData.productTag2],
                 notes: '',
             };
-            const products: Array<Product> = Object.assign([], TestUtils.products);
+            const products: Array<Product> = Object.assign([], TestData.products);
             products.push(productWithAnnArborLocation);
 
             const initialState = {
-                productTags: TestUtils.productTags,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                currentSpace: TestUtils.space,
+                productTags: TestData.productTags,
+                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
+                currentSpace: TestData.space,
             };
             renderProductList(initialState, ({set}) => {
                 set(IsReadOnlyState, true)
                 set(ProductsState, products)
             });
 
-            await screen.findByText(TestUtils.productForHank.name);
+            await screen.findByText(TestData.productForHank.name);
             await screen.findByText(productWithAnnArborLocation.name);
             expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
             expect(screen.queryByTestId('newProductButton')).not.toBeInTheDocument();
@@ -123,15 +124,15 @@ describe('Product List', () => {
             ];
 
             const initialState = {
-                productTags: TestUtils.productTags,
+                productTags: TestData.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                currentSpace: TestUtils.space,
+                currentSpace: TestData.space,
             };
             renderProductList(initialState, ({set}) => {
-                set(ProductsState, TestUtils.products)
+                set(ProductsState, TestData.products)
             });
 
-            await screen.findByText(TestUtils.productWithAssignments.name);
+            await screen.findByText(TestData.productWithAssignments.name);
             expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
 
@@ -160,16 +161,16 @@ describe('Product List', () => {
             ];
 
             const initialState = {
-                productTags: TestUtils.productTags,
+                productTags: TestData.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                currentSpace: TestUtils.space,
+                currentSpace: TestData.space,
             };
             renderProductList(initialState, ({set}) => {
                 set(IsReadOnlyState, true)
-                set(ProductsState, TestUtils.products)
+                set(ProductsState, TestData.products)
             });
 
-            await screen.findByText(TestUtils.productWithAssignments.name);
+            await screen.findByText(TestData.productWithAssignments.name);
             expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(1);
             expect(screen.queryByTestId('newProductButton')).not.toBeInTheDocument();
         });
@@ -199,15 +200,15 @@ describe('Product List', () => {
             ];
 
             const initialState = {
-                productTags: TestUtils.productTags,
+                productTags: TestData.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                currentSpace: TestUtils.space,
+                currentSpace: TestData.space,
             };
             renderProductList(initialState, ({set}) => {
-                set(ProductsState, TestUtils.products)
+                set(ProductsState, TestData.products)
             });
 
-            await screen.findByText(TestUtils.productWithoutAssignments.name);
+            await screen.findByText(TestData.productWithoutAssignments.name);
             expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
     });

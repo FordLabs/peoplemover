@@ -17,14 +17,11 @@
 
 import TestData from '../../Utils/TestData';
 
-const SpaceClient = {
-    getSpacesForUser: jest.fn().mockResolvedValue([TestData.space]),
-    getUsersForSpace:  jest.fn().mockResolvedValue(TestData.spaceMappingsArray),
-    changeOwner: jest.fn().mockResolvedValue({}),
-    removeUser: jest.fn().mockResolvedValue({data: {}}),
-    deleteSpaceByUuid: jest.fn().mockResolvedValue({}),
-    getSpaceFromUuid: jest.fn().mockResolvedValue({data: TestData.space}),
-    inviteUsersToSpace: jest.fn().mockResolvedValue({})
+const ProductClient = {
+    getProductsForDate: jest.fn().mockResolvedValue({ data: TestData.products }),
+    createProduct: jest.fn().mockResolvedValue({ data: {} }),
+    deleteProduct: jest.fn().mockResolvedValue({ data: {} }),
+    editProduct: jest.fn().mockResolvedValue({ data: {} }),
 }
 
-export default SpaceClient;
+export default ProductClient;

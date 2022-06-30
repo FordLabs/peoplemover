@@ -18,32 +18,33 @@
 import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import EditMenu, {EditMenuOption} from './EditMenu';
-import TestUtils from '../Utils/TestUtils';
 
 describe('The edit menu', () => {
-
     describe('for a person card', () => {
+        const editPersonCallback = jest.fn();
+        const markAsPlaceholderCallback = jest.fn();
+        const cancelAssignmentCallback = jest.fn();
         const menuOptionList: EditMenuOption[] = [
             {
-                callback: TestUtils.dummyCallback,
+                callback: editPersonCallback,
                 text: 'Edit Person',
                 icon: 'account_circle',
             },
             {
-                callback: TestUtils.dummyCallback,
+                callback: markAsPlaceholderCallback,
                 text: 'Mark as Placeholder',
                 icon: 'create',
 
             },
             {
-                callback: TestUtils.dummyCallback,
+                callback: cancelAssignmentCallback,
                 text: 'Cancel Assignment',
                 icon: 'delete',
             },
         ];
 
         it('should render the right static content', async () => {
-            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={TestUtils.dummyCallback}/>);
+            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={jest.fn()}/>);
 
             await underTest.findByText('Edit Person');
             const firstIcon = await underTest.findByTestId('editMenuOption__edit_person');
@@ -59,18 +60,10 @@ describe('The edit menu', () => {
         });
 
         it('should call the right callback when menu option is clicked', () => {
-            let testPassed = false;
-
-            function makeTestPass(): void {
-                testPassed = true;
-            }
-
-            menuOptionList[0].callback = makeTestPass;
-
-            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={TestUtils.dummyCallback}/>);
-            expect(testPassed).toBeFalsy();
+            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={jest.fn()}/>);
+            expect(menuOptionList[0].callback).not.toHaveBeenCalled();
             fireEvent.click(underTest.getByText('Edit Person'));
-            expect(testPassed).toBeTruthy();
+            expect(menuOptionList[0].callback).toHaveBeenCalled();
         });
     });
 
@@ -78,17 +71,17 @@ describe('The edit menu', () => {
         it('should render the right static content', async () => {
             const menuOptionList: EditMenuOption[] = [
                 {
-                    callback: TestUtils.dummyCallback,
+                    callback: jest.fn(),
                     text: 'Edit product',
                     icon: 'create',
                 },
                 {
-                    callback: TestUtils.dummyCallback,
+                    callback: jest.fn(),
                     text: 'Archive product',
                     icon: 'inbox',
                 },
             ];
-            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={TestUtils.dummyCallback}/>);
+            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={jest.fn()}/>);
             await underTest.findByText('Edit product');
             const firstIcon = await underTest.findByTestId('editMenuOption__edit_product');
             expect(firstIcon.innerHTML).toContain(menuOptionList[0].icon);

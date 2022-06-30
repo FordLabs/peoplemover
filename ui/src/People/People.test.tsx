@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,13 +21,13 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-import ProductClient from '../Products/ProductClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {RecoilRoot} from 'recoil';
 import {ProductsState} from '../State/ProductsState';
@@ -35,32 +35,28 @@ import {ProductsState} from '../State/ProductsState';
 declare let window: MatomoWindow;
 
 jest.mock('../Products/ProductClient');
+jest.mock('../Space/SpaceClient');
 
 describe('People actions', () => {
-    const initialState: PreloadedState<Partial<GlobalStateProps>> = {currentSpace: TestUtils.space};
+    const initialState: PreloadedState<Partial<GlobalStateProps>> = {currentSpace: TestData.space};
     const addPersonButtonText = 'Add Person';
     const addPersonModalTitle = 'Add New Person';
     const submitFormButtonText = 'Add';
 
     beforeEach(() => {
-        ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: [] })
-
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
     describe('Person Form', () => {
         const personFormInitialState: PreloadedState<Partial<GlobalStateProps>> = {
-            people: TestUtils.people,
-            currentSpace: TestUtils.space,
-            allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            people: TestData.people,
+            currentSpace: TestData.space,
+            allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         };
         const viewingDate = new Date(2020, 5, 5)
 
         beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState, ({set}) => {
                 set(ViewingDateState, viewingDate)
             });
@@ -97,8 +93,8 @@ describe('People actions', () => {
 
             await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
                 .toBeCalledWith(
-                    TestUtils.space.uuid,
-                    TestUtils.person1.id,
+                    TestData.space.uuid,
+                    TestData.person1.id,
                     new Date(2020, 5, 5)
                 )
             );
@@ -155,7 +151,7 @@ describe('People actions', () => {
                     name: 'Low Achiever',
                 }],
             };
-            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestUtils.space, expectedPerson, ['Low Achiever']);
+            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson, ['Low Achiever']);
         });
 
         it('should not create person with empty value and display proper error message', async () => {
@@ -210,11 +206,11 @@ describe('People actions', () => {
                         name: 'Product Manager',
                         id: 2,
                         spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-                        color: TestUtils.color2,
+                        color: TestData.color2,
                     },
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson, []]);
+                expect(spy.mock.calls[0]).toEqual([TestData.space, expectedPerson, []]);
             });
         });
 
@@ -247,7 +243,7 @@ describe('People actions', () => {
                     },
                 };
                 const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([TestUtils.space, expectedPerson, []]);
+                expect(spy.mock.calls[0]).toEqual([TestData.space, expectedPerson, []]);
             });
         });
 
@@ -287,7 +283,7 @@ describe('People actions', () => {
                 name: 'Software Engineer',
                 id: 1,
                 spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-                color: TestUtils.color1,
+                color: TestData.color1,
             },
             newPerson: true,
             newPersonDate: viewingDate,
@@ -295,13 +291,13 @@ describe('People actions', () => {
 
         const checkForCreatedPerson = async (): Promise<void> => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-            expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestUtils.space, expectedPerson, []);
+            expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestData.space, expectedPerson, []);
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
                 [],
-                TestUtils.space,
+                TestData.space,
                 expectedPerson
             );
         };
@@ -335,7 +331,7 @@ describe('People actions', () => {
                 <PersonForm
                     isEditPersonForm={false}
                     initialPersonName="BRADLEY"
-                    initiallySelectedProduct={TestUtils.productWithAssignments}
+                    initiallySelectedProduct={TestData.productWithAssignments}
                 />
             </RecoilRoot>,
             undefined,
@@ -345,7 +341,7 @@ describe('People actions', () => {
     });
 
     it('should not show the unassigned product or archived products in product list', async () => {
-        const products = [TestUtils.productWithAssignments, TestUtils.archivedProduct, TestUtils.unassignedProduct];
+        const products = [TestData.productWithAssignments, TestData.archivedProduct, TestData.unassignedProduct];
         renderWithRedux(
             <RecoilRoot  initializeState={({set}) => {
                 set(ProductsState, products)
@@ -374,7 +370,7 @@ describe('People actions', () => {
     });
 
     it('should remove the unassigned product when a product is selected from dropdown', async () => {
-        const products = [TestUtils.productWithAssignments, TestUtils.unassignedProduct];
+        const products = [TestData.productWithAssignments, TestData.unassignedProduct];
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(ProductsState, products)
@@ -399,8 +395,8 @@ describe('People actions', () => {
 
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(undefined,{
-                currentSpace: TestUtils.space,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+                currentSpace: TestData.space,
+                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
             }, ({set}) => {
                 set(ViewingDateState, new Date(2019, 0, 1))
             })
@@ -431,13 +427,13 @@ describe('People actions', () => {
 
             await waitFor(() => {
                 expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
-                    TestUtils.originDateString,
+                    TestData.originDateString,
                     [],
-                    TestUtils.space,
-                    TestUtils.person1,
+                    TestData.space,
+                    TestData.person1,
                     false
                 );
-                expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'cancelAssignment', TestUtils.person1.name]);
+                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'cancelAssignment', TestData.person1.name]);
             });
         });
     });

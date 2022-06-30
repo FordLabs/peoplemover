@@ -19,6 +19,7 @@ import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from './AssignmentCard';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {Assignment} from './Assignment';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import rootReducer from '../Redux/Reducers';
@@ -35,6 +36,7 @@ import ProductClient from '../Products/ProductClient';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
 jest.mock('axios');
+jest.mock('../Products/ProductClient');
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
@@ -48,9 +50,9 @@ describe('Assignment Card', () => {
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 id: 445,
                 name: 'Billiam Handy',
-                spaceRole: TestUtils.softwareEngineer,
+                spaceRole: TestData.softwareEngineer,
                 notes: 'This is a note',
-                tags: TestUtils.personTags,
+                tags: TestData.personTags,
             },
             placeholder: false,
             productId: 1,
@@ -62,7 +64,7 @@ describe('Assignment Card', () => {
 
         jest.useFakeTimers();
 
-        store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+        store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
     });
 
     afterEach(() => {
@@ -94,7 +96,7 @@ describe('Assignment Card', () => {
             .toHaveBeenCalledWith(assignmentToRender.spaceUuid, assignmentToRender.person.id, expect.any(Date))
         )
         await waitFor(() => expect(AssignmentClient.createAssignmentForDate)
-            .toHaveBeenCalledWith(moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": true, "productId": 1}], TestUtils.space, assignmentToRender.person, false)
+            .toHaveBeenCalledWith(moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": true, "productId": 1}], TestData.space, assignmentToRender.person, false)
         )
         await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith('uuid', expect.any(Date)))
     });
@@ -114,14 +116,14 @@ describe('Assignment Card', () => {
             assignmentToRender.spaceUuid, assignmentToRender.person.id, expect.any(Date)
         ))
         await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
-            moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": false, "productId": 1}], TestUtils.space, assignmentToRender.person, false
+            moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": false, "productId": 1}], TestData.space, assignmentToRender.person, false
         ))
         await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith('uuid', expect.any(Date)));
     });
 
     describe('Read-Only Functionality', function() {
         beforeEach(function() {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            store = createStore(rootReducer, {currentSpace: TestData.space});
         });
 
         it('should not display edit Menu if in read only mode', function() {
@@ -185,13 +187,13 @@ describe('Assignment Card', () => {
 
     describe('Role color', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            store = createStore(rootReducer, {currentSpace: TestData.space});
         });
 
         it('should render software engineer color correctly', () => {
             renderAssignmentCard(assignmentToRender);
             const assignmentCardEditContainer: HTMLElement = screen.getByTestId('editPersonIconContainer__billiam_handy');
-            const person1Role: RoleTag = (TestUtils.people[0].spaceRole as RoleTag);
+            const person1Role: RoleTag = (TestData.people[0].spaceRole as RoleTag);
             const person1RoleColor: Color = (person1Role.color as Color);
             expect(assignmentCardEditContainer).toHaveStyle(`background-color: ${person1RoleColor.color}`);
         });
@@ -232,7 +234,7 @@ describe('Assignment Card', () => {
 
     describe('Edit Menu', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
         });
 
         it('should initialize with the Edit Menu closed', () => {
@@ -287,13 +289,13 @@ describe('Assignment Card', () => {
             expectEditMenuContents(true);
             fireEvent.click(screen.getByText('Archive Person'));
             fireEvent.click(await screen.findByText('Archive'));
-            await waitFor(() =>expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestUtils.space, assignmentToRender.person, new Date(2020, 0, 1)));
+            await waitFor(() =>expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestData.space, assignmentToRender.person, new Date(2020, 0, 1)));
         });
     });
 
     describe('New Person Badge', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
         });
 
         it('should show the new badge if the assignment says the person is new and there is a newPersonDate', () => {
@@ -325,7 +327,7 @@ describe('Assignment Card', () => {
 
     describe('Hoverable Notes', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
         });
 
         it('should display hover notes icon if person has valid notes', () => {
@@ -368,7 +370,7 @@ describe('Assignment Card', () => {
         });
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            store = createStore(rootReducer, {currentSpace: TestData.space});
             renderAssignmentCard(assignmentToRender, false, ({set}) => {
                 set(IsDraggingState, true);
             });
@@ -385,7 +387,7 @@ describe('Assignment Card', () => {
 
     describe('Hoverable Person tag', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
         });
 
         it('should display person tag Icon if person has valid notes', () => {
@@ -394,7 +396,7 @@ describe('Assignment Card', () => {
         });
 
         it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space});
+            store = createStore(rootReducer, {currentSpace: TestData.space});
             renderAssignmentCard(assignmentToRender, false, ({set}) => {
                 set(IsReadOnlyState, true);
             });

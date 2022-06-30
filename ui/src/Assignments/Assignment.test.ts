@@ -16,15 +16,15 @@
  */
 
 import {Assignment, calculateDuration} from './Assignment';
-import TestUtils from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 
 describe('Assignment', () => {
     describe('calculateDuration', () => {
         const assignment: Assignment = {
             id: 1,
-            person: TestUtils.hank,
-            productId: TestUtils.productForHank.id,
-            spaceUuid: TestUtils.hank.spaceUuid,
+            person: TestData.hank,
+            productId: TestData.productForHank.id,
+            spaceUuid: TestData.hank.spaceUuid,
             placeholder: false,
             startDate: undefined,
             endDate: undefined,

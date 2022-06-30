@@ -18,7 +18,8 @@ import ProductForm from '../Products/ProductForm';
 import React from 'react';
 import configureStore from 'redux-mock-store';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import TestUtils, {mockCreateRange, renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {Space} from '../Space/Space';
 import {AvailableActions} from '../Redux/Actions';
 import LocationClient from '../Locations/LocationClient';
@@ -37,17 +38,17 @@ import {ProductsState} from '../State/ProductsState';
 describe('ProductForm', function() {
     const mockStore = configureStore([]);
     const store = mockStore({
-        currentSpace: TestUtils.space,
+        currentSpace: TestData.space,
     });
 
     let resetCreateRange: () => void;
 
     beforeEach(() => {
         store.dispatch = jest.fn();
-        resetCreateRange = mockCreateRange();
+        resetCreateRange = TestUtils.mockCreateRange();
 
-        LocationClient.get = jest.fn().mockResolvedValue({data: TestUtils.locations});
-        ProductTagClient.get = jest.fn().mockResolvedValue({data: TestUtils.productTags});
+        LocationClient.get = jest.fn().mockResolvedValue({data: TestData.locations});
+        ProductTagClient.get = jest.fn().mockResolvedValue({data: TestData.productTags});
         ProductClient.createProduct = jest.fn().mockResolvedValue({data: {}});
     });
 
@@ -93,19 +94,19 @@ describe('ProductForm', function() {
         fireEvent.click(screen.getByText('Add'));
 
         await waitFor(() => expect(ProductClient.createProduct).toHaveBeenCalledWith(
-            TestUtils.space,
+            TestData.space,
             {
                 id: -1,
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 name: 'Some Name',
                 startDate: '2020-05-14',
                 endDate: '',
-                spaceLocation: TestUtils.annarbor,
+                spaceLocation: TestData.annarbor,
                 archived: false,
                 dorf: '',
                 notes: '',
                 url: '',
-                tags: [TestUtils.productTag2],
+                tags: [TestData.productTag2],
                 assignments: [],
             } as Product));
 
@@ -123,7 +124,7 @@ describe('ProductForm', function() {
             } as Space,
         });
 
-        const archivedProduct = {...TestUtils.productWithoutLocation, endDate: '2020-02-02'};
+        const archivedProduct = {...TestData.productWithoutLocation, endDate: '2020-02-02'};
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2022, 3, 14))
@@ -148,7 +149,7 @@ describe('ProductForm', function() {
             }}>
                 <ProductForm
                     editing={true}
-                    product={TestUtils.productWithoutLocation}
+                    product={TestData.productWithoutLocation}
                 />
             </RecoilRoot>,
             store
@@ -164,7 +165,7 @@ describe('ProductForm', function() {
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2020, 4, 14))
             }}>
-                <ProductForm editing={true} product={TestUtils.archivedProduct} />
+                <ProductForm editing={true} product={TestData.archivedProduct} />
             </RecoilRoot>,
             store
         );
@@ -178,9 +179,9 @@ describe('ProductForm', function() {
     describe('tag dropdowns', () => {
         let history: History;
         const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-            currentSpace: TestUtils.space,
-            productTags: TestUtils.productTags,
-            allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+            currentSpace: TestData.space,
+            productTags: TestData.productTags,
+            allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         };
 
         beforeEach(() => {
@@ -194,7 +195,7 @@ describe('ProductForm', function() {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, moment().toDate())
-                    set(ProductsState, TestUtils.products)
+                    set(ProductsState, TestData.products)
                 }}>
                     <ProductForm editing={false} />
                 </RecoilRoot>,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import * as React from 'react';
 import {act, waitFor} from '@testing-library/react';
 import DeleteSpaceForm from './DeleteSpaceForm';
@@ -32,11 +33,11 @@ describe('Delete Space Form', () => {
 
     describe('Space has no editors', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
             store.dispatch = jest.fn();
             renderWithRedux(
                 <RecoilRoot>
-                    <DeleteSpaceForm space={TestUtils.space} spaceHasEditors={false}/>
+                    <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>
                 </RecoilRoot>,
                 store
             );
@@ -49,12 +50,12 @@ describe('Delete Space Form', () => {
 
     describe('Space has editors', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestUtils.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
             store.dispatch = jest.fn();
 
             renderWithRedux(
                 <RecoilRoot>
-                    <DeleteSpaceForm space={TestUtils.space} spaceHasEditors={true}/>
+                    <DeleteSpaceForm space={TestData.space} spaceHasEditors={true}/>
                 </RecoilRoot>,
                 store
             );
@@ -113,7 +114,7 @@ describe('Delete Space Form', () => {
                 const bigRedButton = await screen.getByText('Delete space');
                 fireEvent.click(bigRedButton);
 
-                await waitFor(() => expect(SpaceClient.deleteSpaceByUuid).toHaveBeenCalledWith(TestUtils.space.uuid));
+                await waitFor(() => expect(SpaceClient.deleteSpaceByUuid).toHaveBeenCalledWith(TestData.space.uuid));
             });
 
             it('should open the Transfer Ownership modal when the assign a new owner button is pressed', async () => {
@@ -125,7 +126,7 @@ describe('Delete Space Form', () => {
                 await waitFor(() => expect(store.dispatch).toHaveBeenCalledWith({
                     type: AvailableActions.SET_CURRENT_MODAL,
                     modal: AvailableModals.TRANSFER_OWNERSHIP,
-                    item: TestUtils.space,
+                    item: TestData.space,
                 }));
             });
         });

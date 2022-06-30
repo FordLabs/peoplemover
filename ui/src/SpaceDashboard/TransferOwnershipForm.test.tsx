@@ -16,7 +16,8 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import SpaceClient from '../Space/SpaceClient';
 
@@ -43,7 +44,7 @@ describe('Transfer Ownership Form', () => {
             <RecoilRoot initializeState={({set}) => {
                 set(CurrentUserState,  'user_id')
             }}>
-                <TransferOwnershipForm space={TestUtils.space}/>
+                <TransferOwnershipForm space={TestData.space}/>
             </RecoilRoot>,
             store
         );
@@ -52,7 +53,7 @@ describe('Transfer Ownership Form', () => {
     });
 
     it('should prompt the choice with the space name', () => {
-        expect(screen.getByText('Please choose who you would like to be the new owner of ' + TestUtils.space.name)).toBeDefined();
+        expect(screen.getByText('Please choose who you would like to be the new owner of ' + TestData.space.name)).toBeDefined();
     });
 
     it('should show each editors name', () => {
@@ -89,13 +90,13 @@ describe('Transfer Ownership Form', () => {
         it('should use the Client to promote the selected editor to owner', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
             await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
-            expect(SpaceClient.changeOwner).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[0], TestUtils.spaceMappingsArray[1]);
+            expect(SpaceClient.changeOwner).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[0], TestData.spaceMappingsArray[1]);
         });
 
         it('should use the Client to remove the current users permissions from the space', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
             await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
-            expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestUtils.space, TestUtils.spaceMappingsArray[0]);
+            expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[0]);
         });
 
         it('should refresh user spaces if a new owner is assigned', async () => {

@@ -20,6 +20,7 @@ import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from './ProductClient';
 import TestUtils, {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import {applyMiddleware, createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
@@ -33,6 +34,9 @@ import thunk from 'redux-thunk';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {RecoilRoot} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+
+jest.mock('./ProductClient');
+jest.mock('../Space/SpaceClient');
 
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
@@ -67,7 +71,7 @@ describe('Products', () => {
         });
 
         it('should not make an update assignment call when dragging assignment card to same product', async () => {
-            renderProductCard({ product: TestUtils.productWithAssignments });
+            renderProductCard({ product: TestData.productWithAssignments });
 
             AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({});
 
@@ -420,7 +424,7 @@ describe('Products', () => {
             fireEvent.click(editProductOption);
 
             const notesFieldText = await screen.findByTestId('notesFieldText');
-            const expectedNotes = TestUtils.productWithAssignments.notes || '';
+            const expectedNotes = TestData.productWithAssignments.notes || '';
             expect(notesFieldText.innerHTML).toContain(expectedNotes.length.toString());
         });
 
@@ -470,7 +474,7 @@ describe('Products', () => {
             const deleteButton = await screen.findByText('Delete');
             fireEvent.click(deleteButton);
             expect(ProductClient.deleteProduct).toBeCalledTimes(1);
-            expect(ProductClient.deleteProduct).toBeCalledWith(TestUtils.space, TestUtils.productWithoutAssignments);
+            expect(ProductClient.deleteProduct).toBeCalledWith(TestData.space, TestData.productWithoutAssignments);
         });
 
         it('should not show archive button option in delete modal if product is already archived', async () => {
@@ -506,9 +510,9 @@ describe('Products', () => {
                 fireEvent.click(archiveButton);
 
                 expect(ProductClient.editProduct).toBeCalledTimes(1);
-                const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestUtils.productWithoutAssignments));
+                const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestData.productWithoutAssignments));
                 cloneWithEndDateSet.endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
-                expect(ProductClient.editProduct).toBeCalledWith(TestUtils.space, cloneWithEndDateSet);
+                expect(ProductClient.editProduct).toBeCalledWith(TestData.space, cloneWithEndDateSet);
             });
         });
     });
@@ -537,12 +541,12 @@ describe('Products', () => {
         it('should put product in archived products when clicking archive product', async () => {
             function updateGetAllProductsResponse(): void {
                 const updatedProduct = {
-                    ...TestUtils.productWithAssignments,
+                    ...TestData.productWithAssignments,
                     archived: true,
                 };
                 const updatedProducts = [
                     updatedProduct,
-                    TestUtils.unassignedProduct,
+                    TestData.unassignedProduct,
                 ];
                 ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: updatedProducts });
             }
@@ -568,7 +572,7 @@ describe('Products', () => {
 
     describe('Read only view', () => {
         beforeEach(() => {
-            renderProductCard({ product: TestUtils.productWithAssignments, isReadOnly: true})
+            renderProductCard({ product: TestData.productWithAssignments, isReadOnly: true})
         });
 
         it('should not show edit product icon', async () => {
@@ -582,11 +586,11 @@ describe('Products', () => {
 });
 
 function renderProductCard(params?: { product?: Product, isReadOnly?: boolean }) {
-    const { product = TestUtils.productWithoutAssignments, isReadOnly = false } = params || {}
+    const { product = TestData.productWithoutAssignments, isReadOnly = false } = params || {}
 
     const initialState = {
-        currentSpace: TestUtils.space,
-        allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
+        currentSpace: TestData.space,
+        allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         currentModal: {modal: null},
     };
 

@@ -18,7 +18,7 @@
 import Axios from 'axios';
 import AssignmentClient from './AssignmentClient';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
-import TestUtils from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
@@ -77,17 +77,17 @@ describe('Assignment client', () => {
 
         };
 
-        const expectedUrl = `/api/spaces/${TestUtils.space.uuid}/person/${TestUtils.person1.id}/assignment/create`;
+        const expectedUrl = `/api/spaces/${TestData.space.uuid}/person/${TestData.person1.id}/assignment/create`;
 
         await AssignmentClient.createAssignmentForDate(
             moment(date).format('YYYY-MM-DD'),
             [productPlaceholderPair],
-            TestUtils.space,
-            TestUtils.person1
+            TestData.space,
+            TestData.person1
         );
 
         expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
-        expect(window._paq).toContainEqual(['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]);
+        expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'assignPerson', TestData.person1.name]);
     });
 
     it('should send matomo error event if assign person fails', async () => {
@@ -97,12 +97,12 @@ describe('Assignment client', () => {
             await AssignmentClient.createAssignmentForDate(
                 moment(new Date()).format('YYYY-MM-DD'),
                 [],
-                TestUtils.space,
-                TestUtils.person1
+                TestData.space,
+                TestData.person1
             );
         } catch (err) {
             expect(window._paq).toContainEqual(
-                ['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]
+                ['trackEvent', TestData.space.name, 'assignPersonError', TestData.person1.name, 417]
             );
         }
     });
@@ -111,12 +111,12 @@ describe('Assignment client', () => {
         await AssignmentClient.createAssignmentForDate(
             moment(new Date()).format('YYYY-MM-DD'),
             [],
-            TestUtils.space,
-            TestUtils.person1,
+            TestData.space,
+            TestData.person1,
             false
         );
         expect(window._paq).not.toContainEqual(
-            ['trackEvent', TestUtils.space.name, 'assignPerson', TestUtils.person1.name]
+            ['trackEvent', TestData.space.name, 'assignPerson', TestData.person1.name]
         );
     });
 
@@ -127,13 +127,13 @@ describe('Assignment client', () => {
             await AssignmentClient.createAssignmentForDate(
                 moment(new Date()).format('YYYY-MM-DD'),
                 [],
-                TestUtils.space,
-                TestUtils.person1,
+                TestData.space,
+                TestData.person1,
                 false
             );
         } catch (err) {
             expect(window._paq).not.toContainEqual(
-                ['trackEvent', TestUtils.space.name, 'assignPersonError', TestUtils.person1.name, 417]
+                ['trackEvent', TestData.space.name, 'assignPersonError', TestData.person1.name, 417]
             );
         }
 
@@ -149,15 +149,15 @@ describe('Assignment client', () => {
     });
 
     it('should delete assignment given person for a specific date', async () => {
-        const expectedUrl = `/api/spaces/${TestUtils.person1.spaceUuid}/person/${TestUtils.person1.id}/assignment/delete/${TestUtils.originDateString}`;
+        const expectedUrl = `/api/spaces/${TestData.person1.spaceUuid}/person/${TestData.person1.id}/assignment/delete/${TestData.originDateString}`;
         const expectedConfig = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer 123456',
             },
-            data: TestUtils.person1,
+            data: TestData.person1,
         };
-        await AssignmentClient.deleteAssignmentForDate(new Date(2019, 0, 1), TestUtils.person1);
+        await AssignmentClient.deleteAssignmentForDate(new Date(2019, 0, 1), TestData.person1);
 
         expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
@@ -169,18 +169,18 @@ describe('Assignment client', () => {
                 'Authorization': 'Bearer 123456',
             },
         };
-        await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(TestUtils.hank.spaceUuid, TestUtils.hank.id);
-        expect(Axios.get).toHaveBeenCalledWith('/api/v2/spaces/' + TestUtils.hank.spaceUuid + '/person/' + TestUtils.hank.id + '/assignments', expectedConfig);
+        await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(TestData.hank.spaceUuid, TestData.hank.id);
+        expect(Axios.get).toHaveBeenCalledWith('/api/v2/spaces/' + TestData.hank.spaceUuid + '/person/' + TestData.hank.id + '/assignments', expectedConfig);
     });
 
     it('should return what it gets from the assignment history summary API', async () => {
-        const assignment = TestUtils.assignmentForHank;
+        const assignment = TestData.assignmentForHank;
         Axios.get = jest.fn().mockResolvedValue({
             data: [assignment],
         });
 
-        const actual = await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(TestUtils.hank.spaceUuid, TestUtils.hank.id);
-        expect(actual.data).toEqual([TestUtils.assignmentForHank]);
+        const actual = await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(TestData.hank.spaceUuid, TestData.hank.id);
+        expect(actual.data).toEqual([TestData.assignmentForHank]);
     });
 
     it('should get reassignments given assignment', async () => {
