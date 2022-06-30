@@ -220,8 +220,8 @@ function PersonForm({
             if (isEditPersonForm) {
                 const response = await PeopleClient.updatePerson(currentSpace, personToSend, personTagModified);
                 const updatedPerson: Person = response.data;
-                setPeople(currentState => currentState.map((person) => {
-                    return (person.id === updatedPerson.id) ? updatedPerson : person;
+                setPeople(currentPeople => currentPeople.map((p) => {
+                    return (p.id === updatedPerson.id) ? updatedPerson : p;
                 }))
 
                 if (hasAssignmentChanged) {
@@ -236,7 +236,7 @@ function PersonForm({
             } else {
                 const response = await PeopleClient.createPersonForSpace(currentSpace, personToSend, personTagModified);
                 const newPerson: Person = response.data;
-                setPeople(currentState => [...currentState, newPerson])
+                setPeople(currentPeople => [...currentPeople, newPerson])
                 await AssignmentClient.createAssignmentForDate(
                     moment(viewingDate).format('YYYY-MM-DD'),
                     getSelectedProductPairs(),
