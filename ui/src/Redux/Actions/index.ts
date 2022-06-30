@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-import {Person} from '../../People/Person';
 import {CurrentModalState} from '../Reducers/currentModalReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
 import {Space} from '../../Space/Space';
-import {Product} from '../../Products/Product';
 import {Tag} from '../../Tags/Tag';
 import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import {LocationTag} from '../../Locations/LocationTag.interface';
@@ -35,14 +33,10 @@ import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 export enum AvailableActions {
     SET_CURRENT_MODAL,
     CLOSE_MODAL,
-    ADD_PERSON,
-    EDIT_PERSON,
-    SET_PEOPLE,
     REGISTER_PRODUCT_REF,
     UNREGISTER_PRODUCT_REF,
     SET_ALL_FILTER_OPTIONS,
     SET_CURRENT_SPACE,
-    SET_PRODUCTS,
     SET_PRODUCT_TAGS,
     SET_PERSON_TAGS,
     SET_LOCATIONS,
@@ -57,21 +51,6 @@ export const setCurrentModalAction = (modalState: CurrentModalState) => ({
 
 export const closeModalAction = () => ({
     type: AvailableActions.CLOSE_MODAL,
-});
-
-export const addPersonAction = (person: Person) => ({
-    type: AvailableActions.ADD_PERSON,
-    people: [person],
-});
-
-export const editPersonAction = (person: Person) => ({
-    type: AvailableActions.EDIT_PERSON,
-    people: [person],
-});
-
-export const setPeopleAction = (people: Array<Person>) => ({
-    type: AvailableActions.SET_PEOPLE,
-    people,
 });
 
 export const registerProductRefAction = (productRef: ProductCardRefAndProductPair) => ({
@@ -92,11 +71,6 @@ export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: 
 export const setCurrentSpaceAction = (space: Space) => ({
     type: AvailableActions.SET_CURRENT_SPACE,
     space,
-});
-
-export const setProductsAction = (products: Array<Product>) => ({
-    type: AvailableActions.SET_PRODUCTS,
-    products,
 });
 
 export const setProductTagsAction = (productTags: Array<Tag>) => ({

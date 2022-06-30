@@ -20,13 +20,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import {connect} from 'react-redux';
-import {
-    addPersonAction,
-    closeModalAction,
-    editPersonAction,
-    fetchRolesAction,
-    setAllGroupedTagFilterOptionsAction,
-} from '../Redux/Actions';
+import {closeModalAction, fetchRolesAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived, Person} from './Person';
@@ -62,8 +56,9 @@ import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
 import {ProductsState} from '../State/ProductsState';
+import {PeopleState} from '../State/PeopleState';
 
-interface PersonFormProps {
+interface Props {
     isEditPersonForm: boolean
     initiallySelectedProduct?: Product;
     initialPersonName?: string;
@@ -73,8 +68,6 @@ interface PersonFormProps {
     roles: Array<RoleTag>;
 
     closeModal(): void;
-    addPerson(person: Person): void;
-    editPerson(person: Person): void;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
     fetchRoles(): Array<RoleTag>;
 }
@@ -86,13 +79,16 @@ function PersonForm({
     currentSpace,
     personEdited,
     closeModal,
-    addPerson,
-    editPerson,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
     roles,
     fetchRoles,
-}: PersonFormProps): JSX.Element {
+}: Props): JSX.Element {
+    const products = useRecoilValue(ProductsState);
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const setIsUnassignedDrawerOpen = useSetRecoilState(IsUnassignedDrawerOpenState);
+    const setPeople = useSetRecoilState(PeopleState);
+
     const spaceUuid = currentSpace.uuid!;
     const { ROLE_TAGS } = MetadataReactSelectProps;
     const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
@@ -107,10 +103,6 @@ function PersonForm({
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
     const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
-
-    const products = useRecoilValue(ProductsState);
-    const viewingDate = useRecoilValue(ViewingDateState);
-    const setIsUnassignedDrawerOpen = useSetRecoilState(IsUnassignedDrawerOpenState);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -228,7 +220,10 @@ function PersonForm({
             if (isEditPersonForm) {
                 const response = await PeopleClient.updatePerson(currentSpace, personToSend, personTagModified);
                 const updatedPerson: Person = response.data;
-                editPerson(updatedPerson);
+                setPeople(currentState => currentState.map((person) => {
+                    return (person.id === updatedPerson.id) ? updatedPerson : person;
+                }))
+
                 if (hasAssignmentChanged) {
                     await AssignmentClient.createAssignmentForDate(
                         moment(viewingDate).format('YYYY-MM-DD'),
@@ -241,7 +236,7 @@ function PersonForm({
             } else {
                 const response = await PeopleClient.createPersonForSpace(currentSpace, personToSend, personTagModified);
                 const newPerson: Person = response.data;
-                addPerson(newPerson);
+                setPeople(currentState => [...currentState, newPerson])
                 await AssignmentClient.createAssignmentForDate(
                     moment(viewingDate).format('YYYY-MM-DD'),
                     getSelectedProductPairs(),
@@ -464,8 +459,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     closeModal: () => dispatch(closeModalAction()),
-    addPerson: (person: Person) => dispatch(addPersonAction(person)),
-    editPerson: (person: Person) => dispatch(editPersonAction(person)),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
     fetchRoles: () => dispatch(fetchRolesAction()),
