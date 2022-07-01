@@ -31,10 +31,12 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {RecoilRoot} from 'recoil';
 import {ProductsState} from '../State/ProductsState';
+import {PeopleState} from '../State/PeopleState';
 
 declare let window: MatomoWindow;
 
 jest.mock('../Products/ProductClient');
+jest.mock('../People/PeopleClient');
 jest.mock('../Space/SpaceClient');
 
 describe('People actions', () => {
@@ -50,7 +52,6 @@ describe('People actions', () => {
 
     describe('Person Form', () => {
         const personFormInitialState: PreloadedState<Partial<GlobalStateProps>> = {
-            people: TestData.people,
             currentSpace: TestData.space,
             allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         };
@@ -59,6 +60,7 @@ describe('People actions', () => {
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState, ({set}) => {
                 set(ViewingDateState, viewingDate)
+                set(PeopleState,  TestData.people)
             });
             await screen.findByText(addPersonButtonText);
         });

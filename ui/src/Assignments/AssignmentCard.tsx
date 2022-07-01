@@ -20,7 +20,7 @@ import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
-import {fetchPeopleAction, setCurrentModalAction} from '../Redux/Actions';
+import {setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -38,18 +38,18 @@ import {JSX} from '@babel/types';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import useFetchProducts from '../Hooks/useFetchProducts';
 
 import '../Styles/Main.scss';
 import './AssignmentCard.scss';
-import useFetchProducts from '../Hooks/useFetchProducts';
+import useFetchPeople from '../Hooks/useFetchPeople';
 
-interface AssignmentCardProps {
+interface Props {
     currentSpace: Space;
     assignment: Assignment;
     isUnassignedProduct: boolean;
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
     setCurrentModal(modalState: CurrentModalState): void;
-    fetchPeople(): void;
 }
 
 function AssignmentCard({
@@ -58,12 +58,12 @@ function AssignmentCard({
     isUnassignedProduct,
     startDraggingAssignment,
     setCurrentModal,
-    fetchPeople,
-}: AssignmentCardProps): JSX.Element {
+}: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const { fetchProducts } = useFetchProducts();
+    const  { fetchPeople } = useFetchPeople();
 
     const spaceUuid = currentSpace.uuid!;
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
@@ -267,7 +267,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchPeople: () => dispatch(fetchPeopleAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCard);

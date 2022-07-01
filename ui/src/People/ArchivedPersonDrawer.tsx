@@ -17,22 +17,18 @@
 
 import React, {useState} from 'react';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
 import {Person} from './Person';
 import moment from 'moment';
 import PersonCard from './PersonCard';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {PeopleState} from '../State/PeopleState';
 
-interface Props {
-    people: Array<Person>;
-}
-
-function ArchivedPersonDrawer({ people }: Props): JSX.Element {
-    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-
+function ArchivedPersonDrawer(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
+    const people = useRecoilValue(PeopleState);
+
+    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
     const getArchivedPeople = (): Array<Person> => {
         return people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment(viewingDate)));
@@ -60,10 +56,4 @@ function ArchivedPersonDrawer({ people }: Props): JSX.Element {
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    people: state.people,
-});
-
-export default connect(mapStateToProps)(ArchivedPersonDrawer);
-/* eslint-enable */
+export default ArchivedPersonDrawer;

@@ -18,7 +18,6 @@
 import {
     AvailableActions,
     fetchLocationsAction,
-    fetchPeopleAction,
     fetchPersonTagsAction,
     fetchProductTagsAction,
     fetchRolesAction,
@@ -33,7 +32,6 @@ import {AxiosResponse} from 'axios';
 import LocationClient from '../../Locations/LocationClient';
 import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
-import PeopleClient from '../../People/PeopleClient';
 
 describe('Actions', () => {
     let mockStore: MockStoreCreator<unknown, {}>;
@@ -132,24 +130,6 @@ describe('Actions', () => {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(fetchRolesAction()).then(() => {
-                expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
-                expect(store.getActions()).toEqual(expectedActions);
-            });
-        });
-    });
-
-    describe('fetchPeopleAction', () => {
-        it('should invoke PeopleClient.getforspace and fire the setPeople action', () => {
-            const mock = jest.spyOn(PeopleClient, 'getAllPeopleInSpace');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestData.people} as AxiosResponse));
-
-            const expectedActions = [
-                {type: AvailableActions.SET_PEOPLE, people: TestData.people},
-            ];
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return store.dispatch<any>(fetchPeopleAction()).then(() => {
                 expect(mock).toHaveBeenCalledTimes(1);
                 expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);
