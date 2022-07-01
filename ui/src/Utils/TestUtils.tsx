@@ -16,7 +16,6 @@
  */
 
 import React from 'react';
-import PeopleClient from '../People/PeopleClient';
 import SpaceClient from '../Space/SpaceClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
@@ -33,15 +32,9 @@ import PeopleMover from '../PeopleMover/PeopleMover';
 import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
 import TestData from '../Utils/TestData';
-import {AxiosResponse} from 'axios';
 
 // @todo replace this with jest manual mocks
 function mockClientCalls(): void {
-    PeopleClient.createPersonForSpace = jest.fn((space, person) => Promise.resolve({ data: person } as AxiosResponse));
-    PeopleClient.getAllPeopleInSpace = jest.fn().mockResolvedValue({ data: TestData.people });
-    PeopleClient.updatePerson = jest.fn().mockResolvedValue({data: {}});
-    PeopleClient.removePerson = jest.fn().mockResolvedValue({data: {}});
-
     AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({ data: [TestData.assignmentForPerson1] });
     AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
     AssignmentClient.getAssignmentEffectiveDates = jest.fn().mockResolvedValue({

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +32,7 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {PeopleState} from '../State/PeopleState';
 
 jest.mock('../Products/ProductClient');
+jest.mock('../People/PeopleClient');
 
 describe('ReassignedDrawer', () => {
     let store: Store;

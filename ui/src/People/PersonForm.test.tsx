@@ -35,6 +35,8 @@ import {ProductsState} from '../State/ProductsState';
 
 declare let window: MatomoWindow;
 
+jest.mock('../People/PeopleClient');
+
 describe('Person Form', () => {
     const mayFourteen: Date = new Date(2020, 4, 14);
 
@@ -210,7 +212,7 @@ describe('Person Form', () => {
 
             fireEvent.click(await screen.findByText('Save'));
 
-            expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(0);
+            await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(0));
         });
 
         it('should call createAssignmentForDate when assignment has been deliberately changed to unassigned', async () => {
@@ -306,7 +308,7 @@ describe('Person Form', () => {
     describe('handleMatomoEventsForNewPersonCheckboxChange()', () => {
         let originalWindow: Window;
 
-        afterEach(() => {
+        beforeEach(() => {
             window._paq = [];
             (window as Window) = originalWindow;
         });
@@ -376,7 +378,7 @@ describe('Person Form', () => {
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
             fireEvent.click(await screen.findByText('Save'));
 
-            expect(window._paq).toEqual([]);
+            await waitFor(() => expect(window._paq).toEqual([]));
         });
 
         it('newPerson box goes from unchecked to checked to unchecked, DO NOT call matomo event',  async () => {
@@ -398,7 +400,7 @@ describe('Person Form', () => {
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
             fireEvent.click(await screen.findByText('Save'));
 
-            expect(window._paq).toEqual([]);
+            await waitFor(() => expect(window._paq).toEqual([]));
         });
     });
 });

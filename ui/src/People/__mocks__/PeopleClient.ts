@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +16,13 @@
  */
 
 import TestData from '../../Utils/TestData';
+import {AxiosResponse} from 'axios';
 
 const PeopleClient = {
-    getAllPeopleInSpace: jest.fn().mockResolvedValue({ data: TestData.people })
+    createPersonForSpace: jest.fn((space, person) => Promise.resolve({ data: person } as AxiosResponse)),
+    getAllPeopleInSpace: jest.fn().mockResolvedValue({ data: TestData.people }),
+    updatePerson: jest.fn().mockResolvedValue({data: {}}),
+    removePerson: jest.fn().mockResolvedValue({data: {}})
 }
 
 export default PeopleClient;

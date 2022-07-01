@@ -36,6 +36,7 @@ import {PeopleState} from '../State/PeopleState';
 declare let window: MatomoWindow;
 
 jest.mock('../Products/ProductClient');
+jest.mock('../People/PeopleClient');
 jest.mock('../Space/SpaceClient');
 
 describe('People actions', () => {
