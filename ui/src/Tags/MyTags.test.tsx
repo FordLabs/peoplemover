@@ -25,12 +25,12 @@ import MyTagsForm from './MyTagsForm';
 import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {RecoilRoot} from 'recoil';
 import {LocationsState} from '../State/LocationsState';
+import {ProductTagsState} from '../State/ProductTagsState';
 
-jest.mock('../Locations/LocationClient');
+jest.mock('Locations/LocationClient');
 
 describe('My Tags Form', () => {
     const initialState = {
-        productTags: TestData.productTags,
         currentSpace: TestData.space,
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
     };
@@ -44,6 +44,7 @@ describe('My Tags Form', () => {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(LocationsState, TestData.locations)
+                set(ProductTagsState, TestData.productTags)
             }}>
                 <MyTagsForm filterType={filterType} />
             </RecoilRoot>,

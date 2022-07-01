@@ -18,17 +18,18 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {fetchPersonTagsAction, fetchProductTagsAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {TagInterface} from './Tag.interface';
 import {JSX} from '@babel/types';
-import {FilterOption} from '../CommonTypes/Option';
-import {Tag} from './Tag';
+import {FilterOption} from 'CommonTypes/Option';
 import TagsModalContent from './TagsModalContent';
 import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import ProductTagClient from './ProductTag/ProductTagClient';
-import LocationClient from '../Locations/LocationClient';
+import LocationClient from 'Locations/LocationClient';
 import PersonTagClient from './PersonTag/PersonTagClient';
 import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
+import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
+import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
 
@@ -36,24 +37,14 @@ export const INACTIVE_EDIT_STATE_INDEX = -1;
 
 interface Props {
     filterType: FilterType;
-    productTags: Array<Tag>;
-    personTags: Array<Tag>;
-    fetchProductTags(): Array<Tag>;
-    fetchPersonTags(): Array<Tag>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function MyTagsForm({
-    filterType,
-    productTags,
-    personTags,
-    fetchProductTags,
-    fetchPersonTags,
-    allGroupedTagFilterOptions,
-    setAllGroupedTagFilterOptions,
-}: Props): JSX.Element {
+function MyTagsForm({ filterType, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
     const { fetchLocations, locations } = useFetchLocations();
+    const { fetchPersonTags, personTags } = useFetchPersonTags();
+    const { fetchProductTags, productTags } = useFetchProductTags();
 
     const getUpdatedFilterOptions = (index: number, tag: TagInterface): Array<FilterOption> => {
         return allGroupedTagFilterOptions[index].options.map(val =>
@@ -127,14 +118,10 @@ function MyTagsForm({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    productTags: state.productTags,
-    personTags: state.personTags,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
-    fetchProductTags: () => dispatch(fetchProductTagsAction()),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });

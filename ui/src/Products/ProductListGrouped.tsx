@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,21 +20,18 @@ import {Product} from './Product';
 import NewProductButton from './NewProductButton';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {TagInterface} from '../Tags/Tag.interface';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {Tag} from '../Tags/Tag';
 import {useRecoilValue} from 'recoil';
 
 import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
 import {AvailableModals} from '../Modal/AvailableModals';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
+import {LocationsState} from 'State/LocationsState';
+import {ProductTagsState} from 'State/ProductTagsState';
 
 import './ProductListGrouped.scss';
-import {LocationsState} from '../State/LocationsState';
 
 interface GroupedByListProps {
     products: Array<Product>;
-    productTags: Array<Tag>;
 }
 
 interface GroupedListDataProps {
@@ -52,9 +49,12 @@ interface ProductGroupProps {
     useGrayBackground?: boolean;
 }
 
-function GroupedByList({ products, productTags }: GroupedByListProps): JSX.Element {
+function GroupedByList({ products }: GroupedByListProps): JSX.Element {
     const locations = useRecoilValue(LocationsState);
     const productSortBy = useRecoilValue(ProductSortByState);
+
+    const productTags = useRecoilValue(ProductTagsState);
+
     const productGroupList = sortProducts();
 
     function sortProducts(): GroupedListDataProps {
@@ -133,10 +133,4 @@ function GroupedByList({ products, productTags }: GroupedByListProps): JSX.Eleme
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    productTags: state.productTags,
-});
-
-export default connect(mapStateToProps)(GroupedByList);
-/* eslint-enable */
+export default GroupedByList;
