@@ -37,7 +37,7 @@ interface Props {
     currentSpace: Space;
     tagClient: TagClient;
     filterType: FilterType;
-    fetchCommand: () => {};
+    fetchCommand: () => void;
 }
 
 const TagsModalContent = ({

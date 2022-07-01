@@ -22,7 +22,6 @@ import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
 import {
-    fetchLocationsAction,
     fetchPersonTagsAction,
     fetchProductTagsAction,
     setCurrentModalAction,
@@ -36,7 +35,6 @@ import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import {Tag} from '../Tags/Tag';
-import {LocationTag} from '../Locations/LocationTag.interface';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
@@ -51,10 +49,11 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import useFetchProducts from '../Hooks/useFetchProducts';
 import useFetchPeople from '../Hooks/useFetchPeople';
+import useFetchRoles from '../Hooks/useFetchRoles';
+import useFetchLocations from '../Hooks/useFetchLocations';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
-import useFetchRoles from '../Hooks/useFetchRoles';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -65,7 +64,6 @@ export interface PeopleMoverProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     fetchProductTags(): Array<Tag>;
     fetchPersonTags(): Array<Tag>;
-    fetchLocations(): Array<LocationTag>;
     setCurrentModal(modalState: CurrentModalState): void;
     setSpace(space: Space): void;
 }
@@ -76,7 +74,6 @@ function PeopleMover({
     allGroupedTagFilterOptions,
     fetchProductTags,
     fetchPersonTags,
-    fetchLocations,
     setSpace,
     setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
@@ -88,6 +85,7 @@ function PeopleMover({
 
     const { fetchPeople } = useFetchPeople();
     const { fetchRoles } = useFetchRoles();
+    const { fetchLocations } = useFetchLocations()
     const { fetchProducts, products } = useFetchProducts();
 
     const hasProductsAndFilters: boolean = products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0;
@@ -192,7 +190,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     fetchProductTags: () => dispatch(fetchProductTagsAction()),
     fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
-    fetchLocations: () => dispatch(fetchLocationsAction()),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });

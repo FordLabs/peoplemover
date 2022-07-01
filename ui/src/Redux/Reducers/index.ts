@@ -23,10 +23,8 @@ import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
 import productTagsReducer from './productTagsReducer';
 import personTagsReducer from './personTagsReducer';
-import locationsReducer from './locationsReducer';
 import {Space} from '../../Space/Space';
 import {Tag} from '../../Tags/Tag';
-import {LocationTag} from '../../Locations/LocationTag.interface';
 import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
 
 export default combineReducers({
@@ -36,7 +34,6 @@ export default combineReducers({
     currentSpace: currentSpaceReducer,
     productTags: productTagsReducer,
     personTags: personTagsReducer,
-    locations: locationsReducer,
 });
 
 export interface GlobalStateProps {
@@ -46,7 +43,6 @@ export interface GlobalStateProps {
     currentSpace: Space;
     productTags: Array<Tag>;
     personTags: Array<Tag>;
-    locations: Array<LocationTag>;
 }
 
 

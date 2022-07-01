@@ -23,6 +23,7 @@ import LocationClient from '../Locations/LocationClient';
 import TestUtils from '../Utils/TestUtils';
 
 jest.mock('../Products/ProductClient');
+jest.mock('../Locations/LocationClient');
 jest.mock('../Space/SpaceClient');
 jest.mock('../Roles/RoleClient');
 

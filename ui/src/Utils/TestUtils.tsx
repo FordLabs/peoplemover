@@ -19,7 +19,6 @@ import React from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ColorClient from '../Roles/ColorClient';
-import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
@@ -47,11 +46,6 @@ function mockClientCalls(): void {
     AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn().mockResolvedValue({ data: [] });
 
     ColorClient.getAllColors = jest.fn().mockResolvedValue({ data: TestData.colors });
-
-    LocationClient.get = jest.fn().mockResolvedValue({ data: TestData.locations });
-    LocationClient.add = jest.fn().mockResolvedValue({ data: { id: 11, name: 'Ahmedabad' } });
-    LocationClient.edit = jest.fn().mockResolvedValue({ data: { id: 1, name: 'Saline' } });
-    LocationClient.delete = jest.fn().mockResolvedValue({ data: {} });
 
     ProductTagClient.get = jest.fn().mockResolvedValue({ data: TestData.productTags });
     ProductTagClient.add = jest.fn().mockResolvedValue({ data: {id: 9, name: 'Fin Tech'} });
@@ -96,7 +90,8 @@ async function renderPeopleMoverComponent(
         store,
         initialReduxState
     );
-    await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(initialPath.replace('/', '')))
+    const uuid = initialPath.replace('/', '');
+    await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(uuid))
     return result;
 }
 

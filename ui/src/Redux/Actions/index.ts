@@ -22,8 +22,6 @@ import {ThunkAction} from 'redux-thunk';
 import {Space} from '../../Space/Space';
 import {Tag} from '../../Tags/Tag';
 import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
-import {LocationTag} from '../../Locations/LocationTag.interface';
-import LocationClient from '../../Locations/LocationClient';
 import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
 import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
@@ -37,7 +35,6 @@ export enum AvailableActions {
     SET_CURRENT_SPACE,
     SET_PRODUCT_TAGS,
     SET_PERSON_TAGS,
-    SET_LOCATIONS,
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({
@@ -80,11 +77,6 @@ export const setPersonTagsAction = (personTags: Array<Tag>) => ({
     personTags,
 });
 
-export const setLocationsAction = (locations: Array<LocationTag>) => ({
-    type: AvailableActions.SET_LOCATIONS,
-    locations,
-});
-
 export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
     (dispatch: Dispatch, getState: Function): Promise<void> => {
         return ProductTagClient.get(getState().currentSpace.uuid!,)
@@ -103,16 +95,6 @@ export const fetchPersonTagsAction: ActionCreator<ThunkAction<void, Function, nu
                 const personTags: Array<Tag> = result.data || [];
                 sortTagsAlphabetically(personTags);
                 dispatch(setPersonTagsAction(personTags));
-            });
-    };
-
-export const fetchLocationsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
-    (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return LocationClient.get(getState().currentSpace.uuid,)
-            .then(result => {
-                const locations: Array<LocationTag> = result.data || [];
-                sortTagsAlphabetically(locations);
-                dispatch(setLocationsAction(locations));
             });
     };
 

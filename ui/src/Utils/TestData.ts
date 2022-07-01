@@ -34,8 +34,8 @@ const southfield = {id: 4, name: 'Southfield', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aa
 
 const locations: LocationTag[] = [
     annarbor,
-    detroit,
     dearborn,
+    detroit,
     southfield,
 ];
 

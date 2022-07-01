@@ -23,7 +23,6 @@ import {TagInterface} from '../Tags/Tag.interface';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {connect} from 'react-redux';
 import {Tag} from '../Tags/Tag';
-import {LocationTag} from '../Locations/LocationTag.interface';
 import {useRecoilValue} from 'recoil';
 
 import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
@@ -31,11 +30,11 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 
 import './ProductListGrouped.scss';
+import {LocationsState} from '../State/LocationsState';
 
 interface GroupedByListProps {
     products: Array<Product>;
     productTags: Array<Tag>;
-    locations: Array<LocationTag>;
 }
 
 interface GroupedListDataProps {
@@ -53,11 +52,8 @@ interface ProductGroupProps {
     useGrayBackground?: boolean;
 }
 
-function GroupedByList({
-    products,
-    productTags,
-    locations,
-}: GroupedByListProps): JSX.Element {
+function GroupedByList({ products, productTags }: GroupedByListProps): JSX.Element {
+    const locations = useRecoilValue(LocationsState);
     const productSortBy = useRecoilValue(ProductSortByState);
     const productGroupList = sortProducts();
 
@@ -140,7 +136,6 @@ function GroupedByList({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     productTags: state.productTags,
-    locations: state.locations,
 });
 
 export default connect(mapStateToProps)(GroupedByList);

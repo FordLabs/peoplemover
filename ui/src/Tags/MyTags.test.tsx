@@ -23,10 +23,13 @@ import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from './ProductTag/ProductTagClient';
 import MyTagsForm from './MyTagsForm';
 import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {RecoilRoot} from 'recoil';
+import {LocationsState} from '../State/LocationsState';
+
+jest.mock('../Locations/LocationClient');
 
 describe('My Tags Form', () => {
     const initialState = {
-        locations: TestData.locations,
         productTags: TestData.productTags,
         currentSpace: TestData.space,
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
@@ -38,7 +41,15 @@ describe('My Tags Form', () => {
     });
 
     const renderMyTagsForm = (filterType: FilterType): void => {
-        renderWithRedux(<MyTagsForm filterType={filterType} />, undefined, initialState);
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(LocationsState, TestData.locations)
+            }}>
+                <MyTagsForm filterType={filterType} />
+            </RecoilRoot>,
+            undefined,
+            initialState
+        );
     };
 
     describe('should contain expected contents', () => {
@@ -49,8 +60,8 @@ describe('My Tags Form', () => {
             expect(locationTags).toHaveLength(4);
 
             expect(locationTags[0].innerHTML).toEqual(TestData.annarbor.name);
-            expect(locationTags[1].innerHTML).toEqual(TestData.detroit.name);
-            expect(locationTags[2].innerHTML).toEqual(TestData.dearborn.name);
+            expect(locationTags[1].innerHTML).toEqual(TestData.dearborn.name);
+            expect(locationTags[2].innerHTML).toEqual(TestData.detroit.name);
             expect(locationTags[3].innerHTML).toEqual(TestData.southfield.name);
         });
 
