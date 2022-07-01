@@ -34,6 +34,7 @@ declare let window: MatomoWindow;
 jest.mock('../Space/SpaceClient');
 jest.mock('../Products/ProductClient');
 jest.mock('../People/PeopleClient');
+jest.mock('../Roles/RoleClient');
 
 const mockedUsedNavigate = jest.fn();
 

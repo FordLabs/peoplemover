@@ -27,6 +27,8 @@ import {RecoilRoot} from 'recoil';
 import {RolesState} from '../State/RolesState';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
+jest.mock('../Roles/RoleClient');
+
 describe('My Roles Form', () => {
     const initialState = {currentSpace: TestData.space, allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions};
 

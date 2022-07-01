@@ -24,6 +24,7 @@ import TestUtils from '../Utils/TestUtils';
 
 jest.mock('../Products/ProductClient');
 jest.mock('../Space/SpaceClient');
+jest.mock('../Roles/RoleClient');
 
 describe('Filter products', () => {
     class MockLocalStorage {

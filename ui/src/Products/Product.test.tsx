@@ -37,6 +37,7 @@ import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 jest.mock('./ProductClient');
 jest.mock('../Space/SpaceClient');
+jest.mock('../Roles/RoleClient');
 
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
