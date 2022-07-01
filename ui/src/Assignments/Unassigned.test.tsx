@@ -28,11 +28,13 @@ import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
 import {ProductTagsState} from 'State/ProductTagsState';
 
-jest.mock('../Products/ProductClient');
-jest.mock('../Space/SpaceClient');
-jest.mock('../People/PeopleClient');
-jest.mock('../Roles/RoleClient');
-jest.mock('../Locations/LocationClient');
+jest.mock('Products/ProductClient');
+jest.mock('Space/SpaceClient');
+jest.mock('People/PeopleClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';

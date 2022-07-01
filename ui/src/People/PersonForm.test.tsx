@@ -35,7 +35,10 @@ import {ProductsState} from '../State/ProductsState';
 
 declare let window: MatomoWindow;
 
-jest.mock('../People/PeopleClient');
+jest.mock('People/PeopleClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
 
 describe('Person Form', () => {
     const mayFourteen: Date = new Date(2020, 4, 14);

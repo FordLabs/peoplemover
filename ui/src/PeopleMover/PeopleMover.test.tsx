@@ -32,11 +32,13 @@ import {LocationsState} from '../State/LocationsState';
 
 declare let window: MatomoWindow;
 
-jest.mock('../Space/SpaceClient');
-jest.mock('../Products/ProductClient');
-jest.mock('../People/PeopleClient');
-jest.mock('../Roles/RoleClient');
-jest.mock('../Locations/LocationClient');
+jest.mock('Space/SpaceClient');
+jest.mock('Products/ProductClient');
+jest.mock('People/PeopleClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
 
 const mockedUsedNavigate = jest.fn();
 

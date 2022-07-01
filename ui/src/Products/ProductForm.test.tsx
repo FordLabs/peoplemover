@@ -36,7 +36,8 @@ import {ViewingDateState} from 'State/ViewingDateState';
 import {ProductsState} from 'State/ProductsState';
 import {ProductTagsState} from 'State/ProductTagsState';
 
-jest.mock('../Locations/LocationClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
 
 describe('ProductForm', function() {
     const mockStore = configureStore([]);

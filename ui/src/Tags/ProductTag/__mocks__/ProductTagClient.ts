@@ -15,17 +15,15 @@
  * limitations under the License.
  */
 
-import TestData from '../../Utils/TestData';
+import TestData from 'Utils/TestData';
 
-const RoleClient = {
-    get: jest.fn().mockResolvedValue({ data: [...TestData.roles] }),
-    add: jest.fn().mockResolvedValue({
-        data: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: {color: '1', id: 2}},
-    }),
+const ProductTagClient = {
+    get: jest.fn().mockResolvedValue({ data: [...TestData.productTags] }),
+    add: jest.fn().mockResolvedValue({ data: {id: 9, name: 'Fin Tech'} }),
     edit: jest.fn().mockResolvedValue({
-        data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color3},
+        data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
     }),
     delete:  jest.fn().mockResolvedValue({ data: {} })
 }
 
-export default RoleClient;
+export default ProductTagClient;
