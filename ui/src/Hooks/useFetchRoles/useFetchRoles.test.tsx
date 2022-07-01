@@ -19,36 +19,41 @@ import React, {ReactNode} from 'react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {act, renderHook} from '@testing-library/react-hooks';
 import {RecoilRoot} from 'recoil';
-import useFetchProducts from './useFetchProducts';
-import ProductClient from '../Products/ProductClient';
-import {ViewingDateState} from '../State/ViewingDateState';
-import TestData from '../Utils/TestData';
+import useFetchRoles from './useFetchRoles';
+import RoleClient from 'Roles/RoleClient';
+import TestData from 'Utils/TestData';
 
-jest.mock('../Products/ProductClient');
+jest.mock('Roles/RoleClient');
 
 const teamUUID = 'team-uuid';
-const viewingDate = new Date();
 
-describe('useFetchProducts Hook', () => {
-    it('should fetch all products and store them in recoil', async () => {
-        const { result } = renderHook(() => useFetchProducts(), { wrapper });
+const rolesNotAlphabetical = [
+    TestData.productManager,
+    TestData.softwareEngineer,
+    TestData.productDesigner,
+]
+const rolesAlphabetical = TestData.roles;
 
-        expect(ProductClient.getProductsForDate).not.toHaveBeenCalled()
-        expect(result.current.products).toEqual([]);
+describe('useFetchRoles Hook', () => {
+    it('should fetch all roles for space and store them in recoil alphabetically', async () => {
+        RoleClient.get = jest.fn().mockResolvedValue({ data: rolesNotAlphabetical })
+
+        const { result } = renderHook(() => useFetchRoles(), { wrapper });
+
+        expect(RoleClient.get).not.toHaveBeenCalled()
+        expect(result.current.roles).toEqual([]);
 
         await act(async () => {
-            result.current.fetchProducts()
+            result.current.fetchRoles()
         });
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(teamUUID, viewingDate);
-        expect(result.current.products).toEqual(TestData.products);
+        expect(RoleClient.get).toHaveBeenCalledWith(teamUUID);
+        expect(result.current.roles).toEqual(rolesAlphabetical);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
     <MemoryRouter initialEntries={[`/${teamUUID}`]}>
-        <RecoilRoot initializeState={({set}) => {
-            set(ViewingDateState, viewingDate)
-        }}>
+        <RecoilRoot>
             <Routes>
                 <Route path="/:teamUUID" element={children} />
             </Routes>

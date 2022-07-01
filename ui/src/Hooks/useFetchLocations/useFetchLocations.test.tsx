@@ -19,35 +19,36 @@ import React, {ReactNode} from 'react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {act, renderHook} from '@testing-library/react-hooks';
 import {RecoilRoot} from 'recoil';
-import useFetchRoles from './useFetchRoles';
-import RoleClient from '../Roles/RoleClient';
-import TestData from '../Utils/TestData';
+import TestData from 'Utils/TestData';
+import LocationClient from 'Locations/LocationClient';
+import useFetchLocations from './useFetchLocations';
 
-jest.mock('../Roles/RoleClient');
+jest.mock('Locations/LocationClient');
 
 const teamUUID = 'team-uuid';
 
-const rolesNotAlphabetical = [
-    TestData.productManager,
-    TestData.softwareEngineer,
-    TestData.productDesigner,
+const locationsNotAlphabetical = [
+    TestData.southfield,
+    TestData.dearborn,
+    TestData.annarbor,
+    TestData.detroit,
 ]
-const rolesAlphabetical = TestData.roles;
+const locationsAlphabetical = TestData.locations;
 
-describe('useFetchRoles Hook', () => {
-    it('should fetch all roles for space and store them in recoil alphabetically', async () => {
-        RoleClient.get = jest.fn().mockResolvedValue({ data: rolesNotAlphabetical })
+describe('useFetchLocations Hook', () => {
+    it('should fetch all location tags and store them in recoil alphabetically', async () => {
+        LocationClient.get = jest.fn().mockResolvedValue({ data: locationsNotAlphabetical })
 
-        const { result } = renderHook(() => useFetchRoles(), { wrapper });
+        const { result } = renderHook(() => useFetchLocations(), { wrapper });
 
-        expect(RoleClient.get).not.toHaveBeenCalled()
-        expect(result.current.roles).toEqual([]);
+        expect(LocationClient.get).not.toHaveBeenCalled()
+        expect(result.current.locations).toEqual([]);
 
         await act(async () => {
-            result.current.fetchRoles()
+            result.current.fetchLocations()
         });
-        expect(RoleClient.get).toHaveBeenCalledWith(teamUUID);
-        expect(result.current.roles).toEqual(rolesAlphabetical);
+        expect(LocationClient.get).toHaveBeenCalledWith(teamUUID);
+        expect(result.current.locations).toEqual(locationsAlphabetical);
     });
 });
 

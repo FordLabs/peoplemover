@@ -18,34 +18,28 @@
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import {useParams} from 'react-router-dom';
-import RoleClient from '../Roles/RoleClient';
-import {RolesState} from '../State/RolesState';
-import {RoleTag} from '../Roles/RoleTag.interface';
-import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
+import {PeopleState} from 'State/PeopleState';
+import {Person} from 'People/Person';
+import PeopleClient from 'People/PeopleClient';
 
-interface UseFetchRoles {
-    roles: RoleTag[];
-    fetchRoles(): void
+interface UseFetchPeople {
+    people: Person[];
+    fetchPeople(): void
 }
 
-function useFetchRoles(): UseFetchRoles {
+function useFetchPeople(): UseFetchPeople {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
-    const [roles, setRoles] = useRecoilState(RolesState);
+    const [people, setPeople] = useRecoilState(PeopleState);
 
-    const fetchRoles = useCallback(() => {
-        RoleClient.get(teamUUID)
-            .then(result => {
-                const roles: Array<RoleTag> = [...result.data];
-                sortTagsAlphabetically(roles);
-                setRoles(roles)
-            })
-            .catch(console.error);
-    }, [setRoles, teamUUID])
+    const fetchPeople = useCallback(() => {
+        PeopleClient.getAllPeopleInSpace(teamUUID)
+            .then(result => setPeople(result.data || [])).catch(console.error);
+    }, [setPeople, teamUUID])
 
     return {
-        roles: roles || [],
-        fetchRoles
+        people: people || [],
+        fetchPeople
     };
 }
 
-export default useFetchRoles;
+export default useFetchPeople;

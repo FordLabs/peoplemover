@@ -38,11 +38,11 @@ import {JSX} from '@babel/types';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import useFetchProducts from '../Hooks/useFetchProducts';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
+import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 
 import '../Styles/Main.scss';
 import './AssignmentCard.scss';
-import useFetchPeople from '../Hooks/useFetchPeople';
 
 interface Props {
     currentSpace: Space;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,9 +28,9 @@ import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../Sor
 import ProductTagClient from './ProductTag/ProductTagClient';
 import LocationClient from '../Locations/LocationClient';
 import PersonTagClient from './PersonTag/PersonTagClient';
+import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
-import useFetchLocations from '../Hooks/useFetchLocations';
 
 export const INACTIVE_EDIT_STATE_INDEX = -1;
 

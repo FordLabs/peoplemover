@@ -57,7 +57,7 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
-import useFetchRoles from '../Hooks/useFetchRoles';
+import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 
 interface Props {
     isEditPersonForm: boolean

@@ -21,7 +21,7 @@ import {connect} from 'react-redux';
 import SpaceClient from '../Space/SpaceClient';
 import {createEmptySpace, Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
-import useFetchUserSpaces from '../Hooks/useFetchUserSpaces';
+import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 
 import './SpaceForm.scss';
 

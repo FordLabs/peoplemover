@@ -15,31 +15,28 @@
  * limitations under the License.
  */
 
+import SpaceClient from 'Space/SpaceClient';
+import {Space} from 'Space/Space';
 import {useRecoilState} from 'recoil';
+import {UserSpacesState} from 'State/UserSpacesState';
 import {useCallback} from 'react';
-import {useParams} from 'react-router-dom';
-import {PeopleState} from '../State/PeopleState';
-import {Person} from '../People/Person';
-import PeopleClient from '../People/PeopleClient';
 
-interface UseFetchPeople {
-    people: Person[];
-    fetchPeople(): void
+interface UseFetchUserSpaces {
+    userSpaces: Space[];
+    fetchUserSpaces(): Promise<void>
 }
 
-function useFetchPeople(): UseFetchPeople {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
-    const [people, setPeople] = useRecoilState(PeopleState);
+function useFetchUserSpaces(): UseFetchUserSpaces {
+    const [userSpaces, setUserSpaces] = useRecoilState(UserSpacesState);
 
-    const fetchPeople = useCallback(() => {
-        PeopleClient.getAllPeopleInSpace(teamUUID)
-            .then(result => setPeople(result.data || [])).catch(console.error);
-    }, [setPeople, teamUUID])
+    const fetchUserSpaces = useCallback(() => {
+        return SpaceClient.getSpacesForUser().then(setUserSpaces).catch();
+    }, [setUserSpaces])
 
     return {
-        people: people || [],
-        fetchPeople
+        userSpaces: userSpaces || [],
+        fetchUserSpaces
     };
 }
 
-export default useFetchPeople;
+export default useFetchUserSpaces;

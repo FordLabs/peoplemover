@@ -30,10 +30,10 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
+import {useNavigate, useParams} from 'react-router-dom';
 
 import './TimeOnProduct.scss';
-import useFetchProducts from '../Hooks/useFetchProducts';
-import {useNavigate, useParams} from 'react-router-dom';
 
 export const LOADING = 'Loading...';
 

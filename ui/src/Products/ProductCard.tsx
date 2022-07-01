@@ -41,7 +41,7 @@ import {ViewingDateState} from '../State/ViewingDateState';
 
 import './Product.scss';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import useFetchProducts from '../Hooks/useFetchProducts';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 

@@ -18,10 +18,10 @@
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import {useParams} from 'react-router-dom';
-import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
-import LocationClient from '../Locations/LocationClient';
-import {LocationsState} from '../State/LocationsState';
-import {LocationTag} from '../Locations/LocationTag.interface';
+import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
+import LocationClient from 'Locations/LocationClient';
+import {LocationsState} from 'State/LocationsState';
+import {LocationTag} from 'Locations/LocationTag.interface';
 
 interface UseFetchLocations {
     locations: LocationTag[];

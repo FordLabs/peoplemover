@@ -19,32 +19,36 @@ import React, {ReactNode} from 'react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {act, renderHook} from '@testing-library/react-hooks';
 import {RecoilRoot} from 'recoil';
-import TestData from '../Utils/TestData';
-import useFetchPeople from './useFetchPeople';
-import PeopleClient from '../People/PeopleClient';
+import useFetchProducts from './useFetchProducts';
+import ProductClient from 'Products/ProductClient';
+import {ViewingDateState} from 'State/ViewingDateState';
+import TestData from 'Utils/TestData';
 
-jest.mock('../People/PeopleClient');
+jest.mock('Products/ProductClient');
 
 const teamUUID = 'team-uuid';
+const viewingDate = new Date();
 
-describe('useFetchPeople Hook', () => {
-    it('should fetch all people and store them in recoil', async () => {
-        const { result } = renderHook(() => useFetchPeople(), { wrapper });
+describe('useFetchProducts Hook', () => {
+    it('should fetch all products and store them in recoil', async () => {
+        const { result } = renderHook(() => useFetchProducts(), { wrapper });
 
-        expect(PeopleClient.getAllPeopleInSpace).not.toHaveBeenCalled()
-        expect(result.current.people).toEqual([]);
+        expect(ProductClient.getProductsForDate).not.toHaveBeenCalled()
+        expect(result.current.products).toEqual([]);
 
         await act(async () => {
-            result.current.fetchPeople()
+            result.current.fetchProducts()
         });
-        expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(teamUUID);
-        expect(result.current.people).toEqual(TestData.people);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(teamUUID, viewingDate);
+        expect(result.current.products).toEqual(TestData.products);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
     <MemoryRouter initialEntries={[`/${teamUUID}`]}>
-        <RecoilRoot>
+        <RecoilRoot initializeState={({set}) => {
+            set(ViewingDateState, viewingDate)
+        }}>
             <Routes>
                 <Route path="/:teamUUID" element={children} />
             </Routes>

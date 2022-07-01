@@ -19,36 +19,26 @@ import React, {ReactNode} from 'react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {act, renderHook} from '@testing-library/react-hooks';
 import {RecoilRoot} from 'recoil';
-import TestData from '../Utils/TestData';
-import LocationClient from '../Locations/LocationClient';
-import useFetchLocations from './useFetchLocations';
+import TestData from 'Utils/TestData';
+import useFetchPeople from './useFetchPeople';
+import PeopleClient from 'People/PeopleClient';
 
-jest.mock('../Locations/LocationClient');
+jest.mock('People/PeopleClient');
 
 const teamUUID = 'team-uuid';
 
-const locationsNotAlphabetical = [
-    TestData.southfield,
-    TestData.dearborn,
-    TestData.annarbor,
-    TestData.detroit,
-]
-const locationsAlphabetical = TestData.locations;
+describe('useFetchPeople Hook', () => {
+    it('should fetch all people and store them in recoil', async () => {
+        const { result } = renderHook(() => useFetchPeople(), { wrapper });
 
-describe('useFetchLocations Hook', () => {
-    it('should fetch all location tags and store them in recoil alphabetically', async () => {
-        LocationClient.get = jest.fn().mockResolvedValue({ data: locationsNotAlphabetical })
-
-        const { result } = renderHook(() => useFetchLocations(), { wrapper });
-
-        expect(LocationClient.get).not.toHaveBeenCalled()
-        expect(result.current.locations).toEqual([]);
+        expect(PeopleClient.getAllPeopleInSpace).not.toHaveBeenCalled()
+        expect(result.current.people).toEqual([]);
 
         await act(async () => {
-            result.current.fetchLocations()
+            result.current.fetchPeople()
         });
-        expect(LocationClient.get).toHaveBeenCalledWith(teamUUID);
-        expect(result.current.locations).toEqual(locationsAlphabetical);
+        expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(teamUUID);
+        expect(result.current.people).toEqual(TestData.people);
     });
 });
 

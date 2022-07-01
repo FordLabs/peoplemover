@@ -26,7 +26,7 @@ import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
 import {useRecoilValue} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
-import useFetchUserSpaces from '../Hooks/useFetchUserSpaces';
+import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 
 import './TransferOwnershipForm.scss';
 

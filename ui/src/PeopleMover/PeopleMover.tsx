@@ -47,10 +47,10 @@ import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import useFetchProducts from '../Hooks/useFetchProducts';
-import useFetchPeople from '../Hooks/useFetchPeople';
-import useFetchRoles from '../Hooks/useFetchRoles';
-import useFetchLocations from '../Hooks/useFetchLocations';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
+import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
+import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
+import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
