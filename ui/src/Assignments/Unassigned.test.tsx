@@ -30,6 +30,7 @@ import {PeopleState} from '../State/PeopleState';
 jest.mock('../Products/ProductClient');
 jest.mock('../Space/SpaceClient');
 jest.mock('../People/PeopleClient');
+jest.mock('../Roles/RoleClient');
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';

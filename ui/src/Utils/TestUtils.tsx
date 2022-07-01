@@ -18,7 +18,6 @@
 import React from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import RoleClient from '../Roles/RoleClient';
 import ColorClient from '../Roles/ColorClient';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
@@ -46,20 +45,6 @@ function mockClientCalls(): void {
     });
     AssignmentClient.getReassignments = jest.fn().mockResolvedValue({ data: [] });
     AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn().mockResolvedValue({ data: [] });
-
-
-    RoleClient.get = jest.fn().mockResolvedValue({ data: [
-        {id: 1, name: 'Software Engineer', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color1},
-        {id: 2, name: 'Product Manager', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color2},
-        {id: 3, name: 'Product Designer', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color3},
-    ]});
-    RoleClient.add = jest.fn().mockResolvedValue({
-        data: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: {color: '1', id: 2}},
-    });
-    RoleClient.edit = jest.fn().mockResolvedValue({
-        data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color3},
-    });
-    RoleClient.delete = jest.fn().mockResolvedValue({ data: {} });
 
     ColorClient.getAllColors = jest.fn().mockResolvedValue({ data: TestData.colors });
 

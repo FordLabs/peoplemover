@@ -22,17 +22,33 @@ import {findByTestId, findByText, fireEvent, screen, waitFor} from '@testing-lib
 import RoleClient from './RoleClient';
 import {RoleAddRequest} from './RoleAddRequest.interface';
 import MyRolesForm from './MyRolesForm';
-import * as Actions from '../Redux/Actions';
 import ColorClient from '../Roles/ColorClient';
+import {RecoilRoot} from 'recoil';
+import {RolesState} from '../State/RolesState';
+import {MemoryRouter, Route, Routes} from 'react-router-dom';
+
+jest.mock('../Roles/RoleClient');
 
 describe('My Roles Form', () => {
-    const initialState = {currentSpace: TestData.space, allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions, roles: TestData.roles};
+    const initialState = {currentSpace: TestData.space, allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions};
 
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        renderWithRedux(<MyRolesForm/>, undefined, initialState);
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(RolesState, TestData.roles)
+            }}>
+                <MemoryRouter initialEntries={['/' + TestData.space.uuid]}>
+                    <Routes>
+                        <Route path="/:teamUUID" element={<MyRolesForm/>} />
+                    </Routes>
+                </MemoryRouter>
+            </RecoilRoot>,
+            undefined,
+            initialState
+        );
 
         await waitFor(() => expect(ColorClient.getAllColors).toHaveBeenCalled());
     });
@@ -92,8 +108,6 @@ describe('My Roles Form', () => {
         });
 
         it('should make role with white color if user never changed color option', async () => {
-            const fetchRolesActionFn = jest.spyOn(Actions, 'fetchRolesAction');
-
             const expectedNewRoleName = 'Architecture';
 
             const addNewRoleButton = await screen.findByText('Add New Role');
@@ -115,9 +129,8 @@ describe('My Roles Form', () => {
             };
             expect(RoleClient.add).toHaveBeenCalledTimes(1);
             expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace);
-            expect(RoleClient.get).toHaveBeenCalledTimes(1);
-            expect(RoleClient.get).toHaveBeenCalledWith(initialState.currentSpace.uuid);
-            expect(fetchRolesActionFn).toHaveBeenCalledTimes(1);
+            await waitFor(() => expect(RoleClient.get).toHaveBeenCalledTimes(1));
+            expect(RoleClient.get).toHaveBeenCalledWith(initialState.currentSpace.uuid)
         });
 
         it('should not allow saving empty role', async () => {

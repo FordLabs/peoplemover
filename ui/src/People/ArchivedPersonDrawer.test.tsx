@@ -27,6 +27,7 @@ import {PeopleState} from '../State/PeopleState';
 
 jest.mock('../Products/ProductClient');
 jest.mock('../Space/SpaceClient');
+jest.mock('../Roles/RoleClient');
 
 describe('Archived People', () => {
     const mayFourteen2020: Date = new Date(2020, 4, 14);

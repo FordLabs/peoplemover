@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 
-import {AvailableActions} from '../Actions';
-import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
-import {RoleTag} from '../../Roles/RoleTag.interface';
+import TestData from '../../Utils/TestData';
 
-const rolesReducer = (state: Array<RoleTag> = [], action: {type: AvailableActions; roles: Array<RoleTag>} ): Array<RoleTag> => {
-    if (action.type === AvailableActions.SET_ROLES) {
-        const roles = [...action.roles];
-        sortTagsAlphabetically(roles);
-        return roles;
-    } else {
-        return state;
-    }
-};
+const RoleClient = {
+    get: jest.fn().mockResolvedValue({ data: [...TestData.roles] }),
+    add: jest.fn().mockResolvedValue({
+        data: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: {color: '1', id: 2}},
+    }),
+    edit: jest.fn().mockResolvedValue({
+        data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color3},
+    }),
+    delete:  jest.fn().mockResolvedValue({ data: {} })
+}
 
-export default rolesReducer;
+export default RoleClient;
