@@ -46,10 +46,10 @@ import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
+import Modal from '../Modal/Modal';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
-import Modal from '../Modal/Modal';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;

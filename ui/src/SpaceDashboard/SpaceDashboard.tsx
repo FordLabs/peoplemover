@@ -32,7 +32,6 @@ import SpaceForm from './SpaceForm';
 import Modal from '../Modal/Modal';
 
 import './SpaceDashboard.scss';
-import Modal from '../Modal/Modal';
 
 interface Props {
     currentSpace: Space;
