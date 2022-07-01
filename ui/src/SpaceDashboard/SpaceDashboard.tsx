@@ -30,7 +30,6 @@ import Modal from '../Modal/Modal';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 import './SpaceDashboard.scss';
-import Modal from '../Modal/Modal';
 
 
 function SpaceDashboard(): JSX.Element {

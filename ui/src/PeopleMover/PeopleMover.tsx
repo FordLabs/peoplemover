@@ -44,11 +44,11 @@ import useFetchCurrentSpace from '../Hooks/useFetchCurrentSpace/useFetchCurrentS
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import Modal from '../Modal/Modal';
+import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {Dispatch} from 'redux';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
-import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {Dispatch} from 'redux';
 
 export interface PeopleMoverProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
