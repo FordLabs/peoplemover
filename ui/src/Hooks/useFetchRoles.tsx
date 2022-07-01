@@ -35,7 +35,7 @@ function useFetchRoles(): UseFetchRoles {
     const fetchRoles = useCallback(() => {
         RoleClient.get(teamUUID)
             .then(result => {
-                const roles: Array<RoleTag> = result.data || [];
+                const roles: Array<RoleTag> = [...result.data];
                 sortTagsAlphabetically(roles);
                 setRoles(roles)
             })
