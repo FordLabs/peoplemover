@@ -35,6 +35,8 @@ import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 
+jest.mock('../Locations/LocationClient');
+
 describe('ProductForm', function() {
     const mockStore = configureStore([]);
     const store = mockStore({

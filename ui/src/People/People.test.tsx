@@ -39,6 +39,7 @@ jest.mock('../Products/ProductClient');
 jest.mock('../People/PeopleClient');
 jest.mock('../Space/SpaceClient');
 jest.mock('../Roles/RoleClient');
+jest.mock('../Locations/LocationClient');
 
 describe('People actions', () => {
     const initialState: PreloadedState<Partial<GlobalStateProps>> = {currentSpace: TestData.space};

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@ import thunk from 'redux-thunk';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
+import {LocationsState} from '../State/LocationsState';
 
 declare let window: MatomoWindow;
 
@@ -35,6 +36,7 @@ jest.mock('../Space/SpaceClient');
 jest.mock('../Products/ProductClient');
 jest.mock('../People/PeopleClient');
 jest.mock('../Roles/RoleClient');
+jest.mock('../Locations/LocationClient');
 
 const mockedUsedNavigate = jest.fn();
 
@@ -224,7 +226,7 @@ describe('PeopleMover', () => {
 
             const productGroups = await screen.findAllByTestId('productGroup');
 
-            expect(productGroups.length).toBe(4);
+            expect(productGroups).toHaveLength(4);
             const productGroup1 = productGroups[0];
             expect(productGroup1).toHaveTextContent('Ann Arbor');
             expect(productGroup1).toHaveTextContent('Hanky Product');
@@ -290,6 +292,7 @@ describe('PeopleMover', () => {
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
                 set(IsReadOnlyState, true);
+                set(LocationsState, TestData.locations);
             });
         });
 
@@ -302,7 +305,7 @@ describe('PeopleMover', () => {
 
             const productGroups = await screen.findAllByTestId('productGroup');
 
-            expect(productGroups.length).toBe(4);
+            expect(productGroups).toHaveLength(4);
             const productGroup1 = productGroups[0];
             expect(productGroup1).toHaveTextContent('Ann Arbor');
             expect(productGroup1).toHaveTextContent('Hanky Product');

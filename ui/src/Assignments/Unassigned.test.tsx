@@ -31,6 +31,7 @@ jest.mock('../Products/ProductClient');
 jest.mock('../Space/SpaceClient');
 jest.mock('../People/PeopleClient');
 jest.mock('../Roles/RoleClient');
+jest.mock('../Locations/LocationClient');
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';

@@ -15,19 +15,12 @@
  * limitations under the License.
  */
 
-import {
-    AvailableActions,
-    fetchLocationsAction,
-    fetchPersonTagsAction,
-    fetchProductTagsAction,
-    setupSpaceAction,
-} from './index';
+import {AvailableActions, fetchPersonTagsAction, fetchProductTagsAction, setupSpaceAction} from './index';
 import configureStore, {MockStoreCreator, MockStoreEnhanced} from 'redux-mock-store';
 import TestData from '../../Utils/TestData';
 import thunk from 'redux-thunk';
 import * as filterConstants from '../../SortingAndFiltering/FilterLibraries';
 import {AxiosResponse} from 'axios';
-import LocationClient from '../../Locations/LocationClient';
 import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 
@@ -92,24 +85,6 @@ describe('Actions', () => {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(fetchPersonTagsAction()).then(() => {
-                expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
-                expect(store.getActions()).toEqual(expectedActions);
-            });
-        });
-    });
-
-    describe('fetchLocationsAction', () => {
-        it('should invoke LocationClient.get and fire the setLocations Action', () => {
-            const mock = jest.spyOn(LocationClient, 'get');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestData.locations} as AxiosResponse));
-
-            const expectedActions = [
-                {type: AvailableActions.SET_LOCATIONS, locations: TestData.locations},
-            ];
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return store.dispatch<any>(fetchLocationsAction()).then(() => {
                 expect(mock).toHaveBeenCalledTimes(1);
                 expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);

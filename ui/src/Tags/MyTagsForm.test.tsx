@@ -23,17 +23,26 @@ import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import React from 'react';
 import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
+import {RecoilRoot} from 'recoil';
+import {LocationsState} from '../State/LocationsState';
 
 describe('My Tags Form', () => {
     const initialState: PreloadedState<Partial<GlobalStateProps>> = {
         productTags: TestData.productTags,
-        locations: TestData.locations,
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         currentSpace: TestData.space,
     };
 
     it('should only display location tags when the passed-in filter type is location tags', async () => {
-        renderWithRedux(<MyTagsForm filterType={FilterTypeListings.Location}/>, undefined, initialState);
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(LocationsState, TestData.locations)
+            }}>
+                <MyTagsForm filterType={FilterTypeListings.Location}/>
+            </RecoilRoot>,
+            undefined,
+            initialState
+        );
 
         await screen.findByText( TestData.annarbor.name);
         await screen.findByText( TestData.detroit.name);
@@ -42,7 +51,15 @@ describe('My Tags Form', () => {
     });
 
     it('should only display product tags when the passed-in filter type is product tags', async () => {
-        renderWithRedux(<MyTagsForm filterType={FilterTypeListings.ProductTag}/>, undefined, initialState);
+        renderWithRedux(
+            <RecoilRoot initializeState={({set}) => {
+                set(LocationsState, TestData.locations)
+            }}>
+                <MyTagsForm filterType={FilterTypeListings.ProductTag}/>
+            </RecoilRoot>,
+            undefined,
+            initialState
+        );
 
         await screen.findByText(TestData.productTag1.name);
         await screen.findByText(TestData.productTag2.name);
