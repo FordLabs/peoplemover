@@ -29,9 +29,9 @@ import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {ModalContentsState} from 'State/ModalContentsState';
 import SpaceForm from './SpaceForm';
+import Modal from '../Modal/Modal';
 
 import './SpaceDashboard.scss';
-import Modal from '../Modal/Modal';
 
 interface Props {
     currentSpace: Space;
