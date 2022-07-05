@@ -30,7 +30,7 @@ import {createDataTestId} from '../Utils/ReactUtils';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {getAssignments, Person} from '../People/Person';
 import {useRecoilValue, useSetRecoilState} from 'recoil';

@@ -24,7 +24,7 @@ import {JSX} from '@babel/types';
 import moment from 'moment';
 import ProductClient from './ProductClient';
 import {emptyProduct, Product} from './Product';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Tag} from '../Tags/Tag';
 import {TagInterface} from '../Tags/Tag.interface';
 import ProductFormLocationField from './ProductFormLocationField';

@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import FormButton from '../ModalFormComponents/FormButton';
-import ModalCardBanner from './ModalCardBanner';
+import FormButton from 'ModalFormComponents/FormButton';
+import ModalCardBanner from 'Modal/ModalCardBanner/ModalCardBanner';
 
 export interface NotificationModalProps {
     close(): void;

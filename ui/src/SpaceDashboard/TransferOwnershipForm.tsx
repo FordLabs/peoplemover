@@ -22,7 +22,7 @@ import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
+import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {CurrentUserState} from 'State/CurrentUserState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';

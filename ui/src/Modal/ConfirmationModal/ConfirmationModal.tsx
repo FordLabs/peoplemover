@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,10 @@
  */
 
 import React from 'react';
-import ModalCardBanner from './ModalCardBanner';
-import FormButton, {ButtonStyle} from '../ModalFormComponents/FormButton';
+import ModalCardBanner from '../ModalCardBanner/ModalCardBanner';
+import FormButton, {ButtonStyle} from '../../ModalFormComponents/FormButton';
+
+import './ConfirmationModal.scss';
 
 export interface ConfirmationModalProps {
     submit(item?: unknown): void | Promise<void>;

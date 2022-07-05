@@ -30,7 +30,7 @@ import {createDataTestId} from '../Utils/ReactUtils';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import PeopleClient from '../People/PeopleClient';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';

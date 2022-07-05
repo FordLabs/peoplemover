@@ -18,10 +18,10 @@
 import React, {useState} from 'react';
 import {useSetRecoilState} from 'recoil';
 import {Space} from 'Space/Space';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import SpaceClient from 'Space/SpaceClient';
 import FormButton from '../ModalFormComponents/FormButton';
-import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
+import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {ModalContentsState} from 'State/ModalContentsState';
 import TransferOwnershipForm from './TransferOwnershipForm';

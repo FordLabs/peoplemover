@@ -18,7 +18,7 @@
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {TagInterface} from './Tag.interface';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {TagRequest} from './TagRequest.interface';
 import {createDataTestId} from '../Utils/ReactUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
@@ -79,7 +79,7 @@ const TagsModalContent = ({
 
     const addTag = async (tagToAdd: TagRequest): Promise<unknown> => {
         return await tagClient.add(tagToAdd, currentSpace)
-            .then((response) => {
+            .then(() => {
                 fetchCommand();
                 returnToViewState();
             });

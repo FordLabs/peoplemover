@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,47 +16,85 @@
  */
 
 import React from 'react';
-import {fireEvent, render, RenderResult} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
+import {axe} from 'jest-axe';
+import {RecoilRoot} from 'recoil';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+
 import Modal from './Modal';
 
 describe('Modal', () => {
-    let mockedCloseFunction: jest.Mock, comp: RenderResult;
+    let modalContent: ModalContents | null;
 
     beforeEach(() => {
-        mockedCloseFunction = jest.fn();
+        modalContent = null;
+    });
 
-        const ModalForm = (): JSX.Element => {
-            return <p>Hello</p>;
-        };
-
-        comp = render(
-            <Modal
-                modalMetadata={[{
-                    title:'Test Modal',
-                    form:<ModalForm/>,
-                }]}
-                closeModal={mockedCloseFunction}
-            />
+    const setupComponentWithModalContents = () => {
+        return render(
+            <RecoilRoot
+                initializeState={({ set }) => {
+                    set(ModalContentsState, {
+                        title: 'A Title',
+                        component: <div>Some Component</div>,
+                    });
+                }}
+            >
+                <RecoilObserver
+                    recoilState={ModalContentsState}
+                    onChange={(value: ModalContents) => {
+                        modalContent = value;
+                    }}
+                />
+                <Modal />
+            </RecoilRoot>
         );
+    };
+
+    it('should render without axe errors', async () => {
+        const { container } = setupComponentWithModalContents();
+        const results = await axe(container);
+        expect(results).toHaveNoViolations();
     });
 
-    it('should close the modal when the escape key is pressed', () => {
-        fireEvent.keyDown(comp.getByTestId('modalContainer'), {key: 'Escape', code: 27});
-        expect(mockedCloseFunction).toHaveBeenCalled();
+    it('should show modal when modal contents exist', () => {
+        setupComponentWithModalContents();
+
+        expect(screen.getByText('A Title')).toBeDefined();
+        expect(screen.getByText('Some Component')).toBeDefined();
     });
 
-    it('should close the modal when the background is clicked', () => {
-        fireEvent.click(comp.getByTestId('modalContainer'));
-        expect(mockedCloseFunction).toHaveBeenCalled();
+    it('should hide modal when modal contents is null', () => {
+        render(
+            <RecoilRoot
+                initializeState={({ set }) => {
+                    set(ModalContentsState, null);
+                }}
+            >
+                <Modal />
+            </RecoilRoot>
+        );
+
+        expect(screen.queryByText('A Title')).toBeNull();
+        expect(screen.queryByText('Some Component')).toBeNull();
     });
 
-    it('should close the modal when the X is clicked', () => {
-        fireEvent.click(comp.getByTestId('modalCloseButton'));
-        expect(mockedCloseFunction).toHaveBeenCalled();
+    it('should clear modal contents when close button is clicked', async () => {
+        setupComponentWithModalContents();
+
+        const closeModalButton = screen.getByLabelText('Close Modal');
+        closeModalButton.click();
+
+        await waitFor(() => expect(modalContent).toBeNull());
     });
 
-    it('should not close the modal when the modal popup is clicked', () => {
-        fireEvent.click(comp.getByTestId('modalCard'));
-        expect(mockedCloseFunction).not.toHaveBeenCalled();
+    it('should clear modal contents when overlay is clicked', async () => {
+        setupComponentWithModalContents();
+
+        const modalOverlay = screen.getByTestId('modalOverlay');
+        modalOverlay.click();
+
+        await waitFor(() => expect(modalContent).toBeNull());
     });
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,133 +15,73 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
-import {JSX} from '@babel/types';
-import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
-import FocusRing from '../FocusRing';
-import ModalCardBanner from './ModalCardBanner';
-import MultiModalCardBanner from './MultiModalCardBanner';
+import React, {useCallback, useEffect} from 'react';
+import {useA11yDialog} from 'react-a11y-dialog';
+import {useRecoilState} from 'recoil';
+
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+
 import './Modal.scss';
-import FocusTrap from 'focus-trap-react';
 
-interface ModalProps {
-    modalMetadata: Array<any> | null;
-    closeModal(): void;
-}
+function Modal() {
+    const [modalContents, setModalContents] =
+        useRecoilState<ModalContents | null>(ModalContentsState);
 
-function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | null {
-    const [shouldShowConfirmCloseModal, setShouldShowConfirmCloseModal] = useState<boolean>(false);
-    const [confirmCloseModal, setConfirmCloseModal] = useState<JSX.Element | null>(null);
-    const [expandedSectionIndex, setExpandedSectionIndex] = useState<number>(0);
+    const [modalInstance, attr] = useA11yDialog({
+        id: 'modal-container',
+        title: modalContents?.title,
+    });
 
-    const getModalCardCount = useCallback((): number => modalMetadata?.length || 0, [modalMetadata]);
-    const modalCardContentsArePresent = getModalCardCount() > 0;
-    const isSingleModalCard = getModalCardCount() === 1;
-    const isMultiModalCard = getModalCardCount() > 1;
+    const dataTestId = `${modalContents?.title
+        .toLowerCase()
+        .replace(' ', '-')}-modal`;
+
+    const clearModalContents = useCallback(
+        () => setModalContents(null),
+        [setModalContents]
+    );
 
     useEffect(() => {
-        let bodyOverflowState = 'unset';
-        if (modalCardContentsArePresent) bodyOverflowState = 'hidden';
-        document.body.style.overflow = bodyOverflowState;
+        if (modalContents) {
+            modalInstance?.show();
+        } else {
+            modalInstance?.hide();
+            clearModalContents();
+        }
+    }, [clearModalContents, modalContents, modalInstance]);
 
-        if (isSingleModalCard) setExpandedSectionIndex(0);
-
-    }, [modalMetadata, modalCardContentsArePresent, isSingleModalCard]);
-
-    const showCloseModalWarning = (): void => {
-        const closeConfirmationModal = (): void => { setConfirmCloseModal(null); };
-        const propsForCloseConfirmationModal: ConfirmationModalProps = {
-            submit: () => {
-                closeModal();
-                closeConfirmationModal();
-            },
-            close: closeConfirmationModal,
-            submitButtonLabel: 'Close',
-            content: (
-                <>
-                    <div>
-                        You have unsaved changes. Closing the window will result in the changes being discarded.
-                    </div>
-                    <div>
-                        <br/>
-                        Are you sure you want to close the window?
-                    </div>
-                </>
-            ),
-        };
-        const confirmConfirmationModal: JSX.Element = ConfirmationModal(propsForCloseConfirmationModal);
-        setConfirmCloseModal(confirmConfirmationModal);
-    };
-
-    const exitModal = (): void => {
-        if (shouldShowConfirmCloseModal) showCloseModalWarning();
-        else closeModal();
-    };
-
-    const modalBackgroundOnKeyDown = (e: React.KeyboardEvent): void => {
-        if (e.key === 'Escape') exitModal();
-    };
-
-    const onModalCardClick = (e: React.MouseEvent, index: number): void => {
-        e.stopPropagation();
-        FocusRing.turnOffWhenClicking();
-
-        if (isMultiModalCard) setExpandedSectionIndex(index);
-    };
-
-    const onModalCardKeydown = (e: React.KeyboardEvent): void => {
-        e.stopPropagation();
-        FocusRing.turnOnWhenTabbing(e);
-    };
-
-    return !modalCardContentsArePresent ? null : (
-        <FocusTrap focusTrapOptions={{escapeDeactivates: false}}>
+    return (
+        <div
+            {...attr.container}
+            className="modal-container"
+            data-testid={dataTestId}
+        >
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
             <div
-                className="modalBackground"
-                data-testid="modalContainer"
-                onClick={exitModal}
-                onKeyDown={modalBackgroundOnKeyDown}>
-                <div className="modalContents">
-                    {modalMetadata?.map((item: any, index) => {
-                        const isExpanded = expandedSectionIndex === index;
-                        const isCollapsed = !isExpanded;
-                        const customModalForm = React.cloneElement(
-                            item.form,
-                            {
-                                collapsed: isCollapsed,
-                                setShouldShowConfirmCloseModal: setShouldShowConfirmCloseModal,
-                            }
-                        );
-                        return (
-                            <div
-                                key={item.title}
-                                className="modalCard"
-                                data-testid="modalCard"
-                                onClick={(e: React.MouseEvent): void => onModalCardClick(e, index)}
-                                onKeyDown={onModalCardKeydown}
-                                aria-expanded={isExpanded}
-                                hidden={isCollapsed}
-                            >
-                                <input type="text" aria-hidden={true} className="hiddenInputField"/>
-                                {isSingleModalCard ?
-                                    <ModalCardBanner
-                                        title={item.title}
-                                        onCloseBtnClick={exitModal}
-                                    /> :
-                                    <MultiModalCardBanner
-                                        title={item.title}
-                                        onCloseBtnClick={exitModal}
-                                        collapsed={isCollapsed}
-                                    />
-                                }
-                                {customModalForm ? customModalForm : item.form}
-                                {confirmCloseModal}
-                            </div>
-                        );
-                    })}
-                </div>
+                {...attr.overlay}
+                className="modal-overlay"
+                data-testid="modalOverlay"
+                onClick={clearModalContents}
+            />
+            <div
+                {...attr.dialog}
+                data-testid="modalCard"
+                className="modal-content"
+            >
+                <p {...attr.title} className="modal-title">
+                    {modalContents?.title}
+                </p>
+                {modalContents?.component}
+                <button
+                    {...attr.closeButton}
+                    className="material-icons modal-close-button"
+                    aria-label="Close Modal"
+                    onClick={clearModalContents}
+                >
+                    close
+                </button>
             </div>
-        </FocusTrap>
+        </div>
     );
 }
 

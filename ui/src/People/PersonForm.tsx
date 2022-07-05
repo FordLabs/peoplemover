@@ -27,7 +27,7 @@ import {emptyPerson, isArchived, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
