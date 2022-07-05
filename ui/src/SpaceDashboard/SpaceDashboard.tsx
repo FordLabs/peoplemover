@@ -17,32 +17,27 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
-import {setCurrentSpaceAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
 import SpaceDashboardTile from './SpaceDashboardTile';
-import {GlobalStateProps} from '../Redux/Reducers';
 
 import Branding from '../ReusableComponents/Branding';
 import {useNavigate} from 'react-router-dom';
-import {useSetRecoilState} from 'recoil';
+import {useRecoilState, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {ModalContentsState} from 'State/ModalContentsState';
 import SpaceForm from './SpaceForm';
 import Modal from '../Modal/Modal';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 import './SpaceDashboard.scss';
 
-interface Props {
-    currentSpace: Space;
-    setCurrentSpace(space: Space): Space;
-}
 
-function SpaceDashboard({ currentSpace, setCurrentSpace }: Props): JSX.Element {
+function SpaceDashboard(): JSX.Element {
     const navigate = useNavigate();
 
     const setModalContents = useSetRecoilState(ModalContentsState);
     const setViewingDate = useSetRecoilState(ViewingDateState);
+    const [currentSpace, setCurrentSpace] = useRecoilState(CurrentSpaceState);
 
     const { userSpaces, fetchUserSpaces } = useFetchUserSpaces();
 
@@ -121,14 +116,4 @@ function SpaceDashboard({ currentSpace, setCurrentSpace }: Props): JSX.Element {
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboard);
-/* eslint-enable */
+export default SpaceDashboard;

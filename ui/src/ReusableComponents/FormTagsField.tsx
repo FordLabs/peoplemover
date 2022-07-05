@@ -20,14 +20,13 @@ import {Tag} from '../Tags/Tag';
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {TagInterface} from '../Tags/Tag.interface';
-import {Space} from '../Space/Space';
 import {AxiosResponse} from 'axios';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
 import {useOnLoad} from './UseOnLoad';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import SelectWithCreateOption, {Metadata} from '../ModalFormComponents/SelectWithCreateOption';
 import {TagClient} from '../Tags/TagClient.interface';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
@@ -37,7 +36,6 @@ interface Props {
         setSelectedTags: (tags: Array<Tag>) => void;
     };
     addGroupedTagFilterOptions: (trait: TagInterface) => void;
-    currentSpace: Space;
     tagClient: TagClient;
     tagsMetadata: Metadata;
     toolTip?: JSX.Element;
@@ -55,14 +53,13 @@ function FormTagsField({
         selectedTags,
         setSelectedTags,
     },
-    currentSpace,
     addGroupedTagFilterOptions,
     tagClient,
     tagsMetadata,
     toolTip,
 }: Props): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const uuid = currentSpace.uuid!;
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
     const [availableTags, setAvailableTags] = useState<Array<Tag>>([]);
 
     useOnLoad(() => {
@@ -134,10 +131,5 @@ function FormTagsField({
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
+export default FormTagsField;
 
-export default connect(mapStateToProps)(FormTagsField);
-/* eslint-enable */

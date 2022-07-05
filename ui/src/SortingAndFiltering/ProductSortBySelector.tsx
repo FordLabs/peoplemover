@@ -19,14 +19,11 @@ import React, {createRef, useCallback, useEffect, useState} from 'react';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import Dropdown from '../ReusableComponents/Dropdown';
 import NavigationSection from '../ReusableComponents/NavigationSection';
-import {useRecoilState} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 
-import {Space} from '../Space/Space';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
-
 import './FilterOrSortBy.scss';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface SortByOption {
     label: string;
@@ -39,14 +36,11 @@ const sortByOptions: SortByOption[] = [
     {label:'Product Tag', value: ProductSortBy.PRODUCT_TAG},
 ];
 
-interface Props {
-    currentSpace: Space;
-}
-
-function ProductSortBySelector({ currentSpace }: Props): JSX.Element {
-    const [selectedSortOption, setSelectedSortOption] = useState<SortByOption>();
-
+function ProductSortBySelector(): JSX.Element {
+    const currentSpace = useRecoilValue(CurrentSpaceState);
     const [productSortBy, setProductSortBy] = useRecoilState(ProductSortByState);
+
+    const [selectedSortOption, setSelectedSortOption] = useState<SortByOption>();
 
     const stringToOption = useCallback((value: string): SortByOption => {
         return sortByOptions.filter(option => option.value === value)[0];
@@ -89,10 +83,4 @@ function ProductSortBySelector({ currentSpace }: Props): JSX.Element {
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps)(ProductSortBySelector);
-/* eslint-enable */
+export default ProductSortBySelector;

@@ -25,16 +25,14 @@ import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import {INACTIVE_EDIT_STATE_INDEX} from './MyTagsForm';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {Space} from '../Space/Space';
 import {TagClient} from './TagClient.interface';
 import {FilterType} from '../SortingAndFiltering/FilterLibraries';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     tags: Array<TagInterface>;
     updateFilterOptions(index: number, tag: TagInterface): void;
-    currentSpace: Space;
     tagClient: TagClient;
     filterType: FilterType;
     fetchCommand: () => void;
@@ -42,12 +40,13 @@ interface Props {
 
 const TagsModalContent = ({
     tags,
-    currentSpace,
     updateFilterOptions,
     tagClient,
     filterType,
     fetchCommand,
 }: Props): JSX.Element => {
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+
     const [editTagIndex, setEditTagIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
@@ -142,10 +141,4 @@ const TagsModalContent = ({
     );
 };
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps)(TagsModalContent);
-/* eslint-enable */
+export default TagsModalContent;

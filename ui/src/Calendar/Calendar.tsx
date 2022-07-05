@@ -20,23 +20,17 @@ import CalendarInputLabel from './CalendarInputLabel';
 import DatePicker from 'react-datepicker';
 import ReactDatePicker from 'react-datepicker';
 import React, {createRef, useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import {Space} from '../Space/Space';
 import moment from 'moment';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
 
 import './Calendar.scss';
 
-interface Props {
-    currentSpace: Space;
-}
-
-function Calendar({ currentSpace}: Props): JSX.Element {
-    const { uuid = '' } = currentSpace;
+function Calendar(): JSX.Element {
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     const [daysHighlighted, setDaysHighlighted] = useState<Array<Date>>([]);
@@ -98,10 +92,4 @@ function Calendar({ currentSpace}: Props): JSX.Element {
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps)(Calendar);
-/* eslint-enable */
+export default Calendar;

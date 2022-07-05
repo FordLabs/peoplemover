@@ -15,21 +15,17 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect} from 'react';
+import React, {useEffect} from 'react';
 
 import ProductList from '../Products/ProductList';
 import Branding from '../ReusableComponents/Branding';
 import {connect} from 'react-redux';
-import {setupSpaceAction} from '../Redux/Actions';
 import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {useNavigate, useParams} from 'react-router-dom';
-import {Space} from '../Space/Space';
-import SpaceClient from '../Space/SpaceClient';
+import {useParams} from 'react-router-dom';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
-import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
@@ -44,6 +40,7 @@ import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
+import useFetchCurrentSpace from '../Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import Modal from '../Modal/Modal';
@@ -51,18 +48,12 @@ import Modal from '../Modal/Modal';
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
 
-const BAD_REQUEST = 400;
-const FORBIDDEN = 403;
-
 export interface PeopleMoverProps {
-    currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setSpace(space: Space): void;
 }
 
-function PeopleMover({ currentSpace, allGroupedTagFilterOptions, setSpace }: PeopleMoverProps): JSX.Element {
+function PeopleMover({ allGroupedTagFilterOptions }: PeopleMoverProps): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
-    const navigate = useNavigate();
 
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
@@ -74,20 +65,9 @@ function PeopleMover({ currentSpace, allGroupedTagFilterOptions, setSpace }: Peo
     const { fetchProducts, products } = useFetchProducts();
     const { fetchProductTags } = useFetchProductTags();
     const { fetchPersonTags } = useFetchPersonTags();
+    const { fetchCurrentSpace, currentSpace } = useFetchCurrentSpace();
 
     const hasProductsAndFilters: boolean = products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0;
-
-    const handleErrors = useCallback((error: AxiosError): Error | null => {
-        if (error?.response?.status === BAD_REQUEST) {
-            navigate("/error/404");
-            return null;
-        } else if (error?.response?.status === FORBIDDEN) {
-            navigate("/error/403");
-            return null;
-        } else {
-            return error;
-        }
-    }, [navigate]);
 
     useEffect(() => {
         if (currentSpace) {
@@ -103,14 +83,9 @@ function PeopleMover({ currentSpace, allGroupedTagFilterOptions, setSpace }: Peo
 
     useEffect(() => {
         if (!modalContents && teamUUID) {
-            SpaceClient.getSpaceFromUuid(teamUUID)
-                .then((response) => {
-                    const space = response.data;
-                    setSpace(space);
-                })
-                .catch(handleErrors);
+            fetchCurrentSpace()
         }
-    }, [modalContents, setSpace, handleErrors, teamUUID]);
+    }, [modalContents, fetchCurrentSpace, teamUUID]);
 
     useEffect(() => {
         if (currentSpace && currentSpace.uuid) {
@@ -121,7 +96,7 @@ function PeopleMover({ currentSpace, allGroupedTagFilterOptions, setSpace }: Peo
             fetchRoles();
             fetchPeople();
         }
-    }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, handleErrors, fetchProducts]);
+    }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, fetchProducts]);
 
     return (
         !hasProductsAndFilters
@@ -172,13 +147,8 @@ function PeopleMover({ currentSpace, allGroupedTagFilterOptions, setSpace }: Peo
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PeopleMover);
+export default connect(mapStateToProps)(PeopleMover);
 /* eslint-enable */

@@ -16,24 +16,19 @@
  */
 
 import React, {createRef, FormEvent, useEffect, useState} from 'react';
-import {setCurrentSpaceAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
 import SpaceClient from '../Space/SpaceClient';
 import {createEmptySpace, Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
-import {useSetRecoilState} from 'recoil';
+import {useRecoilState, useSetRecoilState} from 'recoil';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
-import {ModalContentsState} from 'State/ModalContentsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {ModalContentsState} from '../State/ModalContentsState';
 
 import './SpaceForm.scss';
 
-interface Props {
-    space?: Space;
-    setCurrentSpace(space: Space): void;
-}
-
-function SpaceForm({ space, setCurrentSpace }: Props): JSX.Element {
+function SpaceForm(): JSX.Element {
     const { fetchUserSpaces } = useFetchUserSpaces();
+    const [currentSpace, setCurrentSpace] = useRecoilState(CurrentSpaceState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
     const maxLength = 40;
@@ -50,7 +45,7 @@ function SpaceForm({ space, setCurrentSpace }: Props): JSX.Element {
     }
 
     function initializeSpace(): Space {
-        return space ? space : createEmptySpace();
+        return currentSpace ? currentSpace : createEmptySpace();
     }
 
     function handleSubmit(event: FormEvent): void {
@@ -63,8 +58,8 @@ function SpaceForm({ space, setCurrentSpace }: Props): JSX.Element {
 
         const spaceToSend = {...formSpace, name:  formSpace.name.trim() };
 
-        if (!!space && formSpace.uuid) {
-            SpaceClient.editSpaceName(formSpace.uuid, spaceToSend, space.name)
+        if (!!currentSpace && formSpace.uuid) {
+            SpaceClient.editSpaceName(formSpace.uuid, spaceToSend, currentSpace.name)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         } else {
@@ -121,17 +116,12 @@ function SpaceForm({ space, setCurrentSpace }: Props): JSX.Element {
                     type="submit"
                     disabled={spaceNameLength <= 0}
                     testId="createSpaceButton">
-                    {space ? 'Save' : 'Create'}
+                    {currentSpace ? 'Save' : 'Create'}
                 </FormButton>
             </div>
         </form>
     );
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
-});
+export default SpaceForm;
 
-export default connect(null, mapDispatchToProps)(SpaceForm);
-/* eslint-enable */

@@ -24,8 +24,7 @@ import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../Sortin
 export enum AvailableActions {
     REGISTER_PRODUCT_REF,
     UNREGISTER_PRODUCT_REF,
-    SET_ALL_FILTER_OPTIONS,
-    SET_CURRENT_SPACE
+    SET_ALL_FILTER_OPTIONS
 }
 
 export const registerProductRefAction = (productRef: ProductCardRefAndProductPair) => ({
@@ -41,11 +40,6 @@ export const unregisterProductRefAction = (productRef: ProductCardRefAndProductP
 export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
     type: AvailableActions.SET_ALL_FILTER_OPTIONS,
     allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-});
-
-export const setCurrentSpaceAction = (space: Space) => ({
-    type: AvailableActions.SET_CURRENT_SPACE,
-    space,
 });
 
 export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (space: Space) =>

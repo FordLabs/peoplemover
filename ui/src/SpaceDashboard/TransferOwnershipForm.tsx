@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  */
 
 import React, {FormEvent, useEffect, useState} from 'react';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from 'Space/SpaceClient';
 import {connect} from 'react-redux';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
@@ -30,16 +30,10 @@ import {ModalContentsState} from 'State/ModalContentsState';
 
 import './TransferOwnershipForm.scss';
 
-interface TransferOwnershipFormProps {
-    currentSpace: Space;
-}
 
-interface TransferOwnershipFormOwnProps {
-    space?: Space;
-}
-
-function TransferOwnershipForm({currentSpace}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
+function TransferOwnershipForm(): JSX.Element {
     const currentUser = useRecoilValue(CurrentUserState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
     const { fetchUserSpaces } = useFetchUserSpaces();
@@ -127,10 +121,5 @@ function TransferOwnershipForm({currentSpace}: TransferOwnershipFormProps, {spac
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps, ownProps?: TransferOwnershipFormOwnProps) => ({
-    currentSpace: ownProps?.space || state.currentSpace
-});
+export default TransferOwnershipForm;
 
-export default connect(mapStateToProps)(TransferOwnershipForm);
-/* eslint-enable */

@@ -22,14 +22,15 @@ import {renderWithRedux} from '../Utils/TestUtils';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import moment from 'moment';
-import {createEmptySpace} from '../Space/Space';
+import {createEmptySpace, Space} from '../Space/Space';
 import {createStore} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import {setCurrentSpaceAction} from '../Redux/Actions';
 import {MemoryRouter} from 'react-router-dom';
 import {RecoilRoot} from 'recoil';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import TestData from '../Utils/TestData';
 
 class MockDate extends Date {
     constructor() {
@@ -85,18 +86,24 @@ describe('SpaceDashboard', () => {
     });
 
     it('should reset currentSpace on load', async () => {
-        const store = createStore(rootReducer, {});
-        store.dispatch = jest.fn();
+        let currentSpace = TestData.space;
         renderWithRedux(
             <MemoryRouter>
-                <RecoilRoot>
+                <RecoilRoot initializeState={({set}) => {
+                    set(CurrentSpaceState, TestData.space)
+                }}>
+                    <RecoilObserver
+                        recoilState={CurrentSpaceState}
+                        onChange={(value: Space) => {
+                            currentSpace = value;
+                        }}
+                    />
                     <SpaceDashboard/>
                 </RecoilRoot>
-            </MemoryRouter>,
-            store
+            </MemoryRouter>
         );
 
-        await waitFor(() => expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(createEmptySpace())));
+        await waitFor(() => expect(currentSpace).toEqual(createEmptySpace()));
     });
 
     describe('if spaces are present', () => {
