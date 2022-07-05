@@ -52,16 +52,19 @@ function Routes(): JSX.Element {
                 <Route path={dashboardUrl} element={
                     <AuthenticatedRoute>
                         <SpaceDashboard/>
+                        <Modal />
                     </AuthenticatedRoute>
                 } />
                 <Route path="/:teamUUID" element={
                     <AuthorizedRoute>
                         <PeopleMover/>
+                        <Modal />
                     </AuthorizedRoute>
                 } />
                 <Route path="/:teamUUID/timeonproduct" element={
                     <AuthorizedRoute>
                         <TimeOnProduct/>
+                        <Modal />
                     </AuthorizedRoute>
                 } />
                 <Route
@@ -84,7 +87,6 @@ function Routes(): JSX.Element {
                 />
                 <Route element={<Navigate replace to={notFoundUrl} />} />
             </ReactRoutes>
-            <Modal />
         </Router>
     );
 }
