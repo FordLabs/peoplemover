@@ -32,8 +32,8 @@ function useFetchRoles(): UseFetchRoles {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
     const [roles, setRoles] = useRecoilState(RolesState);
 
-    const fetchRoles = useCallback(() => {
-        RoleClient.get(teamUUID)
+    const fetchRoles = useCallback((): Promise<void> => {
+        return RoleClient.get(teamUUID)
             .then(result => {
                 const roles: Array<RoleTag> = [...result.data];
                 sortTagsAlphabetically(roles);

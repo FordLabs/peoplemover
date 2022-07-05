@@ -65,10 +65,10 @@ function Modal() {
             />
             <div
                 {...attr.dialog}
-                data-testid="modalCard"
+                data-testid="modalContent"
                 className="modal-content"
             >
-                <p {...attr.title} className="modal-title">
+                <p {...attr.title} className="modal-title" data-testid="modalTitle">
                     {modalContents?.title}
                 </p>
                 {modalContents?.component}
@@ -76,6 +76,7 @@ function Modal() {
                     {...attr.closeButton}
                     className="material-icons modal-close-button"
                     aria-label="Close Modal"
+                    data-testid="modalCloseButton"
                     onClick={clearModalContents}
                 >
                     close

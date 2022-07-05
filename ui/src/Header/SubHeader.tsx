@@ -66,7 +66,7 @@ function SubHeader({ showFilters = true, showSortBy = true, message = undefined}
                             component: <MyTagsForm filterType={FilterTypeListings.PersonTag}/>
                         }}/>
                         <Filter filterType={FilterTypeListings.Role} modalContents={{
-                            title: 'Roles', component: <MyRolesForm/>
+                            title: 'My Roles', component: <MyRolesForm/>
                         }}/>
                     </NavigationSection>
                 )}

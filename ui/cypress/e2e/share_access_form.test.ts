@@ -76,7 +76,7 @@ describe('Share Access Form', () => {
                     expect(xhr.status).to.equal(200);
                 });
 
-            cy.get('[data-testid=modalCard]')
+            cy.get('[data-testid=modalContent]')
                 .should('have.attr', 'aria-expanded', 'true')
                 .should('not.have.attr', 'hidden');
 
@@ -166,7 +166,7 @@ describe('Share Access Form', () => {
 const openShareAccessForm = (): void => {
     cy.get('[data-testid=accountDropdownToggle]').click();
     cy.get('[data-testid=shareAccess]').click();
-    cy.get('[data-testid=modalContainer]').should('exist');
+    cy.get('[data-testid=modalContent]').should('exist');
 };
 
 const expandInviteToViewModalCard = (): void => {
