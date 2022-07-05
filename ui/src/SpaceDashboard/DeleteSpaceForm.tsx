@@ -43,8 +43,7 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
     const closeModal = () => setModalContents(null);
 
     const notificationModalProps = {
-        content: <span>{space.name + ' has been deleted from PeopleMover.'
-        }</span>,
+        content: <span>{space.name + ' has been deleted from PeopleMover.'}</span>,
         title: 'Confirmed',
         close: closeModal,
     } as NotificationModalProps;
@@ -79,9 +78,7 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
                 component: <TransferOwnershipForm spaceToTransfer={space}/>
             });
         },
-        close() {
-            closeModal();
-        },
+        close: closeModal,
     } as ConfirmationModalProps;
 
     const propsWithoutEditors = {
@@ -100,9 +97,7 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
                 setSubmitted(true);
             });
         },
-        close() {
-            closeModal();
-        },
+        close() { closeModal(); },
     } as ConfirmationModalProps;
 
     if (submitted) {
@@ -112,7 +107,6 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
     } else {
         return (<ConfirmationModal {...propsWithoutEditors}/>);
     }
-
 }
 
 export default DeleteSpaceForm;

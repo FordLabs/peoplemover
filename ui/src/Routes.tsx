@@ -30,6 +30,7 @@ import AnimatedImageSrc from './Assets/404.gif';
 import errorImageSrc from './Assets/403.png';
 import Header from './Header/Header';
 import AnnouncementBanner from './Header/AnnouncementBanner';
+import Modal from 'NewModal/Modal';
 
 export const dashboardUrl = '/user/dashboard';
 const notFoundUrl = '/error/404';
@@ -83,6 +84,7 @@ function Routes(): JSX.Element {
                 />
                 <Route element={<Navigate replace to={notFoundUrl} />} />
             </ReactRoutes>
+            <Modal />
         </Router>
     );
 }
