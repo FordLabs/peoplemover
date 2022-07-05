@@ -21,7 +21,6 @@ import {fireEvent, screen, waitFor} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {Space} from '../Space/Space';
-import {AvailableActions} from '../Redux/Actions';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';
@@ -35,11 +34,15 @@ import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {ProductsState} from 'State/ProductsState';
 import {ProductTagsState} from 'State/ProductTagsState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
 
 jest.mock('Locations/LocationClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 
 describe('ProductForm', function() {
+    let modalContent: ModalContents | null;
+
     const mockStore = configureStore([]);
     const store = mockStore({
         currentSpace: TestData.space,
@@ -48,12 +51,13 @@ describe('ProductForm', function() {
     let resetCreateRange: () => void;
 
     beforeEach(() => {
-        store.dispatch = jest.fn();
         resetCreateRange = TestUtils.mockCreateRange();
 
         LocationClient.get = jest.fn().mockResolvedValue({data: TestData.locations});
         ProductTagClient.get = jest.fn().mockResolvedValue({data: TestData.productTags});
         ProductClient.createProduct = jest.fn().mockResolvedValue({data: {}});
+
+        modalContent = null;
     });
 
     afterEach(() => {
@@ -64,15 +68,23 @@ describe('ProductForm', function() {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2020, 4, 14))
+                set(ModalContentsState, { title: 'Some Modal', component: <></> })
             }}>
+                <RecoilObserver
+                    recoilState={ModalContentsState}
+                    onChange={(value: ModalContents) => {
+                        modalContent = value;
+                    }}
+                />
                 <ProductForm editing={false} />
             </RecoilRoot>,
             store
         );
         await waitFor(() => expect(LocationClient.get).toHaveBeenCalled());
 
+        expect(modalContent).not.toBeNull();
         fireEvent.click(screen.getByText('Cancel'));
-        expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
+        expect(modalContent).toBeNull();
         expect(LocationClient.get).toHaveBeenCalled();
         expect(ProductTagClient.get).toHaveBeenCalled();
     });
@@ -81,7 +93,14 @@ describe('ProductForm', function() {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2020, 4, 14))
+                set(ModalContentsState, { title: 'Some Modal', component: <></> })
             }}>
+                <RecoilObserver
+                    recoilState={ModalContentsState}
+                    onChange={(value: ModalContents) => {
+                        modalContent = value;
+                    }}
+                />
                 <ProductForm editing={false} />
             </RecoilRoot>,
             store
@@ -95,6 +114,7 @@ describe('ProductForm', function() {
         const tagsLabelElement = await screen.findByLabelText('Product Tags');
         await selectEvent.select(tagsLabelElement, /FordX/);
 
+        expect(modalContent).not.toBeNull();
         fireEvent.click(screen.getByText('Add'));
 
         await waitFor(() => expect(ProductClient.createProduct).toHaveBeenCalledWith(
@@ -114,7 +134,7 @@ describe('ProductForm', function() {
                 assignments: [],
             } as Product));
 
-        expect(store.dispatch).toHaveBeenCalledWith({type: AvailableActions.CLOSE_MODAL});
+        expect(modalContent).toBeNull();
         expect(LocationClient.get).toHaveBeenCalled();
         expect(ProductTagClient.get).toHaveBeenCalled();
     });

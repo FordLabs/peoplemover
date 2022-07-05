@@ -27,12 +27,14 @@ import {useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
+import {Space} from '../Space/Space';
 
 interface Props {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    currentSpace: Space;
 }
 
-function ProductList({ allGroupedTagFilterOptions }: Props): JSX.Element {
+function ProductList({ allGroupedTagFilterOptions, currentSpace }: Props): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const products = useRecoilValue(ProductsState);
@@ -64,7 +66,7 @@ function ProductList({ allGroupedTagFilterOptions }: Props): JSX.Element {
                     return <SortedByList products={filteredAndActiveProduct} />;
                 }
                 default:
-                    return <GroupedByList products={filteredAndActiveProduct} />;
+                    return <GroupedByList products={filteredAndActiveProduct} uuid={currentSpace.uuid} />;
             }
         } else {
             return <></>;
@@ -76,6 +78,7 @@ function ProductList({ allGroupedTagFilterOptions }: Props): JSX.Element {
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
+    currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

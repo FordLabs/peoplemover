@@ -16,23 +16,25 @@
  */
 
 import React, {createRef, FormEvent, useEffect, useState} from 'react';
-import {closeModalAction, setCurrentSpaceAction} from '../Redux/Actions';
+import {setCurrentSpaceAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import SpaceClient from '../Space/SpaceClient';
 import {createEmptySpace, Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
+import {useSetRecoilState} from 'recoil';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
+import {ModalContentsState} from 'State/ModalContentsState';
 
 import './SpaceForm.scss';
 
 interface Props {
     space?: Space;
-    closeModal(): void;
     setCurrentSpace(space: Space): void;
 }
 
-function SpaceForm({ space, closeModal, setCurrentSpace }: Props): JSX.Element {
+function SpaceForm({ space, setCurrentSpace }: Props): JSX.Element {
     const { fetchUserSpaces } = useFetchUserSpaces();
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const maxLength = 40;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
@@ -42,6 +44,10 @@ function SpaceForm({ space, closeModal, setCurrentSpace }: Props): JSX.Element {
     useEffect(() => {
         spaceNameInputRef.current?.focus();
     });
+
+    function closeModal() {
+        setModalContents(null);
+    }
 
     function initializeSpace(): Space {
         return space ? space : createEmptySpace();
@@ -124,7 +130,6 @@ function SpaceForm({ space, closeModal, setCurrentSpace }: Props): JSX.Element {
 
 /* eslint-disable */
 const mapDispatchToProps = (dispatch: any) => ({
-    closeModal: () => dispatch(closeModalAction()),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
 });
 

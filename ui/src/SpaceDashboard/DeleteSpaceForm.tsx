@@ -1,38 +1,49 @@
-import * as React from 'react';
-import {useState} from 'react';
-import {Space} from '../Space/Space';
+/*
+ * Copyright (c) 2022 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import React, {useState} from 'react';
+import {useSetRecoilState} from 'recoil';
+import {Space} from 'Space/Space';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import SpaceClient from '../Space/SpaceClient';
-import {closeModalAction, setCurrentModalAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {AvailableModals} from '../Modal/AvailableModals';
+import SpaceClient from 'Space/SpaceClient';
 import FormButton from '../ModalFormComponents/FormButton';
 import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
+import {ModalContentsState} from 'State/ModalContentsState';
+import TransferOwnershipForm from './TransferOwnershipForm';
 
 import './DeleteSpaceForm.scss';
 
-interface DeleteSpaceFormProps {
+interface Props {
     space: Space;
-    closeModal(): void;
-    setCurrentModal(modalState: CurrentModalState): void;
     spaceHasEditors?: boolean;
 }
 
-function DeleteSpaceForm({
-    space,
-    closeModal,
-    setCurrentModal,
-    spaceHasEditors,
-}: DeleteSpaceFormProps): JSX.Element {
+function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
+    const setModalContents = useSetRecoilState(ModalContentsState);
+
     const { fetchUserSpaces } = useFetchUserSpaces();
 
     const [submitted, setSubmitted] = useState<boolean>(false);
 
+    const closeModal = () => setModalContents(null);
+
     const notificationModalProps = {
-        content: <span>{space.name + ' has been deleted from PeopleMover.'
-        }</span>,
+        content: <span>{space.name + ' has been deleted from PeopleMover.'}</span>,
         title: 'Confirmed',
         close: closeModal,
     } as NotificationModalProps;
@@ -62,11 +73,12 @@ function DeleteSpaceForm({
                 Delete space
             </FormButton>),
         submit(): void | Promise<void> {
-            setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
+            setModalContents({
+                title: 'Transfer Ownership of Space',
+                component: <TransferOwnershipForm space={space}/>
+            });
         },
-        close() {
-            closeModal();
-        },
+        close: closeModal,
     } as ConfirmationModalProps;
 
     const propsWithoutEditors = {
@@ -85,9 +97,7 @@ function DeleteSpaceForm({
                 setSubmitted(true);
             });
         },
-        close() {
-            closeModal();
-        },
+        close() { closeModal(); },
     } as ConfirmationModalProps;
 
     if (submitted) {
@@ -97,14 +107,6 @@ function DeleteSpaceForm({
     } else {
         return (<ConfirmationModal {...propsWithoutEditors}/>);
     }
-
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: any) => ({
-    closeModal: () => dispatch(closeModalAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(null, mapDispatchToProps)(DeleteSpaceForm);
-/* eslint-enable */
+export default DeleteSpaceForm;

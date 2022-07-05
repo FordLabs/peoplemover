@@ -20,9 +20,6 @@ import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import SpaceClient from '../Space/SpaceClient';
-
-import {act} from 'react-dom/test-utils';
-import {closeModalAction} from '../Redux/Actions';
 import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
@@ -30,20 +27,33 @@ import {fireEvent, screen} from '@testing-library/dom';
 import {waitFor} from '@testing-library/react';
 import {RecoilRoot} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
 
 jest.mock('../Space/SpaceClient');
 
 describe('Transfer Ownership Form', () => {
     let store: Store;
+    let modalContent: ModalContents | null;
 
     beforeEach(async () => {
+        modalContent = null;
         store = createStore(rootReducer, {}, applyMiddleware(thunk));
-        store.dispatch = jest.fn();
 
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(CurrentUserState,  'user_id')
+                set(ModalContentsState, {
+                    title: 'A Title',
+                    component: <div>Some Component</div>,
+                });
             }}>
+                <RecoilObserver
+                    recoilState={ModalContentsState}
+                    onChange={(value: ModalContents) => {
+                        modalContent = value;
+                    }}
+                />
                 <TransferOwnershipForm space={TestData.space}/>
             </RecoilRoot>,
             store
@@ -67,36 +77,41 @@ describe('Transfer Ownership Form', () => {
     });
 
     it('should close the modal when cancel is clicked', () => {
+        expect(modalContent).not.toBeNull();
         fireEvent.click(screen.getByText('Cancel'));
-        expect(store.dispatch).toBeCalledWith(closeModalAction());
+        expect(modalContent).toBeNull();
     });
 
     describe('The happy path', () => {
         it('should close the modal when a persons name is clicked and Transfer button, then OK is pressed on the confirmation', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
-            await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
+            fireEvent.click(screen.getByText('Transfer ownership'));
             await screen.findByText('Ownership has been transferred to user_id_2 and you have been removed from the space testSpace.');
-            await act(async () => {fireEvent.click(screen.getByText('Ok'));});
-            await expect(store.dispatch).toBeCalledWith(closeModalAction());
+            expect(modalContent).not.toBeNull();
+            fireEvent.click(screen.getByText('Ok'));
+            expect(modalContent).toBeNull();
         });
 
         it('should be able to choose a person by clicking anywhere in their row', async () => {
             fireEvent.click(screen.getByTestId('transferOwnershipFormRadioControl-user_id_2'));
             fireEvent.click(screen.getByText('Transfer ownership'));
+            expect(modalContent).not.toBeNull();
             fireEvent.click(await screen.findByText('Ok'));
-            await waitFor(() => expect(store.dispatch).toBeCalledWith(closeModalAction()));
+            expect(modalContent).toBeNull();
         });
 
         it('should use the Client to promote the selected editor to owner', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
-            await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
-            expect(SpaceClient.changeOwner).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[0], TestData.spaceMappingsArray[1]);
+            fireEvent.click(screen.getByText('Transfer ownership'));
+            await waitFor(() =>
+                expect(SpaceClient.changeOwner).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[0], TestData.spaceMappingsArray[1])
+            );
         });
 
         it('should use the Client to remove the current users permissions from the space', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
-            await act(async () => {fireEvent.click(screen.getByText('Transfer ownership'));});
-            expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[0]);
+            fireEvent.click(screen.getByText('Transfer ownership'));
+            await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[0]));
         });
 
         it('should refresh user spaces if a new owner is assigned', async () => {
@@ -106,9 +121,8 @@ describe('Transfer Ownership Form', () => {
             const transferOwnershipButton = await screen.findByText('Transfer ownership')
             fireEvent.click(transferOwnershipButton);
 
-            expect(SpaceClient.changeOwner).toHaveBeenCalled();
+            await waitFor(() => expect(SpaceClient.changeOwner).toHaveBeenCalled());
             await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalled());
-
             await waitFor(() => expect(SpaceClient.getSpacesForUser).toHaveBeenCalled());
         });
     });

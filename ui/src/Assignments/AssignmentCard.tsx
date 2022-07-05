@@ -20,10 +20,8 @@ import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
 import {connect} from 'react-redux';
-import {setCurrentModalAction} from '../Redux/Actions';
 import AssignmentClient from './AssignmentClient';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {Assignment, calculateDuration} from './Assignment';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
@@ -31,15 +29,16 @@ import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from '../Utils/ReactUtils';
 import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {AvailableModals} from '../Modal/AvailableModals';
 import PeopleClient from '../People/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
 import {JSX} from '@babel/types';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
+import {ModalContentsState} from 'State/ModalContentsState';
+import PersonForm from 'People/PersonForm';
 
 import '../Styles/Main.scss';
 import './AssignmentCard.scss';
@@ -49,7 +48,6 @@ interface Props {
     assignment: Assignment;
     isUnassignedProduct: boolean;
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function AssignmentCard({
@@ -57,10 +55,10 @@ function AssignmentCard({
     assignment = {id: 0} as Assignment,
     isUnassignedProduct,
     startDraggingAssignment,
-    setCurrentModal,
 }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const { fetchProducts } = useFetchProducts();
     const  { fetchPeople } = useFetchPeople();
@@ -76,19 +74,23 @@ function AssignmentCard({
         if (!isUnassignedProduct) {
             setEditMenuIsOpened(!editMenuIsOpened)
         } else {
-            setCurrentModal({
-                modal: AvailableModals.EDIT_PERSON,
-                item: assignment.person,
-            });
+            openModal()
         }
+    }
+
+    function openModal() {
+        setModalContents({
+            title: 'Edit Person',
+            component: <PersonForm
+                isEditPersonForm
+                personEdited={assignment.person}
+            />,
+        });
     }
 
     function editPersonAndCloseEditMenu(): void {
         toggleEditMenu();
-        setCurrentModal({
-            modal: AvailableModals.EDIT_PERSON,
-            item: assignment.person,
-        });
+        openModal();
     }
 
     async function markAsPlaceholderAndCloseEditMenu(): Promise<void> {
@@ -265,9 +267,5 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCard);
+export default connect(mapStateToProps)(AssignmentCard);
 /* eslint-enable */

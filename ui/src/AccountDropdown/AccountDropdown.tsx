@@ -39,7 +39,6 @@ function AccountDropdown({hideSpaceButtons, showAllDropDownOptions}: Props): JSX
 
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
-
     useEffect(() => {
         setCurrentUser(getUserNameFromAccessToken());
     }, [setCurrentUser]);

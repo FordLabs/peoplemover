@@ -17,38 +17,38 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {createEmptySpace, Space} from '../Space/Space';
-import CurrentModal from '../Redux/Containers/CurrentModal';
-import {setCurrentModalAction, setCurrentSpaceAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
+import {setCurrentSpaceAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import SpaceDashboardTile from './SpaceDashboardTile';
 import {GlobalStateProps} from '../Redux/Reducers';
 
 import Branding from '../ReusableComponents/Branding';
-import {AvailableModals} from '../Modal/AvailableModals';
 import {useNavigate} from 'react-router-dom';
 import {useSetRecoilState} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
+import {ModalContentsState} from 'State/ModalContentsState';
+import SpaceForm from './SpaceForm';
 
 import './SpaceDashboard.scss';
-import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 
 interface Props {
     currentSpace: Space;
-    setCurrentModal(modalState: CurrentModalState): void;
     setCurrentSpace(space: Space): Space;
 }
 
-function SpaceDashboard({ currentSpace, setCurrentModal, setCurrentSpace }: Props): JSX.Element {
+function SpaceDashboard({ currentSpace, setCurrentSpace }: Props): JSX.Element {
     const navigate = useNavigate();
 
+    const setModalContents = useSetRecoilState(ModalContentsState);
     const setViewingDate = useSetRecoilState(ViewingDateState);
+
     const { userSpaces, fetchUserSpaces } = useFetchUserSpaces();
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     function onCreateNewSpaceButtonClicked(): void {
-        setCurrentModal({modal: AvailableModals.CREATE_SPACE});
+        setModalContents({title: 'Create New Space', component: <SpaceForm/>});
     }
 
     const onSpaceClicked = useCallback((space: Space): void => {
@@ -113,7 +113,6 @@ function SpaceDashboard({ currentSpace, setCurrentModal, setCurrentSpace }: Prop
 
     return (
         <div className="spaceDashboard">
-            <CurrentModal/>
             {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
             <Branding />
         </div>
@@ -126,7 +125,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
 });
 

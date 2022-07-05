@@ -35,7 +35,6 @@ function NotificationModal({
     containerClassname = '',
 }: NotificationModalProps): JSX.Element {
 
-
     const CancelButton = (): JSX.Element => (
         <FormButton
             buttonStyle="primary"

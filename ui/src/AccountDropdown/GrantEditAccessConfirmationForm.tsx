@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,18 +16,15 @@
  */
 
 import React, {useState} from 'react';
-import {Dispatch} from 'redux';
-import {closeModalAction} from '../Redux/Actions';
 import FormButton from '../ModalFormComponents/FormButton';
-import {connect} from 'react-redux';
+import {useSetRecoilState} from 'recoil';
+import {ModalContentsState} from '../State/ModalContentsState';
 
 import './GrantEditAccessConfirmationForm.scss';
 
-interface Props {
-    closeModal(): void;
-}
+const GrantEditAccessConfirmationForm = (): JSX.Element => {
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
-const GrantEditAccessConfirmationForm = ({ closeModal }: Props): JSX.Element => {
     const linkToSpace: string = window.location.href;
     const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
@@ -57,7 +54,7 @@ const GrantEditAccessConfirmationForm = ({ closeModal }: Props): JSX.Element => 
             </div>
             <FormButton
                 buttonStyle="primary"
-                onClick={closeModal}
+                onClick={() => setModalContents(null)}
                 testId="grantEditAccessConfirmationFormDoneButton">
                 Done
             </FormButton>
@@ -65,10 +62,4 @@ const GrantEditAccessConfirmationForm = ({ closeModal }: Props): JSX.Element => 
     );
 };
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    closeModal: () => dispatch(closeModalAction()),
-});
-
-export default connect(null, mapDispatchToProps)(GrantEditAccessConfirmationForm);
-/* eslint-enable */
+export default GrantEditAccessConfirmationForm;

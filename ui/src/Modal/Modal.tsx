@@ -19,14 +19,13 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
 import ConfirmationModal, {ConfirmationModalProps} from './ConfirmationModal';
 import FocusRing from '../FocusRing';
-import {ModalMetadataItem} from '../Redux/Containers/CurrentModal';
 import ModalCardBanner from './ModalCardBanner';
 import MultiModalCardBanner from './MultiModalCardBanner';
 import './Modal.scss';
 import FocusTrap from 'focus-trap-react';
 
 interface ModalProps {
-    modalMetadata: Array<ModalMetadataItem> | null;
+    modalMetadata: Array<any> | null;
     closeModal(): void;
 }
 
@@ -103,7 +102,7 @@ function Modal({ modalMetadata = null, closeModal }: ModalProps): JSX.Element | 
                 onClick={exitModal}
                 onKeyDown={modalBackgroundOnKeyDown}>
                 <div className="modalContents">
-                    {modalMetadata?.map((item: ModalMetadataItem, index) => {
+                    {modalMetadata?.map((item: any, index) => {
                         const isExpanded = expandedSectionIndex === index;
                         const isCollapsed = !isExpanded;
                         const customModalForm = React.cloneElement(

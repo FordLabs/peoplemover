@@ -16,40 +16,40 @@
  */
 
 import React from 'react';
-import {Product} from './Product';
+import {emptyProduct, Product} from './Product';
 import NewProductButton from './NewProductButton';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {TagInterface} from '../Tags/Tag.interface';
 import {useRecoilValue} from 'recoil';
 
 import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
-import {AvailableModals} from '../Modal/AvailableModals';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 import {LocationsState} from 'State/LocationsState';
 import {ProductTagsState} from 'State/ProductTagsState';
+import {ModalContents} from '../State/ModalContentsState';
+import ProductForm from './ProductForm';
 
 import './ProductListGrouped.scss';
 
 interface GroupedByListProps {
     products: Array<Product>;
+    uuid?: string;
 }
 
 interface GroupedListDataProps {
     traitTitle: string;
     traits: Array<TagInterface>;
-    modalType: AvailableModals | null;
     filterByTraitFunction: (product: Product, tagName: string) => boolean;
     filterByNoTraitFunction: (product: Product) => boolean;
 }
 
 interface ProductGroupProps {
     tagName: string;
-    modalState?: CurrentModalState;
+    modalContents?: ModalContents;
     productFilterFunction: (product: Product, tagName: string) => boolean;
     useGrayBackground?: boolean;
 }
 
-function GroupedByList({ products }: GroupedByListProps): JSX.Element {
+function GroupedByList({ products, uuid = '' }: GroupedByListProps): JSX.Element {
     const locations = useRecoilValue(LocationsState);
     const productSortBy = useRecoilValue(ProductSortByState);
 
@@ -62,7 +62,6 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
             return ({
                 traitTitle: 'Location',
                 traits: [...locations],
-                modalType: AvailableModals.CREATE_PRODUCT_OF_LOCATION,
                 filterByTraitFunction: filterByLocation,
                 filterByNoTraitFunction: filterByNoLocation,
             });
@@ -70,7 +69,6 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
             return ({
                 traitTitle: 'Product Tag',
                 traits: [...productTags],
-                modalType: AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG,
                 filterByTraitFunction: filterByProductTag,
                 filterByNoTraitFunction: filterByNoProductTag,
             });
@@ -93,7 +91,7 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
         return !product.spaceLocation;
     }
 
-    function ProductGroup({tagName, modalState, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
+    function ProductGroup({tagName, modalContents, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
         const filteredProducts = products.filter(product => productFilterFunction(product, tagName));
 
         return (
@@ -103,7 +101,7 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
                         <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
                         <div className="groupedProducts">
                             <ProductCardArray products={filteredProducts} arrayId={tagName}/>
-                            <NewProductButton modalState={modalState}/>
+                            <NewProductButton modalContents={modalContents}/>
                         </div>
                     </div>
                 )
@@ -113,11 +111,26 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
     return (
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
             {productGroupList.traits.map((trait: TagInterface) => {
+                const newProduct = emptyProduct(uuid);
+
+                console.log('trait', trait)
+
+                // if location
+                //  newProduct.spaceLocation = {...trait}
+
+                // if product tags
+                // newProduct.productTags = [trait]
+
                 return (
                     <span key={trait.id}>
                         <ProductGroup
                             tagName={trait.name}
-                            modalState={{modal: productGroupList.modalType, item: trait}}
+                            modalContents={{
+                                title: 'Add New Product',
+                                component: <ProductForm
+                                    editing={false}
+                                    product={newProduct}/>
+                            }}
                             productFilterFunction={productGroupList.filterByTraitFunction}/>
                     </span>
                 );

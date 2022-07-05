@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,25 +17,24 @@
 
 import React, {CSSProperties, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
-import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {closeModalAction, setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import {AvailableModals} from '../Modal/AvailableModals';
 
-import './InviteEditorsFormSection.scss';
 import UserAccessList from '../ReusableComponents/UserAccessList';
 import Creatable from 'react-select/creatable';
 import {reactSelectStyles} from '../ModalFormComponents/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';
 import {Option} from '../CommonTypes/Option';
 import {nameSplitPattern, userIdPattern, validate} from '../Utils/UserIdValidator';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
+
+import './InviteEditorsFormSection.scss';
+import {ModalContentsState} from '../State/ModalContentsState';
+import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
 
 const inviteEditorsStyle = {
     ...reactSelectStyles,
@@ -62,8 +61,6 @@ const inviteEditorsStyle = {
 interface InviteEditorsFormReduxProps {
     collapsed?: boolean;
     currentSpace: Space;
-    closeModal(): void;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 interface InviteEditorsFormOwnProps {
@@ -76,8 +73,9 @@ const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMappin
     }
 };
 
-function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurrentModal}: InviteEditorsFormReduxProps, {space}: InviteEditorsFormOwnProps): JSX.Element {
+function InviteEditorsFormSection({collapsed, currentSpace}: InviteEditorsFormReduxProps, {space}: InviteEditorsFormOwnProps): JSX.Element {
     const currentUser = useRecoilValue(CurrentUserState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const isExpanded = !collapsed;
     const [invitedUserIds, setInvitedUserIds] = useState<Option[]>([]);
@@ -98,7 +96,10 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
         await SpaceClient.inviteUsersToSpace(currentSpace, invitedUserIds.map(userId => userId.value))
             .catch(console.error)
             .finally(() => {
-                setCurrentModal({modal: AvailableModals.GRANT_EDIT_ACCESS_CONFIRMATION});
+                setModalContents({
+                    title: 'Your team member now has access!',
+                    component: <GrantEditAccessConfirmationForm />,
+                });
             });
     };
 
@@ -203,7 +204,7 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
                         <FormButton
                             buttonStyle="secondary"
                             className="cancelButton"
-                            onClick={closeModal}>
+                            onClick={() => setModalContents(null)}>
                             Cancel
                         </FormButton>
                         <FormButton
@@ -222,14 +223,9 @@ function InviteEditorsFormSection({collapsed, currentSpace, closeModal, setCurre
 }
 
 /* eslint-disable */
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    closeModal: () => dispatch(closeModalAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
 const mapStateToProps = (state: GlobalStateProps, ownProps?: InviteEditorsFormOwnProps) => ({
     currentSpace: ownProps?.space || state.currentSpace,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(InviteEditorsFormSection);
+export default connect(mapStateToProps)(InviteEditorsFormSection);
 /* eslint-enable */

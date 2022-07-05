@@ -19,12 +19,10 @@ import React, {useCallback, useEffect} from 'react';
 
 import ProductList from '../Products/ProductList';
 import Branding from '../ReusableComponents/Branding';
-import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
-import {setCurrentModalAction, setupSpaceAction} from '../Redux/Actions';
+import {setupSpaceAction} from '../Redux/Actions';
 import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
@@ -33,20 +31,21 @@ import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {AvailableModals} from '../Modal/AvailableModals';
 import Counter from '../ReusableComponents/Counter';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import HeaderContainer from '../Header/HeaderContainer';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
-import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
+import {ModalContentsState} from 'State/ModalContentsState';
+import PersonForm from 'People/PersonForm';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
@@ -55,25 +54,18 @@ const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
 
 export interface PeopleMoverProps {
-    currentModal: CurrentModalState;
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setCurrentModal(modalState: CurrentModalState): void;
     setSpace(space: Space): void;
 }
 
-function PeopleMover({
-    currentModal,
-    currentSpace,
-    allGroupedTagFilterOptions,
-    setSpace,
-    setCurrentModal,
-}: PeopleMoverProps): JSX.Element {
+function PeopleMover({ currentSpace, allGroupedTagFilterOptions, setSpace }: PeopleMoverProps): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
     const navigate = useNavigate();
 
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
+    const [modalContents, setModalContents] = useRecoilState(ModalContentsState);
 
     const { fetchPeople } = useFetchPeople();
     const { fetchRoles } = useFetchRoles();
@@ -109,7 +101,7 @@ function PeopleMover({
     }, [currentSpace, isReadOnly]);
 
     useEffect(() => {
-        if (currentModal.modal === null && teamUUID) {
+        if (!modalContents && teamUUID) {
             SpaceClient.getSpaceFromUuid(teamUUID)
                 .then((response) => {
                     const space = response.data;
@@ -117,7 +109,7 @@ function PeopleMover({
                 })
                 .catch(handleErrors);
         }
-    }, [currentModal, setSpace, handleErrors, teamUUID]);
+    }, [modalContents, setSpace, handleErrors, teamUUID]);
 
     useEffect(() => {
         if (currentSpace && currentSpace.uuid) {
@@ -153,7 +145,10 @@ function PeopleMover({
                                         type="button"
                                         className="addPersonButton"
                                         data-testid="addPersonButton"
-                                        onClick={(): void => setCurrentModal({modal: AvailableModals.CREATE_PERSON})}>
+                                        onClick={(): void => setModalContents({
+                                            title: 'Add New Person',
+                                            component: <PersonForm isEditPersonForm={false} />,
+                                        })}>
                                         <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
                                         <span>Add Person</span>
                                     </button>
@@ -165,7 +160,6 @@ function PeopleMover({
                             </div>
                         )}
                     </div>
-                    <CurrentModal/>
                 </main>
                 <footer>
                     <Branding/>
@@ -176,14 +170,12 @@ function PeopleMover({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentModal: state.currentModal,
     currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleMover);
