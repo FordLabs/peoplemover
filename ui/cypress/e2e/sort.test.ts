@@ -66,6 +66,10 @@ describe('Sort', () => {
         getProductListGroup2()
             .should('contain', 'My Product')
             .should('contain', 'No Location');
+
+        cy.log('**Pre-populate form with selected location**');
+        cy.contains('Add Product').click();
+        cy.getModal().should('exist').contains('location1');
     });
 
     it('Sort products by product tag', () => {
@@ -83,6 +87,10 @@ describe('Sort', () => {
         getProductListGroup2()
             .should('contain', 'Baguette Bakery')
             .should('contain', 'No Product Tag');
+
+        cy.log('**Pre-populate form with selected product tags**');
+        cy.contains('Add Product').click();
+        cy.getModal().should('exist').contains('productTag1');
     });
 });
 
