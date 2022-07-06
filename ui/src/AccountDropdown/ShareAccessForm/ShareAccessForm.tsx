@@ -26,8 +26,6 @@ import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection/ViewOnlyAcces
 import {ModalContentsState} from 'State/ModalContentsState';
 
 import './ShareAccessForm.scss';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from '../../State/ModalContentsState';
 
 interface Props {
     currentSpace: Space;

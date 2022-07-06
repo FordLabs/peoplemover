@@ -23,9 +23,9 @@ import {Dispatch} from 'redux';
 import {setCurrentSpaceAction} from 'Redux/Actions';
 import {GlobalStateProps} from 'Redux/Reducers';
 import {connect} from 'react-redux';
+import MatomoEvents from 'Matomo/MatomoEvents';
 
 import './ViewOnlyAccessFormSection.scss';
-import MatomoEvents from 'Matomo/MatomoEvents';
 
 interface Props {
     collapsed?: boolean;
