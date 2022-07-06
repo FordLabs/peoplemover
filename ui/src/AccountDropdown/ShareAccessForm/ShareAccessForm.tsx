@@ -24,6 +24,8 @@ import MultiModalCardBanner from '../../Modal/MultiModalCardBanner/MultiModalCar
 import ViewOnlyAccessFormSection from '../ViewOnlyAccessFormSection';
 
 import './ShareAccessForm.scss';
+import {useSetRecoilState} from 'recoil';
+import {ModalContentsState} from '../../State/ModalContentsState';
 
 interface Props {
     currentSpace: Space;
@@ -31,6 +33,9 @@ interface Props {
 
 function ShareAccessForm({ currentSpace }: Props) {
     const [isFirstSectionCollapsed, setIsFirstSectionCollapsed] = useState<boolean>(false);
+    const setModalContents = useSetRecoilState(ModalContentsState);
+
+    const closeModal = () => setModalContents(null);
 
     return (
         <div className="share-access-form">
@@ -38,7 +43,7 @@ function ShareAccessForm({ currentSpace }: Props) {
                 <MultiModalCardBanner
                     title="Invite others to view"
                     collapsed={isFirstSectionCollapsed}
-                    onCloseBtnClick={() => { console.log('CLICK') }}
+                    onCloseBtnClick={closeModal}
                     onClick={() => setIsFirstSectionCollapsed(false)}
                 />
                 <ViewOnlyAccessFormSection collapsed={isFirstSectionCollapsed}/>
@@ -47,7 +52,7 @@ function ShareAccessForm({ currentSpace }: Props) {
                 <MultiModalCardBanner
                     title="Invite others to edit"
                     collapsed={!isFirstSectionCollapsed}
-                    onCloseBtnClick={() => { console.log('CLICK') }}
+                    onCloseBtnClick={closeModal}
                     onClick={() => setIsFirstSectionCollapsed(true)}
                 />
                 <InviteEditorsFormSection

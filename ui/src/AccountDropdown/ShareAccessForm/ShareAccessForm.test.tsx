@@ -22,25 +22,42 @@ import {RecoilRoot} from 'recoil';
 import TestData from '../../Utils/TestData';
 import SpaceClient from '../../Space/SpaceClient';
 import {screen, waitFor} from '@testing-library/react';
+import {RecoilObserver} from '../../Utils/RecoilObserver';
+import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
 
 jest.mock('Space/SpaceClient');
 
 describe('Share Access Form', () => {
-    it('should toggle between the "Invite others to view" and "Invite others to edit" sections', async () => {
+    let modalContent: ModalContents | null;
+
+    beforeEach(async () => {
+        modalContent = null;
+
         renderWithRedux(
-            <RecoilRoot>
+            <RecoilRoot initializeState={({set}) => {
+                set(ModalContentsState, {
+                    title: 'A Title',
+                    component: <div>Some Component</div>,
+                });
+            }}>
+                <RecoilObserver
+                    recoilState={ModalContentsState}
+                    onChange={(value: ModalContents) => {
+                        modalContent = value;
+                    }}
+                />
                 <ShareAccessForm />
             </RecoilRoot>,
             undefined,
             {currentSpace: TestData.space}
         );
-
         await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled())
+    })
 
-        const buttons = screen.getAllByTestId('multiModalExpandCollapseButton');
-        const inviteOthersToViewBtn = buttons[0];
+    it('should toggle between the "Invite others to view" and "Invite others to edit" sections', () => {
+        const inviteOthersToViewBtn = getInviteOthersToViewButton();
         expect(inviteOthersToViewBtn).toHaveTextContent('Invite others to view');
-        const inviteOthersToEditBtn = buttons[1];
+        const inviteOthersToEditBtn = getInviteOthersToEditButton();
         expect(inviteOthersToEditBtn).toHaveTextContent('Invite others to edit');
 
         expect(inviteOthersToViewBtn).toBeDisabled();
@@ -61,6 +78,27 @@ describe('Share Access Form', () => {
         inviteOthersToViewIsExpanded();
         expect(inviteOthersToEditBtn).not.toBeDisabled();
         inviteOthersToEditCollapsed();
+    });
+
+    describe('should close modal if user clicks the "x" from', () => {
+        it('the expanded "Invite others to view" section', async () => {
+            inviteOthersToViewIsExpanded();
+            expect(modalContent).not.toBeNull();
+
+            screen.getByTestId('modalCloseButton').click();
+
+            await waitFor(() => expect(modalContent).toBeNull());
+        });
+
+        it('the expanded "Invite others to edit" section', async () => {
+            getInviteOthersToEditButton().click();
+            inviteOthersToEditIsExpanded();
+            expect(modalContent).not.toBeNull();
+
+            screen.getByTestId('modalCloseButton').click();
+
+            await waitFor(() => expect(modalContent).toBeNull())
+        });
     });
 });
 
@@ -84,4 +122,12 @@ function inviteOthersToEditCollapsed() {
     expect(screen.queryByText('user_id')).toBeNull();
     expect(screen.queryByText('user_id_2')).toBeNull();
     expect(screen.queryByText('Invite')).toBeNull();
+}
+
+function getInviteOthersToViewButton() {
+    return screen.getAllByTestId('multiModalExpandCollapseButton')[0]
+}
+
+function getInviteOthersToEditButton() {
+    return screen.getAllByTestId('multiModalExpandCollapseButton')[1]
 }
