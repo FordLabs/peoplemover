@@ -17,15 +17,15 @@
 
 import InviteEditorsFormSection from './InviteEditorsFormSection/InviteEditorsFormSection';
 import React, {useState} from 'react';
-import {Space} from '../../Space/Space';
-import {GlobalStateProps} from '../../Redux/Reducers';
+import {useSetRecoilState} from 'recoil';
+import {Space} from 'Space/Space';
+import {GlobalStateProps} from 'Redux/Reducers';
 import {connect} from 'react-redux';
 import MultiModalCardBanner from './MultiModalCardBanner/MultiModalCardBanner';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection/ViewOnlyAccessFormSection';
+import {ModalContentsState} from 'State/ModalContentsState';
 
 import './ShareAccessForm.scss';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from '../../State/ModalContentsState';
 
 interface Props {
     currentSpace: Space;
