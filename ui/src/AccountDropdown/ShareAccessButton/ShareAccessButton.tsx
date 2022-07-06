@@ -17,8 +17,8 @@
 
 import React from 'react';
 import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from '../State/ModalContentsState';
-import ShareAccessForm from './ShareAccessForm/ShareAccessForm';
+import {ModalContentsState} from '../../State/ModalContentsState';
+import ShareAccessForm from '../ShareAccessForm/ShareAccessForm';
 
 interface Props {
     focusOnRender?: boolean;
@@ -32,7 +32,8 @@ function ShareAccessButton({ focusOnRender = false }: Props): JSX.Element {
         title: 'Share Access',
         component: <ShareAccessForm />,
         hideTitle: true,
-        hideCloseBtn: true
+        hideCloseBtn: true,
+        hideBackground: true
     });
 
     return showButton ? (

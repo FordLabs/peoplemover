@@ -32,7 +32,7 @@ import {nameSplitPattern, userIdPattern, validate} from 'Utils/UserIdValidator';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {CurrentUserState} from 'State/CurrentUserState';
 import {ModalContentsState} from 'State/ModalContentsState';
-import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
+import GrantEditAccessConfirmationForm from '../GrantAccessConfirmationForm/GrantEditAccessConfirmationForm';
 
 import './InviteEditorsFormSection.scss';
 

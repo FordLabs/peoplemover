@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +17,15 @@
 
 import React, {useState} from 'react';
 import ReactSwitch from 'react-switch';
-import SpaceClient from '../Space/SpaceClient';
-import {Space} from '../Space/Space';
-import {Dispatch} from 'redux';
-import {setCurrentSpaceAction} from '../Redux/Actions';
-import {GlobalStateProps} from '../Redux/Reducers';
+import SpaceClient from 'Space/SpaceClient';
+import {Space} from 'Space/Space';
+import {Dispatch} from 'Redux';
+import {setCurrentSpaceAction} from 'Redux/Actions';
+import {GlobalStateProps} from 'Redux/Reducers';
 import {connect} from 'react-redux';
 
 import './ViewOnlyAccessFormSection.scss';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoEvents from 'Matomo/MatomoEvents';
 
 interface Props {
     collapsed?: boolean;

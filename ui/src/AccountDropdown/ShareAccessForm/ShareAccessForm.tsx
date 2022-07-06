@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import InviteEditorsFormSection from '../InviteEditorsFormSection';
+import InviteEditorsFormSection from './InviteEditorsFormSection/InviteEditorsFormSection';
 import React, {useState} from 'react';
 import {Space} from '../../Space/Space';
 import {GlobalStateProps} from '../../Redux/Reducers';
 import {connect} from 'react-redux';
 import MultiModalCardBanner from '../../Modal/MultiModalCardBanner/MultiModalCardBanner';
-import ViewOnlyAccessFormSection from '../ViewOnlyAccessFormSection';
+import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection/ViewOnlyAccessFormSection';
 
 import './ShareAccessForm.scss';
 import {useSetRecoilState} from 'recoil';
@@ -39,7 +39,7 @@ function ShareAccessForm({ currentSpace }: Props) {
 
     return (
         <div className="share-access-form">
-            <div className="form-section">
+            <div className="form-container" data-testid="modalCard" aria-expanded={!isFirstSectionCollapsed}>
                 <MultiModalCardBanner
                     title="Invite others to view"
                     collapsed={isFirstSectionCollapsed}
@@ -48,7 +48,7 @@ function ShareAccessForm({ currentSpace }: Props) {
                 />
                 <ViewOnlyAccessFormSection collapsed={isFirstSectionCollapsed}/>
             </div>
-            <div className="form-section">
+            <div className="form-container" data-testid="modalCard" aria-expanded={isFirstSectionCollapsed}>
                 <MultiModalCardBanner
                     title="Invite others to edit"
                     collapsed={!isFirstSectionCollapsed}

@@ -30,7 +30,7 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
-import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
+import ShareAccessForm from './ShareAccessForm/ShareAccessForm';
 
 describe('Account Dropdown', () => {
     let modalContent: ModalContents | null;
@@ -91,7 +91,11 @@ describe('Account Dropdown', () => {
             it('should trigger edit contributors modal on "Share Access" click', async () => {
                 fireEvent.click(await screen.findByText('Share Access'));
                 await waitFor(() => expect(modalContent).toEqual({
-                    title: 'Invite others to view', component: <ViewOnlyAccessFormSection/>
+                    title: 'Share Access',
+                    component: <ShareAccessForm />,
+                    hideTitle: true,
+                    hideCloseBtn: true,
+                    hideBackground: true
                 }));
             });
         });

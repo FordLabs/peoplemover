@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import TestUtils, {renderWithRedux} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {fireEvent, screen, waitFor, within} from '@testing-library/react';
 import Cookies from 'universal-cookie';
-import SpaceClient from '../Space/SpaceClient';
-import RedirectClient from '../Utils/RedirectClient';
-import {Space} from '../Space/Space';
+import SpaceClient from 'Space/SpaceClient';
+import RedirectClient from 'Utils/RedirectClient';
+import {Space} from 'Space/Space';
 import {RecoilRoot} from 'recoil';
-import {CurrentUserState} from '../State/CurrentUserState';
+import {CurrentUserState} from 'State/CurrentUserState';
 
-jest.mock('../Space/SpaceClient');
+jest.mock('Space/SpaceClient');
 
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();
@@ -45,7 +45,7 @@ describe('Invite Editors Form', function() {
     describe('Feature toggle enabled', () => {
         describe('Add editors', () => {
             it('should render the local test space', async () => {
-                renderComponentWithSpaceFromProps();
+                await renderComponentWithSpaceFromProps();
                 await screen.findByText('Enter CDSID of your editors');
                 const inputField = screen.getByLabelText(/People with this permission can edit/);
                 fireEvent.change(inputField, {target: {value: 'hford1'}});
@@ -56,7 +56,7 @@ describe('Invite Editors Form', function() {
 
                 fireEvent.click(screen.getByTestId('inviteEditorsFormSubmitButton'));
 
-                expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(space, ['hford1']);
+                await waitFor(() => expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(space, ['hford1']));
             });
 
             it('should add users as editors', async function() {
@@ -71,7 +71,7 @@ describe('Invite Editors Form', function() {
 
                 fireEvent.click(screen.getByTestId('inviteEditorsFormSubmitButton'));
 
-                validateApiCall(['hford1']);
+                await validateApiCall(['hford1']);
             });
 
             it('should not add invalid cdsid user as editor', async function() {
@@ -150,7 +150,7 @@ describe('Invite Editors Form', function() {
                 expect(screen.queryByTestId('inviteEditorsFormErrorMessage')).not.toBeInTheDocument();
                 fireEvent.click(submitButton);
 
-                validateApiCall(['hford1', 'bford']);
+                await validateApiCall(['hford1', 'bford']);
             });
 
             describe('Submit Button and Error Message', () => {
@@ -333,7 +333,7 @@ const space: Space = {
     todayViewIsPublic: true,
 };
 
-function renderComponentWithSpaceFromProps(): void {
+async function renderComponentWithSpaceFromProps() {
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
             set(CurrentUserState, 'User_id')
@@ -343,8 +343,10 @@ function renderComponentWithSpaceFromProps(): void {
         undefined,
         {currentSpace: TestData.space}
     );
+
+    await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled());
 }
 
-function validateApiCall(userIds: string[]): void {
-    expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(TestData.space, userIds);
+async function validateApiCall(userIds: string[]) {
+    await waitFor(() => expect(SpaceClient.inviteUsersToSpace).toHaveBeenCalledWith(TestData.space, userIds));
 }

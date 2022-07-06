@@ -65,12 +65,12 @@ function Modal() {
             <div
                 {...attr.dialog}
                 data-testid="modalContent"
-                className="modal-content"
+                className={ `modal-content ${ modalContents?.hideBackground ? '' : 'form-container' }`}
             >
                 <p {...attr.title}
                     className="modal-title"
                     data-testid="modalTitle"
-                    style={{ display: modalContents?.hideTitle ? 'none': 'initial' }}
+                    style={{ display: modalContents?.hideTitle ? 'none': '' }}
                 >
                     {modalContents?.title}
                 </p>

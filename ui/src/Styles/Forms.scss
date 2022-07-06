@@ -15,17 +15,9 @@
  * limitations under the License.
  */
 
-import {atom} from 'recoil';
-
-export interface ModalContents {
-    title: string;
-    component: JSX.Element;
-    hideBackground?: boolean;
-    hideTitle?: boolean;
-    hideCloseBtn?: boolean;
+.form-container {
+  background-color: white;
+  border-radius: 6px;
+  padding: 2rem;
+  margin-bottom: 1rem;
 }
-
-export const ModalContentsState = atom<ModalContents | null>({
-    key: 'modalContentsState',
-    default: null,
-});

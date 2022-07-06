@@ -15,17 +15,17 @@
  *  limitations under the License.
  */
 
-import {renderWithRedux} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import {renderWithRedux} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import rootReducer from '../Redux/Reducers';
-import SpaceClient from '../Space/SpaceClient';
-import {createStore, Store} from 'redux';
-import {Space} from '../Space/Space';
-import {setCurrentSpaceAction} from '../Redux/Actions';
+import rootReducer from 'Redux/Reducers';
+import SpaceClient from 'Space/SpaceClient';
+import {createStore, Store} from 'Redux';
+import {Space} from 'Space/Space';
+import {setCurrentSpaceAction} from 'Redux/Actions';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from 'CommonTypes/MatomoWindow';
 
 declare let window: MatomoWindow;
 

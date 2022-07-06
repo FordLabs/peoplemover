@@ -17,7 +17,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
-import ShareAccessButton from './ShareAccessButton';
+import ShareAccessButton from './ShareAccessButton/ShareAccessButton';
 import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
 

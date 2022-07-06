@@ -16,11 +16,12 @@
  */
 
 
-@import "../Styles/Colors.scss";
+@import "Styles/Colors";
 
-.grantEditAccessConfirmationForm {
+.grant-edit-access-confirmation-form {
   margin: 0 auto;
   color: $gray-1;
+  text-align: center;
 
   .shareLinkLabel {
     text-align: left;

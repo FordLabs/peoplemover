@@ -16,9 +16,9 @@
  */
 
 import React, {useState} from 'react';
-import FormButton from '../ModalFormComponents/FormButton';
+import FormButton from 'ModalFormComponents/FormButton';
 import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from '../State/ModalContentsState';
+import {ModalContentsState} from 'State/ModalContentsState';
 
 import './GrantEditAccessConfirmationForm.scss';
 
@@ -37,7 +37,7 @@ const GrantEditAccessConfirmationForm = (): JSX.Element => {
     };
 
     return (
-        <form className="grantEditAccessConfirmationForm">
+        <form className="grant-edit-access-confirmation-form">
             <div className="shareLinkLabel">
                 Share this link with your collaborators.
             </div>
