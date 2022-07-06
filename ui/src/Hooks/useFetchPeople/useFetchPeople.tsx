@@ -18,9 +18,9 @@
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import {useParams} from 'react-router-dom';
-import {PeopleState} from '../State/PeopleState';
-import {Person} from '../People/Person';
-import PeopleClient from '../People/PeopleClient';
+import {PeopleState} from 'State/PeopleState';
+import {Person} from 'People/Person';
+import PeopleClient from 'People/PeopleClient';
 
 interface UseFetchPeople {
     people: Person[];

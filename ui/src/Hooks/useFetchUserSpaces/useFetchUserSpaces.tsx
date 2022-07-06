@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import SpaceClient from '../Space/SpaceClient';
-import {Space} from '../Space/Space';
+import SpaceClient from 'Space/SpaceClient';
+import {Space} from 'Space/Space';
 import {useRecoilState} from 'recoil';
-import {UserSpacesState} from '../State/UserSpacesState';
+import {UserSpacesState} from 'State/UserSpacesState';
 import {useCallback} from 'react';
 
 interface UseFetchUserSpaces {

@@ -19,8 +19,6 @@ import React from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ColorClient from '../Roles/ColorClient';
-import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {MutableSnapshot, RecoilRoot} from 'recoil';
@@ -46,22 +44,6 @@ function mockClientCalls(): void {
     AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn().mockResolvedValue({ data: [] });
 
     ColorClient.getAllColors = jest.fn().mockResolvedValue({ data: TestData.colors });
-
-    ProductTagClient.get = jest.fn().mockResolvedValue({ data: TestData.productTags });
-    ProductTagClient.add = jest.fn().mockResolvedValue({ data: {id: 9, name: 'Fin Tech'} });
-    ProductTagClient.edit = jest.fn().mockResolvedValue({
-        data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
-    });
-    ProductTagClient.delete = jest.fn().mockResolvedValue({ data: {} });
-
-    PersonTagClient.get = jest.fn().mockResolvedValue({ data: TestData.personTags });
-    PersonTagClient.add = jest.fn().mockResolvedValue({
-        data: {id: 1337, name: 'Low Achiever', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
-    });
-    PersonTagClient.edit = jest.fn().mockResolvedValue({
-        data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
-    });
-    PersonTagClient.delete = jest.fn().mockResolvedValue({ data: {} });
 }
 
 export function renderWithRedux(

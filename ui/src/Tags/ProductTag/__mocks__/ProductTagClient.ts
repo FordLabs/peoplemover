@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-import {AvailableActions} from '../Actions';
-import {Tag} from '../../Tags/Tag';
-import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
+import TestData from 'Utils/TestData';
 
-const personTagsReducer = (state: Array<Tag> = [], action: {type: AvailableActions; personTags: Array<Tag>} ): Array<Tag> => {
-    if (action.type === AvailableActions.SET_PERSON_TAGS) {
-        const personTags = [...action.personTags];
-        sortTagsAlphabetically(personTags);
-        return personTags;
-    } else {
-        return state;
-    }
-};
+const ProductTagClient = {
+    get: jest.fn().mockResolvedValue({ data: [...TestData.productTags] }),
+    add: jest.fn().mockResolvedValue({ data: {id: 9, name: 'Fin Tech'} }),
+    edit: jest.fn().mockResolvedValue({
+        data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+    }),
+    delete:  jest.fn().mockResolvedValue({ data: {} })
+}
 
-export default personTagsReducer;
+export default ProductTagClient;

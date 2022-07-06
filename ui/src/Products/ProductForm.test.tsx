@@ -32,10 +32,12 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
 import {PreloadedState} from 'redux';
 import {RecoilRoot} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {ProductsState} from '../State/ProductsState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState} from 'State/ProductsState';
+import {ProductTagsState} from 'State/ProductTagsState';
 
-jest.mock('../Locations/LocationClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
 
 describe('ProductForm', function() {
     const mockStore = configureStore([]);
@@ -182,7 +184,6 @@ describe('ProductForm', function() {
         let history: History;
         const initialState: PreloadedState<Partial<GlobalStateProps>> = {
             currentSpace: TestData.space,
-            productTags: TestData.productTags,
             allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         };
 
@@ -198,6 +199,7 @@ describe('ProductForm', function() {
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, moment().toDate())
                     set(ProductsState, TestData.products)
+                    set(ProductTagsState, TestData.productTags)
                 }}>
                     <ProductForm editing={false} />
                 </RecoilRoot>,

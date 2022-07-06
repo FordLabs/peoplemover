@@ -21,10 +21,7 @@ import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
 import currentSpaceReducer from './currentSpaceReducer';
-import productTagsReducer from './productTagsReducer';
-import personTagsReducer from './personTagsReducer';
 import {Space} from '../../Space/Space';
-import {Tag} from '../../Tags/Tag';
 import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
 
 export default combineReducers({
@@ -32,8 +29,6 @@ export default combineReducers({
     productRefs: productRefsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
     currentSpace: currentSpaceReducer,
-    productTags: productTagsReducer,
-    personTags: personTagsReducer,
 });
 
 export interface GlobalStateProps {
@@ -41,8 +36,4 @@ export interface GlobalStateProps {
     productRefs: Array<ProductCardRefAndProductPair>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     currentSpace: Space;
-    productTags: Array<Tag>;
-    personTags: Array<Tag>;
 }
-
-

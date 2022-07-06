@@ -22,10 +22,12 @@ import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 import LocationClient from '../Locations/LocationClient';
 import TestUtils from '../Utils/TestUtils';
 
-jest.mock('../Products/ProductClient');
-jest.mock('../Locations/LocationClient');
-jest.mock('../Space/SpaceClient');
-jest.mock('../Roles/RoleClient');
+jest.mock('Products/ProductClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Space/SpaceClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
 
 describe('Filter products', () => {
     class MockLocalStorage {

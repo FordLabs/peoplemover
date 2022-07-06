@@ -31,7 +31,7 @@ import {Space} from '../Space/Space';
 import {INACTIVE_EDIT_STATE_INDEX} from '../Tags/MyTagsForm';
 import {RoleEditRequest} from './RoleEditRequest.interface';
 import {setupSpaceAction} from '../Redux/Actions';
-import useFetchRoles from '../Hooks/useFetchRoles';
+import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 
 interface Props {
     colors: Array<Color>;

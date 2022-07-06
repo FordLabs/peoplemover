@@ -23,15 +23,18 @@ import {Product} from '../Products/Product';
 import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
 import {RecoilRoot} from 'recoil';
-import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
-import {ProductsState} from '../State/ProductsState';
-import {PeopleState} from '../State/PeopleState';
+import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
+import {ProductsState} from 'State/ProductsState';
+import {PeopleState} from 'State/PeopleState';
+import {ProductTagsState} from 'State/ProductTagsState';
 
-jest.mock('../Products/ProductClient');
-jest.mock('../Space/SpaceClient');
-jest.mock('../People/PeopleClient');
-jest.mock('../Roles/RoleClient');
-jest.mock('../Locations/LocationClient');
+jest.mock('Products/ProductClient');
+jest.mock('Space/SpaceClient');
+jest.mock('People/PeopleClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';
@@ -136,14 +139,13 @@ describe('Unassigned Products', () => {
     });
 
     describe('Edit menus', () => {
-        const initialState = {productTags: [TestData.productTag1]};
-
         beforeEach(async () => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
 
-            await TestUtils.renderPeopleMoverComponent(undefined, initialState, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
                 set(PeopleState, TestData.people)
+                set(ProductTagsState,  [TestData.productTag1])
             });
         });
 

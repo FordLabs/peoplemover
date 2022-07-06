@@ -20,11 +20,7 @@ import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
 import {Space} from '../../Space/Space';
-import {Tag} from '../../Tags/Tag';
-import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
-import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
-import sortTagsAlphabetically from '../../Tags/sortTagsAlphabetically';
 
 export enum AvailableActions {
     SET_CURRENT_MODAL,
@@ -32,9 +28,7 @@ export enum AvailableActions {
     REGISTER_PRODUCT_REF,
     UNREGISTER_PRODUCT_REF,
     SET_ALL_FILTER_OPTIONS,
-    SET_CURRENT_SPACE,
-    SET_PRODUCT_TAGS,
-    SET_PERSON_TAGS,
+    SET_CURRENT_SPACE
 }
 
 export const setCurrentModalAction = (modalState: CurrentModalState) => ({
@@ -66,37 +60,6 @@ export const setCurrentSpaceAction = (space: Space) => ({
     type: AvailableActions.SET_CURRENT_SPACE,
     space,
 });
-
-export const setProductTagsAction = (productTags: Array<Tag>) => ({
-    type: AvailableActions.SET_PRODUCT_TAGS,
-    productTags,
-});
-
-export const setPersonTagsAction = (personTags: Array<Tag>) => ({
-    type: AvailableActions.SET_PERSON_TAGS,
-    personTags,
-});
-
-export const fetchProductTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
-    (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return ProductTagClient.get(getState().currentSpace.uuid!,)
-            .then(result => {
-                const productTags: Array<Tag> = result.data || [];
-                sortTagsAlphabetically(productTags);
-                dispatch(setProductTagsAction(productTags));
-            });
-    };
-
-
-export const fetchPersonTagsAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = () =>
-    (dispatch: Dispatch, getState: Function): Promise<void> => {
-        return PersonTagClient.get(getState().currentSpace.uuid!,)
-            .then(result => {
-                const personTags: Array<Tag> = result.data || [];
-                sortTagsAlphabetically(personTags);
-                dispatch(setPersonTagsAction(personTags));
-            });
-    };
 
 export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (space: Space) =>
     (dispatch: Dispatch): Promise<void> => {

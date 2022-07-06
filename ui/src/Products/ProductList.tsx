@@ -76,7 +76,6 @@ function ProductList({ allGroupedTagFilterOptions }: Props): JSX.Element {
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    productTags: state.productTags,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

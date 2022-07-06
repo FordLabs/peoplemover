@@ -31,7 +31,7 @@ import {useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 
 import './SpaceDashboard.scss';
-import useFetchUserSpaces from '../Hooks/useFetchUserSpaces';
+import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 
 interface Props {
     currentSpace: Space;

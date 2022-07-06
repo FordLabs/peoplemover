@@ -40,7 +40,7 @@ import {isPersonMatchingSelectedFilters} from '../People/Person';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsDraggingState} from '../State/IsDraggingState';
-import useFetchProducts from '../Hooks/useFetchProducts';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 
 import '../Products/Product.scss';
 

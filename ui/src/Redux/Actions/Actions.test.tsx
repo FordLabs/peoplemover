@@ -15,14 +15,11 @@
  * limitations under the License.
  */
 
-import {AvailableActions, fetchPersonTagsAction, fetchProductTagsAction, setupSpaceAction} from './index';
+import {AvailableActions, setupSpaceAction} from './index';
 import configureStore, {MockStoreCreator, MockStoreEnhanced} from 'redux-mock-store';
 import TestData from '../../Utils/TestData';
 import thunk from 'redux-thunk';
 import * as filterConstants from '../../SortingAndFiltering/FilterLibraries';
-import {AxiosResponse} from 'axios';
-import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
-import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 
 describe('Actions', () => {
     let mockStore: MockStoreCreator<unknown, {}>;
@@ -51,42 +48,6 @@ describe('Actions', () => {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return store.dispatch<any>(setupSpaceAction(TestData.space)).then(() => {
-                expect(store.getActions()).toEqual(expectedActions);
-            });
-        });
-    });
-
-    describe('fetchProductTagsAction', () => {
-        it('should invoke ProductTagClient.get and fire the setProductTag Action', () => {
-            const mock = jest.spyOn(ProductTagClient, 'get');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestData.productTags} as AxiosResponse));
-
-            const expectedActions = [
-                {type: AvailableActions.SET_PRODUCT_TAGS, productTags: TestData.productTags},
-            ];
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return store.dispatch<any>(fetchProductTagsAction()).then(() => {
-                expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
-                expect(store.getActions()).toEqual(expectedActions);
-            });
-        });
-    });
-
-    describe('fetchPersonTagsAction', () => {
-        it('should invoke PersonTagClient.get and fire the setPersonTags Action', () => {
-            const mock = jest.spyOn(PersonTagClient, 'get');
-            mock.mockReturnValueOnce(Promise.resolve({data: TestData.personTags} as AxiosResponse));
-
-            const expectedActions = [
-                {type: AvailableActions.SET_PERSON_TAGS, personTags: TestData.personTags},
-            ];
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return store.dispatch<any>(fetchPersonTagsAction()).then(() => {
-                expect(mock).toHaveBeenCalledTimes(1);
-                expect(mock).toHaveBeenCalledWith(TestData.space.uuid);
                 expect(store.getActions()).toEqual(expectedActions);
             });
         });

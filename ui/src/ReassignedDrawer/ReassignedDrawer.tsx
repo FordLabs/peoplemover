@@ -27,10 +27,10 @@ import MatomoEvents from '../Matomo/MatomoEvents';
 import PeopleClient from '../People/PeopleClient';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
-import useFetchProducts from '../Hooks/useFetchProducts';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 
 import './ReassignedDrawer.scss';
-import useFetchPeople from '../Hooks/useFetchPeople';
+import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 
 interface Props {
     currentSpace: Space;

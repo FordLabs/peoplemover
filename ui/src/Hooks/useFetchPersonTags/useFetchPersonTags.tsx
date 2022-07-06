@@ -18,34 +18,35 @@
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import {useParams} from 'react-router-dom';
-import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
-import LocationClient from '../Locations/LocationClient';
-import {LocationsState} from '../State/LocationsState';
-import {LocationTag} from '../Locations/LocationTag.interface';
+import {RoleTag} from 'Roles/RoleTag.interface';
+import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
+import {Tag} from 'Tags/Tag';
+import {PersonTagsState} from 'State/PersonTagsState';
+import PersonTagClient from 'Tags/PersonTag/PersonTagClient';
 
-interface UseFetchLocations {
-    locations: LocationTag[];
-    fetchLocations(): void
+interface UseFetchPersonTags {
+    personTags: Tag[];
+    fetchPersonTags(): void
 }
 
-function useFetchLocations(): UseFetchLocations {
+function useFetchPersonTags(): UseFetchPersonTags {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
-    const [locations, setLocations] = useRecoilState(LocationsState);
+    const [personTags, setPersonTags] = useRecoilState(PersonTagsState);
 
-    const fetchLocations = useCallback(() => {
-        LocationClient.get(teamUUID)
+    const fetchPersonTags = useCallback(() => {
+        PersonTagClient.get(teamUUID)
             .then(result => {
-                const locationsForSpace: Array<LocationTag> = [...result.data];
-                sortTagsAlphabetically(locationsForSpace);
-                setLocations(locationsForSpace)
+                const tags: Array<RoleTag> = [...result.data];
+                sortTagsAlphabetically(tags);
+                setPersonTags(tags)
             })
             .catch(console.error);
-    }, [setLocations, teamUUID])
+    }, [setPersonTags, teamUUID])
 
     return {
-        locations: locations || [],
-        fetchLocations
+        personTags: personTags || [],
+        fetchPersonTags
     };
 }
 
-export default useFetchLocations;
+export default useFetchPersonTags;

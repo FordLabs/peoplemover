@@ -25,10 +25,10 @@ import {PreloadedState} from 'redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {RecoilRoot} from 'recoil';
 import {LocationsState} from '../State/LocationsState';
+import {ProductTagsState} from '../State/ProductTagsState';
 
 describe('My Tags Form', () => {
     const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-        productTags: TestData.productTags,
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         currentSpace: TestData.space,
     };
@@ -37,6 +37,7 @@ describe('My Tags Form', () => {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(LocationsState, TestData.locations)
+                set(ProductTagsState, TestData.productTags)
             }}>
                 <MyTagsForm filterType={FilterTypeListings.Location}/>
             </RecoilRoot>,
@@ -54,6 +55,7 @@ describe('My Tags Form', () => {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(LocationsState, TestData.locations)
+                set(ProductTagsState, TestData.productTags)
             }}>
                 <MyTagsForm filterType={FilterTypeListings.ProductTag}/>
             </RecoilRoot>,

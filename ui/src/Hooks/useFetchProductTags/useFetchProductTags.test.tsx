@@ -19,26 +19,37 @@ import React, {ReactNode} from 'react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {act, renderHook} from '@testing-library/react-hooks';
 import {RecoilRoot} from 'recoil';
-import TestData from '../Utils/TestData';
-import useFetchPeople from './useFetchPeople';
-import PeopleClient from '../People/PeopleClient';
+import TestData from 'Utils/TestData';
+import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
+import useFetchProductTags from './useFetchProductTags';
 
-jest.mock('../People/PeopleClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
 
 const teamUUID = 'team-uuid';
 
-describe('useFetchPeople Hook', () => {
-    it('should fetch all people and store them in recoil', async () => {
-        const { result } = renderHook(() => useFetchPeople(), { wrapper });
+const productTagsNotAlphabetical = TestData.productTags;
 
-        expect(PeopleClient.getAllPeopleInSpace).not.toHaveBeenCalled()
-        expect(result.current.people).toEqual([]);
+const productTagsAlphabetical = [
+    TestData.productTag1,
+    TestData.productTag3,
+    TestData.productTag2,
+    TestData.productTag4,
+];
+
+describe('useFetchProductTags Hook', () => {
+    it('should fetch all product tags for space and store them in recoil alphabetically', async () => {
+        ProductTagClient.get = jest.fn().mockResolvedValue({ data: productTagsNotAlphabetical })
+
+        const { result } = renderHook(() => useFetchProductTags(), { wrapper });
+
+        expect(ProductTagClient.get).not.toHaveBeenCalled()
+        expect(result.current.productTags).toEqual([]);
 
         await act(async () => {
-            result.current.fetchPeople()
+            result.current.fetchProductTags()
         });
-        expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(teamUUID);
-        expect(result.current.people).toEqual(TestData.people);
+        expect(ProductTagClient.get).toHaveBeenCalledWith(teamUUID);
+        expect(result.current.productTags).toEqual(productTagsAlphabetical);
     });
 });
 

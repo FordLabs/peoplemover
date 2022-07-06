@@ -17,10 +17,10 @@
 
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {useCallback} from 'react';
-import {Product} from '../Products/Product';
-import {ProductsState} from '../State/ProductsState';
-import ProductClient from '../Products/ProductClient';
-import {ViewingDateState} from '../State/ViewingDateState';
+import {Product} from 'Products/Product';
+import {ProductsState} from 'State/ProductsState';
+import ProductClient from 'Products/ProductClient';
+import {ViewingDateState} from 'State/ViewingDateState';
 import {useParams} from 'react-router-dom';
 
 interface UseFetchProducts {

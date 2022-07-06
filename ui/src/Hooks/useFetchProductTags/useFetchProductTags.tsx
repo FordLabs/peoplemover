@@ -18,34 +18,35 @@
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import {useParams} from 'react-router-dom';
-import RoleClient from '../Roles/RoleClient';
-import {RolesState} from '../State/RolesState';
-import {RoleTag} from '../Roles/RoleTag.interface';
-import sortTagsAlphabetically from '../Tags/sortTagsAlphabetically';
+import {RoleTag} from 'Roles/RoleTag.interface';
+import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
+import {Tag} from 'Tags/Tag';
+import {ProductTagsState} from 'State/ProductTagsState';
+import ProductTagClient from 'Tags/ProductTag/ProductTagClient';
 
-interface UseFetchRoles {
-    roles: RoleTag[];
-    fetchRoles(): void
+interface UseFetchProductTags {
+    productTags: Tag[];
+    fetchProductTags(): void
 }
 
-function useFetchRoles(): UseFetchRoles {
+function useFetchProductTags(): UseFetchProductTags {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
-    const [roles, setRoles] = useRecoilState(RolesState);
+    const [productTags, setProductTags] = useRecoilState(ProductTagsState);
 
-    const fetchRoles = useCallback(() => {
-        RoleClient.get(teamUUID)
+    const fetchProductTags = useCallback(() => {
+        ProductTagClient.get(teamUUID)
             .then(result => {
-                const roles: Array<RoleTag> = [...result.data];
-                sortTagsAlphabetically(roles);
-                setRoles(roles)
+                const tags: Array<RoleTag> = [...result.data];
+                sortTagsAlphabetically(tags);
+                setProductTags(tags)
             })
             .catch(console.error);
-    }, [setRoles, teamUUID])
+    }, [setProductTags, teamUUID])
 
     return {
-        roles: roles || [],
-        fetchRoles
+        productTags: productTags || [],
+        fetchProductTags
     };
 }
 
-export default useFetchRoles;
+export default useFetchProductTags;

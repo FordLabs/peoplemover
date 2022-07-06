@@ -17,12 +17,12 @@
 
 import React, {ReactNode} from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
-import TestData from '../Utils/TestData';
-import SpaceClient from '../Space/SpaceClient';
+import TestData from 'Utils/TestData';
+import SpaceClient from 'Space/SpaceClient';
 import useFetchUserSpaces from './useFetchUserSpaces';
 import {RecoilRoot} from 'recoil';
 
-jest.mock('../Space/SpaceClient');
+jest.mock('Space/SpaceClient');
 
 describe('useFetchUserSpaces Hook', () => {
     it('should fetch all spaces and store them in recoil', async () => {

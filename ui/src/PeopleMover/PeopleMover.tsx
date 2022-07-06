@@ -21,12 +21,7 @@ import ProductList from '../Products/ProductList';
 import Branding from '../ReusableComponents/Branding';
 import CurrentModal from '../Redux/Containers/CurrentModal';
 import {connect} from 'react-redux';
-import {
-    fetchPersonTagsAction,
-    fetchProductTagsAction,
-    setCurrentModalAction,
-    setupSpaceAction,
-} from '../Redux/Actions';
+import {setCurrentModalAction, setupSpaceAction} from '../Redux/Actions';
 import SubHeader from '../Header/SubHeader';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
@@ -34,7 +29,6 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {Space} from '../Space/Space';
 import SpaceClient from '../Space/SpaceClient';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
-import {Tag} from '../Tags/Tag';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import {AxiosError} from 'axios';
@@ -47,10 +41,12 @@ import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import useFetchProducts from '../Hooks/useFetchProducts';
-import useFetchPeople from '../Hooks/useFetchPeople';
-import useFetchRoles from '../Hooks/useFetchRoles';
-import useFetchLocations from '../Hooks/useFetchLocations';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
+import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
+import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
+import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
+import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
+import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
@@ -62,8 +58,6 @@ export interface PeopleMoverProps {
     currentModal: CurrentModalState;
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    fetchProductTags(): Array<Tag>;
-    fetchPersonTags(): Array<Tag>;
     setCurrentModal(modalState: CurrentModalState): void;
     setSpace(space: Space): void;
 }
@@ -72,8 +66,6 @@ function PeopleMover({
     currentModal,
     currentSpace,
     allGroupedTagFilterOptions,
-    fetchProductTags,
-    fetchPersonTags,
     setSpace,
     setCurrentModal,
 }: PeopleMoverProps): JSX.Element {
@@ -87,6 +79,8 @@ function PeopleMover({
     const { fetchRoles } = useFetchRoles();
     const { fetchLocations } = useFetchLocations()
     const { fetchProducts, products } = useFetchProducts();
+    const { fetchProductTags } = useFetchProductTags();
+    const { fetchPersonTags } = useFetchPersonTags();
 
     const hasProductsAndFilters: boolean = products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0;
 
@@ -188,8 +182,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchProductTags: () => dispatch(fetchProductTagsAction()),
-    fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
     setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
     setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
 });

@@ -36,9 +36,11 @@ import {RecoilRoot} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 jest.mock('./ProductClient');
-jest.mock('../Space/SpaceClient');
-jest.mock('../Roles/RoleClient');
-jest.mock('../Locations/LocationClient');
+jest.mock('Space/SpaceClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
 
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
