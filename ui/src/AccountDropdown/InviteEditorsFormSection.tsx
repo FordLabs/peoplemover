@@ -16,25 +16,25 @@
  */
 
 import React, {CSSProperties, FormEvent, useEffect, useState} from 'react';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from 'Space/SpaceClient';
 import {connect} from 'react-redux';
-import FormButton from '../ModalFormComponents/FormButton';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Space} from '../Space/Space';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
+import FormButton from 'ModalFormComponents/FormButton';
+import {GlobalStateProps} from 'Redux/Reducers';
+import {Space} from 'Space/Space';
+import {UserSpaceMapping} from 'Space/UserSpaceMapping';
 
-import UserAccessList from '../ReusableComponents/UserAccessList';
+import UserAccessList from 'ReusableComponents/UserAccessList';
 import Creatable from 'react-select/creatable';
-import {reactSelectStyles} from '../ModalFormComponents/ReactSelectStyles';
+import {reactSelectStyles} from 'ModalFormComponents/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';
-import {Option} from '../CommonTypes/Option';
-import {nameSplitPattern, userIdPattern, validate} from '../Utils/UserIdValidator';
+import {Option} from 'CommonTypes/Option';
+import {nameSplitPattern, userIdPattern, validate} from 'Utils/UserIdValidator';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {CurrentUserState} from '../State/CurrentUserState';
+import {CurrentUserState} from 'State/CurrentUserState';
+import {ModalContentsState} from 'State/ModalContentsState';
+import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
 
 import './InviteEditorsFormSection.scss';
-import {ModalContentsState} from '../State/ModalContentsState';
-import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
 
 const inviteEditorsStyle = {
     ...reactSelectStyles,
@@ -152,7 +152,7 @@ function InviteEditorsFormSection({collapsed, currentSpace}: InviteEditorsFormRe
 
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
-            {!isExpanded && <span className={'inviteEditorsLabel'}>People with this permission can edit</span>}
+            {!isExpanded && <span className="inviteEditorsLabel">People with this permission can edit</span>}
             {isExpanded && (
                 <>
                     <label htmlFor="employeeIdTextArea" className="inviteEditorsLabel">

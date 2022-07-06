@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {atom} from 'recoil';
+.share-access-form {
+  button.expand-collapse-toggle-button:disabled {
+    opacity: unset;
+    cursor: unset;
+  }
 
-export interface ModalContents {
-    title: string;
-    component: JSX.Element;
-    hideTitle?: boolean;
-    hideCloseBtn?: boolean;
+  .form-section {
+    background-color: white;
+    border-radius: 6px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+  }
 }
-
-export const ModalContentsState = atom<ModalContents | null>({
-    key: 'modalContentsState',
-    default: null,
-});

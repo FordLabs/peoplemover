@@ -24,8 +24,7 @@ import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
 import './Modal.scss';
 
 function Modal() {
-    const [modalContents, setModalContents] =
-        useRecoilState<ModalContents | null>(ModalContentsState);
+    const [modalContents, setModalContents] = useRecoilState<ModalContents | null>(ModalContentsState);
 
     const [modalInstance, attr] = useA11yDialog({
         id: 'modal-container',
@@ -68,19 +67,25 @@ function Modal() {
                 data-testid="modalContent"
                 className="modal-content"
             >
-                <p {...attr.title} className="modal-title" data-testid="modalTitle">
+                <p {...attr.title}
+                    className="modal-title"
+                    data-testid="modalTitle"
+                    style={{ display: modalContents?.hideTitle ? 'none': 'initial' }}
+                >
                     {modalContents?.title}
                 </p>
                 {modalContents?.component}
-                <button
-                    {...attr.closeButton}
-                    className="material-icons modal-close-button"
-                    aria-label="Close Modal"
-                    data-testid="modalCloseButton"
-                    onClick={clearModalContents}
-                >
-                    close
-                </button>
+                {!modalContents?.hideCloseBtn && (
+                    <button
+                        {...attr.closeButton}
+                        className="material-icons modal-close-button"
+                        aria-label="Close Modal"
+                        data-testid="modalCloseButton"
+                        onClick={clearModalContents}
+                    >
+                        close
+                    </button>
+                )}
             </div>
         </div>
     );

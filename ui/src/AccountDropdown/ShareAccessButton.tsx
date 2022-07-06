@@ -18,7 +18,7 @@
 import React from 'react';
 import {useSetRecoilState} from 'recoil';
 import {ModalContentsState} from '../State/ModalContentsState';
-import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
+import ShareAccessForm from './ShareAccessForm/ShareAccessForm';
 
 interface Props {
     focusOnRender?: boolean;
@@ -28,14 +28,11 @@ function ShareAccessButton({ focusOnRender = false }: Props): JSX.Element {
     const setModalContents = useSetRecoilState(ModalContentsState);
     const showButton = window.runConfig.invite_users_to_space_enabled;
 
-    /*
-    *
-    * {title: 'Invite others to view', form: <ViewOnlyAccessFormSection/>},
-                {title: 'Invite others to edit', form: <InviteEditorsFormSection space={item}/>},
-    * */
-
     const openEditContributorsModal = (): void => setModalContents({
-        title: 'Invite others to view', component: <ViewOnlyAccessFormSection/>
+        title: 'Share Access',
+        component: <ShareAccessForm />,
+        hideTitle: true,
+        hideCloseBtn: true
     });
 
     return showButton ? (
