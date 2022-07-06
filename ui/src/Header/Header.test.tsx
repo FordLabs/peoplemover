@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import {axe, toHaveNoViolations} from 'jest-axe';
+import {axe} from 'jest-axe';
 import Header from './Header';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
@@ -27,7 +27,6 @@ import flagsmith from 'flagsmith';
 import {RecoilRoot} from 'recoil';
 
 const debounceTimeToWait = 100;
-expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
     const initialState = {currentSpace: TestData.space };
