@@ -24,8 +24,6 @@ import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection/ViewOnlyAcces
 import {ModalContentsState} from 'State/ModalContentsState';
 
 import './ShareAccessForm.scss';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from '../../State/ModalContentsState';
 
 function ShareAccessForm() {
     const [isFirstSectionCollapsed, setIsFirstSectionCollapsed] = useState<boolean>(false);
