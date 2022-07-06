@@ -82,7 +82,7 @@ describe('Share Access Form', () => {
                 .should('contain', 'Copy link' )
                 .click()
                 .should('contain', 'Copied' );
-            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
+            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').focus().click();
             cy.get('[data-testid=modalPopupContainer]').should('not.exist');
 
 

@@ -16,17 +16,17 @@
  */
 
 import React, {useState} from 'react';
-import {useSetRecoilState} from 'recoil';
 import {Space} from 'Space/Space';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import SpaceClient from 'Space/SpaceClient';
 import FormButton from '../ModalFormComponents/FormButton';
 import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
-import {ModalContentsState} from 'State/ModalContentsState';
 import TransferOwnershipForm from './TransferOwnershipForm';
 
 import './DeleteSpaceForm.scss';
+import {useSetRecoilState} from 'recoil';
+import {ModalContentsState} from '../State/ModalContentsState';
 
 interface Props {
     space: Space;
@@ -43,7 +43,8 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
     const closeModal = () => setModalContents(null);
 
     const notificationModalProps = {
-        content: <span>{space.name + ' has been deleted from PeopleMover.'}</span>,
+        content: <span>{space.name + ' has been deleted from PeopleMover.'
+        }</span>,
         title: 'Confirmed',
         close: closeModal,
     } as NotificationModalProps;
@@ -66,7 +67,7 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
                 onClick={(): void => {
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     SpaceClient.deleteSpaceByUuid(space.uuid!).then(() => {
-                        fetchUserSpaces().catch();
+                        fetchUserSpaces().catch().finally(closeModal);
                         setSubmitted(true);
                     });
                 }}>
@@ -78,7 +79,9 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
                 component: <TransferOwnershipForm space={space}/>
             });
         },
-        close: closeModal,
+        close() {
+            closeModal();
+        },
     } as ConfirmationModalProps;
 
     const propsWithoutEditors = {
@@ -97,7 +100,9 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
                 setSubmitted(true);
             });
         },
-        close() { closeModal(); },
+        close() {
+            closeModal();
+        },
     } as ConfirmationModalProps;
 
     if (submitted) {
@@ -107,6 +112,7 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
     } else {
         return (<ConfirmationModal {...propsWithoutEditors}/>);
     }
+
 }
 
 export default DeleteSpaceForm;

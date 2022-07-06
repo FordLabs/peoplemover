@@ -49,6 +49,7 @@ import PersonForm from 'People/PersonForm';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
+import Modal from '../Modal/Modal';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -160,6 +161,7 @@ function PeopleMover({ currentSpace, allGroupedTagFilterOptions, setSpace }: Peo
                             </div>
                         )}
                     </div>
+                    <Modal />
                 </main>
                 <footer>
                     <Branding/>

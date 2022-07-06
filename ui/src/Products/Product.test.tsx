@@ -477,7 +477,7 @@ describe('Products', () => {
             fireEvent.click(deleteProductButton);
             const deleteButton = await screen.findByText('Delete');
             fireEvent.click(deleteButton);
-            expect(ProductClient.deleteProduct).toBeCalledTimes(1);
+            await waitFor(() => expect(ProductClient.deleteProduct).toBeCalledTimes(1));
             expect(ProductClient.deleteProduct).toBeCalledWith(TestData.space, TestData.productWithoutAssignments);
         });
 
@@ -513,7 +513,7 @@ describe('Products', () => {
                 const archiveButton = await screen.findByText('Archive');
                 fireEvent.click(archiveButton);
 
-                expect(ProductClient.editProduct).toBeCalledTimes(1);
+                await waitFor(() => expect(ProductClient.editProduct).toBeCalledTimes(1));
                 const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestData.productWithoutAssignments));
                 cloneWithEndDateSet.endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
                 expect(ProductClient.editProduct).toBeCalledWith(TestData.space, cloneWithEndDateSet);
@@ -595,7 +595,6 @@ function renderProductCard(params?: { product?: Product, isReadOnly?: boolean })
     const initialState = {
         currentSpace: TestData.space,
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-        currentModal: {modal: null},
     };
 
     const store = createStore(rootReducer, initialState, applyMiddleware(thunk));

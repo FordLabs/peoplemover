@@ -30,7 +30,6 @@ import AnimatedImageSrc from './Assets/404.gif';
 import errorImageSrc from './Assets/403.png';
 import Header from './Header/Header';
 import AnnouncementBanner from './Header/AnnouncementBanner';
-import Modal from 'Modal/Modal';
 
 export const dashboardUrl = '/user/dashboard';
 const notFoundUrl = '/error/404';
@@ -52,19 +51,16 @@ function Routes(): JSX.Element {
                 <Route path={dashboardUrl} element={
                     <AuthenticatedRoute>
                         <SpaceDashboard/>
-                        <Modal />
                     </AuthenticatedRoute>
                 } />
                 <Route path="/:teamUUID" element={
                     <AuthorizedRoute>
                         <PeopleMover/>
-                        <Modal />
                     </AuthorizedRoute>
                 } />
                 <Route path="/:teamUUID/timeonproduct" element={
                     <AuthorizedRoute>
                         <TimeOnProduct/>
-                        <Modal />
                     </AuthorizedRoute>
                 } />
                 <Route

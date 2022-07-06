@@ -38,7 +38,6 @@ let modalContent: ModalContents | null;
 describe('SpaceDashboardTile tests', () => {
     let onClick: () => void;
     let store: import('redux').Store<import('redux').AnyAction>;
-    let unmount: () => void;
 
     beforeEach(async () => {
         modalContent = null;

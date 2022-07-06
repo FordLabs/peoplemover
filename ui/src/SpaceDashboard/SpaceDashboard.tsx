@@ -31,6 +31,7 @@ import {ModalContentsState} from 'State/ModalContentsState';
 import SpaceForm from './SpaceForm';
 
 import './SpaceDashboard.scss';
+import Modal from '../Modal/Modal';
 
 interface Props {
     currentSpace: Space;
@@ -115,6 +116,7 @@ function SpaceDashboard({ currentSpace, setCurrentSpace }: Props): JSX.Element {
         <div className="spaceDashboard">
             {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
             <Branding />
+            <Modal />
         </div>
     );
 }

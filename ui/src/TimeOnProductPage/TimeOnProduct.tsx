@@ -16,20 +16,21 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {Product, UNASSIGNED} from '../Products/Product';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {Product, UNASSIGNED} from 'Products/Product';
+import {GlobalStateProps} from 'Redux/Reducers';
 import {connect} from 'react-redux';
-import {calculateDuration} from '../Assignments/Assignment';
-import {Space} from '../Space/Space';
-import HeaderContainer from '../Header/HeaderContainer';
-import SubHeader from '../Header/SubHeader';
+import {calculateDuration} from 'Assignments/Assignment';
+import {Space} from 'Space/Space';
+import HeaderContainer from 'Header/HeaderContainer';
+import SubHeader from 'Header/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {useNavigate, useParams} from 'react-router-dom';
-import {ModalContentsState} from '../State/ModalContentsState';
-import PersonForm from '../People/PersonForm';
+import {ModalContentsState} from 'State/ModalContentsState';
+import PersonForm from 'People/PersonForm';
+import Modal from 'Modal/Modal';
 
 import './TimeOnProduct.scss';
 
@@ -167,6 +168,7 @@ function TimeOnProduct({currentSpace}: TimeOnProductProps): JSX.Element {
     return (
         currentSpace && (
             <div className="App">
+                <Modal />
                 <HeaderContainer>
                     <SubHeader
                         showFilters={false}

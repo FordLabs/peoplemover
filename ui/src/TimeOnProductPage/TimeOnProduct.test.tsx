@@ -38,6 +38,7 @@ import {ProductsState} from '../State/ProductsState';
 import ProductClient from '../Products/ProductClient';
 import {RecoilObserver} from 'Utils/RecoilObserver';
 import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import PersonForm from '../People/PersonForm';
 
 const mockedUsedNavigate = jest.fn();
 
@@ -45,7 +46,9 @@ jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockedUsedNavigate,
 }));
-jest.mock('../Products/ProductClient');
+jest.mock('Products/ProductClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
 
 describe('TimeOnProduct', () => {
     let store: Store;
@@ -103,7 +106,13 @@ describe('TimeOnProduct', () => {
             expect(hank).toBeEnabled();
             expect(modalContent).toBeNull();
             fireEvent.click(hank);
-            expect(modalContent).toEqual({});
+            await waitFor(() => expect(modalContent).toEqual({
+                title: 'Edit Person',
+                component: <PersonForm
+                    isEditPersonForm
+                    personEdited={TestData.hank}
+                />,
+            }));
         });
     });
 

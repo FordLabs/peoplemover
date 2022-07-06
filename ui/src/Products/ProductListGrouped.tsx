@@ -52,7 +52,6 @@ interface ProductGroupProps {
 function GroupedByList({ products, uuid = '' }: GroupedByListProps): JSX.Element {
     const locations = useRecoilValue(LocationsState);
     const productSortBy = useRecoilValue(ProductSortByState);
-
     const productTags = useRecoilValue(ProductTagsState);
 
     const productGroupList = sortProducts();
@@ -112,14 +111,11 @@ function GroupedByList({ products, uuid = '' }: GroupedByListProps): JSX.Element
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
             {productGroupList.traits.map((trait: TagInterface) => {
                 const newProduct = emptyProduct(uuid);
-
-                console.log('trait', trait)
-
-                // if location
-                //  newProduct.spaceLocation = {...trait}
-
-                // if product tags
-                // newProduct.productTags = [trait]
+                if (productSortBy === ProductSortBy.LOCATION) {
+                    newProduct.spaceLocation = {...trait}
+                } else if (productSortBy === ProductSortBy.PRODUCT_TAG) {
+                    newProduct.tags = [trait]
+                }
 
                 return (
                     <span key={trait.id}>

@@ -45,7 +45,7 @@ function NotificationModal({
     );
 
     return (
-        <div className="modalBackground">
+        <div className="modalBackground" data-testid="notificationModal">
             <div className={containerClassname ? 'modalContents ' + containerClassname : 'modalContents'}>
                 <div className="modalCard">
                     <ModalCardBanner
