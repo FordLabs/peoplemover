@@ -20,7 +20,7 @@ import React, {useState} from 'react';
 import {Space} from '../../Space/Space';
 import {GlobalStateProps} from '../../Redux/Reducers';
 import {connect} from 'react-redux';
-import MultiModalCardBanner from '../../Modal/MultiModalCardBanner/MultiModalCardBanner';
+import MultiModalCardBanner from './MultiModalCardBanner/MultiModalCardBanner';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection/ViewOnlyAccessFormSection';
 
 import './ShareAccessForm.scss';
