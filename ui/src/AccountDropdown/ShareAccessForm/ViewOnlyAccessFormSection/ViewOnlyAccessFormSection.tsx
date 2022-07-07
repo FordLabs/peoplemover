@@ -19,7 +19,7 @@ import React, {useState} from 'react';
 import ReactSwitch from 'react-switch';
 import SpaceClient from 'Space/SpaceClient';
 import {Space} from 'Space/Space';
-import {Dispatch} from 'Redux';
+import {Dispatch} from 'redux';
 import {setCurrentSpaceAction} from 'Redux/Actions';
 import {GlobalStateProps} from 'Redux/Reducers';
 import {connect} from 'react-redux';
