@@ -54,7 +54,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: lts
+          node-version: 16.x
       - name: Increment version
         run: npm version patch
         working-directory: ./ui
@@ -89,7 +89,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: lts
+          node-version: 16.x
       - name: NPM Install
         run: npm install
         working-directory: ./ui
