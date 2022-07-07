@@ -91,7 +91,7 @@ jobs:
         with:
           node-version: 16.x
       - name: NPM Install
-        run: npm install
+        run: npm ci --legacy-peer-deps
         working-directory: ./ui
       - name: Setup Java JDK
         uses: actions/setup-java@v1.4.3
