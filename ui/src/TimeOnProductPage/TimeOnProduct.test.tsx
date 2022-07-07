@@ -68,7 +68,6 @@ describe('TimeOnProduct', () => {
             await renderTimeOnProduct({}, ({set}) => {
                 set(ViewingDateState, new Date(2020, 0, 1))
                 set(IsReadOnlyState, false)
-                set(CurrentSpaceState, TestData.space)
                 set(ProductsState, [TestData.productForHank])
             })
         });
