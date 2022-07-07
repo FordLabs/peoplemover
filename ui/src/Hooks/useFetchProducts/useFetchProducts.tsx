@@ -21,15 +21,13 @@ import {Product} from 'Products/Product';
 import {ProductsState} from 'State/ProductsState';
 import ProductClient from 'Products/ProductClient';
 import {ViewingDateState} from 'State/ViewingDateState';
-import {UUIDForCurrentSpaceSelector} from '../../State/CurrentSpaceState';
 
 interface UseFetchProducts {
     products: Product[];
     fetchProducts(): void
 }
 
-function useFetchProducts(): UseFetchProducts {
-    const spaceUUID = useRecoilValue(UUIDForCurrentSpaceSelector);
+function useFetchProducts(spaceUUID: string): UseFetchProducts {
     const [products, setProducts] = useRecoilState(ProductsState);
     const viewingDate = useRecoilValue(ViewingDateState);
 

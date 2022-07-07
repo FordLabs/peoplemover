@@ -25,13 +25,13 @@ import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
-import {useNavigate, useParams} from 'react-router-dom';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import Modal from 'Modal/Modal';
 import useFetchCurrentSpace from '../Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 
 import './TimeOnProduct.scss';
+import {useParams} from 'react-router-dom';
 
 export const LOADING = 'Loading...';
 
@@ -78,24 +78,22 @@ export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductIte
 
 function TimeOnProduct(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
-    const navigate = useNavigate();
 
     const [modalContents, setModalContents] = useRecoilState(ModalContentsState)
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
-    const { fetchProducts, products } = useFetchProducts();
-    const { fetchCurrentSpace, currentSpace } = useFetchCurrentSpace();
+    const { fetchProducts, products } = useFetchProducts(teamUUID);
+    const { fetchCurrentSpace, currentSpace } = useFetchCurrentSpace(teamUUID);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        // @todo fetch space if no space is present
-        if (!currentSpace) navigate(`/${teamUUID}`);
-    }, [currentSpace, navigate, teamUUID]);
+        if (!currentSpace.uuid) fetchCurrentSpace();
+    }, [currentSpace, fetchCurrentSpace]);
 
     useEffect(() => {
-        if (currentSpace && modalContents === null) {
+        if (currentSpace && !modalContents) {
             setIsLoading(true);
             fetchProducts();
         }
@@ -106,7 +104,7 @@ function TimeOnProduct(): JSX.Element {
     }, [products]);
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
-        const product = products.find(item => timeOnProductItem.productName === item.name);
+        const product = products.find(item => timeOnProductItem.productName.toLowerCase() === item.name.toLowerCase());
         const assignment = product?.assignments.find(item => timeOnProductItem.assignmentId === item.id);
         if (assignment) {
             setModalContents({

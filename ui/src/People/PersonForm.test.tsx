@@ -32,6 +32,7 @@ import moment from 'moment';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 declare let window: MatomoWindow;
 
@@ -45,9 +46,7 @@ describe('Person Form', () => {
 
     const mockStore = configureStore([]);
     const store = mockStore({
-        currentSpace: TestData.space,
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-        roles: TestData.roles,
     });
 
     beforeEach(() => {
@@ -61,6 +60,7 @@ describe('Person Form', () => {
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
                     set(ProductsState, TestData.products)
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <PersonForm isEditPersonForm={false}/>
                 </RecoilRoot>,
@@ -252,6 +252,7 @@ describe('Person Form', () => {
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
                     set(ProductsState, TestData.products);
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
@@ -283,6 +284,7 @@ describe('Person Form', () => {
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
                     set(ProductsState, [TestData.unassignedProduct, TestData.productWithoutAssignments]);
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
@@ -321,6 +323,7 @@ describe('Person Form', () => {
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
                     set(ProductsState, TestData.products);
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
@@ -344,6 +347,7 @@ describe('Person Form', () => {
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
                     set(ProductsState, TestData.products);
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <PersonForm
                         isEditPersonForm={true}
@@ -367,6 +371,7 @@ describe('Person Form', () => {
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, mayFourteen);
                     set(ProductsState, TestData.products);
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <PersonForm
                         isEditPersonForm={true}

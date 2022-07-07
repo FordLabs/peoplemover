@@ -25,7 +25,7 @@ import useFetchProductTags from './useFetchProductTags';
 
 jest.mock('Tags/ProductTag/ProductTagClient');
 
-const teamUUID = 'team-uuid';
+const spaceUUID = 'space-uuid';
 
 const productTagsNotAlphabetical = TestData.productTags;
 
@@ -40,7 +40,7 @@ describe('useFetchProductTags Hook', () => {
     it('should fetch all product tags for space and store them in recoil alphabetically', async () => {
         ProductTagClient.get = jest.fn().mockResolvedValue({ data: productTagsNotAlphabetical })
 
-        const { result } = renderHook(() => useFetchProductTags(), { wrapper });
+        const { result } = renderHook(() => useFetchProductTags(spaceUUID), { wrapper });
 
         expect(ProductTagClient.get).not.toHaveBeenCalled()
         expect(result.current.productTags).toEqual([]);
@@ -48,13 +48,13 @@ describe('useFetchProductTags Hook', () => {
         await act(async () => {
             result.current.fetchProductTags()
         });
-        expect(ProductTagClient.get).toHaveBeenCalledWith(teamUUID);
+        expect(ProductTagClient.get).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.productTags).toEqual(productTagsAlphabetical);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${teamUUID}`]}>
+    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
         <RecoilRoot>
             <Routes>
                 <Route path="/:teamUUID" element={children} />

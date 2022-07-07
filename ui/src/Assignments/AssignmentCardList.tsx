@@ -55,9 +55,9 @@ function AssignmentCardList({product, productRefs, allGroupedTagFilterOptions }:
     const setModalContents = useSetRecoilState(ModalContentsState);
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
-    const { fetchProducts } = useFetchProducts();
-
     const spaceUuid = currentSpace.uuid!;
+    const { fetchProducts } = useFetchProducts(spaceUuid);
+
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;

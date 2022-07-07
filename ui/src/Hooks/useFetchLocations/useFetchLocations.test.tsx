@@ -25,7 +25,7 @@ import useFetchLocations from './useFetchLocations';
 
 jest.mock('Locations/LocationClient');
 
-const teamUUID = 'team-uuid';
+const spaceUUID = 'space-uuid';
 
 const locationsNotAlphabetical = [
     TestData.southfield,
@@ -39,7 +39,7 @@ describe('useFetchLocations Hook', () => {
     it('should fetch all location tags and store them in recoil alphabetically', async () => {
         LocationClient.get = jest.fn().mockResolvedValue({ data: locationsNotAlphabetical })
 
-        const { result } = renderHook(() => useFetchLocations(), { wrapper });
+        const { result } = renderHook(() => useFetchLocations(spaceUUID), { wrapper });
 
         expect(LocationClient.get).not.toHaveBeenCalled()
         expect(result.current.locations).toEqual([]);
@@ -47,13 +47,13 @@ describe('useFetchLocations Hook', () => {
         await act(async () => {
             result.current.fetchLocations()
         });
-        expect(LocationClient.get).toHaveBeenCalledWith(teamUUID);
+        expect(LocationClient.get).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.locations).toEqual(locationsAlphabetical);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${teamUUID}`]}>
+    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
         <RecoilRoot>
             <Routes>
                 <Route path="/:teamUUID" element={children} />

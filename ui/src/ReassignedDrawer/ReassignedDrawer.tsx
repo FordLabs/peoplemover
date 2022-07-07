@@ -26,16 +26,17 @@ import PeopleClient from 'People/PeopleClient';
 import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 import './ReassignedDrawer.scss';
 
 function ReassignedDrawer(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const currentSpace = useRecoilValue(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
-    const { fetchProducts, products } = useFetchProducts();
-    const { fetchPeople } = useFetchPeople();
+    const { fetchProducts, products } = useFetchProducts(uuid);
+    const { fetchPeople } = useFetchPeople(uuid);
 
     const [showDrawer, setShowDrawer] = useState(true);
     const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);

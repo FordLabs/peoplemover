@@ -15,20 +15,18 @@
  * limitations under the License.
  */
 
-import {useRecoilState, useRecoilValue} from 'recoil';
+import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import {PeopleState} from 'State/PeopleState';
 import {Person} from 'People/Person';
 import PeopleClient from 'People/PeopleClient';
-import {UUIDForCurrentSpaceSelector} from '../../State/CurrentSpaceState';
 
 interface UseFetchPeople {
     people: Person[];
     fetchPeople(): void
 }
 
-function useFetchPeople(): UseFetchPeople {
-    const spaceUUID = useRecoilValue(UUIDForCurrentSpaceSelector);
+function useFetchPeople(spaceUUID: string): UseFetchPeople {
     const [people, setPeople] = useRecoilState(PeopleState);
 
     const fetchPeople = useCallback(() => {

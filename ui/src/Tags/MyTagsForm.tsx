@@ -32,6 +32,8 @@ import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
+import {useRecoilValue} from 'recoil';
+import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 export const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -42,9 +44,11 @@ interface Props {
 }
 
 function MyTagsForm({ filterType, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
-    const { fetchLocations, locations } = useFetchLocations();
-    const { fetchPersonTags, personTags } = useFetchPersonTags();
-    const { fetchProductTags, productTags } = useFetchProductTags();
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
+
+    const { fetchLocations, locations } = useFetchLocations(uuid);
+    const { fetchPersonTags, personTags } = useFetchPersonTags(uuid);
+    const { fetchProductTags, productTags } = useFetchProductTags(uuid);
 
     const getUpdatedFilterOptions = (index: number, tag: TagInterface): Array<FilterOption> => {
         return allGroupedTagFilterOptions[index].options.map(val =>

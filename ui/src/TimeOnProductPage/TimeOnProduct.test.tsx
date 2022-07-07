@@ -40,6 +40,8 @@ import {RecoilObserver} from 'Utils/RecoilObserver';
 import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from '../People/PersonForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import SpaceClient from '../Space/SpaceClient';
+import {Space} from '../Space/Space';
 
 const mockedUsedNavigate = jest.fn();
 
@@ -48,6 +50,7 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedUsedNavigate,
 }));
 jest.mock('Products/ProductClient');
+jest.mock('Space/SpaceClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
 
@@ -65,7 +68,6 @@ describe('TimeOnProduct', () => {
             await renderTimeOnProduct({}, ({set}) => {
                 set(ViewingDateState, new Date(2020, 0, 1))
                 set(IsReadOnlyState, false)
-                set(CurrentSpaceState, TestData.space)
                 set(ProductsState, [TestData.productForHank])
             })
         });
@@ -116,19 +118,29 @@ describe('TimeOnProduct', () => {
         });
     });
 
-    describe(' redirect', () => {
-        it('should redirect to the space page when there is no state', async () => {
-            renderWithRedux(
-                <RecoilRoot>
-                    <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
-                        <Routes>
-                            <Route path="/:teamUUID/timeonproduct" element={<TimeOnProduct/>} />
-                        </Routes>
-                    </MemoryRouter>
-                </RecoilRoot>
-            );
-            expect(mockedUsedNavigate).toHaveBeenCalledWith(`/${TestData.space.uuid}`);
-        });
+    it('should fetch current space if not already gotten', async () => {
+        let actualCurrentSpace: Space | null = null;
+        renderWithRedux(
+            <RecoilRoot>
+                <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
+                    <Routes>
+                        <Route path="/:teamUUID/timeonproduct" element={
+                            <>
+                                <RecoilObserver
+                                    recoilState={CurrentSpaceState}
+                                    onChange={(value: Space) => {
+                                        actualCurrentSpace = value;
+                                    }}
+                                />
+                                <TimeOnProduct/>
+                            </>
+                        } />
+                    </Routes>
+                </MemoryRouter>
+            </RecoilRoot>
+        );
+        await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalled())
+        expect(actualCurrentSpace).toEqual(TestData.space);
     });
 
     describe('generateTimeOnProductItems', () => {

@@ -17,7 +17,7 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import SpaceClient from '../../Space/SpaceClient';
 import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 import {Space} from '../../Space/Space';
@@ -31,8 +31,7 @@ interface UseFetchCurrentSpace {
     fetchCurrentSpace(): void
 }
 
-function useFetchCurrentSpace(): UseFetchCurrentSpace {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+function useFetchCurrentSpace(spaceUUID: string): UseFetchCurrentSpace {
     const navigate = useNavigate();
 
     const [currentSpace, setCurrentSpace] = useRecoilState(CurrentSpaceState);
@@ -50,10 +49,10 @@ function useFetchCurrentSpace(): UseFetchCurrentSpace {
     }, [navigate]);
 
     const fetchCurrentSpace = useCallback(() => {
-        SpaceClient.getSpaceFromUuid(teamUUID)
+        SpaceClient.getSpaceFromUuid(spaceUUID)
             .then(result => setCurrentSpace(result.data))
             .catch(handleErrors);
-    }, [handleErrors, setCurrentSpace, teamUUID])
+    }, [handleErrors, setCurrentSpace, spaceUUID])
 
     return {
         currentSpace: currentSpace || [],

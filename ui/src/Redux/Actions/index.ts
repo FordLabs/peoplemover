@@ -16,10 +16,7 @@
  */
 
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
-import {Action, ActionCreator, Dispatch} from 'redux';
-import {ThunkAction} from 'redux-thunk';
-import {Space} from '../../Space/Space';
-import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
+import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
 
 export enum AvailableActions {
     REGISTER_PRODUCT_REF,
@@ -41,13 +38,3 @@ export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: 
     type: AvailableActions.SET_ALL_FILTER_OPTIONS,
     allGroupedTagFilterOptions: allGroupedTagFilterOptions,
 });
-
-export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (space: Space) =>
-    (dispatch: Dispatch): Promise<void> => {
-        // dispatch(setCurrentSpaceAction(space));
-
-        // @todo MAKE SURE THIS GETS handled
-        return getFilterOptionsForSpace(space.uuid!).then((filterOptions: Array<AllGroupedTagFilterOptions>) => {
-            dispatch(setAllGroupedTagFilterOptionsAction(filterOptions));
-        });
-    };

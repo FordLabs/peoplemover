@@ -26,12 +26,12 @@ import TestData from 'Utils/TestData';
 
 jest.mock('Products/ProductClient');
 
-const teamUUID = 'team-uuid';
+const spaceUUID = 'space-uuid';
 const viewingDate = new Date();
 
 describe('useFetchProducts Hook', () => {
     it('should fetch all products and store them in recoil', async () => {
-        const { result } = renderHook(() => useFetchProducts(), { wrapper });
+        const { result } = renderHook(() => useFetchProducts(spaceUUID), { wrapper });
 
         expect(ProductClient.getProductsForDate).not.toHaveBeenCalled()
         expect(result.current.products).toEqual([]);
@@ -39,13 +39,13 @@ describe('useFetchProducts Hook', () => {
         await act(async () => {
             result.current.fetchProducts()
         });
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(teamUUID, viewingDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUUID, viewingDate);
         expect(result.current.products).toEqual(TestData.products);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${teamUUID}`]}>
+    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
         <RecoilRoot initializeState={({set}) => {
             set(ViewingDateState, viewingDate)
         }}>

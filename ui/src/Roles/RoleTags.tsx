@@ -39,7 +39,7 @@ interface Props {
 const RoleTags = ({ colors, updateFilterOptions }: Props): JSX.Element => {
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
-    const { fetchRoles, roles } = useFetchRoles();
+    const { fetchRoles, roles } = useFetchRoles(currentSpace.uuid || '');
 
     const tagType = 'role';
     const roleFiltersIndex = 2;

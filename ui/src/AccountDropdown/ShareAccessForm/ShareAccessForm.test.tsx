@@ -16,14 +16,14 @@
  */
 
 import ShareAccessForm from './ShareAccessForm';
-import {renderWithRedux} from '../../Utils/TestUtils';
+import {renderWithRecoil} from '../../Utils/TestUtils';
 import React from 'react';
-import {RecoilRoot} from 'recoil';
 import TestData from '../../Utils/TestData';
 import SpaceClient from '../../Space/SpaceClient';
 import {screen, waitFor} from '@testing-library/react';
 import {RecoilObserver} from '../../Utils/RecoilObserver';
 import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
+import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 
 jest.mock('Space/SpaceClient');
 
@@ -33,13 +33,8 @@ describe('Share Access Form', () => {
     beforeEach(async () => {
         modalContent = null;
 
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ModalContentsState, {
-                    title: 'A Title',
-                    component: <div>Some Component</div>,
-                });
-            }}>
+        renderWithRecoil(
+            <>
                 <RecoilObserver
                     recoilState={ModalContentsState}
                     onChange={(value: ModalContents) => {
@@ -47,9 +42,14 @@ describe('Share Access Form', () => {
                     }}
                 />
                 <ShareAccessForm />
-            </RecoilRoot>,
-            undefined,
-            {currentSpace: TestData.space}
+            </>,
+            ({set}) => {
+                set(CurrentSpaceState, TestData.space)
+                set(ModalContentsState, {
+                    title: 'A Title',
+                    component: <div>Some Component</div>,
+                });
+            }
         );
         await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled())
     })

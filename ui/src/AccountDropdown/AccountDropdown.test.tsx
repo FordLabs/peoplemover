@@ -16,14 +16,13 @@
  */
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil, renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
 import AccountDropdown from './AccountDropdown';
-import configureStore from 'redux-mock-store';
 import ReportClient from '../Reports/ReportClient';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
@@ -31,6 +30,7 @@ import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import ShareAccessForm from './ShareAccessForm/ShareAccessForm';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 describe('Account Dropdown', () => {
     let modalContent: ModalContents | null;
@@ -57,32 +57,26 @@ describe('Account Dropdown', () => {
     });
 
     describe('Dropdown Options', () => {
-        const mockStore = configureStore([]);
-        const expectedCurrentSpace = TestData.space;
         const expectedViewingDate = new Date(2020, 4, 14);
-        const store = mockStore({
-            currentSpace: expectedCurrentSpace,
-        });
 
         beforeEach(async () => {
             ReportClient.getReportsWithNames = jest.fn().mockResolvedValue({});
 
-            renderWithRedux(
+            renderWithRecoil(
                 <MemoryRouter>
-                    <RecoilRoot initializeState={({set}) => {
-                        set(ViewingDateState, expectedViewingDate)
-                    }}>
-                        <RecoilObserver
-                            recoilState={ModalContentsState}
-                            onChange={(value: ModalContents) => {
-                                modalContent = value;
-                            }}
-                        />
-                        <AccountDropdown showAllDropDownOptions={true}/>
-                    </RecoilRoot>
+                    <RecoilObserver
+                        recoilState={ModalContentsState}
+                        onChange={(value: ModalContents) => {
+                            modalContent = value;
+                        }}
+                    />
+                    <AccountDropdown showAllDropDownOptions={true}/>
                 </MemoryRouter>,
-                store,
-            );
+                ({set}) => {
+                    set(ViewingDateState, expectedViewingDate)
+                    set(CurrentSpaceState, TestData.space)
+                }
+            )
             const userIconButton = await screen.findByTestId('userIcon');
             fireEvent.click(userIconButton);
         });
@@ -105,8 +99,8 @@ describe('Account Dropdown', () => {
                 fireEvent.click(await screen.findByText('Download Report'));
 
                 expect(ReportClient.getReportsWithNames).toHaveBeenCalledWith(
-                    expectedCurrentSpace.name,
-                    expectedCurrentSpace.uuid,
+                    TestData.space.name,
+                    TestData.space.uuid,
                     expectedViewingDate
                 );
             });
@@ -131,16 +125,14 @@ describe('Account Dropdown', () => {
 
     describe('Read Only', function() {
         beforeEach(async () => {
-            renderWithRedux(
+            renderWithRecoil(
                 <MemoryRouter>
-                    <RecoilRoot initializeState={({set}) => {
-                        set(IsReadOnlyState, true)
-                    }}>
-                        <AccountDropdown showAllDropDownOptions={true}/>
-                    </RecoilRoot>
+                    <AccountDropdown showAllDropDownOptions={true}/>
                 </MemoryRouter>,
-                undefined,
-                {currentSpace: TestData.space}
+                ({set}) => {
+                    set(IsReadOnlyState, true)
+                    set(CurrentSpaceState, TestData.space)
+                }
             );
         });
         it('should not display Download Report and Share Access when it is in Read Only mode', async () => {

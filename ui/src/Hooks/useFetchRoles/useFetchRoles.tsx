@@ -17,7 +17,6 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import {useParams} from 'react-router-dom';
 import RoleClient from 'Roles/RoleClient';
 import {RolesState} from 'State/RolesState';
 import {RoleTag} from 'Roles/RoleTag.interface';
@@ -28,19 +27,18 @@ interface UseFetchRoles {
     fetchRoles(): void
 }
 
-function useFetchRoles(): UseFetchRoles {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+function useFetchRoles(spaceUUID: string): UseFetchRoles {
     const [roles, setRoles] = useRecoilState(RolesState);
 
     const fetchRoles = useCallback((): Promise<void> => {
-        return RoleClient.get(teamUUID)
+        return RoleClient.get(spaceUUID)
             .then(result => {
                 const roles: Array<RoleTag> = [...result.data];
                 sortTagsAlphabetically(roles);
                 setRoles(roles)
             })
             .catch(console.error);
-    }, [setRoles, teamUUID])
+    }, [setRoles, spaceUUID])
 
     return {
         roles: roles || [],

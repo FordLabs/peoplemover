@@ -25,13 +25,13 @@ import useFetchCurrentSpace from './useFetchCurrentSpace';
 
 jest.mock('Locations/LocationClient');
 
-const teamUUID = 'team-uuid';
+const spaceUUID = 'space-uuid';
 
 describe('useFetchCurrentSpace Hook', () => {
     it('should fetch the current space and store them in recoil', async () => {
         SpaceClient.getSpaceFromUuid = jest.fn().mockResolvedValue({ data: TestData.space })
 
-        const { result } = renderHook(() => useFetchCurrentSpace(), { wrapper });
+        const { result } = renderHook(() => useFetchCurrentSpace(spaceUUID), { wrapper });
 
         expect(SpaceClient.getSpaceFromUuid).not.toHaveBeenCalled()
         expect(result.current.currentSpace).toEqual({"lastModifiedDate": "", "name": "", "todayViewIsPublic": false});
@@ -39,13 +39,13 @@ describe('useFetchCurrentSpace Hook', () => {
         await act(async () => {
             result.current.fetchCurrentSpace()
         });
-        expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(teamUUID);
+        expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.currentSpace).toEqual(TestData.space);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${teamUUID}`]}>
+    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
         <RecoilRoot>
             <Routes>
                 <Route path="/:teamUUID" element={children} />

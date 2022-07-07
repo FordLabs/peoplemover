@@ -25,11 +25,11 @@ import PeopleClient from 'People/PeopleClient';
 
 jest.mock('People/PeopleClient');
 
-const teamUUID = 'team-uuid';
+const spaceUUID = 'space-uuid';
 
 describe('useFetchPeople Hook', () => {
     it('should fetch all people and store them in recoil', async () => {
-        const { result } = renderHook(() => useFetchPeople(), { wrapper });
+        const { result } = renderHook(() => useFetchPeople(spaceUUID), { wrapper });
 
         expect(PeopleClient.getAllPeopleInSpace).not.toHaveBeenCalled()
         expect(result.current.people).toEqual([]);
@@ -37,13 +37,13 @@ describe('useFetchPeople Hook', () => {
         await act(async () => {
             result.current.fetchPeople()
         });
-        expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(teamUUID);
+        expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.people).toEqual(TestData.people);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${teamUUID}`]}>
+    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
         <RecoilRoot>
             <Routes>
                 <Route path="/:teamUUID" element={children} />

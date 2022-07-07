@@ -56,7 +56,7 @@ function ProductCard({ product, registerProductRef, unregisterProductRef }: Prop
     const setModalContents = useSetRecoilState(ModalContentsState);
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
-    const { fetchProducts, products } = useFetchProducts();
+    const { fetchProducts, products } = useFetchProducts(currentSpace.uuid || '');
 
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const [modal, setModal] = useState<JSX.Element | null>(null);

@@ -86,9 +86,9 @@ function PersonForm({
     const setPeople = useSetRecoilState(PeopleState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
-    const { fetchRoles, roles } = useFetchRoles();
+    const spaceUuid = currentSpace.uuid || '';
+    const { fetchRoles, roles } = useFetchRoles(spaceUuid);
 
-    const spaceUuid = currentSpace.uuid!;
     const { ROLE_TAGS } = MetadataReactSelectProps;
     const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
     const { ARCHIVED_PERSON_ASSIGN_TO } = MetadataMultiSelectProps;

@@ -24,22 +24,22 @@ import {Assignment, calculateDuration} from './Assignment';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
-import {createDataTestId} from '../Utils/ReactUtils';
-import MatomoEvents from '../Matomo/MatomoEvents';
-import PeopleClient from '../People/PeopleClient';
+import {createDataTestId} from 'Utils/ReactUtils';
+import MatomoEvents from 'Matomo/MatomoEvents';
+import PeopleClient from 'People/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 import '../Styles/Main.scss';
 import './AssignmentCard.scss';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     assignment: Assignment;
@@ -57,10 +57,10 @@ function AssignmentCard({
     const setModalContents = useSetRecoilState(ModalContentsState);
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
-    const { fetchProducts } = useFetchProducts();
-    const  { fetchPeople } = useFetchPeople();
-
     const spaceUuid = currentSpace.uuid!;
+    const { fetchProducts } = useFetchProducts(spaceUuid);
+    const  { fetchPeople } = useFetchPeople(spaceUuid);
+
     const [editMenuIsOpened, setEditMenuIsOpened] = useState<boolean>(false);
     const [modal, setModal] = useState<JSX.Element | null>(null);
     const assignmentRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);

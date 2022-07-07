@@ -25,7 +25,7 @@ import TestData from 'Utils/TestData';
 
 jest.mock('Roles/RoleClient');
 
-const teamUUID = 'team-uuid';
+const spaceUUID = 'space-uuid';
 
 const rolesNotAlphabetical = [
     TestData.productManager,
@@ -38,7 +38,7 @@ describe('useFetchRoles Hook', () => {
     it('should fetch all roles for space and store them in recoil alphabetically', async () => {
         RoleClient.get = jest.fn().mockResolvedValue({ data: rolesNotAlphabetical })
 
-        const { result } = renderHook(() => useFetchRoles(), { wrapper });
+        const { result } = renderHook(() => useFetchRoles(spaceUUID), { wrapper });
 
         expect(RoleClient.get).not.toHaveBeenCalled()
         expect(result.current.roles).toEqual([]);
@@ -46,13 +46,13 @@ describe('useFetchRoles Hook', () => {
         await act(async () => {
             result.current.fetchRoles()
         });
-        expect(RoleClient.get).toHaveBeenCalledWith(teamUUID);
+        expect(RoleClient.get).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.roles).toEqual(rolesAlphabetical);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${teamUUID}`]}>
+    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
         <RecoilRoot>
             <Routes>
                 <Route path="/:teamUUID" element={children} />

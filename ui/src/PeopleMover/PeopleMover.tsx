@@ -28,7 +28,7 @@ import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import Counter from '../ReusableComponents/Counter';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../SortingAndFiltering/FilterLibraries';
 import HeaderContainer from '../Header/HeaderContainer';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
@@ -47,25 +47,28 @@ import Modal from '../Modal/Modal';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
+import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {Dispatch} from 'redux';
 
 export interface PeopleMoverProps {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
+    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function PeopleMover({ allGroupedTagFilterOptions }: PeopleMoverProps): JSX.Element {
+function PeopleMover({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: PeopleMoverProps): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
 
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const [modalContents, setModalContents] = useRecoilState(ModalContentsState);
 
-    const { fetchPeople } = useFetchPeople();
-    const { fetchRoles } = useFetchRoles();
-    const { fetchLocations } = useFetchLocations()
-    const { fetchProducts, products } = useFetchProducts();
-    const { fetchProductTags } = useFetchProductTags();
-    const { fetchPersonTags } = useFetchPersonTags();
-    const { fetchCurrentSpace, currentSpace } = useFetchCurrentSpace();
+    const { fetchPeople } = useFetchPeople(teamUUID);
+    const { fetchRoles } = useFetchRoles(teamUUID);
+    const { fetchLocations } = useFetchLocations(teamUUID)
+    const { fetchProducts, products } = useFetchProducts(teamUUID);
+    const { fetchProductTags } = useFetchProductTags(teamUUID);
+    const { fetchPersonTags } = useFetchPersonTags(teamUUID);
+    const { fetchCurrentSpace, currentSpace } = useFetchCurrentSpace(teamUUID);
 
     const hasProductsAndFilters: boolean = products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0;
 
@@ -89,6 +92,9 @@ function PeopleMover({ allGroupedTagFilterOptions }: PeopleMoverProps): JSX.Elem
 
     useEffect(() => {
         if (currentSpace && currentSpace.uuid) {
+            getFilterOptionsForSpace(currentSpace.uuid!)
+                .then(setAllGroupedTagFilterOptions);
+
             fetchProducts();
             fetchProductTags();
             fetchPersonTags();
@@ -150,5 +156,10 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
-export default connect(mapStateToProps)(PeopleMover);
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
+        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PeopleMover);
 /* eslint-enable */
