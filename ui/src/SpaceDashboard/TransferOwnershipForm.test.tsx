@@ -25,7 +25,6 @@ import {waitFor} from '@testing-library/react';
 import {CurrentUserState} from '../State/CurrentUserState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 jest.mock('../Space/SpaceClient');
 
@@ -35,15 +34,8 @@ describe('Transfer Ownership Form', () => {
     beforeEach(async () => {
         modalContent = null;
 
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(CurrentUserState,  'user_id')
-                set(CurrentSpaceState, TestData.space)
-                set(ModalContentsState, {
-                    title: 'A Title',
-                    component: <div>Some Component</div>,
-                });
-            }}>
+        renderWithRecoil(
+            <>
                 <RecoilObserver
                     recoilState={ModalContentsState}
                     onChange={(value: ModalContents) => {

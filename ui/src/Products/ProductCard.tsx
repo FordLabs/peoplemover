@@ -41,6 +41,7 @@ import ProductForm from './ProductForm';
 import AssignmentForm from '../Assignments/AssignmentForm';
 
 import './Product.scss';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
