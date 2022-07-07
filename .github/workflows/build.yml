@@ -63,7 +63,7 @@ jobs:
         run: npm run generate-build-version
         working-directory: ./ui
       - name: NPM CI Install
-        run: npm ci
+        run: npm ci --legacy-peer-deps
         working-directory: ./ui
       - name: Lint
         run: npm run lint
