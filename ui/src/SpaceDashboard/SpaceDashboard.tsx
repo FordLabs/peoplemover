@@ -29,9 +29,9 @@ import {AvailableModals} from '../Modal/AvailableModals';
 import {useNavigate} from 'react-router-dom';
 import {useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 
 import './SpaceDashboard.scss';
-import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 
 interface Props {
     currentSpace: Space;
