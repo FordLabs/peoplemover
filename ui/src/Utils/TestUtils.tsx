@@ -129,9 +129,7 @@ export const RecoilObserver = ({
 const TestUtils = {
     mockClientCalls,
     renderPeopleMoverComponent,
-    renderWithRecoil,
     RecoilObserver,
-    renderWithRedux,
     createDataTestId,
     mockCreateRange,
     expectedCreateOptionText

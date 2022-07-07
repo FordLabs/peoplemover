@@ -18,29 +18,23 @@
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from './AssignmentCard';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {Assignment} from './Assignment';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
-import rootReducer from '../Redux/Reducers';
-import {applyMiddleware, createStore, Store} from 'redux';
 import PeopleClient from '../People/PeopleClient';
-import thunk from 'redux-thunk';
-import {MutableSnapshot, RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {IsDraggingState} from '../State/IsDraggingState';
 import AssignmentClient from './AssignmentClient';
 import moment from 'moment';
 import ProductClient from '../Products/ProductClient';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('axios');
 jest.mock('../Products/ProductClient');
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
-    let store: Store;
 
     beforeEach(() => {
         assignmentToRender =  {
@@ -63,8 +57,6 @@ describe('Assignment Card', () => {
         TestUtils.mockClientCalls();
 
         jest.useFakeTimers();
-
-        store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
     });
 
     afterEach(() => {
@@ -98,7 +90,7 @@ describe('Assignment Card', () => {
         await waitFor(() => expect(AssignmentClient.createAssignmentForDate)
             .toHaveBeenCalledWith(moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": true, "productId": 1}], TestData.space, assignmentToRender.person, false)
         )
-        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith('uuid', expect.any(Date)))
+        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestData.space.uuid, expect.any(Date)))
     });
 
     it('should unmark person as placeholder', async () => {
@@ -118,18 +110,18 @@ describe('Assignment Card', () => {
         await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
             moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": false, "productId": 1}], TestData.space, assignmentToRender.person, false
         ))
-        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith('uuid', expect.any(Date)));
+        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestData.space.uuid, expect.any(Date)));
     });
 
     describe('Read-Only Functionality', function() {
-        beforeEach(function() {
-            store = createStore(rootReducer, {currentSpace: TestData.space});
-        });
-
         it('should not display edit Menu if in read only mode', function() {
-            renderAssignmentCard(assignmentToRender, false, ({set}) => {
-                set(IsReadOnlyState, true);
-            });
+            renderWithRecoil(
+                <AssignmentCard assignment={assignmentToRender} />,
+                ({set}) => {
+                    set(IsReadOnlyState, true);
+                    set(CurrentSpaceState, TestData.space)
+                }
+            );
             const editPersonButton = screen.getByTestId('editPersonIconContainer__billiam_handy');
             editPersonButton.click();
             expect(screen.queryByTestId('editMenu')).toBeNull();
@@ -138,17 +130,16 @@ describe('Assignment Card', () => {
 
         it('should not allow drag and drop if in read only mode', function() {
             const startDraggingAssignment = jest.fn();
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
+            renderWithRecoil(
+                <AssignmentCard
+                    assignment={assignmentToRender}
+                    isUnassignedProduct={false}
+                    startDraggingAssignment={startDraggingAssignment}
+                />,
+                ({set}) => {
                     set(IsReadOnlyState, true);
-                }}>
-                    <AssignmentCard
-                        assignment={assignmentToRender}
-                        isUnassignedProduct={false}
-                        startDraggingAssignment={startDraggingAssignment}
-                    />
-                </RecoilRoot>,
-                store
+                    set(CurrentSpaceState, TestData.space)
+                }
             );
 
             fireEvent.mouseDown(screen.getByTestId('assignmentCard__billiam_handy'));
@@ -160,9 +151,13 @@ describe('Assignment Card', () => {
                 ...assignmentToRender,
                 placeholder: true,
             };
-            renderAssignmentCard(placeholderAssignment, false, ({set}) => {
-                set(IsReadOnlyState, true);
-            });
+            renderWithRecoil(
+                <AssignmentCard assignment={placeholderAssignment} />,
+                ({set}) => {
+                    set(IsReadOnlyState, true);
+                    set(CurrentSpaceState, TestData.space)
+                }
+            );
 
             const assignmentCard = screen.getByTestId('assignmentCard__billiam_handy');
             expect(assignmentCard).toHaveClass('notPlaceholder');
@@ -186,10 +181,6 @@ describe('Assignment Card', () => {
     };
 
     describe('Role color', () => {
-        beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestData.space});
-        });
-
         it('should render software engineer color correctly', () => {
             renderAssignmentCard(assignmentToRender);
             const assignmentCardEditContainer: HTMLElement = screen.getByTestId('editPersonIconContainer__billiam_handy');
@@ -233,21 +224,12 @@ describe('Assignment Card', () => {
     });
 
     describe('Edit Menu', () => {
-        beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
-        });
-
         it('should initialize with the Edit Menu closed', () => {
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
+            renderWithRecoil(
+                <AssignmentCard assignment={assignmentToRender}/>,
+                ({set}) => {
                     set(ViewingDateState, new Date(2020, 0, 1))
-                }}>
-                    <AssignmentCard
-                        assignment={assignmentToRender}
-                        isUnassignedProduct={false}
-                    />
-                </RecoilRoot>,
-                store
+                }
             );
 
             expectEditMenuContents(false);
@@ -273,16 +255,12 @@ describe('Assignment Card', () => {
             PeopleClient.archivePerson = jest.fn().mockResolvedValue({data: {}});
             const viewingDate = new Date(2020, 0, 1);
 
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
+            renderWithRecoil(
+                <AssignmentCard assignment={assignmentToRender} />,
+                ({set}) => {
                     set(ViewingDateState, viewingDate)
-                }}>
-                    <AssignmentCard
-                        assignment={assignmentToRender}
-                        isUnassignedProduct={false}
-                    />
-                </RecoilRoot>,
-                store
+                    set(CurrentSpaceState, TestData.space)
+                }
             );
 
             fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
@@ -294,10 +272,6 @@ describe('Assignment Card', () => {
     });
 
     describe('New Person Badge', () => {
-        beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
-        });
-
         it('should show the new badge if the assignment says the person is new and there is a newPersonDate', () => {
             const assignmentThatIsNew: Assignment = {
                 id: 199,
@@ -326,10 +300,6 @@ describe('Assignment Card', () => {
     });
 
     describe('Hoverable Notes', () => {
-        beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
-        });
-
         it('should display hover notes icon if person has valid notes', () => {
             renderAssignmentCard(assignmentToRender);
             expect(screen.getByText('note')).toBeInTheDocument();
@@ -370,10 +340,13 @@ describe('Assignment Card', () => {
         });
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {
-            store = createStore(rootReducer, {currentSpace: TestData.space});
-            renderAssignmentCard(assignmentToRender, false, ({set}) => {
-                set(IsDraggingState, true);
-            });
+            renderWithRecoil(
+                <AssignmentCard assignment={{...assignmentToRender}} />,
+                ({set}) => {
+                    set(IsDraggingState, true);
+                    set(CurrentSpaceState, TestData.space)
+                }
+            )
 
             expect(screen.queryByText('This is a note')).toBeNull();
             expect(screen.getByText('note')).toBeInTheDocument();
@@ -386,20 +359,19 @@ describe('Assignment Card', () => {
     });
 
     describe('Hoverable Person tag', () => {
-        beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
-        });
-
         it('should display person tag Icon if person has valid notes', () => {
             renderAssignmentCard(assignmentToRender);
             expect(screen.getByText('local_offer')).toBeInTheDocument();
         });
 
         it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
-            store = createStore(rootReducer, {currentSpace: TestData.space});
-            renderAssignmentCard(assignmentToRender, false, ({set}) => {
-                set(IsReadOnlyState, true);
-            });
+            renderWithRecoil(
+                <AssignmentCard assignment={{...assignmentToRender}} />,
+                ({set}) => {
+                    set(IsReadOnlyState, true);
+                    set(CurrentSpaceState, TestData.space)
+                }
+            )
             expect(screen.queryByText('local_offer')).toBeNull();
         });
 
@@ -411,6 +383,7 @@ describe('Assignment Card', () => {
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {
             renderAssignmentCard(assignmentToRender);
+
             expect(screen.queryByText('The lil boss,The big boss')).toBeNull();
             expect(screen.getByText('local_offer')).toBeInTheDocument();
 
@@ -421,19 +394,15 @@ describe('Assignment Card', () => {
         });
     });
 
-    function renderAssignmentCard(assignment: Assignment, isUnassignedProduct = false, initializeRecoilState?: (mutableSnapshot: MutableSnapshot) => void): void {
-        renderWithRedux(
-            <RecoilRoot initializeState={initializeRecoilState}>
-                <MemoryRouter initialEntries={['/uuid']}>
-                    <Routes>
-                        <Route path="/:teamUUID" element={<AssignmentCard
-                            assignment={{...assignment}}
-                            isUnassignedProduct={isUnassignedProduct}
-                        />} />
-                    </Routes>
-                </MemoryRouter>
-            </RecoilRoot>,
-            store
-        );
+    function renderAssignmentCard(assignment: Assignment, isUnassignedProduct = false): void {
+        renderWithRecoil(
+            <AssignmentCard
+                assignment={{...assignment}}
+                isUnassignedProduct={isUnassignedProduct}
+            />,
+            ({set}) => {
+                set(CurrentSpaceState, TestData.space)
+            }
+        )
     }
 });

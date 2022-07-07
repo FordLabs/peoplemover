@@ -149,7 +149,7 @@ describe('Delete Space Form', () => {
 
                 await waitFor(() => expect(modalContent).toEqual({
                     title: 'Transfer Ownership of Space',
-                    component: <TransferOwnershipForm space={TestData.space}/>
+                    component: <TransferOwnershipForm spaceToTransfer={TestData.space}/>
                 }));
             });
         });

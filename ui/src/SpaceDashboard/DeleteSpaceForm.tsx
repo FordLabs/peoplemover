@@ -78,7 +78,7 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
         submit(): void | Promise<void> {
             setModalContents({
                 title: 'Transfer Ownership of Space',
-                component: <TransferOwnershipForm space={space}/>
+                component: <TransferOwnershipForm spaceToTransfer={space}/>
             });
         },
         close() {

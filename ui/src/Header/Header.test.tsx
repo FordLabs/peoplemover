@@ -19,17 +19,16 @@ import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import {axe} from 'jest-axe';
 import Header from './Header';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import {RunConfig} from '../index';
 import {MemoryRouter} from 'react-router-dom';
 import flagsmith from 'flagsmith';
-import {RecoilRoot} from 'recoil';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import TestData from '../Utils/TestData';
 
 const debounceTimeToWait = 100;
 
 describe('Header', () => {
-    const initialState = {currentSpace: TestData.space };
     let location: (string | Location) & Location;
 
     beforeEach(() => {
@@ -46,14 +45,10 @@ describe('Header', () => {
 
     it('should have no axe violations', async () => {
         window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
-        const {container} = renderWithRedux(
+        const {container} = renderWithRecoil(
             <MemoryRouter>
-                <RecoilRoot>
-                    <Header/>
-                </RecoilRoot>
+                <Header/>
             </MemoryRouter>,
-            undefined,
-            initialState
         );
         const results = await axe(container);
         expect(results).toHaveNoViolations();
@@ -61,36 +56,27 @@ describe('Header', () => {
 
     it('should hide space buttons', async () => {
         window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
-        renderWithRedux(
+        renderWithRecoil(
             <MemoryRouter>
-                <RecoilRoot>
-                    <Header hideSpaceButtons={true}/>
-                </RecoilRoot>
+                <Header hideSpaceButtons={true}/>
             </MemoryRouter>,
-            undefined,
-            initialState
         );
         expect(screen.queryByTestId('filters')).toBeFalsy();
         expect(screen.queryByTestId('sortBy')).toBeFalsy();
 
         const userIconButton = await screen.findByTestId('accountDropdownToggle');
-        await waitFor(() => {
-            fireEvent.click(userIconButton);
-        });
-        expect(await screen.queryByTestId('shareAccess')).toBeNull();
-        expect(await screen.queryByTestId('downloadReport')).toBeNull();
+        fireEvent.click(userIconButton);
+
+        await waitFor(() => expect(screen.queryByTestId('shareAccess')).toBeNull());
+        expect(screen.queryByTestId('downloadReport')).toBeNull();
     });
 
     it('should not show the account dropdown when user is on the error page', () => {
         window.location = {origin: 'https://localhost', pathname: '/error/404'} as Location;
-        renderWithRedux(
+        renderWithRecoil(
             <MemoryRouter>
-                <RecoilRoot>
-                    <Header hideSpaceButtons={true}/>
-                </RecoilRoot>
+                <Header hideSpaceButtons={true}/>
             </MemoryRouter>,
-            undefined,
-            initialState
         );
 
         expect(screen.queryByText('bob')).toBeNull();
@@ -103,14 +89,13 @@ describe('Header', () => {
             flagsmith.hasFeature = jest.fn().mockReturnValue(true);
             window.location = {origin: 'https://localhost', pathname: '/aaaaaaaaaaaaaa'} as Location;
 
-            renderWithRedux(
+            renderWithRecoil(
                 <MemoryRouter>
-                    <RecoilRoot>
-                        <Header/>
-                    </RecoilRoot>
+                    <Header/>
                 </MemoryRouter>,
-                undefined,
-                initialState
+                ({set}) => {
+                    set(CurrentSpaceState, TestData.space)
+                }
             );
 
             await screen.findByTestId('accountDropdownToggle');
@@ -121,12 +106,12 @@ describe('Header', () => {
         });
 
         it('should show time On Product Link when user is in a space', async () => {
-            expect(await screen.getByText('Time On Product >'));
+            expect(screen.getByText('Time On Product >'));
         });
 
         it('should show Back to Space Link when user is in time on product page', async () => {
-            fireEvent.click( await screen.getByText('Time On Product >'));
-            expect(await screen.getByText('< Back'));
+            fireEvent.click(screen.getByText('Time On Product >'));
+            expect(screen.getByText('< Back'));
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {

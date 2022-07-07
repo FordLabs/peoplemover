@@ -70,7 +70,7 @@ describe('SpaceDashboardTile tests', () => {
         
         expect(modalContent).toEqual({
             title: 'Edit Space',
-            component: <SpaceForm space={TestData.space}/>
+            component: <SpaceForm selectedSpace={TestData.space}/>
         });
     });
 
@@ -153,7 +153,7 @@ describe('SpaceDashboardTile tests', () => {
 
             expect(modalContent).toEqual({
                 title: 'Transfer Ownership of Space',
-                component: <TransferOwnershipForm space={TestData.space}/>
+                component: <TransferOwnershipForm spaceToTransfer={TestData.space}/>
             });
         });
     });

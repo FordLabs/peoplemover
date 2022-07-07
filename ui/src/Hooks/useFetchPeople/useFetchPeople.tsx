@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import {useRecoilState} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import {useCallback} from 'react';
-import {useParams} from 'react-router-dom';
 import {PeopleState} from 'State/PeopleState';
 import {Person} from 'People/Person';
 import PeopleClient from 'People/PeopleClient';
+import {UUIDForCurrentSpaceSelector} from '../../State/CurrentSpaceState';
 
 interface UseFetchPeople {
     people: Person[];
@@ -28,13 +28,13 @@ interface UseFetchPeople {
 }
 
 function useFetchPeople(): UseFetchPeople {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+    const spaceUUID = useRecoilValue(UUIDForCurrentSpaceSelector);
     const [people, setPeople] = useRecoilState(PeopleState);
 
     const fetchPeople = useCallback(() => {
-        PeopleClient.getAllPeopleInSpace(teamUUID)
+        PeopleClient.getAllPeopleInSpace(spaceUUID)
             .then(result => setPeople(result.data || [])).catch(console.error);
-    }, [setPeople, teamUUID])
+    }, [setPeople, spaceUUID])
 
     return {
         people: people || [],

@@ -15,17 +15,16 @@
  *  limitations under the License.
  */
 
-import {renderWithRedux} from 'Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
-import {createStore, Store} from 'redux';
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import rootReducer from 'Redux/Reducers';
 import SpaceClient from 'Space/SpaceClient';
 import {Space} from 'Space/Space';
-import {setCurrentSpaceAction} from 'Redux/Actions';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
 import {MatomoWindow} from 'CommonTypes/MatomoWindow';
+import {CurrentSpaceState} from '../../../State/CurrentSpaceState';
+import {RecoilObserver} from '../../../Utils/RecoilObserver';
 
 declare let window: MatomoWindow;
 
@@ -37,6 +36,8 @@ Object.assign(navigator, {
     },
 });
 
+let actualCurrentSpace: Space | null;
+
 describe('View Only Access Form Section', () => {
     const testSpace = TestData.space;
     const testSpaceWithViewOnlyOn = {...testSpace, todayViewIsPublic: true};
@@ -47,6 +48,8 @@ describe('View Only Access Form Section', () => {
     let _paq: (string | number)[][];
 
     beforeEach(() => {
+        actualCurrentSpace = null;
+
         location = window.location;
         _paq = window._paq
         Reflect.deleteProperty(window, 'location');
@@ -79,21 +82,17 @@ describe('View Only Access Form Section', () => {
         setupComponent(testSpaceWithViewOnlyOn);
         jest.spyOn(navigator.clipboard, 'writeText');
 
-        await waitFor(() => {
-            fireEvent.click(screen.getByText('Copy link'));
-        });
+        fireEvent.click(screen.getByText('Copy link'));
 
-        expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl);
+        await waitFor(() => expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl));
         expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'readOnlyLinkCopied', '']);
     });
 
     it('should should change text on copy', async () => {
         setupComponent(testSpaceWithViewOnlyOn);
-        await waitFor(() => {
-            fireEvent.click(screen.getByText('Copy link'));
-        });
+        fireEvent.click(screen.getByText('Copy link'));
 
-        expect(screen.queryByText('Copy link')).toBeNull();
+        await waitFor(() => expect(screen.queryByText('Copy link')).toBeNull());
         expect(screen.queryByText('Copied!')).not.toBeNull();
     });
 
@@ -104,7 +103,7 @@ describe('View Only Access Form Section', () => {
     });
 
     it('should update the current space when the toggle is clicked', async function() {
-        const { store } = setupComponent(testSpaceWithViewOnlyOn);
+        setupComponent(testSpaceWithViewOnlyOn);
 
         const expectedUpdatedSpaceData = {...testSpace, todayViewIsPublic: false};
         SpaceClient.editSpaceReadOnlyFlag = jest.fn().mockResolvedValue({
@@ -113,14 +112,14 @@ describe('View Only Access Form Section', () => {
 
         const enableViewOnlyCheckbox = screen.getByTestId('viewOnlyAccessToggle');
         expect(enableViewOnlyCheckbox).toBeChecked();
-        await fireEvent.click(enableViewOnlyCheckbox);
+        fireEvent.click(enableViewOnlyCheckbox);
 
-        expect(SpaceClient.editSpaceReadOnlyFlag).toHaveBeenCalledWith(
+        await waitFor(() => expect(SpaceClient.editSpaceReadOnlyFlag).toHaveBeenCalledWith(
             testSpace.uuid,
             expectedUpdatedSpaceData
-        );
+        ));
 
-        expect(store.dispatch).toHaveBeenCalledWith(setCurrentSpaceAction(expectedUpdatedSpaceData));
+        expect(actualCurrentSpace).toEqual(expectedUpdatedSpaceData);
     });
 
     it('should have copy link button disabled when view only view is turned off', async function() {
@@ -142,14 +141,19 @@ describe('View Only Access Form Section', () => {
     });
 });
 
-const setupComponent = (currentSpace: Space, collapsed = false): { store: Store } => {
-    const store = createStore(rootReducer,  {currentSpace});
-    store.dispatch = jest.fn();
-    renderWithRedux(
-        <ViewOnlyAccessFormSection collapsed={collapsed} />,
-        store,
-        {currentSpace: currentSpace}
+const setupComponent = (currentSpace: Space, collapsed = false) => {
+    renderWithRecoil(
+        <>
+            <RecoilObserver
+                recoilState={CurrentSpaceState}
+                onChange={(value: Space) => {
+                    actualCurrentSpace = value;
+                }}
+            />
+            <ViewOnlyAccessFormSection collapsed={collapsed} />
+        </>,
+        ({set}) => {
+            set(CurrentSpaceState, currentSpace)
+        }
     );
-
-    return { store };
 };

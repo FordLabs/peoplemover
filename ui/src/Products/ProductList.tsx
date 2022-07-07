@@ -27,21 +27,18 @@ import {useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
-import {Space} from '../Space/Space';
 
 interface Props {
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    currentSpace: Space;
 }
 
-function ProductList({ allGroupedTagFilterOptions, currentSpace }: Props): JSX.Element {
+function ProductList({ allGroupedTagFilterOptions }: Props): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const products = useRecoilValue(ProductsState);
 
     const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
     const [filteredProductsLoaded, setFilteredProductsLoaded] = useState<boolean>(false);
-
 
     useEffect(() => {
         if (allGroupedTagFilterOptions.length > 0) {
@@ -66,7 +63,7 @@ function ProductList({ allGroupedTagFilterOptions, currentSpace }: Props): JSX.E
                     return <SortedByList products={filteredAndActiveProduct} />;
                 }
                 default:
-                    return <GroupedByList products={filteredAndActiveProduct} uuid={currentSpace.uuid} />;
+                    return <GroupedByList products={filteredAndActiveProduct} />;
             }
         } else {
             return <></>;
@@ -78,7 +75,6 @@ function ProductList({ allGroupedTagFilterOptions, currentSpace }: Props): JSX.E
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

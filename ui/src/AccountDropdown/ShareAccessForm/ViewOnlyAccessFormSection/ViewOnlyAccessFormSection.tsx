@@ -16,24 +16,22 @@
  */
 
 import React, {useState} from 'react';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import ReactSwitch from 'react-switch';
 import SpaceClient from 'Space/SpaceClient';
-import {Space} from 'Space/Space';
-import {Dispatch} from 'redux';
-import {setCurrentSpaceAction} from 'Redux/Actions';
-import {GlobalStateProps} from 'Redux/Reducers';
-import {connect} from 'react-redux';
 import MatomoEvents from 'Matomo/MatomoEvents';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
 
 import './ViewOnlyAccessFormSection.scss';
 
 interface Props {
     collapsed?: boolean;
-    currentSpace: Space;
-    setCurrentSpace(space: Space): void;
 }
 
-function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: Props): JSX.Element {
+function ViewOnlyAccessFormSection({ collapsed }: Props): JSX.Element {
+    const [currentSpace, setCurrentSpace] = useRecoilState(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
+
     const isExpanded = !collapsed;
     const [enableViewOnly, setEnableViewOnly] = useState<boolean>(currentSpace.todayViewIsPublic);
     const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -50,11 +48,8 @@ function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: P
 
     const toggleReadOnlyEnabled = async (checked: boolean): Promise<void> => {
         setEnableViewOnly(checked);
-        await SpaceClient.editSpaceReadOnlyFlag(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            currentSpace.uuid!,
-            {...currentSpace, todayViewIsPublic:checked}
-        ).then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
+        await SpaceClient.editSpaceReadOnlyFlag(uuid, {...currentSpace, todayViewIsPublic:checked})
+            .then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
     };
 
     const viewAccessEnabledMessage = `View only access is ${enableViewOnly ? 'enabled' : 'disabled'}`;
@@ -115,14 +110,5 @@ function ViewOnlyAccessFormSection({collapsed, currentSpace, setCurrentSpace}: P
     );
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
-});
+export default ViewOnlyAccessFormSection;
 
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ViewOnlyAccessFormSection);
-/* eslint-enable */

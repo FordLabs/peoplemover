@@ -19,28 +19,28 @@ import React from 'react';
 import AssignmentForm from './AssignmentForm';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import AssignmentClient from './AssignmentClient';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-describe('the assignment form', () => {
+describe('The Assignment Form', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
 
     it('renders the assignment form labels', () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={(({set}) => {
+        renderWithRecoil(
+            <AssignmentForm initiallySelectedProduct={TestData.unassignedProduct} />,
+            (({set}) => {
                 set(ProductsState, [TestData.unassignedProduct])
-            })}>
-                <AssignmentForm initiallySelectedProduct={TestData.unassignedProduct} />,
-            </RecoilRoot>
+                set(CurrentSpaceState, TestData.space)
+            })
         );
         expect(screen.getByLabelText('Name')).toBeDefined();
         expect(screen.getByLabelText('Mark as Placeholder')).toBeDefined();
@@ -50,17 +50,14 @@ describe('the assignment form', () => {
     it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
         const products = [TestData.unassignedProduct, TestData.productWithAssignments, TestData.productWithoutAssignments, TestData.productForHank];
         const viewingDate = new Date(2020, 5, 5);
-        const initialState = {currentSpace: TestData.space};
-        renderWithRedux(
-            <RecoilRoot initializeState={(({set}) => {
+        renderWithRecoil(
+            <AssignmentForm initiallySelectedProduct={products[2]} />,
+            (({set}) => {
                 set(ViewingDateState, viewingDate)
                 set(ProductsState, products)
                 set(PeopleState, TestData.people)
-            })}>
-                <AssignmentForm initiallySelectedProduct={products[2]} />,
-            </RecoilRoot>,
-            undefined,
-            initialState
+                set(CurrentSpaceState, TestData.space)
+            })
         );
 
         const labelElement = await screen.findByLabelText('Name');

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,26 +16,23 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Space} from '../Space/Space';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link} from 'react-router-dom';
-import './Headers.scss';
 import MatomoEvents from '../Matomo/MatomoEvents';
+
+import './Headers.scss';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
     hideAllButtons?: boolean;
-    currentSpace: Space;
 }
 
-function Header({
-    hideSpaceButtons,
-    hideAllButtons,
-    currentSpace,
-}: HeaderProps): JSX.Element {
+function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element {
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+
     const dashboardPathname = '/user/dashboard';
     const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
     const spaceName = currentSpace?.name;
@@ -43,11 +40,11 @@ function Header({
     const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
 
     const useReactPath = (): string => {
-        const [path, setPath] = React.useState(window.location.pathname);
+        const [path, setPath] = useState(window.location.pathname);
         const listenToPopstate = (): void => {
             setPath(window.location.pathname);
         };
-        React.useEffect(() => {
+        useEffect(() => {
             window.addEventListener('popstate', listenToPopstate);
             return (): void => {
                 window.removeEventListener('popstate', listenToPopstate);
@@ -107,10 +104,4 @@ function Header({
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps)(Header);
-/* eslint-enable */
+export default Header;

@@ -16,28 +16,23 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import DrawerContainer from '../ReusableComponents/DrawerContainer';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {Reassignment} from './Reassignment';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import {Space} from '../Space/Space';
-import {isArchived, Person} from '../People/Person';
-import MatomoEvents from '../Matomo/MatomoEvents';
-import PeopleClient from '../People/PeopleClient';
 import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
+import DrawerContainer from 'ReusableComponents/DrawerContainer';
+import {Reassignment} from './Reassignment';
+import AssignmentClient from 'Assignments/AssignmentClient';
+import {isArchived, Person} from 'People/Person';
+import MatomoEvents from 'Matomo/MatomoEvents';
+import PeopleClient from 'People/PeopleClient';
+import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
+import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 import './ReassignedDrawer.scss';
-import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 
-interface Props {
-    currentSpace: Space;
-}
-
-function ReassignedDrawer({ currentSpace }: Props): JSX.Element {
+function ReassignedDrawer(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
 
     const { fetchProducts, products } = useFetchProducts();
     const { fetchPeople } = useFetchPeople();
@@ -125,10 +120,4 @@ function ReassignedDrawer({ currentSpace }: Props): JSX.Element {
     }
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps)(ReassignedDrawer);
-/* eslint-enable */
+export default ReassignedDrawer;

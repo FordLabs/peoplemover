@@ -26,7 +26,6 @@ import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';
 import selectEvent from 'react-select-event';
 import {Product} from './Product';
-import {createBrowserHistory, History} from 'history';
 import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
 import {PreloadedState} from 'redux';
@@ -36,6 +35,7 @@ import {ProductsState} from 'State/ProductsState';
 import {ProductTagsState} from 'State/ProductTagsState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 jest.mock('Locations/LocationClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
@@ -44,9 +44,7 @@ describe('ProductForm', function() {
     let modalContent: ModalContents | null;
 
     const mockStore = configureStore([]);
-    const store = mockStore({
-        currentSpace: TestData.space,
-    });
+    const store = mockStore({});
 
     let resetCreateRange: () => void;
 
@@ -69,6 +67,7 @@ describe('ProductForm', function() {
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2020, 4, 14))
                 set(ModalContentsState, { title: 'Some Modal', component: <></> })
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <RecoilObserver
                     recoilState={ModalContentsState}
@@ -94,6 +93,7 @@ describe('ProductForm', function() {
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2020, 4, 14))
                 set(ModalContentsState, { title: 'Some Modal', component: <></> })
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <RecoilObserver
                     recoilState={ModalContentsState}
@@ -140,25 +140,21 @@ describe('ProductForm', function() {
     });
 
     it('should show delete modal without archive text when an archive product is being deleted', async () => {
-        const store = mockStore({
-            currentSpace: {
-                uuid: 'aaa-aaa-aaa-aaaaa',
-                id: 1,
-                name: 'Test Space',
-            } as Space,
-        });
-
         const archivedProduct = {...TestData.productWithoutLocation, endDate: '2020-02-02'};
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2022, 3, 14))
+                set(CurrentSpaceState, {
+                    uuid: 'aaa-aaa-aaa-aaaaa',
+                    id: 1,
+                    name: 'Test Space',
+                } as Space)
             }}>
                 <ProductForm
                     editing={true}
                     product={archivedProduct}
                 />
             </RecoilRoot>,
-            store
         );
         const deleteSpan = await screen.findByTestId('deleteProduct');
         fireEvent.click(deleteSpan);
@@ -170,6 +166,7 @@ describe('ProductForm', function() {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2022, 3, 14))
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <ProductForm
                     editing={true}
@@ -188,6 +185,7 @@ describe('ProductForm', function() {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, new Date(2020, 4, 14))
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <ProductForm editing={true} product={TestData.archivedProduct} />
             </RecoilRoot>,
@@ -200,18 +198,14 @@ describe('ProductForm', function() {
         expect(screen.queryByText('You can also choose to archive this product to be able to access it later.')).toBeFalsy();
     });
 
-    describe('tag dropdowns', () => {
-        let history: History;
+    describe('Tag dropdowns', () => {
         const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-            currentSpace: TestData.space,
             allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         };
 
         beforeEach(() => {
             jest.clearAllMocks();
             TestUtils.mockClientCalls();
-            history = createBrowserHistory();
-            history.push('/uuid');
         });
 
         it('should show filter option when new location tag is created from edit product modal', async () => {
@@ -220,6 +214,7 @@ describe('ProductForm', function() {
                     set(ViewingDateState, moment().toDate())
                     set(ProductsState, TestData.products)
                     set(ProductTagsState, TestData.productTags)
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <ProductForm editing={false} />
                 </RecoilRoot>,
@@ -241,6 +236,7 @@ describe('ProductForm', function() {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ViewingDateState, moment().toDate())
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <ProductForm editing={false} />
                 </RecoilRoot>,

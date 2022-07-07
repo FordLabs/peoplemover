@@ -19,15 +19,12 @@ import React, {RefObject, useRef, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
-import {connect} from 'react-redux';
 import AssignmentClient from './AssignmentClient';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {Assignment, calculateDuration} from './Assignment';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from '../Utils/ReactUtils';
-import {Space} from '../Space/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import PeopleClient from '../People/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
@@ -42,23 +39,23 @@ import PersonForm from 'People/PersonForm';
 
 import '../Styles/Main.scss';
 import './AssignmentCard.scss';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
-    currentSpace: Space;
     assignment: Assignment;
-    isUnassignedProduct: boolean;
+    isUnassignedProduct?: boolean;
     startDraggingAssignment?(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void;
 }
 
 function AssignmentCard({
-    currentSpace,
     assignment = {id: 0} as Assignment,
-    isUnassignedProduct,
+    isUnassignedProduct = false,
     startDraggingAssignment,
 }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const setModalContents = useSetRecoilState(ModalContentsState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
 
     const { fetchProducts } = useFetchProducts();
     const  { fetchPeople } = useFetchPeople();
@@ -262,10 +259,5 @@ function AssignmentCard({
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
+export default AssignmentCard;
 
-export default connect(mapStateToProps)(AssignmentCard);
-/* eslint-enable */

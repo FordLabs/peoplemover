@@ -44,7 +44,9 @@ export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: 
 
 export const setupSpaceAction: ActionCreator<ThunkAction<void, Function, null, Action<string>>> = (space: Space) =>
     (dispatch: Dispatch): Promise<void> => {
-        dispatch(setCurrentSpaceAction(space));
+        // dispatch(setCurrentSpaceAction(space));
+
+        // @todo MAKE SURE THIS GETS handled
         return getFilterOptionsForSpace(space.uuid!).then((filterOptions: Array<AllGroupedTagFilterOptions>) => {
             dispatch(setAllGroupedTagFilterOptionsAction(filterOptions));
         });

@@ -33,13 +33,11 @@ import {Assignment} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
-import {Space} from '../Space/Space';
 import moment from 'moment';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
-import './PersonForm.scss';
 import FormTagsField from '../ReusableComponents/FormTagsField';
 import {TagInterface} from '../Tags/Tag.interface';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
@@ -59,13 +57,15 @@ import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {ModalContentsState} from '../State/ModalContentsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+
+import './PersonForm.scss';
 
 interface Props {
     isEditPersonForm: boolean
     initiallySelectedProduct?: Product;
     initialPersonName?: string;
     personEdited?: Person;
-    currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -75,13 +75,13 @@ function PersonForm({
     isEditPersonForm,
     initiallySelectedProduct,
     initialPersonName,
-    currentSpace,
     personEdited,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: Props): JSX.Element {
     const products = useRecoilValue(ProductsState);
     const viewingDate = useRecoilValue(ViewingDateState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
     const setIsUnassignedDrawerOpen = useSetRecoilState(IsUnassignedDrawerOpenState);
     const setPeople = useSetRecoilState(PeopleState);
     const setModalContents = useSetRecoilState(ModalContentsState);
@@ -453,7 +453,6 @@ function PersonForm({
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

@@ -21,7 +21,7 @@ import {Product} from 'Products/Product';
 import {ProductsState} from 'State/ProductsState';
 import ProductClient from 'Products/ProductClient';
 import {ViewingDateState} from 'State/ViewingDateState';
-import {useParams} from 'react-router-dom';
+import {UUIDForCurrentSpaceSelector} from '../../State/CurrentSpaceState';
 
 interface UseFetchProducts {
     products: Product[];
@@ -29,14 +29,14 @@ interface UseFetchProducts {
 }
 
 function useFetchProducts(): UseFetchProducts {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+    const spaceUUID = useRecoilValue(UUIDForCurrentSpaceSelector);
     const [products, setProducts] = useRecoilState(ProductsState);
     const viewingDate = useRecoilValue(ViewingDateState);
 
     const fetchProducts = useCallback(() => {
-        ProductClient.getProductsForDate(teamUUID, viewingDate)
+        ProductClient.getProductsForDate(spaceUUID, viewingDate)
             .then(result => setProducts(result.data || [])).catch(console.error);
-    }, [setProducts, teamUUID, viewingDate])
+    }, [setProducts, spaceUUID, viewingDate])
 
     return {
         products: products || [],

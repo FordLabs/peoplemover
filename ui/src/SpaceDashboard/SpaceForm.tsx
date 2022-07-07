@@ -18,18 +18,24 @@
 import React, {createRef, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {createEmptySpace, Space} from '../Space/Space';
+
 import FormButton from '../ModalFormComponents/FormButton';
-import {useRecoilState, useSetRecoilState} from 'recoil';
+import {useSetRecoilState} from 'recoil';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {ModalContentsState} from '../State/ModalContentsState';
 
 import './SpaceForm.scss';
 
-function SpaceForm(): JSX.Element {
-    const { fetchUserSpaces } = useFetchUserSpaces();
-    const [currentSpace, setCurrentSpace] = useRecoilState(CurrentSpaceState);
+interface Props {
+    selectedSpace?: Space;
+}
+
+function SpaceForm({ selectedSpace }: Props): JSX.Element {
+    const setCurrentSpace = useSetRecoilState(CurrentSpaceState);
     const setModalContents = useSetRecoilState(ModalContentsState);
+
+    const { fetchUserSpaces } = useFetchUserSpaces();
 
     const maxLength = 40;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
@@ -45,7 +51,7 @@ function SpaceForm(): JSX.Element {
     }
 
     function initializeSpace(): Space {
-        return currentSpace ? currentSpace : createEmptySpace();
+        return selectedSpace ? selectedSpace : createEmptySpace();
     }
 
     function handleSubmit(event: FormEvent): void {
@@ -58,8 +64,8 @@ function SpaceForm(): JSX.Element {
 
         const spaceToSend = {...formSpace, name:  formSpace.name.trim() };
 
-        if (!!currentSpace && formSpace.uuid) {
-            SpaceClient.editSpaceName(formSpace.uuid, spaceToSend, currentSpace.name)
+        if (!!selectedSpace && formSpace.uuid) {
+            SpaceClient.editSpaceName(formSpace.uuid, spaceToSend, selectedSpace.name)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         } else {
@@ -116,7 +122,7 @@ function SpaceForm(): JSX.Element {
                     type="submit"
                     disabled={spaceNameLength <= 0}
                     testId="createSpaceButton">
-                    {currentSpace ? 'Save' : 'Create'}
+                    {selectedSpace ? 'Save' : 'Create'}
                 </FormButton>
             </div>
         </form>
