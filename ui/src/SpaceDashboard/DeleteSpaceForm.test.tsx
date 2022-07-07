@@ -21,7 +21,7 @@ import {waitFor} from '@testing-library/react';
 import DeleteSpaceForm from './DeleteSpaceForm';
 import {fireEvent, screen} from '@testing-library/dom';
 import SpaceClient from '../Space/SpaceClient';
-import {applyMiddleware, createStore, Store} from 'Redux';
+import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
 import {RecoilRoot} from 'recoil';
