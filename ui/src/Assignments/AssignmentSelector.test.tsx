@@ -17,7 +17,7 @@
 
 import React from 'react';
 import AssignmentForm from './AssignmentForm';
-import {fireEvent, screen} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
 import AssignmentClient from './AssignmentClient';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
@@ -72,7 +72,7 @@ describe('the assignment form', () => {
         const assignButton = await screen.findByText('Assign');
         fireEvent.click(assignButton);
 
-        expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
+        await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1));
             
         expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
             moment(viewingDate).format('YYYY-MM-DD'),
