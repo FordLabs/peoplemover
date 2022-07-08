@@ -15,14 +15,9 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Dispatch} from 'redux';
-import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
+import React from 'react';
 import {FilterOption} from '../CommonTypes/Option';
 import Dropdown from '../ReusableComponents/Dropdown';
-import {AllGroupedTagFilterOptions, FilterType} from './FilterLibraries';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
@@ -33,71 +28,44 @@ interface Props {
     label: string;
     defaultValues: Array<FilterOption>;
     onSelect(options: FilterOption[]): void;
-
     modalContents: ModalContents,
-    filterType: FilterType;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function Filter({
-    label,
-    defaultValues,
-    onSelect,
-
-    modalContents,
-    filterType,
-    allGroupedTagFilterOptions,
-    setAllGroupedTagFilterOptions,
-}: Props): JSX.Element {
+function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.Element {
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
-    const filterIndex = filterType.index;
-
-    const formattedFilterTypeValue = filterType.label.replace(' ', '_');
-
+    const labelId = label.replace(' ', '_');
     const getNumberOfSelectedFilters = (): number => defaultValues.filter(item => item.selected).length || 0;
+    const areFiltersSelected = (getNumberOfSelectedFilters() > 0);
 
     const getNumbersOfSelectedFiltersDisplayText = (): string => {
         const numOfSelectedFilters = getNumberOfSelectedFilters();
         return (numOfSelectedFilters === 0 ? 'All' : numOfSelectedFilters.toString());
     };
 
-    const areFiltersSelected = (getNumberOfSelectedFilters() > 0);
-
     const getNumberOfSelectedFiltersStyle = (): string => {
         return (areFiltersSelected ? 'dropdown_filter_count_style_badge' : 'dropdown_filter_count_style_default');
     };
 
     const clearFilter = (): void => {
-        setAllGroupedTagFilterOptions(allGroupedTagFilterOptions.map((aGroupOfTagFilterOptions, index) => {
-            if (index === filterIndex) {
-                return {
-                    ...aGroupOfTagFilterOptions, options: aGroupOfTagFilterOptions.options.map(anOption => {
-                        return (anOption.selected) ? {...anOption, selected: false } : anOption;
-                    }),
-                };
-            } else {
-                return {...aGroupOfTagFilterOptions};
-            }
-        }),);
+        onSelect(defaultValues.map(v => {
+            v.selected = false;
+            return v;
+        }));
     };
 
-    const getClearFilterButton = (): ReactNode => {
-        if (areFiltersSelected) {
-            return <button className="material-icons clear-filter-button"
-                data-testid={`clear_selected_filter_${formattedFilterTypeValue}`}
-                onClick={clearFilter}
-            >
-                close
-            </button>;
-        }
-        return <></>;
+    const ClearFilterButton = (): JSX.Element => areFiltersSelected ?  (
+        <button
+            className="material-icons clear-filter-button"
+            data-testid={`clearSelectedFilter-${labelId}`}
+            onClick={clearFilter}
+        >
+            close
+        </button>
+    ) : <></>;
 
-    };
-
-    const dropdownContent =
+    const FilterDropdown = () => (
         <>
             <div className="sortby-option-container">
                 {defaultValues.map(
@@ -127,53 +95,45 @@ function Filter({
             </div>
             {!isReadOnly && (
                 <button className="add-edit-tags-dropdown-button"
-                    data-testid={`open_${formattedFilterTypeValue}_modal_button`}
+                    data-testid={`open_${labelId}_modal_button`}
                     onClick={(): void => setModalContents(modalContents)}
                 >
-                    <span>{`Add/Edit your ${filterType.label}`}</span>
+                    <span>Add/Edit your ${label}</span>
                     <i className="material-icons">keyboard_arrow_right</i>
                 </button>
             )}
-        </>;
+        </>
+    );
 
-    const dropdownButtonContent =
+    const FilterSelector = () => (
         <>
-            <span className="dropdown-label" id={`dropdown-label_${formattedFilterTypeValue}`}>
+            <span className="dropdown-label" id={`dropdown-label_${labelId}`}>
                 {label}:
             </span>
             <span
-                id={`filter_count_${formattedFilterTypeValue}`}
-                data-testid={`filter_count_${formattedFilterTypeValue}`}
+                id={`filter_count_${labelId}`}
+                data-testid={`filter_count_${labelId}`}
                 className={getNumberOfSelectedFiltersStyle()}>
                 {getNumbersOfSelectedFiltersDisplayText()}
             </span>
-        </>;
+        </>
+    );
 
     return (
         <Dropdown
-            buttonId={`Filter-button_${formattedFilterTypeValue}`}
-            dropdownButtonContent={dropdownButtonContent}
-            dropdownContent={dropdownContent}
-            dropdownOptionIds={[`Filter-button_${formattedFilterTypeValue}`,
-                `dropdown-label_${formattedFilterTypeValue}`,
-                `dropdown-button-arrow-up_${formattedFilterTypeValue}`,
-                `filter_count_${formattedFilterTypeValue}`]}
-            dropdownTestId={`dropdown_${formattedFilterTypeValue}`}
-            buttonTestId={`dropdown_button_${formattedFilterTypeValue}`}
-            clearFilterButton={getClearFilterButton()}
+            buttonId={`Filter-button_${labelId}`}
+            dropdownButtonContent={<FilterSelector />}
+            dropdownContent={<FilterDropdown />}
+            dropdownOptionIds={[`Filter-button_${labelId}`,
+                `dropdown-label_${labelId}`,
+                `dropdown-button-arrow-up_${labelId}`,
+                `filter_count_${labelId}`]}
+            dropdownTestId={`dropdown_${labelId}`}
+            buttonTestId={`dropdown_button_${labelId}`}
+            clearFilterButton={<ClearFilterButton />}
         />
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
+export default Filter;
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Filter);
-/* eslint-enable */

@@ -130,13 +130,13 @@ describe('Filter Dropdown', () => {
 
         it('should show the clear filter button when there are filters selected', async () => {
             const locationCounter = await appLocation.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            await appLocation.findByTestId(`clear_selected_filter_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            await appLocation.findByTestId(`clearSelectedFilter-${FilterTypeListings.Location.label.replace(' ', '_')}`);
             expect(locationCounter).toContainHTML('2');
         });
 
         it('should clear the selected filters when clicking the clear filter button', async () => {
             const locationCounter = await appLocation.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            const clearSelectedFiltersIcon = await appLocation.findByTestId(`clear_selected_filter_${FilterTypeListings.Location.label.replace(' ', '_')}`);
+            const clearSelectedFiltersIcon = await appLocation.findByTestId(`clearSelectedFilter-${FilterTypeListings.Location.label.replace(' ', '_')}`);
             expect(locationCounter).toContainHTML('2');
             clearSelectedFiltersIcon.click();
             expect(store.getState().allGroupedTagFilterOptions[0].options.filter((item: { selected: boolean }) => item.selected).length).toEqual(0);
@@ -145,7 +145,7 @@ describe('Filter Dropdown', () => {
 
         it('should not show the x to clear the selected filters when there are no filters selected', async () => {
             const locationCounter = await appRole.findByTestId(`filter_count_${FilterTypeListings.Role.label.replace(' ', '_')}`);
-            const clearSelectedFiltersIcon = appRole.queryByTestId(`clear_selected_filter_${FilterTypeListings.Role.label.replace(' ', '_')}`);
+            const clearSelectedFiltersIcon = appRole.queryByTestId(`clearSelectedFilter-${FilterTypeListings.Role.label.replace(' ', '_')}`);
             expect(locationCounter).toContainHTML('All');
             expect(clearSelectedFiltersIcon).toBeNull();
         });

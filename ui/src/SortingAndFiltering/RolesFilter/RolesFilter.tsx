@@ -16,7 +16,7 @@
  */
 
 import Filter from '../Filter';
-import {FilterTypeListings, getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
+import {getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
 import React, {useState} from 'react';
 import MyRolesForm from '../../Roles/MyRolesForm';
 import {useRecoilValue} from 'recoil';
@@ -48,11 +48,8 @@ function RolesFilter() {
             label="Roles"
             defaultValues={roleFilterOptions}
             onSelect={setFilterOptions}
-
-            filterType={FilterTypeListings.Role}
-            modalContents={{
-                title: 'My Roles', component: <MyRolesForm/>
-            }}/>
+            modalContents={{ title: 'My Roles', component: <MyRolesForm/>}}
+        />
     )
 }
 
