@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {fireEvent, getByText, screen, within} from '@testing-library/react';
+import {fireEvent, getByText, screen, waitFor, within} from '@testing-library/react';
 import React from 'react';
 import AssignmentForm from '../Assignments/AssignmentForm';
 import AssignmentClient from '../Assignments/AssignmentClient';
@@ -25,15 +25,19 @@ import TestData from '../Utils/TestData';
 import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {AvailableModals} from '../Modal/AvailableModals';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
+import PersonForm from '../People/PersonForm';
+
+let modalContent: ModalContents | null;
 
 describe('AssignmentForm', () => {
     beforeEach(() => {
+        modalContent = null;
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
     });
@@ -45,6 +49,12 @@ describe('AssignmentForm', () => {
                 <RecoilRoot initializeState={({set}) => {
                     set(ProductsState, products);
                 }}>
+                    <RecoilObserver
+                        recoilState={ModalContentsState}
+                        onChange={(value: ModalContents) => {
+                            modalContent = value;
+                        }}
+                    />
                     <AssignmentForm initiallySelectedProduct={products[0]} />
                 </RecoilRoot>
             );
@@ -65,7 +75,8 @@ describe('AssignmentForm', () => {
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
 
             fireEvent.click(screen.getByText('Assign'));
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
+
+            await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
                 [{
@@ -83,7 +94,8 @@ describe('AssignmentForm', () => {
             const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
             await selectEvent.select(labelElement, /Person 1/, containerToFindOptionsIn);
             fireEvent.submit(screen.getByTestId('assignmentForm'));
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
+
+            await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
                 [{
@@ -104,7 +116,7 @@ describe('AssignmentForm', () => {
             fireEvent.click(screen.getByLabelText('Mark as Placeholder'));
             fireEvent.click(screen.getByText('Assign'));
 
-            expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
+            await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1));
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
                 moment(viewingDate).format('YYYY-MM-DD'),
                 [{
@@ -150,7 +162,6 @@ describe('AssignmentForm', () => {
 
         it('populates the person name field of the Create Person modal on open', async () => {
             const store = createStore(rootReducer);
-            store.dispatch = jest.fn();
 
             renderComponent(store);
             const labelElement = await screen.findByLabelText('Name');
@@ -159,12 +170,13 @@ describe('AssignmentForm', () => {
             const createOptionText = TestUtils.expectedCreateOptionText('XYZ ABC 123');
             fireEvent.click(getByText(await screen.findByTestId('assignmentForm'),  createOptionText));
 
-            expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
-                modal: AvailableModals.CREATE_PERSON,
-                item: {
-                    initiallySelectedProduct: TestData.productWithAssignments,
-                    initialPersonName: 'XYZ ABC 123',
-                },
+            await waitFor(() => expect(modalContent).toEqual({
+                title: 'Add New Person',
+                component: <PersonForm
+                    isEditPersonForm={false}
+                    initiallySelectedProduct={ TestData.productWithAssignments}
+                    initialPersonName="XYZ ABC 123"
+                />,
             }));
         });
     });
@@ -186,6 +198,12 @@ const renderComponent = (store: Store|undefined = undefined): { viewingDate: Dat
             set(ProductsState, products);
             set(PeopleState,  TestData.people);
         }}>
+            <RecoilObserver
+                recoilState={ModalContentsState}
+                onChange={(value: ModalContents) => {
+                    modalContent = value;
+                }}
+            />
             <AssignmentForm initiallySelectedProduct={products[0]} />
         </RecoilRoot>,
         store,

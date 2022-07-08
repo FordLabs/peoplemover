@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import FormButton from '../ModalFormComponents/FormButton';
-import ModalCardBanner from './ModalCardBanner';
+import FormButton from 'ModalFormComponents/FormButton';
+import ModalCardBanner from 'Modal/ModalCardBanner/ModalCardBanner';
 
 export interface NotificationModalProps {
     close(): void;
@@ -35,7 +35,6 @@ function NotificationModal({
     containerClassname = '',
 }: NotificationModalProps): JSX.Element {
 
-
     const CancelButton = (): JSX.Element => (
         <FormButton
             buttonStyle="primary"
@@ -46,7 +45,7 @@ function NotificationModal({
     );
 
     return (
-        <div className="modalBackground">
+        <div className="modalBackground" data-testid="notificationModal">
             <div className={containerClassname ? 'modalContents ' + containerClassname : 'modalContents'}>
                 <div className="modalCard">
                     <ModalCardBanner

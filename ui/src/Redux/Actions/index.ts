@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import {CurrentModalState} from '../Reducers/currentModalReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import {Action, ActionCreator, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
@@ -23,23 +22,11 @@ import {Space} from '../../Space/Space';
 import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../../SortingAndFiltering/FilterLibraries';
 
 export enum AvailableActions {
-    SET_CURRENT_MODAL,
-    CLOSE_MODAL,
     REGISTER_PRODUCT_REF,
     UNREGISTER_PRODUCT_REF,
     SET_ALL_FILTER_OPTIONS,
     SET_CURRENT_SPACE
 }
-
-export const setCurrentModalAction = (modalState: CurrentModalState) => ({
-    type: AvailableActions.SET_CURRENT_MODAL,
-    modal: modalState.modal,
-    item: modalState.item,
-});
-
-export const closeModalAction = () => ({
-    type: AvailableActions.CLOSE_MODAL,
-});
 
 export const registerProductRefAction = (productRef: ProductCardRefAndProductPair) => ({
     type: AvailableActions.REGISTER_PRODUCT_REF,

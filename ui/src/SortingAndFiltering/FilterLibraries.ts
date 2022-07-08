@@ -22,7 +22,6 @@ import RoleClient from '../Roles/RoleClient';
 import {TagClient} from '../Tags/TagClient.interface';
 import {AxiosResponse} from 'axios';
 import {TagInterface} from '../Tags/Tag.interface';
-import {AvailableModals} from '../Modal/AvailableModals';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 
 export interface FilterTypeListing {
@@ -33,14 +32,13 @@ export interface FilterTypeListing {
 }
 
 export const FilterTypeListings: FilterTypeListing = {
-    Location: {index: 0, label: 'Product Location', modal: AvailableModals.MY_LOCATION_TAGS, tagType: 'location', tagNameType: 'Location' },
-    ProductTag: {index: 1, label: 'Product Tags', modal: AvailableModals.MY_PRODUCT_TAGS, tagType: 'product tag', tagNameType: 'Product Tag'},
-    Role: {index: 2, label: 'Role', modal: AvailableModals.MY_ROLES_MODAL, tagType: 'role', tagNameType: 'Role'},
-    PersonTag: {index: 3, label: 'Person Tags', modal: AvailableModals.MY_PERSON_TAGS, tagType: 'person tag', tagNameType: 'Person Tag'},
+    Location: {index: 0, label: 'Product Location', tagType: 'location', tagNameType: 'Location' },
+    ProductTag: {index: 1, label: 'Product Tags', tagType: 'product tag', tagNameType: 'Product Tag'},
+    Role: {index: 2, label: 'Role', tagType: 'role', tagNameType: 'Role'},
+    PersonTag: {index: 3, label: 'Person Tags', tagType: 'person tag', tagNameType: 'Person Tag'},
 };
 
 export interface FilterType {
-    modal: AvailableModals;
     index: number;
     label: string;
     tagType: TagType;

@@ -23,19 +23,25 @@ import React from 'react';
 import SpaceDashboardTile from './SpaceDashboardTile';
 import {createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {AvailableModals} from '../Modal/AvailableModals';
 import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {RecoilRoot} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
+import SpaceForm from './SpaceForm';
+import DeleteSpaceForm from './DeleteSpaceForm';
+import TransferOwnershipForm from './TransferOwnershipForm';
+
+let modalContent: ModalContents | null;
 
 describe('SpaceDashboardTile tests', () => {
     let onClick: () => void;
     let store: import('redux').Store<import('redux').AnyAction>;
-    let unmount: () => void;
 
     beforeEach(async () => {
+        modalContent = null;
+
         jest.clearAllMocks();
         SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
             [
@@ -44,28 +50,28 @@ describe('SpaceDashboardTile tests', () => {
             ]
         );
         store = createStore(rootReducer, {});
-        store.dispatch = jest.fn();
         onClick = jest.fn();
-        ({unmount} = await renderSpaceDashboardList(store, onClick));
     });
 
     it('should open space on click', async () => {
+        await renderSpaceDashboardList(store, onClick);
         const spaceTile = await screen.findByTestId('spaceDashboardTile');
         fireEvent.click(spaceTile);
         expect(onClick).toBeCalled();
     });
 
     it('should open edit space modal on click', async () => {
+        await renderSpaceDashboardList(store, onClick);
         const editSpaceEllipsis = await screen.findByTestId('ellipsisButton');
         fireEvent.click(editSpaceEllipsis);
 
         const editSpaceTile = await screen.findByText('Edit');
         fireEvent.click(editSpaceTile);
         
-        expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
-            modal: AvailableModals.EDIT_SPACE,
-            item: TestData.space,
-        }));
+        expect(modalContent).toEqual({
+            title: 'Edit Space',
+            component: <SpaceForm space={TestData.space}/>
+        });
     });
 
     describe('deleting a space', () => {
@@ -73,7 +79,6 @@ describe('SpaceDashboardTile tests', () => {
             SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
                 [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
             );
-            unmount();
             await renderSpaceDashboardList(store, onClick);
 
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
@@ -82,15 +87,35 @@ describe('SpaceDashboardTile tests', () => {
             expect(screen.queryByText('Delete Space')).not.toBeInTheDocument();
         });
 
-        it('should show the delete space modal on click', async () => {
-            const spaceEllipsis = await screen.findByTestId('ellipsisButton');
-            fireEvent.click(spaceEllipsis);
-            const leaveSpaceTile = await screen.findByText('Delete Space');
-            fireEvent.click(leaveSpaceTile);
-            expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
-                modal: AvailableModals.DELETE_SPACE,
-                item: TestData.space,
-            }));
+        describe('should show the delete space modal on click', () => {
+            it('with space having editor', async () => {
+                await renderSpaceDashboardList(store, onClick);
+                const spaceEllipsis = await screen.findByTestId('ellipsisButton');
+                fireEvent.click(spaceEllipsis);
+                const leaveSpaceTile = await screen.findByText('Delete Space');
+                fireEvent.click(leaveSpaceTile);
+
+                expect(modalContent).toEqual({
+                    title: "Are you sure?",
+                    component: <DeleteSpaceForm space={TestData.space} spaceHasEditors={true}/>
+                });
+            });
+
+            it('with space NOT having editor', async () => {
+                SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
+                    [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
+                );
+                await renderSpaceDashboardList(store, onClick);
+                const spaceEllipsis = await screen.findByTestId('ellipsisButton');
+                fireEvent.click(spaceEllipsis);
+                const leaveSpaceTile = await screen.findByText('Delete Space');
+                fireEvent.click(leaveSpaceTile);
+
+                expect(modalContent).toEqual({
+                    title: "Are you sure?",
+                    component: <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>
+                });
+            });
         });
     });
 
@@ -99,7 +124,6 @@ describe('SpaceDashboardTile tests', () => {
             SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
                 [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
             );
-            unmount();
             await renderSpaceDashboardList(store, onClick)
 
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
@@ -112,7 +136,6 @@ describe('SpaceDashboardTile tests', () => {
             SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
                 [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
             );
-            unmount();
             await renderSpaceDashboardList(store, onClick);
 
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
@@ -122,18 +145,21 @@ describe('SpaceDashboardTile tests', () => {
         });
 
         it('should open leave space modal on click', async () => {
+            await renderSpaceDashboardList(store, onClick);
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
             fireEvent.click(spaceEllipsis);
             const leaveSpaceTile = await screen.findByText('Leave Space');
             fireEvent.click(leaveSpaceTile);
-            expect(store.dispatch).toBeCalledWith(setCurrentModalAction({
-                modal: AvailableModals.TRANSFER_OWNERSHIP,
-                item: TestData.space,
-            }));
+
+            expect(modalContent).toEqual({
+                title: 'Transfer Ownership of Space',
+                component: <TransferOwnershipForm space={TestData.space}/>
+            });
         });
     });
 
     it('should focus the first dropdown option when opened', async () => {
+        await renderSpaceDashboardList(store, onClick);
         const spaceTileDropdownButton = await screen.findByTestId('ellipsisButton');
         spaceTileDropdownButton.click();
         await waitFor(() => expect(screen.getByTestId('editSpace')).toHaveFocus());
@@ -145,6 +171,12 @@ async function renderSpaceDashboardList(store: Store, onClick: () => void) {
         <RecoilRoot initializeState={({set}) => {
             set(CurrentUserState, 'USER_ID')
         }}>
+            <RecoilObserver
+                recoilState={ModalContentsState}
+                onChange={(value: ModalContents) => {
+                    modalContent = value;
+                }}
+            />
             <SpaceDashboardTile space={TestData.space} onClick={onClick}/>
         </RecoilRoot>,
         store

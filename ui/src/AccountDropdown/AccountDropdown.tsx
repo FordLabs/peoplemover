@@ -17,7 +17,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {getUserNameFromAccessToken} from '../Auth/TokenProvider';
-import ShareAccessButton from './ShareAccessButton';
+import ShareAccessButton from './ShareAccessButton/ShareAccessButton';
 import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
 
@@ -38,7 +38,6 @@ function AccountDropdown({hideSpaceButtons, showAllDropDownOptions}: Props): JSX
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
-
 
     useEffect(() => {
         setCurrentUser(getUserNameFromAccessToken());

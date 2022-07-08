@@ -17,26 +17,32 @@
 import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import * as React from 'react';
-import {act, waitFor} from '@testing-library/react';
+import {waitFor} from '@testing-library/react';
 import DeleteSpaceForm from './DeleteSpaceForm';
 import {fireEvent, screen} from '@testing-library/dom';
 import SpaceClient from '../Space/SpaceClient';
-import {AvailableActions, closeModalAction} from '../Redux/Actions';
 import {applyMiddleware, createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
 import thunk from 'redux-thunk';
-import {AvailableModals} from '../Modal/AvailableModals';
 import {RecoilRoot} from 'recoil';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
+import TransferOwnershipForm from './TransferOwnershipForm';
 
 describe('Delete Space Form', () => {
     let store: Store;
+    let modalContent: ModalContents | null;
 
     describe('Space has no editors', () => {
         beforeEach(() => {
             store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
-            store.dispatch = jest.fn();
             renderWithRedux(
-                <RecoilRoot>
+                <RecoilRoot initializeState={({set}) => {
+                    set(ModalContentsState, {
+                        title: 'A Title',
+                        component: <div>Some Component</div>,
+                    });
+                }}>
                     <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>
                 </RecoilRoot>,
                 store
@@ -50,16 +56,28 @@ describe('Delete Space Form', () => {
 
     describe('Space has editors', () => {
         beforeEach(() => {
+            modalContent = null;
             store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
-            store.dispatch = jest.fn();
 
             renderWithRedux(
-                <RecoilRoot>
+                <RecoilRoot initializeState={({set}) => {
+                    set(ModalContentsState, {
+                        title: 'A Title',
+                        component: <div>Some Component</div>,
+                    });
+                }}>
+                    <RecoilObserver
+                        recoilState={ModalContentsState}
+                        onChange={(value: ModalContents) => {
+                            modalContent = value;
+                        }}
+                    />
                     <DeleteSpaceForm space={TestData.space} spaceHasEditors={true}/>
                 </RecoilRoot>,
                 store
             );
         });
+
         describe('Things to display', () => {
             it('should show copy and prompt "do you want to assign a new owner before leaving?"', () => {
                 expect(screen.getByText(/As owner of this space, deleting it will permanently remove it from all users' dashboards. This action cannot be undone./)).toBeInTheDocument();
@@ -86,24 +104,27 @@ describe('Delete Space Form', () => {
 
             it('should close the modal after OK is pressed on the notification of deletion', async () => {
                 SpaceClient.deleteSpaceByUuid = jest.fn().mockResolvedValue(undefined);
-                await act(async () => {
-                    const bigRedButton = screen.getByText('Delete space');
-                    fireEvent.click(bigRedButton);
-                });
-                await act(async () => {
-                    const okButton = screen.getByText('Ok');
-                    fireEvent.click(okButton);
-                });
-                expect(store.dispatch).toBeCalledWith(closeModalAction());
+
+                const bigRedButton = screen.getByText('Delete space');
+                fireEvent.click(bigRedButton);
+
+                expect(modalContent).not.toBeNull();
+
+                const okButton = await screen.findByText('Ok');
+                fireEvent.click(okButton);
+
+                await waitFor(() => expect(modalContent).toBeNull());
             });
 
             it('should stop showing the modal when the close button is pressed', async () => {
                 SpaceClient.deleteSpaceByUuid = jest.fn().mockResolvedValue(undefined);
 
+                expect(modalContent).not.toBeNull();
+
                 const bigRedButton = screen.getByText('Cancel');
                 fireEvent.click(bigRedButton);
 
-                expect(store.dispatch).toBeCalledWith(closeModalAction());
+                await waitFor(() => expect(modalContent).toBeNull());
             });
         });
 
@@ -123,10 +144,9 @@ describe('Delete Space Form', () => {
                 const bigRedButton = screen.getByText('Transfer Ownership');
                 fireEvent.click(bigRedButton);
 
-                await waitFor(() => expect(store.dispatch).toHaveBeenCalledWith({
-                    type: AvailableActions.SET_CURRENT_MODAL,
-                    modal: AvailableModals.TRANSFER_OWNERSHIP,
-                    item: TestData.space,
+                await waitFor(() => expect(modalContent).toEqual({
+                    title: 'Transfer Ownership of Space',
+                    component: <TransferOwnershipForm space={TestData.space}/>
                 }));
             });
         });

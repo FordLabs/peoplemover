@@ -19,7 +19,7 @@ import {JSX} from '@babel/types';
 import {Color, RoleTag} from './RoleTag.interface';
 import React, {useState} from 'react';
 import {TagInterface} from '../Tags/Tag.interface';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import RoleClient from './RoleClient';
 import {createDataTestId} from '../Utils/ReactUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';

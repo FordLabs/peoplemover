@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,40 +17,39 @@
 
 import React, {RefObject, useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {registerProductRefAction, setCurrentModalAction, unregisterProductRefAction} from '../Redux/Actions';
+import {registerProductRefAction, unregisterProductRefAction} from '../Redux/Actions';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
 import {ProductCardRefAndProductPair} from './ProductDnDHelper';
 import {isUnassignedProduct, Product} from './Product';
 import {GlobalStateProps} from '../Redux/Reducers';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
 import {Space} from '../Space/Space';
 import {createDataTestId} from '../Utils/ReactUtils';
-
-import {AvailableModals} from '../Modal/AvailableModals';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {getAssignments, Person} from '../People/Person';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
-
-import './Product.scss';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 
+import './Product.scss';
+import {ModalContentsState} from '../State/ModalContentsState';
+import ProductForm from './ProductForm';
+import AssignmentForm from '../Assignments/AssignmentForm';
+
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
-interface ProductCardProps {
+interface Props {
     product: Product;
     currentSpace: Space;
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function ProductCard({
@@ -58,10 +57,10 @@ function ProductCard({
     currentSpace,
     registerProductRef,
     unregisterProductRef,
-    setCurrentModal,
-}: ProductCardProps): JSX.Element {
+}: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const { fetchProducts, products } = useFetchProducts();
 
@@ -96,11 +95,12 @@ function ProductCard({
 
     function editProductAndCloseEditMenu(): void {
         setIsEditMenuOpen(false);
-        const newModal: CurrentModalState = {
-            modal: AvailableModals.EDIT_PRODUCT,
-            item: product,
-        };
-        setCurrentModal(newModal);
+        setModalContents({
+            title: 'Edit Product',
+            component: <ProductForm
+                editing
+                product={product}/>,
+        });
     }
 
     async function showArchiveProductModalAndCloseEditMenu(): Promise<void> {
@@ -145,9 +145,9 @@ function ProductCard({
             });
     };
 
-    const setCurrentModalToCreateAssignment = (): void => setCurrentModal({
-        modal: AvailableModals.CREATE_ASSIGNMENT,
-        item: product,
+    const setCurrentModalToCreateAssignment = (): void => setModalContents({
+        title: 'Assign a Person',
+        component: <AssignmentForm initiallySelectedProduct={product}/>,
     });
 
     function handleKeyDownForSetCurrentModalToCreateAssignment(event: React.KeyboardEvent): void {
@@ -273,7 +273,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     registerProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(registerProductRefAction(productRef)),
     unregisterProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(unregisterProductRefAction(productRef)),
 });

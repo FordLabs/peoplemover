@@ -16,25 +16,25 @@
  */
 
 import React from 'react';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Dispatch} from 'redux';
-import {connect} from 'react-redux';
-import {AvailableModals} from '../Modal/AvailableModals';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import ProductForm from './ProductForm';
 
 import './NewProductButton.scss';
 
 interface Props {
-  setCurrentModal(modalState: CurrentModalState): void;
-  modalState?: CurrentModalState;
+    modalContents?: ModalContents;
 }
 
-function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: Props): JSX.Element {
+function NewProductButton({ modalContents}: Props): JSX.Element {
     const isReadOnly = useRecoilValue(IsReadOnlyState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
-    const openModal = (): void => setCurrentModal(modalState);
+    const openModal = (): void => {
+        const createNewProductForm = {title: 'Add New Product', component: <ProductForm editing={false}/>};
+        setModalContents(modalContents || createNewProductForm);
+    }
 
     return isReadOnly ? <></> : (
         <button
@@ -47,10 +47,4 @@ function NewProductButton({ modalState = {modal: AvailableModals.CREATE_PRODUCT}
     );
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(null, mapDispatchToProps)(NewProductButton);
-/* eslint-enable */
+export default NewProductButton;

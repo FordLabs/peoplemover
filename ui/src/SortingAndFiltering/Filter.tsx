@@ -1,5 +1,5 @@
-/*!
- * Copyright (c) 2021 Ford Motor Company
+/*
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,34 +18,36 @@
 import React, {ReactNode} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
-import {setAllGroupedTagFilterOptionsAction, setCurrentModalAction} from '../Redux/Actions';
+import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {connect} from 'react-redux';
 import {FilterOption} from '../CommonTypes/Option';
-import './FilterOrSortBy.scss';
 import Dropdown from '../ReusableComponents/Dropdown';
 import {AllGroupedTagFilterOptions, FilterType} from './FilterLibraries';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+
+import './FilterOrSortBy.scss';
 
 function toggleOption(option: FilterOption): FilterOption {
     return {...option, selected: !option.selected};
 }
 
-interface FilterProps {
+interface Props {
+    modalContents: ModalContents,
     filterType: FilterType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function Filter({
+    modalContents,
     filterType,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
-    setCurrentModal,
-}: FilterProps): JSX.Element {
+}: Props): JSX.Element {
     const isReadOnly = useRecoilValue(IsReadOnlyState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const filterIndex = filterType.index;
 
@@ -154,7 +156,7 @@ function Filter({
             {!isReadOnly && (
                 <button className="add-edit-tags-dropdown-button"
                     data-testid={`open_${formattedFilterTypeValue}_modal_button`}
-                    onClick={(): void => { setCurrentModal({modal: filterType.modal}); }}
+                    onClick={(): void => setModalContents(modalContents)}
                 >
                     <span>{`Add/Edit your ${filterType.label}`}</span>
                     <i className="material-icons">keyboard_arrow_right</i>
@@ -198,7 +200,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });

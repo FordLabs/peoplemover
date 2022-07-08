@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,25 +17,26 @@
 
 import {JSX} from '@babel/types';
 import React from 'react';
-import {CloseModalButton, ModalTitle} from './ModalCardBanner';
+import {CloseModalButton, ModalTitle} from 'Modal/ModalCardBanner/ModalCardBanner';
 
 import './MultiModalCardBanner.scss';
 
 interface Props {
     title: string;
     onCloseBtnClick: () => void;
+    onClick?: () => void;
     collapsed?: boolean;
 }
 
-const MultiModalCardBanner = ({title, onCloseBtnClick, collapsed = false}: Props): JSX.Element => {
-    const HeaderWrapper = collapsed ? 'button' : 'div';
-
+const MultiModalCardBanner = ({title, onClick, onCloseBtnClick, collapsed = false}: Props): JSX.Element => {
     return (
         <div className="modalCardBanner multiModal">
-            <HeaderWrapper
-                className="expandCollapseToggleButton"
+            <button
+                className="expand-collapse-toggle-button"
                 data-testid="multiModalExpandCollapseButton"
                 aria-label={collapsed ? 'Open ' + title + ' controls' : title}
+                disabled={!collapsed}
+                onClick={onClick}
             >
                 <ModalTitle title={title} />
                 <i data-testid="modalCardBannerArrowIcon"
@@ -44,7 +45,7 @@ const MultiModalCardBanner = ({title, onCloseBtnClick, collapsed = false}: Props
                 >
                     {collapsed ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
                 </i>
-            </HeaderWrapper>
+            </button>
             {!collapsed && <CloseModalButton onClick={onCloseBtnClick} />}
         </div>
     );

@@ -16,34 +16,34 @@
  */
 
 import React from 'react';
-import {connect} from 'react-redux';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {createDataTestId} from '../Utils/ReactUtils';
-import {AvailableModals} from '../Modal/AvailableModals';
+import {createDataTestId} from 'Utils/ReactUtils';
 import {Person} from './Person';
-import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
-import {useRecoilValue} from 'recoil';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import PersonAndRoleInfo from 'Assignments/PersonAndRoleInfo';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import PersonForm from './PersonForm';
+import {ModalContentsState} from 'State/ModalContentsState';
 
 import '../Styles/Main.scss';
 import './PersonCard.scss';
 
 interface Props {
     person: Person;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function PersonCard({ person, setCurrentModal }: Props): JSX.Element {
+function PersonCard({ person }: Props): JSX.Element {
+    const setModalContents = useSetRecoilState(ModalContentsState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     function toggleModal(): void {
         if (!isReadOnly) {
-            const newModalState: CurrentModalState = {
-                modal: AvailableModals.EDIT_PERSON,
-                item: person,
-            };
-            setCurrentModal(newModalState);
+            setModalContents({
+                title: 'Edit Person',
+                component: <PersonForm
+                    isEditPersonForm
+                    personEdited={person}
+                />,
+            });
         }
     }
 
@@ -71,21 +71,15 @@ function PersonCard({ person, setCurrentModal }: Props): JSX.Element {
                     style={{backgroundColor: 'transparent'}}
                     onClick={toggleModal}
                 >
-                    {!isReadOnly &&
-                    <i className="material-icons archivedPersonEditIcon greyIcon" aria-hidden>
-                        more_vert
-                    </i>
-                    }
+                    {!isReadOnly && (
+                        <i className="material-icons archivedPersonEditIcon greyIcon" aria-hidden>
+                            more_vert
+                        </i>
+                    )}
                 </button>
             </div>
         </div>
     );
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(null, mapDispatchToProps)(PersonCard);
-/* eslint-enable */
+export default PersonCard;

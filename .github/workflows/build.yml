@@ -52,9 +52,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
-        uses: actions/setup-node@v1.4.4
+        uses: actions/setup-node@v3
         with:
-          node-version: 13.x
+          node-version: 16.x
       - name: Increment version
         run: npm version patch
         working-directory: ./ui
@@ -63,7 +63,7 @@ jobs:
         run: npm run generate-build-version
         working-directory: ./ui
       - name: NPM CI Install
-        run: npm ci
+        run: npm ci --legacy-peer-deps
         working-directory: ./ui
       - name: Lint
         run: npm run lint
@@ -87,11 +87,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
-        uses: actions/setup-node@v1.4.4
+        uses: actions/setup-node@v3
         with:
-          node-version: 13.x
+          node-version: 16.x
       - name: NPM Install
-        run: npm install
+        run: npm ci --legacy-peer-deps
         working-directory: ./ui
       - name: Setup Java JDK
         uses: actions/setup-java@v1.4.3

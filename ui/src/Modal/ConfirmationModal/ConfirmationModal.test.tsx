@@ -19,7 +19,7 @@ import ConfirmationModal from './ConfirmationModal';
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react';
 import {noop} from '@babel/types';
-import FormButton from '../ModalFormComponents/FormButton';
+import FormButton from 'ModalFormComponents/FormButton';
 
 describe('the confirmation modal for deleting a board', () => {
     it('should call back properly when the archive button is clicked', async () => {

@@ -76,17 +76,13 @@ describe('Share Access Form', () => {
                     expect(xhr.status).to.equal(200);
                 });
 
-            cy.get('[data-testid=modalCard]')
-                .should('have.attr', 'aria-expanded', 'true')
-                .should('not.have.attr', 'hidden');
-
             cy.get('[data-testid=grantEditAccessConfirmationFormLinkToSpace]')
                 .should('contain', baseUrl + '/' + spaceUuid);
             cy.get('[data-testid=grantEditAccessConfirmationFormCopyButton]')
                 .should('contain', 'Copy link' )
                 .click()
                 .should('contain', 'Copied' );
-            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
+            cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').focus().click();
             cy.get('[data-testid=modalPopupContainer]').should('not.exist');
 
 
@@ -166,31 +162,27 @@ describe('Share Access Form', () => {
 const openShareAccessForm = (): void => {
     cy.get('[data-testid=accountDropdownToggle]').click();
     cy.get('[data-testid=shareAccess]').click();
-    cy.get('[data-testid=modalContainer]').should('exist');
+    cy.get('[data-testid=modalContent]').should('exist');
 };
 
 const expandInviteToViewModalCard = (): void => {
-    cy.get('@inviteToViewModalCard').click();
+    cy.get('@inviteToViewModalCard').contains('Invite others to view').click();
 };
 
 const expandInviteToEditModalCard = (): void => {
-    cy.get('@inviteToEditModalCard').click();
+    cy.get('@inviteToEditModalCard').contains('Invite others to edit').click();
 };
 
 const inviteToViewModalCardShouldBeExpanded = (): void => {
     cy.get('@inviteToViewModalCard')
-        .should('have.attr', 'aria-expanded', 'true')
-        .should('not.have.attr', 'hidden');
+        .should('have.attr', 'aria-expanded', 'true');
     cy.get('@inviteToEditModalCard')
-        .should('have.attr', 'aria-expanded', 'false')
-        .should('have.attr', 'hidden');
+        .should('have.attr', 'aria-expanded', 'false');
 };
 
 const inviteToEditModalCardShouldBeExpanded = (): void => {
     cy.get('@inviteToViewModalCard')
-        .should('have.attr', 'aria-expanded', 'false')
-        .should('have.attr', 'hidden');
+        .should('have.attr', 'aria-expanded', 'false');
     cy.get('@inviteToEditModalCard')
-        .should('have.attr', 'aria-expanded', 'true')
-        .should('not.have.attr', 'hidden');
+        .should('have.attr', 'aria-expanded', 'true');
 };

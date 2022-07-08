@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,12 @@ import React, {ChangeEvent, FormEvent, useState} from 'react';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {closeModalAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {JSX} from '@babel/types';
 import moment from 'moment';
 import ProductClient from './ProductClient';
 import {emptyProduct, Product} from './Product';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Tag} from '../Tags/Tag';
 import {TagInterface} from '../Tags/Tag.interface';
 import ProductFormLocationField from './ProductFormLocationField';
@@ -43,17 +43,17 @@ import {
 import {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import FormTagsField from '../ReusableComponents/FormTagsField';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {ModalContentsState} from '../State/ModalContentsState';
 
-interface ProductFormProps {
+interface Props {
     editing: boolean;
     product?: Product;
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-    closeModal(): void;
 }
 
 function ProductForm({
@@ -62,9 +62,9 @@ function ProductForm({
     currentSpace,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
-    closeModal,
-}: ProductFormProps): JSX.Element {
+}: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct(viewingDate));
     const [selectedProductTags, setSelectedProductTags] = useState<Array<Tag>>([]);
@@ -74,6 +74,8 @@ function ProductForm({
     const duplicateProductNameWarningMessage = 'A product with this name already exists. Please enter a different name.';
     const emptyProductNameWarningMessage = 'Please enter a product name.';
     const [nameWarningMessage, setNameWarningMessage] = useState<string>('');
+
+    const closeModal = () => setModalContents(null);
 
     function initializeProduct(startDate = new Date()): Product {
         const returnProduct = {
@@ -282,7 +284,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    closeModal: () => dispatch(closeModalAction()),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });

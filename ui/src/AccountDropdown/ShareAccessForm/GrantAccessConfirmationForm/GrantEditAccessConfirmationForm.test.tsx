@@ -16,7 +16,7 @@
  */
 
 import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
-import {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from 'Utils/TestUtils';
 import React from 'react';
 import {fireEvent, waitFor} from '@testing-library/react';
 

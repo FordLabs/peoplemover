@@ -24,15 +24,19 @@ import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
 import AccountDropdown from './AccountDropdown';
 import configureStore from 'redux-mock-store';
-import {AvailableActions} from '../Redux/Actions';
 import ReportClient from '../Reports/ReportClient';
-import {AvailableModals} from '../Modal/AvailableModals';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
+import ShareAccessForm from './ShareAccessForm/ShareAccessForm';
 
 describe('Account Dropdown', () => {
+    let modalContent: ModalContents | null;
+
     beforeEach(async () => {
+        modalContent = null;
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
@@ -63,12 +67,17 @@ describe('Account Dropdown', () => {
         beforeEach(async () => {
             ReportClient.getReportsWithNames = jest.fn().mockResolvedValue({});
 
-            store.dispatch = jest.fn();
             renderWithRedux(
                 <MemoryRouter>
                     <RecoilRoot initializeState={({set}) => {
                         set(ViewingDateState, expectedViewingDate)
                     }}>
+                        <RecoilObserver
+                            recoilState={ModalContentsState}
+                            onChange={(value: ModalContents) => {
+                                modalContent = value;
+                            }}
+                        />
                         <AccountDropdown showAllDropDownOptions={true}/>
                     </RecoilRoot>
                 </MemoryRouter>,
@@ -81,11 +90,13 @@ describe('Account Dropdown', () => {
         describe('Share Access', () => {
             it('should trigger edit contributors modal on "Share Access" click', async () => {
                 fireEvent.click(await screen.findByText('Share Access'));
-                expect(store.dispatch).toHaveBeenCalledWith({
-                    type: AvailableActions.SET_CURRENT_MODAL,
-                    modal: AvailableModals.SHARE_SPACE_ACCESS,
-                    item: undefined,
-                });
+                await waitFor(() => expect(modalContent).toEqual({
+                    title: 'Share Access',
+                    component: <ShareAccessForm />,
+                    hideTitle: true,
+                    hideCloseBtn: true,
+                    hideBackground: true
+                }));
             });
         });
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,18 +77,6 @@ describe('Multi Modal Card Banner', () => {
     });
 
     describe('Header Wrapper', () => {
-        it('should be a div when expanded', () => {
-            component = render(
-                <MultiModalCardBanner
-                    title={testTitle}
-                    collapsed={false}
-                    onCloseBtnClick={buttonClickCallback}
-                />
-            );
-
-            const headerWrapper = component.getByTestId('multiModalExpandCollapseButton');
-            expect(headerWrapper.nodeName).toBe('DIV');
-        });
 
         it('should be a button when collapsed which automagically inherits its parent component\'s onClick', () => {
             component = render(

@@ -18,29 +18,29 @@
 import React, {FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import {connect} from 'react-redux';
-import {closeModalAction} from '../Redux/Actions';
 import FormButton from '../ModalFormComponents/FormButton';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
-import {useRecoilValue} from 'recoil';
-import {CurrentUserState} from '../State/CurrentUserState';
+import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {CurrentUserState} from 'State/CurrentUserState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
+import {ModalContentsState} from 'State/ModalContentsState';
 
 import './TransferOwnershipForm.scss';
 
 interface TransferOwnershipFormProps {
     currentSpace: Space;
-    closeModal(): void;
 }
 
 interface TransferOwnershipFormOwnProps {
     space?: Space;
 }
 
-function TransferOwnershipForm({currentSpace, closeModal}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
+function TransferOwnershipForm({currentSpace}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
     const currentUser = useRecoilValue(CurrentUserState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const { fetchUserSpaces } = useFetchUserSpaces();
 
@@ -60,6 +60,8 @@ function TransferOwnershipForm({currentSpace, closeModal}: TransferOwnershipForm
         };
         getUsers(currentSpace, setUsersList);
     }, [currentSpace, setUsersList, currentUser]);
+
+    const closeModal = () => setModalContents(null);
 
     const handleSubmit = (e: FormEvent): void => {
         e.preventDefault();
@@ -84,12 +86,14 @@ function TransferOwnershipForm({currentSpace, closeModal}: TransferOwnershipForm
         </label>;
     };
 
-    const notificationModalProps = {content:<span>{'Ownership has been transferred to ' + selectedUser?.userId +
+    const notificationModalProps = {
+        content:<span>{'Ownership has been transferred to ' + selectedUser?.userId +
         ' and you have been removed from the space ' +
         currentSpace.name +
         '.'}</span>,
-    title: 'Confirmed',
-    close: closeModal} as NotificationModalProps;
+        title: 'Confirmed',
+        close: closeModal
+    } as NotificationModalProps;
 
     if (submitted) return (<NotificationModal {...notificationModalProps}/>);
 
@@ -124,13 +128,9 @@ function TransferOwnershipForm({currentSpace, closeModal}: TransferOwnershipForm
 }
 
 /* eslint-disable */
-const mapDispatchToProps = (dispatch: any) => ({
-    closeModal: () => dispatch(closeModalAction()),
-});
-
 const mapStateToProps = (state: GlobalStateProps, ownProps?: TransferOwnershipFormOwnProps) => ({
     currentSpace: ownProps?.space || state.currentSpace
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TransferOwnershipForm);
+export default connect(mapStateToProps)(TransferOwnershipForm);
 /* eslint-enable */

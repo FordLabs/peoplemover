@@ -30,14 +30,15 @@ import {Product, UNASSIGNED} from '../Products/Product';
 import {cleanup, screen, waitFor} from '@testing-library/react';
 import {fireEvent} from '@testing-library/dom';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {AvailableModals} from '../Modal/AvailableModals';
 import thunk from 'redux-thunk';
 import {MutableSnapshot, RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
 import ProductClient from '../Products/ProductClient';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import PersonForm from '../People/PersonForm';
 
 const mockedUsedNavigate = jest.fn();
 
@@ -45,10 +46,13 @@ jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockedUsedNavigate,
 }));
-jest.mock('../Products/ProductClient');
+jest.mock('Products/ProductClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
 
 describe('TimeOnProduct', () => {
     let store: Store;
+    let modalContent: ModalContents | null = null;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -100,13 +104,15 @@ describe('TimeOnProduct', () => {
         it('should make the call to open the Edit Person modal when person name is clicked', async () => {
             const hank = screen.getByText(TestData.hank.name);
             expect(hank).toBeEnabled();
+            expect(modalContent).toBeNull();
             fireEvent.click(hank);
-            expect(store.dispatch).toHaveBeenCalledWith(
-                setCurrentModalAction({
-                    modal: AvailableModals.EDIT_PERSON,
-                    item: TestData.hank,
-                })
-            );
+            await waitFor(() => expect(modalContent).toEqual({
+                title: 'Edit Person',
+                component: <PersonForm
+                    isEditPersonForm
+                    personEdited={TestData.hank}
+                />,
+            }));
         });
     });
 
@@ -257,7 +263,15 @@ describe('TimeOnProduct', () => {
             <RecoilRoot initializeState={initializeState}>
                 <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
                     <Routes>
-                        <Route path="/:teamUUID/timeonproduct" element={<TimeOnProduct/>} />
+                        <Route path="/:teamUUID/timeonproduct" element={<>
+                            <RecoilObserver
+                                recoilState={ModalContentsState}
+                                onChange={(value: ModalContents) => {
+                                    modalContent = value;
+                                }}
+                            />
+                            <TimeOnProduct/>
+                        </>} />
                     </Routes>
                 </MemoryRouter>
             </RecoilRoot>,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,21 +15,26 @@
  * limitations under the License.
  */
 
-import {setCurrentModalAction} from '../Redux/Actions';
 import React from 'react';
-import {Dispatch} from 'redux';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {connect} from 'react-redux';
-import {AvailableModals} from '../Modal/AvailableModals';
+import {useSetRecoilState} from 'recoil';
+import {ModalContentsState} from '../../State/ModalContentsState';
+import ShareAccessForm from '../ShareAccessForm/ShareAccessForm';
 
 interface Props {
-    setCurrentModal(modalState: CurrentModalState): void;
     focusOnRender?: boolean;
 }
 
-function ShareAccessButton({ setCurrentModal, focusOnRender = false }: Props): JSX.Element {
-    const openEditContributorsModal = (): void => setCurrentModal({modal: AvailableModals.SHARE_SPACE_ACCESS});
+function ShareAccessButton({ focusOnRender = false }: Props): JSX.Element {
+    const setModalContents = useSetRecoilState(ModalContentsState);
     const showButton = window.runConfig.invite_users_to_space_enabled;
+
+    const openEditContributorsModal = (): void => setModalContents({
+        title: 'Share Access',
+        component: <ShareAccessForm />,
+        hideTitle: true,
+        hideCloseBtn: true,
+        hideBackground: true
+    });
 
     return showButton ? (
         <button
@@ -44,10 +49,4 @@ function ShareAccessButton({ setCurrentModal, focusOnRender = false }: Props): J
     ) : <></>;
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(null, mapDispatchToProps)(ShareAccessButton);
-/* eslint-enable */
+export default ShareAccessButton;

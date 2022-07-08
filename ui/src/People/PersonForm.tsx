@@ -20,14 +20,14 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import {connect} from 'react-redux';
-import {closeModalAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
 import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
 import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
@@ -58,6 +58,7 @@ import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState'
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
+import {ModalContentsState} from '../State/ModalContentsState';
 
 interface Props {
     isEditPersonForm: boolean
@@ -67,7 +68,6 @@ interface Props {
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
-    closeModal(): void;
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
@@ -77,7 +77,6 @@ function PersonForm({
     initialPersonName,
     currentSpace,
     personEdited,
-    closeModal,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: Props): JSX.Element {
@@ -85,6 +84,7 @@ function PersonForm({
     const viewingDate = useRecoilValue(ViewingDateState);
     const setIsUnassignedDrawerOpen = useSetRecoilState(IsUnassignedDrawerOpenState);
     const setPeople = useSetRecoilState(PeopleState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const { fetchRoles, roles } = useFetchRoles();
 
@@ -247,6 +247,8 @@ function PersonForm({
             closeModal();
         }
     };
+
+    const closeModal = () => setModalContents(null);
 
     const removePerson = (): void => {
         const assignmentId = personEdited && personEdited.id;
@@ -456,7 +458,6 @@ const mapStateToProps = (state: GlobalStateProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    closeModal: () => dispatch(closeModalAction()),
     setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
         dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
 });

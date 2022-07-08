@@ -16,22 +16,21 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {Product, UNASSIGNED} from '../Products/Product';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {Product, UNASSIGNED} from 'Products/Product';
+import {GlobalStateProps} from 'Redux/Reducers';
 import {connect} from 'react-redux';
-import {calculateDuration} from '../Assignments/Assignment';
-import {Space} from '../Space/Space';
-import CurrentModal from '../Redux/Containers/CurrentModal';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import HeaderContainer from '../Header/HeaderContainer';
-import SubHeader from '../Header/SubHeader';
-import {AvailableModals} from '../Modal/AvailableModals';
-import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {calculateDuration} from 'Assignments/Assignment';
+import {Space} from 'Space/Space';
+import HeaderContainer from 'Header/HeaderContainer';
+import SubHeader from 'Header/SubHeader';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {useNavigate, useParams} from 'react-router-dom';
+import {ModalContentsState} from 'State/ModalContentsState';
+import PersonForm from 'People/PersonForm';
+import Modal from 'Modal/Modal';
 
 import './TimeOnProduct.scss';
 
@@ -80,14 +79,13 @@ export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductIte
 
 export interface TimeOnProductProps {
     currentSpace: Space;
-    currentModal: CurrentModalState;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function TimeOnProduct({currentSpace, currentModal, setCurrentModal}: TimeOnProductProps): JSX.Element {
+function TimeOnProduct({currentSpace}: TimeOnProductProps): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
     const navigate = useNavigate();
 
+    const [modalContents, setModalContents] = useRecoilState(ModalContentsState)
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
@@ -101,11 +99,11 @@ function TimeOnProduct({currentSpace, currentModal, setCurrentModal}: TimeOnProd
     }, [currentSpace, navigate, teamUUID]);
 
     useEffect(() => {
-        if (currentSpace && currentModal.modal === null) {
+        if (currentSpace && modalContents === null) {
             setIsLoading(true);
             fetchProducts();
         }
-    }, [currentModal, currentSpace, fetchProducts]);
+    }, [modalContents, currentSpace, fetchProducts]);
 
     useEffect(() => {
         if (products.length) setIsLoading(false);
@@ -115,11 +113,13 @@ function TimeOnProduct({currentSpace, currentModal, setCurrentModal}: TimeOnProd
         const product = products.find(item => timeOnProductItem.productName === item.name);
         const assignment = product?.assignments.find(item => timeOnProductItem.assignmentId === item.id);
         if (assignment) {
-            const newModalState: CurrentModalState = {
-                modal: AvailableModals.EDIT_PERSON,
-                item: assignment.person,
-            };
-            setCurrentModal(newModalState);
+            setModalContents({
+                title: 'Edit Person',
+                component: <PersonForm
+                    isEditPersonForm
+                    personEdited={assignment.person}
+                />,
+            });
         }
     };
 
@@ -166,31 +166,37 @@ function TimeOnProduct({currentSpace, currentModal, setCurrentModal}: TimeOnProd
     };
 
     return (
-        currentSpace && <>
-            <CurrentModal/>
+        currentSpace && (
             <div className="App">
+                <Modal />
                 <HeaderContainer>
-                    <SubHeader showFilters={false} showSortBy={false} message={<div className="timeOnProductHeaderMessage"><span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product</div>}/>
+                    <SubHeader
+                        showFilters={false}
+                        showSortBy={false}
+                        message={
+                            <div className="timeOnProductHeaderMessage">
+                                <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
+                            </div>
+                        }
+                    />
                 </HeaderContainer>
                 {isLoading ?
                     <div className="timeOnProductLoading">{LOADING}</div>
-                    : <div className="timeOnProductTable">
-                        {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
-                    </div>}
+                    : (
+                        <div className="timeOnProductTable">
+                            {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
+                        </div>
+                    )
+                }
             </div>
-        </>
+        )
     );
 }
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     currentSpace: state.currentSpace,
-    currentModal: state.currentModal,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(TimeOnProduct);
+export default connect(mapStateToProps)(TimeOnProduct);
 /* eslint-enable */

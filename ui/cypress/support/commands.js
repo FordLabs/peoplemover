@@ -64,12 +64,12 @@ Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash
 });
 
 Cypress.Commands.add('getModal', () => {
-    return cy.get('[data-testid=modalCard]');
+    return cy.get('[data-testid=modalContent]');
 });
 
 Cypress.Commands.add('closeModal', () => {
     cy.get('[data-testid=modalCloseButton]').click();
-    cy.getModal().should('not.exist');
+    cy.getModal().should('not.be.visible');
 });
 
 Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTextToSelect) => {

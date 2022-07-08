@@ -22,14 +22,16 @@ import TestData from '../Utils/TestData';
 import {Store} from 'redux';
 import PersonCard from './PersonCard';
 import {Person} from './Person';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {AvailableModals} from '../Modal/AvailableModals';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import configureStore from 'redux-mock-store';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
+import PersonForm from './PersonForm';
 
 describe('Person Card', () => {
+    let modalContent: ModalContents | null;
     const personToRender: Person = {
         newPerson: false,
         spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
@@ -45,6 +47,7 @@ describe('Person Card', () => {
     let initialState: unknown;
 
     beforeEach(() => {
+        modalContent = null;
         jest.clearAllMocks();
 
         initialState = {currentSpace: TestData.space}
@@ -67,12 +70,13 @@ describe('Person Card', () => {
 
         fireEvent.click(william);
 
-        expect(store.dispatch).toHaveBeenCalledWith(
-            setCurrentModalAction({
-                modal: AvailableModals.EDIT_PERSON,
-                item: personToRender,
-            })
-        );
+        expect(modalContent).toEqual({
+            title: 'Edit Person',
+            component: <PersonForm
+                isEditPersonForm
+                personEdited={personToRender}
+            />,
+        });
     });
 
     it('should not show any icons (note, tag)', () => {
@@ -110,6 +114,12 @@ describe('Person Card', () => {
                 set(ViewingDateState, initialViewingDate);
                 set(IsReadOnlyState, isReadOnly);
             }}>
+                <RecoilObserver
+                    recoilState={ModalContentsState}
+                    onChange={(value: ModalContents) => {
+                        modalContent = value;
+                    }}
+                />
                 <PersonCard person={personToRender}/>
             </RecoilRoot>,
             store

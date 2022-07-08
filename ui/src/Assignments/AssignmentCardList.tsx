@@ -17,30 +17,29 @@
 
 import React, {RefObject, useRef} from 'react';
 import {connect} from 'react-redux';
-import {setCurrentModalAction} from '../Redux/Actions';
 import {
     AssignmentCardRefAndAssignmentPair,
     getProductUserDroppedAssignmentOn,
     getTopLeftOfDraggedCard,
     ProductCardRefAndProductPair,
-} from '../Products/ProductDnDHelper';
-import AssignmentCard from '../Assignments/AssignmentCard';
-import {isUnassignedProduct, Product} from '../Products/Product';
-import {GlobalStateProps} from '../Redux/Reducers';
+} from 'Products/ProductDnDHelper';
+import AssignmentCard from 'Assignments/AssignmentCard';
+import {isUnassignedProduct, Product} from 'Products/Product';
+import {GlobalStateProps} from 'Redux/Reducers';
 import {Assignment} from './Assignment';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
 import AssignmentClient from './AssignmentClient';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
-import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
-import {Space} from '../Space/Space';
+import {getSelectedFilterLabels} from 'Redux/Reducers/allGroupedTagOptionsReducer';
+import {Space} from 'Space/Space';
 import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
-import {AvailableModals} from '../Modal/AvailableModals';
-import {isPersonMatchingSelectedFilters} from '../People/Person';
+import {isPersonMatchingSelectedFilters} from 'People/Person';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsDraggingState} from '../State/IsDraggingState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsDraggingState} from 'State/IsDraggingState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
+import {ModalContentsState} from 'State/ModalContentsState';
+import AssignmentExistsWarning from './AssignmentExistsWarning';
 
 import '../Products/Product.scss';
 
@@ -49,7 +48,6 @@ interface Props {
     productRefs: Array<ProductCardRefAndProductPair>;
     currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
 function AssignmentCardList({
@@ -57,10 +55,10 @@ function AssignmentCardList({
     productRefs,
     currentSpace,
     allGroupedTagFilterOptions,
-    setCurrentModal,
 }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const setIsDragging = useSetRecoilState(IsDraggingState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
     const { fetchProducts } = useFetchProducts();
 
@@ -162,7 +160,9 @@ function AssignmentCardList({
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     } catch (error: any) {
                         if (error.response.status === 409) {
-                            setCurrentModal({modal: AvailableModals.ASSIGNMENT_EXISTS_WARNING});
+                            setModalContents({
+                                title: 'Uh-oh', component: <AssignmentExistsWarning/>
+                            });
                         }
                     }
                 }
@@ -246,9 +246,5 @@ const mapStateToProps = (state: GlobalStateProps) => ({
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AssignmentCardList);
+export default connect(mapStateToProps)(AssignmentCardList);
 /* eslint-enable */

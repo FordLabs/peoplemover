@@ -17,22 +17,28 @@
 
 import React from 'react';
 import {renderWithRedux} from '../Utils/TestUtils';
-import {AvailableActions} from '../Redux/Actions';
 import Filter from './Filter';
 import {FilterType, FilterTypeListings} from './FilterLibraries';
 import {createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
-import {AvailableModals} from '../Modal/AvailableModals';
-import {RenderResult} from '@testing-library/react';
+import {RenderResult, waitFor} from '@testing-library/react';
 import {RecoilRoot} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {RecoilObserver} from '../Utils/RecoilObserver';
+
+let actualModalContent: ModalContents | null;
+const expectedModalContents: ModalContents = {
+    title: 'Test',
+    component: <div>hi</div>
+};
 
 describe('Filter Dropdown', () => {
     let store: import('redux').Store<import('redux').AnyAction>;
 
     beforeEach(() => {
+        actualModalContent = null;
         store = createStore(rootReducer, {});
-        store.dispatch = jest.fn();
     });
 
     describe('Add new filter button', () => {
@@ -42,10 +48,7 @@ describe('Filter Dropdown', () => {
             dropdownButton.click();
             const addLocationButton = await app.findByText('Add/Edit your Product Location');
             addLocationButton.click();
-            expect(store.dispatch).toHaveBeenCalledWith({
-                type: AvailableActions.SET_CURRENT_MODAL,
-                modal: AvailableModals.MY_LOCATION_TAGS,
-            });
+            await waitFor(() => expect(actualModalContent).toEqual(expectedModalContents));
         });
     });
 
@@ -155,7 +158,13 @@ function renderFilter(filterType: FilterType, store: Store, isReadOnly = false) 
         <RecoilRoot initializeState={({set}) => {
             set(IsReadOnlyState, isReadOnly)
         }}>
-            <Filter filterType={filterType}/>
+            <RecoilObserver
+                recoilState={ModalContentsState}
+                onChange={(value: ModalContents) => {
+                    actualModalContent = value;
+                }}
+            />
+            <Filter filterType={filterType} modalContents={expectedModalContents}/>
         </RecoilRoot>,
         store
     )
