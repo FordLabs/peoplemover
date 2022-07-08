@@ -26,11 +26,12 @@ import ColorClient from '../Roles/ColorClient';
 import {RecoilRoot} from 'recoil';
 import {RolesState} from '../State/RolesState';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 jest.mock('../Roles/RoleClient');
 
 describe('My Roles Form', () => {
-    const initialState = {currentSpace: TestData.space, allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions};
+    const initialState = {allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions};
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -39,6 +40,7 @@ describe('My Roles Form', () => {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(RolesState, TestData.roles)
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <MemoryRouter initialEntries={['/' + TestData.space.uuid]}>
                     <Routes>
@@ -128,9 +130,9 @@ describe('My Roles Form', () => {
                 colorId: TestData.whiteColor.id,
             };
             expect(RoleClient.add).toHaveBeenCalledTimes(1);
-            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, initialState.currentSpace);
+            expect(RoleClient.add).toHaveBeenCalledWith(expectedRoleAddRequest, TestData.space);
             await waitFor(() => expect(RoleClient.get).toHaveBeenCalledTimes(1));
-            expect(RoleClient.get).toHaveBeenCalledWith(initialState.currentSpace.uuid)
+            expect(RoleClient.get).toHaveBeenCalledWith(TestData.space.uuid)
         });
 
         it('should not allow saving empty role', async () => {
@@ -238,7 +240,7 @@ describe('My Roles Form', () => {
             const confirmDeleteButton = await screen.findByTestId('confirmDeleteButton');
             fireEvent.click(confirmDeleteButton);
 
-            expect(RoleClient.delete).toHaveBeenCalledWith(TestData.productManager.id, initialState.currentSpace);
+            expect(RoleClient.delete).toHaveBeenCalledWith(TestData.productManager.id, TestData.space);
             await waitFor(() => {
                 expect(screen.queryByText(deleteWarning)).not.toBeInTheDocument();
             });

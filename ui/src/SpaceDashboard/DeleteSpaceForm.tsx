@@ -27,8 +27,6 @@ import {useSetRecoilState} from 'recoil';
 import {ModalContentsState} from '../State/ModalContentsState';
 
 import './DeleteSpaceForm.scss';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from '../State/ModalContentsState';
 
 interface Props {
     space: Space;
