@@ -102,7 +102,7 @@ function PeopleMover({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
             fetchRoles();
             fetchPeople();
         }
-    }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, fetchProducts]);
+    }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, fetchProducts, setAllGroupedTagFilterOptions]);
 
     return (
         !hasProductsAndFilters
