@@ -18,16 +18,16 @@
 import React from 'react';
 import Calendar from '../Calendar/Calendar';
 import ProductSortBy from '../SortingAndFiltering/ProductSortBySelector';
-import Filter from '../SortingAndFiltering/Filter';
 import NavigationSection from '../ReusableComponents/NavigationSection';
-import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import MyTagsForm from '../Tags/MyTagsForm';
-import MyRolesForm from '../Roles/MyRolesForm';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './SubHeader.scss';
+import ProductLocationFilter from '../SortingAndFiltering/ProductLocationFilter/ProductLocationFilter';
+import ProductTagsFilter from '../SortingAndFiltering/ProductTagsFilter/ProductTagsFilter';
+import PersonTagsFilter from '../SortingAndFiltering/PersonTagsFilter/PersonTagsFilter';
+import RolesFilter from '../SortingAndFiltering/RolesFilter/RolesFilter';
 
 interface Props {
     showFilters?: boolean;
@@ -53,21 +53,10 @@ function SubHeader({ showFilters = true, showSortBy = true, message = undefined}
             <div className="rightContent">
                 {showFilters && (
                     <NavigationSection label="Filter by" icon="filter_list">
-                        <Filter filterType={FilterTypeListings.Location} modalContents={{
-                            title: 'Product Location',
-                            component: <MyTagsForm filterType={FilterTypeListings.Location}/>}
-                        }/>
-                        <Filter filterType={FilterTypeListings.ProductTag} modalContents={{
-                            title: 'Product Tags',
-                            component: <MyTagsForm filterType={FilterTypeListings.ProductTag}/>
-                        }}/>
-                        <Filter filterType={FilterTypeListings.PersonTag} modalContents={{
-                            title: 'Person Tags',
-                            component: <MyTagsForm filterType={FilterTypeListings.PersonTag}/>
-                        }}/>
-                        <Filter filterType={FilterTypeListings.Role} modalContents={{
-                            title: 'My Roles', component: <MyRolesForm/>
-                        }}/>
+                        <ProductLocationFilter />
+                        <ProductTagsFilter />
+                        <PersonTagsFilter />
+                        <RolesFilter />
                     </NavigationSection>
                 )}
                 {showSortBy && <ProductSortBy/>}

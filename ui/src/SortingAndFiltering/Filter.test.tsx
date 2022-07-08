@@ -17,7 +17,6 @@
 
 import React from 'react';
 import {renderWithRedux} from '../Utils/TestUtils';
-import Filter from './Filter';
 import {FilterType, FilterTypeListings} from './FilterLibraries';
 import {createStore, Store} from 'redux';
 import rootReducer from '../Redux/Reducers';
@@ -164,7 +163,7 @@ function renderFilter(filterType: FilterType, store: Store, isReadOnly = false) 
                     actualModalContent = value;
                 }}
             />
-            <Filter filterType={filterType} modalContents={expectedModalContents}/>
+            {/*<Filter filterType={filterType} modalContents={expectedModalContents}/>*/}
         </RecoilRoot>,
         store
     )

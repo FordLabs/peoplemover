@@ -37,7 +37,7 @@ function updateLocalStorage(tagOptions: Array<AllGroupedTagFilterOptions>): void
         roleTagsFilters: getSelectedFilterLabels(tagOptions[2].options),
         personTagsFilters: getSelectedFilterLabels(tagOptions[3].options),
     };
-    localStorage.setItem('filters', JSON.stringify(selectedFilterOptions));
+    // localStorage.setItem('filters', JSON.stringify(selectedFilterOptions));
 }
 
 const allGroupedTagFilterOptionsReducer = (

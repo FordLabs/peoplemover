@@ -133,3 +133,24 @@ function getLocalStorageFilters(): LocalStorageFilters {
         personTagsFilters: [],
     };
 }
+
+type filterTypes = 'locationTagsFilters' | 'productTagFilter' | 'roleTagFilters' | 'personTagFilters';
+
+export function getLocalStorageFiltersByType(filterType: filterTypes): Array<string> {
+    const localStorageFilters: string | null = localStorage.getItem('filters');
+    if (localStorageFilters) {
+        const allFilters = JSON.parse(localStorageFilters);
+        return allFilters[filterType] || []
+    }
+    return [];
+}
+
+export function setLocalStorageFiltersByType(filterType: filterTypes, updatedFilters: FilterOption[]): void {
+    const localStorageFilters: string | null = localStorage.getItem('filters');
+    if (localStorageFilters) {
+        const allFilters = JSON.parse(localStorageFilters);
+        allFilters[filterType] = updatedFilters.filter(f => f.selected).map(f => f.label);
+        localStorage.setItem('filters', JSON.stringify(allFilters));
+    }
+}
+

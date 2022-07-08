@@ -29,11 +29,11 @@ import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 
 import './FilterOrSortBy.scss';
 
-function toggleOption(option: FilterOption): FilterOption {
-    return {...option, selected: !option.selected};
-}
-
 interface Props {
+    label: string;
+    defaultValues: Array<FilterOption>;
+    onSelect(options: FilterOption[]): void;
+
     modalContents: ModalContents,
     filterType: FilterType;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
@@ -41,6 +41,10 @@ interface Props {
 }
 
 function Filter({
+    label,
+    defaultValues,
+    onSelect,
+
     modalContents,
     filterType,
     allGroupedTagFilterOptions,
@@ -51,39 +55,13 @@ function Filter({
 
     const filterIndex = filterType.index;
 
-    const updateFilters = (option: FilterOption): void => {
-        setAllGroupedTagFilterOptions(
-            allGroupedTagFilterOptions.map((aGroupOfTagFilterOptions, index) => {
-                if (index === filterIndex) {
-                    return {
-                        ...aGroupOfTagFilterOptions, options: aGroupOfTagFilterOptions.options.map(anOption => {
-                            if (anOption.value === option.value) {
-                                return option;
-                            } else {
-                                return anOption;
-                            }
-                        }),
-                    };
-                } else {
-                    return {...aGroupOfTagFilterOptions};
-                }
-            }),
-        );
-    };
-
     const formattedFilterTypeValue = filterType.label.replace(' ', '_');
 
-    const getNumberOfSelectedFilters = (): number => {
-        let numberOfSelectedFilters = 0;
-        if (allGroupedTagFilterOptions[filterIndex] && allGroupedTagFilterOptions[filterIndex].options) {
-            numberOfSelectedFilters = allGroupedTagFilterOptions[filterIndex].options.filter(item => item.selected).length;
-        }
-        return numberOfSelectedFilters;
-    };
+    const getNumberOfSelectedFilters = (): number => defaultValues.filter(item => item.selected).length || 0;
 
-    const getNumberOfSelectedFiltersAsString = (): string => {
-        const numberOfSelectedFilters = getNumberOfSelectedFilters();
-        return (numberOfSelectedFilters === 0 ? 'All' : numberOfSelectedFilters.toString());
+    const getNumbersOfSelectedFiltersDisplayText = (): string => {
+        const numOfSelectedFilters = getNumberOfSelectedFilters();
+        return (numOfSelectedFilters === 0 ? 'All' : numOfSelectedFilters.toString());
     };
 
     const areFiltersSelected = (getNumberOfSelectedFilters() > 0);
@@ -122,15 +100,10 @@ function Filter({
     const dropdownContent =
         <>
             <div className="sortby-option-container">
-                {allGroupedTagFilterOptions
-                && allGroupedTagFilterOptions.length > 0
-                && allGroupedTagFilterOptions[filterIndex].options.map(
+                {defaultValues.map(
                     (option) => {
                         return (
-                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-                            <div key={option.value} onClick={(): void => {
-                                updateFilters(toggleOption(option));
-                            }} className="sortby-option">
+                            <div key={option.value} className="sortby-option">
                                 <input
                                     className="sortby-option-input"
                                     type="checkbox"
@@ -138,16 +111,15 @@ function Filter({
                                     value={option.value}
                                     checked={option.selected}
                                     onChange={(): void => {
-                                        updateFilters(toggleOption(option));
+                                        const updatedValues = defaultValues.map((r) => {
+                                            if(r.value === option.value) r.selected = !option.selected;
+                                            return r;
+                                        })
+                                        onSelect(updatedValues);
                                     }}
                                 />
-                                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */}
-                                <label className="sortby-option-label"
-                                    htmlFor={option.value}
-                                    onClick={(event): void => {
-                                        event.stopPropagation();
-                                    }}
-                                >{option.label}
+                                <label className="sortby-option-label" htmlFor={option.value}>
+                                    {option.label}
                                 </label>
                             </div>
                         );
@@ -167,14 +139,13 @@ function Filter({
     const dropdownButtonContent =
         <>
             <span className="dropdown-label" id={`dropdown-label_${formattedFilterTypeValue}`}>
-                {allGroupedTagFilterOptions && allGroupedTagFilterOptions.length > 0
-                    && filterType.label}:
+                {label}:
             </span>
             <span
                 id={`filter_count_${formattedFilterTypeValue}`}
                 data-testid={`filter_count_${formattedFilterTypeValue}`}
                 className={getNumberOfSelectedFiltersStyle()}>
-                {getNumberOfSelectedFiltersAsString()}
+                {getNumbersOfSelectedFiltersDisplayText()}
             </span>
         </>;
 
