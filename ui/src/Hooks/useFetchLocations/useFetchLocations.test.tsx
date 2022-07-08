@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
-import {RecoilRoot} from 'recoil';
 import TestData from 'Utils/TestData';
 import LocationClient from 'Locations/LocationClient';
 import useFetchLocations from './useFetchLocations';
+import TestUtils from '../../Utils/TestUtils';
+
+const wrapper = TestUtils.hookWrapper;
 
 jest.mock('Locations/LocationClient');
 
@@ -51,13 +52,3 @@ describe('useFetchLocations Hook', () => {
         expect(result.current.locations).toEqual(locationsAlphabetical);
     });
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
-        <RecoilRoot>
-            <Routes>
-                <Route path="/:teamUUID" element={children} />
-            </Routes>
-        </RecoilRoot>
-    </MemoryRouter>
-);

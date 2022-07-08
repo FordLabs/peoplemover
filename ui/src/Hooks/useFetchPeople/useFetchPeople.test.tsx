@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
-import {RecoilRoot} from 'recoil';
 import TestData from 'Utils/TestData';
 import useFetchPeople from './useFetchPeople';
 import PeopleClient from 'People/PeopleClient';
+import TestUtils from '../../Utils/TestUtils';
+
+const wrapper = TestUtils.hookWrapper;
 
 jest.mock('People/PeopleClient');
 
@@ -41,13 +42,3 @@ describe('useFetchPeople Hook', () => {
         expect(result.current.people).toEqual(TestData.people);
     });
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
-        <RecoilRoot>
-            <Routes>
-                <Route path="/:teamUUID" element={children} />
-            </Routes>
-        </RecoilRoot>
-    </MemoryRouter>
-);

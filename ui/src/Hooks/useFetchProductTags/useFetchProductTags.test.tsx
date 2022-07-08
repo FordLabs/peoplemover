@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
-import {RecoilRoot} from 'recoil';
 import TestData from 'Utils/TestData';
 import ProductTagClient from '../../Tags/ProductTag/ProductTagClient';
 import useFetchProductTags from './useFetchProductTags';
+import TestUtils from '../../Utils/TestUtils';
+
+const wrapper = TestUtils.hookWrapper;
 
 jest.mock('Tags/ProductTag/ProductTagClient');
 
@@ -52,13 +53,3 @@ describe('useFetchProductTags Hook', () => {
         expect(result.current.productTags).toEqual(productTagsAlphabetical);
     });
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
-        <RecoilRoot>
-            <Routes>
-                <Route path="/:teamUUID" element={children} />
-            </Routes>
-        </RecoilRoot>
-    </MemoryRouter>
-);

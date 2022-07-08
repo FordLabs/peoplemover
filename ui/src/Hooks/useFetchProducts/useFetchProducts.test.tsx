@@ -16,7 +16,7 @@
  */
 
 import React, {ReactNode} from 'react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import {MemoryRouter} from 'react-router-dom';
 import {act, renderHook} from '@testing-library/react-hooks';
 import {RecoilRoot} from 'recoil';
 import useFetchProducts from './useFetchProducts';
@@ -45,13 +45,11 @@ describe('useFetchProducts Hook', () => {
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
+    <MemoryRouter>
         <RecoilRoot initializeState={({set}) => {
             set(ViewingDateState, viewingDate)
         }}>
-            <Routes>
-                <Route path="/:teamUUID" element={children} />
-            </Routes>
+            {children}
         </RecoilRoot>
     </MemoryRouter>
 );

@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
-import {RecoilRoot} from 'recoil';
 import useFetchRoles from './useFetchRoles';
 import RoleClient from 'Roles/RoleClient';
 import TestData from 'Utils/TestData';
+import TestUtils from '../../Utils/TestUtils';
+
+const wrapper = TestUtils.hookWrapper;
 
 jest.mock('Roles/RoleClient');
 
@@ -50,13 +51,3 @@ describe('useFetchRoles Hook', () => {
         expect(result.current.roles).toEqual(rolesAlphabetical);
     });
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
-        <RecoilRoot>
-            <Routes>
-                <Route path="/:teamUUID" element={children} />
-            </Routes>
-        </RecoilRoot>
-    </MemoryRouter>
-);

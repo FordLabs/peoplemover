@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useEffect} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ColorClient from '../Roles/ColorClient';
@@ -81,6 +81,14 @@ export function renderWithRecoil(component: JSX.Element, initializeState?: (muta
     return render(<RecoilRoot initializeState={initializeState}>{component}</RecoilRoot>)
 }
 
+const hookWrapper = ({ children }: { children: ReactNode }) => (
+    <MemoryRouter>
+        <RecoilRoot>
+            {children}
+        </RecoilRoot>
+    </MemoryRouter>
+);
+
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
 }
@@ -132,7 +140,8 @@ const TestUtils = {
     RecoilObserver,
     createDataTestId,
     mockCreateRange,
-    expectedCreateOptionText
+    expectedCreateOptionText,
+    hookWrapper
 }
 
 export default TestUtils;

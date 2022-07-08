@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
-import {RecoilRoot} from 'recoil';
 import TestData from 'Utils/TestData';
 import SpaceClient from '../../Space/SpaceClient';
 import useFetchCurrentSpace from './useFetchCurrentSpace';
+import TestUtils from '../../Utils/TestUtils';
 
-jest.mock('Locations/LocationClient');
+const wrapper = TestUtils.hookWrapper;
+
+jest.mock('Space/SpaceClient');
 
 const spaceUUID = 'space-uuid';
 
@@ -43,13 +44,3 @@ describe('useFetchCurrentSpace Hook', () => {
         expect(result.current.currentSpace).toEqual(TestData.space);
     });
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${spaceUUID}`]}>
-        <RecoilRoot>
-            <Routes>
-                <Route path="/:teamUUID" element={children} />
-            </Routes>
-        </RecoilRoot>
-    </MemoryRouter>
-);
