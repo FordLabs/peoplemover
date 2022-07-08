@@ -92,7 +92,7 @@ function PeopleMover({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
 
     useEffect(() => {
         if (currentSpace && currentSpace.uuid) {
-            getFilterOptionsForSpace(currentSpace.uuid!)
+            getFilterOptionsForSpace(currentSpace.uuid)
                 .then(setAllGroupedTagFilterOptions);
 
             fetchProducts();

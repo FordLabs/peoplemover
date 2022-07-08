@@ -40,9 +40,9 @@ function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element 
     const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
 
     const useReactPath = (): string => {
-        const [path, setPath] = useState(window.location.pathname);
+        const [reactPath, setReactPath] = useState(window.location.pathname);
         const listenToPopstate = (): void => {
-            setPath(window.location.pathname);
+            setReactPath(window.location.pathname);
         };
         useEffect(() => {
             window.addEventListener('popstate', listenToPopstate);
@@ -50,7 +50,7 @@ function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element 
                 window.removeEventListener('popstate', listenToPopstate);
             };
         }, []);
-        return path;
+        return reactPath;
     };
 
     const path = useReactPath();

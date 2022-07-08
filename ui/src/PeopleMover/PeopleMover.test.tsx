@@ -83,24 +83,11 @@ describe('PeopleMover', () => {
             expect(await screen.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
         });
 
-        xit('should trigger a matomo read-only visit event each time the current space changes', () => {
+        it('should trigger a matomo read-only visit event on load if space is defined', () => {
             const nextSpace = {...createEmptySpace(), name: 'newSpace'};
 
             expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'viewOnlyVisit', '']);
             expect(window._paq).not.toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
-            expect(getEventCount('viewOnlyVisit')).toEqual(1);
-
-            // store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: nextSpace });
-
-            expect(window._paq).toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
-            expect(getEventCount('viewOnlyVisit')).toEqual(2);
-        });
-
-        xit('should not trigger a matomo read-only visit event if no space has been defined', () => {
-            expect(getEventCount('viewOnlyVisit')).toEqual(1);
-
-            // store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: null });
-
             expect(getEventCount('viewOnlyVisit')).toEqual(1);
         });
     });

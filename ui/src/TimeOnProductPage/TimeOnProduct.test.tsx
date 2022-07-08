@@ -246,7 +246,7 @@ describe('TimeOnProduct', () => {
 
     describe('Loading', () => {
         it('should show loading state', async () => {
-            const store = createStore(rootReducer, {}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {}, applyMiddleware(thunk));
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(CurrentSpaceState, TestData.space)
