@@ -134,7 +134,7 @@ function getLocalStorageFilters(): LocalStorageFilters {
     };
 }
 
-export type filterTypes = 'locationsTagsFilters' | 'productTagsFilter' | 'roleTagsFilters' | 'personTagsFilters';
+export type filterTypes = 'locationTagsFilters' | 'productTagsFilter' | 'roleTagsFilters' | 'personTagsFilters';
 
 export function getLocalStorageFiltersByType(filterType: filterTypes): Array<string> {
     const localStorageFilters: string | null = localStorage.getItem('filters');

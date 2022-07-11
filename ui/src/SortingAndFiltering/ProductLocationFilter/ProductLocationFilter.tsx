@@ -15,19 +15,43 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
+import {useRecoilValue} from 'recoil';
+import {LocationsState} from '../../State/LocationsState';
+import MyTagsForm from '../../Tags/MyTagsForm';
+import {FilterTypeListings, getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
+import {FilterOption} from '../../CommonTypes/Option';
+import {TagInterface} from '../../Tags/Tag.interface';
+import Filter from '../Filter';
 
 function ProductLocationFilter() {
+    const productLocations = useRecoilValue(LocationsState);
+
+    const [locationFilterOptions, setLocationFilterOptions] = useState<Array<FilterOption>>(getFilterOptions());
+
+    function getFilterOptions (): Array<FilterOption> {
+        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('locationTagsFilters');
+        return productLocations.map((tag: TagInterface): FilterOption => ({
+            label: tag.name,
+            value: tag.id + '_' + tag.name,
+            selected: selectedRolesFromLocalStorage.includes(tag.name),
+        }));
+    }
+
+    function setFilterOptions(options: FilterOption[]) {
+        setLocalStorageFiltersByType('locationTagsFilters', options);
+        setLocationFilterOptions(options);
+    }
+
     return (
-        // <Filter
-        //     label="Product Location"
-        //
-        //     filterType={FilterTypeListings.Location}
-        //     modalContents={{
-        //         title: 'Product Location',
-        //         component: <MyTagsForm filterType={FilterTypeListings.Location}/>}
-        //     }/>
-        <></>
+        <Filter
+            label="Product Location"
+            defaultValues={locationFilterOptions}
+            onSelect={setFilterOptions}
+            modalContents={{
+                title: 'Product Location',
+                component: <MyTagsForm filterType={FilterTypeListings.Location}/>}
+            }/>
     )
 }
 
