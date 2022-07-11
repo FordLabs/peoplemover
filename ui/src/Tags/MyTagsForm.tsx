@@ -19,9 +19,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {GlobalStateProps} from '../Redux/Reducers';
 import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {TagInterface} from './Tag.interface';
 import {JSX} from '@babel/types';
-import {FilterOption} from 'CommonTypes/Option';
 import TagsModalContent from './TagsModalContent';
 import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import ProductTagClient from './ProductTag/ProductTagClient';
@@ -39,35 +37,14 @@ export const INACTIVE_EDIT_STATE_INDEX = -1;
 
 interface Props {
     filterType: FilterType;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function MyTagsForm({ filterType, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
+function MyTagsForm({ filterType }: Props): JSX.Element {
     const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
     const { fetchLocations, locations } = useFetchLocations(uuid);
     const { fetchPersonTags, personTags } = useFetchPersonTags(uuid);
     const { fetchProductTags, productTags } = useFetchProductTags(uuid);
-
-    const getUpdatedFilterOptions = (index: number, tag: TagInterface): Array<FilterOption> => {
-        return allGroupedTagFilterOptions[index].options.map(val =>
-            !val.value.includes(tag.id.toString() + '_') ?
-                val :
-                {
-                    label: tag.name,
-                    value: tag.id.toString() + '_' + tag.name,
-                    selected: val.selected,
-                }
-        );
-    };
-
-    function updateFilterOptions(optionIndex: number, tag: TagInterface): void {
-        const groupedFilterOptions = [...allGroupedTagFilterOptions];
-        groupedFilterOptions[optionIndex]
-            .options = getUpdatedFilterOptions(optionIndex, tag);
-        setAllGroupedTagFilterOptions(groupedFilterOptions);
-    }
 
     const getWarningMessageElement = (message: string): JSX.Element => {
         return <div className="traitWarning">
@@ -84,7 +61,6 @@ function MyTagsForm({ filterType, allGroupedTagFilterOptions, setAllGroupedTagFi
             <>
                 <TagsModalContent
                     tags={locations}
-                    updateFilterOptions={updateFilterOptions}
                     tagClient={LocationClient}
                     filterType={filterType}
                     fetchCommand={fetchLocations}
@@ -96,7 +72,6 @@ function MyTagsForm({ filterType, allGroupedTagFilterOptions, setAllGroupedTagFi
             <>
                 <TagsModalContent
                     tags={productTags}
-                    updateFilterOptions={updateFilterOptions}
                     tagClient={ProductTagClient}
                     filterType={filterType}
                     fetchCommand={fetchProductTags}
@@ -108,7 +83,6 @@ function MyTagsForm({ filterType, allGroupedTagFilterOptions, setAllGroupedTagFi
             <>
                 <TagsModalContent
                     tags={personTags}
-                    updateFilterOptions={updateFilterOptions}
                     tagClient={PersonTagClient}
                     filterType={filterType}
                     fetchCommand={fetchPersonTags}

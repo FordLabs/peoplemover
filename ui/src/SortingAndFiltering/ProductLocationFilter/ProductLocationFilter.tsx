@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import {LocationsState} from '../../State/LocationsState';
 import MyTagsForm from '../../Tags/MyTagsForm';
@@ -27,16 +27,20 @@ import Filter from '../Filter';
 function ProductLocationFilter() {
     const productLocations = useRecoilValue(LocationsState);
 
-    const [locationFilterOptions, setLocationFilterOptions] = useState<Array<FilterOption>>(getFilterOptions());
-
-    function getFilterOptions (): Array<FilterOption> {
+    const getFilterOptions = useCallback((): Array<FilterOption> => {
         const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('locationTagsFilters');
         return productLocations.map((tag: TagInterface): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: selectedRolesFromLocalStorage.includes(tag.name),
         }));
-    }
+    },[productLocations])
+
+    const [locationFilterOptions, setLocationFilterOptions] = useState<Array<FilterOption>>([]);
+
+    useEffect(() => {
+        setLocationFilterOptions(getFilterOptions())
+    }, [getFilterOptions, productLocations])
 
     function setFilterOptions(options: FilterOption[]) {
         setLocalStorageFiltersByType('locationTagsFilters', options);
