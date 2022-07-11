@@ -16,26 +16,14 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
 import {JSX} from '@babel/types';
-import {Dispatch} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {Color} from './RoleTag.interface';
 import ColorClient from './ColorClient';
 import RoleTags from './RoleTags';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
-import {TagInterface} from '../Tags/Tag.interface';
-import {FilterOption} from '../CommonTypes/Option';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
 
-interface Props {
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-}
-
-function MyRolesForm({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: Props): JSX.Element {
+function MyRolesForm(): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
 
     useEffect(() => {
@@ -44,31 +32,9 @@ function MyRolesForm({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
         });
     }, []);
 
-    const getUpdatedFilterOptions = (index: number, trait: TagInterface): Array<FilterOption> => {
-        return allGroupedTagFilterOptions[index].options.map(val =>
-            !val.value.includes(trait.id.toString() + '_') ?
-                val :
-                {
-                    label: trait.name,
-                    value: trait.id.toString() + '_' + trait.name,
-                    selected: val.selected,
-                }
-        );
-    };
-
-    function updateFilterOptions(optionIndex: number, tag: TagInterface): void {
-        const groupedFilterOptions = [...allGroupedTagFilterOptions];
-        groupedFilterOptions[optionIndex]
-            .options = getUpdatedFilterOptions(optionIndex, tag);
-        setAllGroupedTagFilterOptions(groupedFilterOptions);
-    }
-
     return (
         <div data-testid="myRolesModalContainer" className="myTraitsContainer">
-            {colors.length && <RoleTags
-                colors={colors}
-                updateFilterOptions={updateFilterOptions}
-            />}
+            {colors.length && <RoleTags colors={colors} />}
             <div className="traitWarning">
                 <i className="material-icons warningIcon">error</i>
                 <p className="warningText">Editing or deleting a role will affect any person currently assigned to it.</p>
@@ -77,15 +43,4 @@ function MyRolesForm({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyRolesForm);
-/* eslint-enable */
+export default MyRolesForm;

@@ -98,7 +98,7 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
                     data-testid={`open_${labelId}_modal_button`}
                     onClick={(): void => setModalContents(modalContents)}
                 >
-                    <span>Add/Edit your ${label}</span>
+                    <span>Add/Edit your {label}</span>
                     <i className="material-icons">keyboard_arrow_right</i>
                 </button>
             )}

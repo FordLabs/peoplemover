@@ -30,10 +30,10 @@ import PersonTagClient from './PersonTag/PersonTagClient';
 import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
-import {useRecoilValue} from 'recoil';
-import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
+import {useRecoilValue} from 'recoil';
+import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 export const INACTIVE_EDIT_STATE_INDEX = -1;
 

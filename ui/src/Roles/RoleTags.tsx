@@ -33,10 +33,9 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     colors: Array<Color>;
-    updateFilterOptions(index: number, tag: TagInterface): void;
 }
 
-const RoleTags = ({ colors, updateFilterOptions }: Props): JSX.Element => {
+const RoleTags = ({ colors }: Props): JSX.Element => {
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
     const { fetchRoles, roles } = useFetchRoles(currentSpace.uuid || '');
@@ -64,8 +63,6 @@ const RoleTags = ({ colors, updateFilterOptions }: Props): JSX.Element => {
     const editRole = async (role: RoleEditRequest): Promise<unknown> => {
         return await RoleClient.edit(role, currentSpace)
             .then((response) => {
-                const newRole: RoleTag = response.data;
-                updateFilterOptions(roleFiltersIndex, newRole);
                 fetchRoles();
                 returnToViewState();
             });

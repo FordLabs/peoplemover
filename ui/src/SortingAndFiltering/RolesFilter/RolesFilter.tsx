@@ -17,7 +17,7 @@
 
 import Filter from '../Filter';
 import {getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import MyRolesForm from '../../Roles/MyRolesForm';
 import {useRecoilValue} from 'recoil';
 import {RolesState} from '../../State/RolesState';
@@ -27,16 +27,20 @@ import {TagInterface} from '../../Tags/Tag.interface';
 function RolesFilter() {
     const roles = useRecoilValue(RolesState);
 
-    const [roleFilterOptions, setRoleFilterOptions] = useState<Array<FilterOption>>(getFilterOptions());
-
-    function getFilterOptions (): Array<FilterOption> {
+    const getFilterOptions = useCallback((): Array<FilterOption> => {
         const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('roleTagsFilters');
         return roles.map((tag: TagInterface): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: selectedRolesFromLocalStorage.includes(tag.name),
         }));
-    }
+    },[roles])
+
+    const [roleFilterOptions, setRoleFilterOptions] = useState<Array<FilterOption>>([]);
+
+    useEffect(() => {
+        setRoleFilterOptions(getFilterOptions())
+    }, [getFilterOptions, roles])
 
     function setFilterOptions(options: FilterOption[]) {
         setLocalStorageFiltersByType('roleTagsFilters', options);
