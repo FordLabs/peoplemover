@@ -23,6 +23,7 @@ import {TagClient} from '../Tags/TagClient.interface';
 import {AxiosResponse} from 'axios';
 import {TagInterface} from '../Tags/Tag.interface';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
+import {localStorageEventListenerKey} from '../Hooks/useOnStorageChange/useOnStorageChange';
 
 export interface FilterTypeListing {
     Location: FilterType;
@@ -152,8 +153,7 @@ export function setLocalStorageFiltersByType(filterType: filterTypes, updatedFil
     allFilters[filterType] = updatedFilters.filter(f => f.selected).map(f => f.label);
     localStorage.setItem('filters', JSON.stringify(allFilters));
 
-    console.log('hey')
-    window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new Event(localStorageEventListenerKey));
 }
 
 function defaultLocalStorageFilters() {

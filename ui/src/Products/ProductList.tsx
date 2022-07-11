@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {isActiveProduct, isProductMatchingSelectedFilters, Product} from './Product';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
@@ -24,13 +24,14 @@ import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {getLocalStorageFiltersByType} from '../SortingAndFiltering/FilterLibraries';
+import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 
 function ProductList(): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const products = useRecoilValue(ProductsState);
 
-    const [filteredAndActiveProduct, setFilteredAndActiveProducts] = useState<Product[]>([])
+    const [filteredAndActiveProduct, setFilteredAndActiveProducts] = useState<Product[]>([]);
 
     const getFilteredAndActiveProducts = useCallback(() => {
         const locationTagFilters: string[] = getLocalStorageFiltersByType('locationTagsFilters');
@@ -42,16 +43,7 @@ function ProductList(): JSX.Element {
         setFilteredAndActiveProducts(filteredProducts);
     }, [products, viewingDate]);
 
-    useEffect(() => {
-        getFilteredAndActiveProducts();
-
-        window.addEventListener('storage', getFilteredAndActiveProducts)
-
-        return () => {
-            window.removeEventListener('storage', getFilteredAndActiveProducts)
-        }
-    }, [getFilteredAndActiveProducts]);
-
+    useOnStorageChange(getFilteredAndActiveProducts);
 
     if (productSortBy === ProductSortBy.NAME) {
         return <SortedByList products={filteredAndActiveProduct}/>;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {RefObject, useCallback, useRef, useState} from 'react';
 import {connect} from 'react-redux';
 import {
     AssignmentCardRefAndAssignmentPair,
@@ -38,9 +38,10 @@ import {IsDraggingState} from 'State/IsDraggingState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from 'State/ModalContentsState';
 import AssignmentExistsWarning from './AssignmentExistsWarning';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 
 import '../Products/Product.scss';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     product: Product;
@@ -74,15 +75,7 @@ function AssignmentCardList({product, productRefs }: Props): JSX.Element {
         setFilteredAssignments(filteredAssignments);
     }, [product.assignments]);
 
-    useEffect(() => {
-        getFilteredAssignments();
-
-        window.addEventListener('storage', getFilteredAssignments)
-
-        return () => {
-            window.removeEventListener('storage', getFilteredAssignments)
-        }
-    }, [getFilteredAssignments]);
+    useOnStorageChange(getFilteredAssignments);
 
     function sortAssignmentsByPersonRole({person: person1}: Assignment, {person: person2}: Assignment) {
         const spaceRole1 = person1?.spaceRole?.name || '';
