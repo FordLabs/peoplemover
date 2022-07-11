@@ -15,68 +15,49 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
-import {isActiveProduct, isProductMatchingSelectedFilters} from './Product';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
+import React, {useCallback, useEffect, useState} from 'react';
+import {isActiveProduct, isProductMatchingSelectedFilters, Product} from './Product';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
-import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import {useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
+import {getLocalStorageFiltersByType} from '../SortingAndFiltering/FilterLibraries';
 
-interface Props {
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-}
-
-function ProductList({ allGroupedTagFilterOptions }: Props): JSX.Element {
+function ProductList(): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const products = useRecoilValue(ProductsState);
 
-    const [noFiltersApplied, setNoFiltersApplied] = useState<boolean>(false);
-    const [filteredProductsLoaded, setFilteredProductsLoaded] = useState<boolean>(false);
+    const [filteredAndActiveProduct, setFilteredAndActiveProducts] = useState<Product[]>([])
+
+    const getFilteredAndActiveProducts = useCallback(() => {
+        const locationTagFilters: string[] = getLocalStorageFiltersByType('locationTagsFilters');
+        const productTagFilters: string[] = getLocalStorageFiltersByType('productTagsFilter');
+        const noFiltersApplied = !locationTagFilters.length && !productTagFilters.length;
+        const filteredProducts = products
+            .filter(product => noFiltersApplied || isProductMatchingSelectedFilters(product, locationTagFilters, productTagFilters))
+            .filter(prod => isActiveProduct(prod, viewingDate));
+        setFilteredAndActiveProducts(filteredProducts);
+    }, [products, viewingDate]);
 
     useEffect(() => {
-        if (allGroupedTagFilterOptions.length > 0) {
-            const numberOfSelectedLocationFilters = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options).length;
-            const numberOfSelectedProductTagFilters = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options).length;
-            const totalNumberOfFiltersApplied = numberOfSelectedLocationFilters + numberOfSelectedProductTagFilters;
-            setNoFiltersApplied(totalNumberOfFiltersApplied === 0);
-            setFilteredProductsLoaded(true);
-        }
-    }, [allGroupedTagFilterOptions]);
+        getFilteredAndActiveProducts();
 
-    function ListOfProducts(): JSX.Element {
-        if (filteredProductsLoaded) {
-            const locationTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[0].options);
-            const productTagFilters: Array<string> = getSelectedFilterLabels(allGroupedTagFilterOptions[1].options);
-            const filteredAndActiveProduct = products
-                .filter(product => noFiltersApplied || isProductMatchingSelectedFilters(product, locationTagFilters, productTagFilters))
-                .filter(prod => isActiveProduct(prod, viewingDate));
+        window.addEventListener('storage', getFilteredAndActiveProducts)
 
-            switch (productSortBy) {
-                case ProductSortBy.NAME : {
-                    return <SortedByList products={filteredAndActiveProduct} />;
-                }
-                default:
-                    return <GroupedByList products={filteredAndActiveProduct} />;
-            }
-        } else {
-            return <></>;
+        return () => {
+            window.removeEventListener('storage', getFilteredAndActiveProducts)
         }
+    }, [getFilteredAndActiveProducts]);
+
+
+    if (productSortBy === ProductSortBy.NAME) {
+        return <SortedByList products={filteredAndActiveProduct}/>;
     }
 
-    return <ListOfProducts/>;
+    return <GroupedByList products={filteredAndActiveProduct} />;
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
-
-export default connect(mapStateToProps)(ProductList);
-/* eslint-enable */
+export default ProductList;

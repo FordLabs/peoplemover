@@ -151,6 +151,9 @@ export function setLocalStorageFiltersByType(filterType: filterTypes, updatedFil
     const allFilters = JSON.parse(localStorageFilters || defaultLocalStorageFilters());
     allFilters[filterType] = updatedFilters.filter(f => f.selected).map(f => f.label);
     localStorage.setItem('filters', JSON.stringify(allFilters));
+
+    console.log('hey')
+    window.dispatchEvent(new Event("storage"));
 }
 
 function defaultLocalStorageFilters() {
