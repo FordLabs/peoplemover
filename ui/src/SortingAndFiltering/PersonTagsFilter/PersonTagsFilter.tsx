@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {FilterOption} from '../../CommonTypes/Option';
 import {FilterTypeListings, getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
 import {TagInterface} from '../../Tags/Tag.interface';
@@ -27,16 +27,20 @@ import MyTagsForm from '../../Tags/MyTagsForm';
 function PersonTagsFilter() {
     const personTags = useRecoilValue(PersonTagsState);
 
-    const [personTagFilterOptions, setPersonTagFilterOptions] = useState<Array<FilterOption>>(getFilterOptions());
-
-    function getFilterOptions (): Array<FilterOption> {
+    const getFilterOptions = useCallback((): Array<FilterOption> => {
         const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('personTagsFilters');
         return personTags.map((tag: TagInterface): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: selectedRolesFromLocalStorage.includes(tag.name),
         }));
-    }
+    },[personTags])
+
+    const [personTagFilterOptions, setPersonTagFilterOptions] = useState<Array<FilterOption>>([]);
+
+    useEffect(() => {
+        setPersonTagFilterOptions(getFilterOptions())
+    }, [getFilterOptions, personTags])
 
     function setFilterOptions(options: FilterOption[]) {
         setLocalStorageFiltersByType('personTagsFilters', options);
