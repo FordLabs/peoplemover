@@ -17,7 +17,6 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import {useParams} from 'react-router-dom';
 import {RoleTag} from 'Roles/RoleTag.interface';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
 import {Tag} from 'Tags/Tag';
@@ -29,19 +28,18 @@ interface UseFetchProductTags {
     fetchProductTags(): void
 }
 
-function useFetchProductTags(): UseFetchProductTags {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+function useFetchProductTags(spaceUUID: string): UseFetchProductTags {
     const [productTags, setProductTags] = useRecoilState(ProductTagsState);
 
     const fetchProductTags = useCallback(() => {
-        ProductTagClient.get(teamUUID)
+        ProductTagClient.get(spaceUUID)
             .then(result => {
                 const tags: Array<RoleTag> = [...result.data];
                 sortTagsAlphabetically(tags);
                 setProductTags(tags)
             })
             .catch(console.error);
-    }, [setProductTags, teamUUID])
+    }, [setProductTags, spaceUUID])
 
     return {
         productTags: productTags || [],

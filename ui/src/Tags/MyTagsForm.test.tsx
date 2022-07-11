@@ -26,11 +26,11 @@ import {GlobalStateProps} from '../Redux/Reducers';
 import {RecoilRoot} from 'recoil';
 import {LocationsState} from '../State/LocationsState';
 import {ProductTagsState} from '../State/ProductTagsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 describe('My Tags Form', () => {
     const initialState: PreloadedState<Partial<GlobalStateProps>> = {
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-        currentSpace: TestData.space,
     };
 
     it('should only display location tags when the passed-in filter type is location tags', async () => {
@@ -38,6 +38,7 @@ describe('My Tags Form', () => {
             <RecoilRoot initializeState={({set}) => {
                 set(LocationsState, TestData.locations)
                 set(ProductTagsState, TestData.productTags)
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <MyTagsForm filterType={FilterTypeListings.Location}/>
             </RecoilRoot>,

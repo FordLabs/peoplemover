@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,29 +16,23 @@
  */
 
 import React, {FormEvent, useEffect, useState} from 'react';
-import SpaceClient from '../Space/SpaceClient';
-import {connect} from 'react-redux';
-import FormButton from '../ModalFormComponents/FormButton';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Space} from '../Space/Space';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
+import SpaceClient from 'Space/SpaceClient';
+import FormButton from 'ModalFormComponents/FormButton';
+import {Space} from 'Space/Space';
+import {UserSpaceMapping} from 'Space/UserSpaceMapping';
+import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
 import {CurrentUserState} from 'State/CurrentUserState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {ModalContentsState} from 'State/ModalContentsState';
 
 import './TransferOwnershipForm.scss';
 
-interface TransferOwnershipFormProps {
-    currentSpace: Space;
+interface Props {
+    spaceToTransfer: Space;
 }
 
-interface TransferOwnershipFormOwnProps {
-    space?: Space;
-}
-
-function TransferOwnershipForm({currentSpace}: TransferOwnershipFormProps, {space}: TransferOwnershipFormOwnProps): JSX.Element {
+function TransferOwnershipForm({ spaceToTransfer }: Props): JSX.Element {
     const currentUser = useRecoilValue(CurrentUserState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
@@ -50,16 +44,13 @@ function TransferOwnershipForm({currentSpace}: TransferOwnershipFormProps, {spac
     const [submitted, setSubmitted] = useState<boolean>(false);
 
     useEffect(() => {
-        const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
-            if (currentSpace.uuid) {
-                SpaceClient.getUsersForSpace(currentSpace.uuid).then((users) => {
-                    setUsersList(users.filter(u => u.permission === 'editor'));
-                    setMe(users.find(u => u.userId.toUpperCase() === currentUser.toUpperCase()));
-                });
-            }
-        };
-        getUsers(currentSpace, setUsersList);
-    }, [currentSpace, setUsersList, currentUser]);
+        if (spaceToTransfer.uuid) {
+            SpaceClient.getUsersForSpace(spaceToTransfer.uuid).then((users) => {
+                setUsersList(users.filter(u => u.permission === 'editor'));
+                setMe(users.find(u => u.userId.toUpperCase() === currentUser.toUpperCase()));
+            });
+        }
+    }, [spaceToTransfer, setUsersList, currentUser]);
 
     const closeModal = () => setModalContents(null);
 
@@ -68,8 +59,8 @@ function TransferOwnershipForm({currentSpace}: TransferOwnershipFormProps, {spac
         const currentOwner = me;
         const newOwner = selectedUser;
         if (!currentOwner || !newOwner) return;
-        SpaceClient.changeOwner(currentSpace, currentOwner, newOwner).then(() => {
-            SpaceClient.removeUser(currentSpace, currentOwner).then(() => {
+        SpaceClient.changeOwner(spaceToTransfer, currentOwner, newOwner).then(() => {
+            SpaceClient.removeUser(spaceToTransfer, currentOwner).then(() => {
                 fetchUserSpaces().catch();
                 setSubmitted(true);
             });
@@ -89,7 +80,7 @@ function TransferOwnershipForm({currentSpace}: TransferOwnershipFormProps, {spac
     const notificationModalProps = {
         content:<span>{'Ownership has been transferred to ' + selectedUser?.userId +
         ' and you have been removed from the space ' +
-        currentSpace.name +
+            spaceToTransfer.name +
         '.'}</span>,
         title: 'Confirmed',
         close: closeModal
@@ -99,38 +90,31 @@ function TransferOwnershipForm({currentSpace}: TransferOwnershipFormProps, {spac
 
     else return (
         <form className="transferOwnershipForm form" onSubmit={handleSubmit}>
-            <>
-                <div className={'transferOwnershipFormPrompt'}>
-                        Please choose who you would like to be the new owner of {currentSpace.name}
-                </div>
-                <div className={'transferOwnershipFormRadioContainer'}>
-                    {usersList.map((user) => renderOption(user))}
-                </div>
-                <div className="buttonsContainer">
-                    <FormButton
-                        buttonStyle="secondary"
-                        className="cancelButton"
-                        onClick={closeModal}>
-                            Cancel
-                    </FormButton>
-                    <FormButton
-                        type="submit"
-                        buttonStyle="primary"
-                        testId="transferOwnershipFormSubmitButton"
-                        disabled={!selectedUser}
-                    >
-                            Transfer ownership
-                    </FormButton>
-                </div>
-            </>
+            <div className="transferOwnershipFormPrompt">
+                Please choose who you would like to be the new owner of {spaceToTransfer.name}
+            </div>
+            <div className="transferOwnershipFormRadioContainer">
+                {usersList.map((user) => renderOption(user))}
+            </div>
+            <div className="buttonsContainer">
+                <FormButton
+                    buttonStyle="secondary"
+                    className="cancelButton"
+                    onClick={closeModal}>
+                        Cancel
+                </FormButton>
+                <FormButton
+                    type="submit"
+                    buttonStyle="primary"
+                    testId="transferOwnershipFormSubmitButton"
+                    disabled={!selectedUser}
+                >
+                    Transfer ownership
+                </FormButton>
+            </div>
         </form>
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps, ownProps?: TransferOwnershipFormOwnProps) => ({
-    currentSpace: ownProps?.space || state.currentSpace
-});
+export default TransferOwnershipForm;
 
-export default connect(mapStateToProps)(TransferOwnershipForm);
-/* eslint-enable */

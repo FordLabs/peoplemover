@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,7 @@ import RoleTags from './RoleTags';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import {TagInterface} from '../Tags/Tag.interface';
 import {FilterOption} from '../CommonTypes/Option';
+
 import '../ModalFormComponents/TagRowsContainer.scss';
 
 interface Props {
@@ -78,7 +79,6 @@ function MyRolesForm({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

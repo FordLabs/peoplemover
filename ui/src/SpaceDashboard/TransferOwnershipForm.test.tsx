@@ -16,16 +16,12 @@
  */
 
 import React from 'react';
-import {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import SpaceClient from '../Space/SpaceClient';
-import {applyMiddleware, createStore, Store} from 'redux';
-import rootReducer from '../Redux/Reducers';
-import thunk from 'redux-thunk';
 import {fireEvent, screen} from '@testing-library/dom';
 import {waitFor} from '@testing-library/react';
-import {RecoilRoot} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
@@ -33,30 +29,28 @@ import {RecoilObserver} from '../Utils/RecoilObserver';
 jest.mock('../Space/SpaceClient');
 
 describe('Transfer Ownership Form', () => {
-    let store: Store;
     let modalContent: ModalContents | null;
 
     beforeEach(async () => {
         modalContent = null;
-        store = createStore(rootReducer, {}, applyMiddleware(thunk));
 
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(CurrentUserState,  'user_id')
-                set(ModalContentsState, {
-                    title: 'A Title',
-                    component: <div>Some Component</div>,
-                });
-            }}>
+        renderWithRecoil(
+            <>
                 <RecoilObserver
                     recoilState={ModalContentsState}
                     onChange={(value: ModalContents) => {
                         modalContent = value;
                     }}
                 />
-                <TransferOwnershipForm space={TestData.space}/>
-            </RecoilRoot>,
-            store
+                <TransferOwnershipForm spaceToTransfer={TestData.space}/>
+            </>,
+            ({set}) => {
+                set(CurrentUserState,  'user_id')
+                set(ModalContentsState, {
+                    title: 'A Title',
+                    component: <div>Some Component</div>,
+                });
+            }
         );
 
         await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled());

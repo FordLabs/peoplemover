@@ -18,7 +18,7 @@
 import React from 'react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {findByTestId, findByText, fireEvent, queryByText, screen} from '@testing-library/react';
+import {findByTestId, findByText, fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from './ProductTag/ProductTagClient';
 import MyTagsForm from './MyTagsForm';
@@ -26,12 +26,12 @@ import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibra
 import {RecoilRoot} from 'recoil';
 import {LocationsState} from '../State/LocationsState';
 import {ProductTagsState} from '../State/ProductTagsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 jest.mock('Locations/LocationClient');
 
 describe('My Tags Form', () => {
     const initialState = {
-        currentSpace: TestData.space,
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
     };
 
@@ -45,6 +45,7 @@ describe('My Tags Form', () => {
             <RecoilRoot initializeState={({set}) => {
                 set(LocationsState, TestData.locations)
                 set(ProductTagsState, TestData.productTags)
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <MyTagsForm filterType={filterType} />
             </RecoilRoot>,
@@ -220,7 +221,7 @@ describe('My Tags Form', () => {
                 fireEvent.click(deleteButton);
 
                 const myTagsModal = await screen.findByTestId('myTagsModal');
-                expect(queryByText(myTagsModal, 'Ann Arbor')).not.toBeInTheDocument();
+                await waitFor(() => expect(queryByText(myTagsModal, 'Ann Arbor')).not.toBeInTheDocument());
             });
         });
 

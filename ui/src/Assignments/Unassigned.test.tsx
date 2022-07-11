@@ -27,6 +27,7 @@ import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
 import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
 import {ProductTagsState} from 'State/ProductTagsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 jest.mock('Products/ProductClient');
 jest.mock('Space/SpaceClient');
@@ -75,6 +76,7 @@ describe('Unassigned Products', () => {
                 <RecoilRoot initializeState={({set}) => {
                     set(IsUnassignedDrawerOpenState, true)
                     set(ProductsState, products)
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <UnassignedDrawer/>
                 </RecoilRoot>,
@@ -86,7 +88,6 @@ describe('Unassigned Products', () => {
                         { label: 'Role Tags:', options: []},
                         { label: 'Person Tags:', options: []},
                     ],
-                    currentSpace: TestData.space,
                 }
             );
         }

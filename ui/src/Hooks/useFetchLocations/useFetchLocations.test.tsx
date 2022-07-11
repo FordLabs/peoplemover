@@ -15,17 +15,18 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
-import {RecoilRoot} from 'recoil';
 import TestData from 'Utils/TestData';
 import LocationClient from 'Locations/LocationClient';
 import useFetchLocations from './useFetchLocations';
+import TestUtils from '../../Utils/TestUtils';
+
+const wrapper = TestUtils.hookWrapper;
 
 jest.mock('Locations/LocationClient');
 
-const teamUUID = 'team-uuid';
+const spaceUUID = 'space-uuid';
 
 const locationsNotAlphabetical = [
     TestData.southfield,
@@ -39,7 +40,7 @@ describe('useFetchLocations Hook', () => {
     it('should fetch all location tags and store them in recoil alphabetically', async () => {
         LocationClient.get = jest.fn().mockResolvedValue({ data: locationsNotAlphabetical })
 
-        const { result } = renderHook(() => useFetchLocations(), { wrapper });
+        const { result } = renderHook(() => useFetchLocations(spaceUUID), { wrapper });
 
         expect(LocationClient.get).not.toHaveBeenCalled()
         expect(result.current.locations).toEqual([]);
@@ -47,17 +48,7 @@ describe('useFetchLocations Hook', () => {
         await act(async () => {
             result.current.fetchLocations()
         });
-        expect(LocationClient.get).toHaveBeenCalledWith(teamUUID);
+        expect(LocationClient.get).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.locations).toEqual(locationsAlphabetical);
     });
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${teamUUID}`]}>
-        <RecoilRoot>
-            <Routes>
-                <Route path="/:teamUUID" element={children} />
-            </Routes>
-        </RecoilRoot>
-    </MemoryRouter>
-);

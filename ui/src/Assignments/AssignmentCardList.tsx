@@ -31,7 +31,6 @@ import AssignmentClient from './AssignmentClient';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import {getSelectedFilterLabels} from 'Redux/Reducers/allGroupedTagOptionsReducer';
-import {Space} from 'Space/Space';
 import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {isPersonMatchingSelectedFilters} from 'People/Person';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
@@ -42,27 +41,23 @@ import {ModalContentsState} from 'State/ModalContentsState';
 import AssignmentExistsWarning from './AssignmentExistsWarning';
 
 import '../Products/Product.scss';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
-    currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 }
 
-function AssignmentCardList({
-    product,
-    productRefs,
-    currentSpace,
-    allGroupedTagFilterOptions,
-}: Props): JSX.Element {
+function AssignmentCardList({product, productRefs, allGroupedTagFilterOptions }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const setIsDragging = useSetRecoilState(IsDraggingState);
     const setModalContents = useSetRecoilState(ModalContentsState);
-
-    const { fetchProducts } = useFetchProducts();
+    const currentSpace = useRecoilValue(CurrentSpaceState);
 
     const spaceUuid = currentSpace.uuid!;
+    const { fetchProducts } = useFetchProducts(spaceUuid);
+
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
@@ -242,7 +237,6 @@ function AssignmentCardList({
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     productRefs: state.productRefs,
-    currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

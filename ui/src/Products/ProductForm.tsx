@@ -31,7 +31,6 @@ import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
-import {Space} from '../Space/Space';
 import FormButton from '../ModalFormComponents/FormButton';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
@@ -46,11 +45,11 @@ import FormTagsField from '../ReusableComponents/FormTagsField';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ModalContentsState} from '../State/ModalContentsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     editing: boolean;
     product?: Product;
-    currentSpace: Space;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 
     setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
@@ -59,12 +58,12 @@ interface Props {
 function ProductForm({
     editing,
     product,
-    currentSpace,
     allGroupedTagFilterOptions,
     setAllGroupedTagFilterOptions,
 }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const setModalContents = useSetRecoilState(ModalContentsState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
 
     const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct(viewingDate));
     const [selectedProductTags, setSelectedProductTags] = useState<Array<Tag>>([]);
@@ -279,7 +278,6 @@ function ProductForm({
 
 /* eslint-disable  */
 const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
     allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 

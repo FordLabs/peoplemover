@@ -22,10 +22,8 @@ import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
 import {ProductCardRefAndProductPair} from './ProductDnDHelper';
 import {isUnassignedProduct, Product} from './Product';
-import {GlobalStateProps} from '../Redux/Reducers';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 import moment from 'moment';
-import {Space} from '../Space/Space';
 import {createDataTestId} from '../Utils/ReactUtils';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
@@ -37,32 +35,28 @@ import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
-
-import './Product.scss';
 import {ModalContentsState} from '../State/ModalContentsState';
 import ProductForm from './ProductForm';
 import AssignmentForm from '../Assignments/AssignmentForm';
+
+import './Product.scss';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
 interface Props {
     product: Product;
-    currentSpace: Space;
     registerProductRef(productRef: ProductCardRefAndProductPair): void;
     unregisterProductRef(productRef: ProductCardRefAndProductPair): void;
 }
 
-function ProductCard({
-    product,
-    currentSpace,
-    registerProductRef,
-    unregisterProductRef,
-}: Props): JSX.Element {
+function ProductCard({ product, registerProductRef, unregisterProductRef }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const setModalContents = useSetRecoilState(ModalContentsState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
 
-    const { fetchProducts, products } = useFetchProducts();
+    const { fetchProducts, products } = useFetchProducts(currentSpace.uuid || '');
 
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const [modal, setModal] = useState<JSX.Element | null>(null);
@@ -268,14 +262,10 @@ function ProductCard({
 }
 
 /* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
 const mapDispatchToProps = (dispatch: any) => ({
     registerProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(registerProductRefAction(productRef)),
     unregisterProductRef: (productRef: ProductCardRefAndProductPair) => dispatch(unregisterProductRefAction(productRef)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductCard);
+export default connect(null, mapDispatchToProps)(ProductCard);
 /* eslint-enable */

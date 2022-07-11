@@ -15,21 +15,20 @@
  * limitations under the License.
  */
 
-import {Space} from '../Space/Space';
-import * as React from 'react';
-import {useEffect, useState} from 'react';
-import moment, {now} from 'moment';
-import LeaveIcon from '../Assets/leave-icon.svg';
-import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
-import SpaceClient from '../Space/SpaceClient';
+import React, {useEffect, useState} from 'react';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {CurrentUserState} from '../State/CurrentUserState';
-
-import './SpaceDashboardTile.scss';
-import {ModalContentsState} from '../State/ModalContentsState';
+import moment, {now} from 'moment';
+import {Space} from 'Space/Space';
+import LeaveIcon from 'Assets/leave-icon.svg';
+import AccessibleDropdownContainer from 'ReusableComponents/AccessibleDropdownContainer';
+import SpaceClient from 'Space/SpaceClient';
+import {CurrentUserState} from 'State/CurrentUserState';
+import {ModalContentsState} from 'State/ModalContentsState';
 import SpaceForm from './SpaceForm';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import DeleteSpaceForm from './DeleteSpaceForm';
+
+import './SpaceDashboardTile.scss';
 
 interface Props {
     space: Space;
@@ -76,14 +75,14 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
     function openEditModal(): void {
         setModalContents({
             title: 'Edit Space',
-            component: <SpaceForm space={space}/>
+            component: <SpaceForm selectedSpace={space}/>
         });
     }
 
     function openLeaveModal(): void {
         setModalContents( {
             title: 'Transfer Ownership of Space',
-            component: <TransferOwnershipForm space={space}/>
+            component: <TransferOwnershipForm spaceToTransfer={space}/>
         });
     }
 

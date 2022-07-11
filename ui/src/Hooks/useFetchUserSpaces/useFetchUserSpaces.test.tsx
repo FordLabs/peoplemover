@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
+import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
 import SpaceClient from 'Space/SpaceClient';
 import useFetchUserSpaces from './useFetchUserSpaces';
-import {RecoilRoot} from 'recoil';
+import TestUtils from '../../Utils/TestUtils';
+
+const wrapper = TestUtils.hookWrapper;
 
 jest.mock('Space/SpaceClient');
 
@@ -38,9 +40,3 @@ describe('useFetchUserSpaces Hook', () => {
         expect(result.current.userSpaces).toEqual([TestData.space]);
     });
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-    <RecoilRoot>
-        {children}
-    </RecoilRoot>
-);

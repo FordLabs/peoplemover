@@ -19,10 +19,8 @@ import {fireEvent, getByText, screen, waitFor, within} from '@testing-library/re
 import React from 'react';
 import AssignmentForm from '../Assignments/AssignmentForm';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil, renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {createStore, Store} from 'redux';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {RecoilRoot} from 'recoil';
@@ -32,6 +30,7 @@ import {PeopleState} from '../State/PeopleState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import PersonForm from '../People/PersonForm';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 let modalContent: ModalContents | null;
 
@@ -161,9 +160,7 @@ describe('AssignmentForm', () => {
         });
 
         it('populates the person name field of the Create Person modal on open', async () => {
-            const store = createStore(rootReducer);
-
-            renderComponent(store);
+            renderComponent();
             const labelElement = await screen.findByLabelText('Name');
             await selectEvent.openMenu(labelElement);
             await prefillReactSelectField('Name', 'XYZ ABC 123');
@@ -182,22 +179,15 @@ describe('AssignmentForm', () => {
     });
 });
 
-const renderComponent = (store: Store|undefined = undefined): { viewingDate: Date; initialState: Partial<GlobalStateProps>; } => {
+const renderComponent = (): { viewingDate: Date; } => {
     const products = [
         TestData.productWithAssignments,
         TestData.archivedProduct,
         TestData.unassignedProduct,
     ];
     const viewingDate = new Date(2020, 5, 5);
-    const initialState = {
-        currentSpace: TestData.space,
-    };
-    renderWithRedux(
-        <RecoilRoot initializeState={({set}) => {
-            set(ViewingDateState, viewingDate);
-            set(ProductsState, products);
-            set(PeopleState,  TestData.people);
-        }}>
+    renderWithRecoil(
+        <>
             <RecoilObserver
                 recoilState={ModalContentsState}
                 onChange={(value: ModalContents) => {
@@ -205,12 +195,16 @@ const renderComponent = (store: Store|undefined = undefined): { viewingDate: Dat
                 }}
             />
             <AssignmentForm initiallySelectedProduct={products[0]} />
-        </RecoilRoot>,
-        store,
-        initialState
+        </>,
+        ({set}) => {
+            set(ViewingDateState, viewingDate);
+            set(ProductsState, products);
+            set(PeopleState,  TestData.people);
+            set(CurrentSpaceState, TestData.space)
+        }
     );
 
-    return {viewingDate, initialState};
+    return { viewingDate };
 };
 
 const prefillReactSelectField = async (label: string, prefillText: string): Promise<void> => {

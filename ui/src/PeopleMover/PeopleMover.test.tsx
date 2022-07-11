@@ -23,12 +23,12 @@ import rootReducer from '../Redux/Reducers';
 import {applyMiddleware, createStore, Store} from 'redux';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {createEmptySpace} from '../Space/Space';
-import {AvailableActions} from '../Redux/Actions';
 import thunk from 'redux-thunk';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
 import {LocationsState} from '../State/LocationsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 declare let window: MatomoWindow;
 
@@ -60,7 +60,6 @@ describe('PeopleMover', () => {
     describe('Read Only Mode', function() {
         beforeEach(async () => {
             const initialState = {
-                currentSpace: TestData.space,
                 allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
             };
             store = createStore(rootReducer, initialState, applyMiddleware(thunk));
@@ -68,6 +67,7 @@ describe('PeopleMover', () => {
             await TestUtils.renderPeopleMoverComponent(store, initialState, ({set}) => {
                 set(IsReadOnlyState, true);
                 set(ProductsState, TestData.products);
+                set(CurrentSpaceState, TestData.space);
             });
         });
 
@@ -83,24 +83,11 @@ describe('PeopleMover', () => {
             expect(await screen.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
         });
 
-        it('should trigger a matomo read-only visit event each time the current space changes', () => {
+        it('should trigger a matomo read-only visit event on load if space is defined', () => {
             const nextSpace = {...createEmptySpace(), name: 'newSpace'};
 
             expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'viewOnlyVisit', '']);
             expect(window._paq).not.toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
-            expect(getEventCount('viewOnlyVisit')).toEqual(1);
-
-            store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: nextSpace });
-
-            expect(window._paq).toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
-            expect(getEventCount('viewOnlyVisit')).toEqual(2);
-        });
-
-        it('should not trigger a matomo read-only visit event if no space has been defined', () => {
-            expect(getEventCount('viewOnlyVisit')).toEqual(1);
-
-            store.dispatch({ type: AvailableActions.SET_CURRENT_SPACE, space: null });
-
             expect(getEventCount('viewOnlyVisit')).toEqual(1);
         });
     });

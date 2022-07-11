@@ -15,17 +15,18 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
-import {RecoilRoot} from 'recoil';
 import TestData from 'Utils/TestData';
 import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
 import useFetchPersonTags from './useFetchPersonTags';
+import TestUtils from '../../Utils/TestUtils';
+
+const wrapper = TestUtils.hookWrapper;
 
 jest.mock('Tags/PersonTag/PersonTagClient');
 
-const teamUUID = 'team-uuid';
+const spaceUUID = 'space-uuid';
 
 const personTagsNotAlphabetical = TestData.personTags;
 
@@ -38,7 +39,7 @@ describe('useFetchPersonTags Hook', () => {
     it('should fetch all person tags for space and store them in recoil alphabetically', async () => {
         PersonTagClient.get = jest.fn().mockResolvedValue({ data: personTagsNotAlphabetical })
 
-        const { result } = renderHook(() => useFetchPersonTags(), { wrapper });
+        const { result } = renderHook(() => useFetchPersonTags(spaceUUID), { wrapper });
 
         expect(PersonTagClient.get).not.toHaveBeenCalled()
         expect(result.current.personTags).toEqual([]);
@@ -46,17 +47,7 @@ describe('useFetchPersonTags Hook', () => {
         await act(async () => {
             result.current.fetchPersonTags()
         });
-        expect(PersonTagClient.get).toHaveBeenCalledWith(teamUUID);
+        expect(PersonTagClient.get).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.personTags).toEqual(personTagsAlphabetical);
     });
 });
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[`/${teamUUID}`]}>
-        <RecoilRoot>
-            <Routes>
-                <Route path="/:teamUUID" element={children} />
-            </Routes>
-        </RecoilRoot>
-    </MemoryRouter>
-);

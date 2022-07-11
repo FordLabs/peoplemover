@@ -17,7 +17,6 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import {useParams} from 'react-router-dom';
 import {PeopleState} from 'State/PeopleState';
 import {Person} from 'People/Person';
 import PeopleClient from 'People/PeopleClient';
@@ -27,14 +26,13 @@ interface UseFetchPeople {
     fetchPeople(): void
 }
 
-function useFetchPeople(): UseFetchPeople {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+function useFetchPeople(spaceUUID: string): UseFetchPeople {
     const [people, setPeople] = useRecoilState(PeopleState);
 
     const fetchPeople = useCallback(() => {
-        PeopleClient.getAllPeopleInSpace(teamUUID)
+        PeopleClient.getAllPeopleInSpace(spaceUUID)
             .then(result => setPeople(result.data || [])).catch(console.error);
-    }, [setPeople, teamUUID])
+    }, [setPeople, spaceUUID])
 
     return {
         people: people || [],

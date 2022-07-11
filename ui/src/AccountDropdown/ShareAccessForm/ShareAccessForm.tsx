@@ -17,24 +17,17 @@
 
 import InviteEditorsFormSection from './InviteEditorsFormSection/InviteEditorsFormSection';
 import React, {useState} from 'react';
-import {Space} from '../../Space/Space';
-import {GlobalStateProps} from '../../Redux/Reducers';
-import {connect} from 'react-redux';
+import {useSetRecoilState} from 'recoil';
+
 import MultiModalCardBanner from './MultiModalCardBanner/MultiModalCardBanner';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection/ViewOnlyAccessFormSection';
+import {ModalContentsState} from 'State/ModalContentsState';
 
 import './ShareAccessForm.scss';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from '../../State/ModalContentsState';
 
-interface Props {
-    currentSpace: Space;
-}
-
-function ShareAccessForm({ currentSpace }: Props) {
+function ShareAccessForm() {
     const [isFirstSectionCollapsed, setIsFirstSectionCollapsed] = useState<boolean>(false);
     const setModalContents = useSetRecoilState(ModalContentsState);
-
     const closeModal = () => setModalContents(null);
 
     return (
@@ -55,19 +48,10 @@ function ShareAccessForm({ currentSpace }: Props) {
                     onCloseBtnClick={closeModal}
                     onClick={() => setIsFirstSectionCollapsed(true)}
                 />
-                <InviteEditorsFormSection
-                    space={currentSpace}
-                    collapsed={!isFirstSectionCollapsed}
-                />
+                <InviteEditorsFormSection collapsed={!isFirstSectionCollapsed} />
             </div>
         </div>
     )
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps)(ShareAccessForm);
-/* eslint-enable */
+export default ShareAccessForm;

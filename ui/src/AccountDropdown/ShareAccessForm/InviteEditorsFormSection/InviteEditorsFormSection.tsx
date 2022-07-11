@@ -17,9 +17,7 @@
 
 import React, {CSSProperties, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from 'Space/SpaceClient';
-import {connect} from 'react-redux';
 import FormButton from 'ModalFormComponents/FormButton';
-import {GlobalStateProps} from 'Redux/Reducers';
 import {Space} from 'Space/Space';
 import {UserSpaceMapping} from 'Space/UserSpaceMapping';
 
@@ -32,6 +30,7 @@ import {nameSplitPattern, userIdPattern, validate} from 'Utils/UserIdValidator';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {CurrentUserState} from 'State/CurrentUserState';
 import {ModalContentsState} from 'State/ModalContentsState';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
 import GrantEditAccessConfirmationForm from '../GrantAccessConfirmationForm/GrantEditAccessConfirmationForm';
 
 import './InviteEditorsFormSection.scss';
@@ -57,14 +56,8 @@ const inviteEditorsStyle = {
     }),
 };
 
-
-interface InviteEditorsFormReduxProps {
+interface InviteEditorsFormSectionProps {
     collapsed?: boolean;
-    currentSpace: Space;
-}
-
-interface InviteEditorsFormOwnProps {
-    space?: Space;
 }
 
 const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
@@ -73,7 +66,9 @@ const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMappin
     }
 };
 
-function InviteEditorsFormSection({collapsed, currentSpace}: InviteEditorsFormReduxProps, {space}: InviteEditorsFormOwnProps): JSX.Element {
+function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): JSX.Element {
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
     const currentUser = useRecoilValue(CurrentUserState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
@@ -88,8 +83,11 @@ function InviteEditorsFormSection({collapsed, currentSpace}: InviteEditorsFormRe
     };
 
     useEffect(() => {
-        getUsers(currentSpace, setUsersList);
-    }, [currentSpace, setUsersList]);
+        if (uuid) {
+            SpaceClient.getUsersForSpace(uuid)
+                .then(setUsersList);
+        }
+    }, [uuid, setUsersList]);
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
@@ -222,10 +220,5 @@ function InviteEditorsFormSection({collapsed, currentSpace}: InviteEditorsFormRe
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps, ownProps?: InviteEditorsFormOwnProps) => ({
-    currentSpace: ownProps?.space || state.currentSpace,
-});
+export default InviteEditorsFormSection;
 
-export default connect(mapStateToProps)(InviteEditorsFormSection);
-/* eslint-enable */

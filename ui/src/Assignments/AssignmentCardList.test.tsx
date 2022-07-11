@@ -24,6 +24,7 @@ import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries
 import {Product} from '../Products/Product';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 const product: Product = {
     id: 1,
@@ -83,13 +84,13 @@ const setupComponent = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOpt
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
             set(ViewingDateState, moment().toDate())
+            set(CurrentSpaceState, TestData.space)
         }}>
             <AssignmentCardList product={product}/>
         </RecoilRoot>,
         undefined,
         {
             allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-            currentSpace: TestData.space,
         }
     );
 }

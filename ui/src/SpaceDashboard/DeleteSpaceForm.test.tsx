@@ -28,6 +28,7 @@ import {RecoilRoot} from 'recoil';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import TransferOwnershipForm from './TransferOwnershipForm';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 describe('Delete Space Form', () => {
     let store: Store;
@@ -35,13 +36,14 @@ describe('Delete Space Form', () => {
 
     describe('Space has no editors', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {}, applyMiddleware(thunk));
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
                     set(ModalContentsState, {
                         title: 'A Title',
                         component: <div>Some Component</div>,
                     });
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>
                 </RecoilRoot>,
@@ -57,7 +59,7 @@ describe('Delete Space Form', () => {
     describe('Space has editors', () => {
         beforeEach(() => {
             modalContent = null;
-            store = createStore(rootReducer, {currentSpace: TestData.space}, applyMiddleware(thunk));
+            store = createStore(rootReducer, {}, applyMiddleware(thunk));
 
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
@@ -65,6 +67,7 @@ describe('Delete Space Form', () => {
                         title: 'A Title',
                         component: <div>Some Component</div>,
                     });
+                    set(CurrentSpaceState, TestData.space)
                 }}>
                     <RecoilObserver
                         recoilState={ModalContentsState}
@@ -146,7 +149,7 @@ describe('Delete Space Form', () => {
 
                 await waitFor(() => expect(modalContent).toEqual({
                     title: 'Transfer Ownership of Space',
-                    component: <TransferOwnershipForm space={TestData.space}/>
+                    component: <TransferOwnershipForm spaceToTransfer={TestData.space}/>
                 }));
             });
         });

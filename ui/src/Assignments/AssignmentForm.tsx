@@ -16,18 +16,15 @@
  */
 
 import React, {FormEvent, useState} from 'react';
-import {connect} from 'react-redux';
 import moment from 'moment';
 import AssignmentClient from 'Assignments/AssignmentClient';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from 'ModalFormComponents/SelectWithNoCreateOption';
 import {Person} from 'People/Person';
-import {GlobalStateProps} from 'Redux/Reducers';
 import {Product} from 'Products/Product';
 import {Option} from 'CommonTypes/Option';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
 import FormButton from 'ModalFormComponents/FormButton';
-import {Space} from 'Space/Space';
 import SelectWithCreateOption, {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -35,19 +32,20 @@ import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 import './AssignmentForm.scss';
 
 interface Props {
     initiallySelectedProduct: Product;
-    currentSpace: Space;
 }
 
-function AssignmentForm({ initiallySelectedProduct, currentSpace }: Props): JSX.Element {
+function AssignmentForm({ initiallySelectedProduct }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const products = useRecoilValue(ProductsState);
     const people = useRecoilValue(PeopleState);
     const setModalContents = useSetRecoilState(ModalContentsState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
 
     const { ASSIGNMENT_NAME } = MetadataReactSelectProps;
     const { ASSIGNMENT_ASSIGN_TO } = MetadataMultiSelectProps;
@@ -240,10 +238,5 @@ function AssignmentForm({ initiallySelectedProduct, currentSpace }: Props): JSX.
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
+export default AssignmentForm;
 
-export default connect(mapStateToProps)(AssignmentForm);
-/* eslint-enable */

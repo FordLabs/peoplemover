@@ -32,6 +32,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 declare let window: MatomoWindow;
 
@@ -61,12 +62,7 @@ describe('ProductCard', () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
 
-        store = createStore(rootReducer, 
-            {
-                currentSpace: TestData.space,
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-            },
-            applyMiddleware(thunk));
+        store = createStore(rootReducer,{allGroupedTagFilterOptions: allGroupedTagFilterOptions}, applyMiddleware(thunk));
     });
 
     afterEach(() => {
@@ -139,6 +135,7 @@ describe('ProductCard', () => {
             <RecoilRoot initializeState={({set}) => {
                 set(ViewingDateState, mayFourteenth2020);
                 set(ProductsState, products);
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <ProductCard product={product}/>
             </RecoilRoot>,

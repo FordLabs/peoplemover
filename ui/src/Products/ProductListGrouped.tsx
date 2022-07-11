@@ -29,10 +29,10 @@ import {ModalContents} from '../State/ModalContentsState';
 import ProductForm from './ProductForm';
 
 import './ProductListGrouped.scss';
+import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 interface GroupedByListProps {
     products: Array<Product>;
-    uuid?: string;
 }
 
 interface GroupedListDataProps {
@@ -49,10 +49,11 @@ interface ProductGroupProps {
     useGrayBackground?: boolean;
 }
 
-function GroupedByList({ products, uuid = '' }: GroupedByListProps): JSX.Element {
+function GroupedByList({ products }: GroupedByListProps): JSX.Element {
     const locations = useRecoilValue(LocationsState);
     const productSortBy = useRecoilValue(ProductSortByState);
     const productTags = useRecoilValue(ProductTagsState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
     const productGroupList = sortProducts();
 

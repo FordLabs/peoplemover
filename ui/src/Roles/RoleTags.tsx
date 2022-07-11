@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,22 +25,21 @@ import {createDataTestId} from '../Utils/ReactUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {Space} from '../Space/Space';
 import {INACTIVE_EDIT_STATE_INDEX} from '../Tags/MyTagsForm';
 import {RoleEditRequest} from './RoleEditRequest.interface';
-import {setupSpaceAction} from '../Redux/Actions';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     colors: Array<Color>;
     updateFilterOptions(index: number, tag: TagInterface): void;
-    currentSpace: Space;
 }
 
-const RoleTags = ({ colors, updateFilterOptions, currentSpace }: Props): JSX.Element => {
-    const { fetchRoles, roles } = useFetchRoles();
+const RoleTags = ({ colors, updateFilterOptions }: Props): JSX.Element => {
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+
+    const { fetchRoles, roles } = useFetchRoles(currentSpace.uuid || '');
 
     const tagType = 'role';
     const roleFiltersIndex = 2;
@@ -156,14 +155,4 @@ const RoleTags = ({ colors, updateFilterOptions, currentSpace }: Props): JSX.Ele
     );
 };
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(RoleTags);
-/* eslint-enable */
+export default RoleTags;

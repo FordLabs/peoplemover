@@ -517,6 +517,7 @@ describe('Products', () => {
                 const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestData.productWithoutAssignments));
                 cloneWithEndDateSet.endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
                 expect(ProductClient.editProduct).toBeCalledWith(TestData.space, cloneWithEndDateSet);
+                await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith('uuid', viewingDate))
             });
         });
     });
@@ -593,7 +594,6 @@ function renderProductCard(params?: { product?: Product, isReadOnly?: boolean })
     const { product = TestData.productWithoutAssignments, isReadOnly = false } = params || {}
 
     const initialState = {
-        currentSpace: TestData.space,
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
     };
 

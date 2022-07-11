@@ -32,6 +32,7 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {RecoilRoot} from 'recoil';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 declare let window: MatomoWindow;
 
@@ -44,7 +45,6 @@ jest.mock('../Tags/PersonTag/PersonTagClient');
 jest.mock('../Tags/ProductTag/ProductTagClient');
 
 describe('People actions', () => {
-    const initialState: PreloadedState<Partial<GlobalStateProps>> = {currentSpace: TestData.space};
     const addPersonButtonText = 'Add Person';
     const addPersonModalTitle = 'Add New Person';
     const submitFormButtonText = 'Add';
@@ -56,7 +56,6 @@ describe('People actions', () => {
 
     describe('Person Form', () => {
         const personFormInitialState: PreloadedState<Partial<GlobalStateProps>> = {
-            currentSpace: TestData.space,
             allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         };
         const viewingDate = new Date(2020, 5, 5)
@@ -65,6 +64,7 @@ describe('People actions', () => {
             await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState, ({set}) => {
                 set(ViewingDateState, viewingDate)
                 set(PeopleState,  TestData.people)
+                set(CurrentSpaceState, TestData.space)
             });
             await screen.findByText(addPersonButtonText);
         });
@@ -333,15 +333,15 @@ describe('People actions', () => {
 
     it('should have initially selected product selected', async () => {
         renderWithRedux(
-            <RecoilRoot>
+            <RecoilRoot initializeState={({set}) => {
+                set(CurrentSpaceState, TestData.space)
+            }}>
                 <PersonForm
                     isEditPersonForm={false}
                     initialPersonName="BRADLEY"
                     initiallySelectedProduct={TestData.productWithAssignments}
                 />
-            </RecoilRoot>,
-            undefined,
-            initialState
+            </RecoilRoot>
         );
         await screen.findByText('Product 1');
     });
@@ -351,14 +351,13 @@ describe('People actions', () => {
         renderWithRedux(
             <RecoilRoot  initializeState={({set}) => {
                 set(ProductsState, products)
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <PersonForm
                     isEditPersonForm={false}
                     initialPersonName="BRADLEY"
                 />
             </RecoilRoot>,
-            undefined,
-            initialState
         );
 
         expect(screen.getByText('unassigned')).toBeDefined();
@@ -380,14 +379,13 @@ describe('People actions', () => {
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(ProductsState, products)
+                set(CurrentSpaceState, TestData.space)
             }}>
                 <PersonForm
                     isEditPersonForm={false}
                     initialPersonName="BRADLEY"
                 />
             </RecoilRoot>,
-            undefined,
-            initialState
         );
         const productDropDown = screen.getByLabelText('Assign to');
         expect(screen.getByText('unassigned')).toBeDefined();
@@ -401,10 +399,10 @@ describe('People actions', () => {
 
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(undefined,{
-                currentSpace: TestData.space,
                 allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
             }, ({set}) => {
                 set(ViewingDateState, new Date(2019, 0, 1))
+                set(CurrentSpaceState, TestData.space)
             })
 
             const editPersonButton = await screen.findByTestId('editPersonIconContainer__person_1');

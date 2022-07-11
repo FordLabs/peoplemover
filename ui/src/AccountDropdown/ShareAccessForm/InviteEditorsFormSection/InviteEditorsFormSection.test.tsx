@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from 'Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
@@ -24,8 +24,8 @@ import Cookies from 'universal-cookie';
 import SpaceClient from 'Space/SpaceClient';
 import RedirectClient from 'Utils/RedirectClient';
 import {Space} from 'Space/Space';
-import {RecoilRoot} from 'recoil';
 import {CurrentUserState} from 'State/CurrentUserState';
+import {CurrentSpaceState} from '../../../State/CurrentSpaceState';
 
 jest.mock('Space/SpaceClient');
 
@@ -45,7 +45,14 @@ describe('Invite Editors Form', function() {
     describe('Feature toggle enabled', () => {
         describe('Add editors', () => {
             it('should render the local test space', async () => {
-                await renderComponentWithSpaceFromProps();
+                const space: Space = {
+                    id: 2,
+                    uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                    name: 'local testSpace',
+                    lastModifiedDate: TestData.originDateString,
+                    todayViewIsPublic: true,
+                };
+                await renderComponent('User_id', space);
                 await screen.findByText('Enter CDSID of your editors');
                 const inputField = screen.getByLabelText(/People with this permission can edit/);
                 fireEvent.change(inputField, {target: {value: 'hford1'}});
@@ -60,7 +67,7 @@ describe('Invite Editors Form', function() {
             });
 
             it('should add users as editors', async function() {
-                renderComponent();
+                await renderComponent();
                 await screen.findByText('Enter CDSID of your editors');
                 const inputField = screen.getByLabelText(/People with this permission can edit/);
                 fireEvent.change(inputField, {target: {value: 'hford1'}});
@@ -75,7 +82,7 @@ describe('Invite Editors Form', function() {
             });
 
             it('should not add invalid cdsid user as editor', async function() {
-                renderComponent();
+                await renderComponent();
                 await screen.findByText('Enter CDSID of your editors');
                 fireEvent.change(
                     screen.getByLabelText(/People with this permission can edit/),
@@ -94,7 +101,7 @@ describe('Invite Editors Form', function() {
             });
 
             it('should not add invalid cdsid user as editor (on Enter)', async function() {
-                renderComponent();
+                await renderComponent();
                 await screen.findByText('Enter CDSID of your editors');
                 const inputField = screen.getByLabelText(/People with this permission can edit/);
                 fireEvent.change(inputField, {target: {value: '#ford'}});
@@ -115,7 +122,7 @@ describe('Invite Editors Form', function() {
             });
 
             it('should not add users as editors when one of them is invalid', async function() {
-                renderComponent();
+                await renderComponent();
                 await screen.findByText('Enter CDSID of your editors');
                 fireEvent.change(
                     screen.getByLabelText(/People with this permission can edit/),
@@ -134,7 +141,7 @@ describe('Invite Editors Form', function() {
             });
 
             it('should add two users as editors when both are valid', async function() {
-                renderComponent();
+                await renderComponent();
                 await screen.findByText('Enter CDSID of your editors');
                 fireEvent.change(
                     screen.getByLabelText(/People with this permission can edit/),
@@ -155,14 +162,14 @@ describe('Invite Editors Form', function() {
 
             describe('Submit Button and Error Message', () => {
                 it('should be disabled/disabled when there is no input', async () => {
-                    renderComponent();
+                    await renderComponent();
                     expect(await screen.findByText('Enter CDSID of your editors')).toBeInTheDocument();
                     expect(screen.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
                     expect(screen.queryByTestId('inviteEditorsFormErrorMessage')).toBeNull();
                 });
 
                 it('should be enabled when there are entries, and disabled when there are none', async () => {
-                    renderComponent();
+                    await renderComponent();
                     let inputField: HTMLElement;
                     expect(screen.queryByText('Enter CDSID of your editors')).toBeInTheDocument();
                     expect(screen.getByTestId('inviteEditorsFormSubmitButton')).toBeDisabled();
@@ -200,7 +207,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should show owners and editors for the space', async () => {
-            renderComponent( 'User_id');
+            await renderComponent( 'User_id');
 
             const ownerRow = within(await screen.findByTestId('userListItem__user_id'));
             ownerRow.getByText(/owner/i);
@@ -212,7 +219,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should change owner', async () => {
-            renderComponent( 'USER_ID');
+            await renderComponent( 'USER_ID');
             let editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
             const editor = editorRow.getByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -239,7 +246,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should not change owner after cancelling', async () => {
-            renderComponent( 'user_id');
+            await renderComponent( 'user_id');
             let editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
             const editor = await editorRow.findByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -260,7 +267,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should not be able to change owner', async () => {
-            renderComponent( 'user_id_2');
+            await renderComponent( 'user_id_2');
             const editorRow = within(await screen.findByTestId('userListItem__user_id_2'));
             const editor = editorRow.getByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -269,7 +276,7 @@ describe('Invite Editors Form', function() {
 
         it('should show a confirmation modal when removing self', async () => {
             const currentUser = 'USER_ID_2';
-            renderComponent(currentUser);
+            await renderComponent(currentUser);
             const editorRow = within(await screen.findByTestId(`userListItem__user_id_2`));
             const editor = editorRow.getByText(/editor/i);
             fireEvent.keyDown(editor, {key: 'ArrowDown'});
@@ -287,7 +294,7 @@ describe('Invite Editors Form', function() {
 
         it('should show a confirmation modal when removing editor access', async () => {
             const currentUser = 'USER_ID';
-            renderComponent(currentUser);
+            await renderComponent(currentUser);
 
             const editorRow = within(await screen.findByTestId(`userListItem__user_id_2`));
             const editor = editorRow.getByText(/editor/i);
@@ -304,7 +311,7 @@ describe('Invite Editors Form', function() {
         });
 
         it('should not open UserAccessList popup', async () => {
-            renderComponent();
+            await renderComponent();
 
             await waitFor(() => {
                 expect(screen.queryByTestId('userAccess')).not.toBeInTheDocument();
@@ -313,37 +320,14 @@ describe('Invite Editors Form', function() {
     });
 });
 
-function renderComponent(currentUser = 'User_id'): void {
-    renderWithRedux(
-        <RecoilRoot initializeState={({set}) => {
+async function renderComponent(currentUser = 'User_id', currentSpace: Space = TestData.space): Promise<void> {
+    renderWithRecoil(
+        <InviteEditorsFormSection collapsed={false} />,
+        ({set}) => {
             set(CurrentUserState, currentUser)
-        }}>
-            <InviteEditorsFormSection collapsed={false}/>,
-        </RecoilRoot>,
-        undefined,
-        {currentSpace: TestData.space}
+            set(CurrentSpaceState, currentSpace)
+        }
     );
-}
-
-const space: Space = {
-    id: 2,
-    uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    name: 'local testSpace',
-    lastModifiedDate: TestData.originDateString,
-    todayViewIsPublic: true,
-};
-
-async function renderComponentWithSpaceFromProps() {
-    renderWithRedux(
-        <RecoilRoot initializeState={({set}) => {
-            set(CurrentUserState, 'User_id')
-        }}>
-            <InviteEditorsFormSection collapsed={false} space={space}/>,
-        </RecoilRoot>,
-        undefined,
-        {currentSpace: TestData.space}
-    );
-
     await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled());
 }
 

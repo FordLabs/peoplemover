@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import SpaceClient from '../Space/SpaceClient';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ColorClient from '../Roles/ColorClient';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
-import {MutableSnapshot, RecoilRoot} from 'recoil';
+import {MutableSnapshot, RecoilRoot, RecoilValue, useRecoilValue} from 'recoil';
 import {render, RenderResult, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
@@ -81,6 +81,14 @@ export function renderWithRecoil(component: JSX.Element, initializeState?: (muta
     return render(<RecoilRoot initializeState={initializeState}>{component}</RecoilRoot>)
 }
 
+const hookWrapper = ({ children }: { children: ReactNode }) => (
+    <MemoryRouter>
+        <RecoilRoot>
+            {children}
+        </RecoilRoot>
+    </MemoryRouter>
+);
+
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
 }
@@ -114,14 +122,26 @@ function expectedCreateOptionText(expectedCreationString: string): string {
     return `Create "${expectedCreationString}"`;
 }
 
+export const RecoilObserver = ({
+    recoilState,
+    onChange,
+}: {
+    recoilState: RecoilValue<unknown>;
+    onChange: Function;
+}) => {
+    const value = useRecoilValue(recoilState);
+    useEffect(() => onChange(value), [onChange, value]);
+    return null;
+};
+
 const TestUtils = {
     mockClientCalls,
     renderPeopleMoverComponent,
-    renderWithRecoil,
-    renderWithRedux,
+    RecoilObserver,
     createDataTestId,
     mockCreateRange,
-    expectedCreateOptionText
+    expectedCreateOptionText,
+    hookWrapper
 }
 
 export default TestUtils;

@@ -23,10 +23,10 @@ import FormButton from '../ModalFormComponents/FormButton';
 import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import TransferOwnershipForm from './TransferOwnershipForm';
-
-import './DeleteSpaceForm.scss';
 import {useSetRecoilState} from 'recoil';
 import {ModalContentsState} from '../State/ModalContentsState';
+
+import './DeleteSpaceForm.scss';
 
 interface Props {
     space: Space;
@@ -76,7 +76,7 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
         submit(): void | Promise<void> {
             setModalContents({
                 title: 'Transfer Ownership of Space',
-                component: <TransferOwnershipForm space={space}/>
+                component: <TransferOwnershipForm spaceToTransfer={space}/>
             });
         },
         close() {

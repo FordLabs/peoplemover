@@ -17,7 +17,6 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import {useParams} from 'react-router-dom';
 import {RoleTag} from 'Roles/RoleTag.interface';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
 import {Tag} from 'Tags/Tag';
@@ -29,19 +28,18 @@ interface UseFetchPersonTags {
     fetchPersonTags(): void
 }
 
-function useFetchPersonTags(): UseFetchPersonTags {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+function useFetchPersonTags(spaceUUID: string): UseFetchPersonTags {
     const [personTags, setPersonTags] = useRecoilState(PersonTagsState);
 
     const fetchPersonTags = useCallback(() => {
-        PersonTagClient.get(teamUUID)
+        PersonTagClient.get(spaceUUID)
             .then(result => {
                 const tags: Array<RoleTag> = [...result.data];
                 sortTagsAlphabetically(tags);
                 setPersonTags(tags)
             })
             .catch(console.error);
-    }, [setPersonTags, teamUUID])
+    }, [setPersonTags, spaceUUID])
 
     return {
         personTags: personTags || [],

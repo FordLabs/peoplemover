@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  */
 
 import {JSX} from '@babel/types';
-import {connect} from 'react-redux';
 import {Option} from '../CommonTypes/Option';
 import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
@@ -24,16 +23,15 @@ import {LocationTag} from '../Locations/LocationTag.interface';
 import {TagInterface} from '../Tags/Tag.interface';
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
-import {Space} from '../Space/Space';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
     currentProductState: { currentProduct: Product; setCurrentProduct: (updatedProduct: Product) => void };
     addGroupedTagFilterOptions: (tagFilterIndex: number, trait: TagInterface) => void;
-    currentSpace: Space;
 }
 
 function ProductFormLocationField({
@@ -45,10 +43,11 @@ function ProductFormLocationField({
         currentProduct,
         setCurrentProduct,
     },
-    currentSpace,
     addGroupedTagFilterOptions,
 }: Props): JSX.Element {
-    const uuid = currentSpace.uuid!;
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
+
     const { LOCATION_TAGS } = MetadataReactSelectProps;
     const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
 
@@ -124,10 +123,5 @@ function ProductFormLocationField({
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
+export default ProductFormLocationField;
 
-export default connect(mapStateToProps)(ProductFormLocationField);
-/* eslint-enable */

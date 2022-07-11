@@ -19,18 +19,14 @@ import {combineReducers} from 'redux';
 import productRefsReducer from './productRefsReducer';
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
 import allGroupedTagFilterOptionsReducer from './allGroupedTagOptionsReducer';
-import currentSpaceReducer from './currentSpaceReducer';
-import {Space} from '../../Space/Space';
 import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
 
 export default combineReducers({
     productRefs: productRefsReducer,
     allGroupedTagFilterOptions: allGroupedTagFilterOptionsReducer,
-    currentSpace: currentSpaceReducer,
 });
 
 export interface GlobalStateProps {
     productRefs: Array<ProductCardRefAndProductPair>;
     allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    currentSpace: Space;
 }

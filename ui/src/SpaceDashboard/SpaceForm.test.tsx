@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,14 +16,13 @@
  */
 
 import React from 'react';
-import {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import {fireEvent, screen} from '@testing-library/dom';
 import SpaceForm from './SpaceForm';
-import {RecoilRoot} from 'recoil';
 
 describe('Space Form', () => {
     beforeEach(() => {
-        renderSpaceForm();
+        renderWithRecoil(<SpaceForm/>);
     })
 
     it('should update the count for number of characters and have max input of 40', () => {
@@ -43,12 +42,3 @@ describe('Space Form', () => {
         expect(screen.getByTestId('createSpaceErrorMessage')).toBeVisible();
     });
 });
-
-
-function renderSpaceForm () {
-    renderWithRedux(
-        <RecoilRoot>
-            <SpaceForm/>
-        </RecoilRoot>
-    );
-}

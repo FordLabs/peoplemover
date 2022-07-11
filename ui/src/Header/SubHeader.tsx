@@ -23,11 +23,11 @@ import NavigationSection from '../ReusableComponents/NavigationSection';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import MyTagsForm from '../Tags/MyTagsForm';
+import MyRolesForm from '../Roles/MyRolesForm';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './SubHeader.scss';
-import MyTagsForm from '../Tags/MyTagsForm';
-import MyRolesForm from '../Roles/MyRolesForm';
 
 interface Props {
     showFilters?: boolean;

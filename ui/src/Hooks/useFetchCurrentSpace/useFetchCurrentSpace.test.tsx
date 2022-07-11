@@ -18,27 +18,29 @@
 import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
-import useFetchPeople from './useFetchPeople';
-import PeopleClient from 'People/PeopleClient';
+import SpaceClient from '../../Space/SpaceClient';
+import useFetchCurrentSpace from './useFetchCurrentSpace';
 import TestUtils from '../../Utils/TestUtils';
 
 const wrapper = TestUtils.hookWrapper;
 
-jest.mock('People/PeopleClient');
+jest.mock('Space/SpaceClient');
 
 const spaceUUID = 'space-uuid';
 
-describe('useFetchPeople Hook', () => {
-    it('should fetch all people and store them in recoil', async () => {
-        const { result } = renderHook(() => useFetchPeople(spaceUUID), { wrapper });
+describe('useFetchCurrentSpace Hook', () => {
+    it('should fetch the current space and store them in recoil', async () => {
+        SpaceClient.getSpaceFromUuid = jest.fn().mockResolvedValue({ data: TestData.space })
 
-        expect(PeopleClient.getAllPeopleInSpace).not.toHaveBeenCalled()
-        expect(result.current.people).toEqual([]);
+        const { result } = renderHook(() => useFetchCurrentSpace(spaceUUID), { wrapper });
+
+        expect(SpaceClient.getSpaceFromUuid).not.toHaveBeenCalled()
+        expect(result.current.currentSpace).toEqual({"lastModifiedDate": "", "name": "", "todayViewIsPublic": false});
 
         await act(async () => {
-            result.current.fetchPeople()
+            result.current.fetchCurrentSpace()
         });
-        expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(spaceUUID);
-        expect(result.current.people).toEqual(TestData.people);
+        expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(spaceUUID);
+        expect(result.current.currentSpace).toEqual(TestData.space);
     });
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,21 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import ReportClient from '../Reports/ReportClient';
-import {Space} from '../Space/Space';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-interface Props {
-    currentSpace: Space;
-}
-
-function DownloadReportButton({ currentSpace }: Props): JSX.Element {
+function DownloadReportButton(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
 
     const handleDownloadReport = async (): Promise<void> => {
         const { uuid, name } = currentSpace;
@@ -47,10 +41,5 @@ function DownloadReportButton({ currentSpace }: Props): JSX.Element {
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
+export default DownloadReportButton;
 
-export default connect(mapStateToProps, {})(DownloadReportButton);
-/* eslint-enable */

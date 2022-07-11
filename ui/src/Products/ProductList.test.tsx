@@ -19,7 +19,6 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import ProductClient from './ProductClient';
 import ProductList from './ProductList';
 import {Product} from './Product';
 import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
@@ -27,13 +26,13 @@ import {MutableSnapshot, RecoilRoot} from 'recoil';
 import configureStore from 'redux-mock-store';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {ProductTagsState} from '../State/ProductTagsState';
 
 describe('Product List', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
         TestUtils.mockClientCalls();
-
-        ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: TestData.products });
     });
 
     describe('Product list test filtering', () => {
@@ -124,12 +123,12 @@ describe('Product List', () => {
             ];
 
             const initialState = {
-                productTags: TestData.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                currentSpace: TestData.space,
             };
             renderProductList(initialState, ({set}) => {
                 set(ProductsState, TestData.products)
+                set(ProductTagsState, TestData.productTags)
+                set(CurrentSpaceState, TestData.space)
             });
 
             await screen.findByText(TestData.productWithAssignments.name);
@@ -163,11 +162,11 @@ describe('Product List', () => {
             const initialState = {
                 productTags: TestData.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                currentSpace: TestData.space,
             };
             renderProductList(initialState, ({set}) => {
                 set(IsReadOnlyState, true)
                 set(ProductsState, TestData.products)
+                set(CurrentSpaceState, TestData.space)
             });
 
             await screen.findByText(TestData.productWithAssignments.name);
@@ -200,12 +199,12 @@ describe('Product List', () => {
             ];
 
             const initialState = {
-                productTags: TestData.productTags,
                 allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                currentSpace: TestData.space,
             };
             renderProductList(initialState, ({set}) => {
                 set(ProductsState, TestData.products)
+                set(ProductTagsState, TestData.productTags)
+                set(CurrentSpaceState, TestData.space)
             });
 
             await screen.findByText(TestData.productWithoutAssignments.name);

@@ -17,7 +17,6 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import {useParams} from 'react-router-dom';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
 import LocationClient from 'Locations/LocationClient';
 import {LocationsState} from 'State/LocationsState';
@@ -28,19 +27,18 @@ interface UseFetchLocations {
     fetchLocations(): void
 }
 
-function useFetchLocations(): UseFetchLocations {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
+function useFetchLocations(spaceUUID: string): UseFetchLocations {
     const [locations, setLocations] = useRecoilState(LocationsState);
 
     const fetchLocations = useCallback(() => {
-        LocationClient.get(teamUUID)
+        LocationClient.get(spaceUUID)
             .then(result => {
                 const locationsForSpace: Array<LocationTag> = [...result.data];
                 sortTagsAlphabetically(locationsForSpace);
                 setLocations(locationsForSpace)
             })
             .catch(console.error);
-    }, [setLocations, teamUUID])
+    }, [setLocations, spaceUUID])
 
     return {
         locations: locations || [],
