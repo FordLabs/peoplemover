@@ -30,7 +30,7 @@ function RolesFilter() {
     const [roleFilterOptions, setRoleFilterOptions] = useState<Array<FilterOption>>(getFilterOptions());
 
     function getFilterOptions (): Array<FilterOption> {
-        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('roleTagFilters');
+        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('roleTagsFilters');
         return roles.map((tag: TagInterface): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
@@ -39,7 +39,7 @@ function RolesFilter() {
     }
 
     function setFilterOptions(options: FilterOption[]) {
-        setLocalStorageFiltersByType( 'roleTagFilters', options);
+        setLocalStorageFiltersByType('roleTagsFilters', options);
         setRoleFilterOptions(options);
     }
 

@@ -51,10 +51,10 @@ export interface AllGroupedTagFilterOptions {
 }
 
 export type LocalStorageFilters = {
-    locationTagsFilters: Array<string>;
-    productTagsFilters: Array<string>;
-    roleTagsFilters: Array<string>;
-    personTagsFilters: Array<string>;
+    locationTagsFilters: string[];
+    productTagsFilters: string[];
+    roleTagsFilters: string[];
+    personTagsFilters: string[];
 }
 
 
@@ -134,7 +134,7 @@ function getLocalStorageFilters(): LocalStorageFilters {
     };
 }
 
-type filterTypes = 'locationTagsFilters' | 'productTagFilter' | 'roleTagFilters' | 'personTagFilters';
+export type filterTypes = 'locationsTagsFilters' | 'productTagsFilter' | 'roleTagsFilters' | 'personTagsFilters';
 
 export function getLocalStorageFiltersByType(filterType: filterTypes): Array<string> {
     const localStorageFilters: string | null = localStorage.getItem('filters');
@@ -147,10 +147,18 @@ export function getLocalStorageFiltersByType(filterType: filterTypes): Array<str
 
 export function setLocalStorageFiltersByType(filterType: filterTypes, updatedFilters: FilterOption[]): void {
     const localStorageFilters: string | null = localStorage.getItem('filters');
-    if (localStorageFilters) {
-        const allFilters = JSON.parse(localStorageFilters);
-        allFilters[filterType] = updatedFilters.filter(f => f.selected).map(f => f.label);
-        localStorage.setItem('filters', JSON.stringify(allFilters));
-    }
+
+    const allFilters = JSON.parse(localStorageFilters || defaultLocalStorageFilters());
+    allFilters[filterType] = updatedFilters.filter(f => f.selected).map(f => f.label);
+    localStorage.setItem('filters', JSON.stringify(allFilters));
+}
+
+function defaultLocalStorageFilters() {
+    return JSON.stringify({
+        locationsTagsFilters: [],
+        productTagsFilter: [],
+        roleTagsFilters: [],
+        personTagsFilters: [],
+    })
 }
 
