@@ -15,19 +15,43 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
+import {FilterOption} from '../../CommonTypes/Option';
+import {FilterTypeListings, getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
+import {TagInterface} from '../../Tags/Tag.interface';
+import {useRecoilValue} from 'recoil';
+import {PersonTagsState} from '../../State/PersonTagsState';
+import Filter from '../Filter';
+import MyTagsForm from '../../Tags/MyTagsForm';
 
 function PersonTagsFilter() {
+    const personTags = useRecoilValue(PersonTagsState);
+
+    const [personTagFilterOptions, setPersonTagFilterOptions] = useState<Array<FilterOption>>(getFilterOptions());
+
+    function getFilterOptions (): Array<FilterOption> {
+        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('personTagsFilters');
+        return personTags.map((tag: TagInterface): FilterOption => ({
+            label: tag.name,
+            value: tag.id + '_' + tag.name,
+            selected: selectedRolesFromLocalStorage.includes(tag.name),
+        }));
+    }
+
+    function setFilterOptions(options: FilterOption[]) {
+        setLocalStorageFiltersByType('personTagsFilters', options);
+        setPersonTagFilterOptions(options);
+    }
+
     return (
-        // <Filter
-        //     label="Person Tags"
-        //
-        //     filterType={FilterTypeListings.PersonTag}
-        //     modalContents={{
-        //         title: 'Person Tags',
-        //         component: <MyTagsForm filterType={FilterTypeListings.PersonTag}/>
-        //     }}/>
-        <></>
+        <Filter
+            label="Person Tags"
+            defaultValues={personTagFilterOptions}
+            onSelect={setFilterOptions}
+            modalContents={{
+                title: 'Person Tags',
+                component: <MyTagsForm filterType={FilterTypeListings.PersonTag}/>
+            }}/>
     )
 }
 
