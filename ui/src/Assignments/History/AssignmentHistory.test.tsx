@@ -24,12 +24,11 @@ import ProductClient from '../../Products/ProductClient';
 import moment, {now} from 'moment';
 import {fireEvent} from '@testing-library/dom';
 import {Assignment} from '../Assignment';
-import TestUtils from '../../Utils/TestUtils';
 
-jest.mock('../../Products/ProductClient');
+jest.mock('Products/ProductClient');
+jest.mock('Assignments/AssignmentClient');
 
 describe('Assignment History', () => {
-
     const daysBetweenStartAndToday = (assignment: Assignment): number  => {
         return Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(assignment.startDate).startOf('day'))).asDays());
     };
@@ -62,8 +61,6 @@ describe('Assignment History', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn().mockResolvedValue({
             data: [{...TestData.assignmentForHank, endDate: null},
                 TestData.assignmentVacationForHank,

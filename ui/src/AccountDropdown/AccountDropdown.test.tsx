@@ -16,41 +16,28 @@
  */
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import TestUtils, {renderWithRecoil, renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import React from 'react';
-import {MemoryRouter} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
 import AccountDropdown from './AccountDropdown';
 import ReportClient from '../Reports/ReportClient';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import ShareAccessForm from './ShareAccessForm/ShareAccessForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {MemoryRouter} from 'react-router-dom';
 
 describe('Account Dropdown', () => {
-    let modalContent: ModalContents | null;
-
     beforeEach(async () => {
-        modalContent = null;
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
     });
 
     it('should show current user\'s name', () => {
-        renderWithRedux(
-            <MemoryRouter>
-                <RecoilRoot>
-                    <AccountDropdown showAllDropDownOptions={true}/>
-                </RecoilRoot>
-            </MemoryRouter>,
-        );
+        renderWithRecoil(<AccountDropdown showAllDropDownOptions={true}/>);
 
         const expectedCurrentUser = 'USER_ID'
         expect(screen.getByTestId('currentUserMessage')).toHaveTextContent(`Welcome, ${expectedCurrentUser}`)
@@ -58,9 +45,11 @@ describe('Account Dropdown', () => {
 
     describe('Dropdown Options', () => {
         const expectedViewingDate = new Date(2020, 4, 14);
+        let modalContent: ModalContents | null;
 
         beforeEach(async () => {
             ReportClient.getReportsWithNames = jest.fn().mockResolvedValue({});
+            modalContent = null;
 
             renderWithRecoil(
                 <MemoryRouter>

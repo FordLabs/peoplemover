@@ -33,6 +33,7 @@ jest.mock('Products/ProductClient');
 jest.mock('Space/SpaceClient');
 jest.mock('People/PeopleClient');
 jest.mock('Roles/RoleClient');
+jest.mock('Assignments/AssignmentClient');
 jest.mock('Locations/LocationClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
@@ -42,9 +43,6 @@ describe('Unassigned Products', () => {
 
     describe('Showing the unassigned product', () => {
         beforeEach(  async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent();
         });
         it('has the unassigned product drawer closed by default', async () => {
@@ -79,16 +77,7 @@ describe('Unassigned Products', () => {
                     set(CurrentSpaceState, TestData.space)
                 }}>
                     <UnassignedDrawer/>
-                </RecoilRoot>,
-                undefined,
-                {
-                    allGroupedTagFilterOptions: [
-                        { label: 'Location Tags:', options: []},
-                        { label: 'Product Tags:', options: []},
-                        { label: 'Role Tags:', options: []},
-                        { label: 'Person Tags:', options: []},
-                    ],
-                }
+                </RecoilRoot>
             );
         }
 
@@ -118,9 +107,6 @@ describe('Unassigned Products', () => {
 
     describe('Automated linkage between modals and drawers', () => {
         beforeEach(  async  () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent();
         });
 
@@ -141,9 +127,6 @@ describe('Unassigned Products', () => {
 
     describe('Edit menus', () => {
         beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
                 set(PeopleState, TestData.people)
                 set(ProductTagsState,  [TestData.productTag1])

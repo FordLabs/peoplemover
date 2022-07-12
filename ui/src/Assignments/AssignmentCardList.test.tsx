@@ -20,7 +20,7 @@ import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 import {Product} from '../Products/Product';
 import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
@@ -39,10 +39,12 @@ const product: Product = {
     notes: '',
 };
 
+jest.mock('Assignments/AssignmentClient');
+
 describe('Assignment card list', () => {
     describe('Filtering person by role and person tag',  () => {
         it('should not filter people if no role or tag are selected', async () => {
-            setupComponent(getAllGroupedTagFilterOptions(false, false));
+            setupAssignmentCardList();
 
             expect(screen.getByTestId('assignmentCard__person_1')).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_se')).toBeDefined();
@@ -52,7 +54,7 @@ describe('Assignment card list', () => {
         });
 
         it('should filter people that do not have selected role', async () => {
-            setupComponent(getAllGroupedTagFilterOptions(true, false));
+            setupAssignmentCardList({ roleFilters: ['Software Engineer'] });
 
             expect(screen.getByTestId('assignmentCard__person_1')).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_se')).toBeDefined();
@@ -61,7 +63,7 @@ describe('Assignment card list', () => {
         });
 
         it('should filter people that do not have the person tag selected', async () => {
-            setupComponent(getAllGroupedTagFilterOptions(false, true));
+            setupAssignmentCardList({ personFilters: ['The lil boss'] });
 
             expect(screen.getByTestId('assignmentCard__person_1')).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_se')).toBeDefined();
@@ -70,7 +72,7 @@ describe('Assignment card list', () => {
         });
 
         it('should filter people that do not have the role and person tag selected', async () => {
-            setupComponent(getAllGroupedTagFilterOptions(true, true));
+            setupAssignmentCardList({ roleFilters: ['Software Engineer'], personFilters: ['The lil boss'] });
 
             expect(screen.getByTestId('assignmentCard__person_1')).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_se')).toBeDefined();
@@ -80,47 +82,21 @@ describe('Assignment card list', () => {
     });
 });
 
-const setupComponent = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => {
+const setupAssignmentCardList = ({ roleFilters = [], personFilters = [] }: { roleFilters?: string[]; personFilters?: string[]; } = {}) => {
+    const selectedFilters: LocalStorageFilters = {
+        locationTagFilters: [],
+        productTagFilters: [],
+        roleTagFilters: roleFilters,
+        personTagFilters: personFilters,
+    };
+    localStorage.setItem('filters', JSON.stringify(selectedFilters));
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
             set(ViewingDateState, moment().toDate())
             set(CurrentSpaceState, TestData.space)
         }}>
             <AssignmentCardList product={product}/>
-        </RecoilRoot>,
-        undefined,
-        {
-            allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-        }
+        </RecoilRoot>
     );
-}
-
-const getAllGroupedTagFilterOptions = (roleTagIsSelected: boolean, personTagIsSelected: boolean): Array<AllGroupedTagFilterOptions> => {
-    return [
-        {
-            label:'Location Tags:',
-            options: [],
-        },
-        {
-            label:'Product Tags:',
-            options: [],
-        },
-        {
-            label:'Role Tags:',
-            options: [{
-                label: 'Software Engineer',
-                value: '1_Software Engineer',
-                selected: roleTagIsSelected,
-            }],
-        },
-        {
-            label:'Person Tags:',
-            options: [{
-                label: 'The lil boss',
-                value: '1_The_lil_boss',
-                selected: personTagIsSelected,
-            }],
-        },
-    ]
 }
 

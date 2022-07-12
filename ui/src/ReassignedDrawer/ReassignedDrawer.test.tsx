@@ -17,7 +17,7 @@
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import ReassignedDrawer from './ReassignedDrawer';
 import AssignmentClient from '../Assignments/AssignmentClient';
@@ -28,17 +28,16 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('../Products/ProductClient');
-jest.mock('../People/PeopleClient');
+jest.mock('Products/ProductClient');
+jest.mock('People/PeopleClient');
+jest.mock('Assignments/AssignmentClient');
 
 describe('ReassignedDrawer', () => {
     const mayFourteen2020: Date = new Date(2020, 4, 14);
     const fromProductName = 'Product 1';
 
-    describe('archived people', () => {
+    describe('Archived people', () => {
         beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
             AssignmentClient.getReassignments = jest.fn().mockResolvedValue( {
                 data: [{
                     person: TestData.archivedPerson,

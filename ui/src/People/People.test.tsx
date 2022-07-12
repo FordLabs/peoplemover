@@ -22,8 +22,6 @@ import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import moment from 'moment';
@@ -33,16 +31,18 @@ import {RecoilRoot} from 'recoil';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 
 declare let window: MatomoWindow;
 
-jest.mock('../Products/ProductClient');
-jest.mock('../People/PeopleClient');
-jest.mock('../Space/SpaceClient');
-jest.mock('../Roles/RoleClient');
-jest.mock('../Locations/LocationClient');
-jest.mock('../Tags/PersonTag/PersonTagClient');
-jest.mock('../Tags/ProductTag/ProductTagClient');
+jest.mock('Products/ProductClient');
+jest.mock('People/PeopleClient');
+jest.mock('Space/SpaceClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Assignments/AssignmentClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
 
 describe('People actions', () => {
     const addPersonButtonText = 'Add Person';
@@ -50,18 +50,21 @@ describe('People actions', () => {
     const submitFormButtonText = 'Add';
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
+        localStorage.removeItem('filters');
+    })
 
     describe('Person Form', () => {
-        const personFormInitialState: PreloadedState<Partial<GlobalStateProps>> = {
-            allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
+        const filters: LocalStorageFilters = {
+            locationTagFilters: [TestData.annarbor.name],
+            productTagFilters: [],
+            roleTagFilters: [],
+            personTagFilters: [],
         };
+        localStorage.setItem('filters', JSON.stringify(filters));
         const viewingDate = new Date(2020, 5, 5)
 
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
                 set(ViewingDateState, viewingDate)
                 set(PeopleState,  TestData.people)
                 set(CurrentSpaceState, TestData.space)
@@ -167,9 +170,7 @@ describe('People actions', () => {
             fireEvent.change(screen.getByLabelText('Name'), {target: {value: ''}});
             fireEvent.click(screen.getByText(submitFormButtonText));
 
-            await waitFor(() => {
-                expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0);
-            });
+            await waitFor(() => expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0));
 
             expect(screen.getByText('Please enter a person name.')).toBeInTheDocument();
         });
@@ -399,7 +400,7 @@ describe('People actions', () => {
 
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(undefined,{
-                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
+                // allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
             }, ({set}) => {
                 set(ViewingDateState, new Date(2019, 0, 1))
                 set(CurrentSpaceState, TestData.space)
@@ -445,9 +446,6 @@ describe('People actions', () => {
 
 describe('Deleting a Person', () => {
     beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
         await TestUtils.renderPeopleMoverComponent();
     });
 

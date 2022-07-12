@@ -28,6 +28,7 @@ import {PeopleState} from '../State/PeopleState';
 jest.mock('Products/ProductClient');
 jest.mock('Space/SpaceClient');
 jest.mock('Roles/RoleClient');
+jest.mock('Assignments/AssignmentClient');
 jest.mock('Locations/LocationClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
@@ -39,9 +40,6 @@ describe('Archived People', () => {
 
     describe('Showing archived people', () => {
         beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             const mockStore = configureStore([]);
             const store = mockStore({
                 currentSpace: TestData.space,
@@ -87,9 +85,6 @@ describe('Archived People', () => {
         });
 
         it('should not show an archived person if the viewing date is before their archive date', async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             const mockStore = configureStore([]);
             const store = mockStore({
                 currentSpace: TestData.space,
@@ -118,9 +113,6 @@ describe('Archived People', () => {
 
     describe('Showing the drawer in the app', () => {
         beforeEach(  async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent();
         });
 
