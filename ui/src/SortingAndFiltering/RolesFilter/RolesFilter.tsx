@@ -16,7 +16,7 @@
  */
 
 import Filter from '../Filter';
-import {getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
+import {getLocalStorageFiltersByType, roleTagsFilterKey, setLocalStorageFiltersByType} from '../FilterLibraries';
 import React, {useCallback, useEffect, useState} from 'react';
 import MyRolesForm from '../../Roles/MyRolesForm';
 import {useRecoilValue} from 'recoil';
@@ -28,7 +28,7 @@ function RolesFilter() {
     const roles = useRecoilValue(RolesState);
 
     const getFilterOptions = useCallback((): Array<FilterOption> => {
-        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('roleTagsFilters');
+        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(roleTagsFilterKey);
         return roles.map((tag: TagInterface): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
@@ -43,7 +43,7 @@ function RolesFilter() {
     }, [getFilterOptions, roles])
 
     function setFilterOptions(options: FilterOption[]) {
-        setLocalStorageFiltersByType('roleTagsFilters', options);
+        setLocalStorageFiltersByType(roleTagsFilterKey, options);
         setRoleFilterOptions(options);
     }
 

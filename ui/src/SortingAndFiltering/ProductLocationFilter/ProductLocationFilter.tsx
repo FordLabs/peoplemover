@@ -19,7 +19,12 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import {LocationsState} from '../../State/LocationsState';
 import MyTagsForm from '../../Tags/MyTagsForm';
-import {FilterTypeListings, getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
+import {
+    FilterTypeListings,
+    getLocalStorageFiltersByType,
+    locationTagsFilterKey,
+    setLocalStorageFiltersByType,
+} from '../FilterLibraries';
 import {FilterOption} from '../../CommonTypes/Option';
 import {TagInterface} from '../../Tags/Tag.interface';
 import Filter from '../Filter';
@@ -28,7 +33,7 @@ function ProductLocationFilter() {
     const productLocations = useRecoilValue(LocationsState);
 
     const getFilterOptions = useCallback((): Array<FilterOption> => {
-        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('locationTagsFilters');
+        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(locationTagsFilterKey);
         return productLocations.map((tag: TagInterface): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
@@ -43,7 +48,7 @@ function ProductLocationFilter() {
     }, [getFilterOptions, productLocations])
 
     function setFilterOptions(options: FilterOption[]) {
-        setLocalStorageFiltersByType('locationTagsFilters', options);
+        setLocalStorageFiltersByType(locationTagsFilterKey, options);
         setLocationFilterOptions(options);
     }
 

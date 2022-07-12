@@ -30,7 +30,11 @@ import {Assignment} from './Assignment';
 import AssignmentClient from './AssignmentClient';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
-import {getLocalStorageFiltersByType} from '../SortingAndFiltering/FilterLibraries';
+import {
+    getLocalStorageFiltersByType,
+    personTagsFilterKey,
+    roleTagsFilterKey,
+} from '../SortingAndFiltering/FilterLibraries';
 import {isPersonMatchingSelectedFilters} from 'People/Person';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -67,8 +71,8 @@ function AssignmentCardList({product, productRefs }: Props): JSX.Element {
         const filteredAssignments = [...product.assignments]
             .sort(sortAssignmentsByPersonRole)
             .filter((assignment: Assignment) => {
-                const roleFilters = getLocalStorageFiltersByType('roleTagsFilters');
-                const personTagFilters = getLocalStorageFiltersByType('personTagsFilters');
+                const roleFilters = getLocalStorageFiltersByType(roleTagsFilterKey);
+                const personTagFilters = getLocalStorageFiltersByType(personTagsFilterKey);
                 return isPersonMatchingSelectedFilters(assignment.person, roleFilters, personTagFilters);
             })
 

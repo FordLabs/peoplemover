@@ -23,7 +23,11 @@ import {useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
-import {getLocalStorageFiltersByType} from '../SortingAndFiltering/FilterLibraries';
+import {
+    getLocalStorageFiltersByType,
+    locationTagsFilterKey,
+    productTagsFilterKey,
+} from '../SortingAndFiltering/FilterLibraries';
 import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 
 function ProductList(): JSX.Element {
@@ -34,8 +38,8 @@ function ProductList(): JSX.Element {
     const [filteredAndActiveProduct, setFilteredAndActiveProducts] = useState<Product[]>([]);
 
     const getFilteredAndActiveProducts = useCallback(() => {
-        const locationTagFilters: string[] = getLocalStorageFiltersByType('locationTagsFilters');
-        const productTagFilters: string[] = getLocalStorageFiltersByType('productTagsFilter');
+        const locationTagFilters: string[] = getLocalStorageFiltersByType(locationTagsFilterKey);
+        const productTagFilters: string[] = getLocalStorageFiltersByType(productTagsFilterKey);
         const noFiltersApplied = !locationTagFilters.length && !productTagFilters.length;
         const filteredProducts = products
             .filter(product => noFiltersApplied || isProductMatchingSelectedFilters(product, locationTagFilters, productTagFilters))
