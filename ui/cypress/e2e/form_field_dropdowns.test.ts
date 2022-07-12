@@ -22,9 +22,8 @@ const expectedCreateOptionText = (expectedCreationString) => `Create "${expected
 describe('Form Dropdown Fields', () => {
 
     beforeEach(() => {
-        cy.server();
-        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
-        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewProductTag');
+        cy.intercept('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewProductTag');
 
         cy.visitSpace({locationData: [], productTagsData: []});
         cy.get('[data-testid=newProductButton]').click();
@@ -112,6 +111,10 @@ describe('Form Dropdown Fields', () => {
     });
 
     it('Add Product Tags Workflow', () => {
+        const openProductTagsDropdown = () => {
+            cy.get('[data-testid="downArrow_productTags"]').click();
+        };
+
         const focusOnProductTagsDropdownInput = () => {
             cy.get('@productTagsInput')
                 .click({force: true});
@@ -157,7 +160,7 @@ describe('Form Dropdown Fields', () => {
 
         productTagsDropdownMenuIsClosed();
 
-        focusOnProductTagsDropdownInput();
+        openProductTagsDropdown();
 
         cy.get('@productForm')
             .find('.productTags__option')
@@ -177,7 +180,7 @@ describe('Form Dropdown Fields', () => {
         cy.get('.productTags__multi-value__remove').eq(0).click();
         cy.get('.productTags__multi-value__remove').eq(0).click();
 
-        focusOnProductTagsDropdownInput();
+        openProductTagsDropdown();
 
         cy.get('@productForm')
             .find('.productTags__option')
