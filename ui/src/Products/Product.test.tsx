@@ -38,6 +38,7 @@ import {IsReadOnlyState} from '../State/IsReadOnlyState';
 jest.mock('./ProductClient');
 jest.mock('Space/SpaceClient');
 jest.mock('Roles/RoleClient');
+jest.mock('Assignments/AssignmentClient');
 jest.mock('Locations/LocationClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
@@ -45,11 +46,6 @@ jest.mock('Tags/PersonTag/PersonTagClient');
 describe('Products', () => {
     const addProductButtonText = 'Add Product';
     const addProductModalTitle = 'Add New Product';
-
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
 
     describe('Home page', () => {
         it('displays the product names', async () => {
@@ -593,11 +589,7 @@ describe('Products', () => {
 function renderProductCard(params?: { product?: Product, isReadOnly?: boolean }) {
     const { product = TestData.productWithoutAssignments, isReadOnly = false } = params || {}
 
-    const initialState = {
-        allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-    };
-
-    const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+    const store = createStore(rootReducer, {}, applyMiddleware(thunk));
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
             set(ViewingDateState, new Date(2020, 4, 14));

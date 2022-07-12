@@ -16,22 +16,19 @@
  */
 
 import React from 'react';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
+import {useRecoilValue} from 'recoil';
 import {JSX} from '@babel/types';
 import TagsModalContent from './TagsModalContent';
-import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import ProductTagClient from './ProductTag/ProductTagClient';
 import LocationClient from 'Locations/LocationClient';
 import PersonTagClient from './PersonTag/PersonTagClient';
 import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
+import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
-import {useRecoilValue} from 'recoil';
-import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 export const INACTIVE_EDIT_STATE_INDEX = -1;
 
@@ -46,14 +43,12 @@ function MyTagsForm({ filterType }: Props): JSX.Element {
     const { fetchPersonTags, personTags } = useFetchPersonTags(uuid);
     const { fetchProductTags, productTags } = useFetchProductTags(uuid);
 
-    const getWarningMessageElement = (message: string): JSX.Element => {
-        return <div className="traitWarning">
+    const getWarningMessageElement = (message: string): JSX.Element => (
+        <div className="traitWarning">
             <i className="material-icons warningIcon">error</i>
-            <p className="warningText">
-                {message}
-            </p>
-        </div>;
-    };
+            <p className="warningText">{message}</p>
+        </div>
+    );
 
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
@@ -94,15 +89,5 @@ function MyTagsForm({ filterType }: Props): JSX.Element {
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
+export default MyTagsForm;
 
-const mapDispatchToProps = (dispatch: any) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyTagsForm);
-/* eslint-enable */

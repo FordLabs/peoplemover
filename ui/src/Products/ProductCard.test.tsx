@@ -16,14 +16,13 @@
  */
 
 import React from 'react';
-import TestUtils, {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
+import {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {emptyProduct, Product} from './Product';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import ProductClient from './ProductClient';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
 import moment from 'moment';
 import rootReducer from '../Redux/Reducers';
 import {applyMiddleware, createStore, Store} from 'redux';
@@ -36,15 +35,10 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 declare let window: MatomoWindow;
 
+jest.mock('Assignments/AssignmentClient');
+
 describe('ProductCard', () => {
     let originalWindow: Window;
-
-    const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-        { label:'Location Tags:', options: [] },
-        { label:'Product Tags:', options: [] },
-        { label:'Role Tags:', options: [] },
-        { label:'Person Tags:', options: [] },
-    ];
     const mayFourteenth2020 = new Date(2020, 4, 14);
     let store: Store;
     const products = [TestData.unassignedProduct,
@@ -59,10 +53,7 @@ describe('ProductCard', () => {
     ];
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
-        store = createStore(rootReducer,{allGroupedTagFilterOptions: allGroupedTagFilterOptions}, applyMiddleware(thunk));
+        store = createStore(rootReducer,{}, applyMiddleware(thunk));
     });
 
     afterEach(() => {

@@ -17,22 +17,20 @@
 
 import React from 'react';
 import {screen} from '@testing-library/react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import ProductList from './ProductList';
 import {Product} from './Product';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 import {MutableSnapshot, RecoilRoot} from 'recoil';
-import configureStore from 'redux-mock-store';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {ProductTagsState} from '../State/ProductTagsState';
 
 describe('Product List', () => {
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
+    beforeEach(() => {
+        localStorage.removeItem('filters');
     });
 
     describe('Product list test filtering', () => {
@@ -49,16 +47,17 @@ describe('Product List', () => {
                 tags: [TestData.productTag2],
                 notes: '',
             };
-            const products: Array<Product> = Object.assign([], TestData.products);
-            products.push(productWithAnnArborLocation);
 
-            const initialState = {
-                productTags: TestData.productTags,
-                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-                currentSpace: TestData.space,
-            };
-            renderProductList(initialState, ({set}) => {
-                set(ProductsState, products)
+            const localStorageFilters: LocalStorageFilters = {
+                locationTagFilters: [TestData.annarbor.name],
+                productTagFilters: [],
+                personTagFilters: [],
+                roleTagFilters: []
+            }
+            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+
+            renderProductList(({set}) => {
+                set(ProductsState, [...TestData.products, productWithAnnArborLocation])
             });
 
             await screen.findByText(TestData.productForHank.name);
@@ -82,12 +81,15 @@ describe('Product List', () => {
             const products: Array<Product> = Object.assign([], TestData.products);
             products.push(productWithAnnArborLocation);
 
-            const initialState = {
-                productTags: TestData.productTags,
-                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-                currentSpace: TestData.space,
-            };
-            renderProductList(initialState, ({set}) => {
+            const localStorageFilters: LocalStorageFilters = {
+                locationTagFilters: [TestData.annarbor.name],
+                productTagFilters: [],
+                personTagFilters: [],
+                roleTagFilters: []
+            }
+            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+
+            renderProductList(({set}) => {
                 set(IsReadOnlyState, true)
                 set(ProductsState, products)
             });
@@ -99,33 +101,15 @@ describe('Product List', () => {
         });
 
         it('should return all products with the selected product tag filter', async () => {
-            const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [{
-                        label: 'FordX',
-                        value: '1_FordX',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [],
-                },
-                {
-                    label: 'Person Tags:',
-                    options: [],
-                },
-            ];
+            const localStorageFilters: LocalStorageFilters = {
+                locationTagFilters: [],
+                productTagFilters: ['FordX'],
+                personTagFilters: [],
+                roleTagFilters: []
+            }
+            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
 
-            const initialState = {
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-            };
-            renderProductList(initialState, ({set}) => {
+            renderProductList(({set}) => {
                 set(ProductsState, TestData.products)
                 set(ProductTagsState, TestData.productTags)
                 set(CurrentSpaceState, TestData.space)
@@ -136,34 +120,14 @@ describe('Product List', () => {
         });
 
         it('should return one FordX products with product tag filter but not a product add button with readonly', async () => {
-            const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [{
-                        label: 'FordX',
-                        value: '1_FordX',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [],
-                },
-                {
-                    label: 'Person Tags:',
-                    options: [],
-                },
-            ];
-
-            const initialState = {
-                productTags: TestData.productTags,
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-            };
-            renderProductList(initialState, ({set}) => {
+            const localStorageFilters: LocalStorageFilters = {
+                locationTagFilters: [],
+                productTagFilters: ['FordX'],
+                personTagFilters: [],
+                roleTagFilters: []
+            }
+            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+            renderProductList(({set}) => {
                 set(IsReadOnlyState, true)
                 set(ProductsState, TestData.products)
                 set(CurrentSpaceState, TestData.space)
@@ -175,33 +139,14 @@ describe('Product List', () => {
         });
 
         it('should return all products with the selected product tag filter', async () => {
-            const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [{
-                        label: 'Dearborn',
-                        value: '1_Dearborn',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [{
-                        label: 'AV',
-                        value: '1_AV',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [],
-                },
-            ];
-
-            const initialState = {
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-            };
-            renderProductList(initialState, ({set}) => {
+            const localStorageFilters: LocalStorageFilters = {
+                locationTagFilters: ['Dearborn'],
+                productTagFilters: ['AV'],
+                personTagFilters: [],
+                roleTagFilters: []
+            }
+            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+            renderProductList(({set}) => {
                 set(ProductsState, TestData.products)
                 set(ProductTagsState, TestData.productTags)
                 set(CurrentSpaceState, TestData.space)
@@ -213,13 +158,10 @@ describe('Product List', () => {
     });
 });
 
-function renderProductList(preloadedReduxState: unknown, initializeState?: (mutableSnapshot: MutableSnapshot) => void) {
-    const mockStore = configureStore([]);
-    const store = mockStore(preloadedReduxState);
+function renderProductList(initializeState?: (mutableSnapshot: MutableSnapshot) => void) {
     renderWithRedux(
         <RecoilRoot initializeState={initializeState}>
             <ProductList/>
         </RecoilRoot>,
-        store
     );
 }
