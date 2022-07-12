@@ -49,7 +49,7 @@ function RolesFilter() {
 
     return (
         <Filter
-            label="Roles"
+            label="Role"
             defaultValues={roleFilterOptions}
             onSelect={setFilterOptions}
             modalContents={{ title: 'My Roles', component: <MyRolesForm/>}}
