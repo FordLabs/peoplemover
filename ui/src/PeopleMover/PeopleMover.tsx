@@ -19,20 +19,16 @@ import React, {useEffect} from 'react';
 
 import ProductList from '../Products/ProductList';
 import Branding from '../ReusableComponents/Branding';
-import {connect} from 'react-redux';
 import SubHeader from '../Header/SubHeader';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import Counter from '../ReusableComponents/Counter';
-import {AllGroupedTagFilterOptions, getFilterOptionsForSpace} from '../SortingAndFiltering/FilterLibraries';
 import HeaderContainer from '../Header/HeaderContainer';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
@@ -44,21 +40,13 @@ import useFetchCurrentSpace from '../Hooks/useFetchCurrentSpace/useFetchCurrentS
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import Modal from '../Modal/Modal';
-import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {Dispatch} from 'redux';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
 
-export interface PeopleMoverProps {
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-}
-
-function PeopleMover({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions }: PeopleMoverProps): JSX.Element {
+function PeopleMover(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
 
-    const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const [modalContents, setModalContents] = useRecoilState(ModalContentsState);
 
@@ -69,8 +57,6 @@ function PeopleMover({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
     const { fetchProductTags } = useFetchProductTags(teamUUID);
     const { fetchPersonTags } = useFetchPersonTags(teamUUID);
     const { fetchCurrentSpace, currentSpace } = useFetchCurrentSpace(teamUUID);
-
-    const hasProductsAndFilters: boolean = products && products.length > 0 && currentSpace && allGroupedTagFilterOptions.length > 0;
 
     useEffect(() => {
         if (currentSpace) {
@@ -92,9 +78,6 @@ function PeopleMover({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
 
     useEffect(() => {
         if (currentSpace && currentSpace.uuid) {
-            getFilterOptionsForSpace(currentSpace.uuid)
-                .then(setAllGroupedTagFilterOptions);
-
             fetchProducts();
             fetchProductTags();
             fetchPersonTags();
@@ -102,64 +85,48 @@ function PeopleMover({ allGroupedTagFilterOptions, setAllGroupedTagFilterOptions
             fetchRoles();
             fetchPeople();
         }
-    }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, fetchProducts, setAllGroupedTagFilterOptions]);
+    }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, fetchProducts]);
 
-    return (
-        !hasProductsAndFilters
-            ? <></>
-            : <div className="App">
-                <HeaderContainer>
-                    <SubHeader/>
-                </HeaderContainer>
-                <main>
-                    <div id="main-content-landing-target"/>
-                    <Counter
-                        products={products}
-                        allGroupedTagFilterOptions={allGroupedTagFilterOptions}
-                        viewingDate={viewingDate}
-                    />
-                    <div className="productAndAccordionContainer">
-                        <ProductList/>
-                        {!isReadOnly && (
-                            <div className="accordionContainer">
-                                <div className="accordionHeaderContainer">
-                                    <button
-                                        type="button"
-                                        className="addPersonButton"
-                                        data-testid="addPersonButton"
-                                        onClick={(): void => setModalContents({
-                                            title: 'Add New Person',
-                                            component: <PersonForm isEditPersonForm={false} />,
-                                        })}>
-                                        <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
-                                        <span>Add Person</span>
-                                    </button>
-                                    <UnassignedDrawer/>
-                                    <ReassignedDrawer/>
-                                    <ArchivedPersonDrawer/>
-                                    <ArchivedProductsDrawer/>
-                                </div>
+    return products.length && !!currentSpace ? (
+        <div className="App">
+            <HeaderContainer>
+                <SubHeader/>
+            </HeaderContainer>
+            <main>
+                <div id="main-content-landing-target"/>
+                <Counter />
+                <div className="productAndAccordionContainer">
+                    <ProductList/>
+                    {!isReadOnly && (
+                        <div className="accordionContainer">
+                            <div className="accordionHeaderContainer">
+                                <button
+                                    type="button"
+                                    className="addPersonButton"
+                                    data-testid="addPersonButton"
+                                    onClick={(): void => setModalContents({
+                                        title: 'Add New Person',
+                                        component: <PersonForm isEditPersonForm={false} />,
+                                    })}>
+                                    <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
+                                    <span>Add Person</span>
+                                </button>
+                                <UnassignedDrawer/>
+                                <ReassignedDrawer/>
+                                <ArchivedPersonDrawer/>
+                                <ArchivedProductsDrawer/>
                             </div>
-                        )}
-                    </div>
-                    <Modal />
-                </main>
-                <footer>
-                    <Branding/>
-                </footer>
-            </div>
-    );
+                        </div>
+                    )}
+                </div>
+                <Modal />
+            </main>
+            <footer>
+                <Branding/>
+            </footer>
+        </div>
+    ) : <></>;
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
+export default PeopleMover;
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PeopleMover);
-/* eslint-enable */

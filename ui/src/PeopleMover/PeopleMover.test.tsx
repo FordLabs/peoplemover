@@ -36,6 +36,7 @@ jest.mock('Space/SpaceClient');
 jest.mock('Products/ProductClient');
 jest.mock('People/PeopleClient');
 jest.mock('Roles/RoleClient');
+jest.mock('Assignments/AssignmentClient');
 jest.mock('Locations/LocationClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
@@ -51,20 +52,15 @@ describe('PeopleMover', () => {
     const addProductButtonText = 'Add Product';
     let store: Store;
 
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
+    beforeEach(() => {
         window._paq = [];
     });
 
     describe('Read Only Mode', function() {
         beforeEach(async () => {
-            const initialState = {
-                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-            };
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+            store = createStore(rootReducer, undefined, applyMiddleware(thunk));
 
-            await TestUtils.renderPeopleMoverComponent(store, initialState, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(store, undefined, ({set}) => {
                 set(IsReadOnlyState, true);
                 set(ProductsState, TestData.products);
                 set(CurrentSpaceState, TestData.space);
