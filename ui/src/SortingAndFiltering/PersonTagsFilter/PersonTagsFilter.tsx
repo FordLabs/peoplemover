@@ -17,7 +17,12 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {FilterOption} from '../../CommonTypes/Option';
-import {FilterTypeListings, getLocalStorageFiltersByType, setLocalStorageFiltersByType} from '../FilterLibraries';
+import {
+    FilterTypeListings,
+    getLocalStorageFiltersByType,
+    personTagsFilterKey,
+    setLocalStorageFiltersByType,
+} from '../FilterLibraries';
 import {TagInterface} from '../../Tags/Tag.interface';
 import {useRecoilValue} from 'recoil';
 import {PersonTagsState} from '../../State/PersonTagsState';
@@ -28,7 +33,7 @@ function PersonTagsFilter() {
     const personTags = useRecoilValue(PersonTagsState);
 
     const getFilterOptions = useCallback((): Array<FilterOption> => {
-        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType('personTagsFilters');
+        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(personTagsFilterKey);
         return personTags.map((tag: TagInterface): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
@@ -43,7 +48,7 @@ function PersonTagsFilter() {
     }, [getFilterOptions, personTags])
 
     function setFilterOptions(options: FilterOption[]) {
-        setLocalStorageFiltersByType('personTagsFilters', options);
+        setLocalStorageFiltersByType(personTagsFilterKey, options);
         setPersonTagFilterOptions(options);
     }
 
