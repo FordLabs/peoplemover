@@ -31,6 +31,7 @@ import moment from 'moment';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {MutableSnapshot} from 'recoil';
 
 declare let window: MatomoWindow;
 
@@ -42,6 +43,11 @@ jest.mock('Tags/PersonTag/PersonTagClient');
 
 describe('Person Form', () => {
     const mayFourteen: Date = new Date(2020, 4, 14);
+    const recoilState = ({set}: MutableSnapshot) => {
+        set(ViewingDateState, mayFourteen);
+        set(ProductsState, TestData.products)
+        set(CurrentSpaceState, TestData.space)
+    }
 
     beforeEach(() => {
         AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
@@ -49,14 +55,7 @@ describe('Person Form', () => {
 
     describe('Creating a new person', () => {
         beforeEach(async () => {
-            renderWithRecoil(
-                <PersonForm isEditPersonForm={false}/>,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products)
-                    set(CurrentSpaceState, TestData.space)
-                }
-            );
+            renderWithRecoil(<PersonForm isEditPersonForm={false}/>, recoilState);
             await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
         });
 
@@ -147,14 +146,8 @@ describe('Person Form', () => {
                 data: [TestData.assignmentForUnassigned],
             });
             renderWithRecoil(
-                <PersonForm
-                    isEditPersonForm={true}
-                    personEdited={TestData.unassignedPerson}
-                />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                }
+                <PersonForm isEditPersonForm={true} personEdited={TestData.unassignedPerson}/>,
+                recoilState
             );
             expect(await screen.findByText('unassigned')).toBeInTheDocument();
         });
@@ -164,14 +157,8 @@ describe('Person Form', () => {
                 data: [TestData.assignmentForArchived],
             });
             renderWithRecoil(
-                <PersonForm
-                    isEditPersonForm={true}
-                    personEdited={TestData.archivedPerson}
-                />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                }
+                <PersonForm isEditPersonForm={true} personEdited={TestData.archivedPerson}/>,
+                recoilState
             );
             expect(await screen.findByText('archived')).toBeInTheDocument();
         });
@@ -185,10 +172,7 @@ describe('Person Form', () => {
                     initiallySelectedProduct={TestData.productForHank}
                     personEdited={TestData.hank}
                 />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                }
+                recoilState
             );
 
             await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
@@ -208,10 +192,7 @@ describe('Person Form', () => {
                     initialPersonName={TestData.hank.name}
                     personEdited={TestData.hank}
                 />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                }
+                recoilState
             );
             await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
 
@@ -232,11 +213,7 @@ describe('Person Form', () => {
                     initialPersonName={TestData.hank.name}
                     personEdited={TestData.hank}
                 />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                    set(CurrentSpaceState, TestData.space)
-                }
+                recoilState
             );
             await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
 
@@ -298,11 +275,7 @@ describe('Person Form', () => {
                     initiallySelectedProduct={TestData.productForHank}
                     personEdited={TestData.hank}
                 />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                    set(CurrentSpaceState, TestData.space)
-                }
+                recoilState
             );
 
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
@@ -320,11 +293,7 @@ describe('Person Form', () => {
                     initiallySelectedProduct={TestData.productForHank}
                     personEdited={newHank}
                 />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                    set(CurrentSpaceState, TestData.space)
-                }
+                recoilState
             );
 
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
@@ -342,11 +311,7 @@ describe('Person Form', () => {
                     initiallySelectedProduct={TestData.productForHank}
                     personEdited={newHank}
                 />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                    set(CurrentSpaceState, TestData.space)
-                }
+                recoilState
             );
 
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
@@ -363,10 +328,7 @@ describe('Person Form', () => {
                     initiallySelectedProduct={TestData.productForHank}
                     personEdited={TestData.hank}
                 />,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen);
-                    set(ProductsState, TestData.products);
-                }
+                recoilState
             );
 
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));

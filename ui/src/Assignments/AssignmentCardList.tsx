@@ -68,7 +68,7 @@ function AssignmentCardList({product, productRefs }: Props): JSX.Element {
     let assignmentCardRectHeight  = 0;
 
     const getFilteredAssignments = useCallback(() => {
-        const filteredAssignments = [...product.assignments]
+        const _filteredAssignments = [...product.assignments]
             .sort(sortAssignmentsByPersonRole)
             .filter((assignment: Assignment) => {
                 const roleFilters = getLocalStorageFiltersByType(roleTagsFilterKey);
@@ -76,7 +76,7 @@ function AssignmentCardList({product, productRefs }: Props): JSX.Element {
                 return isPersonMatchingSelectedFilters(assignment.person, roleFilters, personTagFilters);
             })
 
-        setFilteredAssignments(filteredAssignments);
+        setFilteredAssignments(_filteredAssignments);
     }, [product.assignments]);
 
     useOnStorageChange(getFilteredAssignments);
