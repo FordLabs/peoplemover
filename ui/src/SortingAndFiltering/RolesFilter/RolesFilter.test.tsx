@@ -49,14 +49,13 @@ describe('Role Filter', () => {
                     }}
                 />
                 <RolesFilter />
-            </>
-            ,
+            </>,
             ({set}) => {
                 set(RolesState, TestData.roles)
             })
     })
 
-    it('should show "Role" label', () => {
+    it('should show "Role:" label', () => {
         expect(getRoleDropdownButton()).toHaveTextContent('Role:');
     });
 
