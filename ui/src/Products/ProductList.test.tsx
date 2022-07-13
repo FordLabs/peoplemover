@@ -47,14 +47,7 @@ describe('Product List', () => {
                 tags: [TestData.productTag2],
                 notes: '',
             };
-
-            const localStorageFilters: LocalStorageFilters = {
-                locationTagFilters: [TestData.annarbor.name],
-                productTagFilters: [],
-                personTagFilters: [],
-                roleTagFilters: []
-            }
-            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+            localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
 
             renderProductList(({set}) => {
                 set(ProductsState, [...TestData.products, productWithAnnArborLocation])
@@ -81,13 +74,7 @@ describe('Product List', () => {
             const products: Array<Product> = Object.assign([], TestData.products);
             products.push(productWithAnnArborLocation);
 
-            const localStorageFilters: LocalStorageFilters = {
-                locationTagFilters: [TestData.annarbor.name],
-                productTagFilters: [],
-                personTagFilters: [],
-                roleTagFilters: []
-            }
-            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+            localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
 
             renderProductList(({set}) => {
                 set(IsReadOnlyState, true)

@@ -60,13 +60,7 @@ describe('Counter', () => {
     });
 
     it('should display the number of products and people when location filters are applied', () => {
-        const filters: LocalStorageFilters = {
-            locationTagFilters: ['Ann Arbor'],
-            productTagFilters: [],
-            roleTagFilters: [],
-            personTagFilters: [],
-        }
-        localStorage.setItem('filters', JSON.stringify(filters));
+        localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
         renderCounter();
         expect(getCounter()).toHaveTextContent('Results - Products: 1, People: 2 (Unassigned: 1)');
     });
