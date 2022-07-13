@@ -39,11 +39,6 @@ export interface FilterType {
     tagNameType: TagNameType;
 }
 
-export interface AllGroupedTagFilterOptions {
-    label: LabelType;
-    options: Array<FilterOption>;
-}
-
 export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:' | 'Person Tags:';
 export type TagType = 'role' | 'product tag' | 'location' | 'person tag';
 export type TagNameType = 'Role' | 'Product Tag' | 'Location' | 'Person Tag';

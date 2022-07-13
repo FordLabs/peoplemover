@@ -41,7 +41,6 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
     const { fetchRoles, roles } = useFetchRoles(currentSpace.uuid || '');
 
     const tagType = 'role';
-    const roleFiltersIndex = 2;
     const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);

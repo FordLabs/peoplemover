@@ -35,7 +35,12 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
-    const labelId = label.replace(' ', '_');
+    const labelId = label.replace(/ /g, '_').toLowerCase();
+    const buttonId = `filter-button_${labelId}`;
+    const dropdownLabelId = `dropdown-label_${labelId}`;
+    const dropdownButtonArrowUpId = `dropdown-button-arrow-up_${labelId}`;
+    const filterCountId = `filter-count_${labelId}`;
+
     const getNumberOfSelectedFilters = (): number => defaultValues.filter(item => item.selected).length || 0;
     const areFiltersSelected = (getNumberOfSelectedFilters() > 0);
 
@@ -58,7 +63,7 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
     const ClearFilterButton = (): JSX.Element => areFiltersSelected ?  (
         <button
             className="material-icons clear-filter-button"
-            data-testid={`clearSelectedFilter-${labelId}`}
+            data-testid={`clearSelectedFilter_${labelId}`}
             onClick={clearFilter}
         >
             close
@@ -107,12 +112,12 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
 
     const FilterSelector = () => (
         <>
-            <span className="dropdown-label" id={`dropdown-label_${labelId}`}>
+            <span className="dropdown-label" id={dropdownLabelId}>
                 {label}:
             </span>
             <span
-                id={`filter_count_${labelId}`}
-                data-testid={`filter_count_${labelId}`}
+                id={filterCountId}
+                data-testid={`filterCount_${labelId}`}
                 className={getNumberOfSelectedFiltersStyle()}>
                 {getNumbersOfSelectedFiltersDisplayText()}
             </span>
@@ -121,16 +126,13 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
 
     return (
         <Dropdown
-            buttonId={`Filter-button_${labelId}`}
             dropdownButtonContent={<FilterSelector />}
             dropdownContent={<FilterDropdown />}
-            dropdownOptionIds={[`Filter-button_${labelId}`,
-                `dropdown-label_${labelId}`,
-                `dropdown-button-arrow-up_${labelId}`,
-                `filter_count_${labelId}`]}
-            dropdownTestId={`dropdown_${labelId}`}
-            buttonTestId={`dropdown_button_${labelId}`}
             clearFilterButton={<ClearFilterButton />}
+            buttonId={buttonId}
+            dropdownOptionIds={[buttonId, dropdownLabelId, dropdownButtonArrowUpId, filterCountId]}
+            dropdownTestId={`dropdown_${labelId}`}
+            buttonTestId={`dropdownButton_${labelId}`}
         />
     );
 }

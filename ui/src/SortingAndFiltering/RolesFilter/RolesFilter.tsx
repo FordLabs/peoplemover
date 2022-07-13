@@ -27,7 +27,7 @@ import {TagInterface} from '../../Tags/Tag.interface';
 function RolesFilter() {
     const roles = useRecoilValue(RolesState);
 
-    const getFilterOptions = useCallback((): Array<FilterOption> => {
+    const getFilterOptions = useCallback((): FilterOption[] => {
         const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(roleTagsFilterKey);
         return roles.map((tag: TagInterface): FilterOption => ({
             label: tag.name,
@@ -36,7 +36,7 @@ function RolesFilter() {
         }));
     },[roles])
 
-    const [roleFilterOptions, setRoleFilterOptions] = useState<Array<FilterOption>>([]);
+    const [roleFilterOptions, setRoleFilterOptions] = useState<FilterOption[]>([]);
 
     useEffect(() => {
         setRoleFilterOptions(getFilterOptions())
