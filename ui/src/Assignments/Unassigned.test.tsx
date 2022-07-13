@@ -127,7 +127,7 @@ describe('Unassigned Products', () => {
 
     describe('Edit menus', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(PeopleState, TestData.people)
                 set(ProductTagsState,  [TestData.productTag1])
             });

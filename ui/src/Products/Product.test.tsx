@@ -495,8 +495,7 @@ describe('Products', () => {
                 ProductClient.editProduct = jest.fn().mockResolvedValue({});
 
                 const viewingDate = new Date(2020, 6, 17);
-                const store = createStore(rootReducer, {}, applyMiddleware(thunk));
-                await TestUtils.renderPeopleMoverComponent(store, undefined, (({set}) => {
+                await TestUtils.renderPeopleMoverComponent((({set}) => {
                     set(ViewingDateState, viewingDate)
                 }));
 

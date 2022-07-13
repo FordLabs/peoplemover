@@ -36,8 +36,6 @@ export function renderWithRedux(
 }
 
 async function renderPeopleMoverComponent(
-    store?: Store,
-    initialReduxState?: PreloadedState<Partial<GlobalStateProps>>,
     initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,
     initialPath = '/uuid'
 ): Promise<RenderResult> {
@@ -49,8 +47,6 @@ async function renderPeopleMoverComponent(
                 </Routes>
             </RecoilRoot>
         </MemoryRouter>,
-        store,
-        initialReduxState
     );
     const uuid = initialPath.replace('/', '');
     await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(uuid))

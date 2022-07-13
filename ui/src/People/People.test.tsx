@@ -31,7 +31,6 @@ import {RecoilRoot} from 'recoil';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 
 declare let window: MatomoWindow;
 
@@ -54,17 +53,11 @@ describe('People actions', () => {
     })
 
     describe('Person Form', () => {
-        const filters: LocalStorageFilters = {
-            locationTagFilters: [TestData.annarbor.name],
-            productTagFilters: [],
-            roleTagFilters: [],
-            personTagFilters: [],
-        };
-        localStorage.setItem('filters', JSON.stringify(filters));
+        localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
         const viewingDate = new Date(2020, 5, 5)
 
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, viewingDate)
                 set(PeopleState,  TestData.people)
                 set(CurrentSpaceState, TestData.space)
@@ -180,7 +173,7 @@ describe('People actions', () => {
         const viewingDate: Date = new Date(2020, 5, 5)
 
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, viewingDate)
             });
 
@@ -310,7 +303,7 @@ describe('People actions', () => {
         };
 
         it('assigns the person created by the PersonForm', async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined,undefined, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, viewingDate)
             })
             const createPersonButton = await screen.findByText(addPersonButtonText);
@@ -399,9 +392,7 @@ describe('People actions', () => {
         let originalWindow: Window;
 
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined,{
-                // allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-            }, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, new Date(2019, 0, 1))
                 set(CurrentSpaceState, TestData.space)
             })
