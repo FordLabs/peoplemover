@@ -52,7 +52,7 @@ describe('Filter Dropdown', () => {
         });
 
         it('should NOT show the x that clears the selected filters', async () => {
-            expect(screen.queryByTestId(`clearSelectedFilter_my_test_label`)).toBeNull();
+            expect(screen.queryByTestId(`clearSelectedFilter__my_test_label`)).toBeNull();
         });
 
         it('should show all options, but none should be checked', () => {
@@ -176,13 +176,13 @@ function renderFilter(defaultValues: FilterOption[] = _defaultValues, isReadOnly
 }
 
 function getDropdownButton() {
-    return screen.getByTestId('dropdownButton_my_test_label');
+    return screen.getByTestId('dropdownButton__my_test_label');
 }
 
 function getFilterCount() {
-    return screen.getByTestId(`filterCount_my_test_label`);
+    return screen.getByTestId(`filterCount__my_test_label`);
 }
 
 function getClearFilterButton() {
-    return screen.getByTestId(`clearSelectedFilter_my_test_label`)
+    return screen.getByTestId(`clearSelectedFilter__my_test_label`)
 }

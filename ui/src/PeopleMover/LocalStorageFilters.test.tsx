@@ -70,9 +70,9 @@ xdescribe('Filter products', () => {
 
         await TestUtils.renderPeopleMoverComponent();
 
-        const locationFilterButton = await screen.findByTestId('dropdown_button_Product_Location');
+        const locationFilterButton = await screen.findByTestId('dropdownButton__product_location');
         fireEvent.click(locationFilterButton);
-        const editButton = await screen.findByTestId('open_Product_Location_modal_button');
+        const editButton = await screen.findByTestId('openModalButton__product_location');
         fireEvent.click(editButton);
 
         const editIcons = await screen.findAllByTestId('editIcon__location');

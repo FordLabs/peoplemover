@@ -63,7 +63,7 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
     const ClearFilterButton = (): JSX.Element => areFiltersSelected ?  (
         <button
             className="material-icons clear-filter-button"
-            data-testid={`clearSelectedFilter_${labelId}`}
+            data-testid={`clearSelectedFilter__${labelId}`}
             onClick={clearFilter}
         >
             close
@@ -100,7 +100,7 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
             </div>
             {!isReadOnly && (
                 <button className="add-edit-tags-dropdown-button"
-                    data-testid={`open_${labelId}_modal_button`}
+                    data-testid={`openModalButton__${labelId}`}
                     onClick={(): void => setModalContents(modalContents)}
                 >
                     <span>Add/Edit your {label}</span>
@@ -117,7 +117,7 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
             </span>
             <span
                 id={filterCountId}
-                data-testid={`filterCount_${labelId}`}
+                data-testid={`filterCount__${labelId}`}
                 className={getNumberOfSelectedFiltersStyle()}>
                 {getNumbersOfSelectedFiltersDisplayText()}
             </span>
@@ -132,7 +132,7 @@ function Filter({ label, defaultValues, onSelect, modalContents }: Props): JSX.E
             buttonId={buttonId}
             dropdownOptionIds={[buttonId, dropdownLabelId, dropdownButtonArrowUpId, filterCountId]}
             dropdownTestId={`dropdown_${labelId}`}
-            buttonTestId={`dropdownButton_${labelId}`}
+            buttonTestId={`dropdownButton__${labelId}`}
         />
     );
 }
