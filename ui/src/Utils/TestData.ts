@@ -435,7 +435,6 @@ const defaultLocalStorageFilters: LocalStorageFilters = {
     personTagFilters: [],
 };
 
-
 const TestData = {
     defaultLocalStorageFilters,
 

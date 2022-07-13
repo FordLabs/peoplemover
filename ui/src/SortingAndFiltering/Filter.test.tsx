@@ -38,6 +38,11 @@ describe('Filter Dropdown', () => {
         mockOnSelect = jest.fn();
     });
 
+    it('should show label', () => {
+        renderFilter();
+        expect(getDropdownButton()).toHaveTextContent(`${expectedLabel}:`);
+    });
+
     describe('When no filters are selected', () => {
         beforeEach(() => {
             renderFilter([
