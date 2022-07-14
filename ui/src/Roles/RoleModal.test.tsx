@@ -28,7 +28,8 @@ import {RolesState} from '../State/RolesState';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('../Roles/RoleClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Roles/ColorClient');
 
 describe('My Roles Form', () => {
     const initialState = {allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions};

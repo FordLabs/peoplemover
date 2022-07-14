@@ -17,7 +17,6 @@
 
 import React, {ReactNode, useEffect} from 'react';
 import SpaceClient from '../Space/SpaceClient';
-import ColorClient from '../Roles/ColorClient';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {MutableSnapshot, RecoilRoot, RecoilValue, useRecoilValue} from 'recoil';
@@ -26,11 +25,9 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
 import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
-import TestData from '../Utils/TestData';
 
 // @todo replace this with jest manual mocks
 function mockClientCalls(): void {
-    ColorClient.getAllColors = jest.fn().mockResolvedValue({ data: TestData.colors });
 }
 
 export function renderWithRedux(
