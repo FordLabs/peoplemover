@@ -24,7 +24,6 @@ import ProductClient from '../../Products/ProductClient';
 import moment, {now} from 'moment';
 import {fireEvent} from '@testing-library/dom';
 import {Assignment} from '../Assignment';
-import TestUtils from '../../Utils/TestUtils';
 
 jest.mock('../../Products/ProductClient');
 
@@ -62,8 +61,6 @@ describe('Assignment History', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
         AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn().mockResolvedValue({
             data: [{...TestData.assignmentForHank, endDate: null},
                 TestData.assignmentVacationForHank,

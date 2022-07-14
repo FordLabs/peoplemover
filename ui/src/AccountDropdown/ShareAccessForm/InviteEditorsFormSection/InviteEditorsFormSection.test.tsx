@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
@@ -33,9 +33,6 @@ describe('Invite Editors Form', function() {
     const cookies = new Cookies();
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
         SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(TestData.spaceMappingsArray);
 
         cookies.set('accessToken', '123456');

@@ -19,7 +19,7 @@ import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import {axe} from 'jest-axe';
 import Header from './Header';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import {RunConfig} from '../index';
 import {MemoryRouter} from 'react-router-dom';
 import flagsmith from 'flagsmith';
@@ -34,9 +34,6 @@ describe('Header', () => {
     beforeEach(() => {
         location = window.location;
         Reflect.deleteProperty(window, 'location');
-
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
     });
 
     afterEach(() => {

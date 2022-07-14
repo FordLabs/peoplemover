@@ -113,7 +113,8 @@
     "typescript": "^4.6.4"
   },
   "jest": {
-    "resetMocks": false
+    "resetMocks": false,
+    "clearMocks": true
   },
   "browserslist": [
     ">0.2%",

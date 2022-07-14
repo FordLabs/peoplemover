@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import PersonForm from './PersonForm';
 import configureStore from 'redux-mock-store';
@@ -38,6 +38,7 @@ declare let window: MatomoWindow;
 
 jest.mock('People/PeopleClient');
 jest.mock('Roles/RoleClient');
+jest.mock('Assignments/AssignmentClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
 
@@ -50,8 +51,7 @@ describe('Person Form', () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
+        AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
     })
 
     describe('Creating a new person', () => {

@@ -16,7 +16,7 @@
  */
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import TestUtils, {renderWithRecoil, renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRecoil, renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
@@ -37,8 +37,6 @@ describe('Account Dropdown', () => {
 
     beforeEach(async () => {
         modalContent = null;
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
 
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
     });

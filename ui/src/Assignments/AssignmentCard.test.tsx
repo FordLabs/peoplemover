@@ -18,7 +18,7 @@
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from './AssignmentCard';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {Assignment} from './Assignment';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
@@ -31,7 +31,8 @@ import moment from 'moment';
 import ProductClient from '../Products/ProductClient';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('../Products/ProductClient');
+jest.mock('Products/ProductClient');
+jest.mock('Assignments/AssignmentClient');
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
@@ -52,9 +53,6 @@ describe('Assignment Card', () => {
             productId: 1,
             spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         };
-
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
 
         jest.useFakeTimers();
     });
