@@ -31,7 +31,7 @@ import moment from 'moment';
 import ProductClient from '../Products/ProductClient';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('../Products/ProductClient');
+jest.mock('Products/ProductClient');
 jest.mock('Assignments/AssignmentClient');
 
 describe('Assignment Card', () => {

@@ -26,6 +26,8 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 jest.mock('Assignments/AssignmentClient');
 
+jest.mock('Assignments/AssignmentClient');
+
 describe('Calendar', () => {
     let resetCreateRange: () => void;
 

@@ -54,6 +54,7 @@ jest.mock('Space/SpaceClient');
 jest.mock('Assignments/AssignmentClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Assignments/AssignmentClient');
 
 describe('TimeOnProduct', () => {
     let store: Store;
