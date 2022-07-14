@@ -21,13 +21,12 @@ import {Moment} from 'moment';
 describe('Product', () => {
     beforeEach(() => {
         cy.visitSpace();
-        cy.server();
     });
 
     it('Create a new product', () => {
-        cy.route('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
-        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
-        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+        cy.intercept('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
+        cy.intercept('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
 
         cy.get(product.name).should('not.exist');
 
@@ -62,9 +61,9 @@ describe('Product', () => {
     });
 
     it('Edit a product', () => {
-        cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
-        cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
-        cy.route('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
+        cy.intercept('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+        cy.intercept('PUT', Cypress.env('API_PRODUCTS_PATH') + '/**').as('updateProduct');
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
         cy.get('[data-testid=editMenuOption__edit_product]').click();
@@ -104,7 +103,7 @@ describe('Product', () => {
     });
 
     it('Delete a product', () => {
-        cy.route('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
+        cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
         cy.get('[data-testid=editMenuOption__edit_product]').click();
@@ -118,6 +117,22 @@ describe('Product', () => {
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
 
+    });
+
+    it('Archive a product', () => {
+        cy.contains('Baguette Bakery').should('exist');
+        cy.get('[data-testid="editProductIcon__baguette_bakery"]').click();
+
+        cy.contains('Archive Product').click();
+
+        cy.contains('Are you sure?').should('exist');
+        cy.contains('Archive').click();
+        cy.contains('Baguette Bakery').should('not.exist');
+
+        cy.get('[data-testid="calendarToggle"]').click();
+        const expectedCurrentDate = moment().subtract(1, 'days').format('D');
+        cy.contains(expectedCurrentDate).click();
+        cy.contains('Baguette Bakery').should('exist');
     });
 
     context('Product name field warnings', () => {
