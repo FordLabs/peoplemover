@@ -17,46 +17,90 @@
 
 import React, {PropsWithChildren, useCallback} from 'react';
 import {DragDropContext, OnDragEndResponder} from 'react-beautiful-dnd';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {ProductsState} from '../State/ProductsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import AssignmentClient from '../Assignments/AssignmentClient';
+import {ViewingDateState} from '../State/ViewingDateState';
+import moment from 'moment';
+import {Assignment} from '../Assignments/Assignment';
+import {Product} from '../Products/Product';
+import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
+import useFetchProducts from '../Hooks/useFetchProducts/useFetchProducts';
 
 type Props = {};
 
 function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
+    const [products, setProducts] = useRecoilState(ProductsState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+    const viewingDate = useRecoilValue(ViewingDateState);
+
+    const { fetchProducts } = useFetchProducts(currentSpace!.uuid!)
+
+    const getNumberFromId = (id: string) => parseInt(id.replace(/[^0-9.]/g, ''), 10);
 
     const onDragEnd: OnDragEndResponder = useCallback(
-        (result) => {
-            console.log('result', result)
-
+        async (result) => {
             if (!result.destination) return;
 
-            const assignmentId = parseInt(result.draggableId);
-            const productId = parseInt(result.destination!.droppableId);
-            console.log('productId', productId)
+            const assignmentId: number = getNumberFromId(result.draggableId);
+            const oldProductId: number = getNumberFromId(result.source.droppableId);
+            const newProductId: number =  getNumberFromId(result.destination?.droppableId);
+            const isSameProduct = oldProductId === newProductId;
 
-            let oldColumnId: number;
-            // const newColumn = columns.find((c) => c.id === columnId);
-            //
-            // if (!newColumn) return;
-            //
-            // setThoughts((currentState: Thought[]) => {
-            //     return currentState.map((thought) => {
-            //         if (thought.id === thoughtId) {
-            //             oldColumnId = thought.columnId;
-            //             return { ...thought, columnId: newColumn.id };
+            if (isSameProduct) return;
+
+            const assignmentToMove: Assignment | undefined = products.find((p) => p.id === oldProductId)
+                ?.assignments
+                .find((a) => a.id === assignmentId);
+            const newProduct: Product | undefined = products.find((p) => p.id === newProductId);
+            const oldProduct: Product | undefined = products.find((p) => p.id === oldProductId);
+
+            if (!assignmentToMove || !newProduct || !oldProduct) return;
+
+
+            // setProducts((currentState: Product[]) => {
+            //     return currentState.map((product) => {
+            //         if (product.id === oldProductId) {
+            //             return {
+            //                 ...product,
+            //                 assignments: oldProduct.assignments.filter((a) => a.id !== assignmentToMove.id)
+            //             };
             //         }
-            //         return thought;
+            //         if (product.id === newProductId) {
+            //             return {
+            //                 ...product,
+            //                 assignments: [...product.assignments, assignmentToMove]
+            //             };
+            //         }
+            //         return product;
             //     });
             // });
-            // ThoughtService.updateColumn(team.id, thoughtId, columnId).catch(() => {
-            //     if (!oldColumnId) return;
-            //
-            //     setThoughts((currentState: Thought[]) => {
-            //         return currentState.map((thought) =>
-            //             thought.id === thoughtId
-            //                 ? { ...thought, columnId: oldColumnId }
-            //                 : thought
-            //         );
-            //     });
-            // });
+
+            const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(currentSpace!.uuid!, assignmentToMove.person.id, viewingDate)).data;
+            const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
+                .map(existingAssignment => ({
+                    productId: existingAssignment.productId,
+                    placeholder: existingAssignment.placeholder,
+                }))
+                .filter(existingAssignment => existingAssignment.productId !== assignmentToMove.productId)
+                .concat({ productId: newProductId, placeholder: assignmentToMove.placeholder });
+
+            await AssignmentClient.createAssignmentForDate(
+                moment(viewingDate).format('YYYY-MM-DD'),
+                productPlaceholderPairs,
+                currentSpace,
+                assignmentToMove.person
+            ).catch(() => {
+                // setProducts((currentState: Product[]) => {
+                //     return currentState.map((product) =>
+                //         product.id === oldProductId
+                //             ? { ...product, assignments: [...oldProduct.assignments] }
+                //             : product
+                //     );
+                // });
+            });
+            fetchProducts();
         },
         []
     );

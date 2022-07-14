@@ -36,7 +36,7 @@ interface Props {
     product: Product;
 }
 
-function AssignmentCardList({product }: Props): JSX.Element {
+function AssignmentCardList({ product }: Props): JSX.Element {
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);

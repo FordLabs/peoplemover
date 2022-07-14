@@ -105,8 +105,8 @@ export const getProductWithMostOverlappingArea = (
 
 const getListOfClientRectsForAllProducts = (productRefs: Array<ProductCardRefAndProductPair>): Array<DOMRect> => {
     return productRefs.reduce((accumulator: Array<DOMRect>, productRef: ProductCardRefAndProductPair) => {
-        const clientRect = productRef.ref.current && productRef.ref.current.getBoundingClientRect();
-        if (clientRect) accumulator.push(clientRect);
+        // const clientRect = productRef.ref.current && productRef.ref.current.getBoundingClientRect();
+        // if (clientRect) accumulator.push(clientRect);
         return accumulator;
     }, []);
 };

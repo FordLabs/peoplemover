@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useEffect, useRef, useState} from 'react';
+import React, {RefObject, useRef, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
 import {isUnassignedProduct, Product} from './Product';
@@ -37,8 +37,6 @@ import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from '../State/ModalContentsState';
 import ProductForm from './ProductForm';
 import AssignmentForm from '../Assignments/AssignmentForm';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {ProductRefsState} from '../State/ProductRefsState';
 
 import './Product.scss';
 
@@ -60,15 +58,15 @@ function ProductCard({ product }: Props): JSX.Element {
     const [modal, setModal] = useState<JSX.Element | null>(null);
     const productRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-    const setProductRefs = useSetRecoilState(ProductRefsState);
+    // const setProductRefs = useSetRecoilState(ProductRefsState);
 
-    useEffect(() => {
-        setProductRefs(currentState => [...currentState, {ref: productRef, product: {...product}}]);
-
-        return () => setProductRefs(currentState => currentState.filter(
-            _productRef => _productRef.ref !== productRef && _productRef.ref.current !== null
-        ));
-    }, [product, setProductRefs]);
+    // useEffect(() => {
+    //     setProductRefs(currentState => [...currentState, {ref: productRef, product: {...product}}]);
+    //
+    //     return () => setProductRefs(currentState => currentState.filter(
+    //         _productRef => _productRef.ref !== productRef && _productRef.ref.current !== null
+    //     ));
+    // }, [product, setProductRefs]);
 
     function toggleEditMenu(): void {
         setIsEditMenuOpen(!isEditMenuOpen);
@@ -249,7 +247,7 @@ function ProductCard({ product }: Props): JSX.Element {
                         </div>
                     </div>
                 )}
-                <AssignmentCardList product={product} isReadOnly={isReadOnly} />
+                <AssignmentCardList product={product} />
             </div>
             {modal}
         </div>
