@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
+import {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {emptyProduct, Product} from './Product';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
@@ -61,9 +61,6 @@ describe('ProductCard', () => {
     ];
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
         store = createStore(rootReducer,{allGroupedTagFilterOptions: allGroupedTagFilterOptions}, applyMiddleware(thunk));
     });
 

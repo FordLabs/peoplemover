@@ -17,7 +17,7 @@
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import ReassignedDrawer from './ReassignedDrawer';
 import AssignmentClient from '../Assignments/AssignmentClient';
@@ -37,8 +37,6 @@ describe('ReassignedDrawer', () => {
 
     describe('archived people', () => {
         beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
             AssignmentClient.getReassignments = jest.fn().mockResolvedValue( {
                 data: [{
                     person: TestData.archivedPerson,

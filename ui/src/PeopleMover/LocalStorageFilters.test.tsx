@@ -48,8 +48,6 @@ describe('Filter products', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
         (global.localStorage as unknown) = new MockLocalStorage();
     });
 

@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {screen} from '@testing-library/react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import ProductList from './ProductList';
 import {Product} from './Product';
@@ -30,11 +30,6 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {ProductTagsState} from '../State/ProductTagsState';
 
 describe('Product List', () => {
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
-
     describe('Product list test filtering', () => {
         it('should return all products with the selected location filter', async () => {
             const productWithAnnArborLocation: Product = {

@@ -26,10 +26,6 @@ import PeopleMover from '../PeopleMover/PeopleMover';
 import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
 
-// @todo replace this with jest manual mocks
-function mockClientCalls(): void {
-}
-
 export function renderWithRedux(
     component: JSX.Element,
     store?: Store,
@@ -119,7 +115,6 @@ export const RecoilObserver = ({
 };
 
 const TestUtils = {
-    mockClientCalls,
     renderPeopleMoverComponent,
     RecoilObserver,
     createDataTestId,

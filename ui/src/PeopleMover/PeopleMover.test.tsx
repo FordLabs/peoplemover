@@ -53,8 +53,6 @@ describe('PeopleMover', () => {
     let store: Store;
 
     beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
         window._paq = [];
     });
 

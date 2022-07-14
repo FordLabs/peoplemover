@@ -43,9 +43,6 @@ describe('Unassigned Products', () => {
 
     describe('Showing the unassigned product', () => {
         beforeEach(  async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent();
         });
         it('has the unassigned product drawer closed by default', async () => {
@@ -119,9 +116,6 @@ describe('Unassigned Products', () => {
 
     describe('Automated linkage between modals and drawers', () => {
         beforeEach(  async  () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent();
         });
 
@@ -142,9 +136,6 @@ describe('Unassigned Products', () => {
 
     describe('Edit menus', () => {
         beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
                 set(PeopleState, TestData.people)
                 set(ProductTagsState,  [TestData.productTag1])

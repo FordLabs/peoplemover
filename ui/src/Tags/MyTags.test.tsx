@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {findByTestId, findByText, fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
@@ -34,11 +34,6 @@ describe('My Tags Form', () => {
     const initialState = {
         allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
     };
-
-    beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
 
     const renderMyTagsForm = (filterType: FilterType): void => {
         renderWithRedux(

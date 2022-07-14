@@ -50,11 +50,6 @@ describe('People actions', () => {
     const addPersonModalTitle = 'Add New Person';
     const submitFormButtonText = 'Add';
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
-
     describe('Person Form', () => {
         const personFormInitialState: PreloadedState<Partial<GlobalStateProps>> = {
             allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
@@ -446,9 +441,6 @@ describe('People actions', () => {
 
 describe('Deleting a Person', () => {
     beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
         await TestUtils.renderPeopleMoverComponent();
     });
 

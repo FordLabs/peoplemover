@@ -31,8 +31,6 @@ describe('Calendar', () => {
     let resetCreateRange: () => void;
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
         resetCreateRange = TestUtils.mockCreateRange();
     });
 

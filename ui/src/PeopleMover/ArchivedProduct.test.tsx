@@ -32,9 +32,6 @@ jest.mock('Tags/ProductTag/ProductTagClient');
 describe('Archive Products', () => {
     describe('integration tests', () => {
         beforeEach(async () => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-
             await TestUtils.renderPeopleMoverComponent();
         });
 

@@ -47,11 +47,6 @@ describe('Products', () => {
     const addProductButtonText = 'Add Product';
     const addProductModalTitle = 'Add New Product';
 
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
-
     describe('Home page', () => {
         it('displays the product names', async () => {
             renderProductCard();

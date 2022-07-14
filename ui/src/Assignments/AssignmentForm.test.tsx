@@ -39,8 +39,6 @@ jest.mock('Assignments/AssignmentClient');
 describe('AssignmentForm', () => {
     beforeEach(() => {
         modalContent = null;
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
     });
 
     describe('in create mode', () => {
