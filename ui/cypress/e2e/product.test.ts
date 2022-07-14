@@ -39,9 +39,9 @@ describe('Product', () => {
 
         submitProductForm('Add');
 
-        cy.wait('@postNewProduct').should((xhr: Cypress.ObjectLike) => {
-            expect(xhr?.status).to.equal(200);
-            const body = xhr?.response?.body;
+        cy.wait('@postNewProduct').then((interception) => {
+            expect(interception?.response.statusCode).to.equal(200);
+            const body = interception?.response?.body;
             expect(body.name).to.equal(product.name);
             expect(body.archived).to.equal(product.archived);
             expect(body.spaceLocation.name).to.equal(product.location);
@@ -81,9 +81,9 @@ describe('Product', () => {
 
         submitProductForm('Save');
 
-        cy.wait('@updateProduct').should((xhr: Cypress.ObjectLike) => {
-            expect(xhr?.status).to.equal(200);
-            const body = xhr?.response?.body;
+        cy.wait('@updateProduct').then((interception) => {
+            expect(interception?.response.statusCode).to.equal(200);
+            const body = interception?.response?.body;
             expect(body.name).to.equal(updateProduct.name);
             expect(body.archived).to.equal(updateProduct.archived);
             expect(body.spaceLocation.name).to.equal(updateProduct.location);
@@ -111,9 +111,8 @@ describe('Product', () => {
         cy.get('[data-testid=deleteProduct]').click();
         cy.get('[data-testid=confirmDeleteButton]').click();
 
-        cy.wait('@deleteProduct').should((xhr: Cypress.ObjectLike) => {
-            expect(xhr?.status).to.equal(200);
-        });
+        cy.wait('@deleteProduct')
+            .its('response.statusCode').should('eq', 200);
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
 
