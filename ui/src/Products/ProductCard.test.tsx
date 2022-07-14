@@ -36,6 +36,8 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 declare let window: MatomoWindow;
 
+jest.mock('Assignments/AssignmentClient');
+
 describe('ProductCard', () => {
     let originalWindow: Window;
 

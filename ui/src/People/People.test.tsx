@@ -36,13 +36,14 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 declare let window: MatomoWindow;
 
-jest.mock('../Products/ProductClient');
-jest.mock('../People/PeopleClient');
-jest.mock('../Space/SpaceClient');
-jest.mock('../Roles/RoleClient');
-jest.mock('../Locations/LocationClient');
-jest.mock('../Tags/PersonTag/PersonTagClient');
-jest.mock('../Tags/ProductTag/ProductTagClient');
+jest.mock('Products/ProductClient');
+jest.mock('People/PeopleClient');
+jest.mock('Space/SpaceClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Assignments/AssignmentClient');
+jest.mock('Locations/LocationClient');
+jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Tags/ProductTag/ProductTagClient');
 
 describe('People actions', () => {
     const addPersonButtonText = 'Add Person';

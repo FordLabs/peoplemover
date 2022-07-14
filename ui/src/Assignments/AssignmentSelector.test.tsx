@@ -28,6 +28,8 @@ import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
+jest.mock('Assignments/AssignmentClient');
+
 describe('The Assignment Form', () => {
     beforeEach(() => {
         jest.clearAllMocks();

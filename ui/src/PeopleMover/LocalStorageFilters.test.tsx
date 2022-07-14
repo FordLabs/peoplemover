@@ -24,6 +24,7 @@ import TestUtils from '../Utils/TestUtils';
 
 jest.mock('Products/ProductClient');
 jest.mock('Locations/LocationClient');
+jest.mock('Assignments/AssignmentClient');
 jest.mock('Space/SpaceClient');
 jest.mock('Roles/RoleClient');
 jest.mock('Tags/ProductTag/ProductTagClient');

@@ -34,6 +34,8 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 let modalContent: ModalContents | null;
 
+jest.mock('Assignments/AssignmentClient');
+
 describe('AssignmentForm', () => {
     beforeEach(() => {
         modalContent = null;

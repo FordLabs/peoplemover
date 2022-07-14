@@ -23,6 +23,7 @@ import {fireEvent, screen} from '@testing-library/react';
 
 jest.mock('Space/SpaceClient');
 jest.mock('Products/ProductClient');
+jest.mock('Assignments/AssignmentClient');
 jest.mock('Roles/RoleClient');
 jest.mock('Locations/LocationClient');
 jest.mock('Tags/PersonTag/PersonTagClient');

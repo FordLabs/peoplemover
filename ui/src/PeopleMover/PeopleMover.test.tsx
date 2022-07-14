@@ -36,6 +36,7 @@ jest.mock('Space/SpaceClient');
 jest.mock('Products/ProductClient');
 jest.mock('People/PeopleClient');
 jest.mock('Roles/RoleClient');
+jest.mock('Assignments/AssignmentClient');
 jest.mock('Locations/LocationClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
