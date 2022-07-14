@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {findByTestId, findByText, fireEvent, screen, waitFor} from '@testing-library/react';
 import RoleClient from './RoleClient';
@@ -28,15 +28,13 @@ import {RolesState} from '../State/RolesState';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('../Roles/RoleClient');
+jest.mock('Roles/RoleClient');
+jest.mock('Roles/ColorClient');
 
 describe('My Roles Form', () => {
     const initialState = {allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions};
 
     beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
         renderWithRedux(
             <RecoilRoot initializeState={({set}) => {
                 set(RolesState, TestData.roles)

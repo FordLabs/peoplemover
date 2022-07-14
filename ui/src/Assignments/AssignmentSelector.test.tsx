@@ -19,7 +19,7 @@ import React from 'react';
 import AssignmentForm from './AssignmentForm';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import AssignmentClient from './AssignmentClient';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
@@ -28,12 +28,9 @@ import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-describe('The Assignment Form', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
+jest.mock('Assignments/AssignmentClient');
 
+describe('The Assignment Form', () => {
     it('renders the assignment form labels', () => {
         renderWithRecoil(
             <AssignmentForm initiallySelectedProduct={TestData.unassignedProduct} />,

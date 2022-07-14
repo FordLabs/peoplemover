@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import TimeOnProduct, {
     generateTimeOnProductItems,
@@ -53,15 +53,11 @@ jest.mock('Products/ProductClient');
 jest.mock('Space/SpaceClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Assignments/AssignmentClient');
 
 describe('TimeOnProduct', () => {
     let store: Store;
     let modalContent: ModalContents | null = null;
-
-    beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
 
     describe('calculation', () => {
         beforeEach(async () => {

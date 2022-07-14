@@ -17,8 +17,6 @@
 
 import React, {ReactNode, useEffect} from 'react';
 import SpaceClient from '../Space/SpaceClient';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import ColorClient from '../Roles/ColorClient';
 import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
 import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {MutableSnapshot, RecoilRoot, RecoilValue, useRecoilValue} from 'recoil';
@@ -27,24 +25,6 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
 import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
-import TestData from '../Utils/TestData';
-
-// @todo replace this with jest manual mocks
-function mockClientCalls(): void {
-    AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({ data: [TestData.assignmentForPerson1] });
-    AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
-    AssignmentClient.getAssignmentEffectiveDates = jest.fn().mockResolvedValue({
-        data: [
-            new Date(2020, 4, 15),
-            new Date(2020, 5, 1),
-            new Date(2020, 6, 1),
-        ],
-    });
-    AssignmentClient.getReassignments = jest.fn().mockResolvedValue({ data: [] });
-    AssignmentClient.getAssignmentsV2ForSpaceAndPerson = jest.fn().mockResolvedValue({ data: [] });
-
-    ColorClient.getAllColors = jest.fn().mockResolvedValue({ data: TestData.colors });
-}
 
 export function renderWithRedux(
     component: JSX.Element,
@@ -135,7 +115,6 @@ export const RecoilObserver = ({
 };
 
 const TestUtils = {
-    mockClientCalls,
     renderPeopleMoverComponent,
     RecoilObserver,
     createDataTestId,

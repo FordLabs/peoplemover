@@ -25,12 +25,12 @@ import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
+jest.mock('Assignments/AssignmentClient');
+
 describe('Calendar', () => {
     let resetCreateRange: () => void;
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
         resetCreateRange = TestUtils.mockCreateRange();
     });
 

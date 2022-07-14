@@ -203,11 +203,6 @@ describe('ProductForm', function() {
             allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
         };
 
-        beforeEach(() => {
-            jest.clearAllMocks();
-            TestUtils.mockClientCalls();
-        });
-
         it('should show filter option when new location tag is created from edit product modal', async () => {
             renderWithRedux(
                 <RecoilRoot initializeState={({set}) => {
