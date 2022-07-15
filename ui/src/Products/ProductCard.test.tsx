@@ -80,8 +80,6 @@ describe('ProductCard', () => {
 
         ProductClient.editProduct = jest.fn().mockResolvedValue({data: {...testProduct, endDate: may13String}});
 
-        // store.dispatch = jest.fn();
-
         renderProductCard(testProduct);
 
         fireEvent.click(await screen.findByTestId(createDataTestId('editProductIcon', TestData.productWithAssignments.name)));
@@ -94,7 +92,6 @@ describe('ProductCard', () => {
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestData.space, TestData.person3);
         expect(ProductClient.editProduct).toHaveBeenCalledTimes(1);
         expect(ProductClient.editProduct).toHaveBeenCalledWith(TestData.space, {...testProduct, endDate: may13String}, true);
-        // expect(store.dispatch).toHaveBeenCalledTimes(1);
     });
 
     it('should show a confirmation modal when Archive Person is clicked, and be able to close it', async () => {

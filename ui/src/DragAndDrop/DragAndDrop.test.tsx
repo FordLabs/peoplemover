@@ -72,9 +72,9 @@ describe('Drag and Drop', () => {
     const assignmentToMove: Assignment = TestData.assignmentForUnassigned;
     const productAssignmentWasOriginallyIn = TestData.unassignedProduct;
     const productToMoveAssignmentTo = TestData.productWithAssignments;
+    const viewingDate = new Date(2020, 4, 14);
 
     describe('onDragEnd', () => {
-        const viewingDate = new Date(2020, 4, 14);
         let productState: Product[] | null;
         const originalProducts = [
             productAssignmentWasOriginallyIn,
@@ -118,19 +118,7 @@ describe('Drag and Drop', () => {
 
             screen.getByText('trigger-onDragEnd').click();
 
-            await waitFor(() =>
-                expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
-                    .toHaveBeenCalledWith(TestData.space.uuid, assignmentToMove.person.id, viewingDate)
-            )
-            await waitFor(() =>
-                expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
-                    "2020-05-14",
-                    [{"placeholder": false, "productId": 1}, {"placeholder": false, "productId": 1}],
-                    TestData.space,
-                    assignmentToMove.person
-                )
-            );
-
+            await waitForAssignmentToBeMoved();
             await waitFor(() => expect(productState).toEqual(updatedProducts));
             expect(mockFetchProducts).toHaveBeenCalled();
         });
@@ -140,20 +128,25 @@ describe('Drag and Drop', () => {
 
             screen.getByText('trigger-onDragEnd').click();
 
-            await waitFor(() =>
-                expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
-                    .toHaveBeenCalledWith(TestData.space.uuid, assignmentToMove.person.id, viewingDate)
-            )
-            await waitFor(() =>
-                expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
-                    "2020-05-14",
-                    [{"placeholder": false, "productId": 1}, {"placeholder": false, "productId": 1}],
-                    TestData.space,
-                    assignmentToMove.person
-                )
-            );
+            await waitForAssignmentToBeMoved();
             await waitFor(() => expect(productState).toEqual(originalProducts));
             expect(mockFetchProducts).toHaveBeenCalled();
         });
     });
+
+    async function waitForAssignmentToBeMoved() {
+        await waitFor(() =>
+            expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
+                .toHaveBeenCalledWith(TestData.space.uuid, assignmentToMove.person.id, viewingDate)
+        )
+
+        await waitFor(() =>
+            expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
+                "2020-05-14",
+                [{"placeholder": false, "productId": 1}, {"placeholder": false, "productId": 1}],
+                TestData.space,
+                assignmentToMove.person
+            )
+        );
+    }
 });

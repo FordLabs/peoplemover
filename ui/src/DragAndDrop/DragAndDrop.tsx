@@ -35,7 +35,7 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
     const currentSpace = useRecoilValue(CurrentSpaceState);
     const viewingDate = useRecoilValue(ViewingDateState);
 
-    const { fetchProducts } = useFetchProducts(currentSpace!.uuid!)
+    const { fetchProducts } = useFetchProducts(currentSpace.uuid!)
 
     const getNumberFromId = (id: string) => parseInt(id.replace(/[^0-9.]/g, ''), 10);
 
@@ -71,7 +71,7 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
                 });
             });
 
-            const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(currentSpace!.uuid!, assignmentToMove.person.id, viewingDate)).data;
+            const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(currentSpace.uuid!, assignmentToMove.person.id, viewingDate)).data;
             const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
                 .map(existingAssignment => ({
                     productId: existingAssignment.productId,

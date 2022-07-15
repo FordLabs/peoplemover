@@ -25,21 +25,23 @@ import {RecoilObserver} from '../Utils/RecoilObserver';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {renderWithRecoil} from '../Utils/TestUtils';
+import {MutableSnapshot} from 'recoil';
 
 describe('Delete Space Form', () => {
     let modalContent: ModalContents | null;
+    const initialRecoilState = ({set}: MutableSnapshot) => {
+        set(ModalContentsState, {
+            title: 'A Title',
+            component: <div>Some Component</div>,
+        });
+        set(CurrentSpaceState, TestData.space)
+    }
 
     describe('Space has no editors', () => {
         beforeEach(() => {
             renderWithRecoil(
                 <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>,
-                ({set}) => {
-                    set(ModalContentsState, {
-                        title: 'A Title',
-                        component: <div>Some Component</div>,
-                    });
-                    set(CurrentSpaceState, TestData.space)
-                }
+                initialRecoilState
             );
         });
 
@@ -61,13 +63,7 @@ describe('Delete Space Form', () => {
                     />
                     <DeleteSpaceForm space={TestData.space} spaceHasEditors={true}/>
                 </>,
-                ({set}) => {
-                    set(ModalContentsState, {
-                        title: 'A Title',
-                        component: <div>Some Component</div>,
-                    });
-                    set(CurrentSpaceState, TestData.space)
-                }
+                initialRecoilState
             );
         });
 

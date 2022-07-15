@@ -77,12 +77,12 @@ function AssignmentCardList({ product }: Props): JSX.Element {
         <>
             <div className="antiHighlightCover" ref={antiHighlightCoverRef}/>
             <Droppable droppableId={`product-${product.id}`} type="ASSIGNMENT_CARD">
-                {(provided, snapshot) => (
+                {(droppableProvided) => (
                     <div
                         className={classNameAndDataTestId}
                         data-testid={classNameAndDataTestId}
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
+                        ref={droppableProvided.innerRef}
+                        {...droppableProvided.droppableProps}
                     >
                         {!isReadOnly && product.assignments.length === 0 ? (<NoAssignmentsMessage />)
                             : filteredAssignments.map((assignment: Assignment, index: number) => (
@@ -93,20 +93,19 @@ function AssignmentCardList({ product }: Props): JSX.Element {
                                     disableInteractiveElementBlocking
                                     isDragDisabled={false}
                                 >
-                                    {(provided) => (
-                                        <div ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}>
+                                    {(draggableProvided) => (
+                                        <div ref={draggableProvided.innerRef}
+                                            {...draggableProvided.draggableProps}
+                                            {...draggableProvided.dragHandleProps}>
                                             <AssignmentCard assignment={assignment}
                                                 isUnassignedProduct={isUnassignedProduct(product)}
                                                 key={assignment.id}
                                             />
                                         </div>
-
                                     )}
                                 </Draggable>
                             ))}
-                        {provided.placeholder}
+                        {droppableProvided.placeholder}
                     </div>
                 )}
             </Droppable>
