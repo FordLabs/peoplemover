@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
+import {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {emptyProduct, Product} from './Product';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
@@ -24,11 +24,7 @@ import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import ProductClient from './ProductClient';
 import moment from 'moment';
-import rootReducer from '../Redux/Reducers';
-import {applyMiddleware, createStore, Store} from 'redux';
-import thunk from 'redux-thunk';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
@@ -40,7 +36,6 @@ jest.mock('Assignments/AssignmentClient');
 describe('ProductCard', () => {
     let originalWindow: Window;
     const mayFourteenth2020 = new Date(2020, 4, 14);
-    let store: Store;
     const products = [TestData.unassignedProduct,
         TestData.productWithoutAssignments,
         TestData.archivedProduct,
@@ -51,10 +46,6 @@ describe('ProductCard', () => {
             {...TestData.assignmentForPerson1, productId: TestData.productForHank.id},
         ]},
     ];
-
-    beforeEach(() => {
-        store = createStore(rootReducer,{}, applyMiddleware(thunk));
-    });
 
     afterEach(() => {
         window._paq = [];
@@ -89,7 +80,7 @@ describe('ProductCard', () => {
 
         ProductClient.editProduct = jest.fn().mockResolvedValue({data: {...testProduct, endDate: may13String}});
 
-        store.dispatch = jest.fn();
+        // store.dispatch = jest.fn();
 
         renderProductCard(testProduct);
 
@@ -103,7 +94,7 @@ describe('ProductCard', () => {
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestData.space, TestData.person3);
         expect(ProductClient.editProduct).toHaveBeenCalledTimes(1);
         expect(ProductClient.editProduct).toHaveBeenCalledWith(TestData.space, {...testProduct, endDate: may13String}, true);
-        expect(store.dispatch).toHaveBeenCalledTimes(1);
+        // expect(store.dispatch).toHaveBeenCalledTimes(1);
     });
 
     it('should show a confirmation modal when Archive Person is clicked, and be able to close it', async () => {
@@ -122,15 +113,13 @@ describe('ProductCard', () => {
     });
 
     function renderProductCard(product: Product) {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
+        renderWithRecoil(
+            <ProductCard product={product}/>,
+            ({set}) => {
                 set(ViewingDateState, mayFourteenth2020);
                 set(ProductsState, products);
                 set(CurrentSpaceState, TestData.space)
-            }}>
-                <ProductCard product={product}/>
-            </RecoilRoot>,
-            store
+            }
         );
     }
 });

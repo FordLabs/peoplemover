@@ -17,12 +17,11 @@
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {Product} from '../Products/Product';
 import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
-import {RecoilRoot} from 'recoil';
 import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
 import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
@@ -70,14 +69,13 @@ describe('Unassigned Products', () => {
 
     describe('showing the unassigned product, but...', () => {
         const renderWithUnassignedProduct = (products: Product[]) => {
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
+            renderWithRecoil(
+                <UnassignedDrawer/>,
+                ({set}) => {
                     set(IsUnassignedDrawerOpenState, true)
                     set(ProductsState, products)
                     set(CurrentSpaceState, TestData.space)
-                }}>
-                    <UnassignedDrawer/>
-                </RecoilRoot>
+                }
             );
         }
 

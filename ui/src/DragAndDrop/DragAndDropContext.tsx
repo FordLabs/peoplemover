@@ -91,8 +91,7 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
                             : product
                     );
                 });
-            });
-            fetchProducts();
+            }).finally(fetchProducts);
         },
         [currentSpace, fetchProducts, products, setProducts, viewingDate]
     );

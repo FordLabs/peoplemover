@@ -17,18 +17,15 @@
 
 import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
-import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {Store} from 'redux';
 import PersonCard from './PersonCard';
 import {Person} from './Person';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
-import configureStore from 'redux-mock-store';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import PersonForm from './PersonForm';
+import {renderWithRecoil} from '../Utils/TestUtils';
 
 describe('Person Card', () => {
     let modalContent: ModalContents | null;
@@ -42,29 +39,25 @@ describe('Person Card', () => {
         tags: TestData.personTags,
         archiveDate: new Date(2000, 0, 1),
     }
-    let store: Store;
     const viewingDate = new Date(2020, 0, 1);
-    let initialState: unknown;
 
     beforeEach(() => {
         modalContent = null;
         jest.clearAllMocks();
-
-        initialState = {currentSpace: TestData.space}
     });
 
     it('should render the assigned persons name', () => {
-        renderPersonCard(initialState, viewingDate);
+        renderPersonCard(viewingDate);
         expect(screen.getByText('Billiam Handy')).toBeInTheDocument();
     });
 
     it('should render the assigned persons role if they have one', () => {
-        renderPersonCard(initialState, viewingDate);
+        renderPersonCard(viewingDate);
         expect(screen.getByText('Software Engineer')).toBeInTheDocument();
     });
 
     it('should make the call to open the Edit Person modal when person name is clicked', async () => {
-        renderPersonCard(initialState, viewingDate);
+        renderPersonCard(viewingDate);
         const william = screen.getByText(personToRender.name);
         expect(william).toBeEnabled();
 
@@ -80,40 +73,29 @@ describe('Person Card', () => {
     });
 
     it('should not show any icons (note, tag)', () => {
-        renderPersonCard(initialState, viewingDate);
+        renderPersonCard(viewingDate);
         expect(screen.queryByText('note')).toBeNull();
         expect(screen.queryByText('local_offer')).toBeNull();
     });
 
     it('should not have the hover box on mouseover', async () => {
-        renderPersonCard(initialState, viewingDate);
+        renderPersonCard(viewingDate);
         fireEvent.mouseEnter(await screen.getByText(personToRender.name));
         expect(await screen.queryByText('note')).toBeNull();
         expect(screen.queryByText('local_offer')).toBeNull();
     });
 
     describe('Read-Only Functionality', function() {
-        beforeEach(() => {
-            initialState = {currentSpace: TestData.space};
-        });
-
         it('should not display Edit Person Modal if in read only mode', function() {
-            renderPersonCard(initialState, new Date(), true);
+            renderPersonCard(new Date(), true);
             const william = screen.getByText(personToRender.name);
             fireEvent.click(william);
-            expect(store.dispatch).not.toHaveBeenCalled();
         });
     });
 
-    function renderPersonCard(preloadedReduxState: unknown, initialViewingDate: Date =  new Date(), isReadOnly = false): void {
-        const mockStore = configureStore([]);
-        store = mockStore(preloadedReduxState);
-        store.dispatch = jest.fn();
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, initialViewingDate);
-                set(IsReadOnlyState, isReadOnly);
-            }}>
+    function renderPersonCard(initialViewingDate: Date =  new Date(), isReadOnly = false): void {
+        renderWithRecoil(
+            <>
                 <RecoilObserver
                     recoilState={ModalContentsState}
                     onChange={(value: ModalContents) => {
@@ -121,8 +103,11 @@ describe('Person Card', () => {
                     }}
                 />
                 <PersonCard person={personToRender}/>
-            </RecoilRoot>,
-            store
+            </>,
+            ({set}) => {
+                set(ViewingDateState, initialViewingDate);
+                set(IsReadOnlyState, isReadOnly);
+            }
         )
     }
 });

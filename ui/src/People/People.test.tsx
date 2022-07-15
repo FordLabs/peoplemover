@@ -20,14 +20,13 @@ import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import moment from 'moment';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {ViewingDateState} from '../State/ViewingDateState';
-import {RecoilRoot} from 'recoil';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
@@ -326,32 +325,30 @@ describe('People actions', () => {
     });
 
     it('should have initially selected product selected', async () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
+        renderWithRecoil(
+            <PersonForm
+                isEditPersonForm={false}
+                initialPersonName="BRADLEY"
+                initiallySelectedProduct={TestData.productWithAssignments}
+            />,
+            ({set}) => {
                 set(CurrentSpaceState, TestData.space)
-            }}>
-                <PersonForm
-                    isEditPersonForm={false}
-                    initialPersonName="BRADLEY"
-                    initiallySelectedProduct={TestData.productWithAssignments}
-                />
-            </RecoilRoot>
+            }
         );
         await screen.findByText('Product 1');
     });
 
     it('should not show the unassigned product or archived products in product list', async () => {
         const products = [TestData.productWithAssignments, TestData.archivedProduct, TestData.unassignedProduct];
-        renderWithRedux(
-            <RecoilRoot  initializeState={({set}) => {
+        renderWithRecoil(
+            <PersonForm
+                isEditPersonForm={false}
+                initialPersonName="BRADLEY"
+            />,
+            ({set}) => {
                 set(ProductsState, products)
                 set(CurrentSpaceState, TestData.space)
-            }}>
-                <PersonForm
-                    isEditPersonForm={false}
-                    initialPersonName="BRADLEY"
-                />
-            </RecoilRoot>,
+            }
         );
 
         expect(screen.getByText('unassigned')).toBeDefined();
@@ -370,16 +367,15 @@ describe('People actions', () => {
 
     it('should remove the unassigned product when a product is selected from dropdown', async () => {
         const products = [TestData.productWithAssignments, TestData.unassignedProduct];
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
+        renderWithRecoil(
+            <PersonForm
+                isEditPersonForm={false}
+                initialPersonName="BRADLEY"
+            />,
+            ({set}) => {
                 set(ProductsState, products)
                 set(CurrentSpaceState, TestData.space)
-            }}>
-                <PersonForm
-                    isEditPersonForm={false}
-                    initialPersonName="BRADLEY"
-                />
-            </RecoilRoot>,
+            }
         );
         const productDropDown = screen.getByLabelText('Assign to');
         expect(screen.getByText('unassigned')).toBeDefined();

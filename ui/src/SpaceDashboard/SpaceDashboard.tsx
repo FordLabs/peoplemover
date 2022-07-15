@@ -31,7 +31,6 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 import './SpaceDashboard.scss';
 
-
 function SpaceDashboard(): JSX.Element {
     const navigate = useNavigate();
 

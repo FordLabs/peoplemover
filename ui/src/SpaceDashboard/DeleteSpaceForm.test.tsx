@@ -14,40 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import * as React from 'react';
 import {waitFor} from '@testing-library/react';
 import DeleteSpaceForm from './DeleteSpaceForm';
 import {fireEvent, screen} from '@testing-library/dom';
 import SpaceClient from '../Space/SpaceClient';
-import {applyMiddleware, createStore, Store} from 'redux';
-import rootReducer from '../Redux/Reducers';
-import thunk from 'redux-thunk';
-import {RecoilRoot} from 'recoil';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {renderWithRecoil} from '../Utils/TestUtils';
 
 describe('Delete Space Form', () => {
-    let store: Store;
     let modalContent: ModalContents | null;
 
     describe('Space has no editors', () => {
         beforeEach(() => {
-            store = createStore(rootReducer, {}, applyMiddleware(thunk));
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
+            renderWithRecoil(
+                <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>,
+                ({set}) => {
                     set(ModalContentsState, {
                         title: 'A Title',
                         component: <div>Some Component</div>,
                     });
                     set(CurrentSpaceState, TestData.space)
-                }}>
-                    <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>
-                </RecoilRoot>,
-                store
+                }
             );
         });
 
@@ -59,16 +51,8 @@ describe('Delete Space Form', () => {
     describe('Space has editors', () => {
         beforeEach(() => {
             modalContent = null;
-            store = createStore(rootReducer, {}, applyMiddleware(thunk));
-
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ModalContentsState, {
-                        title: 'A Title',
-                        component: <div>Some Component</div>,
-                    });
-                    set(CurrentSpaceState, TestData.space)
-                }}>
+            renderWithRecoil(
+                <>
                     <RecoilObserver
                         recoilState={ModalContentsState}
                         onChange={(value: ModalContents) => {
@@ -76,8 +60,14 @@ describe('Delete Space Form', () => {
                         }}
                     />
                     <DeleteSpaceForm space={TestData.space} spaceHasEditors={true}/>
-                </RecoilRoot>,
-                store
+                </>,
+                ({set}) => {
+                    set(ModalContentsState, {
+                        title: 'A Title',
+                        component: <div>Some Component</div>,
+                    });
+                    set(CurrentSpaceState, TestData.space)
+                }
             );
         });
 

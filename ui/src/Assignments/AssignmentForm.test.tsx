@@ -19,11 +19,10 @@ import {fireEvent, getByText, screen, waitFor, within} from '@testing-library/re
 import React from 'react';
 import AssignmentForm from '../Assignments/AssignmentForm';
 import AssignmentClient from '../Assignments/AssignmentClient';
-import TestUtils, {renderWithRecoil, renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
@@ -44,10 +43,8 @@ describe('AssignmentForm', () => {
     describe('In create mode', () => {
         it('should not show the unassigned or archived products in the product list', async () => {
             const products = [TestData.productWithAssignments, TestData.archivedProduct, TestData.unassignedProduct];
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ProductsState, products);
-                }}>
+            renderWithRecoil(
+                <>
                     <RecoilObserver
                         recoilState={ModalContentsState}
                         onChange={(value: ModalContents) => {
@@ -55,7 +52,10 @@ describe('AssignmentForm', () => {
                         }}
                     />
                     <AssignmentForm initiallySelectedProduct={products[0]} />
-                </RecoilRoot>
+                </>,
+                ({set}) => {
+                    set(ProductsState, products);
+                }
             );
 
             const productsMultiSelectField = await screen.findByLabelText('Assign to');

@@ -17,25 +17,26 @@
 
 import React from 'react';
 import EditTagRow from './EditTagRow';
-import {renderWithRedux} from '../Utils/TestUtils';
-import {act, fireEvent} from '@testing-library/react';
+import {act, fireEvent, render, screen} from '@testing-library/react';
 
 describe('EditTagRow', () => {
     describe('validation', () => {
         it('should treat empty strings and strings of spaces as invalid', async () => {
-            const editTagRow = renderWithRedux(<EditTagRow
-                tagType={'role'}
-                onSave={jest.fn()}
-                onCancel={jest.fn()}
-                existingTags={[]}
-            />);
-            expect(await editTagRow.findByTestId('saveTagButton')).toBeDisabled();
-            await act(async () => {fireEvent.change(await editTagRow.findByTestId('tagNameInput'), {target: {value: ''}});});
-            expect(await editTagRow.findByTestId('saveTagButton')).toBeDisabled();
-            await act(async () => {fireEvent.change(await editTagRow.findByTestId('tagNameInput'), {target: {value: '  '}});});
-            expect(await editTagRow.findByTestId('saveTagButton')).toBeDisabled();
-            await act(async () => {fireEvent.change(await editTagRow.findByTestId('tagNameInput'), {target: {value: '  one  '}});});
-            expect(await editTagRow.findByTestId('saveTagButton')).toBeEnabled();
+            render(
+                <EditTagRow
+                    tagType="role"
+                    onSave={jest.fn()}
+                    onCancel={jest.fn()}
+                    existingTags={[]}
+                />
+            );
+            expect(await screen.findByTestId('saveTagButton')).toBeDisabled();
+            await act(async () => {fireEvent.change(await screen.findByTestId('tagNameInput'), {target: {value: ''}});});
+            expect(await screen.findByTestId('saveTagButton')).toBeDisabled();
+            await act(async () => {fireEvent.change(await screen.findByTestId('tagNameInput'), {target: {value: '  '}});});
+            expect(await screen.findByTestId('saveTagButton')).toBeDisabled();
+            await act(async () => {fireEvent.change(await screen.findByTestId('tagNameInput'), {target: {value: '  one  '}});});
+            expect(await screen.findByTestId('saveTagButton')).toBeEnabled();
         });
     });
 });

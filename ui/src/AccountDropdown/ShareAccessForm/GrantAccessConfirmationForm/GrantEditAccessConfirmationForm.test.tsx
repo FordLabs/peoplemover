@@ -16,9 +16,9 @@
  */
 
 import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
-import {renderWithRedux} from 'Utils/TestUtils';
 import React from 'react';
-import {fireEvent, waitFor} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
+import {renderWithRecoil} from '../../../Utils/TestUtils';
 
 Object.assign(navigator, {
     clipboard: {
@@ -38,6 +38,9 @@ describe('Grant Edit Access Confirmation Form', function() {
             value: { href: expectedUrl },
             writable: true,
         });
+        jest.spyOn(navigator.clipboard, 'writeText');
+
+        renderWithRecoil(<GrantEditAccessConfirmationForm/>);
     });
 
     afterEach(() => {
@@ -45,29 +48,20 @@ describe('Grant Edit Access Confirmation Form', function() {
     });
 
     it('should show correct space URL', function() {
-        const component = renderWithRedux(<GrantEditAccessConfirmationForm/>);
-        expect(component.queryByText(expectedUrl)).not.toBeNull();
+        expect(screen.queryByText(expectedUrl)).not.toBeNull();
     });
 
     it('should copy the url to clipboard', async () => {
-        jest.spyOn(navigator.clipboard, 'writeText');
-        const component = renderWithRedux(<GrantEditAccessConfirmationForm/>);
-
-        await waitFor(() => {
-            fireEvent.click(component.getByText('Copy link'));
-        });
-
-        expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl);
+        fireEvent.click(screen.getByText('Copy link'));
+        await waitFor(() =>  expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl));
     });
 
     it('should should change text on copy', async () => {
-        const component = renderWithRedux(<GrantEditAccessConfirmationForm/>);
+        fireEvent.click(screen.getByText('Copy link'));
 
         await waitFor(() => {
-            fireEvent.click(component.getByText('Copy link'));
+            expect(screen.queryByText('Copy link')).toBeNull();
+            expect(screen.queryByText('Copied!')).not.toBeNull();
         });
-
-        expect(component.queryByText('Copy link')).toBeNull();
-        expect(component.queryByText('Copied!')).not.toBeNull();
     });
 });

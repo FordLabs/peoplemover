@@ -17,16 +17,16 @@
 
 import React from 'react';
 import {screen} from '@testing-library/react';
-import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import ProductList from './ProductList';
 import {Product} from './Product';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
-import {MutableSnapshot, RecoilRoot} from 'recoil';
+import {MutableSnapshot} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {ProductTagsState} from '../State/ProductTagsState';
+import {renderWithRecoil} from '../Utils/TestUtils';
 
 describe('Product List', () => {
     beforeEach(() => {
@@ -146,9 +146,5 @@ describe('Product List', () => {
 });
 
 function renderProductList(initializeState?: (mutableSnapshot: MutableSnapshot) => void) {
-    renderWithRedux(
-        <RecoilRoot initializeState={initializeState}>
-            <ProductList/>
-        </RecoilRoot>,
-    );
+    renderWithRecoil(<ProductList/>, initializeState);
 }

@@ -18,15 +18,12 @@
 import Cookies from 'universal-cookie';
 import SpaceDashboard from './SpaceDashboard';
 import React from 'react';
-import {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import moment from 'moment';
 import {createEmptySpace, Space} from '../Space/Space';
-import {createStore} from 'redux';
-import rootReducer from '../Redux/Reducers';
 import {MemoryRouter} from 'react-router-dom';
-import {RecoilRoot} from 'recoil';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
@@ -60,23 +57,18 @@ describe('SpaceDashboard', () => {
         });
 
         it('should reset current date on load', async () => {
-            const store = createStore(rootReducer, {});
-            store.dispatch = jest.fn();
             let actualViewingDate: Date;
 
-            renderWithRedux(
+            renderWithRecoil(
                 <MemoryRouter>
-                    <RecoilRoot>
-                        <RecoilObserver
-                            recoilState={ViewingDateState}
-                            onChange={(value: Date) => {
-                                actualViewingDate = value;
-                            }}
-                        />
-                        <SpaceDashboard/>
-                    </RecoilRoot>
+                    <RecoilObserver
+                        recoilState={ViewingDateState}
+                        onChange={(value: Date) => {
+                            actualViewingDate = value;
+                        }}
+                    />
+                    <SpaceDashboard/>
                 </MemoryRouter>,
-                store
             );
 
             await waitFor(() =>
@@ -87,20 +79,19 @@ describe('SpaceDashboard', () => {
 
     it('should reset currentSpace on load', async () => {
         let currentSpace = TestData.space;
-        renderWithRedux(
+        renderWithRecoil(
             <MemoryRouter>
-                <RecoilRoot initializeState={({set}) => {
-                    set(CurrentSpaceState, TestData.space)
-                }}>
-                    <RecoilObserver
-                        recoilState={CurrentSpaceState}
-                        onChange={(value: Space) => {
-                            currentSpace = value;
-                        }}
-                    />
-                    <SpaceDashboard/>
-                </RecoilRoot>
-            </MemoryRouter>
+                <RecoilObserver
+                    recoilState={CurrentSpaceState}
+                    onChange={(value: Space) => {
+                        currentSpace = value;
+                    }}
+                />
+                <SpaceDashboard/>
+            </MemoryRouter>,
+            ({set}) => {
+                set(CurrentSpaceState, TestData.space)
+            }
         );
 
         await waitFor(() => expect(currentSpace).toEqual(createEmptySpace()));
@@ -174,11 +165,9 @@ describe('SpaceDashboard', () => {
         SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([]);
 
         await act(async () => {
-            renderWithRedux(
+            renderWithRecoil(
                 <MemoryRouter initialEntries={['/user/dashboard']}>
-                    <RecoilRoot>
-                        <SpaceDashboard/>
-                    </RecoilRoot>
+                    <SpaceDashboard/>
                 </MemoryRouter>
             );
         })

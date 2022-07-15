@@ -19,10 +19,8 @@ import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from './ProductClient';
-import TestUtils, {createDataTestId, renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {applyMiddleware, createStore} from 'redux';
-import rootReducer from '../Redux/Reducers';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import {Product} from './Product';
 import {Person} from '../People/Person';
@@ -30,9 +28,7 @@ import LocationClient from '../Locations/LocationClient';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
 import ProductCard from './ProductCard';
-import thunk from 'redux-thunk';
 import {ViewingDateState} from '../State/ViewingDateState';
-import {RecoilRoot} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 jest.mock('./ProductClient');
@@ -588,14 +584,11 @@ describe('Products', () => {
 function renderProductCard(params?: { product?: Product, isReadOnly?: boolean }) {
     const { product = TestData.productWithoutAssignments, isReadOnly = false } = params || {}
 
-    const store = createStore(rootReducer, {}, applyMiddleware(thunk));
-    renderWithRedux(
-        <RecoilRoot initializeState={({set}) => {
+    renderWithRecoil(
+        <ProductCard product={product}/>,
+        ({set}) => {
             set(ViewingDateState, new Date(2020, 4, 14));
             set(IsReadOnlyState, isReadOnly)
-        }}>
-            <ProductCard product={product}/>
-        </RecoilRoot>,
-        store
+        }
     );
 }
