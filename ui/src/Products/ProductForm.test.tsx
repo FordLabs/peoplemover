@@ -16,9 +16,8 @@
  */
 import ProductForm from '../Products/ProductForm';
 import React from 'react';
-import configureStore from 'redux-mock-store';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {Space} from '../Space/Space';
 import LocationClient from '../Locations/LocationClient';
@@ -26,35 +25,27 @@ import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';
 import selectEvent from 'react-select-event';
 import {Product} from './Product';
-import {GlobalStateProps} from '../Redux/Reducers';
-import moment from 'moment';
-import {PreloadedState} from 'redux';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
-import {ProductsState} from 'State/ProductsState';
-import {ProductTagsState} from 'State/ProductTagsState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {MutableSnapshot} from 'recoil';
 
 jest.mock('Locations/LocationClient');
+jest.mock('Products/ProductClient');
 jest.mock('Tags/ProductTag/ProductTagClient');
 
 describe('ProductForm', function() {
     let modalContent: ModalContents | null;
-
-    const mockStore = configureStore([]);
-    const store = mockStore({});
-
     let resetCreateRange: () => void;
+    const recoilState = ({set}: MutableSnapshot) => {
+        set(ViewingDateState, new Date(2020, 4, 14))
+        set(ModalContentsState, { title: 'Some Modal', component: <></> })
+        set(CurrentSpaceState, TestData.space)
+    }
 
     beforeEach(() => {
         resetCreateRange = TestUtils.mockCreateRange();
-
-        LocationClient.get = jest.fn().mockResolvedValue({data: TestData.locations});
-        ProductTagClient.get = jest.fn().mockResolvedValue({data: TestData.productTags});
-        ProductClient.createProduct = jest.fn().mockResolvedValue({data: {}});
-
         modalContent = null;
     });
 
@@ -63,12 +54,8 @@ describe('ProductForm', function() {
     });
 
     it('should close the modal when you click the cancel button', async () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 4, 14))
-                set(ModalContentsState, { title: 'Some Modal', component: <></> })
-                set(CurrentSpaceState, TestData.space)
-            }}>
+        renderWithRecoil(
+            <>
                 <RecoilObserver
                     recoilState={ModalContentsState}
                     onChange={(value: ModalContents) => {
@@ -76,8 +63,8 @@ describe('ProductForm', function() {
                     }}
                 />
                 <ProductForm editing={false} />
-            </RecoilRoot>,
-            store
+            </>,
+            recoilState
         );
         await waitFor(() => expect(LocationClient.get).toHaveBeenCalled());
 
@@ -89,12 +76,8 @@ describe('ProductForm', function() {
     });
 
     it('should submit new product to backend and close modal', async () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 4, 14))
-                set(ModalContentsState, { title: 'Some Modal', component: <></> })
-                set(CurrentSpaceState, TestData.space)
-            }}>
+        renderWithRecoil(
+            <>
                 <RecoilObserver
                     recoilState={ModalContentsState}
                     onChange={(value: ModalContents) => {
@@ -102,8 +85,8 @@ describe('ProductForm', function() {
                     }}
                 />
                 <ProductForm editing={false} />
-            </RecoilRoot>,
-            store
+            </>,
+            recoilState
         );
 
         fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'Some Name'}});
@@ -141,20 +124,16 @@ describe('ProductForm', function() {
 
     it('should show delete modal without archive text when an archive product is being deleted', async () => {
         const archivedProduct = {...TestData.productWithoutLocation, endDate: '2020-02-02'};
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
+        renderWithRecoil(
+            <ProductForm editing={true} product={archivedProduct}/>,
+            ({set}) => {
                 set(ViewingDateState, new Date(2022, 3, 14))
                 set(CurrentSpaceState, {
                     uuid: 'aaa-aaa-aaa-aaaaa',
                     id: 1,
                     name: 'Test Space',
                 } as Space)
-            }}>
-                <ProductForm
-                    editing={true}
-                    product={archivedProduct}
-                />
-            </RecoilRoot>,
+            }
         );
         const deleteSpan = await screen.findByTestId('deleteProduct');
         fireEvent.click(deleteSpan);
@@ -163,18 +142,7 @@ describe('ProductForm', function() {
     });
 
     it('should show delete modal with archive text when a non-archived product is being deleted', async () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2022, 3, 14))
-                set(CurrentSpaceState, TestData.space)
-            }}>
-                <ProductForm
-                    editing={true}
-                    product={TestData.productWithoutLocation}
-                />
-            </RecoilRoot>,
-            store
-        );
+        renderWithRecoil(<ProductForm editing={true} product={TestData.productWithoutLocation}/>, recoilState);
         const deleteSpan = await screen.findByTestId('deleteProduct');
         fireEvent.click(deleteSpan);
         expect(screen.getByText('Deleting this product will permanently remove it from this space.')).toBeTruthy();
@@ -182,15 +150,7 @@ describe('ProductForm', function() {
     });
 
     it('should show delete modal without archive text when an archived product is being deleted', async () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
-                set(ViewingDateState, new Date(2020, 4, 14))
-                set(CurrentSpaceState, TestData.space)
-            }}>
-                <ProductForm editing={true} product={TestData.archivedProduct} />
-            </RecoilRoot>,
-            store
-        );
+        renderWithRecoil(<ProductForm editing={true} product={TestData.archivedProduct} />, recoilState);
 
         const deleteSpan = await screen.findByTestId('deleteProduct');
         fireEvent.click(deleteSpan);
@@ -199,45 +159,19 @@ describe('ProductForm', function() {
     });
 
     describe('Tag dropdowns', () => {
-        const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-            allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-        };
-
         it('should show filter option when new location tag is created from edit product modal', async () => {
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, moment().toDate())
-                    set(ProductsState, TestData.products)
-                    set(ProductTagsState, TestData.productTags)
-                    set(CurrentSpaceState, TestData.space)
-                }}>
-                    <ProductForm editing={false} />
-                </RecoilRoot>,
-                undefined,
-                initialState
-            );
+            renderWithRecoil(<ProductForm editing={false} />, recoilState);
             const createOptionText = TestUtils.expectedCreateOptionText('Ahmedabad');
             await createTag('Location', createOptionText, 'Ahmedabad');
             const productForm = await screen.findByTestId('productForm');
 
-            await waitFor(() => {
-                expect(LocationClient.add).toBeCalledTimes(1);
-            });
+            await waitFor(() => expect(LocationClient.add).toBeCalledTimes(1));
             expect(productForm).toHaveFormValues({location: '11'});
             await screen.findByText('Ahmedabad');
         });
 
         it('should show filter option when new product tag is created from edit product modal', async () => {
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
-                    set(ViewingDateState, moment().toDate())
-                    set(CurrentSpaceState, TestData.space)
-                }}>
-                    <ProductForm editing={false} />
-                </RecoilRoot>,
-                undefined,
-                initialState
-            );
+            renderWithRecoil(<ProductForm editing={false} />, recoilState);
 
             const expectedCreateOptionText = TestUtils.expectedCreateOptionText('Fin Tech');
             await createTag('Product Tags', expectedCreateOptionText, 'Fin Tech');

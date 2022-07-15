@@ -76,7 +76,7 @@ export function endsOnOrAfterDate(product: Product, date: Date): boolean {
 }
 
 export function stripAssignmentsForArchivedPeople(product: Product, viewingDate: Date): Product {
-    return {...product, assignments: product.assignments.filter(assignment => !isArchived(assignment.person, viewingDate))};
+    return {...product, assignments: product?.assignments?.filter(assignment => !isArchived(assignment.person, viewingDate))};
 }
 
 export  function isProductMatchingSelectedFilters(product: Product, locationTagFilters: Array<string>, productTagFilters: Array<string>): boolean {

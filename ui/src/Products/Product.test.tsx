@@ -495,8 +495,7 @@ describe('Products', () => {
                 ProductClient.editProduct = jest.fn().mockResolvedValue({});
 
                 const viewingDate = new Date(2020, 6, 17);
-                const store = createStore(rootReducer, {}, applyMiddleware(thunk));
-                await TestUtils.renderPeopleMoverComponent(store, undefined, (({set}) => {
+                await TestUtils.renderPeopleMoverComponent((({set}) => {
                     set(ViewingDateState, viewingDate)
                 }));
 
@@ -589,11 +588,7 @@ describe('Products', () => {
 function renderProductCard(params?: { product?: Product, isReadOnly?: boolean }) {
     const { product = TestData.productWithoutAssignments, isReadOnly = false } = params || {}
 
-    const initialState = {
-        allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-    };
-
-    const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+    const store = createStore(rootReducer, {}, applyMiddleware(thunk));
     renderWithRedux(
         <RecoilRoot initializeState={({set}) => {
             set(ViewingDateState, new Date(2020, 4, 14));

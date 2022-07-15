@@ -77,16 +77,7 @@ describe('Unassigned Products', () => {
                     set(CurrentSpaceState, TestData.space)
                 }}>
                     <UnassignedDrawer/>
-                </RecoilRoot>,
-                undefined,
-                {
-                    allGroupedTagFilterOptions: [
-                        { label: 'Location Tags:', options: []},
-                        { label: 'Product Tags:', options: []},
-                        { label: 'Role Tags:', options: []},
-                        { label: 'Person Tags:', options: []},
-                    ],
-                }
+                </RecoilRoot>
             );
         }
 
@@ -136,7 +127,7 @@ describe('Unassigned Products', () => {
 
     describe('Edit menus', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(PeopleState, TestData.people)
                 set(ProductTagsState,  [TestData.productTag1])
             });

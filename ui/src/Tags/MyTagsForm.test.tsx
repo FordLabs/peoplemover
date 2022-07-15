@@ -15,35 +15,25 @@
  * limitations under the License.
  */
 
-import {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {screen} from '@testing-library/react';
 import MyTagsForm from './MyTagsForm';
 import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import React from 'react';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {RecoilRoot} from 'recoil';
 import {LocationsState} from '../State/LocationsState';
 import {ProductTagsState} from '../State/ProductTagsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 describe('My Tags Form', () => {
-    const initialState: PreloadedState<Partial<GlobalStateProps>> = {
-        allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-    };
-
     it('should only display location tags when the passed-in filter type is location tags', async () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
+        renderWithRecoil(
+            <MyTagsForm filterType={FilterTypeListings.Location}/>,
+            ({set}) => {
                 set(LocationsState, TestData.locations)
                 set(ProductTagsState, TestData.productTags)
                 set(CurrentSpaceState, TestData.space)
-            }}>
-                <MyTagsForm filterType={FilterTypeListings.Location}/>
-            </RecoilRoot>,
-            undefined,
-            initialState
+            }
         );
 
         await screen.findByText( TestData.annarbor.name);
@@ -53,15 +43,12 @@ describe('My Tags Form', () => {
     });
 
     it('should only display product tags when the passed-in filter type is product tags', async () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
+        renderWithRecoil(
+            <MyTagsForm filterType={FilterTypeListings.ProductTag}/>,
+            ({set}) => {
                 set(LocationsState, TestData.locations)
                 set(ProductTagsState, TestData.productTags)
-            }}>
-                <MyTagsForm filterType={FilterTypeListings.ProductTag}/>
-            </RecoilRoot>,
-            undefined,
-            initialState
+            }
         );
 
         await screen.findByText(TestData.productTag1.name);

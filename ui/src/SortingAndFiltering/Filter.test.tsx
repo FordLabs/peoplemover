@@ -16,156 +16,178 @@
  */
 
 import React from 'react';
-import {renderWithRedux} from '../Utils/TestUtils';
-import Filter from './Filter';
-import {FilterType, FilterTypeListings} from './FilterLibraries';
-import {createStore, Store} from 'redux';
-import rootReducer from '../Redux/Reducers';
-import {RenderResult, waitFor} from '@testing-library/react';
-import {RecoilRoot} from 'recoil';
+import {renderWithRecoil} from '../Utils/TestUtils';
+import {screen, waitFor} from '@testing-library/react';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
+import {FilterOption} from '../CommonTypes/Option';
+import Filter from './Filter';
 
 let actualModalContent: ModalContents | null;
 const expectedModalContents: ModalContents = {
     title: 'Test',
     component: <div>hi</div>
 };
+let mockOnSelect = jest.fn();
+const expectedLabel = 'My Test Label';
 
 describe('Filter Dropdown', () => {
-    let store: import('redux').Store<import('redux').AnyAction>;
-
     beforeEach(() => {
         actualModalContent = null;
-        store = createStore(rootReducer, {});
+        mockOnSelect = jest.fn();
     });
 
-    describe('Add new filter button', () => {
-        it('opens the location modal when handling location tags and the add/edit tags button is clicked', async () => {
-            const app = renderFilter(FilterTypeListings.Location, store);
-            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            dropdownButton.click();
-            const addLocationButton = await app.findByText('Add/Edit your Product Location');
-            addLocationButton.click();
+    it('should show label', () => {
+        renderFilter();
+        expect(getDropdownButton()).toHaveTextContent(`${expectedLabel}:`);
+    });
+
+    describe('When no filters are selected', () => {
+        beforeEach(() => {
+            renderFilter([
+                {label: 'foo', value: 'foo', selected: false},
+                {label: 'bar', value: 'bar', selected: false},
+                {label: 'hi', value: 'hi', selected: false},
+            ]);
+        })
+
+        it('should show "All" as the filter count', () => {
+            expect(getFilterCount()).toContainHTML('All');
+        });
+
+        it('should NOT show the x that clears the selected filters', async () => {
+            expect(screen.queryByTestId(`clearSelectedFilter__my_test_label`)).toBeNull();
+        });
+
+        it('should show all options, but none should be checked', () => {
+            getDropdownButton().click();
+            const barCheckbox = screen.getByLabelText('bar');
+            expect(barCheckbox).not.toBeChecked();
+            const fooCheckbox = screen.getByLabelText('foo');
+            expect(fooCheckbox).not.toBeChecked();
+            const hiCheckbox = screen.getByLabelText('hi');
+            expect(hiCheckbox).not.toBeChecked();
+        });
+    });
+
+    describe('When filters are selected', () => {
+        beforeEach(() => {
+            renderFilter([
+                {label: 'foo', value: 'foo', selected: true},
+                {label: 'bar', value: 'bar', selected: true},
+                {label: 'hi', value: 'hi', selected: false},
+            ]);
+        })
+
+        it('should show "2" as the filter count', () => {
+            expect(getFilterCount()).toContainHTML('2');
+        });
+
+        it('should show the x that clears the selected filters', async () => {
+            expect(getClearFilterButton()).toBeDefined();
+        });
+
+        it('should emit event to clear selected filters when x is clicked', async () => {
+            getClearFilterButton().click();
+            expect(mockOnSelect).toHaveBeenCalledWith([
+                {label: 'foo', value: 'foo', selected: false},
+                {label: 'bar', value: 'bar', selected: false},
+                {label: 'hi', value: 'hi', selected: false},
+            ])
+        });
+
+        it('should show all options, with selected options checked', () => {
+            getDropdownButton().click();
+            const barCheckbox = screen.getByLabelText('bar');
+            expect(barCheckbox).toBeChecked();
+            const fooCheckbox = screen.getByLabelText('foo');
+            expect(fooCheckbox).toBeChecked();
+            const hiCheckbox = screen.getByLabelText('hi');
+            expect(hiCheckbox).not.toBeChecked();
+        });
+    });
+
+    describe('Check/Uncheck filter options', () => {
+        beforeEach(() => {
+            renderFilter([
+                {label: 'foo', value: 'foo', selected: true},
+                {label: 'bar', value: 'bar', selected: false},
+            ]);
+        })
+
+        it('should emit event when user unchecks a filter', () => {
+            getDropdownButton().click();
+            screen.getByText('foo').click();
+            expect(mockOnSelect).toHaveBeenCalledWith([
+                {label: 'foo', value: 'foo', selected: false},
+                {label: 'bar', value: 'bar', selected: false},
+            ])
+        });
+
+        it('should emit event when user checks a filter', () => {
+            getDropdownButton().click();
+            screen.getByText('bar').click();
+            expect(mockOnSelect).toHaveBeenCalledWith([
+                {label: 'foo', value: 'foo', selected: true},
+                {label: 'bar', value: 'bar', selected: true},
+            ])
+        });
+    });
+
+    describe('Add/Edit new filters button', () => {
+        const addEditButtonText = `Add/Edit your ${expectedLabel}`;
+
+        it('should show "Add/Edit" button in dropdown and which should open modal on click', async () => {
+            renderFilter()
+            getDropdownButton().click();
+            const openModalButton = screen.getByText(addEditButtonText);
+            openModalButton.click();
             await waitFor(() => expect(actualModalContent).toEqual(expectedModalContents));
         });
-    });
 
-    describe('Read-only', () => {
-        it('should not display the add new filter button', async () => {
-            const app = renderFilter(FilterTypeListings.Location, store, true);
-            const locationFilterTestId = FilterTypeListings.Location.label.replace(' ', '_');
-            const dropdownButton = await app.findByTestId(`dropdown_button_${locationFilterTestId}`);
-            dropdownButton.click();
-            expect(app.queryByTestId(`open_${locationFilterTestId}_modal_button`)).toBeNull();
-        });
-    });
-
-    describe('Listeners', () => {
-        it('should show the correct checkbox state for selected filters', async () => {
-            store = createStore(rootReducer, {
-                allGroupedTagFilterOptions: [
-                    { label: 'Location Tags:', options: [
-                        {label: 'foo', value: 'foo', selected: true},
-                        {label: 'bar', value: 'bar', selected: false},
-                    ]},
-                    { label: 'Product Tags:', options: []},
-                    { label: 'Role Tags:', options: []},
-                    { label: 'Person Tags:', options: []},
-                ],
-            });
-
-            const app = renderFilter(FilterTypeListings.Location, store);
-            const dropdownButton = await app.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            dropdownButton.click();
-            const secondCheckbox = await app.findByLabelText('bar');
-            expect(secondCheckbox).not.toBeChecked();
-            const firstCheckbox = await app.findByLabelText('foo');
-            expect(firstCheckbox).toBeChecked();
-        });
-    });
-
-    describe('Filter Count', () => {
-        let appLocation: RenderResult;
-        let appRole: RenderResult;
-
-        beforeEach(() => {
-            store = createStore(rootReducer, {
-                allGroupedTagFilterOptions: [
-                    {
-                        label: 'Location Tags:', options: [
-                            {label: 'foo', value: 'foo', selected: true},
-                            {label: 'bar', value: 'bar', selected: true},
-                            {label: 'goo', value: 'goo', selected: false},
-                        ],
-                    },
-                    {
-                        label: 'Product Tags:', options: [
-                            {label: 'pt1', value: 'pt1', selected: true},
-                        ],
-                    },
-                    {label: 'Role Tags:', options: []},
-                    {label: 'Person Tags:', options: []},
-                ],
-            });
-            appLocation = renderFilter(FilterTypeListings.Location, store);
-            appRole = renderFilter(FilterTypeListings.Role, store);
-        });
-
-        it('should show the right number of filters that are selected', async () => {
-            const locationCounter = await appLocation.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            expect(locationCounter).toContainHTML('2');
-            const dropdownButton = await appLocation.findByTestId(`dropdown_button_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            dropdownButton.click();
-            const thirdCheckbox = await appLocation.findByLabelText('goo');
-            thirdCheckbox.click();
-            dropdownButton.click();
-            expect(locationCounter).toContainHTML('3');
-        });
-
-        it('should show \'All\' when no filters are selected', async () => {
-            const locationCounter = await appRole.findByTestId(`filter_count_${FilterTypeListings.Role.label.replace(' ', '_')}`);
-            expect(locationCounter).toContainHTML('All');
-        });
-
-        it('should show the clear filter button when there are filters selected', async () => {
-            const locationCounter = await appLocation.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            await appLocation.findByTestId(`clear_selected_filter_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            expect(locationCounter).toContainHTML('2');
-        });
-
-        it('should clear the selected filters when clicking the clear filter button', async () => {
-            const locationCounter = await appLocation.findByTestId(`filter_count_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            const clearSelectedFiltersIcon = await appLocation.findByTestId(`clear_selected_filter_${FilterTypeListings.Location.label.replace(' ', '_')}`);
-            expect(locationCounter).toContainHTML('2');
-            clearSelectedFiltersIcon.click();
-            expect(store.getState().allGroupedTagFilterOptions[0].options.filter((item: { selected: boolean }) => item.selected).length).toEqual(0);
-            expect(store.getState().allGroupedTagFilterOptions[1].options.filter((item: { selected: boolean }) => item.selected).length).toEqual(1);
-        });
-
-        it('should not show the x to clear the selected filters when there are no filters selected', async () => {
-            const locationCounter = await appRole.findByTestId(`filter_count_${FilterTypeListings.Role.label.replace(' ', '_')}`);
-            const clearSelectedFiltersIcon = appRole.queryByTestId(`clear_selected_filter_${FilterTypeListings.Role.label.replace(' ', '_')}`);
-            expect(locationCounter).toContainHTML('All');
-            expect(clearSelectedFiltersIcon).toBeNull();
+        it('should not display the add/edit new filters button when in read only mode', () => {
+            renderFilter(undefined,true);
+            getDropdownButton().click();
+            expect(screen.queryByText(addEditButtonText)).toBeNull();
         });
     });
 });
 
-function renderFilter(filterType: FilterType, store: Store, isReadOnly = false) {
-    return renderWithRedux(
-        <RecoilRoot initializeState={({set}) => {
-            set(IsReadOnlyState, isReadOnly)
-        }}>
+const _defaultValues: FilterOption[] = [
+    {label: 'foo', value: 'foo', selected: true},
+    {label: 'bar', value: 'bar', selected: false},
+]
+
+function renderFilter(defaultValues: FilterOption[] = _defaultValues, isReadOnly = false) {
+    renderWithRecoil(
+        <>
             <RecoilObserver
                 recoilState={ModalContentsState}
                 onChange={(value: ModalContents) => {
                     actualModalContent = value;
                 }}
             />
-            <Filter filterType={filterType} modalContents={expectedModalContents}/>
-        </RecoilRoot>,
-        store
+            <Filter
+                label={expectedLabel}
+                defaultValues={defaultValues}
+                onSelect={mockOnSelect}
+                modalContents={expectedModalContents}/>,
+        </>,
+        ({set}) => {
+            set(IsReadOnlyState, isReadOnly)
+        }
     )
+}
+
+function getDropdownButton() {
+    return screen.getByTestId('dropdownButton__my_test_label');
+}
+
+function getFilterCount() {
+    return screen.getByTestId(`filterCount__my_test_label`);
+}
+
+function getClearFilterButton() {
+    return screen.getByTestId(`clearSelectedFilter__my_test_label`)
 }

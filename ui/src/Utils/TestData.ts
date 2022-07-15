@@ -23,7 +23,7 @@ import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import {Space} from '../Space/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 
 const originDateString = '2019-01-01';
 
@@ -428,31 +428,15 @@ const spaceMappingsArray: UserSpaceMapping[] = [
     {id: '2', spaceUuid: space.uuid!, userId: 'user_id_2', permission: 'editor'},
 ];
 
-const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-    {
-        label:'Location Tags:',
-        options: [{
-            label: 'Ann Arbor',
-            value: '1_Ann Arbor',
-            selected: true,
-        }],
-    },
-    {
-        label:'Product Tags:',
-        options: [],
-    },
-    {
-        label:'Role Tags:',
-        options: [],
-    },
-    {
-        label:'Person Tags:',
-        options: [],
-    },
-]
+const defaultLocalStorageFilters: LocalStorageFilters = {
+    locationTagFilters: [annarbor.name],
+    productTagFilters: [],
+    roleTagFilters: [],
+    personTagFilters: [],
+};
 
 const TestData = {
-    allGroupedTagFilterOptions,
+    defaultLocalStorageFilters,
 
     spaceMappingsArray,
     space,

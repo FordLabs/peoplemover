@@ -16,13 +16,7 @@
  */
 
 import {FilterOption} from '../CommonTypes/Option';
-import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import LocationClient from '../Locations/LocationClient';
-import RoleClient from '../Roles/RoleClient';
-import {TagClient} from '../Tags/TagClient.interface';
-import {AxiosResponse} from 'axios';
-import {TagInterface} from '../Tags/Tag.interface';
-import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
+import {localStorageEventListenerKey} from '../Hooks/useOnStorageChange/useOnStorageChange';
 
 export interface FilterTypeListing {
     Location: FilterType;
@@ -45,91 +39,53 @@ export interface FilterType {
     tagNameType: TagNameType;
 }
 
-export interface AllGroupedTagFilterOptions {
-    label: LabelType;
-    options: Array<FilterOption>;
-}
-
-export type LocalStorageFilters = {
-    locationTagsFilters: Array<string>;
-    productTagsFilters: Array<string>;
-    roleTagsFilters: Array<string>;
-    personTagsFilters: Array<string>;
-}
-
-
 export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:' | 'Person Tags:';
 export type TagType = 'role' | 'product tag' | 'location' | 'person tag';
 export type TagNameType = 'Role' | 'Product Tag' | 'Location' | 'Person Tag';
 
-export async function getFilterOptionsForSpace(uuid: string): Promise<Array<AllGroupedTagFilterOptions>> {
-    const localStorageFilter: LocalStorageFilters = getLocalStorageFilters();
-    const productTagOptions: Array<FilterOption> = await buildTagOptions(uuid, ProductTagClient, localStorageFilter.productTagsFilters);
-    const locationTagOptions: Array<FilterOption> = await buildTagOptions(uuid, LocationClient, localStorageFilter.locationTagsFilters);
-    const roleTagOptions: Array<FilterOption> = await buildTagOptions(uuid, RoleClient, localStorageFilter.roleTagsFilters);
-    const personTagOptions: Array<FilterOption> = await buildTagOptions(uuid, PersonTagClient, localStorageFilter.personTagsFilters);
 
-    return [
-        {
-            label: 'Location Tags:',
-            options: locationTagOptions,
-        },
-        {
-            label: 'Product Tags:',
-            options: productTagOptions,
-        },
-        {
-            label: 'Role Tags:',
-            options: roleTagOptions,
-        },
-        {
-            label: 'Person Tags:',
-            options: personTagOptions,
-        },
-    ];
+
+export const locationTagsFilterKey = 'locationTagFilters';
+export const productTagsFilterKey = 'productTagFilters';
+export const roleTagsFilterKey = 'roleTagFilters';
+export const personTagsFilterKey = 'personTagFilters'
+
+export type filterTypes = typeof locationTagsFilterKey
+    | typeof productTagsFilterKey
+    | typeof roleTagsFilterKey
+    | typeof personTagsFilterKey;
+
+export interface LocalStorageFilters {
+    [locationTagsFilterKey]: string[];
+    [productTagsFilterKey]: string[];
+    [roleTagsFilterKey]: string[];
+    [personTagsFilterKey]: string[];
 }
 
-export function addGroupedTagFilterOptions(
-    tagFilterIndex: number,
-    trait: TagInterface,
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>,
-    setAllGroupedTagFilterOptions: (groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => void
-): void {
-    const addedFilterOption: FilterOption = {
-        label: trait.name,
-        value: trait.id.toString() + '_' + trait.name,
-        selected: false,
-    };
-    const updatedTagFilterOptions: AllGroupedTagFilterOptions = {
-        ...allGroupedTagFilterOptions[tagFilterIndex],
-        options: [
-            ...allGroupedTagFilterOptions[tagFilterIndex].options,
-            addedFilterOption,
-        ],
-    };
-
-    const groupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [...allGroupedTagFilterOptions];
-    groupedTagFilterOptions[tagFilterIndex] = updatedTagFilterOptions;
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions);
-}
-
-async function buildTagOptions(uuid: string, tagClient: TagClient, tagFilters: Array<string> = []): Promise<Array<FilterOption>> {
-    const tagsResponse: AxiosResponse<Array<TagInterface>> = await tagClient.get(uuid);
-    const tags: Array<TagInterface> = tagsResponse.data;
-    return tags.map((tag: TagInterface): FilterOption => ({
-        label: tag.name,
-        value: tag.id + '_' + tag.name,
-        selected: tagFilters.includes(tag.name),
-    }));
-}
-
-function getLocalStorageFilters(): LocalStorageFilters {
+export function getLocalStorageFiltersByType(filterType: filterTypes): Array<string> {
     const localStorageFilters: string | null = localStorage.getItem('filters');
-    if (localStorageFilters) return JSON.parse(localStorageFilters);
+    if (localStorageFilters) {
+        const allFilters = JSON.parse(localStorageFilters);
+        return allFilters[filterType] || []
+    }
+    return [];
+}
+
+export function setLocalStorageFiltersByType(filterType: filterTypes, updatedFilters: FilterOption[]): void {
+    const localStorageFilters: string | null = localStorage.getItem('filters');
+
+    const allFilters = localStorageFilters ? JSON.parse(localStorageFilters) : defaultLocalStorageFilters();
+    allFilters[filterType] = updatedFilters.filter(f => f.selected).map(f => f.label);
+    localStorage.setItem('filters', JSON.stringify(allFilters));
+
+    window.dispatchEvent(new Event(localStorageEventListenerKey));
+}
+
+function defaultLocalStorageFilters(): LocalStorageFilters {
     return {
-        locationTagsFilters: [],
-        productTagsFilters: [],
-        roleTagsFilters: [],
-        personTagsFilters: [],
-    };
+        locationTagFilters: [],
+        productTagFilters: [],
+        roleTagFilters: [],
+        personTagFilters: [],
+    }
 }

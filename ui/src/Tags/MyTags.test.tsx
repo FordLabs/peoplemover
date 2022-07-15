@@ -16,14 +16,13 @@
  */
 
 import React from 'react';
-import {renderWithRedux} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {findByTestId, findByText, fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from './ProductTag/ProductTagClient';
 import MyTagsForm from './MyTagsForm';
 import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
-import {RecoilRoot} from 'recoil';
 import {LocationsState} from '../State/LocationsState';
 import {ProductTagsState} from '../State/ProductTagsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
@@ -31,21 +30,14 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 jest.mock('Locations/LocationClient');
 
 describe('My Tags Form', () => {
-    const initialState = {
-        allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-    };
-
     const renderMyTagsForm = (filterType: FilterType): void => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
+        renderWithRecoil(
+            <MyTagsForm filterType={filterType} />,
+            ({set}) => {
                 set(LocationsState, TestData.locations)
                 set(ProductTagsState, TestData.productTags)
                 set(CurrentSpaceState, TestData.space)
-            }}>
-                <MyTagsForm filterType={filterType} />
-            </RecoilRoot>,
-            undefined,
-            initialState
+            }
         );
     };
 

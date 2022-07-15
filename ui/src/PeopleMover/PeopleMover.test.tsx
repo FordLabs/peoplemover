@@ -19,11 +19,8 @@ import TestUtils from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
-import rootReducer from '../Redux/Reducers';
-import {applyMiddleware, createStore, Store} from 'redux';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {createEmptySpace} from '../Space/Space';
-import thunk from 'redux-thunk';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
@@ -50,20 +47,14 @@ jest.mock('react-router-dom', () => ({
 
 describe('PeopleMover', () => {
     const addProductButtonText = 'Add Product';
-    let store: Store;
 
-    beforeEach(async () => {
+    beforeEach(() => {
         window._paq = [];
     });
 
     describe('Read Only Mode', function() {
         beforeEach(async () => {
-            const initialState = {
-                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-            };
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-
-            await TestUtils.renderPeopleMoverComponent(store, initialState, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(IsReadOnlyState, true);
                 set(ProductsState, TestData.products);
                 set(CurrentSpaceState, TestData.space);
@@ -93,13 +84,9 @@ describe('PeopleMover', () => {
 
     describe('Header and Footer Content', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(
-                undefined,
-                undefined,
-                (({set}) => {
-                    set(ViewingDateState, new Date(2020, 10, 14))
-                })
-            );
+            await TestUtils.renderPeopleMoverComponent((({set}) => {
+                set(ViewingDateState, new Date(2020, 10, 14))
+            }));
         });
 
         it('Should contain calendar button', async () => {
@@ -125,13 +112,9 @@ describe('PeopleMover', () => {
 
     describe('Read only view Header and Footer Content', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(
-                undefined,
-                undefined,
-                ({set}) => {
-                    set(IsReadOnlyState, true);
-                }
-            );
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
+                set(IsReadOnlyState, true);
+            });
         });
 
         it('Should contains My Tags on initial load of People Mover', async () => {
@@ -278,7 +261,7 @@ describe('PeopleMover', () => {
 
     describe('Products in read only view', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(IsReadOnlyState, true);
                 set(LocationsState, TestData.locations);
             });
@@ -354,13 +337,13 @@ describe('PeopleMover', () => {
 
         it('should route to 404 page when bad space name is provided',  async () => {
             SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: BAD_REQUEST}});
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, undefined, spaceUuidPath);
+            await TestUtils.renderPeopleMoverComponent( undefined, spaceUuidPath);
             await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/404'));
         });
 
         it('should route to 403 page when user does not have access to a space', async () => {
             SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: FORBIDDEN}});
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, undefined, spaceUuidPath);
+            await TestUtils.renderPeopleMoverComponent(undefined, spaceUuidPath);
             await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/403'));
         });
     });

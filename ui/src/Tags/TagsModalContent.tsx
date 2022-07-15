@@ -32,7 +32,6 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     tags: Array<TagInterface>;
-    updateFilterOptions(index: number, tag: TagInterface): void;
     tagClient: TagClient;
     filterType: FilterType;
     fetchCommand: () => void;
@@ -40,7 +39,6 @@ interface Props {
 
 const TagsModalContent = ({
     tags,
-    updateFilterOptions,
     tagClient,
     filterType,
     fetchCommand,
@@ -69,8 +67,6 @@ const TagsModalContent = ({
     const editTag = async (tagToEdit: TagRequest): Promise<unknown> => {
         return await tagClient.edit(tagToEdit, currentSpace)
             .then((response) => {
-                const newTag: TagInterface = response.data;
-                updateFilterOptions(filterType.index, newTag);
                 fetchCommand();
                 returnToViewState();
             });

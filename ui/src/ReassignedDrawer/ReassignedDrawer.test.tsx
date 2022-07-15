@@ -28,14 +28,15 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('../Products/ProductClient');
-jest.mock('../People/PeopleClient');
+jest.mock('Products/ProductClient');
+jest.mock('People/PeopleClient');
+jest.mock('Assignments/AssignmentClient');
 
 describe('ReassignedDrawer', () => {
     const mayFourteen2020: Date = new Date(2020, 4, 14);
     const fromProductName = 'Product 1';
 
-    describe('archived people', () => {
+    describe('Archived people', () => {
         beforeEach(async () => {
             AssignmentClient.getReassignments = jest.fn().mockResolvedValue( {
                 data: [{

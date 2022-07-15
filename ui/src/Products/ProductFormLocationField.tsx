@@ -20,7 +20,6 @@ import {Option} from '../CommonTypes/Option';
 import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
 import {LocationTag} from '../Locations/LocationTag.interface';
-import {TagInterface} from '../Tags/Tag.interface';
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {TagRequest} from '../Tags/TagRequest.interface';
@@ -31,7 +30,6 @@ import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSp
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
     currentProductState: { currentProduct: Product; setCurrentProduct: (updatedProduct: Product) => void };
-    addGroupedTagFilterOptions: (tagFilterIndex: number, trait: TagInterface) => void;
 }
 
 function ProductFormLocationField({
@@ -43,7 +41,6 @@ function ProductFormLocationField({
         currentProduct,
         setCurrentProduct,
     },
-    addGroupedTagFilterOptions,
 }: Props): JSX.Element {
     const currentSpace = useRecoilValue(CurrentSpaceState);
     const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
@@ -94,7 +91,6 @@ function ProductFormLocationField({
         LocationClient.add(location, currentSpace).then((result: AxiosResponse) => {
             const newLocation: LocationTag = result.data;
             setAvailableLocations([...availableLocations, newLocation]);
-            addGroupedTagFilterOptions(0, newLocation as TagInterface);
             setCurrentProduct({
                 ...currentProduct,
                 spaceLocation: newLocation,

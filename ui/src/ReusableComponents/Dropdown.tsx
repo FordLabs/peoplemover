@@ -18,7 +18,7 @@
 import AccessibleDropdownContainer from './AccessibleDropdownContainer';
 import React, {ReactNode, useState} from 'react';
 
-interface DropdownProps {
+interface Props {
     buttonId: string;
     dropdownButtonContent: ReactNode;
     dropdownContent: ReactNode;
@@ -29,8 +29,16 @@ interface DropdownProps {
     clearFilterButton?: ReactNode;
 }
 
-export default function Dropdown({buttonId, dropdownButtonContent, dropdownContent, dropdownOptionIds, dropdownTestId, buttonTestId, closeOnSelect = false, clearFilterButton}: DropdownProps): JSX.Element {
-
+function Dropdown({
+    buttonId,
+    dropdownButtonContent,
+    dropdownContent,
+    dropdownOptionIds,
+    dropdownTestId,
+    buttonTestId,
+    closeOnSelect = false,
+    clearFilterButton
+}: Props): JSX.Element {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     const toggleDropdownMenu = (): void => {
@@ -65,10 +73,11 @@ export default function Dropdown({buttonId, dropdownButtonContent, dropdownConte
                         closeOnSelect={closeOnSelect}
                     >
                         {dropdownContent}
-
                     </AccessibleDropdownContainer>
                 </div>}
             {clearFilterButton}
         </div>
     );
 }
+
+export default Dropdown;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useRef} from 'react';
+import React, {RefObject, useCallback, useRef, useState} from 'react';
 import {connect} from 'react-redux';
 import {
     AssignmentCardRefAndAssignmentPair,
@@ -30,8 +30,11 @@ import {Assignment} from './Assignment';
 import AssignmentClient from './AssignmentClient';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
-import {getSelectedFilterLabels} from 'Redux/Reducers/allGroupedTagOptionsReducer';
-import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {
+    getLocalStorageFiltersByType,
+    personTagsFilterKey,
+    roleTagsFilterKey,
+} from '../SortingAndFiltering/FilterLibraries';
 import {isPersonMatchingSelectedFilters} from 'People/Person';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -39,21 +42,23 @@ import {IsDraggingState} from 'State/IsDraggingState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from 'State/ModalContentsState';
 import AssignmentExistsWarning from './AssignmentExistsWarning';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 
 import '../Products/Product.scss';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface Props {
     product: Product;
     productRefs: Array<ProductCardRefAndProductPair>;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
 }
 
-function AssignmentCardList({product, productRefs, allGroupedTagFilterOptions }: Props): JSX.Element {
+function AssignmentCardList({product, productRefs }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const setIsDragging = useSetRecoilState(IsDraggingState);
     const setModalContents = useSetRecoilState(ModalContentsState);
     const currentSpace = useRecoilValue(CurrentSpaceState);
+
+    const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);
 
     const spaceUuid = currentSpace.uuid!;
     const { fetchProducts } = useFetchProducts(spaceUuid);
@@ -61,25 +66,27 @@ function AssignmentCardList({product, productRefs, allGroupedTagFilterOptions }:
     let draggingAssignmentRef: AssignmentCardRefAndAssignmentPair | undefined = undefined;
     const antiHighlightCoverRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     let assignmentCardRectHeight  = 0;
-    const getSelectedRoleFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
-    const getSelectedPersonTagFilters = (): Array<string> => getSelectedFilterLabels(allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
 
-    function assignmentsSortedByPersonRoleStably(): Array<Assignment> {
-        const assignments: Array<Assignment> = [...product.assignments];
-        return assignments.sort(({person: person1}, {person: person2}) => {
-            const spaceRole1 = person1.spaceRole ? person1.spaceRole.name : 'ZZZZZZZ';
-            const spaceRole2 = person2.spaceRole ? person2.spaceRole.name : 'ZZZZZZZ';
-            if (spaceRole1 !== spaceRole2) {
-                return spaceRole1.localeCompare(spaceRole2);
-            } else if (person1.name !== person2.name) {
-                return person1.name.localeCompare(person2.name);
-            }
-            return 0;
-        });
-    }
+    const getFilteredAssignments = useCallback(() => {
+        const _filteredAssignments = [...product.assignments]
+            .sort(sortAssignmentsByPersonRole)
+            .filter((assignment: Assignment) => {
+                const roleFilters = getLocalStorageFiltersByType(roleTagsFilterKey);
+                const personTagFilters = getLocalStorageFiltersByType(personTagsFilterKey);
+                return isPersonMatchingSelectedFilters(assignment.person, roleFilters, personTagFilters);
+            })
 
-    function filterAssignmentByRoleAndProductTag(assignment: Assignment): boolean {
-        return isPersonMatchingSelectedFilters(assignment.person, getSelectedRoleFilters(), getSelectedPersonTagFilters());
+        setFilteredAssignments(_filteredAssignments);
+    }, [product.assignments]);
+
+    useOnStorageChange(getFilteredAssignments);
+
+    function sortAssignmentsByPersonRole({person: person1}: Assignment, {person: person2}: Assignment) {
+        const spaceRole1 = person1?.spaceRole?.name || '';
+        const spaceRole2 = person2?.spaceRole?.name || '';
+        if (spaceRole1 !== spaceRole2) return spaceRole1.localeCompare(spaceRole2);
+        if (person1.name !== person2.name) return person1.name.localeCompare(person2.name);
+        return 0;
     }
 
     function startDraggingAssignment(ref: RefObject<HTMLDivElement>, assignment: Assignment, e: React.MouseEvent): void {
@@ -215,29 +222,24 @@ function AssignmentCardList({product, productRefs, allGroupedTagFilterOptions }:
     const classNameAndDataTestId = isUnassignedProduct(product) ? 'unassignedPeopleContainer' : 'productPeopleContainer';
 
     return (
-        <React.Fragment>
+        <>
             <div className="antiHighlightCover" ref={antiHighlightCoverRef}/>
-            <div
-                className={classNameAndDataTestId}
-                data-testid={classNameAndDataTestId}>
-                {assignmentsSortedByPersonRoleStably()
-                    .filter(filterAssignmentByRoleAndProductTag)
-                    .map((assignment: Assignment) =>
-                        <AssignmentCard assignment={assignment}
-                            isUnassignedProduct={isUnassignedProduct(product)}
-                            startDraggingAssignment={startDraggingAssignment}
-                            key={assignment.id}
-                        />
-                    )}
+            <div className={classNameAndDataTestId} data-testid={classNameAndDataTestId}>
+                {filteredAssignments.map((assignment: Assignment) =>
+                    <AssignmentCard assignment={assignment}
+                        isUnassignedProduct={isUnassignedProduct(product)}
+                        startDraggingAssignment={startDraggingAssignment}
+                        key={assignment.id}
+                    />
+                )}
             </div>
-        </React.Fragment>
+        </>
     );
 }
 
 /* eslint-disable */
 const mapStateToProps = (state: GlobalStateProps) => ({
     productRefs: state.productRefs,
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
 });
 
 export default connect(mapStateToProps)(AssignmentCardList);

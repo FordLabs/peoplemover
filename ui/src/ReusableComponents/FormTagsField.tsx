@@ -19,7 +19,6 @@ import {Option} from '../CommonTypes/Option';
 import {Tag} from '../Tags/Tag';
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
-import {TagInterface} from '../Tags/Tag.interface';
 import {AxiosResponse} from 'axios';
 import {useOnLoad} from './UseOnLoad';
 import {TagRequest} from '../Tags/TagRequest.interface';
@@ -35,7 +34,6 @@ interface Props {
         selectedTags: Array<Tag>;
         setSelectedTags: (tags: Array<Tag>) => void;
     };
-    addGroupedTagFilterOptions: (trait: TagInterface) => void;
     tagClient: TagClient;
     tagsMetadata: Metadata;
     toolTip?: JSX.Element;
@@ -53,7 +51,6 @@ function FormTagsField({
         selectedTags,
         setSelectedTags,
     },
-    addGroupedTagFilterOptions,
     tagClient,
     tagsMetadata,
     toolTip,
@@ -98,7 +95,6 @@ function FormTagsField({
                     id: newTag.id,
                     name: newTag.name,
                 }] as Array<Tag>);
-                addGroupedTagFilterOptions(newTag as TagInterface);
                 updateSelectedTags([...selectedTags, newTag]);
                 setIsLoading(false);
             });

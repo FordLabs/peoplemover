@@ -15,14 +15,18 @@
  * limitations under the License.
  */
 
-import {combineReducers} from 'redux';
-import productRefsReducer from './productRefsReducer';
-import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
+import {useEffect} from 'react';
 
-export default combineReducers({
-    productRefs: productRefsReducer,
-});
+export const localStorageEventListenerKey = 'storage'
 
-export interface GlobalStateProps {
-    productRefs: Array<ProductCardRefAndProductPair>;
+function useOnStorageChange(callback: () => void) {
+    useEffect(() => {
+        callback();
+
+        window.addEventListener(localStorageEventListenerKey, callback);
+
+        return () => window.removeEventListener(localStorageEventListenerKey, callback);
+    }, [callback]);
 }
+
+export default useOnStorageChange;

@@ -41,7 +41,7 @@ describe('AssignmentForm', () => {
         modalContent = null;
     });
 
-    describe('in create mode', () => {
+    describe('In create mode', () => {
         it('should not show the unassigned or archived products in the product list', async () => {
             const products = [TestData.productWithAssignments, TestData.archivedProduct, TestData.unassignedProduct];
             renderWithRedux(
