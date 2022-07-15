@@ -58,6 +58,8 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
 
             if (!assignmentToMove || !newProduct || !oldProduct) return;
 
+            const originalProductState = [...products];
+
             setProducts((currentState: Product[]) => {
                 return currentState.map((product) => {
                     let assignments = [...product.assignments];
@@ -83,15 +85,8 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
                 productPlaceholderPairs,
                 currentSpace,
                 assignmentToMove.person
-            ).catch(() => {
-                setProducts((currentState: Product[]) => {
-                    return currentState.map((product) =>
-                        product.id === oldProductId
-                            ? { ...product, assignments: [...oldProduct.assignments] }
-                            : product
-                    );
-                });
-            }).finally(fetchProducts);
+            ).catch(() => setProducts(originalProductState));
+            fetchProducts();
         },
         [currentSpace, fetchProducts, products, setProducts, viewingDate]
     );
