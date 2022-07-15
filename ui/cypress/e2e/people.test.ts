@@ -288,7 +288,7 @@ function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth(): string {
     const twoWeeksIntoMonth = firstDayOfMonth.add(2, 'weeks');
     const closestWorkdayToMiddleOfMonth = twoWeeksIntoMonth.isoWeekday() <= 5 ? twoWeeksIntoMonth : twoWeeksIntoMonth.add(8 - twoWeeksIntoMonth.isoWeekday(), 'days');
     if (todaysDate === closestWorkdayToMiddleOfMonth.format('yyyy-MM-DD')) {
-        if (closestWorkdayToMiddleOfMonth.isoWeek() === 5) {
+        if (closestWorkdayToMiddleOfMonth.isoWeekday() === 5) {
             closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.subtract(1, 'days').format('yyyy-MM-DD');
         } else {
             closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.add(1, 'days').format('yyyy-MM-DD');
