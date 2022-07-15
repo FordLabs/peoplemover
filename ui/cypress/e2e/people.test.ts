@@ -18,6 +18,11 @@ import * as moment from 'moment';
 import person, {Person} from '../fixtures/person';
 
 const todaysDate = moment().format('yyyy-MM-DD');
+const keycodes = {
+    space: 32,
+    arrowRight: 39,
+    arrowLeft: 37,
+};
 
 describe('People', () => {
     let notTodaysDate;
@@ -210,45 +215,46 @@ describe('People', () => {
             cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + todaysDate).as('getProducts');
         });
 
-        it('Drag and drop person from one product to another product', () => {
+        it('Drag and drop person from one product to another product and back', () => {
             ensureJaneSmithDoesNotExistOnSelector('[data-testid=productCardContainer__baguette_bakery]');
 
-            cy.get('[data-testid=productCardContainer__baguette_bakery]').then(element => {
-                moveElement(element, '[data-testid=assignmentCard__jane_smith]');
+            const janeSmithSelector = '[data-testid=assignmentCard__jane_smith]';
+            moveAssignment(janeSmithSelector, keycodes.arrowLeft);
 
-                cy.wait('@getProducts').should(() => {
-                    cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Jane Smith');
-                });
+            const assignmentName = 'Jane Smith';
+
+            cy.wait('@getProducts').should(() => {
+                cy.get('[data-testid=productCardContainer__baguette_bakery]').should('contain', assignmentName);
+                cy.get('[data-testid=productCardContainer__my_product]').should('not.contain', assignmentName);
+            });
+
+            moveAssignment(janeSmithSelector, keycodes.arrowRight);
+
+            cy.wait('@getProducts').should(() => {
+                cy.get('[data-testid=productCardContainer__baguette_bakery]').should('not.contain', assignmentName);
+                cy.get('[data-testid=productCardContainer__my_product]').should('contain', assignmentName);
             });
         });
 
-        it('Drag and drop person from a product to unassigned', () => {
+        it('Drag and drop person from a product to unassigned and back', () => {
             cy.get('[data-testid=unassignedDrawer]').click();
 
             ensureJaneSmithDoesNotExistOnSelector('[data-testid=productDrawerContainer__unassigned]');
 
-            cy.get('[data-testid=productDrawerContainer__unassigned]').then(element => {
-                moveElement(element, '[data-testid=assignmentCard__jane_smith]');
+            const adamSandlerSelector = '[data-testid="assignmentCard__adam_sandler"]';
 
-                cy.wait('@getProducts').should(() => {
-                    cy.get('[data-testid=productDrawerContainer__unassigned]').contains('Jane Smith');
-                });
+            moveAssignment(adamSandlerSelector, keycodes.arrowLeft);
+
+            cy.wait('@getProducts').should(() => {
+                cy.get('[data-testid=productCardContainer__my_product]').should('contain','Adam Sandler');
+                cy.get('[data-testid=productDrawerContainer__unassigned]').should('not.contain','Adam Sandler');
             });
-        });
 
-        it('Drag and drop person from a unassigned to a product', () => {
-            cy.get('[data-testid=unassignedDrawer]').click();
+            moveAssignment(adamSandlerSelector, keycodes.arrowRight);
 
-            cy.get('[data-testid=productCardContainer__baguette_bakery]')
-                .contains('Adam Sandler')
-                .should('not.exist');
-
-            cy.get('[data-testid=productCardContainer__baguette_bakery]').then(element => {
-                moveElement(element, '[data-testid=assignmentCard__adam_sandler]');
-
-                cy.wait('@getProducts').should(() => {
-                    cy.get('[data-testid=productCardContainer__baguette_bakery]').contains('Adam Sandler');
-                });
+            cy.wait('@getProducts').should(() => {
+                cy.get('[data-testid=productCardContainer__my_product]').should('not.contain','Adam Sandler');
+                cy.get('[data-testid=productDrawerContainer__unassigned]').should('contain','Adam Sandler');
             });
         });
     });
@@ -374,17 +380,11 @@ function ensureJaneSmithDoesNotExistOnSelector(selector: string): void {
         .should('not.exist');
 }
 
-function moveElement(element, itemSelectorToMove: string) {
-    const rect = element[0].getBoundingClientRect();
-    cy.get(itemSelectorToMove)
-        .trigger('mousedown', { button: 0 })
-        .trigger('mousemove', {
-            clientX: rect.x,
-            clientY: rect.y,
-            screenX: rect.x,
-            screenY: rect.y,
-            pageX: rect.x,
-            pageY: rect.y,
-        })
-        .trigger('mouseup', { force: true });
+function moveAssignment(selector: string, direction: typeof keycodes.arrowLeft | typeof  keycodes.arrowLeft) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.get(selector)
+        .trigger('keydown', { keyCode: keycodes.space })
+        .trigger('keydown', { keyCode: direction, force: true })
+        .wait(200)
+        .trigger('keydown', { keyCode: keycodes.space, force: true });
 }

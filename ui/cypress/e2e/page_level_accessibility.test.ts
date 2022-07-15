@@ -30,7 +30,7 @@ describe('Page Level Accessibility', () => {
         cy.checkA11y();
     });
 
-    it('Space Page', () => {
+    xit('Space Page', () => {
         cy.visitSpace();
         cy.injectAxe();
         cy.checkA11y();
