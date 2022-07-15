@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {RefObject, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
 import {isUnassignedProduct, Product} from './Product';
@@ -56,7 +56,6 @@ function ProductCard({ product }: Props): JSX.Element {
 
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const [modal, setModal] = useState<JSX.Element | null>(null);
-    const productRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
     function toggleEditMenu(): void {
         setIsEditMenuOpen(!isEditMenuOpen);
@@ -187,8 +186,7 @@ function ProductCard({ product }: Props): JSX.Element {
     const classNameAndDataTestId = isUnassignedProduct(product) ? 'productDrawerContainer' : 'productCardContainer';
 
     return (
-        <div className={classNameAndDataTestId} data-testid={createDataTestId(classNameAndDataTestId, product.name)}
-            ref={productRef}>
+        <div className={classNameAndDataTestId} data-testid={createDataTestId(classNameAndDataTestId, product.name)}>
             <div key={product.name}>
                 {!isUnassignedProduct(product) && (
                     <div>
@@ -206,7 +204,7 @@ function ProductCard({ product }: Props): JSX.Element {
                                     <div data-testid="productName" className="productName">{product.name}</div>
                                 }
                                 {!isReadOnly && (
-                                    <div className={'productControlsContainer'}>
+                                    <div className="productControlsContainer">
                                         <button
                                             data-testid={createDataTestId('addPersonToProductIcon', product.name)}
                                             className="addPersonIcon material-icons greyIcon clickableIcon"

@@ -102,7 +102,7 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
             });
             fetchProducts();
         },
-        []
+        [currentSpace, fetchProducts, products, viewingDate]
     );
 
     return <DragDropContext onDragEnd={onDragEnd}>{children}</DragDropContext>;
