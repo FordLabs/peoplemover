@@ -67,45 +67,47 @@ function AssignmentCardList({ product }: Props): JSX.Element {
 
     const classNameAndDataTestId = isUnassignedProduct(product) ? 'unassignedPeopleContainer' : 'productPeopleContainer';
 
+    const EmptyProductText = () => (
+        <div className="emptyProductText">
+            <div className="emptyProductTextHint">
+                <p>Add a person by clicking Add Person icon above or drag them in.</p>
+            </div>
+        </div>
+    )
+
     return (
         <>
             <div className="antiHighlightCover" ref={antiHighlightCoverRef}/>
             <Droppable droppableId={`product-${product.id}`} type="ASSIGNMENT_CARD">
-                {(provided) => (
+                {(provided, snapshot) => (
                     <div
                         className={classNameAndDataTestId}
                         data-testid={classNameAndDataTestId}
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                     >
-                        {!isReadOnly && product.assignments.length === 0 ? (
-                            <div className="emptyProductText">
-                                <div className="emptyProductTextHint">
-                                    <p>Add a person by clicking Add Person icon above or drag them in.</p>
-                                </div>
-                            </div>
-                        ) : filteredAssignments.map((assignment: Assignment, index: number) => (
-                            <Draggable
-                                key={assignment.id}
-                                draggableId={`assignment-${assignment.id}`}
-                                index={index}
-                                disableInteractiveElementBlocking
-                                isDragDisabled={false}
-                            >
-                                {(provided) => (
-                                    <div ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}>
-                                        <AssignmentCard assignment={assignment}
-                                            isUnassignedProduct={isUnassignedProduct(product)}
-                                            // startDraggingAssignment={startDraggingAssignment}
-                                            key={assignment.id}
-                                        />
-                                    </div>
+                        {!isReadOnly && product.assignments.length === 0 ? (<EmptyProductText />)
+                            : filteredAssignments.map((assignment: Assignment, index: number) => (
+                                <Draggable
+                                    key={assignment.id}
+                                    draggableId={`assignment-${assignment.id}`}
+                                    index={index}
+                                    disableInteractiveElementBlocking
+                                    isDragDisabled={false}
+                                >
+                                    {(provided) => (
+                                        <div ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}>
+                                            <AssignmentCard assignment={assignment}
+                                                isUnassignedProduct={isUnassignedProduct(product)}
+                                                key={assignment.id}
+                                            />
+                                        </div>
 
-                                )}
-                            </Draggable>
-                        ))}
+                                    )}
+                                </Draggable>
+                            ))}
                         {provided.placeholder}
                     </div>
                 )}

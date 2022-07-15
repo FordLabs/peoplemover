@@ -58,24 +58,16 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
 
             if (!assignmentToMove || !newProduct || !oldProduct) return;
 
-
-            // setProducts((currentState: Product[]) => {
-            //     return currentState.map((product) => {
-            //         if (product.id === oldProductId) {
-            //             return {
-            //                 ...product,
-            //                 assignments: oldProduct.assignments.filter((a) => a.id !== assignmentToMove.id)
-            //             };
-            //         }
-            //         if (product.id === newProductId) {
-            //             return {
-            //                 ...product,
-            //                 assignments: [...product.assignments, assignmentToMove]
-            //             };
-            //         }
-            //         return product;
-            //     });
-            // });
+            setProducts((currentState: Product[]) => {
+                return currentState.map((product) => {
+                    let assignments = [...product.assignments];
+                    if (product.id === oldProductId) {
+                        assignments = oldProduct.assignments.filter((a) => a.id !== assignmentToMove.id)
+                    }
+                    if (product.id === newProductId) assignments = [...assignments, assignmentToMove];
+                    return {...product, assignments};
+                });
+            });
 
             const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(currentSpace!.uuid!, assignmentToMove.person.id, viewingDate)).data;
             const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
@@ -92,17 +84,17 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
                 currentSpace,
                 assignmentToMove.person
             ).catch(() => {
-                // setProducts((currentState: Product[]) => {
-                //     return currentState.map((product) =>
-                //         product.id === oldProductId
-                //             ? { ...product, assignments: [...oldProduct.assignments] }
-                //             : product
-                //     );
-                // });
+                setProducts((currentState: Product[]) => {
+                    return currentState.map((product) =>
+                        product.id === oldProductId
+                            ? { ...product, assignments: [...oldProduct.assignments] }
+                            : product
+                    );
+                });
             });
             fetchProducts();
         },
-        [currentSpace, fetchProducts, products, viewingDate]
+        [currentSpace, fetchProducts, products, setProducts, viewingDate]
     );
 
     return <DragDropContext onDragEnd={onDragEnd}>{children}</DragDropContext>;
