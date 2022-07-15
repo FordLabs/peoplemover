@@ -58,16 +58,6 @@ function ProductCard({ product }: Props): JSX.Element {
     const [modal, setModal] = useState<JSX.Element | null>(null);
     const productRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-    // const setProductRefs = useSetRecoilState(ProductRefsState);
-
-    // useEffect(() => {
-    //     setProductRefs(currentState => [...currentState, {ref: productRef, product: {...product}}]);
-    //
-    //     return () => setProductRefs(currentState => currentState.filter(
-    //         _productRef => _productRef.ref !== productRef && _productRef.ref.current !== null
-    //     ));
-    // }, [product, setProductRefs]);
-
     function toggleEditMenu(): void {
         setIsEditMenuOpen(!isEditMenuOpen);
     }
