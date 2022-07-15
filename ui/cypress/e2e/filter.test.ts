@@ -29,7 +29,7 @@ describe('Filter', () => {
                 cy.get('@peopleCards').eq(0).should('contain', 'Jane Smith');
                 cy.get('@peopleCards').eq(1).should('contain', 'Bob Barker');
 
-                cy.get('[data-testid=dropdown_button_Role]').click();
+                cy.get('[data-testid=dropdownButton__role]').click();
                 cy.contains('THE SECOND BEST (UNDERSTUDY)').click();
             });
 
@@ -47,7 +47,7 @@ describe('Filter', () => {
         cy.get('[data-testid=productCardContainer__my_product]');
         cy.get('[data-testid=productCardContainer__baguette_bakery]');
 
-        cy.get('[data-testid=dropdown_button_Product_Location]').click();
+        cy.get('[data-testid=dropdownButton__product_location]').click();
         cy.contains('location1').click();
 
         cy.get('[data-testid=productCardContainer__my_product]').should('not.exist');
@@ -58,7 +58,7 @@ describe('Filter', () => {
         cy.get('[data-testid=productCardContainer__my_product]');
         cy.get('[data-testid=productCardContainer__baguette_bakery]');
 
-        cy.get('[data-testid=dropdown_button_Product_Tags]').click();
+        cy.get('[data-testid=dropdownButton__product_tags]').click();
         cy.contains('productTag1').click();
 
         cy.get('[data-testid=productCardContainer__my_product]');

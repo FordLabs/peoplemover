@@ -25,10 +25,10 @@ import moment, {now} from 'moment';
 import {fireEvent} from '@testing-library/dom';
 import {Assignment} from '../Assignment';
 
-jest.mock('../../Products/ProductClient');
+jest.mock('Products/ProductClient');
+jest.mock('Assignments/AssignmentClient');
 
 describe('Assignment History', () => {
-
     const daysBetweenStartAndToday = (assignment: Assignment): number  => {
         return Math.floor(moment.duration(moment(now()).startOf('day').diff(moment(assignment.startDate).startOf('day'))).asDays());
     };

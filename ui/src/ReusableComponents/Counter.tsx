@@ -15,81 +15,71 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import {AllGroupedTagFilterOptions, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import React, {useCallback, useState} from 'react';
+import {
+    getLocalStorageFiltersByType,
+    locationTagsFilterKey,
+    personTagsFilterKey,
+    productTagsFilterKey,
+    roleTagsFilterKey,
+} from '../SortingAndFiltering/FilterLibraries';
 import {
     isActiveProduct,
     isProductMatchingSelectedFilters,
     Product,
     stripAssignmentsForArchivedPeople,
 } from '../Products/Product';
-import {getSelectedFilterLabels} from '../Redux/Reducers/allGroupedTagOptionsReducer';
-import './Counter.scss';
 import {isPersonMatchingSelectedFilters} from '../People/Person';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState, UnassignedProductSelector} from '../State/ProductsState';
+import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 
-interface CounterProps {
-    products: Array<Product>;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    viewingDate: Date;
-}
+import './Counter.scss';
 
-interface ProductAndPeopleCount {
-    unassignedPeopleCount: number;
-    assignedPeopleCount: number;
-    totalPeopleCount: number;
-    productCount: number;
-}
+function Counter(): JSX.Element {
+    const products = useRecoilValue(ProductsState);
+    const unassignedProduct = useRecoilValue(UnassignedProductSelector);
+    const viewingDate = useRecoilValue(ViewingDateState);
 
-function Counter(props: CounterProps): JSX.Element {
-    const productAndPeopleCount: ProductAndPeopleCount = {
-        unassignedPeopleCount: 0,
-        assignedPeopleCount: 0,
-        totalPeopleCount: 0,
-        productCount: 0,
-    };
+    const [filteredAndActiveProduct, setFilteredAndActiveProducts] = useState<Product[]>([]);
+    const [filteredAndActivePeopleCount, setFilteredAndActivePeopleCount] = useState<number>(0);
 
-    const filteredProducts: Array<Product> = [];
-    let unassignedProduct: Product;
-
-    const filterProductsAndFindUnassignedProduct = (): void => {
-        const locationFilter = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.Location.index].options);
-        const productTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.ProductTag.index].options);
-
-        props.products.forEach(product => {
-            if (product.name === 'unassigned') {
-                unassignedProduct = product;
-            }
-            if (isActiveProduct(product, props.viewingDate) && isProductMatchingSelectedFilters(product, locationFilter, productTagFilters)) {
-                filteredProducts.push(product);
-            }
-        });
-    };
-
-    const getProductCount = (): void => {
-        productAndPeopleCount.productCount = filteredProducts.length;
-    };
-
-    const getPeopleCount = (): void => {
+    const getFilteredAndActivePeopleCount = useCallback((activeProducts: Product[]): number => {
         const peopleSet = new Set<number>();
-        let unassignedPeopleSet = new Set<number>();
-        const unassignedWithoutArchived = stripAssignmentsForArchivedPeople(unassignedProduct, props.viewingDate);
-        unassignedPeopleSet = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(unassignedWithoutArchived);
-        productAndPeopleCount.unassignedPeopleCount = unassignedPeopleSet.size;
 
-        filteredProducts.forEach(product => {
+        activeProducts.forEach(product => {
             const productPeopleCount = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(product);
             productPeopleCount.forEach(entry => {
                 peopleSet.add(entry);
             });
         });
 
-        productAndPeopleCount.assignedPeopleCount = peopleSet.size;
-        productAndPeopleCount.totalPeopleCount = peopleSet.size + unassignedPeopleSet.size;
-    };
+        return peopleSet.size;
+    }, []);
+
+    const getFilteredAndActiveProducts = useCallback(() => {
+        const locationTagFilters: string[] = getLocalStorageFiltersByType(locationTagsFilterKey);
+        const productTagFilters: string[] = getLocalStorageFiltersByType(productTagsFilterKey);
+        const noFiltersApplied = !locationTagFilters.length && !productTagFilters.length;
+        const filteredProducts = products
+            .filter(product => noFiltersApplied || isProductMatchingSelectedFilters(product, locationTagFilters, productTagFilters))
+            .filter(prod => isActiveProduct(prod, viewingDate));
+        setFilteredAndActiveProducts(filteredProducts);
+        setFilteredAndActivePeopleCount(getFilteredAndActivePeopleCount(filteredProducts))
+    }, [getFilteredAndActivePeopleCount, products, viewingDate]);
+
+    useOnStorageChange(getFilteredAndActiveProducts);
+
+    const getUnassignedPeopleCount = () => {
+        const unassignedWithoutArchived = stripAssignmentsForArchivedPeople(unassignedProduct, viewingDate);
+        const unassignedPeopleSet = getSetOfPersonIdsForAProductByRoleAndPersonTagFilters(unassignedWithoutArchived);
+        return unassignedPeopleSet.size;
+    }
 
     const getSetOfPersonIdsForAProductByRoleAndPersonTagFilters = (product: Product): Set<number> => {
-        const selectedRoleFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.Role.index].options);
-        const selectedPersonTagFilters = getSelectedFilterLabels(props.allGroupedTagFilterOptions[FilterTypeListings.PersonTag.index].options);
+        const selectedRoleFilters = getLocalStorageFiltersByType(roleTagsFilterKey);
+        const selectedPersonTagFilters = getLocalStorageFiltersByType(personTagsFilterKey);
         const peopleSet = new Set<number>();
 
         product.assignments.forEach(assignment => {
@@ -101,14 +91,14 @@ function Counter(props: CounterProps): JSX.Element {
         return peopleSet;
     };
 
-    filterProductsAndFindUnassignedProduct();
-    getProductCount();
-    getPeopleCount();
+    const productCount = filteredAndActiveProduct.length;
+    const unassignedPeopleCount = getUnassignedPeopleCount();
+    const totalPeopleCount = filteredAndActivePeopleCount + unassignedPeopleCount;
 
     return (
         <div className="counter-container">
             <span className="counter" data-testid="counter">
-            Results - Products: {productAndPeopleCount.productCount}, People: {productAndPeopleCount.totalPeopleCount} (Unassigned: {productAndPeopleCount.unassignedPeopleCount})
+                Results - Products: {productCount}, People: {totalPeopleCount} (Unassigned: {unassignedPeopleCount})
             </span>
         </div>
     );

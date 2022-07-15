@@ -32,6 +32,7 @@
 
 import 'cypress-axe';
 import './commands';
+
 const spaceUuid = Cypress.env('SPACE_UUID');
 
 const API_ROOT = `/api/spaces/${spaceUuid}`;
@@ -60,4 +61,17 @@ beforeEach(() => {
     cy.log('Reset DB');
     cy.resetSpace(spaceUuid);
     cy.viewport(1000, 660);
+});
+
+Cypress.on('window:before:load', (win) => {
+    let copyText;
+
+    if (!win.navigator.clipboard) {
+        win.navigator.clipboard = {
+            __proto__: {},
+        };
+    }
+
+    win.navigator.clipboard.__proto__.writeText = (text) => (copyText = text);
+    win.navigator.clipboard.__proto__.readText = () => copyText;
 });

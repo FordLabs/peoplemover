@@ -27,9 +27,9 @@ describe('Roles', () => {
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
 
-        cy.get('[data-testid=dropdown_button_Role]').click();
+        cy.get('[data-testid=dropdownButton__role]').click();
 
-        cy.get('[data-testid=open_Role_modal_button]').click();
+        cy.get('[data-testid=openModalButton__role]').click();
 
         cy.getModal().should('contain', 'My Roles');
 
@@ -74,7 +74,7 @@ describe('Roles', () => {
 
         cy.closeModal();
 
-        cy.get('[data-testid=dropdown_button_Role]').click();
+        cy.get('[data-testid=dropdownButton__role]').click();
         cy.contains(mockRole);
     });
 });

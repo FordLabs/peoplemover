@@ -16,38 +16,27 @@
  */
 
 import React from 'react';
-import {renderWithRedux} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import {findByTestId, findByText, fireEvent, screen, waitFor} from '@testing-library/react';
 import RoleClient from './RoleClient';
 import {RoleAddRequest} from './RoleAddRequest.interface';
 import MyRolesForm from './MyRolesForm';
-import ColorClient from '../Roles/ColorClient';
-import {RecoilRoot} from 'recoil';
-import {RolesState} from '../State/RolesState';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import ColorClient from 'Roles/ColorClient';
+import {RolesState} from 'State/RolesState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 jest.mock('Roles/RoleClient');
 jest.mock('Roles/ColorClient');
 
 describe('My Roles Form', () => {
-    const initialState = {allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions};
-
     beforeEach(async () => {
-        renderWithRedux(
-            <RecoilRoot initializeState={({set}) => {
+        renderWithRecoil(
+            <MyRolesForm/>,
+            ({set}) => {
                 set(RolesState, TestData.roles)
                 set(CurrentSpaceState, TestData.space)
-            }}>
-                <MemoryRouter initialEntries={['/' + TestData.space.uuid]}>
-                    <Routes>
-                        <Route path="/:teamUUID" element={<MyRolesForm/>} />
-                    </Routes>
-                </MemoryRouter>
-            </RecoilRoot>,
-            undefined,
-            initialState
+            }
         );
 
         await waitFor(() => expect(ColorClient.getAllColors).toHaveBeenCalled());
@@ -247,8 +236,8 @@ describe('My Roles Form', () => {
 
     describe('Interaction between editing and creating role', () => {
         it('should not show pen and trash can when add new tag is clicked', async () => {
-            expect(screen.queryAllByTestId('editIcon__role').length).toEqual(3);
-            expect(screen.queryAllByTestId('deleteIcon__role').length).toEqual(3);
+            expect((await screen.findAllByTestId('editIcon__role')).length).toEqual(3);
+            expect((await screen.findAllByTestId('deleteIcon__role')).length).toEqual(3);
 
             const addNewLocationButton = await screen.findByText('Add New Role');
             fireEvent.click(addNewLocationButton);
@@ -258,8 +247,8 @@ describe('My Roles Form', () => {
         });
 
         it('should not show pen and trash icons when editing role', async () => {
-            expect(screen.queryAllByTestId('editIcon__role').length).toEqual(3);
-            expect(screen.queryAllByTestId('deleteIcon__role').length).toEqual(3);
+            expect((await screen.findAllByTestId('editIcon__role')).length).toEqual(3);
+            expect((await screen.findAllByTestId('deleteIcon__role')).length).toEqual(3);
             fireEvent.click(screen.queryAllByTestId('editIcon__role')[0]);
 
             expect(screen.queryAllByTestId('editIcon__role').length).toEqual(0);
@@ -267,7 +256,8 @@ describe('My Roles Form', () => {
         });
 
         it('should have create role button disabled when editing role', async () => {
-            fireEvent.click(screen.queryAllByTestId('editIcon__role')[0]);
+            const firstEditIcon = (await screen.findAllByTestId('editIcon__role'))[0]
+            fireEvent.click(firstEditIcon);
 
             const addNewRoleButton = await screen.findByTestId('addNewButton__role');
             expect(addNewRoleButton).toBeDisabled();

@@ -16,12 +16,10 @@
  */
 
 import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
-import {AllGroupedTagFilterOptions} from '../../SortingAndFiltering/FilterLibraries';
 
 export enum AvailableActions {
     REGISTER_PRODUCT_REF,
-    UNREGISTER_PRODUCT_REF,
-    SET_ALL_FILTER_OPTIONS
+    UNREGISTER_PRODUCT_REF
 }
 
 export const registerProductRefAction = (productRef: ProductCardRefAndProductPair) => ({
@@ -32,9 +30,4 @@ export const registerProductRefAction = (productRef: ProductCardRefAndProductPai
 export const unregisterProductRefAction = (productRef: ProductCardRefAndProductPair) => ({
     type: AvailableActions.UNREGISTER_PRODUCT_REF,
     productRef,
-});
-
-export const setAllGroupedTagFilterOptionsAction = (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) => ({
-    type: AvailableActions.SET_ALL_FILTER_OPTIONS,
-    allGroupedTagFilterOptions: allGroupedTagFilterOptions,
 });

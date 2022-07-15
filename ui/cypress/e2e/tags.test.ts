@@ -30,8 +30,8 @@ describe('Tags',  () => {
         });
 
         it('location tag',  () => {
-            cy.get('[data-testid=dropdown_button_Product_Location]').click();
-            cy.get('[data-testid=open_Product_Location_modal_button]').click();
+            cy.get('[data-testid=dropdownButton__product_location]').click();
+            cy.get('[data-testid=openModalButton__product_location]').click();
             cy.getModal().should('contain', 'Product Location');
 
             cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postLocation');
@@ -55,14 +55,14 @@ describe('Tags',  () => {
 
                 cy.closeModal();
 
-                cy.get('[data-testid=dropdown_button_Product_Location]').click();
+                cy.get('[data-testid=dropdownButton__product_location]').click();
                 cy.contains(locationTag);
             });
         });
 
         it('product tag',  () => {
-            cy.get('[data-testid=dropdown_button_Product_Tags]').click();
-            cy.get('[data-testid=open_Product_Tags_modal_button]').click();
+            cy.get('[data-testid=dropdownButton__product_tags]').click();
+            cy.get('[data-testid=openModalButton__product_tags]').click();
             cy.getModal().should('contain', 'Product Tags');
 
             cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postProductTag');
@@ -83,14 +83,14 @@ describe('Tags',  () => {
 
                 cy.closeModal();
 
-                cy.get('[data-testid=dropdown_button_Product_Tags]').click();
+                cy.get('[data-testid=dropdownButton__product_tags]').click();
                 cy.contains(productTag);
             });
         });
 
         it('person tag', () => {
-            cy.get('[data-testid=dropdown_button_Person_Tags]').click();
-            cy.get('[data-testid=open_Person_Tags_modal_button]').click();
+            cy.get('[data-testid=dropdownButton__person_tags]').click();
+            cy.get('[data-testid=openModalButton__person_tags]').click();
             cy.getModal().should('contain', 'Person Tags');
 
             cy.route('POST', Cypress.env('API_PERSON_TAG_PATH')).as('postPersonTag');
@@ -111,7 +111,7 @@ describe('Tags',  () => {
 
                 cy.closeModal();
 
-                cy.get('[data-testid=dropdown_button_Person_Tags]').click();
+                cy.get('[data-testid=dropdownButton__person_tags]').click();
                 cy.contains(personTag);
             });
         });

@@ -34,13 +34,13 @@ import {getAssignments, Person} from '../People/Person';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from '../State/ModalContentsState';
 import ProductForm from './ProductForm';
 import AssignmentForm from '../Assignments/AssignmentForm';
 
 import './Product.scss';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 

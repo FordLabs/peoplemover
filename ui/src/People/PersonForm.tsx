@@ -19,9 +19,6 @@ import React, {FormEvent, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
-import {connect} from 'react-redux';
-import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
-import {GlobalStateProps} from '../Redux/Reducers';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived, Person} from './Person';
 import {RoleTag} from '../Roles/RoleTag.interface';
@@ -39,14 +36,8 @@ import FormButton from '../ModalFormComponents/FormButton';
 import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import FormTagsField from '../ReusableComponents/FormTagsField';
-import {TagInterface} from '../Tags/Tag.interface';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {Tag} from '../Tags/Tag';
-import {
-    addGroupedTagFilterOptions,
-    AllGroupedTagFilterOptions,
-    FilterTypeListings,
-} from '../SortingAndFiltering/FilterLibraries';
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
@@ -66,19 +57,9 @@ interface Props {
     initiallySelectedProduct?: Product;
     initialPersonName?: string;
     personEdited?: Person;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function PersonForm({
-    isEditPersonForm,
-    initiallySelectedProduct,
-    initialPersonName,
-    personEdited,
-    allGroupedTagFilterOptions,
-    setAllGroupedTagFilterOptions,
-}: Props): JSX.Element {
+function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonName, personEdited }: Props): JSX.Element {
     const products = useRecoilValue(ProductsState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const currentSpace = useRecoilValue(CurrentSpaceState);
@@ -131,9 +112,7 @@ function PersonForm({
             }
         } else {
             if (initialPersonName) {
-                setPerson(
-                    (updatingPerson: Person) => ({...updatingPerson, name: initialPersonName})
-                );
+                setPerson((updatingPerson: Person) => ({...updatingPerson, name: initialPersonName}));
             }
 
             if (initiallySelectedProduct) setSelectedProducts([initiallySelectedProduct]);
@@ -399,16 +378,13 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
-                {isEditPersonForm && <div className="formItem">
-                    <>{getAssignmentHistoryContent()}</>
-                </div>}
+                {isEditPersonForm && <div className="formItem">{getAssignmentHistoryContent()}</div>}
                 <FormTagsField
                     tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
                     tagClient={PersonTagClient}
                     currentTagsState={{currentTags: person.tags}}
                     selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
                     loadingState={{isLoading, setIsLoading}}
-                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                     toolTip={<ToolTip toolTipLabel="What's this?" contentElement={toolTipContent()}/>}
                 />
                 <div className="formItem">
@@ -451,15 +427,4 @@ function PersonForm({
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PersonForm);
-/* eslint-enable */
+export default PersonForm;

@@ -16,17 +16,12 @@
  */
 
 import React, {ChangeEvent, FormEvent, useState} from 'react';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Dispatch} from 'redux';
-import {connect} from 'react-redux';
-import {setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {JSX} from '@babel/types';
 import moment from 'moment';
 import ProductClient from './ProductClient';
 import {emptyProduct, Product} from './Product';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Tag} from '../Tags/Tag';
-import {TagInterface} from '../Tags/Tag.interface';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
@@ -34,11 +29,6 @@ import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
-import {
-    addGroupedTagFilterOptions,
-    AllGroupedTagFilterOptions,
-    FilterTypeListings,
-} from '../SortingAndFiltering/FilterLibraries';
 import {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import FormTagsField from '../ReusableComponents/FormTagsField';
@@ -50,17 +40,9 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 interface Props {
     editing: boolean;
     product?: Product;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-function ProductForm({
-    editing,
-    product,
-    allGroupedTagFilterOptions,
-    setAllGroupedTagFilterOptions,
-}: Props): JSX.Element {
+function ProductForm({ editing, product }: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
     const setModalContents = useSetRecoilState(ModalContentsState);
     const currentSpace = useRecoilValue(CurrentSpaceState);
@@ -223,13 +205,11 @@ function ProductForm({
                 <ProductFormLocationField
                     currentProductState={{currentProduct, setCurrentProduct}}
                     loadingState={{isLoading, setIsLoading}}
-                    addGroupedTagFilterOptions={(tagFilterIndex: number, trait: TagInterface): void => {addGroupedTagFilterOptions(tagFilterIndex, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                 />
                 <FormTagsField
                     currentTagsState={{currentTags: currentProduct.tags}}
                     loadingState={{isLoading, setIsLoading}}
                     selectedTagsState={{selectedTags: selectedProductTags, setSelectedTags: setSelectedProductTags}}
-                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.ProductTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                     tagClient={ProductTagClient}
                     tagsMetadata={MetadataReactSelectProps.PRODUCT_TAGS}
                 />
@@ -276,15 +256,5 @@ function ProductForm({
     ) : <></>;
 }
 
-/* eslint-disable  */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
+export default ProductForm;
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductForm);
-/* eslint-enable  */

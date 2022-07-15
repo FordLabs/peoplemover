@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import React from 'react';
 import {fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
 import Calendar from './Calendar';
-import configureStore from 'redux-mock-store';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+
+jest.mock('Assignments/AssignmentClient');
 
 jest.mock('Assignments/AssignmentClient');
 
@@ -79,19 +80,13 @@ describe('Calendar', () => {
 });
 
 function setupCalenderComponent(isReadOnly = false) {
-    const mockStore = configureStore([]);
-    const reduxStore = mockStore({
-        currentSpace: TestData.space,
-    });
-
-    renderWithRedux(
-        <RecoilRoot initializeState={({set}) => {
+    renderWithRecoil(
+        <Calendar/>,
+        ({set}) => {
             set(ViewingDateState, new Date(2020, 10, 14))
             set(IsReadOnlyState, isReadOnly)
-        }}>
-            <Calendar/>
-        </RecoilRoot>,
-        reduxStore
+            set(CurrentSpaceState, TestData.space)
+        }
     )
 }
 

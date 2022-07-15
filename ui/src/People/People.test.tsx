@@ -22,8 +22,6 @@ import PeopleClient from '../People/PeopleClient';
 import PersonForm from '../People/PersonForm';
 import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import selectEvent from 'react-select-event';
 import {emptyPerson, Person} from './Person';
 import moment from 'moment';
@@ -50,14 +48,16 @@ describe('People actions', () => {
     const addPersonModalTitle = 'Add New Person';
     const submitFormButtonText = 'Add';
 
+    beforeEach(() => {
+        localStorage.removeItem('filters');
+    })
+
     describe('Person Form', () => {
-        const personFormInitialState: PreloadedState<Partial<GlobalStateProps>> = {
-            allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-        };
+        localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
         const viewingDate = new Date(2020, 5, 5)
 
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, personFormInitialState, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, viewingDate)
                 set(PeopleState,  TestData.people)
                 set(CurrentSpaceState, TestData.space)
@@ -163,9 +163,7 @@ describe('People actions', () => {
             fireEvent.change(screen.getByLabelText('Name'), {target: {value: ''}});
             fireEvent.click(screen.getByText(submitFormButtonText));
 
-            await waitFor(() => {
-                expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0);
-            });
+            await waitFor(() => expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0));
 
             expect(screen.getByText('Please enter a person name.')).toBeInTheDocument();
         });
@@ -175,7 +173,7 @@ describe('People actions', () => {
         const viewingDate: Date = new Date(2020, 5, 5)
 
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined, undefined, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, viewingDate)
             });
 
@@ -305,7 +303,7 @@ describe('People actions', () => {
         };
 
         it('assigns the person created by the PersonForm', async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined,undefined, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, viewingDate)
             })
             const createPersonButton = await screen.findByText(addPersonButtonText);
@@ -394,9 +392,7 @@ describe('People actions', () => {
         let originalWindow: Window;
 
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(undefined,{
-                allGroupedTagFilterOptions: TestData.allGroupedTagFilterOptions,
-            }, ({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, new Date(2019, 0, 1))
                 set(CurrentSpaceState, TestData.space)
             })

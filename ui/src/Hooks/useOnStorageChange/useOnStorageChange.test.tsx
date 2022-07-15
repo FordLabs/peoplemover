@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
-import {combineReducers} from 'redux';
-import productRefsReducer from './productRefsReducer';
-import {ProductCardRefAndProductPair} from '../../Products/ProductDnDHelper';
+import {renderHook} from '@testing-library/react-hooks';
+import useOnStorageChange from './useOnStorageChange';
 
-export default combineReducers({
-    productRefs: productRefsReducer,
+describe('UseOnStorageChange Hook', () => {
+    it('should call callback when storage event has been triggered', async () => {
+        const callback = jest.fn();
+        renderHook(() => useOnStorageChange(callback));
+
+        expect(callback).toHaveBeenCalledTimes(1);
+
+        window.dispatchEvent(new Event("storage"));
+        expect(callback).toHaveBeenCalledTimes(2);
+    });
 });
-
-export interface GlobalStateProps {
-    productRefs: Array<ProductCardRefAndProductPair>;
-}
