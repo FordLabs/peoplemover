@@ -33,28 +33,18 @@
   }
 }
 
-.emptyProductText {
-  padding: 2px 5px 8px 9px;
-}
-
-.emptyProductTextHint {
+.no-assignments-message {
+  margin: 2px 5px 8px 9px;
+  font-weight: normal;
   display: flex;
   align-items: flex-end;
+  line-height: 14px;
+  font-size: 12px;
+  color: $gray-2;
 
   i {
     margin-left: 6px;
     color: $gray-2;
-  }
-}
-
-.emptyProductText,
-.emptyProductTextHint {
-  line-height: 14px;
-
-  p {
-    font-size: 12px;
-    color: $gray-2;
-    margin: 0;
   }
 }
 

@@ -67,12 +67,10 @@ function AssignmentCardList({ product }: Props): JSX.Element {
 
     const classNameAndDataTestId = isUnassignedProduct(product) ? 'unassignedPeopleContainer' : 'productPeopleContainer';
 
-    const EmptyProductText = () => (
-        <div className="emptyProductText">
-            <div className="emptyProductTextHint">
-                <p>Add a person by clicking Add Person icon above or drag them in.</p>
-            </div>
-        </div>
+    const NoAssignmentsMessage = () => (
+        <p className="no-assignments-message">
+            Add a person by clicking Add Person icon above or drag them in.
+        </p>
     )
 
     return (
@@ -86,7 +84,7 @@ function AssignmentCardList({ product }: Props): JSX.Element {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                     >
-                        {!isReadOnly && product.assignments.length === 0 ? (<EmptyProductText />)
+                        {!isReadOnly && product.assignments.length === 0 ? (<NoAssignmentsMessage />)
                             : filteredAssignments.map((assignment: Assignment, index: number) => (
                                 <Draggable
                                     key={assignment.id}
