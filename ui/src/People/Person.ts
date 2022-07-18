@@ -16,7 +16,7 @@
  */
 
 import {RoleTag} from '../Roles/RoleTag.interface';
-import {Tag} from '../Tags/Tag';
+import {Tag} from 'Types/Tag';
 import moment from 'moment';
 import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';

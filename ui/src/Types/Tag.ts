@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-import {TagInterface} from './Tag.interface';
+import {TagInterface} from 'Tags/Tag.interface';
 
 export type Tag = TagInterface;

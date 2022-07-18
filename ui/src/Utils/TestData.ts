@@ -18,7 +18,7 @@
 import {Person} from '../People/Person';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
-import {Tag} from '../Tags/Tag';
+import {Tag} from 'Types/Tag';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import {LocationTag} from '../Locations/LocationTag.interface';
 import {Space} from 'Types/Space';

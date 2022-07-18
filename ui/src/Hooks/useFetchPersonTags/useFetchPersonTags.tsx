@@ -19,7 +19,7 @@ import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import {RoleTag} from 'Roles/RoleTag.interface';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
-import {Tag} from 'Tags/Tag';
+import {Tag} from 'Types/Tag';
 import {PersonTagsState} from 'State/PersonTagsState';
 import PersonTagClient from 'Tags/PersonTag/PersonTagClient';
 
