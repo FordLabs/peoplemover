@@ -37,7 +37,7 @@ import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from '../People/PersonForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import SpaceClient from '../Space/SpaceClient';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 import {renderWithRecoil} from '../Utils/TestUtils';
 
 const mockedUsedNavigate = jest.fn();

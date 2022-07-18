@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Space} from './Space';
+import {Space} from 'Types/Space';
 
 export interface SpaceWithAccessTokenResponse {
     space: Space;

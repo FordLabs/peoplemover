@@ -16,7 +16,7 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {Space} from './Space';
+import {Space} from 'Types/Space';
 import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
 import {getToken} from '../Auth/TokenProvider';
 import {UserSpaceMapping} from './UserSpaceMapping';

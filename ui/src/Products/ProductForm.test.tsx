@@ -19,7 +19,7 @@ import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';

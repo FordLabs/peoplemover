@@ -20,7 +20,7 @@ import TestData from '../Utils/TestData';
 import {screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
-import {createEmptySpace} from '../Space/Space';
+import {createEmptySpace} from 'Types/Space';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';

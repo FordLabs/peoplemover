@@ -16,7 +16,7 @@
  */
 
 import React, {useCallback, useEffect, useState} from 'react';
-import {createEmptySpace, Space} from '../Space/Space';
+import {createEmptySpace, Space} from 'Types/Space';
 import SpaceDashboardTile from './SpaceDashboardTile';
 
 import Branding from '../ReusableComponents/Branding';

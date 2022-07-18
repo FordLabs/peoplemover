@@ -17,7 +17,7 @@
 
 import React, {createRef, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from '../Space/SpaceClient';
-import {createEmptySpace, Space} from '../Space/Space';
+import {createEmptySpace, Space} from 'Types/Space';
 
 import FormButton from '../ModalFormComponents/FormButton';
 import {useSetRecoilState} from 'recoil';

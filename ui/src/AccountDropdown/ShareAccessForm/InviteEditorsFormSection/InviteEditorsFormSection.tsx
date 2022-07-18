@@ -18,7 +18,7 @@
 import React, {CSSProperties, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from 'Space/SpaceClient';
 import FormButton from 'ModalFormComponents/FormButton';
-import {Space} from 'Space/Space';
+import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Space/UserSpaceMapping';
 
 import UserAccessList from 'ReusableComponents/UserAccessList';

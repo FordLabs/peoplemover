@@ -18,7 +18,7 @@
 import React, {useEffect, useState} from 'react';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import moment, {now} from 'moment';
-import {Space} from 'Space/Space';
+import {Space} from 'Types/Space';
 import LeaveIcon from 'Assets/leave-icon.svg';
 import AccessibleDropdownContainer from 'ReusableComponents/AccessibleDropdownContainer';
 import SpaceClient from 'Space/SpaceClient';

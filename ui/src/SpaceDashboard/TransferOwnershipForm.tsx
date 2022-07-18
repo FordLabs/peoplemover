@@ -19,7 +19,7 @@ import React, {FormEvent, useEffect, useState} from 'react';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import SpaceClient from 'Space/SpaceClient';
 import FormButton from 'ModalFormComponents/FormButton';
-import {Space} from 'Space/Space';
+import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Space/UserSpaceMapping';
 import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
 import {CurrentUserState} from 'State/CurrentUserState';

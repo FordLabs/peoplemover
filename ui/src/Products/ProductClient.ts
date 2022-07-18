@@ -20,7 +20,7 @@ import {Product} from './Product';
 import moment from 'moment';
 import {getToken} from '../Auth/TokenProvider';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 
 class ProductClient {
     private static getBaseProductsUrl(spaceUuid: string): string {

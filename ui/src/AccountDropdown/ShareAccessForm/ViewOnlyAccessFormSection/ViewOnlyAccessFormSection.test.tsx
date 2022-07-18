@@ -20,7 +20,7 @@ import TestData from 'Utils/TestData';
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import SpaceClient from 'Space/SpaceClient';
-import {Space} from 'Space/Space';
+import {Space} from 'Types/Space';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
 import {MatomoWindow} from 'CommonTypes/MatomoWindow';
 import {CurrentSpaceState} from '../../../State/CurrentSpaceState';

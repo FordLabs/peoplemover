@@ -20,7 +20,7 @@ import {Tag} from '../Tag';
 import {TagRequest} from '../TagRequest.interface';
 import {TagClient} from '../TagClient.interface';
 import {getToken} from '../../Auth/TokenProvider';
-import {Space} from '../../Space/Space';
+import {Space} from 'Types/Space';
 import MatomoEvents from '../../Matomo/MatomoEvents';
 
 class PersonTagClient implements TagClient {

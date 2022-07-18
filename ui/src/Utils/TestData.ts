@@ -21,7 +21,7 @@ import {Product} from '../Products/Product';
 import {Tag} from '../Tags/Tag';
 import {Color, RoleTag} from '../Roles/RoleTag.interface';
 import {LocationTag} from '../Locations/LocationTag.interface';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 

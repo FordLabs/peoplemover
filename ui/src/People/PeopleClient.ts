@@ -18,7 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Person} from './Person';
 import {getToken} from '../Auth/TokenProvider';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 
 class PeopleClient {

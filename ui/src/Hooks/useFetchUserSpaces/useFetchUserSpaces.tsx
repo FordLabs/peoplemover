@@ -16,7 +16,7 @@
  */
 
 import SpaceClient from 'Space/SpaceClient';
-import {Space} from 'Space/Space';
+import {Space} from 'Types/Space';
 import {useRecoilState} from 'recoil';
 import {UserSpacesState} from 'State/UserSpacesState';
 import {useCallback} from 'react';

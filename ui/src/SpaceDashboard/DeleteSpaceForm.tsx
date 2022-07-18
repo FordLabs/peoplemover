@@ -16,7 +16,7 @@
  */
 
 import React, {useState} from 'react';
-import {Space} from 'Space/Space';
+import {Space} from 'Types/Space';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import SpaceClient from 'Space/SpaceClient';
 import FormButton from '../ModalFormComponents/FormButton';

@@ -21,7 +21,7 @@ import {RoleEditRequest} from './RoleEditRequest.interface';
 import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 
 class RoleClient implements TagClient {
     private getBaseRolesUrl(spaceUuid: string): string {

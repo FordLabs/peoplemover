@@ -16,7 +16,7 @@
 */
 
 import {atom, selector} from 'recoil';
-import {createEmptySpace, Space} from 'Space/Space';
+import {createEmptySpace, Space} from 'Types/Space';
 
 export const CurrentSpaceState = atom<Space>({
     key: 'CurrentSpaceState',

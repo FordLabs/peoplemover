@@ -22,7 +22,7 @@ import {
     reactSelectStyles,
 } from '../ModalFormComponents/ReactSelectStyles';
 import React, {CSSProperties, useState} from 'react';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 
 import './UserAccessList.scss';

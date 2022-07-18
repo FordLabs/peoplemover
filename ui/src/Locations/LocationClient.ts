@@ -20,7 +20,7 @@ import {LocationTag} from './LocationTag.interface';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
 
 class LocationClient implements TagClient {
