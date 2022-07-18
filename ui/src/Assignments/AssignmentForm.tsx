@@ -19,7 +19,6 @@ import React, {FormEvent, useState} from 'react';
 import moment from 'moment';
 import AssignmentClient from 'Assignments/AssignmentClient';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from 'ModalFormComponents/SelectWithNoCreateOption';
-import {Person} from 'People/Person';
 import {Option} from 'CommonTypes/Option';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
@@ -32,9 +31,10 @@ import {PeopleState} from 'State/PeopleState';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Product} from '../Types/Product';
+import {Person} from '../Types/Person';
 
 import './AssignmentForm.scss';
-import {Product} from '../Types/Product';
 
 interface Props {
     initiallySelectedProduct: Product;

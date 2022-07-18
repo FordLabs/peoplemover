@@ -15,23 +15,10 @@
  * limitations under the License.
  */
 
-import {RoleTag, Tag} from 'Types/Tags';
 import moment from 'moment';
-import {Assignment} from '../Assignments/Assignment';
-import {Product} from '../Types/Product';
-
-export interface Person {
-    id: number;
-    name: string;
-    spaceRole?: RoleTag;
-    notes?: string;
-    newPerson: boolean;
-    newPersonDate?: Date;
-    spaceUuid: string;
-    tags: Array<Tag>;
-    customField1?: string;
-    archiveDate?: Date;
-}
+import {Assignment} from 'Assignments/Assignment';
+import {Product} from 'Types/Product';
+import {Person} from 'Types/Person';
 
 export function emptyPerson(): Person {
     return {
@@ -72,10 +59,6 @@ export function isPersonMatchingSelectedFilters(person: Person, selectedRoleFilt
 export function isArchived(person: Person, date: Date): boolean {
     return person.archiveDate != null && moment(person.archiveDate).isBefore(moment(date));
 }
-
-export const getAssignedProducts = (person: Person, products: Array<Product>): Array<Product> => {
-    return products.filter((product) => product.assignments.find((assignment) => assignment.person.id === person.id));
-};
 
 export const getAssignments = (person: Person, products: Array<Product>): Array<Assignment> => {
     const assignments: Array<Assignment> = [];

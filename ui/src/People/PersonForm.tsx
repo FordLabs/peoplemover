@@ -20,7 +20,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
-import {emptyPerson, isArchived, Person} from './Person';
+import {emptyPerson, isArchived} from './PersonService';
 import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
@@ -51,6 +51,7 @@ import {RoleTagRequest} from 'Types/TagRequest';
 import {Product} from 'Types/Product';
 
 import './PersonForm.scss';
+import {Person} from '../Types/Person';
 
 interface Props {
     isEditPersonForm: boolean

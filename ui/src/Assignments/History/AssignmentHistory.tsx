@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +18,12 @@
 import moment from 'moment';
 import {Assignment, didAssignmentEndInThePast, getDurationWithRespectToToday} from '../Assignment';
 import React, {useEffect, useState} from 'react';
-import {Person} from '../../People/Person';
 import AssignmentClient from '../AssignmentClient';
-import ProductClient from '../../Products/ProductClient';
+import ProductClient from 'Products/ProductClient';
+import {Product} from 'Types/Product';
+import {Person} from 'Types/Person';
+
 import './AssignmentHistory.scss';
-import {Product} from '../../Types/Product';
 
 interface AssignmentHistoryProps {
     person: Person;

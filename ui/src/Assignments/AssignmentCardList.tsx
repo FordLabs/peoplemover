@@ -24,7 +24,7 @@ import {
     personTagsFilterKey,
     roleTagsFilterKey,
 } from '../SortingAndFiltering/FilterLibraries';
-import {isPersonMatchingSelectedFilters} from 'People/Person';
+import {isPersonMatchingSelectedFilters} from 'People/PersonService';
 import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 import {Draggable, Droppable} from 'react-beautiful-dnd';
 import {useRecoilValue} from 'recoil';

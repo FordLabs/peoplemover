@@ -14,11 +14,17 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+import {RoleTag, Tag} from './Tags';
 
-import {atom} from 'recoil';
-import {Person} from 'Types/Person';
-
-export const PeopleState = atom<Person[]>({
-    key: 'PeopleState',
-    default: [],
-});
+export interface Person {
+    id: number;
+    name: string;
+    spaceRole?: RoleTag;
+    notes?: string;
+    newPerson: boolean;
+    newPersonDate?: Date;
+    spaceUuid: string;
+    tags: Tag[];
+    customField1?: string;
+    archiveDate?: Date;
+}

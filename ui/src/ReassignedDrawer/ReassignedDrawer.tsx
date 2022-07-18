@@ -19,13 +19,14 @@ import React, {useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import DrawerContainer from 'ReusableComponents/DrawerContainer';
 import AssignmentClient from 'Assignments/AssignmentClient';
-import {isArchived, Person} from 'People/Person';
+import {isArchived} from 'People/PersonService';
 import MatomoEvents from 'Matomo/MatomoEvents';
 import PeopleClient from 'People/PeopleClient';
 import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {Person} from 'Types/Person';
 
 import './ReassignedDrawer.scss';
 

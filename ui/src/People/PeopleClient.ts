@@ -16,10 +16,10 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {Person} from './Person';
 import {getToken} from '../Auth/TokenProvider';
 import {Space} from 'Types/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {Person} from '../Types/Person';
 
 class PeopleClient {
 

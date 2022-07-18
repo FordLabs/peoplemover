@@ -28,7 +28,7 @@ import {
     isProductMatchingSelectedFilters,
     stripAssignmentsForArchivedPeople,
 } from '../Products/ProductService';
-import {isPersonMatchingSelectedFilters} from '../People/Person';
+import {isPersonMatchingSelectedFilters} from '../People/PersonService';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState, UnassignedProductSelector} from '../State/ProductsState';

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import {Person} from 'People/Person';
 import {Assignment} from 'Assignments/Assignment';
 import {LocationTag, RoleTag, Tag} from 'Types/Tags';
 import {Space} from 'Types/Space';
@@ -23,6 +22,7 @@ import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 import {LocalStorageFilters} from 'SortingAndFiltering/FilterLibraries';
 import {Color} from 'Types/Color';
 import {Product} from 'Types/Product';
+import {Person} from 'Types/Person';
 
 const originDateString = '2019-01-01';
 

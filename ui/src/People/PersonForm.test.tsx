@@ -25,13 +25,14 @@ import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
 import {TagRequest} from '../Types/TagRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
-import {emptyPerson, Person} from './Person';
+import {emptyPerson} from './PersonService';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import moment from 'moment';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {MutableSnapshot} from 'recoil';
+import {Person} from '../Types/Person';
 
 declare let window: MatomoWindow;
 

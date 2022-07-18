@@ -19,8 +19,8 @@ import Axios from 'axios';
 import PeopleClient from './PeopleClient';
 import TestData from '../Utils/TestData';
 import Cookies from 'universal-cookie';
-import {Person} from './Person';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {Person} from '../Types/Person';
 
 jest.mock('axios');
 
