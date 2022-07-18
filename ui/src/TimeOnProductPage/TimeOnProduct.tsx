@@ -17,21 +17,22 @@
 
 import React, {useEffect, useState} from 'react';
 
-import {Product, UNASSIGNED} from 'Products/Product';
-import {calculateDuration} from '../Assignments/Assignment';
-import HeaderContainer from '../Header/HeaderContainer';
-import SubHeader from '../Header/SubHeader';
+import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
+import {Assignment, calculateDuration} from 'Assignments/Assignment';
+import HeaderContainer from 'Header/HeaderContainer';
+import SubHeader from 'Header/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import Modal from 'Modal/Modal';
-import useFetchCurrentSpace from '../Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
+import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
+import {useParams} from 'react-router-dom';
+import {Product} from 'Types/Product';
 
 import './TimeOnProduct.scss';
-import {useParams} from 'react-router-dom';
 
 export const LOADING = 'Loading...';
 
@@ -47,7 +48,7 @@ export interface TimeOnProductItem {
 export const generateTimeOnProductItems = (products: Product[], viewingDate: Date): TimeOnProductItem[] => {
     const timeOnProductItem: TimeOnProductItem[] = [];
     products.forEach(product => {
-        const productName = product.name === UNASSIGNED ? 'Unassigned' : product.name;
+        const productName = product.name === UNASSIGNED_PRODUCT_NAME ? 'Unassigned' : product.name;
         product.assignments.forEach(assignment => {
             timeOnProductItem.push({
                 personName: assignment.person.name,
@@ -105,7 +106,7 @@ function TimeOnProduct(): JSX.Element {
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
         const product = products.find(item => timeOnProductItem.productName.toLowerCase() === item.name.toLowerCase());
-        const assignment = product?.assignments.find(item => timeOnProductItem.assignmentId === item.id);
+        const assignment = product?.assignments.find((item: Assignment) => timeOnProductItem.assignmentId === item.id);
         if (assignment) {
             setModalContents({
                 title: 'Edit Person',

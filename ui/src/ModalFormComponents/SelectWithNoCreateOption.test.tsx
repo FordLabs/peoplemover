@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,10 +18,10 @@
 import {render, screen} from '@testing-library/react';
 import SelectWithNoCreateOption from './SelectWithNoCreateOption';
 import React from 'react';
-import {Product} from '../Products/Product';
 import TestData from '../Utils/TestData';
 import {noop} from '@babel/types';
 import selectEvent from 'react-select-event';
+import {Product} from '../Types/Product';
 
 describe('SelectWithNoCreateOption (Multi-select)', () => {
     const initiallySelectedProducts: Product[] = [

@@ -20,10 +20,10 @@ import TestData from '../Utils/TestData';
 import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
-import {Product} from '../Products/Product';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {renderWithRecoil} from '../Utils/TestUtils';
+import {Product} from '../Types/Product';
 
 const product: Product = {
     id: 1,

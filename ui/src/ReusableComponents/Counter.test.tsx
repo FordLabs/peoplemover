@@ -20,10 +20,10 @@ import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import Counter from './Counter';
 import {screen} from '@testing-library/react';
-import {Product} from '../Products/Product';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
+import {Product} from '../Types/Product';
 
 describe('Counter', () => {
     it('should display the number of products and people when no filter are applied and ignore archived products', async () => {

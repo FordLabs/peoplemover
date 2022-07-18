@@ -18,7 +18,7 @@
 import React from 'react';
 import './PersonDrawer.scss';
 import './UnassignedDrawer.scss';
-import {stripAssignmentsForArchivedPeople} from '../Products/Product';
+import {stripAssignmentsForArchivedPeople} from '../Products/ProductService';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
 import ProductCard from '../Products/ProductCard';
 import {useRecoilState, useRecoilValue} from 'recoil';

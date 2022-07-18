@@ -22,7 +22,6 @@ import ProductClient from './ProductClient';
 import TestUtils, {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import {Product} from './Product';
 import {Person} from '../People/Person';
 import LocationClient from '../Locations/LocationClient';
 import selectEvent from 'react-select-event';
@@ -30,6 +29,7 @@ import moment from 'moment';
 import ProductCard from './ProductCard';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {Product} from '../Types/Product';
 
 jest.mock('./ProductClient');
 jest.mock('Space/SpaceClient');

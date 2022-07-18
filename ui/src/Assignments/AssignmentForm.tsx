@@ -20,7 +20,6 @@ import moment from 'moment';
 import AssignmentClient from 'Assignments/AssignmentClient';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from 'ModalFormComponents/SelectWithNoCreateOption';
 import {Person} from 'People/Person';
-import {Product} from 'Products/Product';
 import {Option} from 'CommonTypes/Option';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
@@ -35,6 +34,7 @@ import PersonForm from 'People/PersonForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 import './AssignmentForm.scss';
+import {Product} from '../Types/Product';
 
 interface Props {
     initiallySelectedProduct: Product;

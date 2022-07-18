@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,27 +15,11 @@
  * limitations under the License.
  */
 
-import {LocationTag, Tag} from 'Types/Tags';
-import {Assignment} from '../Assignments/Assignment';
 import moment from 'moment';
-import {isArchived} from '../People/Person';
+import {isArchived} from 'People/Person';
+import {Product} from 'Types/Product';
 
-export const UNASSIGNED = 'unassigned';
-
-export interface Product {
-    id: number;
-    name: string;
-    spaceUuid: string;
-    startDate?: string;
-    endDate?: string;
-    dorf?: string;
-    spaceLocation?: LocationTag;
-    tags: Array<Tag>;
-    archived: boolean;
-    notes?: string;
-    url?: string;
-    assignments: Array<Assignment>;
-}
+export const UNASSIGNED_PRODUCT_NAME = 'unassigned';
 
 export function emptyProduct(spaceUuid?: string): Product {
     return {

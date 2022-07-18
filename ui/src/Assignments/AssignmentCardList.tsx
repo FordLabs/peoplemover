@@ -17,7 +17,7 @@
 
 import React, {RefObject, useCallback, useRef, useState} from 'react';
 import AssignmentCard from 'Assignments/AssignmentCard';
-import {isUnassignedProduct, Product} from 'Products/Product';
+import {isUnassignedProduct} from 'Products/ProductService';
 import {Assignment} from './Assignment';
 import {
     getLocalStorageFiltersByType,
@@ -29,6 +29,7 @@ import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 import {Draggable, Droppable} from 'react-beautiful-dnd';
 import {useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {Product} from '../Types/Product';
 
 import '../Products/Product.scss';
 

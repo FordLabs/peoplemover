@@ -17,8 +17,8 @@
 
 import {RoleTag, Tag} from 'Types/Tags';
 import moment from 'moment';
-import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';
+import {Product} from '../Types/Product';
 
 export interface Person {
     id: number;

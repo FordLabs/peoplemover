@@ -21,7 +21,7 @@ import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived, Person} from './Person';
-import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
+import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
@@ -47,9 +47,10 @@ import {PeopleState} from '../State/PeopleState';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {ModalContentsState} from '../State/ModalContentsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {RoleTagRequest} from 'Types/TagRequest';
+import {Product} from 'Types/Product';
 
 import './PersonForm.scss';
-import {RoleTagRequest} from '../Types/TagRequest';
 
 interface Props {
     isEditPersonForm: boolean

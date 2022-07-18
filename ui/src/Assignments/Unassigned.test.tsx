@@ -19,7 +19,6 @@ import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {Product} from '../Products/Product';
 import UnassignedDrawer from './UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
 import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
@@ -27,6 +26,7 @@ import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
 import {ProductTagsState} from 'State/ProductTagsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Product} from '../Types/Product';
 
 jest.mock('Products/ProductClient');
 jest.mock('Space/SpaceClient');

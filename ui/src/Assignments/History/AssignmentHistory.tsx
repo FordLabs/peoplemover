@@ -19,17 +19,16 @@ import moment from 'moment';
 import {Assignment, didAssignmentEndInThePast, getDurationWithRespectToToday} from '../Assignment';
 import React, {useEffect, useState} from 'react';
 import {Person} from '../../People/Person';
-import {Product} from '../../Products/Product';
 import AssignmentClient from '../AssignmentClient';
 import ProductClient from '../../Products/ProductClient';
 import './AssignmentHistory.scss';
+import {Product} from '../../Types/Product';
 
 interface AssignmentHistoryProps {
     person: Person;
 }
 
 export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element {
-
     const [products, setProducts] = useState<Array<Product>>([]);
     const [assignments, setAssignments] = useState<Array<Assignment>>([]);
     const [isShowing, setIsShowing] = useState<boolean>(false);
@@ -118,7 +117,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     const generateTableRows = (inputAssignments: Array<Assignment>): Array<JSX.Element> => {
         const assignmentHistoryRows: Array<JSX.Element> = [];
         inputAssignments.forEach(
-            (assignment, index) => {
+            (assignment) => {
                 if (assignment && moment(assignment.startDate).isBefore(moment())) {
                     assignmentHistoryRows.push(
                         generateTableRow(assignment),

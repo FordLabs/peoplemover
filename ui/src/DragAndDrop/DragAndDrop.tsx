@@ -24,9 +24,9 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import moment from 'moment';
 import {Assignment} from '../Assignments/Assignment';
-import {Product} from '../Products/Product';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import useFetchProducts from '../Hooks/useFetchProducts/useFetchProducts';
+import {Product} from '../Types/Product';
 
 type Props = {};
 

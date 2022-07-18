@@ -16,18 +16,19 @@
  */
 
 import React from 'react';
-import {emptyProduct, Product} from './Product';
+import {emptyProduct} from './ProductService';
 import NewProductButton from './NewProductButton';
 import {useRecoilValue} from 'recoil';
 
-import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
-import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
+import {ProductCardArray} from 'ReusableComponents/ProductCardArray';
+import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
 import {LocationsState} from 'State/LocationsState';
 import {ProductTagsState} from 'State/ProductTagsState';
-import {ModalContents} from '../State/ModalContentsState';
+import {ModalContents} from 'State/ModalContentsState';
 import ProductForm from './ProductForm';
-import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
 import {Tag} from 'Types/Tags';
+import {Product} from 'Types/Product';
 
 import './ProductListGrouped.scss';
 

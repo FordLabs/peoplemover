@@ -24,7 +24,7 @@ import TimeOnProduct, {
     TimeOnProductItem,
 } from './TimeOnProduct';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
-import {Product, UNASSIGNED} from '../Products/Product';
+import {UNASSIGNED_PRODUCT_NAME} from '../Products/ProductService';
 import {cleanup, screen, waitFor} from '@testing-library/react';
 import {fireEvent} from '@testing-library/dom';
 import {MutableSnapshot} from 'recoil';
@@ -39,6 +39,7 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import SpaceClient from '../Space/SpaceClient';
 import {Space} from 'Types/Space';
 import {renderWithRecoil} from '../Utils/TestUtils';
+import {Product} from '../Types/Product';
 
 const mockedUsedNavigate = jest.fn();
 
@@ -134,7 +135,7 @@ describe('TimeOnProduct', () => {
         it('should return an array of TimeOnProductItem objects', () => {
             const unassignedProduct: Product = {
                 id: 999,
-                name: UNASSIGNED,
+                name: UNASSIGNED_PRODUCT_NAME,
                 spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
                 assignments: [TestData.assignmentForUnassigned, TestData.assignmentForUnassignedNoRole],
                 startDate: '',

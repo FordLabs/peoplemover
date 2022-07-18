@@ -18,7 +18,7 @@
 import React from 'react';
 import {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {emptyProduct, Product} from './Product';
+import {emptyProduct} from './ProductService';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
@@ -28,6 +28,7 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Product} from '../Types/Product';
 
 declare let window: MatomoWindow;
 

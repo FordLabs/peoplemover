@@ -24,12 +24,12 @@ import LocationClient from '../Locations/LocationClient';
 import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
 import ProductClient from '../Products/ProductClient';
 import selectEvent from 'react-select-event';
-import {Product} from './Product';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {MutableSnapshot} from 'recoil';
+import {Product} from '../Types/Product';
 
 jest.mock('Locations/LocationClient');
 jest.mock('Products/ProductClient');

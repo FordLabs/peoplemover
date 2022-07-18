@@ -18,7 +18,7 @@
 import React, {useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
-import {isUnassignedProduct, Product} from './Product';
+import {isUnassignedProduct} from './ProductService';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 
 import moment from 'moment';
@@ -39,6 +39,7 @@ import ProductForm from './ProductForm';
 import AssignmentForm from '../Assignments/AssignmentForm';
 
 import './Product.scss';
+import {Product} from '../Types/Product';
 
 export const PRODUCT_URL_CLICKED = 'productUrlClicked';
 
