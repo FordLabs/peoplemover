@@ -16,11 +16,11 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {Tag} from '../Tag';
-import {TagRequest} from '../TagRequest.interface';
-import {TagClient} from '../TagClient.interface';
+import {Tag} from 'Types/Tag';
+import {TagRequest} from '../../Types/TagRequest';
+import {TagClient} from '../../Types/TagClient';
 import {getToken} from '../../Auth/TokenProvider';
-import {Space} from '../../Space/Space';
+import {Space} from 'Types/Space';
 import MatomoEvents from '../../Matomo/MatomoEvents';
 
 class ProductTagClient implements TagClient {

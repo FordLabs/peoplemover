@@ -17,12 +17,12 @@
 
 import React, {useState} from 'react';
 import DrawerContainer from '../ReusableComponents/DrawerContainer';
-import {Person} from './Person';
 import moment from 'moment';
 import PersonCard from './PersonCard';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {PeopleState} from '../State/PeopleState';
+import {Person} from '../Types/Person';
 
 function ArchivedPersonDrawer(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
@@ -30,7 +30,7 @@ function ArchivedPersonDrawer(): JSX.Element {
 
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
-    const getArchivedPeople = (): Array<Person> => {
+    const getArchivedPeople = (): Person[] => {
         return people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment(viewingDate)));
     };
 

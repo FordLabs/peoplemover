@@ -19,11 +19,8 @@ import React, {FormEvent, useState} from 'react';
 import moment from 'moment';
 import AssignmentClient from 'Assignments/AssignmentClient';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from 'ModalFormComponents/SelectWithNoCreateOption';
-import {Person} from 'People/Person';
-import {Product} from 'Products/Product';
-import {Option} from 'CommonTypes/Option';
+import {Option} from 'Types/Option';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
-import {Assignment} from './Assignment';
 import FormButton from 'ModalFormComponents/FormButton';
 import SelectWithCreateOption, {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
@@ -33,8 +30,11 @@ import {PeopleState} from 'State/PeopleState';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Product} from '../Types/Product';
+import {Person} from '../Types/Person';
 
 import './AssignmentForm.scss';
+import {Assignment} from '../Types/Assignment';
 
 interface Props {
     initiallySelectedProduct: Product;

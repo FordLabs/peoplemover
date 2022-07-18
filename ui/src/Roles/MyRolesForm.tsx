@@ -17,9 +17,9 @@
 
 import React, {useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
-import {Color} from 'Roles/RoleTag.interface';
 import ColorClient from 'Roles/ColorClient';
 import RoleTags from 'Roles/RoleTags';
+import {Color} from 'Types/Color';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
 

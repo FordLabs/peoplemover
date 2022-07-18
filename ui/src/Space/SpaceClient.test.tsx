@@ -18,10 +18,10 @@
 import Axios from 'axios';
 import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
-import {createEmptySpace} from './Space';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {createEmptySpace} from 'Types/Space';
+import {MatomoWindow} from '../Types/MatomoWindow';
 import TestData from '../Utils/TestData';
-import {UserSpaceMapping} from './UserSpaceMapping';
+import {UserSpaceMapping} from '../Types/UserSpaceMapping';
 
 declare let window: MatomoWindow;
 

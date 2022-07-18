@@ -20,14 +20,11 @@ import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
-import {emptyPerson, isArchived, Person} from './Person';
-import {RoleTag} from '../Roles/RoleTag.interface';
-import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
+import {emptyPerson, isArchived} from './PersonService';
+import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
-import {Option} from '../CommonTypes/Option';
-import {Assignment} from '../Assignments/Assignment';
-import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
+import {Option} from '../Types/Option';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
@@ -37,7 +34,7 @@ import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import FormTagsField from '../ReusableComponents/FormTagsField';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
-import {Tag} from '../Tags/Tag';
+import {RoleTag, Tag} from 'Types/Tag';
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
@@ -49,6 +46,10 @@ import {PeopleState} from '../State/PeopleState';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {ModalContentsState} from '../State/ModalContentsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {RoleTagRequest} from 'Types/TagRequest';
+import {Product} from 'Types/Product';
+import {Person} from '../Types/Person';
+import {Assignment} from '../Types/Assignment';
 
 import './PersonForm.scss';
 
@@ -125,7 +126,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         return -1;
     };
 
-    const createProductsFromAssignments = (assignments: Array<Assignment>): Array<Product> => {
+    const createProductsFromAssignments = (assignments: Assignment[]): Product[] => {
         const allProductIdsFromAssignments = assignments.map(a => a.productId);
         return products.filter(p => allProductIdsFromAssignments.includes(p.id)).filter(product => product.id !== getUnassignedProductId());
     };
@@ -273,7 +274,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
 
     const handleCreateRole = (inputValue: string): void => {
         setIsLoading(true);
-        const roleAddRequest: RoleAddRequest = {name: inputValue};
+        const roleAddRequest: RoleTagRequest = {name: inputValue};
         RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
             const newRole: RoleTag = response.data;
             fetchRoles();

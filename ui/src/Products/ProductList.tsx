@@ -16,7 +16,7 @@
  */
 
 import React, {useCallback, useState} from 'react';
-import {isActiveProduct, isProductMatchingSelectedFilters, Product} from './Product';
+import {isActiveProduct, isProductMatchingSelectedFilters} from './ProductService';
 import GroupedByList from './ProductListGrouped';
 import SortedByList from './ProductListSorted';
 import {useRecoilValue} from 'recoil';
@@ -29,6 +29,7 @@ import {
     productTagsFilterKey,
 } from '../SortingAndFiltering/FilterLibraries';
 import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
+import {Product} from '../Types/Product';
 
 function ProductList(): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);

@@ -23,13 +23,14 @@ import PersonForm from '../People/PersonForm';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
-import {emptyPerson, Person} from './Person';
+import {emptyPerson} from './PersonService';
 import moment from 'moment';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Person} from '../Types/Person';
 
 declare let window: MatomoWindow;
 

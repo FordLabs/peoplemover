@@ -16,20 +16,21 @@
  */
 
 import React from 'react';
-import {emptyProduct, Product} from './Product';
+import {emptyProduct} from './ProductService';
 import NewProductButton from './NewProductButton';
-import {TagInterface} from '../Tags/Tag.interface';
 import {useRecoilValue} from 'recoil';
 
-import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
-import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
+import {ProductCardArray} from 'ReusableComponents/ProductCardArray';
+import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
 import {LocationsState} from 'State/LocationsState';
 import {ProductTagsState} from 'State/ProductTagsState';
-import {ModalContents} from '../State/ModalContentsState';
+import {ModalContents} from 'State/ModalContentsState';
 import ProductForm from './ProductForm';
+import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
+import {Tag} from 'Types/Tag';
+import {Product} from 'Types/Product';
 
 import './ProductListGrouped.scss';
-import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 interface GroupedByListProps {
     products: Array<Product>;
@@ -37,7 +38,7 @@ interface GroupedByListProps {
 
 interface GroupedListDataProps {
     traitTitle: string;
-    traits: Array<TagInterface>;
+    traits: Array<Tag>;
     filterByTraitFunction: (product: Product, tagName: string) => boolean;
     filterByNoTraitFunction: (product: Product) => boolean;
 }
@@ -110,7 +111,7 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
 
     return (
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
-            {productGroupList.traits.map((trait: TagInterface) => {
+            {productGroupList.traits.map((trait: Tag) => {
                 const newProduct = emptyProduct(uuid);
                 if (productSortBy === ProductSortBy.LOCATION) {
                     newProduct.spaceLocation = {...trait}

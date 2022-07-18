@@ -25,16 +25,16 @@ import {
     locationTagsFilterKey,
     setLocalStorageFiltersByType,
 } from '../FilterLibraries';
-import {FilterOption} from '../../CommonTypes/Option';
-import {TagInterface} from '../../Tags/Tag.interface';
+import {FilterOption} from '../../Types/Option';
 import Filter from '../Filter';
+import {LocationTag} from '../../Types/Tag';
 
 function ProductLocationFilter() {
     const productLocations = useRecoilValue(LocationsState);
 
     const getFilterOptions = useCallback((): Array<FilterOption> => {
         const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(locationTagsFilterKey);
-        return productLocations.map((tag: TagInterface): FilterOption => ({
+        return productLocations.map((tag: LocationTag): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: selectedRolesFromLocalStorage.includes(tag.name),

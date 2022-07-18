@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,12 +16,11 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {RoleAddRequest} from './RoleAddRequest.interface';
-import {RoleEditRequest} from './RoleEditRequest.interface';
-import {TagClient} from '../Tags/TagClient.interface';
+import {TagClient} from '../Types/TagClient';
 import {getToken} from '../Auth/TokenProvider';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
+import {RoleTagRequest} from '../Types/TagRequest';
 
 class RoleClient implements TagClient {
     private getBaseRolesUrl(spaceUuid: string): string {
@@ -40,7 +39,7 @@ class RoleClient implements TagClient {
         return Axios.get(url, config);
     }
 
-    async add(role: RoleAddRequest, space: Space): Promise<AxiosResponse> {
+    async add(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = this.getBaseRolesUrl(space.uuid!);
         const config = {
@@ -59,7 +58,7 @@ class RoleClient implements TagClient {
         });
     }
 
-    async edit(role: RoleEditRequest, space: Space): Promise<AxiosResponse> {
+    async edit(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const url = `${this.getBaseRolesUrl(space.uuid!)}/${role.id}`;
         const config = {

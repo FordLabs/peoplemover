@@ -22,7 +22,7 @@ import {renderWithRecoil} from '../Utils/TestUtils';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Space/SpaceClient';
 import moment from 'moment';
-import {createEmptySpace, Space} from '../Space/Space';
+import {createEmptySpace, Space} from 'Types/Space';
 import {MemoryRouter} from 'react-router-dom';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import {ViewingDateState} from '../State/ViewingDateState';

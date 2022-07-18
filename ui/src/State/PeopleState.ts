@@ -16,7 +16,7 @@
 */
 
 import {atom} from 'recoil';
-import {Person} from '../People/Person';
+import {Person} from 'Types/Person';
 
 export const PeopleState = atom<Person[]>({
     key: 'PeopleState',

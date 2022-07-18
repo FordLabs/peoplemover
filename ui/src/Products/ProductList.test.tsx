@@ -17,16 +17,16 @@
 
 import React from 'react';
 import {screen} from '@testing-library/react';
-import TestData from '../Utils/TestData';
+import TestData from 'Utils/TestData';
 import ProductList from './ProductList';
-import {Product} from './Product';
-import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from 'SortingAndFiltering/FilterLibraries';
 import {MutableSnapshot} from 'recoil';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {ProductsState} from '../State/ProductsState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {ProductTagsState} from '../State/ProductTagsState';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import {ProductsState} from 'State/ProductsState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {ProductTagsState} from 'State/ProductTagsState';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import {Product} from 'Types/Product';
 
 describe('Product List', () => {
     beforeEach(() => {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,12 +16,14 @@
  */
 
 import moment from 'moment';
-import {Assignment, didAssignmentEndInThePast, getDurationWithRespectToToday} from '../Assignment';
+import {didAssignmentEndInThePast, getDurationWithRespectToToday} from '../AssignmentService';
 import React, {useEffect, useState} from 'react';
-import {Person} from '../../People/Person';
-import {Product} from '../../Products/Product';
 import AssignmentClient from '../AssignmentClient';
-import ProductClient from '../../Products/ProductClient';
+import ProductClient from 'Products/ProductClient';
+import {Product} from 'Types/Product';
+import {Person} from 'Types/Person';
+import {Assignment} from 'Types/Assignment';
+
 import './AssignmentHistory.scss';
 
 interface AssignmentHistoryProps {
@@ -29,9 +31,8 @@ interface AssignmentHistoryProps {
 }
 
 export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element {
-
-    const [products, setProducts] = useState<Array<Product>>([]);
-    const [assignments, setAssignments] = useState<Array<Assignment>>([]);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [isShowing, setIsShowing] = useState<boolean>(false);
 
     useEffect(() => {
@@ -118,7 +119,7 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     const generateTableRows = (inputAssignments: Array<Assignment>): Array<JSX.Element> => {
         const assignmentHistoryRows: Array<JSX.Element> = [];
         inputAssignments.forEach(
-            (assignment, index) => {
+            (assignment) => {
                 if (assignment && moment(assignment.startDate).isBefore(moment())) {
                     assignmentHistoryRows.push(
                         generateTableRow(assignment),

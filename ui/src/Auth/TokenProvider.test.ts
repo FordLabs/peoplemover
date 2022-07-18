@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import {getUserNameFromAccessToken} from './TokenProvider';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 
 declare let window: MatomoWindow;
 

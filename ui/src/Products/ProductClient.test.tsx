@@ -16,11 +16,11 @@
  */
 
 import ProductClient from './ProductClient';
-import {Product} from './Product';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 import TestData from '../Utils/TestData';
 import Cookies from 'universal-cookie';
 import Axios from 'axios';
+import {Product} from '../Types/Product';
 
 jest.mock('axios');
 declare let window: MatomoWindow;

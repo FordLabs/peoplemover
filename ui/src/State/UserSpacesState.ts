@@ -16,7 +16,7 @@
 */
 
 import {atom} from 'recoil';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 
 export const UserSpacesState = atom<Space[]>({
     key: 'UserSpacesState',

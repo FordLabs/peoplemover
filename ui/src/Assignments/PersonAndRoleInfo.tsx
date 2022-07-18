@@ -16,11 +16,12 @@
  */
 
 import React, {ReactElement, useState} from 'react';
-import {isArchived, Person} from '../People/Person';
 import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {IsDraggingState} from '../State/IsDraggingState';
+import {isArchived} from 'People/PersonService';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import {IsDraggingState} from 'State/IsDraggingState';
+import {Person} from 'Types/Person';
 
 import './PersonAndRoleInfo.scss';
 

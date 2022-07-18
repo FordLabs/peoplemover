@@ -16,16 +16,16 @@
  */
 
 import {JSX} from '@babel/types';
-import {Option} from '../CommonTypes/Option';
-import LocationClient from '../Locations/LocationClient';
+import {Option} from 'Types/Option';
+import LocationClient from 'Locations/LocationClient';
 import {AxiosResponse} from 'axios';
-import {LocationTag} from '../Locations/LocationTag.interface';
 import React, {useEffect, useState} from 'react';
-import {Product} from './Product';
-import {TagRequest} from '../Tags/TagRequest.interface';
-import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
+import {TagRequest} from 'Types/TagRequest';
+import SelectWithCreateOption, {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
 import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
+import {LocationTag} from 'Types/Tag';
+import {Product} from 'Types/Product';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };

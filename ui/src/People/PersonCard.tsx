@@ -17,12 +17,12 @@
 
 import React from 'react';
 import {createDataTestId} from 'Utils/ReactUtils';
-import {Person} from './Person';
 import PersonAndRoleInfo from 'Assignments/PersonAndRoleInfo';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import PersonForm from './PersonForm';
 import {ModalContentsState} from 'State/ModalContentsState';
+import {Person} from '../Types/Person';
 
 import '../Styles/Main.scss';
 import './PersonCard.scss';

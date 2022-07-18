@@ -18,17 +18,23 @@
 import React, {useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import DrawerContainer from 'ReusableComponents/DrawerContainer';
-import {Reassignment} from './Reassignment';
 import AssignmentClient from 'Assignments/AssignmentClient';
-import {isArchived, Person} from 'People/Person';
+import {isArchived} from 'People/PersonService';
 import MatomoEvents from 'Matomo/MatomoEvents';
 import PeopleClient from 'People/PeopleClient';
 import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {Person} from 'Types/Person';
 
 import './ReassignedDrawer.scss';
+
+interface Reassignment {
+    person: Person;
+    originProductName?: string;
+    destinationProductName: string;
+}
 
 function ReassignedDrawer(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
@@ -39,7 +45,7 @@ function ReassignedDrawer(): JSX.Element {
     const { fetchPeople } = useFetchPeople(uuid);
 
     const [showDrawer, setShowDrawer] = useState(true);
-    const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
+    const [reassignments, setReassignments] = useState<Reassignment[]>([]);
 
     /* eslint-disable */
     useEffect(() => {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,12 @@
  * limitations under the License.
  */
 
-import {TagInterface} from '../Tags/Tag.interface';
-
-export type LocationTag = TagInterface;
+export interface Report {
+    boardName: string;
+    productName: string;
+    productLocation: string;
+    productTags: Array<string>;
+    personName: string;
+    personRole: string;
+    personTags: Array<string>;
+}

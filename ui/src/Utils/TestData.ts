@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 
-import {Person} from '../People/Person';
-import {Assignment} from '../Assignments/Assignment';
-import {Product} from '../Products/Product';
-import {Tag} from '../Tags/Tag';
-import {Color, RoleTag} from '../Roles/RoleTag.interface';
-import {LocationTag} from '../Locations/LocationTag.interface';
-import {Space} from '../Space/Space';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
+import {LocationTag, RoleTag, Tag} from 'Types/Tag';
+import {Space} from 'Types/Space';
+import {UserSpaceMapping} from 'Types/UserSpaceMapping';
+import {LocalStorageFilters} from 'SortingAndFiltering/FilterLibraries';
+import {Color} from 'Types/Color';
+import {Product} from 'Types/Product';
+import {Person} from 'Types/Person';
+import {Assignment} from '../Types/Assignment';
 
 const originDateString = '2019-01-01';
 

@@ -17,18 +17,19 @@
 
 import React, {RefObject, useCallback, useRef, useState} from 'react';
 import AssignmentCard from 'Assignments/AssignmentCard';
-import {isUnassignedProduct, Product} from 'Products/Product';
-import {Assignment} from './Assignment';
+import {isUnassignedProduct} from 'Products/ProductService';
 import {
     getLocalStorageFiltersByType,
     personTagsFilterKey,
     roleTagsFilterKey,
 } from '../SortingAndFiltering/FilterLibraries';
-import {isPersonMatchingSelectedFilters} from 'People/Person';
+import {isPersonMatchingSelectedFilters} from 'People/PersonService';
 import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 import {Draggable, Droppable} from 'react-beautiful-dnd';
 import {useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {Product} from '../Types/Product';
+import {Assignment} from '../Types/Assignment';
 
 import '../Products/Product.scss';
 

@@ -15,10 +15,16 @@
  * limitations under the License.
  */
 
-import {Person} from '../People/Person';
+import {Color} from './Color';
 
-export interface Reassignment {
-    person: Person;
-    originProductName?: string;
-    destinationProductName: string;
+export interface Tag {
+    id: number;
+    name: string;
+    spaceUuid: string;
+}
+export type PersonTag = Tag;
+export type ProductTag = Tag;
+export type LocationTag = Tag;
+export interface RoleTag extends Tag {
+    color?: Color;
 }

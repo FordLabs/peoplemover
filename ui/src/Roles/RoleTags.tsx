@@ -16,9 +16,7 @@
  */
 
 import {JSX} from '@babel/types';
-import {Color, RoleTag} from './RoleTag.interface';
 import React, {useState} from 'react';
-import {TagInterface} from '../Tags/Tag.interface';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import RoleClient from './RoleClient';
 import {createDataTestId} from '../Utils/ReactUtils';
@@ -26,10 +24,12 @@ import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import {INACTIVE_EDIT_STATE_INDEX} from '../Tags/MyTagsForm';
-import {RoleEditRequest} from './RoleEditRequest.interface';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Color} from '../Types/Color';
+import {RoleTag} from '../Types/Tag';
+import {RoleTagRequest} from '../Types/TagRequest';
 
 interface Props {
     colors: Array<Color>;
@@ -45,7 +45,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
-    const showDeleteConfirmationModal = (roleToDelete: TagInterface): void => {
+    const showDeleteConfirmationModal = (roleToDelete: RoleTag): void => {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteRole(roleToDelete),
             close: () => setConfirmDeleteModal(null),
@@ -59,7 +59,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
         setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
     };
 
-    const editRole = async (role: RoleEditRequest): Promise<unknown> => {
+    const editRole = async (role: RoleTagRequest): Promise<unknown> => {
         return await RoleClient.edit(role, currentSpace)
             .then((response) => {
                 fetchRoles();
@@ -67,7 +67,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
             });
     };
 
-    const addRole = async (role: RoleEditRequest): Promise<unknown> => {
+    const addRole = async (role: RoleTagRequest): Promise<unknown> => {
         const newRole = {
             name: role.name,
             colorId: role.colorId,
@@ -79,7 +79,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
             });
     };
 
-    const deleteRole = async (roleToDelete: TagInterface): Promise<void> => {
+    const deleteRole = async (roleToDelete: RoleTag): Promise<void> => {
         try {
             if (currentSpace.uuid) {
                 await RoleClient.delete(roleToDelete.id, currentSpace);
@@ -97,7 +97,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
 
     const showEditState = (index: number): boolean => editRoleIndex === index;
 
-    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleEditRequest => {
+    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleTagRequest => {
         return {id: role.id, name: role.name, colorId: role.color?.id};
     };
 

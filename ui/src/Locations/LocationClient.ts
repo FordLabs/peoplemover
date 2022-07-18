@@ -16,12 +16,12 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {LocationTag} from './LocationTag.interface';
-import {TagRequest} from '../Tags/TagRequest.interface';
-import {TagClient} from '../Tags/TagClient.interface';
+import {TagRequest} from '../Types/TagRequest';
+import {TagClient} from '../Types/TagClient';
 import {getToken} from '../Auth/TokenProvider';
-import {Space} from '../Space/Space';
+import {Space} from 'Types/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
+import {LocationTag} from '../Types/Tag';
 
 class LocationClient implements TagClient {
     private getBaseLocationsUrl(spaceUuid: string): string {

@@ -22,8 +22,8 @@ import {
     reactSelectStyles,
 } from '../ModalFormComponents/ReactSelectStyles';
 import React, {CSSProperties, useState} from 'react';
-import {Space} from '../Space/Space';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
+import {Space} from 'Types/Space';
+import {UserSpaceMapping} from '../Types/UserSpaceMapping';
 
 import './UserAccessList.scss';
 import SpaceClient from '../Space/SpaceClient';

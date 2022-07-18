@@ -19,8 +19,8 @@ import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import RoleClient from 'Roles/RoleClient';
 import {RolesState} from 'State/RolesState';
-import {RoleTag} from 'Roles/RoleTag.interface';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
+import {RoleTag} from '../../Types/Tag';
 
 interface UseFetchRoles {
     roles: RoleTag[];

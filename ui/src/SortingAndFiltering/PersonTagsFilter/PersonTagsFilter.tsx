@@ -16,25 +16,25 @@
  */
 
 import React, {useCallback, useEffect, useState} from 'react';
-import {FilterOption} from '../../CommonTypes/Option';
+import {FilterOption} from '../../Types/Option';
 import {
     FilterTypeListings,
     getLocalStorageFiltersByType,
     personTagsFilterKey,
     setLocalStorageFiltersByType,
 } from '../FilterLibraries';
-import {TagInterface} from '../../Tags/Tag.interface';
 import {useRecoilValue} from 'recoil';
 import {PersonTagsState} from '../../State/PersonTagsState';
 import Filter from '../Filter';
 import MyTagsForm from '../../Tags/MyTagsForm';
+import {PersonTag} from '../../Types/Tag';
 
 function PersonTagsFilter() {
     const personTags = useRecoilValue(PersonTagsState);
 
     const getFilterOptions = useCallback((): Array<FilterOption> => {
         const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(personTagsFilterKey);
-        return personTags.map((tag: TagInterface): FilterOption => ({
+        return personTags.map((tag: PersonTag): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: selectedRolesFromLocalStorage.includes(tag.name),

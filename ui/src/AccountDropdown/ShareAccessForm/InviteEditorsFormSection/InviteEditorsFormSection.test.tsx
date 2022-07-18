@@ -23,7 +23,7 @@ import {fireEvent, screen, waitFor, within} from '@testing-library/react';
 import Cookies from 'universal-cookie';
 import SpaceClient from 'Space/SpaceClient';
 import RedirectClient from 'Utils/RedirectClient';
-import {Space} from 'Space/Space';
+import {Space} from 'Types/Space';
 import {CurrentUserState} from 'State/CurrentUserState';
 import {CurrentSpaceState} from '../../../State/CurrentSpaceState';
 

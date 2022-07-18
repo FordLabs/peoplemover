@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import {Option} from '../CommonTypes/Option';
-import {Tag} from '../Tags/Tag';
+import {Option} from '../Types/Option';
+import {Tag} from 'Types/Tag';
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {AxiosResponse} from 'axios';
 import {useOnLoad} from './UseOnLoad';
-import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagRequest} from '../Types/TagRequest';
 import SelectWithCreateOption, {Metadata} from '../ModalFormComponents/SelectWithCreateOption';
-import {TagClient} from '../Tags/TagClient.interface';
+import {TagClient} from '../Types/TagClient';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 

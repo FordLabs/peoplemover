@@ -20,7 +20,7 @@ import {useCallback} from 'react';
 import {useNavigate} from 'react-router-dom';
 import SpaceClient from '../../Space/SpaceClient';
 import {CurrentSpaceState} from '../../State/CurrentSpaceState';
-import {Space} from '../../Space/Space';
+import {Space} from 'Types/Space';
 import {AxiosError} from 'axios';
 
 const BAD_REQUEST = 400;

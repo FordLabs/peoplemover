@@ -15,20 +15,20 @@
 * limitations under the License.
 */
 
-import {atom, selector} from 'recoil';
-import {Product} from '../Types/Product';
+import {LocationTag, Tag} from './Tag';
+import {Assignment} from './Assignment';
 
-export const ProductsState = atom<Product[]>({
-    key: 'ProductsState',
-    default: [],
-});
-
-export const UnassignedProductSelector = selector<Product>({
-    key: 'UnassignedProductSelector',
-    get: ({get}) => {
-        const products = get(ProductsState);
-        if (!products.length) return {} as Product;
-        const unassignedProducts = products.filter(product => product.name === 'unassigned');
-        return unassignedProducts.length === 1 ? unassignedProducts[0] : {} as Product;
-    }
-})
+export interface Product {
+    id: number;
+    name: string;
+    spaceUuid: string;
+    startDate?: string;
+    endDate?: string;
+    dorf?: string;
+    spaceLocation?: LocationTag;
+    tags: Array<Tag>;
+    archived: boolean;
+    notes?: string;
+    url?: string;
+    assignments: Assignment[];
+}

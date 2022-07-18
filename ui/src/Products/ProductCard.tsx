@@ -18,7 +18,7 @@
 import React, {useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 import ProductClient from './ProductClient';
-import {isUnassignedProduct, Product} from './Product';
+import {isUnassignedProduct} from './ProductService';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 
 import moment from 'moment';
@@ -28,7 +28,7 @@ import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
-import {getAssignments, Person} from '../People/Person';
+import {getAssignments} from '../People/PersonService';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
@@ -37,6 +37,8 @@ import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from '../State/ModalContentsState';
 import ProductForm from './ProductForm';
 import AssignmentForm from '../Assignments/AssignmentForm';
+import {Product} from 'Types/Product';
+import {Person} from 'Types/Person';
 
 import './Product.scss';
 

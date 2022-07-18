@@ -20,7 +20,7 @@ import {useCallback} from 'react';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
 import LocationClient from 'Locations/LocationClient';
 import {LocationsState} from 'State/LocationsState';
-import {LocationTag} from 'Locations/LocationTag.interface';
+import {LocationTag} from '../../Types/Tag';
 
 interface UseFetchLocations {
     locations: LocationTag[];

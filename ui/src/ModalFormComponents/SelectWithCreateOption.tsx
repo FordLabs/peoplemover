@@ -19,7 +19,7 @@ import React, {CSSProperties, useState} from 'react';
 import {JSX} from '@babel/types';
 import Creatable from 'react-select/creatable';
 import {CustomIndicator, reactSelectStyles} from './ReactSelectStyles';
-import {Option} from '../CommonTypes/Option';
+import {Option} from '../Types/Option';
 import {components, ControlProps, OptionProps, OptionTypeBase, StylesConfig} from 'react-select';
 import {OptionType} from './SelectWithHTMLOptions';
 

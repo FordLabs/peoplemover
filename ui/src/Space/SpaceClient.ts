@@ -16,13 +16,17 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {Space} from './Space';
-import {SpaceWithAccessTokenResponse} from './SpaceWithAccessTokenResponse';
+import {Space} from 'Types/Space';
 import {getToken} from '../Auth/TokenProvider';
-import {UserSpaceMapping} from './UserSpaceMapping';
+import {UserSpaceMapping} from '../Types/UserSpaceMapping';
 import MatomoEvents from '../Matomo/MatomoEvents';
 
 const baseSpaceUrl = `/api/spaces`;
+
+interface SpaceWithAccessTokenResponse {
+    space: Space;
+    accessToken: string;
+}
 
 class SpaceClient {
     //eslint-disable-next-line @typescript-eslint/no-explicit-any

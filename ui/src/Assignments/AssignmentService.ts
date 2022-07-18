@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,19 +15,8 @@
  * limitations under the License.
  */
 
-import {Person} from '../People/Person';
 import moment from 'moment';
-
-export interface Assignment {
-    id: number;
-    person: Person;
-    placeholder: boolean;
-    productId: number;
-    spaceUuid: string;
-    effectiveDate?: Date;
-    startDate?: Date;
-    endDate?: Date;
-}
+import {Assignment} from '../Types/Assignment';
 
 export function calculateDuration(assignment: Assignment, viewingDate: Date): number {
     if (assignment.startDate) {

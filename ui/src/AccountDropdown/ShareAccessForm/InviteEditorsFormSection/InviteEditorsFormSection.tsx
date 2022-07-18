@@ -18,14 +18,14 @@
 import React, {CSSProperties, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from 'Space/SpaceClient';
 import FormButton from 'ModalFormComponents/FormButton';
-import {Space} from 'Space/Space';
-import {UserSpaceMapping} from 'Space/UserSpaceMapping';
+import {Space} from 'Types/Space';
+import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 
 import UserAccessList from 'ReusableComponents/UserAccessList';
 import Creatable from 'react-select/creatable';
 import {reactSelectStyles} from 'ModalFormComponents/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';
-import {Option} from 'CommonTypes/Option';
+import {Option} from 'Types/Option';
 import {nameSplitPattern, userIdPattern, validate} from 'Utils/UserIdValidator';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {CurrentUserState} from 'State/CurrentUserState';

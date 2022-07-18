@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,16 +26,16 @@ import {
 import {
     isActiveProduct,
     isProductMatchingSelectedFilters,
-    Product,
     stripAssignmentsForArchivedPeople,
-} from '../Products/Product';
-import {isPersonMatchingSelectedFilters} from '../People/Person';
+} from '../Products/ProductService';
+import {isPersonMatchingSelectedFilters} from '../People/PersonService';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState, UnassignedProductSelector} from '../State/ProductsState';
 import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
 
 import './Counter.scss';
+import {Product} from '../Types/Product';
 
 function Counter(): JSX.Element {
     const products = useRecoilValue(ProductsState);

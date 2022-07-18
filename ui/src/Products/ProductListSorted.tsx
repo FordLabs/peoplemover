@@ -16,13 +16,14 @@
  */
 
 import React from 'react';
-import {Product} from './Product';
 import NewProductButton from './NewProductButton';
 
-import './ProductListSorted.scss';
 import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
 import {useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
+import {Product} from '../Types/Product';
+
+import './ProductListSorted.scss';
 
 interface Props {
     products: Array<Product>;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {FilterOption} from '../CommonTypes/Option';
+import {FilterOption} from '../Types/Option';
 import {localStorageEventListenerKey} from '../Hooks/useOnStorageChange/useOnStorageChange';
 
 export interface FilterTypeListing {
@@ -39,7 +39,6 @@ export interface FilterType {
     tagNameType: TagNameType;
 }
 
-export type LabelType = 'Location Tags:' | 'Product Tags:' | 'Role Tags:' | 'Person Tags:';
 export type TagType = 'role' | 'product tag' | 'location' | 'person tag';
 export type TagNameType = 'Role' | 'Product Tag' | 'Location' | 'Person Tag';
 

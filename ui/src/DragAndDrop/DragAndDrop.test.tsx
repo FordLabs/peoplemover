@@ -20,12 +20,12 @@ import {screen, waitFor} from '@testing-library/react';
 import {ProductsState} from '../State/ProductsState';
 import TestData from '../Utils/TestData';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {Product} from '../Products/Product';
 import {RecoilObserver, renderWithRecoil} from '../Utils/TestUtils';
-import {Assignment} from 'Assignments/Assignment';
 import {ViewingDateState} from '../State/ViewingDateState';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import ProductClient from 'Products/ProductClient';
+import {Product} from '../Types/Product';
+import {Assignment} from '../Types/Assignment';
 
 jest.mock('Assignments/AssignmentClient');
 jest.mock('Products/ProductClient');

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,14 @@
  * limitations under the License.
  */
 
-import {TagInterface} from './Tag.interface';
+import {AxiosResponse} from 'axios';
+import {TagRequest} from './TagRequest';
+import {Space} from 'Types/Space';
+import {Tag} from 'Types/Tag';
 
-export type Tag = TagInterface;
+export interface TagClient {
+     get(spaceUuid: string): Promise<AxiosResponse<Tag[]>>;
+     add(addRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>>;
+     edit(editRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>>;
+     delete(id: number, space: Space): Promise<AxiosResponse>;
+}
