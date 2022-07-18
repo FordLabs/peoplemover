@@ -16,7 +16,7 @@
 */
 
 import {atom} from 'recoil';
-import {RoleTag} from 'Types/RoleTag';
+import {RoleTag} from '../Types/Tags';
 
 export const RolesState = atom<RoleTag[]>({
     key: 'RolesState',

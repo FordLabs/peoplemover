@@ -21,7 +21,7 @@ import moment from 'moment';
 import ProductClient from './ProductClient';
 import {emptyProduct, Product} from './Product';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
-import {Tag} from 'Types/Tag';
+import {Tag} from 'Types/Tags';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';

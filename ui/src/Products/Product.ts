@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-import {Tag} from 'Types/Tag';
+import {LocationTag, Tag} from 'Types/Tags';
 import {Assignment} from '../Assignments/Assignment';
-import {LocationTag} from 'Types/LocationTag';
 import moment from 'moment';
 import {isArchived} from '../People/Person';
 

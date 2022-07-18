@@ -18,7 +18,6 @@
 import React from 'react';
 import {emptyProduct, Product} from './Product';
 import NewProductButton from './NewProductButton';
-import {TagInterface} from '../Tags/Tag.interface';
 import {useRecoilValue} from 'recoil';
 
 import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
@@ -28,7 +27,7 @@ import {ProductTagsState} from 'State/ProductTagsState';
 import {ModalContents} from '../State/ModalContentsState';
 import ProductForm from './ProductForm';
 import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
-import {Tag} from 'Types/Tag';
+import {Tag} from 'Types/Tags';
 
 import './ProductListGrouped.scss';
 
@@ -111,7 +110,7 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
 
     return (
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
-            {productGroupList.traits.map((trait: TagInterface) => {
+            {productGroupList.traits.map((trait: Tag) => {
                 const newProduct = emptyProduct(uuid);
                 if (productSortBy === ProductSortBy.LOCATION) {
                     newProduct.spaceLocation = {...trait}

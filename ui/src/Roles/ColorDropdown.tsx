@@ -1,8 +1,8 @@
-import {Color} from 'Types/RoleTag';
 import {JSX} from '@babel/types';
 import SelectWithHTMLOptions, {OptionType} from '../ModalFormComponents/SelectWithHTMLOptions';
 import React from 'react';
 import ColorCircle from '../ModalFormComponents/ColorCircle';
+import {Color} from 'Types/Color';
 
 const colorMapping: { [key: string]: string } = {
     '#81C0FA': 'Blue',

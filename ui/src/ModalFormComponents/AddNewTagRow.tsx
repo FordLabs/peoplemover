@@ -20,8 +20,8 @@ import React, {useState} from 'react';
 import {createDataTestId} from '../Utils/ReactUtils';
 import EditTagRow from './EditTagRow';
 import {TagRequest} from '../Tags/TagRequest.interface';
-import {Color} from 'Types/RoleTag';
 import {TagNameType, TagType} from '../SortingAndFiltering/FilterLibraries';
+import {Color} from '../Types/Color';
 
 interface Props {
     colors?: Array<Color>;

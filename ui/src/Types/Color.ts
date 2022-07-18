@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
-import {TagInterface} from 'Tags/Tag.interface';
-
-export type Tag = TagInterface;
+export interface Color {
+    id: number;
+    color: string;
+}

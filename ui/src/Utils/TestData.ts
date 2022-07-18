@@ -18,12 +18,11 @@
 import {Person} from '../People/Person';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
-import {Tag} from 'Types/Tag';
-import {Color, RoleTag} from 'Types/RoleTag';
-import {LocationTag} from 'Types/LocationTag';
+import {LocationTag, RoleTag, Tag} from 'Types/Tags';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
+import {Color} from '../Types/Color';
 
 const originDateString = '2019-01-01';
 

@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-import {RoleTag} from 'Types/RoleTag';
-import {Tag} from 'Types/Tag';
+import {RoleTag, Tag} from 'Types/Tags';
 import moment from 'moment';
 import {Product} from '../Products/Product';
 import {Assignment} from '../Assignments/Assignment';

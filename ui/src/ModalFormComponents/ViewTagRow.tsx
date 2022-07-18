@@ -19,7 +19,7 @@ import {JSX} from '@babel/types';
 import React, {ReactNode} from 'react';
 import {createDataTestId} from '../Utils/ReactUtils';
 import {TagType} from '../SortingAndFiltering/FilterLibraries';
-import {Tag} from 'Types/Tag';
+import {Tag} from 'Types/Tags';
 
 interface Props {
     children?: ReactNode;

@@ -16,7 +16,7 @@
 */
 
 import {atom} from 'recoil';
-import {LocationTag} from 'Types/LocationTag';
+import {LocationTag} from '../Types/Tags';
 
 export const LocationsState = atom<LocationTag[]>({
     key: 'LocationsState',

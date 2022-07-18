@@ -22,14 +22,14 @@ import MyRolesForm from '../../Roles/MyRolesForm';
 import {useRecoilValue} from 'recoil';
 import {RolesState} from '../../State/RolesState';
 import {FilterOption} from '../../CommonTypes/Option';
-import {TagInterface} from '../../Tags/Tag.interface';
+import {RoleTag} from '../../Types/Tags';
 
 function RolesFilter() {
     const roles = useRecoilValue(RolesState);
 
     const getFilterOptions = useCallback((): FilterOption[] => {
         const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(roleTagsFilterKey);
-        return roles.map((tag: TagInterface): FilterOption => ({
+        return roles.map((tag: RoleTag): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: selectedRolesFromLocalStorage.includes(tag.name),

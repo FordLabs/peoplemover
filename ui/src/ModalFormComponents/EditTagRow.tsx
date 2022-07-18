@@ -22,12 +22,13 @@ import {JSX} from '@babel/types';
 import {createDataTestId} from '../Utils/ReactUtils';
 import {TagRequest} from '../Tags/TagRequest.interface';
 
-import './TagRowsContainer.scss';
-import {Color} from 'Types/RoleTag';
 import {OptionType} from './SelectWithHTMLOptions';
 import ColorDropdown from '../Roles/ColorDropdown';
 import {RoleEditRequest} from '../Roles/RoleEditRequest.interface';
 import {TagType} from '../SortingAndFiltering/FilterLibraries';
+import {Color} from '../Types/Color';
+
+import './TagRowsContainer.scss';
 
 interface Props {
     colors?: Array<Color>;
@@ -115,14 +116,14 @@ function EditTagRow({
                     <button onClick={onCancel}
                         data-testid="cancelTagButton"
                         className="closeEditTagButton"
-                        aria-label="Close Edited Tag">
+                        aria-label="Close Edited Tags">
                         <img src={CloseIcon} alt=""/>
                     </button>
                     <button disabled={isTraitNameInvalid()}
                         onClick={(): void => saveTag()}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
-                        aria-label="Save Edited Tag">
+                        aria-label="Save Edited Tags">
                         <img src={SaveIcon} alt=""/>
                     </button>
                 </div>

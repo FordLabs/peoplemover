@@ -15,6 +15,16 @@
  * limitations under the License.
  */
 
-import {TagInterface} from '../Tags/Tag.interface';
+import {Color} from './Color';
 
-export type LocationTag = TagInterface;
+export interface Tag {
+    id: number;
+    name: string;
+    spaceUuid: string;
+}
+export type PersonTag = Tag;
+export type ProductTag = Tag;
+export type LocationTag = Tag;
+export interface RoleTag extends Tag {
+    color?: Color;
+}
