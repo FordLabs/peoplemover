@@ -96,7 +96,9 @@ function AssignmentCardList({ product }: Props): JSX.Element {
                                     {(draggableProvided) => (
                                         <div ref={draggableProvided.innerRef}
                                             {...draggableProvided.draggableProps}
-                                            {...draggableProvided.dragHandleProps}>
+                                            {...draggableProvided.dragHandleProps}
+                                            data-testid="draggableAssignmentCard"
+                                        >
                                             <AssignmentCard assignment={assignment}
                                                 isUnassignedProduct={isUnassignedProduct(product)}
                                                 key={assignment.id}
