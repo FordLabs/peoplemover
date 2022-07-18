@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 import React from 'react';
-import {renderWithRedux} from '../Utils/TestUtils';
 import Branding from './Branding';
 import {RunConfig} from '../index';
+import {render, screen} from '@testing-library/react';
 
 describe('Branding', () => {
     const expectedUrl = 'http://url.com';
@@ -27,8 +27,8 @@ describe('Branding', () => {
     });
     
     it('should get url from config', () => {
-        const comp = renderWithRedux(<Branding />);
-        const actualUrl = comp.getByText('FordLabs');
+        render(<Branding />);
+        const actualUrl = screen.getByText('FordLabs');
         expect(actualUrl).toHaveAttribute('href', expectedUrl);
     });
 });

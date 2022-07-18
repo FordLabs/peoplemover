@@ -17,36 +17,23 @@
 
 import React, {ReactNode, useEffect} from 'react';
 import SpaceClient from '../Space/SpaceClient';
-import {applyMiddleware, createStore, PreloadedState, Store} from 'redux';
-import rootReducer, {GlobalStateProps} from '../Redux/Reducers';
 import {MutableSnapshot, RecoilRoot, RecoilValue, useRecoilValue} from 'recoil';
 import {render, RenderResult, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
-import thunk from 'redux-thunk';
-import {Provider} from 'react-redux';
-
-export function renderWithRedux(
-    component: JSX.Element,
-    store?: Store,
-    initialState?: PreloadedState<Partial<GlobalStateProps>>,
-): RenderResult {
-    const testingStore: Store = store ? store : createStore(rootReducer, initialState, applyMiddleware(thunk));
-    return render(<Provider store={testingStore}>{component}</Provider>);
-}
+import DragAndDrop from '../DragAndDrop/DragAndDrop';
 
 async function renderPeopleMoverComponent(
     initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,
     initialPath = '/uuid'
 ): Promise<RenderResult> {
-    const result = renderWithRedux(
+    const result = renderWithRecoil(
         <MemoryRouter initialEntries={[initialPath]}>
-            <RecoilRoot initializeState={initializedRecoilState}>
-                <Routes>
-                    <Route path="/:teamUUID" element={<PeopleMover/>} />
-                </Routes>
-            </RecoilRoot>
+            <Routes>
+                <Route path="/:teamUUID" element={<PeopleMover/>} />
+            </Routes>
         </MemoryRouter>,
+        initializedRecoilState
     );
     const uuid = initialPath.replace('/', '');
     await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(uuid))
@@ -54,7 +41,13 @@ async function renderPeopleMoverComponent(
 }
 
 export function renderWithRecoil(component: JSX.Element, initializeState?: (mutableSnapshot: MutableSnapshot) => void): RenderResult {
-    return render(<RecoilRoot initializeState={initializeState}>{component}</RecoilRoot>)
+    return render(
+        <RecoilRoot initializeState={initializeState}>
+            <DragAndDrop>
+                {component}
+            </DragAndDrop>
+        </RecoilRoot>
+    )
 }
 
 const hookWrapper = ({ children }: { children: ReactNode }) => (

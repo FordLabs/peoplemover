@@ -16,15 +16,14 @@
  */
 import React from 'react';
 import {screen} from '@testing-library/react';
-import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 import {Product} from '../Products/Product';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {renderWithRecoil} from '../Utils/TestUtils';
 
 const product: Product = {
     id: 1,
@@ -90,13 +89,12 @@ const setupAssignmentCardList = ({ roleFilters = [], personFilters = [] }: { rol
         personTagFilters: personFilters,
     };
     localStorage.setItem('filters', JSON.stringify(selectedFilters));
-    renderWithRedux(
-        <RecoilRoot initializeState={({set}) => {
+    renderWithRecoil(
+        <AssignmentCardList product={product}/>,
+        ({set}) => {
             set(ViewingDateState, moment().toDate())
             set(CurrentSpaceState, TestData.space)
-        }}>
-            <AssignmentCardList product={product}/>
-        </RecoilRoot>
+        }
     );
 }
 

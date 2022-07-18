@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,10 +19,6 @@ import './Styles/Colors.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Provider} from 'react-redux';
-import {applyMiddleware, compose, createStore, StoreEnhancer} from 'redux';
-import rootReducer from './Redux/Reducers';
-import thunk from 'redux-thunk';
 import {RedirectToADFS} from './Auth/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
@@ -37,34 +33,9 @@ import axe from '@axe-core/react';
 import {RecoilRoot} from 'recoil';
 import {FlagsState, simplifyFlags} from './State/FlagsState';
 
-/* eslint-disable */
-const reduxDevToolsExtension: Function | undefined = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
-let reduxDevToolsEnhancer: Function | undefined;
-if (reduxDevToolsExtension) {
-    reduxDevToolsEnhancer = (window as any).__REDUX_DEVTOOLS_EXTENSION__();
-}
-/* eslint-enable */
-
-let composedEnhancers: StoreEnhancer;
-if (reduxDevToolsEnhancer) {
-    composedEnhancers = compose(
-        applyMiddleware(thunk),
-        reduxDevToolsEnhancer,
-    );
-} else {
-    composedEnhancers = compose(
-        applyMiddleware(thunk),
-    );
-}
-
 if (process.env.NODE_ENV !== 'production') {
     axe(React, ReactDOM, 1000);
 }
-
-const store = createStore(
-    rootReducer,
-    composedEnhancers,
-);
 
 declare global {
     interface Window {
@@ -154,18 +125,14 @@ if (isUnsupportedBrowser()) {
                 <CacheBuster>
                     {({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {
                         if (loading) return null;
-                        if (!loading && !isLatestVersion) {
-                            refreshCacheAndReload();
-                        }
+                        if (!loading && !isLatestVersion) refreshCacheAndReload();
 
                         return (
-                            <Provider store={store}>
-                                <RecoilRoot initializeState={({set}) => {
-                                    set(FlagsState, simplifyFlags(flags))
-                                }}>
-                                    <Routes />
-                                </RecoilRoot>
-                            </Provider>
+                            <RecoilRoot initializeState={({set}) => {
+                                set(FlagsState, simplifyFlags(flags))
+                            }}>
+                                <Routes />
+                            </RecoilRoot>
                         );
                     }}
                 </CacheBuster>,

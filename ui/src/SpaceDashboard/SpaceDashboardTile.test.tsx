@@ -17,27 +17,23 @@
 
 import {fireEvent, waitFor} from '@testing-library/dom';
 import {screen} from '@testing-library/react';
-import {renderWithRedux} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import React from 'react';
 import SpaceDashboardTile from './SpaceDashboardTile';
-import {createStore, Store} from 'redux';
-import rootReducer from '../Redux/Reducers';
 import SpaceClient from '../Space/SpaceClient';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';
-import {RecoilRoot} from 'recoil';
 import {CurrentUserState} from '../State/CurrentUserState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import SpaceForm from './SpaceForm';
 import DeleteSpaceForm from './DeleteSpaceForm';
 import TransferOwnershipForm from './TransferOwnershipForm';
+import {renderWithRecoil} from '../Utils/TestUtils';
 
 let modalContent: ModalContents | null;
 
 describe('SpaceDashboardTile tests', () => {
     let onClick: () => void;
-    let store: import('redux').Store<import('redux').AnyAction>;
 
     beforeEach(async () => {
         modalContent = null;
@@ -49,19 +45,18 @@ describe('SpaceDashboardTile tests', () => {
                 {id: '2', userId: 'USER_IDDQD', permission: 'editor', spaceUuid: TestData.space.uuid!} as UserSpaceMapping
             ]
         );
-        store = createStore(rootReducer, {});
         onClick = jest.fn();
     });
 
     it('should open space on click', async () => {
-        await renderSpaceDashboardList(store, onClick);
+        await renderSpaceDashboardList(onClick);
         const spaceTile = await screen.findByTestId('spaceDashboardTile');
         fireEvent.click(spaceTile);
         expect(onClick).toBeCalled();
     });
 
     it('should open edit space modal on click', async () => {
-        await renderSpaceDashboardList(store, onClick);
+        await renderSpaceDashboardList(onClick);
         const editSpaceEllipsis = await screen.findByTestId('ellipsisButton');
         fireEvent.click(editSpaceEllipsis);
 
@@ -79,7 +74,7 @@ describe('SpaceDashboardTile tests', () => {
             SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
                 [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
             );
-            await renderSpaceDashboardList(store, onClick);
+            await renderSpaceDashboardList(onClick);
 
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
             fireEvent.click(spaceEllipsis);
@@ -89,7 +84,7 @@ describe('SpaceDashboardTile tests', () => {
 
         describe('should show the delete space modal on click', () => {
             it('with space having editor', async () => {
-                await renderSpaceDashboardList(store, onClick);
+                await renderSpaceDashboardList(onClick);
                 const spaceEllipsis = await screen.findByTestId('ellipsisButton');
                 fireEvent.click(spaceEllipsis);
                 const leaveSpaceTile = await screen.findByText('Delete Space');
@@ -105,7 +100,7 @@ describe('SpaceDashboardTile tests', () => {
                 SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
                     [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
                 );
-                await renderSpaceDashboardList(store, onClick);
+                await renderSpaceDashboardList(onClick);
                 const spaceEllipsis = await screen.findByTestId('ellipsisButton');
                 fireEvent.click(spaceEllipsis);
                 const leaveSpaceTile = await screen.findByText('Delete Space');
@@ -124,7 +119,7 @@ describe('SpaceDashboardTile tests', () => {
             SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
                 [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
             );
-            await renderSpaceDashboardList(store, onClick)
+            await renderSpaceDashboardList(onClick)
 
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
             fireEvent.click(spaceEllipsis);
@@ -136,7 +131,7 @@ describe('SpaceDashboardTile tests', () => {
             SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
                 [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
             );
-            await renderSpaceDashboardList(store, onClick);
+            await renderSpaceDashboardList(onClick);
 
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
             fireEvent.click(spaceEllipsis);
@@ -145,7 +140,7 @@ describe('SpaceDashboardTile tests', () => {
         });
 
         it('should open leave space modal on click', async () => {
-            await renderSpaceDashboardList(store, onClick);
+            await renderSpaceDashboardList(onClick);
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
             fireEvent.click(spaceEllipsis);
             const leaveSpaceTile = await screen.findByText('Leave Space');
@@ -159,18 +154,16 @@ describe('SpaceDashboardTile tests', () => {
     });
 
     it('should focus the first dropdown option when opened', async () => {
-        await renderSpaceDashboardList(store, onClick);
+        await renderSpaceDashboardList(onClick);
         const spaceTileDropdownButton = await screen.findByTestId('ellipsisButton');
         spaceTileDropdownButton.click();
         await waitFor(() => expect(screen.getByTestId('editSpace')).toHaveFocus());
     });
 });
 
-async function renderSpaceDashboardList(store: Store, onClick: () => void) {
-    const result = renderWithRedux(
-        <RecoilRoot initializeState={({set}) => {
-            set(CurrentUserState, 'USER_ID')
-        }}>
+async function renderSpaceDashboardList(onClick: () => void) {
+    const result = renderWithRecoil(
+        <>
             <RecoilObserver
                 recoilState={ModalContentsState}
                 onChange={(value: ModalContents) => {
@@ -178,8 +171,10 @@ async function renderSpaceDashboardList(store: Store, onClick: () => void) {
                 }}
             />
             <SpaceDashboardTile space={TestData.space} onClick={onClick}/>
-        </RecoilRoot>,
-        store
+        </>,
+        ({set}) => {
+            set(CurrentUserState, 'USER_ID')
+        }
     );
 
     await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled())

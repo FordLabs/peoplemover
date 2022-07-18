@@ -129,7 +129,11 @@ describe('Product', () => {
         cy.contains('Baguette Bakery').should('not.exist');
 
         cy.get('[data-testid="calendarToggle"]').click();
-        const expectedCurrentDate = moment().subtract(1, 'days').format('D');
+
+        const isMonday = moment().isoWeekday() === 1;
+        let daysToSubtract = 1;
+        if (isMonday) daysToSubtract = 3;
+        const expectedCurrentDate = moment().subtract(daysToSubtract, 'days').format('D');
         cy.contains(expectedCurrentDate).click();
         cy.contains('Baguette Bakery').should('exist');
     });

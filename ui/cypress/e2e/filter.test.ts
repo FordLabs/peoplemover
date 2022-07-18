@@ -22,9 +22,11 @@ describe('Filter', () => {
     });
 
     it('Filter people by role', () => {
+        const peopleCardsSelector = '[data-testid=draggableAssignmentCard]';
+
         cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')
             .then(($container: any) => {
-                cy.get($container).find('[data-testid=productPeopleContainer]').children().as('peopleCards');
+                cy.get($container).find(peopleCardsSelector).children().as('peopleCards');
                 cy.get('@peopleCards').should('have.length', 2);
                 cy.get('@peopleCards').eq(0).should('contain', 'Jane Smith');
                 cy.get('@peopleCards').eq(1).should('contain', 'Bob Barker');
@@ -35,7 +37,7 @@ describe('Filter', () => {
 
         cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')
             .then(($container: any) => {
-                cy.get($container).find('[data-testid=productPeopleContainer]').children().as('peopleCards');
+                cy.get($container).find(peopleCardsSelector).children().as('peopleCards');
                 cy.get('@peopleCards');
                 cy.get('@peopleCards').should('have.length', 1);
                 cy.get('@peopleCards').eq(0).should('contain', 'Bob Barker');

@@ -43,6 +43,7 @@ import Modal from '../Modal/Modal';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
+import DragAndDrop from '../DragAndDrop/DragAndDrop';
 
 function PeopleMover(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
@@ -95,30 +96,32 @@ function PeopleMover(): JSX.Element {
             <main>
                 <div id="main-content-landing-target"/>
                 <Counter />
-                <div className="productAndAccordionContainer">
-                    <ProductList/>
-                    {!isReadOnly && (
-                        <div className="accordionContainer">
-                            <div className="accordionHeaderContainer">
-                                <button
-                                    type="button"
-                                    className="addPersonButton"
-                                    data-testid="addPersonButton"
-                                    onClick={(): void => setModalContents({
-                                        title: 'Add New Person',
-                                        component: <PersonForm isEditPersonForm={false} />,
-                                    })}>
-                                    <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
-                                    <span>Add Person</span>
-                                </button>
-                                <UnassignedDrawer/>
-                                <ReassignedDrawer/>
-                                <ArchivedPersonDrawer/>
-                                <ArchivedProductsDrawer/>
+                <DragAndDrop>
+                    <div className="productAndAccordionContainer">
+                        <ProductList/>
+                        {!isReadOnly && (
+                            <div className="accordionContainer">
+                                <div className="accordionHeaderContainer">
+                                    <button
+                                        type="button"
+                                        className="addPersonButton"
+                                        data-testid="addPersonButton"
+                                        onClick={(): void => setModalContents({
+                                            title: 'Add New Person',
+                                            component: <PersonForm isEditPersonForm={false} />,
+                                        })}>
+                                        <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
+                                        <span>Add Person</span>
+                                    </button>
+                                    <UnassignedDrawer/>
+                                    <ReassignedDrawer/>
+                                    <ArchivedPersonDrawer/>
+                                    <ArchivedProductsDrawer/>
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </div>
+                        )}
+                    </div>
+                </DragAndDrop>
                 <Modal />
             </main>
             <footer>

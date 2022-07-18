@@ -40,12 +40,12 @@ describe('announcement header', () => {
         expect(screen.queryByText(flagMessage)).not.toBeInTheDocument();
     });
 
-    it('does not render if redux returns default value', () => {
+    it('does not render if recoil returns default value', () => {
         renderWithRecoil(<AnnouncementHeader/>);
         expect(screen.queryByText('close')).not.toBeInTheDocument();
     });
 
-    it('does not overwrite localstorage with default redux state', () => {
+    it('does not overwrite localstorage with default recoil state', () => {
         localStorage.setItem(PREVIOUS_BANNER_MESSAGE_KEY, 'hello i am a banner');
         renderWithRecoil(<AnnouncementHeader/>);
 
@@ -74,7 +74,6 @@ describe('announcement header', () => {
         expect(screen.queryByText(flagMessage)).not.toBeInTheDocument();
 
         unmount()
-
 
         renderAnnouncementBanner({
             announcementBannerMessage: flagMessage,

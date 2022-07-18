@@ -17,11 +17,9 @@
 
 import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
-import configureStore from 'redux-mock-store';
-import {RecoilRoot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {PeopleState} from '../State/PeopleState';
 
@@ -40,19 +38,12 @@ describe('Archived People', () => {
 
     describe('Showing archived people', () => {
         beforeEach(async () => {
-            const mockStore = configureStore([]);
-            const store = mockStore({
-                currentSpace: TestData.space,
-            });
-
-            ({unmount} = renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
+            ({unmount} = renderWithRecoil(
+                <ArchivedPersonDrawer/>,
+                ({set}) => {
                     set(ViewingDateState, mayFourteen2020)
                     set(PeopleState, [...TestData.people, TestData.unassignedBigBossSE])
-                }}>
-                    <ArchivedPersonDrawer/>
-                </RecoilRoot>,
-                store
+                }
             ));
         });
 
@@ -85,21 +76,14 @@ describe('Archived People', () => {
         });
 
         it('should not show an archived person if the viewing date is before their archive date', async () => {
-            const mockStore = configureStore([]);
-            const store = mockStore({
-                currentSpace: TestData.space,
-            });
-
             unmount();
 
-            renderWithRedux(
-                <RecoilRoot initializeState={({set}) => {
+            renderWithRecoil(
+                <ArchivedPersonDrawer/>,
+                ({set}) => {
                     set(ViewingDateState, mayFourteen1999)
                     set(PeopleState, [...TestData.people, TestData.unassignedBigBossSE])
-                }}>
-                    <ArchivedPersonDrawer/>
-                </RecoilRoot>,
-                store
+                }
             );
 
             const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
