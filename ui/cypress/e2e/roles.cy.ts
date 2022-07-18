@@ -68,7 +68,7 @@ describe('Roles', () => {
             expect($lis).to.have.descendants('[data-testid=editIcon__role]');
             expect($lis).to.have.descendants('[data-testid=deleteIcon__role]');
             expect($lis).to.have.descendants(`[data-testid="myRolesCircle__${mockRole}"]`);
-        }).then(($lis: any) => {
+        }).then(($lis: never) => {
             cy.get($lis).find(`[data-testid="myRolesCircle__${mockRole}"]`).should('have.css', 'background-color', pink);
         });
 
