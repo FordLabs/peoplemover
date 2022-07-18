@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {FilterOption} from '../CommonTypes/Option';
+import {FilterOption} from '../Types/Option';
 import Dropdown from '../ReusableComponents/Dropdown';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';

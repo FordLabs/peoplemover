@@ -18,7 +18,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import {ProductTagsState} from '../../State/ProductTagsState';
-import {FilterOption} from '../../CommonTypes/Option';
+import {FilterOption} from '../../Types/Option';
 import {
     FilterTypeListings,
     getLocalStorageFiltersByType,

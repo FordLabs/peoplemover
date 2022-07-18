@@ -25,7 +25,7 @@ import {
     locationTagsFilterKey,
     setLocalStorageFiltersByType,
 } from '../FilterLibraries';
-import {FilterOption} from '../../CommonTypes/Option';
+import {FilterOption} from '../../Types/Option';
 import Filter from '../Filter';
 import {LocationTag} from '../../Types/Tags';
 

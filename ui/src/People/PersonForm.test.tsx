@@ -26,7 +26,7 @@ import {TagRequest} from '../Types/TagRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
 import {emptyPerson} from './PersonService';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 import moment from 'moment';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';

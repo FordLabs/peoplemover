@@ -24,7 +24,7 @@ import {emptyPerson, isArchived} from './PersonService';
 import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
-import {Option} from '../CommonTypes/Option';
+import {Option} from '../Types/Option';
 import {Assignment} from '../Assignments/Assignment';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';

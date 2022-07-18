@@ -19,7 +19,7 @@ import Axios from 'axios';
 import PersonTag from './PersonTagClient';
 import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from '../../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../../Types/MatomoWindow';
 
 declare let window: MatomoWindow;
 

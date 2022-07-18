@@ -21,7 +21,7 @@ import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignme
 import TestData from '../Utils/TestData';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 
 declare let window: MatomoWindow;
 

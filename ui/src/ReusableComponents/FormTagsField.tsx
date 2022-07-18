@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Option} from '../CommonTypes/Option';
+import {Option} from '../Types/Option';
 import {Tag} from 'Types/Tags';
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';

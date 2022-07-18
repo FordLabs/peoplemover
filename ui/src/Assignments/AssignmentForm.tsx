@@ -19,7 +19,7 @@ import React, {FormEvent, useState} from 'react';
 import moment from 'moment';
 import AssignmentClient from 'Assignments/AssignmentClient';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from 'ModalFormComponents/SelectWithNoCreateOption';
-import {Option} from 'CommonTypes/Option';
+import {Option} from 'Types/Option';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import {Assignment} from './Assignment';
 import FormButton from 'ModalFormComponents/FormButton';

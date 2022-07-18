@@ -25,7 +25,7 @@ import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
 import {emptyPerson} from './PersonService';
 import moment from 'moment';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';

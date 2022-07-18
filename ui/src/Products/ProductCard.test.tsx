@@ -20,7 +20,7 @@ import {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {emptyProduct} from './ProductService';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import ProductClient from './ProductClient';
 import moment from 'moment';

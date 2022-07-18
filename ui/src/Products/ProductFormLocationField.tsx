@@ -16,7 +16,7 @@
  */
 
 import {JSX} from '@babel/types';
-import {Option} from 'CommonTypes/Option';
+import {Option} from 'Types/Option';
 import LocationClient from 'Locations/LocationClient';
 import {AxiosResponse} from 'axios';
 import React, {useEffect, useState} from 'react';

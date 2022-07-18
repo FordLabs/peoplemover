@@ -19,7 +19,7 @@ import Axios from 'axios';
 import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {createEmptySpace} from 'Types/Space';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 import TestData from '../Utils/TestData';
 import {UserSpaceMapping} from '../Types/UserSpaceMapping';
 

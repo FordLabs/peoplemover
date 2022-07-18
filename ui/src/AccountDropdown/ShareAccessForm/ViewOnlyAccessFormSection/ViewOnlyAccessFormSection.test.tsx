@@ -22,7 +22,7 @@ import {fireEvent, screen, waitFor} from '@testing-library/react';
 import SpaceClient from 'Space/SpaceClient';
 import {Space} from 'Types/Space';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
-import {MatomoWindow} from 'CommonTypes/MatomoWindow';
+import {MatomoWindow} from 'Types/MatomoWindow';
 import {CurrentSpaceState} from '../../../State/CurrentSpaceState';
 import {RecoilObserver} from '../../../Utils/RecoilObserver';
 

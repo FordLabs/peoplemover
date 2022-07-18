@@ -16,7 +16,7 @@
  */
 
 import React, {useCallback, useEffect, useState} from 'react';
-import {FilterOption} from '../../CommonTypes/Option';
+import {FilterOption} from '../../Types/Option';
 import {
     FilterTypeListings,
     getLocalStorageFiltersByType,

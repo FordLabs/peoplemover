@@ -21,7 +21,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import MyRolesForm from '../../Roles/MyRolesForm';
 import {useRecoilValue} from 'recoil';
 import {RolesState} from '../../State/RolesState';
-import {FilterOption} from '../../CommonTypes/Option';
+import {FilterOption} from '../../Types/Option';
 import {RoleTag} from '../../Types/Tags';
 
 function RolesFilter() {

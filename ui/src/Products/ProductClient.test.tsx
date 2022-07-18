@@ -16,7 +16,7 @@
  */
 
 import ProductClient from './ProductClient';
-import {MatomoWindow} from '../CommonTypes/MatomoWindow';
+import {MatomoWindow} from '../Types/MatomoWindow';
 import TestData from '../Utils/TestData';
 import Cookies from 'universal-cookie';
 import Axios from 'axios';

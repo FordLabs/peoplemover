@@ -25,7 +25,7 @@ import UserAccessList from 'ReusableComponents/UserAccessList';
 import Creatable from 'react-select/creatable';
 import {reactSelectStyles} from 'ModalFormComponents/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';
-import {Option} from 'CommonTypes/Option';
+import {Option} from 'Types/Option';
 import {nameSplitPattern, userIdPattern, validate} from 'Utils/UserIdValidator';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {CurrentUserState} from 'State/CurrentUserState';
