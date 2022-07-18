@@ -123,7 +123,7 @@ describe('Drag and Drop', () => {
             expect(mockFetchProducts).toHaveBeenCalled();
         });
 
-        it('should move thought back to original spot in global state if database update failed', async () => {
+        it('should move assigment back to original spot in global state if database update failed', async () => {
             AssignmentClient.createAssignmentForDate = jest.fn().mockRejectedValue('');
 
             screen.getByText('trigger-onDragEnd').click();

@@ -216,45 +216,48 @@ describe('People', () => {
         });
 
         it('Drag and drop person from one product to another product and back', () => {
-            ensureJaneSmithDoesNotExistOnSelector('[data-testid=productCardContainer__baguette_bakery]');
-
+            const assignmentName = 'Jane Smith';
             const janeSmithSelector = '[data-testid=assignmentCard__jane_smith]';
+
+            checkIfPersonIsInProductBaguetteBakery(assignmentName, false);
+            checkIfPersonIsInProductMyProduct(assignmentName, true);
+
             moveAssignment(janeSmithSelector, keycodes.arrowLeft);
 
-            const assignmentName = 'Jane Smith';
-
             cy.wait('@getProducts').should(() => {
-                cy.get('[data-testid=productCardContainer__baguette_bakery]').should('contain', assignmentName);
-                cy.get('[data-testid=productCardContainer__my_product]').should('not.contain', assignmentName);
+                checkIfPersonIsInProductBaguetteBakery(assignmentName, true);
+                checkIfPersonIsInProductMyProduct(assignmentName, false);
             });
 
             moveAssignment(janeSmithSelector, keycodes.arrowRight);
 
             cy.wait('@getProducts').should(() => {
-                cy.get('[data-testid=productCardContainer__baguette_bakery]').should('not.contain', assignmentName);
-                cy.get('[data-testid=productCardContainer__my_product]').should('contain', assignmentName);
+                checkIfPersonIsInProductBaguetteBakery(assignmentName, false);
+                checkIfPersonIsInProductMyProduct(assignmentName, true);
             });
         });
 
         it('Drag and drop person from a product to unassigned and back', () => {
+            const assignmentName = 'Adam Sandler';
+            const adamSandlerSelector = '[data-testid="assignmentCard__adam_sandler"]';
+
             cy.get('[data-testid=unassignedDrawer]').click();
 
-            ensureJaneSmithDoesNotExistOnSelector('[data-testid=productDrawerContainer__unassigned]');
-
-            const adamSandlerSelector = '[data-testid="assignmentCard__adam_sandler"]';
+            checkIfPersonIsInUnassignedDrawer(assignmentName, true);
+            checkIfPersonIsInProductMyProduct(assignmentName, false);
 
             moveAssignment(adamSandlerSelector, keycodes.arrowLeft);
 
             cy.wait('@getProducts').should(() => {
-                cy.get('[data-testid=productCardContainer__my_product]').should('contain','Adam Sandler');
-                cy.get('[data-testid=productDrawerContainer__unassigned]').should('not.contain','Adam Sandler');
+                checkIfPersonIsInUnassignedDrawer(assignmentName, false);
+                checkIfPersonIsInProductMyProduct(assignmentName, true);
             });
 
             moveAssignment(adamSandlerSelector, keycodes.arrowRight);
 
             cy.wait('@getProducts').should(() => {
-                cy.get('[data-testid=productCardContainer__my_product]').should('not.contain','Adam Sandler');
-                cy.get('[data-testid=productDrawerContainer__unassigned]').should('contain','Adam Sandler');
+                checkIfPersonIsInUnassignedDrawer(assignmentName, true);
+                checkIfPersonIsInProductMyProduct(assignmentName, false);
             });
         });
     });
@@ -374,10 +377,19 @@ const ensureUnassignedPersonIsPresentInUnassignedDrawer = (unassignedPerson: Per
         .should('contain', unassignedPerson.role);
 };
 
-function ensureJaneSmithDoesNotExistOnSelector(selector: string): void {
-    cy.get(selector)
-        .contains('Jane Smith')
-        .should('not.exist');
+function checkIfPersonIsInUnassignedDrawer(name: string, isPresent = false) {
+    const shouldAssertion = isPresent ? 'contain' : 'not.contain';
+    cy.get('[data-testid=productDrawerContainer__unassigned]').should(shouldAssertion, name);
+}
+
+function checkIfPersonIsInProductBaguetteBakery(name: string, isPresent = false) {
+    const shouldAssertion = isPresent ? 'contain' : 'not.contain';
+    cy.get('[data-testid=productCardContainer__baguette_bakery]').should(shouldAssertion, name);
+}
+
+function checkIfPersonIsInProductMyProduct(name: string, isPresent = false) {
+    const shouldAssertion = isPresent ? 'contain' : 'not.contain';
+    cy.get('[data-testid=productCardContainer__my_product]').should(shouldAssertion, name);
 }
 
 function moveAssignment(selector: string, direction: typeof keycodes.arrowLeft | typeof  keycodes.arrowLeft) {
