@@ -26,7 +26,6 @@ import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormCo
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Option} from '../CommonTypes/Option';
 import {Assignment} from '../Assignments/Assignment';
-import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
@@ -50,6 +49,7 @@ import {ModalContentsState} from '../State/ModalContentsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 import './PersonForm.scss';
+import {RoleTagRequest} from '../Types/TagRequest';
 
 interface Props {
     isEditPersonForm: boolean
@@ -272,7 +272,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
 
     const handleCreateRole = (inputValue: string): void => {
         setIsLoading(true);
-        const roleAddRequest: RoleAddRequest = {name: inputValue};
+        const roleAddRequest: RoleTagRequest = {name: inputValue};
         RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
             const newRole: RoleTag = response.data;
             fetchRoles();

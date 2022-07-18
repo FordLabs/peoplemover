@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Tag} from 'Types/Tags';
-import {TagRequest} from '../TagRequest.interface';
+import {TagRequest} from '../../Types/TagRequest';
 import {TagClient} from '../TagClient.interface';
 import {getToken} from '../../Auth/TokenProvider';
 import {Space} from 'Types/Space';

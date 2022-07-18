@@ -20,11 +20,11 @@ import {renderWithRecoil} from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import {findByTestId, findByText, fireEvent, screen, waitFor} from '@testing-library/react';
 import RoleClient from './RoleClient';
-import {RoleAddRequest} from './RoleAddRequest.interface';
 import MyRolesForm from './MyRolesForm';
 import ColorClient from 'Roles/ColorClient';
 import {RolesState} from 'State/RolesState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {RoleTagRequest} from '../Types/TagRequest';
 
 jest.mock('Roles/RoleClient');
 jest.mock('Roles/ColorClient');
@@ -112,7 +112,7 @@ describe('My Roles Form', () => {
                 expect(screen.queryByTestId('saveTagButton')).not.toBeInTheDocument();
             });
 
-            const expectedRoleAddRequest: RoleAddRequest = {
+            const expectedRoleAddRequest: RoleTagRequest = {
                 name: expectedNewRoleName,
                 colorId: TestData.whiteColor.id,
             };

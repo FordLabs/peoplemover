@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
+export interface TagRequest {
+    id?: number;
+    name: string;
+}
 
-import {TagRequest} from '../Tags/TagRequest.interface';
-
-export interface RoleAddRequest extends TagRequest {
+export interface RoleTagRequest extends TagRequest {
     colorId?: number;
 }

@@ -24,12 +24,12 @@ import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import {INACTIVE_EDIT_STATE_INDEX} from '../Tags/MyTagsForm';
-import {RoleEditRequest} from './RoleEditRequest.interface';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {Color} from '../Types/Color';
 import {RoleTag} from '../Types/Tags';
+import {RoleTagRequest} from '../Types/TagRequest';
 
 interface Props {
     colors: Array<Color>;
@@ -59,7 +59,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
         setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
     };
 
-    const editRole = async (role: RoleEditRequest): Promise<unknown> => {
+    const editRole = async (role: RoleTagRequest): Promise<unknown> => {
         return await RoleClient.edit(role, currentSpace)
             .then((response) => {
                 fetchRoles();
@@ -67,7 +67,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
             });
     };
 
-    const addRole = async (role: RoleEditRequest): Promise<unknown> => {
+    const addRole = async (role: RoleTagRequest): Promise<unknown> => {
         const newRole = {
             name: role.name,
             colorId: role.colorId,
@@ -97,7 +97,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
 
     const showEditState = (index: number): boolean => editRoleIndex === index;
 
-    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleEditRequest => {
+    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleTagRequest => {
         return {id: role.id, name: role.name, colorId: role.color?.id};
     };
 

@@ -19,7 +19,7 @@ import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {createDataTestId} from '../Utils/ReactUtils';
 import EditTagRow from './EditTagRow';
-import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagRequest} from '../Types/TagRequest';
 import {TagNameType, TagType} from '../SortingAndFiltering/FilterLibraries';
 import {Color} from '../Types/Color';
 

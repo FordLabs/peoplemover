@@ -21,7 +21,7 @@ import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {AxiosResponse} from 'axios';
 import {useOnLoad} from './UseOnLoad';
-import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagRequest} from '../Types/TagRequest';
 import SelectWithCreateOption, {Metadata} from '../ModalFormComponents/SelectWithCreateOption';
 import {TagClient} from '../Tags/TagClient.interface';
 import {useRecoilValue} from 'recoil';

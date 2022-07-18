@@ -22,7 +22,7 @@ import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import selectEvent from 'react-select-event';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
-import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagRequest} from '../Types/TagRequest';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import PeopleClient from './PeopleClient';
 import {emptyPerson, Person} from './Person';

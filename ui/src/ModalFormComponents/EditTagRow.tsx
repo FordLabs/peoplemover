@@ -20,11 +20,10 @@ import SaveIcon from '../Assets/saveIcon.png';
 import CloseIcon from '../Assets/closeIcon.png';
 import {JSX} from '@babel/types';
 import {createDataTestId} from '../Utils/ReactUtils';
-import {TagRequest} from '../Tags/TagRequest.interface';
+import {RoleTagRequest, TagRequest} from '../Types/TagRequest';
 
 import {OptionType} from './SelectWithHTMLOptions';
 import ColorDropdown from '../Roles/ColorDropdown';
-import {RoleEditRequest} from '../Roles/RoleEditRequest.interface';
 import {TagType} from '../SortingAndFiltering/FilterLibraries';
 import {Color} from '../Types/Color';
 
@@ -53,9 +52,9 @@ function EditTagRow({
     const [showDuplicatedTagErrorMessage, setShowDuplicatedTagErrorMessage] = useState<boolean>(false);
 
     const saveTag = (): void => {
-        const newTag = tagInputValue as RoleEditRequest;
+        const newTag = tagInputValue as RoleTagRequest;
         newTag.name = newTag.name.trim();
-        if (colors && !(tagInputValue as RoleEditRequest).colorId) {
+        if (colors && !(tagInputValue as RoleTagRequest).colorId) {
             newTag.colorId = colors[colors.length - 1].id;
         }
         onSave(newTag).catch((error) => {
@@ -84,11 +83,11 @@ function EditTagRow({
     };
 
     const isColorTheSame = (): boolean => {
-        return (tagInputValue as RoleEditRequest).colorId === (initialValue as RoleEditRequest).colorId;
+        return (tagInputValue as RoleTagRequest).colorId === (initialValue as RoleTagRequest).colorId;
     };
 
     const handleColorChange = (selectedOption: OptionType): void => {
-        setTagInputValue(({...tagInputValue, colorId: ((selectedOption.value as Color).id) }) as RoleEditRequest);
+        setTagInputValue(({...tagInputValue, colorId: ((selectedOption.value as Color).id) }) as RoleTagRequest);
     };
 
     const isTraitNameInvalid = (): boolean => {
@@ -102,7 +101,7 @@ function EditTagRow({
             <div className={`editTagRow ${tagNameClass}`}
                 data-testid={createDataTestId('editTagRow', testIdSuffix)}>
                 { colors?.length && <ColorDropdown
-                    selectedColorId={(tagInputValue as RoleEditRequest).colorId}
+                    selectedColorId={(tagInputValue as RoleTagRequest).colorId}
                     colors={colors} 
                     handleColorChange={handleColorChange}
                 />}

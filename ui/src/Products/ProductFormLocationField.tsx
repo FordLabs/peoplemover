@@ -21,7 +21,7 @@ import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
-import {TagRequest} from '../Tags/TagRequest.interface';
+import {TagRequest} from '../Types/TagRequest';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
