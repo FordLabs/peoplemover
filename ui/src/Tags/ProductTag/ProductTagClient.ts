@@ -18,7 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Tag} from 'Types/Tags';
 import {TagRequest} from '../../Types/TagRequest';
-import {TagClient} from '../TagClient.interface';
+import {TagClient} from '../../Types/TagClient';
 import {getToken} from '../../Auth/TokenProvider';
 import {Space} from 'Types/Space';
 import MatomoEvents from '../../Matomo/MatomoEvents';

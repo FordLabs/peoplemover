@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  */
 
 import {AxiosResponse} from 'axios';
-import {TagRequest} from '../Types/TagRequest';
+import {TagRequest} from './TagRequest';
 import {Space} from 'Types/Space';
 import {Tag} from 'Types/Tags';
 

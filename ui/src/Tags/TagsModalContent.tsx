@@ -24,7 +24,7 @@ import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import {INACTIVE_EDIT_STATE_INDEX} from './MyTagsForm';
-import {TagClient} from './TagClient.interface';
+import {TagClient} from '../Types/TagClient';
 import {FilterType} from '../SortingAndFiltering/FilterLibraries';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
