@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {Color} from '../Roles/RoleTag.interface';
+import {Color} from 'Types/RoleTag';
 import './ColorCircle.scss';
 
 interface Props {

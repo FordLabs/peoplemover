@@ -21,7 +21,7 @@ import AssignmentCard from './AssignmentCard';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {Assignment} from './Assignment';
-import {Color, RoleTag} from '../Roles/RoleTag.interface';
+import {Color, RoleTag} from 'Types/RoleTag';
 import PeopleClient from '../People/PeopleClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';

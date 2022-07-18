@@ -19,7 +19,7 @@ import {Person} from '../People/Person';
 import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
 import {Tag} from 'Types/Tag';
-import {Color, RoleTag} from '../Roles/RoleTag.interface';
+import {Color, RoleTag} from 'Types/RoleTag';
 import {LocationTag} from 'Types/LocationTag';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from '../Space/UserSpaceMapping';

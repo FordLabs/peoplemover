@@ -23,7 +23,7 @@ import {createDataTestId} from '../Utils/ReactUtils';
 import {TagRequest} from '../Tags/TagRequest.interface';
 
 import './TagRowsContainer.scss';
-import {Color} from '../Roles/RoleTag.interface';
+import {Color} from 'Types/RoleTag';
 import {OptionType} from './SelectWithHTMLOptions';
 import ColorDropdown from '../Roles/ColorDropdown';
 import {RoleEditRequest} from '../Roles/RoleEditRequest.interface';

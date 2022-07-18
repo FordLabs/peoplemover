@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {RoleTag} from '../Roles/RoleTag.interface';
+import {RoleTag} from 'Types/RoleTag';
 import {Tag} from 'Types/Tag';
 import moment from 'moment';
 import {Product} from '../Products/Product';

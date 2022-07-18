@@ -17,7 +17,7 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import {RoleTag} from 'Roles/RoleTag.interface';
+import {RoleTag} from 'Types/RoleTag';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
 import {Tag} from 'Types/Tag';
 import {ProductTagsState} from 'State/ProductTagsState';

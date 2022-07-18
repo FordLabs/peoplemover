@@ -21,7 +21,7 @@ import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived, Person} from './Person';
-import {RoleTag} from '../Roles/RoleTag.interface';
+import {RoleTag} from 'Types/RoleTag';
 import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
