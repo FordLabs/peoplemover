@@ -16,7 +16,7 @@
  */
 
 import Axios from 'axios';
-import {Report} from './Report';
+import {Report} from '../Types/Report';
 import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
 import moment from 'moment';
