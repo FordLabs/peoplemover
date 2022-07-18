@@ -27,9 +27,10 @@ import {LocationsState} from 'State/LocationsState';
 import {ProductTagsState} from 'State/ProductTagsState';
 import {ModalContents} from '../State/ModalContentsState';
 import ProductForm from './ProductForm';
+import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {Tag} from 'Types/Tag';
 
 import './ProductListGrouped.scss';
-import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 interface GroupedByListProps {
     products: Array<Product>;
@@ -37,7 +38,7 @@ interface GroupedByListProps {
 
 interface GroupedListDataProps {
     traitTitle: string;
-    traits: Array<TagInterface>;
+    traits: Array<Tag>;
     filterByTraitFunction: (product: Product, tagName: string) => boolean;
     filterByNoTraitFunction: (product: Product) => boolean;
 }

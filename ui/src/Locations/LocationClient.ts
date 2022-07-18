@@ -16,7 +16,7 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {LocationTag} from './LocationTag.interface';
+import {LocationTag} from 'Types/LocationTag';
 import {TagRequest} from '../Tags/TagRequest.interface';
 import {TagClient} from '../Tags/TagClient.interface';
 import {getToken} from '../Auth/TokenProvider';

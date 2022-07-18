@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {TagInterface} from '../Tags/Tag.interface';
 import {JSX} from '@babel/types';
 import React, {ReactNode} from 'react';
 import {createDataTestId} from '../Utils/ReactUtils';
 import {TagType} from '../SortingAndFiltering/FilterLibraries';
+import {Tag} from 'Types/Tag';
 
 interface Props {
     children?: ReactNode;
@@ -27,7 +27,7 @@ interface Props {
     showEditButtons: boolean;
     setConfirmDeleteModal: Function;
     tagType: TagType;
-    tag: TagInterface;
+    tag: Tag;
 }
 
 function ViewTagRow({

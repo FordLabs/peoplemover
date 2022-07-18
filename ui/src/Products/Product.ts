@@ -17,7 +17,7 @@
 
 import {Tag} from 'Types/Tag';
 import {Assignment} from '../Assignments/Assignment';
-import {LocationTag} from '../Locations/LocationTag.interface';
+import {LocationTag} from 'Types/LocationTag';
 import moment from 'moment';
 import {isArchived} from '../People/Person';
 

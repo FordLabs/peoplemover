@@ -19,7 +19,7 @@ import {JSX} from '@babel/types';
 import {Option} from '../CommonTypes/Option';
 import LocationClient from '../Locations/LocationClient';
 import {AxiosResponse} from 'axios';
-import {LocationTag} from '../Locations/LocationTag.interface';
+import {LocationTag} from 'Types/LocationTag';
 import React, {useEffect, useState} from 'react';
 import {Product} from './Product';
 import {TagRequest} from '../Tags/TagRequest.interface';
