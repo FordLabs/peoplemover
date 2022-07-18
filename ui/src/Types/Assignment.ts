@@ -14,21 +14,15 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+import {Person} from './Person';
 
-import {LocationTag, Tag} from './Tags';
-import {Assignment} from './Assignment';
-
-export interface Product {
+export interface Assignment {
     id: number;
-    name: string;
+    person: Person;
+    placeholder: boolean;
+    productId: number;
     spaceUuid: string;
-    startDate?: string;
-    endDate?: string;
-    dorf?: string;
-    spaceLocation?: LocationTag;
-    tags: Array<Tag>;
-    archived: boolean;
-    notes?: string;
-    url?: string;
-    assignments: Assignment[];
+    effectiveDate?: Date;
+    startDate?: Date;
+    endDate?: Date;
 }

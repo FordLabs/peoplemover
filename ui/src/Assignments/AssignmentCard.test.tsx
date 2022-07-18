@@ -20,7 +20,6 @@ import React from 'react';
 import AssignmentCard from './AssignmentCard';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {Assignment} from './Assignment';
 import PeopleClient from '../People/PeopleClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
@@ -31,6 +30,7 @@ import ProductClient from '../Products/ProductClient';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {RoleTag} from '../Types/Tags';
 import {Color} from '../Types/Color';
+import {Assignment} from '../Types/Assignment';
 
 jest.mock('Products/ProductClient');
 jest.mock('Assignments/AssignmentClient');

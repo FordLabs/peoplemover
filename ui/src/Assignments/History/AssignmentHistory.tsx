@@ -16,12 +16,13 @@
  */
 
 import moment from 'moment';
-import {Assignment, didAssignmentEndInThePast, getDurationWithRespectToToday} from '../Assignment';
+import {didAssignmentEndInThePast, getDurationWithRespectToToday} from '../AssignmentService';
 import React, {useEffect, useState} from 'react';
 import AssignmentClient from '../AssignmentClient';
 import ProductClient from 'Products/ProductClient';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
+import {Assignment} from 'Types/Assignment';
 
 import './AssignmentHistory.scss';
 
@@ -30,8 +31,8 @@ interface AssignmentHistoryProps {
 }
 
 export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element {
-    const [products, setProducts] = useState<Array<Product>>([]);
-    const [assignments, setAssignments] = useState<Array<Assignment>>([]);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [isShowing, setIsShowing] = useState<boolean>(false);
 
     useEffect(() => {

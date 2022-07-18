@@ -20,7 +20,7 @@ import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
 import AssignmentClient from './AssignmentClient';
-import {Assignment, calculateDuration} from './Assignment';
+import {calculateDuration} from './AssignmentService';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
@@ -37,6 +37,7 @@ import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {Assignment} from 'Types/Assignment';
 
 import '../Styles/Main.scss';
 import './AssignmentCard.scss';

@@ -18,7 +18,7 @@
 import React, {useEffect, useState} from 'react';
 
 import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
-import {Assignment, calculateDuration} from 'Assignments/Assignment';
+import {calculateDuration} from 'Assignments/AssignmentService';
 import HeaderContainer from 'Header/HeaderContainer';
 import SubHeader from 'Header/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
@@ -33,6 +33,7 @@ import {useParams} from 'react-router-dom';
 import {Product} from 'Types/Product';
 
 import './TimeOnProduct.scss';
+import {Assignment} from '../Types/Assignment';
 
 export const LOADING = 'Loading...';
 

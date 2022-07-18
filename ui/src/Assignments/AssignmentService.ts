@@ -16,18 +16,7 @@
  */
 
 import moment from 'moment';
-import {Person} from 'Types/Person';
-
-export interface Assignment {
-    id: number;
-    person: Person;
-    placeholder: boolean;
-    productId: number;
-    spaceUuid: string;
-    effectiveDate?: Date;
-    startDate?: Date;
-    endDate?: Date;
-}
+import {Assignment} from '../Types/Assignment';
 
 export function calculateDuration(assignment: Assignment, viewingDate: Date): number {
     if (assignment.startDate) {

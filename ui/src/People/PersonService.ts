@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +16,9 @@
  */
 
 import moment from 'moment';
-import {Assignment} from 'Assignments/Assignment';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
+import {Assignment} from '../Types/Assignment';
 
 export function emptyPerson(): Person {
     return {
@@ -60,8 +60,8 @@ export function isArchived(person: Person, date: Date): boolean {
     return person.archiveDate != null && moment(person.archiveDate).isBefore(moment(date));
 }
 
-export const getAssignments = (person: Person, products: Array<Product>): Array<Assignment> => {
-    const assignments: Array<Assignment> = [];
+export const getAssignments = (person: Person, products: Product[]): Assignment[] => {
+    const assignments: Assignment[] = [];
     products.forEach(product => {
         const assignment = product.assignments.find(assignment => assignment.person.id === person.id);
         if (assignment !== undefined) { assignments.push(assignment);}

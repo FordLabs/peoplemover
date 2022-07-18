@@ -25,7 +25,6 @@ import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Option} from '../Types/Option';
-import {Assignment} from '../Assignments/Assignment';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
@@ -49,9 +48,10 @@ import {ModalContentsState} from '../State/ModalContentsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {RoleTagRequest} from 'Types/TagRequest';
 import {Product} from 'Types/Product';
+import {Person} from '../Types/Person';
+import {Assignment} from '../Types/Assignment';
 
 import './PersonForm.scss';
-import {Person} from '../Types/Person';
 
 interface Props {
     isEditPersonForm: boolean
@@ -126,7 +126,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         return -1;
     };
 
-    const createProductsFromAssignments = (assignments: Array<Assignment>): Array<Product> => {
+    const createProductsFromAssignments = (assignments: Assignment[]): Product[] => {
         const allProductIdsFromAssignments = assignments.map(a => a.productId);
         return products.filter(p => allProductIdsFromAssignments.includes(p.id)).filter(product => product.id !== getUnassignedProductId());
     };
