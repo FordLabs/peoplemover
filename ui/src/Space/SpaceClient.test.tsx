@@ -21,7 +21,7 @@ import Cookies from 'universal-cookie';
 import {createEmptySpace} from 'Types/Space';
 import {MatomoWindow} from '../CommonTypes/MatomoWindow';
 import TestData from '../Utils/TestData';
-import {UserSpaceMapping} from './UserSpaceMapping';
+import {UserSpaceMapping} from '../Types/UserSpaceMapping';
 
 declare let window: MatomoWindow;
 

@@ -20,7 +20,7 @@ import {useRecoilValue, useSetRecoilState} from 'recoil';
 import SpaceClient from 'Space/SpaceClient';
 import FormButton from 'ModalFormComponents/FormButton';
 import {Space} from 'Types/Space';
-import {UserSpaceMapping} from 'Space/UserSpaceMapping';
+import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
 import {CurrentUserState} from 'State/CurrentUserState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';

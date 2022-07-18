@@ -20,7 +20,7 @@ import {Assignment} from '../Assignments/Assignment';
 import {Product} from '../Products/Product';
 import {LocationTag, RoleTag, Tag} from 'Types/Tags';
 import {Space} from 'Types/Space';
-import {UserSpaceMapping} from '../Space/UserSpaceMapping';
+import {UserSpaceMapping} from '../Types/UserSpaceMapping';
 import {LocalStorageFilters} from '../SortingAndFiltering/FilterLibraries';
 import {Color} from '../Types/Color';
 
