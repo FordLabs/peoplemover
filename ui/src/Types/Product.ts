@@ -15,7 +15,7 @@
 * limitations under the License.
 */
 
-import {LocationTag, Tag} from './Tags';
+import {LocationTag, Tag} from './Tag';
 import {Assignment} from './Assignment';
 
 export interface Product {

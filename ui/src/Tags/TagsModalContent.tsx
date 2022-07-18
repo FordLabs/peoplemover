@@ -28,7 +28,7 @@ import {TagClient} from '../Types/TagClient';
 import {FilterType} from '../SortingAndFiltering/FilterLibraries';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {Tag} from '../Types/Tags';
+import {Tag} from '../Types/Tag';
 
 interface Props {
     tags: Array<Tag>;

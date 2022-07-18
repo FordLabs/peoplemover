@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {LocationTag, RoleTag, Tag} from 'Types/Tags';
+import {LocationTag, RoleTag, Tag} from 'Types/Tag';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 import {LocalStorageFilters} from 'SortingAndFiltering/FilterLibraries';

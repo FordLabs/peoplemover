@@ -28,7 +28,7 @@ import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {Color} from '../Types/Color';
-import {RoleTag} from '../Types/Tags';
+import {RoleTag} from '../Types/Tag';
 import {RoleTagRequest} from '../Types/TagRequest';
 
 interface Props {

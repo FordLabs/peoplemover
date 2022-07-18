@@ -16,7 +16,7 @@
  */
 
 import {Option} from '../Types/Option';
-import {Tag} from 'Types/Tags';
+import {Tag} from 'Types/Tag';
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import {AxiosResponse} from 'axios';

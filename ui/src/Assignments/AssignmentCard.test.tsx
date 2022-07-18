@@ -28,7 +28,7 @@ import AssignmentClient from './AssignmentClient';
 import moment from 'moment';
 import ProductClient from '../Products/ProductClient';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {RoleTag} from '../Types/Tags';
+import {RoleTag} from '../Types/Tag';
 import {Color} from '../Types/Color';
 import {Assignment} from '../Types/Assignment';
 

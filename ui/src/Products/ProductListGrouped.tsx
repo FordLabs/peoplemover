@@ -27,7 +27,7 @@ import {ProductTagsState} from 'State/ProductTagsState';
 import {ModalContents} from 'State/ModalContentsState';
 import ProductForm from './ProductForm';
 import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
-import {Tag} from 'Types/Tags';
+import {Tag} from 'Types/Tag';
 import {Product} from 'Types/Product';
 
 import './ProductListGrouped.scss';

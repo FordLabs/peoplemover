@@ -24,7 +24,7 @@ import {TagRequest} from 'Types/TagRequest';
 import SelectWithCreateOption, {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
-import {LocationTag} from 'Types/Tags';
+import {LocationTag} from 'Types/Tag';
 import {Product} from 'Types/Product';
 
 interface Props {

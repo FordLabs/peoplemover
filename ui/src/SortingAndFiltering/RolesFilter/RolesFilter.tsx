@@ -22,7 +22,7 @@ import MyRolesForm from '../../Roles/MyRolesForm';
 import {useRecoilValue} from 'recoil';
 import {RolesState} from '../../State/RolesState';
 import {FilterOption} from '../../Types/Option';
-import {RoleTag} from '../../Types/Tags';
+import {RoleTag} from '../../Types/Tag';
 
 function RolesFilter() {
     const roles = useRecoilValue(RolesState);

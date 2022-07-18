@@ -27,7 +27,7 @@ import {
 } from '../FilterLibraries';
 import {FilterOption} from '../../Types/Option';
 import Filter from '../Filter';
-import {LocationTag} from '../../Types/Tags';
+import {LocationTag} from '../../Types/Tag';
 
 function ProductLocationFilter() {
     const productLocations = useRecoilValue(LocationsState);

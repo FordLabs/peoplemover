@@ -16,7 +16,7 @@
 */
 
 import {atom} from 'recoil';
-import {Tag} from 'Types/Tags';
+import {Tag} from 'Types/Tag';
 
 export const PersonTagsState = atom<Tag[]>({
     key: 'PersonTagsState',

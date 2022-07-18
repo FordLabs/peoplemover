@@ -27,7 +27,7 @@ import {useRecoilValue} from 'recoil';
 import {PersonTagsState} from '../../State/PersonTagsState';
 import Filter from '../Filter';
 import MyTagsForm from '../../Tags/MyTagsForm';
-import {PersonTag} from '../../Types/Tags';
+import {PersonTag} from '../../Types/Tag';
 
 function PersonTagsFilter() {
     const personTags = useRecoilValue(PersonTagsState);

@@ -27,7 +27,7 @@ import {
 } from '../FilterLibraries';
 import Filter from '../Filter';
 import MyTagsForm from 'Tags/MyTagsForm';
-import {ProductTag} from 'Types/Tags';
+import {ProductTag} from 'Types/Tag';
 
 function ProductTagsFilter() {
     const productTags = useRecoilValue(ProductTagsState);

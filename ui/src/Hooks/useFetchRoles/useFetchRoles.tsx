@@ -20,7 +20,7 @@ import {useCallback} from 'react';
 import RoleClient from 'Roles/RoleClient';
 import {RolesState} from 'State/RolesState';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
-import {RoleTag} from '../../Types/Tags';
+import {RoleTag} from '../../Types/Tag';
 
 interface UseFetchRoles {
     roles: RoleTag[];

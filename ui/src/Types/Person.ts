@@ -14,7 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-import {RoleTag, Tag} from './Tags';
+import {RoleTag, Tag} from './Tag';
 
 export interface Person {
     id: number;

@@ -21,7 +21,7 @@ import {TagClient} from '../Types/TagClient';
 import {getToken} from '../Auth/TokenProvider';
 import {Space} from 'Types/Space';
 import MatomoEvents from '../Matomo/MatomoEvents';
-import {LocationTag} from '../Types/Tags';
+import {LocationTag} from '../Types/Tag';
 
 class LocationClient implements TagClient {
     private getBaseLocationsUrl(spaceUuid: string): string {

@@ -34,7 +34,7 @@ import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import FormTagsField from '../ReusableComponents/FormTagsField';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
-import {RoleTag, Tag} from 'Types/Tags';
+import {RoleTag, Tag} from 'Types/Tag';
 import ToolTip from '../ReusableComponents/ToolTip';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
