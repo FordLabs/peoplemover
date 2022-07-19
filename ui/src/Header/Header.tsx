@@ -88,7 +88,7 @@ function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element 
             : <>
                 {currentSpace && currentSpace.uuid && !timeOnProductClicked && <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
                     main content</a>}
-                <header className="peopleMoverHeader">
+                <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
                     <div className="headerLeftContainer">
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}

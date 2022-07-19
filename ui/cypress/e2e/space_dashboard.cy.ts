@@ -16,22 +16,46 @@
  */
 
 describe('The Space Dashboard', () => {
+    const newSpaceName = 'SpaceShip';
+
     beforeEach(() => {
         cy.intercept('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
+
         cy.visit('/user/dashboard');
 
         cy.wait('@getSpaceUsers');
 
-        cy.get('[data-testid="spaceDashboardTile"]')
+        cy.get('[data-testid="spaceDashboardTile"]').as('spaceTiles');
+
+        cy.get('@spaceTiles').then((elements) => {
+            if (elements.length > 1) {
+                cy.findByLabelText(`Open Menu for Space ${newSpaceName}`).click();
+                cy.contains('Delete Space').click();
+                cy.get('[data-testid="confirmDeleteButton"]').click();
+                cy.contains('Ok').click();
+            }
+        })
+
+        cy.get('@spaceTiles')
             .should('have.length', 1)
             .should('contain', 'Flipping Sweet');
+        cy.get('[data-testid=peopleMoverHeader]')
+            .should('not.contain', 'Flipping Sweet')
     })
 
-    // it('Delete a space', () => {});
 
-    // it('Add a space', () => {});
+    it('Add a space', () => {
+        cy.contains('Create New Space').click();
+        cy.get('[data-testid="createSpaceInputField"]').type(newSpaceName);
+        cy.get('[data-testid="createSpaceButton"]').should('contain', 'Create').click();
+
+        cy.get('[data-testid=peopleMoverHeader]').should('contain', newSpaceName)
+        cy.contains('Add Product').should('exist');
+    });
 
     // it('Edit a space', () => {});
+
+    // it('Delete a space', () => {});
 
     it('Transfer ownership of a space', () => {
         checkPresenceOfDashboardWelcomeMessage(false);
