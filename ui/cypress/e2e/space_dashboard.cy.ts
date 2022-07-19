@@ -39,9 +39,9 @@ describe('The Space Dashboard', () => {
             .should('have.length', 1)
             .should('contain', 'Flipping Sweet');
         cy.get('[data-testid=peopleMoverHeader]')
+            .should('contain', 'PEOPLEMOVER')
             .should('not.contain', 'Flipping Sweet')
     })
-
 
     it('Add a space', () => {
         cy.contains('Create New Space').click();
@@ -85,6 +85,15 @@ describe('The Space Dashboard', () => {
         cy.get('[data-testid="confirmationModalCancel"]').click({ force: true });
 
         checkPresenceOfDashboardWelcomeMessage(true);
+    });
+
+    it('Only show "Sign Out" option in account dropdown', () => {
+        cy.get('[data-testid="currentUserMessage"]')
+            .should('have.text', 'Welcome, USER_ID')
+            .click();
+        cy.findByText('Sign Out').should('exist');
+        cy.findByText('Share Access').should('not.exist');
+        cy.findByText('Download Report').should('not.exist');
     });
 });
 
