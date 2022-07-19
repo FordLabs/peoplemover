@@ -17,22 +17,42 @@
 
 describe('The Space Dashboard', () => {
     beforeEach(() => {
-        cy.server();
-    });
-
-    it('can open the Invite Editors modal from the Space Dashboard', () => {
-        cy.route('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
+        cy.intercept('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
         cy.visit('/user/dashboard');
-        cy.injectAxe();
-        cy.contains('Flipping Sweet');
+
         cy.wait('@getSpaceUsers');
-        cy.get('[id=ellipsis-button-Flipping-Sweet]').click();
+
+        cy.get('[data-testid="spaceDashboardTile"]')
+            .should('have.length', 1)
+            .should('contain', 'Flipping Sweet');
+    })
+
+    // it('Delete a space', () => {});
+
+    // it('Add a space', () => {});
+
+    // it('Edit a space', () => {});
+
+    it('Transfer ownership of a space', () => {
+        checkPresenceOfDashboardWelcomeMessage(false);
+
+        cy.get('[data-testid="ellipsisButton"]').click();
         cy.contains('Leave Space').click();
         cy.contains('Transfer Ownership of Space');
+        cy.get('[data-testid="transferOwnershipFormRadioControl-BBARKER"]').click();
+        cy.get('[data-testid="transferOwnershipFormSubmitButton"]').click();
+        cy.contains('Confirmed').should('exist');
+        cy.get('[data-testid="confirmationModalCancel"]').click({ force: true });
+
+        checkPresenceOfDashboardWelcomeMessage(true);
     });
 
+    // it('Leave a space ', () => {});
+
+    // it('Show no spaces message', () => {});
+
     xit('refreshes page after deleting a space', () => {
-        cy.route('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
+        cy.intercept('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
         cy.visit('/user/dashboard');
         cy.injectAxe();
         cy.get('.createNewSpaceButton').click();
@@ -53,3 +73,10 @@ describe('The Space Dashboard', () => {
             .should('not.contain.text', 'abc');
     });
 });
+
+function checkPresenceOfDashboardWelcomeMessage(isPresent : boolean) {
+    const isPresentAssertion = isPresent ? 'exist' : 'not.exist';
+    cy.contains('Welcome to PeopleMover!').should(isPresentAssertion);
+    cy.contains('Get started by creating your own space.').should(isPresentAssertion);
+    cy.contains('Create New Space').should('exist');
+}
