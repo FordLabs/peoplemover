@@ -16,7 +16,7 @@
  */
 
 import React, {ReactNode, useEffect, useState} from 'react';
-import {AccessTokenClient} from '../Login/AccessTokenClient';
+import AccessTokenClient from '../Login/AccessTokenClient';
 import {getToken} from './TokenProvider';
 import {setOauthRedirect} from '../ReusableComponents/OAuthRedirect';
 

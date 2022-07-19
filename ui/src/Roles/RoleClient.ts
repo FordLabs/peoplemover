@@ -16,84 +16,58 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {TagClient} from '../Types/TagClient';
-import {getToken} from '../Auth/TokenProvider';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import {TagClient} from 'Types/TagClient';
+import MatomoEvents from 'Matomo/MatomoEvents';
 import {Space} from 'Types/Space';
-import {RoleTagRequest} from '../Types/TagRequest';
+import {RoleTagRequest} from 'Types/TagRequest';
+import {getAxiosConfig} from 'Utils/getAxiosConfig';
 
-class RoleClient implements TagClient {
-    private getBaseRolesUrl(spaceUuid: string): string {
-        return '/api/spaces/' + spaceUuid + '/roles';
-    }
-
-    async get(spaceUuid: string): Promise<AxiosResponse> {
-        const url = this.getBaseRolesUrl(spaceUuid);
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.get(url, config);
-    }
-
-    async add(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseRolesUrl(space.uuid!);
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.post(url, role, config).then((result) => {
-            MatomoEvents.pushEvent(space.name, 'addRole', role.name);
-            return result;
-        }).catch((err) => {
-            MatomoEvents.pushEvent(space.name, 'addRoleError', role.name, err.code);
-            return Promise.reject(err);
-        });
-    }
-
-    async edit(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = `${this.getBaseRolesUrl(space.uuid!)}/${role.id}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.put(url, role, config).then((result) => {
-            MatomoEvents.pushEvent(space.name, 'editRole', role.name);
-            return result;
-        }).catch((err) => {
-            MatomoEvents.pushEvent(space.name, 'editRoleError', role.name, err.code);
-            return Promise.reject(err);
-        });
-    }
-
-    async delete(roleId: number, space: Space): Promise<AxiosResponse> {
-        const url = this.getBaseRolesUrl(space.uuid!) + `/${roleId}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.delete(url, config).then((result) => {
-            MatomoEvents.pushEvent(space.name, 'deleteRole', roleId.toString());
-            return result;
-        }).catch((err) => {
-            MatomoEvents.pushEvent(space.name, 'deleteRoleError', roleId.toString(), err.code);
-            return Promise.reject(err);
-        });
-    }
+function getBaseRolesUrl(spaceUuid: string): string {
+    return '/api/spaces/' + spaceUuid + '/roles';
 }
 
-export default new RoleClient();
+async function get(spaceUuid: string): Promise<AxiosResponse> {
+    const url = getBaseRolesUrl(spaceUuid);
+    return Axios.get(url, getAxiosConfig());
+}
+
+async function add(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
+    const url = getBaseRolesUrl(space.uuid || '');
+    return Axios.post(url, role, getAxiosConfig()).then((result) => {
+        MatomoEvents.pushEvent(space.name, 'addRole', role.name);
+        return result;
+    }).catch((err) => {
+        MatomoEvents.pushEvent(space.name, 'addRoleError', role.name, err.code);
+        return Promise.reject(err);
+    });
+}
+
+async function edit(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
+    const url = `${getBaseRolesUrl(space.uuid || '')}/${role.id}`;
+    return Axios.put(url, role, getAxiosConfig()).then((result) => {
+        MatomoEvents.pushEvent(space.name, 'editRole', role.name);
+        return result;
+    }).catch((err) => {
+        MatomoEvents.pushEvent(space.name, 'editRoleError', role.name, err.code);
+        return Promise.reject(err);
+    });
+}
+
+async function deleteRole(roleId: number, space: Space): Promise<AxiosResponse> {
+    const url = getBaseRolesUrl(space.uuid!) + `/${roleId}`;
+    return Axios.delete(url, getAxiosConfig()).then((result) => {
+        MatomoEvents.pushEvent(space.name, 'deleteRole', roleId.toString());
+        return result;
+    }).catch((err) => {
+        MatomoEvents.pushEvent(space.name, 'deleteRoleError', roleId.toString(), err.code);
+        return Promise.reject(err);
+    });
+}
+const RoleClient: TagClient = {
+    get,
+    add,
+    edit,
+    delete: deleteRole
+}
+
+export default RoleClient;

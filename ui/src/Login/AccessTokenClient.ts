@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,37 +16,26 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {getToken} from '../Auth/TokenProvider';
+import {getAxiosConfig} from '../Utils/getAxiosConfig';
 
-export class AccessTokenClient {
-    static async validateAccessToken(accessToken: string): Promise<AxiosResponse> {
-        const url = '/api/access_token/validate';
-        const data = {
-            accessToken: accessToken,
-        };
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.post(url, data, config);
-    }
-
-    static async userCanAccessSpace(accessToken: string, uuid: string): Promise<AxiosResponse> {
-        const url = '/api/access_token/authenticate';
-        const data = {
-            accessToken: accessToken,
-            uuid: uuid,
-        };
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.post(url, data, config);
-    }
+async function validateAccessToken(accessToken: string): Promise<AxiosResponse> {
+    const url = '/api/access_token/validate';
+    const data = { accessToken: accessToken };
+    return Axios.post(url, data, getAxiosConfig());
 }
+
+async function userCanAccessSpace(accessToken: string, uuid: string): Promise<AxiosResponse> {
+    const url = '/api/access_token/authenticate';
+    const data = {
+        accessToken: accessToken,
+        uuid: uuid,
+    };
+    return Axios.post(url, data, getAxiosConfig());
+}
+
+const AccessTokenClient = {
+    validateAccessToken,
+    userCanAccessSpace
+}
+
+export default AccessTokenClient

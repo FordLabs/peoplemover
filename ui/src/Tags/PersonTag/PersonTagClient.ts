@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,79 +19,57 @@ import Axios, {AxiosResponse} from 'axios';
 import {Tag} from 'Types/Tag';
 import {TagRequest} from '../../Types/TagRequest';
 import {TagClient} from '../../Types/TagClient';
-import {getToken} from '../../Auth/TokenProvider';
 import {Space} from 'Types/Space';
 import MatomoEvents from '../../Matomo/MatomoEvents';
+import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
-class PersonTagClient implements TagClient {
-    private getBasePersonTagsUrl(spaceUuid: string): string {
-        return '/api/spaces/' + spaceUuid + '/person-tags';
-    }
-
-    async get(spaceUuid: string): Promise<AxiosResponse<Array<Tag>>> {
-        const url = this.getBasePersonTagsUrl(spaceUuid);
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.get(url, config);
-    }
-
-    async add(personTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
-        const url = this.getBasePersonTagsUrl(space.uuid!);
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.post(url, personTagAddRequest, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'addPersonTag', personTagAddRequest.name);
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'addPersonTagError', personTagAddRequest.name, err.code);
-            return Promise.reject(err);
-        });
-    }
-
-    async edit(personTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>> {
-        const url = `${this.getBasePersonTagsUrl(space.uuid!)}/${personTagEditRequest.id}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.put(url, personTagEditRequest, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'editPersonTag', personTagEditRequest.name);
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'editPersonTagError', personTagEditRequest.name, err.code);
-            return Promise.reject(err);
-        });
-    }
-
-    async delete(personTagId: number, space: Space): Promise<AxiosResponse> {
-        const url = this.getBasePersonTagsUrl(space.uuid!) + `/${personTagId}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.delete(url, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'deletePersonTag', personTagId.toString());
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'deletePersonTagError', personTagId.toString(), err.code);
-            return Promise.reject(err);
-        });
-    }
+function getBasePersonTagsUrl(spaceUuid: string): string {
+    return '/api/spaces/' + spaceUuid + '/person-tags';
 }
-export default new PersonTagClient();
+
+async function get(spaceUuid: string): Promise<AxiosResponse<Array<Tag>>> {
+    const url = getBasePersonTagsUrl(spaceUuid);
+    return Axios.get(url, getAxiosConfig());
+}
+
+async function add(personTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
+    const url = getBasePersonTagsUrl(space.uuid!);
+    return Axios.post(url, personTagAddRequest, getAxiosConfig()).then( result => {
+        MatomoEvents.pushEvent(space.name, 'addPersonTag', personTagAddRequest.name);
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(space.name, 'addPersonTagError', personTagAddRequest.name, err.code);
+        return Promise.reject(err);
+    });
+}
+
+async function edit(personTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>> {
+    const url = `${getBasePersonTagsUrl(space.uuid!)}/${personTagEditRequest.id}`;
+    return Axios.put(url, personTagEditRequest, getAxiosConfig()).then( result => {
+        MatomoEvents.pushEvent(space.name, 'editPersonTag', personTagEditRequest.name);
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(space.name, 'editPersonTagError', personTagEditRequest.name, err.code);
+        return Promise.reject(err);
+    });
+}
+
+async function deletePerson(personTagId: number, space: Space): Promise<AxiosResponse> {
+    const url = getBasePersonTagsUrl(space.uuid!) + `/${personTagId}`;
+    return Axios.delete(url, getAxiosConfig()).then( result => {
+        MatomoEvents.pushEvent(space.name, 'deletePersonTag', personTagId.toString());
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(space.name, 'deletePersonTagError', personTagId.toString(), err.code);
+        return Promise.reject(err);
+    });
+}
+
+const PersonTagClient: TagClient = {
+    get,
+    add,
+    edit,
+    delete: deletePerson
+}
+
+export default PersonTagClient;

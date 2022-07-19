@@ -20,9 +20,9 @@ import {render, screen, waitFor} from '@testing-library/react';
 import {AuthenticatedRoute} from './AuthenticatedRoute';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
-import { MemoryRouter, Routes } from 'react-router-dom';
+import {MemoryRouter, Routes} from 'react-router-dom';
 import {Route} from 'react-router';
-import {AccessTokenClient} from '../Login/AccessTokenClient';
+import AccessTokenClient from '../Login/AccessTokenClient';
 
 const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 const accessToken = 'TOTALLY_REAL_ACCESS_TOKEN';

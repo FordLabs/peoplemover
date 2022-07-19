@@ -18,7 +18,7 @@
 import {RouteProps} from 'react-router';
 import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
-import {AccessTokenClient} from '../Login/AccessTokenClient';
+import AccessTokenClient from '../Login/AccessTokenClient';
 import {AxiosError} from 'axios';
 import {useNavigate, useParams} from 'react-router-dom';
 import {useSetRecoilState} from 'recoil';
