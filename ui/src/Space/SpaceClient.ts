@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +17,9 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from 'Types/Space';
-import {getToken} from '../Auth/TokenProvider';
-import {UserSpaceMapping} from '../Types/UserSpaceMapping';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import {UserSpaceMapping} from 'Types/UserSpaceMapping';
+import MatomoEvents from 'Matomo/MatomoEvents';
+import {getAxiosConfig} from '../Utils/getAxiosConfig';
 
 const baseSpaceUrl = `/api/spaces`;
 
@@ -28,124 +28,114 @@ interface SpaceWithAccessTokenResponse {
     accessToken: string;
 }
 
-class SpaceClient {
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    static getConfig(withJson = true): any {
-        if (withJson)
-            return {headers: {
-                'Authorization': `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            }};
-        else return {headers: {
-            'Authorization': `Bearer ${getToken()}`}};
+async function deleteSpaceByUuid(uuid: string): Promise<void> {
+    const url = `${baseSpaceUrl}/${uuid}`;
+    return Axios.delete(url, getAxiosConfig());
+}
+
+async function getSpacesForUser(): Promise<Space[]> {
+    const url = baseSpaceUrl + '/user';
+    return Axios.get(url, getAxiosConfig()).then(res => res.data);
+}
+
+async function getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
+    const url = `${baseSpaceUrl}/${spaceUuid}`;
+    return Axios.get(url, getAxiosConfig());
+}
+
+async function getUsersForSpace(spaceUuid: string): Promise<UserSpaceMapping[]> {
+    const url = `${baseSpaceUrl}/${spaceUuid}/users`;
+    return Axios.get(url, getAxiosConfig()).then((users) => {
+        return users.data.sort(compareByPermissionThenByUserId);
+    });
+}
+
+function compareByPermissionThenByUserId(a: UserSpaceMapping, b: UserSpaceMapping): number {
+    let comparison = 0;
+    if (a.permission === b.permission) {
+        if (a.userId > b.userId) comparison = 1;
+        else if (a.userId < b.userId) comparison = -1;
+    } else {
+        if (a.permission.toLowerCase() === 'owner') comparison = -1;
+        else if (b.permission.toLowerCase() === 'owner') comparison = 1;
     }
+    return comparison;
+}
 
-    static async deleteSpaceByUuid(uuid: string): Promise<void> {
-        const url = `${baseSpaceUrl}/${uuid}`;
-        return Axios.delete(url, SpaceClient.getConfig(false));
+async function createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
+    const url = `${baseSpaceUrl}/user`;
+    return Axios.post(url, { spaceName }, getAxiosConfig());
+}
 
-    }
+async function editSpaceName(uuid: string, editedSpace: Space, oldSpaceName: string): Promise<AxiosResponse> {
+    return editSpace(uuid, editedSpace).then(result => {
+        MatomoEvents.pushEvent(oldSpaceName, 'editSpaceName', editedSpace.name);
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(oldSpaceName, 'editSpaceNameError', editedSpace.name, err.code);
+        return Promise.reject(err);
+    });
+}
 
-    static async getSpacesForUser(): Promise<Space[]> {
-        const url = baseSpaceUrl + '/user';
-        return Axios.get(url, SpaceClient.getConfig()).then(res => res.data);
-    }
+async function editSpaceReadOnlyFlag(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+    return editSpace(uuid, editedSpace).then(result => {
+        MatomoEvents.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlag', `${editedSpace.todayViewIsPublic}`);
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlagError', err.code);
+        return Promise.reject(err);
+    });
+}
 
-    static async getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
-        const url = `${baseSpaceUrl}/${spaceUuid}`;
+async function editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+    const url = `${baseSpaceUrl}/${uuid}`;
+    return Axios.put(url, editedSpace, getAxiosConfig());
+}
 
-        return Axios.get(url, SpaceClient.getConfig());
-    }
+async function inviteUsersToSpace(space: Space, userIds: string[]): Promise<AxiosResponse<void>> {
+    const url = `${baseSpaceUrl}/${space.uuid}/users`;
+    return Axios.post(url, { userIds }, getAxiosConfig()).then((result) => {
+        MatomoEvents.pushEvent(space.name, 'inviteUser', userIds.join(', '));
+        return result;
+    }).catch((error) => {
+        MatomoEvents.pushEvent(space.name, 'inviteUserError', userIds.join(', '), error.code);
+        return Promise.reject(error);
+    });
+}
 
-    static compareByPermissionThenByUserId = (a: UserSpaceMapping, b: UserSpaceMapping): number => {
-        let comparison = 0;
-        if (a.permission === b.permission) {
-            if (a.userId > b.userId) comparison = 1;
-            else if (a.userId < b.userId) comparison = -1;
-        } else {
-            if (a.permission.toLowerCase() === 'owner') comparison = -1;
-            else if (b.permission.toLowerCase() === 'owner') comparison = 1;
-        }
-        return comparison;
-    }
+function removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
+    const url = `${baseSpaceUrl}/${space.uuid}/users/${user.userId}`;
+    return Axios.delete(url, getAxiosConfig()).then((result) => {
+        MatomoEvents.pushEvent(space.name, 'removeUser', user.userId);
+        return result;
+    }).catch((error) => {
+        MatomoEvents.pushEvent(space.name, 'removeUserError', user.userId, error.code);
+        return Promise.reject(error);
+    });
+}
 
-    static async getUsersForSpace(spaceUuid: string): Promise<UserSpaceMapping[]> {
-        const url = `${baseSpaceUrl}/${spaceUuid}/users`;
+async function changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping): Promise<AxiosResponse<void>> {
+    const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
+    return Axios.put(url, null, getAxiosConfig()).then((result) => {
+        MatomoEvents.pushEvent(space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`);
+        return result;
+    }).catch((error) => {
+        MatomoEvents.pushEvent(space.name, 'updateOwnerError', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`, error.code);
+        return Promise.reject(error);
+    });
+}
 
-
-        return Axios.get(url, SpaceClient.getConfig()).then((users) => {
-            return users.data.sort(SpaceClient.compareByPermissionThenByUserId);
-        });
-    }
-
-    static async createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
-        const url = `${baseSpaceUrl}/user`;
-        const data = { spaceName };
-
-
-        return Axios.post(url, data, SpaceClient.getConfig());
-    }
-
-    static async editSpaceName(uuid: string, editedSpace: Space, oldSpaceName: string): Promise<AxiosResponse> {
-        return this.editSpace(uuid, editedSpace).then(result => {
-            MatomoEvents.pushEvent(oldSpaceName, 'editSpaceName', editedSpace.name);
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(oldSpaceName, 'editSpaceNameError', editedSpace.name, err.code);
-            return Promise.reject(err);
-        });
-    }
-
-    static async editSpaceReadOnlyFlag(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
-        return this.editSpace(uuid, editedSpace).then(result => {
-            MatomoEvents.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlag', `${editedSpace.todayViewIsPublic}`);
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlagError', err.code);
-            return Promise.reject(err);
-        });
-    }
-
-    private static async editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
-        const url = `${baseSpaceUrl}/${uuid}`;
-        return Axios.put(url, editedSpace, SpaceClient.getConfig());
-    }
-
-    static async inviteUsersToSpace(space: Space, userIds: string[]): Promise<AxiosResponse<void>> {
-        const url = `${baseSpaceUrl}/${space.uuid}/users`;
-        const data = { userIds };
-
-        return Axios.post(url, data, SpaceClient.getConfig()).then((result) => {
-            MatomoEvents.pushEvent(space.name, 'inviteUser', userIds.join(', '));
-            return result;
-        }).catch((error) => {
-            MatomoEvents.pushEvent(space.name, 'inviteUserError', userIds.join(', '), error.code);
-            return Promise.reject(error);
-        });
-    }
-
-    static removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
-        const url = `${baseSpaceUrl}/${space.uuid}/users/${user.userId}`;
-        return Axios.delete(url, SpaceClient.getConfig(false)).then((result) => {
-            MatomoEvents.pushEvent(space.name, 'removeUser', user.userId);
-            return result;
-        }).catch((error) => {
-            MatomoEvents.pushEvent(space.name, 'removeUserError', user.userId, error.code);
-            return Promise.reject(error);
-        });
-    }
-
-    static async changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping): Promise<AxiosResponse<void>> {
-        const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
-
-        return Axios.put(url, null, this.getConfig(false)).then((result) => {
-            MatomoEvents.pushEvent(space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`);
-            return result;
-        }).catch((error) => {
-            MatomoEvents.pushEvent(space.name, 'updateOwnerError', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`, error.code);
-            return Promise.reject(error);
-        });
-    }
+const SpaceClient = {
+    deleteSpaceByUuid,
+    getSpacesForUser,
+    getSpaceFromUuid,
+    getUsersForSpace,
+    createSpaceForUser,
+    editSpaceName,
+    editSpaceReadOnlyFlag,
+    inviteUsersToSpace,
+    removeUser,
+    changeOwner
 }
 
 export default SpaceClient;

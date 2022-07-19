@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,91 +16,65 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from 'Assignments/CreateAssignmentRequest';
 import moment from 'moment';
-import {getToken} from '../Auth/TokenProvider';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoEvents from 'Matomo/MatomoEvents';
 import {Space} from 'Types/Space';
-import {Person} from '../Types/Person';
+import {Person} from 'Types/Person';
+import {getAxiosConfig} from 'Utils/getAxiosConfig';
 
-class AssignmentClient {
+async function createAssignmentForDate(requestedDate: string, products: Array<ProductPlaceholderPair>, space: Space, person: Person, sendEvent = true): Promise<AxiosResponse> {
+    const url = `/api/spaces/${space.uuid}/person/${person.id}/assignment/create`;
+    const assignmentRequest = {
+        requestedDate,
+        products,
+    } as CreateAssignmentsRequest;
 
-    static async createAssignmentForDate(requestedDate: string, products: Array<ProductPlaceholderPair>, space: Space, person: Person, sendEvent = true): Promise<AxiosResponse> {
-        const url = `/api/spaces/${space.uuid}/person/${person.id}/assignment/create`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        };
+    return Axios.post(url, assignmentRequest, getAxiosConfig()).then(result => {
+        if (sendEvent) MatomoEvents.pushEvent(space.name, 'assignPerson', person.name);
+        return result;
+    }).catch(err => {
+        if (sendEvent) MatomoEvents.pushEvent(space.name, 'assignPersonError', person.name, err.code);
+        return Promise.reject(err);
+    });
+}
 
-        const assignmentRequest = {
-            requestedDate,
-            products,
-        } as CreateAssignmentsRequest;
+async function getAssignmentsUsingPersonIdAndDate(spaceUuid: string, personId: number, date: Date): Promise<AxiosResponse> {
+    const dateAsString = moment(date).format('YYYY-MM-DD');
+    const url = `/api/spaces/${spaceUuid}/person/${personId}/assignments/date/${dateAsString}`;
+    return Axios.get(url, getAxiosConfig());
+}
 
-        return Axios.post(url, assignmentRequest, {headers}).then(result => {
-            if (sendEvent) {
-                MatomoEvents.pushEvent(space.name, 'assignPerson', person.name);
-            }
-            return result;
-        }).catch(err => {
-            if (sendEvent) {
-                MatomoEvents.pushEvent(space.name, 'assignPersonError', person.name, err.code);
-            }
-            return Promise.reject(err);
-        });
-    }
+async function getAssignmentEffectiveDates(spaceUuid: string): Promise<AxiosResponse> {
+    const url = `/api/spaces/${spaceUuid}/assignment/dates`;
+    return Axios.get(url, getAxiosConfig());
+}
 
-    static async getAssignmentsUsingPersonIdAndDate(spaceUuid: string, personId: number, date: Date): Promise<AxiosResponse> {
-        const dateAsString = moment(date).format('YYYY-MM-DD');
-        const url = `/api/spaces/${spaceUuid}/person/${personId}/assignments/date/${dateAsString}`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        };
+async function deleteAssignmentForDate(date: Date, person: Person): Promise<AxiosResponse> {
+    const dateAsString = moment(date).format('YYYY-MM-DD');
+    const url = `/api/spaces/${person.spaceUuid}/person/${person.id}/assignment/delete/${dateAsString}`;
+    const config = getAxiosConfig();
+    return Axios.delete(url, {...config, data: person});
+}
 
-        return Axios.get(url, {headers});
-    }
+async function getReassignments(spaceUuid: string, requestedDate: Date): Promise<AxiosResponse> {
+    const formattedDate = moment(requestedDate).format('YYYY-MM-DD');
+    const url = `/api/spaces/${spaceUuid}/reassignment/${formattedDate}`;
+    return Axios.get(url, getAxiosConfig());
+}
 
-    static async getAssignmentEffectiveDates(spaceUuid: string): Promise<AxiosResponse> {
-        const url = `/api/spaces/${spaceUuid}/assignment/dates`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        };
+async function getAssignmentsV2ForSpaceAndPerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
+    const url = `/api/v2/spaces/${spaceUuid}/person/${personId}/assignments`;
+    return Axios.get(url, getAxiosConfig());
+}
 
-        return Axios.get(url, {headers} );
-    }
-
-    static async deleteAssignmentForDate(date: Date, person: Person): Promise<AxiosResponse> {
-        const dateAsString = moment(date).format('YYYY-MM-DD');
-        const url = `/api/spaces/${person.spaceUuid}/person/${person.id}/assignment/delete/${dateAsString}`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        };
-
-        return Axios.delete(url, {headers, data: person});
-    }
-
-    static async getReassignments(spaceUuid: string, requestedDate: Date): Promise<AxiosResponse> {
-        const formattedDate = moment(requestedDate).format('YYYY-MM-DD');
-        const url = `/api/spaces/${spaceUuid}/reassignment/${formattedDate}`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        };
-
-        return Axios.get(url, {headers});
-    }
-
-    static async getAssignmentsV2ForSpaceAndPerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
-        const url = `/api/v2/spaces/${spaceUuid}/person/${personId}/assignments`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        };
-        return Axios.get(url, {headers});
-    }
+const AssignmentClient = {
+    createAssignmentForDate,
+    getAssignmentsUsingPersonIdAndDate,
+    getAssignmentEffectiveDates,
+    deleteAssignmentForDate,
+    getReassignments,
+    getAssignmentsV2ForSpaceAndPerson
 }
 
 export default AssignmentClient;

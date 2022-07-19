@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,85 +16,60 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {TagRequest} from '../Types/TagRequest';
-import {TagClient} from '../Types/TagClient';
-import {getToken} from '../Auth/TokenProvider';
+import {TagRequest} from 'Types/TagRequest';
+import {TagClient} from 'Types/TagClient';
 import {Space} from 'Types/Space';
-import MatomoEvents from '../Matomo/MatomoEvents';
-import {LocationTag} from '../Types/Tag';
+import MatomoEvents from 'Matomo/MatomoEvents';
+import {LocationTag} from 'Types/Tag';
+import {getAxiosConfig} from 'Utils/getAxiosConfig';
 
-class LocationClient implements TagClient {
-    private getBaseLocationsUrl(spaceUuid: string): string {
-        return '/api/spaces/' + spaceUuid + '/locations';
-    }
-
-    async get(spaceUuid: string): Promise<AxiosResponse<LocationTag[]>> {
-        const url = this.getBaseLocationsUrl(spaceUuid);
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.get(url, config);
-    }
-
-    async add(location: TagRequest, space: Space): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseLocationsUrl(space.uuid!);
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.post(url, location, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'addLocationTag', location.name);
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'addLocationTagError', location.name, err.code);
-            return Promise.reject(err);
-        });
-    }
-
-    async edit(location: TagRequest, space: Space): Promise<AxiosResponse<LocationTag>> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseLocationsUrl(space.uuid!) + `/${location.id}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.put(url, location, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'editLocationTag', location.name);
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'editLocationTagError', location.name, err.code);
-            return Promise.reject(err);
-        });
-    }
-
-    async delete(locationId: number, space: Space): Promise<AxiosResponse> {
-        const url = this.getBaseLocationsUrl(space.uuid!) + `/${locationId}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.delete(url, config).then( result => {
-            MatomoEvents.pushEvent(space.name, 'deleteLocationTag', locationId.toString());
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'deleteLocationTagError', locationId.toString(), err.code);
-            return Promise.reject(err);
-        });
-    }
+function getBaseLocationsUrl(spaceUuid: string): string {
+    return '/api/spaces/' + spaceUuid + '/locations';
 }
 
-export default new LocationClient();
+async function get(spaceUuid: string): Promise<AxiosResponse<LocationTag[]>> {
+    const url = getBaseLocationsUrl(spaceUuid);
+    return Axios.get(url, getAxiosConfig());
+}
+
+async function add(location: TagRequest, space: Space): Promise<AxiosResponse> {
+    const url = getBaseLocationsUrl(space.uuid || '');
+    return Axios.post(url, location, getAxiosConfig()).then( result => {
+        MatomoEvents.pushEvent(space.name, 'addLocationTag', location.name);
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(space.name, 'addLocationTagError', location.name, err.code);
+        return Promise.reject(err);
+    });
+}
+
+async function edit(location: TagRequest, space: Space): Promise<AxiosResponse<LocationTag>> {
+    const url = getBaseLocationsUrl(space.uuid || '') + `/${location.id}`;
+    return Axios.put(url, location, getAxiosConfig()).then( result => {
+        MatomoEvents.pushEvent(space.name, 'editLocationTag', location.name);
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(space.name, 'editLocationTagError', location.name, err.code);
+        return Promise.reject(err);
+    });
+}
+
+async function deleteLocation(locationId: number, space: Space): Promise<AxiosResponse> {
+    const url = getBaseLocationsUrl(space.uuid!) + `/${locationId}`;
+    return Axios.delete(url, getAxiosConfig()).then( result => {
+        MatomoEvents.pushEvent(space.name, 'deleteLocationTag', locationId.toString());
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(space.name, 'deleteLocationTagError', locationId.toString(), err.code);
+        return Promise.reject(err);
+    });
+}
+
+const LocationClient: TagClient = {
+    get,
+    add,
+    edit,
+    delete: deleteLocation
+}
+
+export default LocationClient;
