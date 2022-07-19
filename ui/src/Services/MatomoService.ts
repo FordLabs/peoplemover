@@ -14,18 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {MatomoWindow} from '../Types/MatomoWindow';
 
 declare let window: MatomoWindow;
 
-const MatomoEvents = {
-    pushEvent: function(category: string, action: string, name: string, value?: number): void {
-        if (!window._paq) window._paq = [];
-        const eventArray: Array<string | number> = ['trackEvent', category, action, name];
-        if (value) eventArray.push(value);
-        window._paq.push(eventArray);
-    },
+function addUserToMatomo(userName: string): void {
+    if (!window._paq) window._paq = [];
+    window._paq.push(['setUserId', userName]);
+    window._paq.push(['trackPageView']);
+}
+
+function pushEvent(category: string, action: string, name: string, value?: number): void {
+    if (!window._paq) window._paq = [];
+    const eventArray: Array<string | number> = ['trackEvent', category, action, name];
+    if (value) eventArray.push(value);
+    window._paq.push(eventArray);
+}
+
+const MatomoService = {
+    pushEvent,
+    addUserToMatomo
 };
 
-export default MatomoEvents;
+export default MatomoService;

@@ -19,7 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {TagRequest} from 'Types/TagRequest';
 import {TagClient} from 'Types/TagClient';
 import {Space} from 'Types/Space';
-import MatomoEvents from 'Matomo/MatomoEvents';
+import MatomoService from 'Services/MatomoService';
 import {LocationTag} from 'Types/Tag';
 import {getAxiosConfig} from 'Utils/getAxiosConfig';
 
@@ -35,10 +35,10 @@ async function get(spaceUuid: string): Promise<AxiosResponse<LocationTag[]>> {
 async function add(location: TagRequest, space: Space): Promise<AxiosResponse> {
     const url = getBaseLocationsUrl(space.uuid || '');
     return Axios.post(url, location, getAxiosConfig()).then( result => {
-        MatomoEvents.pushEvent(space.name, 'addLocationTag', location.name);
+        MatomoService.pushEvent(space.name, 'addLocationTag', location.name);
         return result;
     }).catch(err => {
-        MatomoEvents.pushEvent(space.name, 'addLocationTagError', location.name, err.code);
+        MatomoService.pushEvent(space.name, 'addLocationTagError', location.name, err.code);
         return Promise.reject(err);
     });
 }
@@ -46,10 +46,10 @@ async function add(location: TagRequest, space: Space): Promise<AxiosResponse> {
 async function edit(location: TagRequest, space: Space): Promise<AxiosResponse<LocationTag>> {
     const url = getBaseLocationsUrl(space.uuid || '') + `/${location.id}`;
     return Axios.put(url, location, getAxiosConfig()).then( result => {
-        MatomoEvents.pushEvent(space.name, 'editLocationTag', location.name);
+        MatomoService.pushEvent(space.name, 'editLocationTag', location.name);
         return result;
     }).catch(err => {
-        MatomoEvents.pushEvent(space.name, 'editLocationTagError', location.name, err.code);
+        MatomoService.pushEvent(space.name, 'editLocationTagError', location.name, err.code);
         return Promise.reject(err);
     });
 }
@@ -57,10 +57,10 @@ async function edit(location: TagRequest, space: Space): Promise<AxiosResponse<L
 async function deleteLocation(locationId: number, space: Space): Promise<AxiosResponse> {
     const url = getBaseLocationsUrl(space.uuid!) + `/${locationId}`;
     return Axios.delete(url, getAxiosConfig()).then( result => {
-        MatomoEvents.pushEvent(space.name, 'deleteLocationTag', locationId.toString());
+        MatomoService.pushEvent(space.name, 'deleteLocationTag', locationId.toString());
         return result;
     }).catch(err => {
-        MatomoEvents.pushEvent(space.name, 'deleteLocationTagError', locationId.toString(), err.code);
+        MatomoService.pushEvent(space.name, 'deleteLocationTagError', locationId.toString(), err.code);
         return Promise.reject(err);
     });
 }

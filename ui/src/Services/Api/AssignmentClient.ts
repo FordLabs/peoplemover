@@ -18,7 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from 'Assignments/CreateAssignmentRequest';
 import moment from 'moment';
-import MatomoEvents from 'Matomo/MatomoEvents';
+import MatomoService from 'Services/MatomoService';
 import {Space} from 'Types/Space';
 import {Person} from 'Types/Person';
 import {getAxiosConfig} from 'Utils/getAxiosConfig';
@@ -31,10 +31,10 @@ async function createAssignmentForDate(requestedDate: string, products: Array<Pr
     } as CreateAssignmentsRequest;
 
     return Axios.post(url, assignmentRequest, getAxiosConfig()).then(result => {
-        if (sendEvent) MatomoEvents.pushEvent(space.name, 'assignPerson', person.name);
+        if (sendEvent) MatomoService.pushEvent(space.name, 'assignPerson', person.name);
         return result;
     }).catch(err => {
-        if (sendEvent) MatomoEvents.pushEvent(space.name, 'assignPersonError', person.name, err.code);
+        if (sendEvent) MatomoService.pushEvent(space.name, 'assignPersonError', person.name, err.code);
         return Promise.reject(err);
     });
 }

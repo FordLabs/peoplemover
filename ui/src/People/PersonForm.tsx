@@ -35,7 +35,7 @@ import FormTagsField from '../ReusableComponents/FormTagsField';
 import PersonTagClient from '../Services/Api/PersonTagClient';
 import {RoleTag, Tag} from 'Types/Tag';
 import ToolTip from '../ReusableComponents/ToolTip';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoService from '../Services/MatomoService';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
@@ -157,9 +157,9 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
     const handleMatomoEventsForNewPersonCheckboxChange = (): void  => {
         if (hasNewPersonChanged) {
             if (person.newPerson) {
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
+                MatomoService.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
             } else {
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
+                MatomoService.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
             }
             setHasNewPersonChanged(false);
         }

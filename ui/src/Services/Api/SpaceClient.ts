@@ -18,7 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
-import MatomoEvents from 'Matomo/MatomoEvents';
+import MatomoService from 'Services/MatomoService';
 import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
 const baseSpaceUrl = `/api/spaces`;
@@ -69,20 +69,20 @@ async function createSpaceForUser(spaceName: string): Promise<AxiosResponse<Spac
 
 async function editSpaceName(uuid: string, editedSpace: Space, oldSpaceName: string): Promise<AxiosResponse> {
     return editSpace(uuid, editedSpace).then(result => {
-        MatomoEvents.pushEvent(oldSpaceName, 'editSpaceName', editedSpace.name);
+        MatomoService.pushEvent(oldSpaceName, 'editSpaceName', editedSpace.name);
         return result;
     }).catch(err => {
-        MatomoEvents.pushEvent(oldSpaceName, 'editSpaceNameError', editedSpace.name, err.code);
+        MatomoService.pushEvent(oldSpaceName, 'editSpaceNameError', editedSpace.name, err.code);
         return Promise.reject(err);
     });
 }
 
 async function editSpaceReadOnlyFlag(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
     return editSpace(uuid, editedSpace).then(result => {
-        MatomoEvents.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlag', `${editedSpace.todayViewIsPublic}`);
+        MatomoService.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlag', `${editedSpace.todayViewIsPublic}`);
         return result;
     }).catch(err => {
-        MatomoEvents.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlagError', err.code);
+        MatomoService.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlagError', err.code);
         return Promise.reject(err);
     });
 }
@@ -95,10 +95,10 @@ async function editSpace(uuid: string, editedSpace: Space): Promise<AxiosRespons
 async function inviteUsersToSpace(space: Space, userIds: string[]): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users`;
     return Axios.post(url, { userIds }, getAxiosConfig()).then((result) => {
-        MatomoEvents.pushEvent(space.name, 'inviteUser', userIds.join(', '));
+        MatomoService.pushEvent(space.name, 'inviteUser', userIds.join(', '));
         return result;
     }).catch((error) => {
-        MatomoEvents.pushEvent(space.name, 'inviteUserError', userIds.join(', '), error.code);
+        MatomoService.pushEvent(space.name, 'inviteUserError', userIds.join(', '), error.code);
         return Promise.reject(error);
     });
 }
@@ -106,10 +106,10 @@ async function inviteUsersToSpace(space: Space, userIds: string[]): Promise<Axio
 function removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users/${user.userId}`;
     return Axios.delete(url, getAxiosConfig()).then((result) => {
-        MatomoEvents.pushEvent(space.name, 'removeUser', user.userId);
+        MatomoService.pushEvent(space.name, 'removeUser', user.userId);
         return result;
     }).catch((error) => {
-        MatomoEvents.pushEvent(space.name, 'removeUserError', user.userId, error.code);
+        MatomoService.pushEvent(space.name, 'removeUserError', user.userId, error.code);
         return Promise.reject(error);
     });
 }
@@ -117,10 +117,10 @@ function removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse
 async function changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
     return Axios.put(url, null, getAxiosConfig()).then((result) => {
-        MatomoEvents.pushEvent(space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`);
+        MatomoService.pushEvent(space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`);
         return result;
     }).catch((error) => {
-        MatomoEvents.pushEvent(space.name, 'updateOwnerError', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`, error.code);
+        MatomoService.pushEvent(space.name, 'updateOwnerError', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`, error.code);
         return Promise.reject(error);
     });
 }

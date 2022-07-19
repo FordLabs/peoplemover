@@ -23,7 +23,7 @@ import AssignmentCardList from '../Assignments/AssignmentCardList';
 
 import moment from 'moment';
 import {createDataTestId} from '../Utils/ReactUtils';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoService from '../Services/MatomoService';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import AssignmentClient from '../Services/Api/AssignmentClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
@@ -153,7 +153,7 @@ function ProductCard({ product }: Props): JSX.Element {
     }
 
     const handleMatomoEventsForProductUrlClicked = (): void  => {
-        MatomoEvents.pushEvent(currentSpace.name, PRODUCT_URL_CLICKED, product.name);
+        MatomoService.pushEvent(currentSpace.name, PRODUCT_URL_CLICKED, product.name);
     };
 
     function listenKeyUp(event: React.KeyboardEvent): void {

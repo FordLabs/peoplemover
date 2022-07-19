@@ -17,7 +17,7 @@
 
 import Cookies from 'universal-cookie';
 import jwtDecoder from 'jwt-decode';
-import {addUserToMatomo} from '../Matomo/MatomoUserTracking';
+import MatomoService from '../Services/MatomoService';
 
 export const getToken = (): string => {
     const cookies = new Cookies();
@@ -38,7 +38,7 @@ export const getUserNameFromAccessToken = (): string => {
     try {
         const decodedAccessToken = getDecodedToken();
         const userName = decodedAccessToken?.sub || '';
-        addUserToMatomo(userName);
+        MatomoService.addUserToMatomo(userName);
 
         return userName;
     } catch {

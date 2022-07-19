@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {TagClient} from 'Types/TagClient';
-import MatomoEvents from 'Matomo/MatomoEvents';
+import MatomoService from 'Services/MatomoService';
 import {Space} from 'Types/Space';
 import {RoleTagRequest} from 'Types/TagRequest';
 import {getAxiosConfig} from 'Utils/getAxiosConfig';
@@ -34,10 +34,10 @@ async function get(spaceUuid: string): Promise<AxiosResponse> {
 async function add(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
     const url = getBaseRolesUrl(space.uuid || '');
     return Axios.post(url, role, getAxiosConfig()).then((result) => {
-        MatomoEvents.pushEvent(space.name, 'addRole', role.name);
+        MatomoService.pushEvent(space.name, 'addRole', role.name);
         return result;
     }).catch((err) => {
-        MatomoEvents.pushEvent(space.name, 'addRoleError', role.name, err.code);
+        MatomoService.pushEvent(space.name, 'addRoleError', role.name, err.code);
         return Promise.reject(err);
     });
 }
@@ -45,10 +45,10 @@ async function add(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
 async function edit(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
     const url = `${getBaseRolesUrl(space.uuid || '')}/${role.id}`;
     return Axios.put(url, role, getAxiosConfig()).then((result) => {
-        MatomoEvents.pushEvent(space.name, 'editRole', role.name);
+        MatomoService.pushEvent(space.name, 'editRole', role.name);
         return result;
     }).catch((err) => {
-        MatomoEvents.pushEvent(space.name, 'editRoleError', role.name, err.code);
+        MatomoService.pushEvent(space.name, 'editRoleError', role.name, err.code);
         return Promise.reject(err);
     });
 }
@@ -56,10 +56,10 @@ async function edit(role: RoleTagRequest, space: Space): Promise<AxiosResponse> 
 async function deleteRole(roleId: number, space: Space): Promise<AxiosResponse> {
     const url = getBaseRolesUrl(space.uuid!) + `/${roleId}`;
     return Axios.delete(url, getAxiosConfig()).then((result) => {
-        MatomoEvents.pushEvent(space.name, 'deleteRole', roleId.toString());
+        MatomoService.pushEvent(space.name, 'deleteRole', roleId.toString());
         return result;
     }).catch((err) => {
-        MatomoEvents.pushEvent(space.name, 'deleteRoleError', roleId.toString(), err.code);
+        MatomoService.pushEvent(space.name, 'deleteRoleError', roleId.toString(), err.code);
         return Promise.reject(err);
     });
 }

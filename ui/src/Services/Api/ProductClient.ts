@@ -18,7 +18,7 @@
 import Axios, {AxiosResponse} from 'axios';
 import moment from 'moment';
 import {getToken} from 'Auth/TokenProvider';
-import MatomoEvents from 'Matomo/MatomoEvents';
+import MatomoService from 'Services/MatomoService';
 import {Space} from 'Types/Space';
 import {Product} from 'Types/Product';
 import {getAxiosConfig} from 'Utils/getAxiosConfig';
@@ -30,10 +30,10 @@ function getBaseProductsUrl(spaceUuid: string): string {
 async function createProduct(space: Space, product: Product): Promise<AxiosResponse> {
     const url = getBaseProductsUrl(space.uuid || '');
     return Axios.post(url, product, getAxiosConfig()).then(result => {
-        MatomoEvents.pushEvent(space.name, 'createProduct', product.name);
+        MatomoService.pushEvent(space.name, 'createProduct', product.name);
         return result;
     }).catch(err => {
-        MatomoEvents.pushEvent(space.name, 'createProductError', product.name, err.code);
+        MatomoService.pushEvent(space.name, 'createProductError', product.name, err.code);
         return Promise.reject(err);
     });
 }
@@ -42,13 +42,13 @@ async function editProduct(space: Space, product: Product, isArchive = false): P
     const url = getBaseProductsUrl(space.uuid || '') + `/${product.id}`;
     return Axios.put(url, product, getAxiosConfig()).then(result => {
         if (isArchive) {
-            MatomoEvents.pushEvent(space.name, 'archiveProduct', product.name);
+            MatomoService.pushEvent(space.name, 'archiveProduct', product.name);
         } else {
-            MatomoEvents.pushEvent(space.name, 'editProduct', product.name);
+            MatomoService.pushEvent(space.name, 'editProduct', product.name);
         }
         return result;
     }).catch(err => {
-        MatomoEvents.pushEvent(space.name, 'editProductError', product.name, err.code);
+        MatomoService.pushEvent(space.name, 'editProductError', product.name, err.code);
         return Promise.reject(err);
     });
 }
@@ -56,10 +56,10 @@ async function editProduct(space: Space, product: Product, isArchive = false): P
 async function deleteProduct(space: Space, product: Product): Promise<AxiosResponse> {
     const url = getBaseProductsUrl(space.uuid || '') + `/${product.id}`;
     return Axios.delete(url, getAxiosConfig()).then(result => {
-        MatomoEvents.pushEvent(space.name, 'deleteProduct', product.name);
+        MatomoService.pushEvent(space.name, 'deleteProduct', product.name);
         return result;
     }).catch((error) => {
-        MatomoEvents.pushEvent(space.name, 'deleteProductError', product.name, error.code);
+        MatomoService.pushEvent(space.name, 'deleteProductError', product.name, error.code);
         return Promise.reject(error);
     });
 }
