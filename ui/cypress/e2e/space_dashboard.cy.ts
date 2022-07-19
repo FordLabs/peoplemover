@@ -73,7 +73,7 @@ describe('The Space Dashboard', () => {
         cy.contains(flippingSweetBoardName).should('not.exist');
     });
 
-    it('Transfer ownership of a space', () => {
+    it('Leave a space (transfer ownership of a space)', () => {
         checkPresenceOfDashboardWelcomeMessage(false);
 
         openSpaceActionsDropdown();
@@ -85,32 +85,6 @@ describe('The Space Dashboard', () => {
         cy.get('[data-testid="confirmationModalCancel"]').click({ force: true });
 
         checkPresenceOfDashboardWelcomeMessage(true);
-    });
-
-    // it('Leave a space ', () => {});
-
-    // it('Show no spaces message', () => {});
-
-    xit('refreshes page after deleting a space', () => {
-        cy.intercept('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
-        cy.visit('/user/dashboard');
-        cy.injectAxe();
-        cy.get('.createNewSpaceButton').click();
-        cy.get('[data-testid=createSpaceInputField]').type('abc');
-        cy.get('[data-testid=createSpaceButton]').click();
-        cy.contains('Unassigned');
-        cy.contains('PEOPLEMOVER').click();
-        cy.get('[data-testid=spaceDashboardTile]')
-            .should('contain.text', 'abc');
-        cy.contains('abc');
-        cy.wait('@getSpaceUsers');
-        cy.wait('@getSpaceUsers');
-        cy.wait('@getSpaceUsers');
-        cy.get('[id=ellipsis-button-abc]').click();
-        cy.contains('Leave Space').click();
-        cy.contains('Leave & delete').click();
-        cy.get('[data-testid=spaceDashboardTile]')
-            .should('not.contain.text', 'abc');
     });
 });
 
