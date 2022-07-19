@@ -17,88 +17,71 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import moment from 'moment';
-import {getToken} from '../Auth/TokenProvider';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import {getToken} from 'Auth/TokenProvider';
+import MatomoEvents from 'Matomo/MatomoEvents';
 import {Space} from 'Types/Space';
-import {Product} from '../Types/Product';
+import {Product} from 'Types/Product';
+import {getAxiosConfig} from 'Utils/getAxiosConfig';
 
-class ProductClient {
-    private static getBaseProductsUrl(spaceUuid: string): string {
-        return '/api/spaces/' + spaceUuid + '/products';
-    }
+function getBaseProductsUrl(spaceUuid: string): string {
+    return '/api/spaces/' + spaceUuid + '/products';
+}
 
-    static async createProduct(space: Space, product: Product): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseProductsUrl(space.uuid!);
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
+async function createProduct(space: Space, product: Product): Promise<AxiosResponse> {
+    const url = getBaseProductsUrl(space.uuid || '');
+    return Axios.post(url, product, getAxiosConfig()).then(result => {
+        MatomoEvents.pushEvent(space.name, 'createProduct', product.name);
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(space.name, 'createProductError', product.name, err.code);
+        return Promise.reject(err);
+    });
+}
 
-        return Axios.post(url, product, config).then(result => {
-            MatomoEvents.pushEvent(space.name, 'createProduct', product.name);
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'createProductError', product.name, err.code);
-            return Promise.reject(err);
-        });
-    }
+async function editProduct(space: Space, product: Product, isArchive = false): Promise<AxiosResponse> {
+    const url = getBaseProductsUrl(space.uuid || '') + `/${product.id}`;
+    return Axios.put(url, product, getAxiosConfig()).then(result => {
+        if (isArchive) {
+            MatomoEvents.pushEvent(space.name, 'archiveProduct', product.name);
+        } else {
+            MatomoEvents.pushEvent(space.name, 'editProduct', product.name);
+        }
+        return result;
+    }).catch(err => {
+        MatomoEvents.pushEvent(space.name, 'editProductError', product.name, err.code);
+        return Promise.reject(err);
+    });
+}
 
-    static async editProduct(space: Space, product: Product, isArchive = false): Promise<AxiosResponse> {
-        const url = this.getBaseProductsUrl(space.uuid!) + `/${product.id}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
+async function deleteProduct(space: Space, product: Product): Promise<AxiosResponse> {
+    const url = getBaseProductsUrl(space.uuid || '') + `/${product.id}`;
+    return Axios.delete(url, getAxiosConfig()).then(result => {
+        MatomoEvents.pushEvent(space.name, 'deleteProduct', product.name);
+        return result;
+    }).catch((error) => {
+        MatomoEvents.pushEvent(space.name, 'deleteProductError', product.name, error.code);
+        return Promise.reject(error);
+    });
+}
 
-        return Axios.put(url, product, config).then(result => {
-            if (isArchive) {
-                MatomoEvents.pushEvent(space.name, 'archiveProduct', product.name);
-            } else {
-                MatomoEvents.pushEvent(space.name, 'editProduct', product.name);
-            }
-            return result;
-        }).catch(err => {
-            MatomoEvents.pushEvent(space.name, 'editProductError', product.name, err.code);
-            return Promise.reject(err);
-        });
-    }
+async function getProductsForDate(spaceUuid: string, date: Date): Promise<AxiosResponse> {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    const url = getBaseProductsUrl(spaceUuid) + `?requestedDate=${formattedDate}`;
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`,
+        },
+    };
 
-    static async deleteProduct(space: Space, product: Product): Promise<AxiosResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const url = this.getBaseProductsUrl(space.uuid!) + `/${product.id}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
+    return Axios.get(url, config);
+}
 
-        return Axios.delete(url, config).then(result => {
-            MatomoEvents.pushEvent(space.name, 'deleteProduct', product.name);
-            return result;
-        }).catch((error) => {
-            MatomoEvents.pushEvent(space.name, 'deleteProductError', product.name, error.code);
-            return Promise.reject(error);
-        });
-    }
-
-    static async getProductsForDate(spaceUuid: string, date: Date): Promise<AxiosResponse> {
-        const formattedDate = moment(date).format('YYYY-MM-DD');
-        const url = this.getBaseProductsUrl(spaceUuid) + `?requestedDate=${formattedDate}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-            },
-        };
-
-        return Axios.get(url, config);
-    }
+const ProductClient = {
+    createProduct,
+    editProduct,
+    deleteProduct,
+    getProductsForDate
 }
 
 export default ProductClient;
