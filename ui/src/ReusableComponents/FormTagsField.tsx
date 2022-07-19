@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,8 @@
 import {Option} from '../Types/Option';
 import {Tag} from 'Types/Tag';
 import {JSX} from '@babel/types';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AxiosResponse} from 'axios';
-import {useOnLoad} from './UseOnLoad';
 import {TagRequest} from '../Types/TagRequest';
 import SelectWithCreateOption, {Metadata} from '../ModalFormComponents/SelectWithCreateOption';
 import {TagClient} from '../Types/TagClient';
@@ -59,11 +58,11 @@ function FormTagsField({
     const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
     const [availableTags, setAvailableTags] = useState<Array<Tag>>([]);
 
-    useOnLoad(() => {
+    useEffect(() => {
         tagClient.get(uuid).then(result => setAvailableTags(result.data));
 
         setSelectedTags(currentTags);
-    });
+    }, [currentTags, setSelectedTags, tagClient, uuid]);
 
     function createTagOption(label: string, id: number): Option {
         return {

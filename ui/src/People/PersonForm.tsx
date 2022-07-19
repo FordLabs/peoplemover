@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {FormEvent, useState} from 'react';
+import React, {FormEvent, useCallback, useEffect, useState} from 'react';
 import AssignmentClient from '../Assignments/AssignmentClient';
 import RoleClient from '../Roles/RoleClient';
 import PeopleClient from './PeopleClient';
@@ -30,7 +30,6 @@ import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import moment from 'moment';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
-import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import FormTagsField from '../ReusableComponents/FormTagsField';
 import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
@@ -91,7 +90,18 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         });
     };
 
-    const populatedEntirePersonForm = (personToPopulate: Person): void => {
+    const getUnassignedProductId = useCallback((): number => {
+        const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
+        if (unassignedProduct && unassignedProduct.id) return unassignedProduct.id;
+        return -1;
+    }, [products]);
+
+    const createProductsFromAssignments = useCallback((assignments: Assignment[]): Product[] => {
+        const allProductIdsFromAssignments = assignments.map(a => a.productId);
+        return products.filter(p => allProductIdsFromAssignments.includes(p.id)).filter(product => product.id !== getUnassignedProductId());
+    }, [getUnassignedProductId, products]);
+
+    const populatedEntirePersonForm = useCallback((personToPopulate: Person): void => {
         setPerson({...personToPopulate});
         setSelectedPersonTags(personToPopulate.tags);
 
@@ -100,9 +110,9 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                 const assignments: Array<Assignment> = response.data;
                 setSelectedProducts(createProductsFromAssignments(assignments));
             });
-    };
+    }, [createProductsFromAssignments, spaceUuid, viewingDate]);
 
-    useOnLoad(() => {
+    useEffect(() => {
         if (isEditPersonForm && personEdited) {
             populatedEntirePersonForm(personEdited);
             setInitialNewPersonFlag(personEdited.newPerson);
@@ -118,18 +128,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
 
             if (initiallySelectedProduct) setSelectedProducts([initiallySelectedProduct]);
         }
-    });
-
-    const getUnassignedProductId = (): number => {
-        const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
-        if (unassignedProduct && unassignedProduct.id) return unassignedProduct.id;
-        return -1;
-    };
-
-    const createProductsFromAssignments = (assignments: Assignment[]): Product[] => {
-        const allProductIdsFromAssignments = assignments.map(a => a.productId);
-        return products.filter(p => allProductIdsFromAssignments.includes(p.id)).filter(product => product.id !== getUnassignedProductId());
-    };
+    }, [initialPersonName, initiallySelectedProduct, isEditPersonForm, personEdited, populatedEntirePersonForm, viewingDate]);
 
     const getSelectedProductPairs = (): ProductPlaceholderPair[] => {
         return selectedProducts.map((product) => {

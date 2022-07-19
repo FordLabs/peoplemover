@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import {AccessTokenClient} from '../Login/AccessTokenClient';
-import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import {getToken} from './TokenProvider';
 import {setOauthRedirect} from '../ReusableComponents/OAuthRedirect';
 
 export function AuthenticatedRoute({ children }: { children: ReactNode }): JSX.Element {
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
-    useOnLoad(() => {
+    useEffect(() => {
         if (!window.runConfig.auth_enabled) {
             setRenderedElement(<>{children}</>);
         } else {
@@ -33,7 +32,7 @@ export function AuthenticatedRoute({ children }: { children: ReactNode }): JSX.E
                 .then(() => setRenderedElement(<>{children}</>))
                 .catch(() => setRenderedElement(<RedirectToADFS/>));
         }
-    });
+    }, [children]);
 
     return renderedElement;
 }
