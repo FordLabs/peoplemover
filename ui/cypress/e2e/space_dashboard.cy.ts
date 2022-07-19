@@ -53,14 +53,23 @@ describe('The Space Dashboard', () => {
         cy.contains('Add Product').should('exist');
     });
 
-    // it('Edit a space', () => {});
+    it('Edit a space name', () => {
+        openSpaceActionsDropdown();
+        cy.contains('Edit').click();
+        cy.get('[data-testid="createSpaceInputField"]').type(' SpaceShip');
+        cy.findByText('Save').click();
+
+        cy.get('@spaceTiles')
+            .should('have.length', 1)
+            .should('contain', 'Flipping Sweet SpaceShip');
+    });
 
     // it('Delete a space', () => {});
 
     it('Transfer ownership of a space', () => {
         checkPresenceOfDashboardWelcomeMessage(false);
 
-        cy.get('[data-testid="ellipsisButton"]').click();
+        openSpaceActionsDropdown();
         cy.contains('Leave Space').click();
         cy.contains('Transfer Ownership of Space');
         cy.get('[data-testid="transferOwnershipFormRadioControl-BBARKER"]').click();
@@ -103,4 +112,8 @@ function checkPresenceOfDashboardWelcomeMessage(isPresent : boolean) {
     cy.contains('Welcome to PeopleMover!').should(isPresentAssertion);
     cy.contains('Get started by creating your own space.').should(isPresentAssertion);
     cy.contains('Create New Space').should('exist');
+}
+
+function openSpaceActionsDropdown() {
+    cy.get('[data-testid="ellipsisButton"]').click();
 }
