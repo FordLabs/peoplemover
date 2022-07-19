@@ -29,10 +29,9 @@ describe('The Space Dashboard', () => {
 
         cy.get('@spaceTiles').then((elements) => {
             if (elements.length > 1) {
-                cy.findByLabelText(`Open Menu for Space ${newSpaceName}`).click();
-                cy.contains('Delete Space').click();
+                openDeleteSpaceModal(newSpaceName);
                 cy.get('[data-testid="confirmDeleteButton"]').click();
-                cy.contains('Ok').click();
+                cy.contains('Ok').click({ force: true });
             }
         })
 
@@ -64,7 +63,15 @@ describe('The Space Dashboard', () => {
             .should('contain', 'Flipping Sweet SpaceShip');
     });
 
-    // it('Delete a space', () => {});
+    it('Delete a space', () => {
+        const flippingSweetBoardName = 'Flipping Sweet'
+        openDeleteSpaceModal(flippingSweetBoardName);
+        cy.contains('Are you sure?').should('exist');
+        cy.contains('Transfer Ownership').should('exist');
+        cy.get('[data-testid="confirmationModalLeaveAndDeleteSpace"]').click();
+        checkPresenceOfDashboardWelcomeMessage(true);
+        cy.contains(flippingSweetBoardName).should('not.exist');
+    });
 
     it('Transfer ownership of a space', () => {
         checkPresenceOfDashboardWelcomeMessage(false);
@@ -116,4 +123,9 @@ function checkPresenceOfDashboardWelcomeMessage(isPresent : boolean) {
 
 function openSpaceActionsDropdown() {
     cy.get('[data-testid="ellipsisButton"]').click();
+}
+
+function openDeleteSpaceModal(spaceName: string) {
+    cy.findByLabelText(`Open Menu for Space ${spaceName}`).click();
+    cy.contains('Delete Space').click();
 }
