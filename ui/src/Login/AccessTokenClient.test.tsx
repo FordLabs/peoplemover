@@ -16,7 +16,7 @@
  */
 import Axios from 'axios';
 import Cookies from 'universal-cookie';
-import {AccessTokenClient} from './AccessTokenClient';
+import AccessTokenClient from './AccessTokenClient';
 
 describe('Access Token Client', function() {
 
