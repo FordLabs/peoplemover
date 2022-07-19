@@ -138,7 +138,7 @@ describe('Space Client', function() {
             .then(() => {
                 expect(Axios.delete).toHaveBeenCalledWith(
                     `/api/spaces/${TestData.space.uuid}/users/${user.userId}`,
-                    {headers: {Authorization: 'Bearer 123456'}}
+                    {headers: {Authorization: 'Bearer 123456',"Content-Type": "application/json"}}
                 );
                 expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'removeUser', user.userId]);
                 done();
@@ -153,7 +153,7 @@ describe('Space Client', function() {
                 expect(Axios.put).toHaveBeenCalledWith(
                     `/api/spaces/${TestData.space.uuid}/users/${newOwner.userId}`,
                     null,
-                    {headers: {Authorization: 'Bearer 123456'}}
+                    {headers: {Authorization: 'Bearer 123456', "Content-Type": "application/json"}}
                 );
                 expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`]);
                 done();
@@ -165,7 +165,7 @@ describe('Space Client', function() {
         SpaceClient.deleteSpaceByUuid(TestData.space.uuid!).then(() => {
             expect(Axios.delete).toHaveBeenCalledWith(
                 `/api/spaces/${TestData.space.uuid}`,
-                {headers: {Authorization: 'Bearer 123456'}}
+                {headers: {Authorization: 'Bearer 123456', "Content-Type": "application/json"}}
             );
             done();
         });
