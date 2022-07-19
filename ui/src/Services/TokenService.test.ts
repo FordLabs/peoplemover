@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {getUserNameFromAccessToken} from './TokenProvider';
+import {getUserNameFromAccessToken} from './TokenService';
 import {MatomoWindow} from '../Types/MatomoWindow';
 
 declare let window: MatomoWindow;
 
 jest.mock('jwt-decode');
 
-describe('TokenProvider', function() {
+describe('Token Service', function() {
     let originalWindow: MatomoWindow;
 
     beforeEach(() => {

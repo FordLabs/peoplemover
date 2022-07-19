@@ -17,7 +17,7 @@
 
 import Cookies from 'universal-cookie';
 import jwtDecoder from 'jwt-decode';
-import MatomoService from '../Services/MatomoService';
+import MatomoService from './MatomoService';
 
 export const getToken = (): string => {
     const cookies = new Cookies();

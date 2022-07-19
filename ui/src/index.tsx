@@ -25,7 +25,7 @@ import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserP
 import FocusRing from './FocusRing';
 import MatomoService from './Services/MatomoService';
 import CacheBuster from './CacheBuster';
-import {removeToken} from './Auth/TokenProvider';
+import {removeToken} from './Services/TokenService';
 import Routes from './Routes';
 import flagsmith, {IFlags} from 'flagsmith';
 

@@ -17,7 +17,7 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import moment from 'moment';
-import {getToken} from 'Auth/TokenProvider';
+import {getToken} from 'Services/TokenService';
 import MatomoService from 'Services/MatomoService';
 import {Space} from 'Types/Space';
 import {Product} from 'Types/Product';

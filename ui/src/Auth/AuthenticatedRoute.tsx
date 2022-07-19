@@ -17,7 +17,7 @@
 
 import React, {ReactNode, useEffect, useState} from 'react';
 import AccessTokenClient from '../Services/Api/AccessTokenClient';
-import {getToken} from './TokenProvider';
+import {getToken} from '../Services/TokenService';
 import {setOauthRedirect} from '../ReusableComponents/OAuthRedirect';
 
 export function AuthenticatedRoute({ children }: { children: ReactNode }): JSX.Element {
