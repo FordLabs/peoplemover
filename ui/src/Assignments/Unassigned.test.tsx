@@ -28,14 +28,14 @@ import {ProductTagsState} from 'State/ProductTagsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {Product} from '../Types/Product';
 
-jest.mock('Products/ProductClient');
-jest.mock('Space/SpaceClient');
-jest.mock('People/PeopleClient');
-jest.mock('Roles/RoleClient');
-jest.mock('Assignments/AssignmentClient');
-jest.mock('Locations/LocationClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
-jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/SpaceClient');
+jest.mock('Services/Api/PeopleClient');
+jest.mock('Services/Api/RoleClient');
+jest.mock('Services/Api/AssignmentClient');
+jest.mock('Services/Api/LocationClient');
+jest.mock('Services/Api/ProductTagClient');
+jest.mock('Services/Api/PersonTagClient');
 
 describe('Unassigned Products', () => {
     const submitFormButtonText = 'Add';

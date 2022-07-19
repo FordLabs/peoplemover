@@ -18,13 +18,13 @@
 import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
 import useFetchRoles from './useFetchRoles';
-import RoleClient from 'Roles/RoleClient';
+import RoleClient from 'Services/Api/RoleClient';
 import TestData from 'Utils/TestData';
 import TestUtils from '../../Utils/TestUtils';
 
 const wrapper = TestUtils.hookWrapper;
 
-jest.mock('Roles/RoleClient');
+jest.mock('Services/Api/RoleClient');
 
 const spaceUUID = 'space-uuid';
 

@@ -17,11 +17,11 @@
 
 import Axios from 'axios';
 import AssignmentClient from './AssignmentClient';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from './CreateAssignmentRequest';
-import TestData from '../Utils/TestData';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../../Assignments/CreateAssignmentRequest';
+import TestData from '../../Utils/TestData';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from '../Types/MatomoWindow';
+import {MatomoWindow} from '../../Types/MatomoWindow';
 
 declare let window: MatomoWindow;
 

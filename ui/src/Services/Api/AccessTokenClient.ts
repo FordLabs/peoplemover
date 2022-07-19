@@ -16,7 +16,7 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {getAxiosConfig} from '../Utils/getAxiosConfig';
+import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
 async function validateAccessToken(accessToken: string): Promise<AxiosResponse> {
     const url = '/api/access_token/validate';

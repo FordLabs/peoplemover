@@ -19,15 +19,15 @@ import React from 'react';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {findByTestId, findByText, fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
-import LocationClient from '../Locations/LocationClient';
-import ProductTagClient from './ProductTag/ProductTagClient';
+import LocationClient from '../Services/Api/LocationClient';
+import ProductTagClient from '../Services/Api/ProductTagClient';
 import MyTagsForm from './MyTagsForm';
 import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
 import {LocationsState} from '../State/LocationsState';
 import {ProductTagsState} from '../State/ProductTagsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('Locations/LocationClient');
+jest.mock('Services/Api/LocationClient');
 
 describe('My Tags Form', () => {
     const renderMyTagsForm = (filterType: FilterType): void => {

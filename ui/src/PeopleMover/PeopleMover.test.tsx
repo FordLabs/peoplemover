@@ -18,7 +18,7 @@
 import TestUtils from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {screen, waitFor} from '@testing-library/react';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from '../Services/Api/SpaceClient';
 import {MatomoWindow} from '../Types/MatomoWindow';
 import {createEmptySpace} from 'Types/Space';
 import {ViewingDateState} from '../State/ViewingDateState';
@@ -29,14 +29,14 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 declare let window: MatomoWindow;
 
-jest.mock('Space/SpaceClient');
-jest.mock('Products/ProductClient');
-jest.mock('People/PeopleClient');
-jest.mock('Roles/RoleClient');
-jest.mock('Assignments/AssignmentClient');
-jest.mock('Locations/LocationClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
-jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Services/Api/SpaceClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/PeopleClient');
+jest.mock('Services/Api/RoleClient');
+jest.mock('Services/Api/AssignmentClient');
+jest.mock('Services/Api/LocationClient');
+jest.mock('Services/Api/ProductTagClient');
+jest.mock('Services/Api/PersonTagClient');
 
 const mockedUsedNavigate = jest.fn();
 

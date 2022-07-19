@@ -19,14 +19,14 @@ import React, {RefObject, useRef, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
-import AssignmentClient from './AssignmentClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
 import {calculateDuration} from './AssignmentService';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from 'Utils/ReactUtils';
 import MatomoEvents from 'Matomo/MatomoEvents';
-import PeopleClient from 'People/PeopleClient';
+import PeopleClient from 'Services/Api/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {useRecoilValue, useSetRecoilState} from 'recoil';

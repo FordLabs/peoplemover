@@ -15,13 +15,17 @@
  * limitations under the License.
  */
 
-import TestData from '../../Utils/TestData';
+import TestData from '../../../Utils/TestData';
 
-const LocationClient = {
-    get: jest.fn().mockResolvedValue({ data: TestData.locations }),
-    add: jest.fn().mockResolvedValue({ data: { id: 11, name: 'Ahmedabad' } }),
-    edit: jest.fn().mockResolvedValue({ data: { id: 1, name: 'Saline' } }),
-    delete: jest.fn().mockResolvedValue({ data: {} })
+const RoleClient = {
+    get: jest.fn().mockResolvedValue({ data: [...TestData.roles] }),
+    add: jest.fn().mockResolvedValue({
+        data: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: {color: '1', id: 2}},
+    }),
+    edit: jest.fn().mockResolvedValue({
+        data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color3},
+    }),
+    delete:  jest.fn().mockResolvedValue({ data: {} })
 }
 
-export default LocationClient;
+export default RoleClient;

@@ -17,9 +17,9 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from 'Types/Space';
-import MatomoEvents from '../Matomo/MatomoEvents';
-import {Person} from '../Types/Person';
-import {getAxiosConfig} from '../Utils/getAxiosConfig';
+import MatomoEvents from '../../Matomo/MatomoEvents';
+import {Person} from '../../Types/Person';
+import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
 function getBasePeopleUrl(spaceUuid: string): string {
     return '/api/spaces/' + spaceUuid + '/people';

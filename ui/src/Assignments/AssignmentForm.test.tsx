@@ -18,7 +18,7 @@
 import {fireEvent, getByText, screen, waitFor, within} from '@testing-library/react';
 import React from 'react';
 import AssignmentForm from '../Assignments/AssignmentForm';
-import AssignmentClient from '../Assignments/AssignmentClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
@@ -33,7 +33,7 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 let modalContent: ModalContents | null;
 
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/AssignmentClient');
 
 describe('AssignmentForm', () => {
     beforeEach(() => {

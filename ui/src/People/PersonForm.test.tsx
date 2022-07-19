@@ -21,10 +21,10 @@ import PersonForm from './PersonForm';
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import selectEvent from 'react-select-event';
-import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
+import PersonTagClient from '../Services/Api/PersonTagClient';
 import {TagRequest} from '../Types/TagRequest';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import PeopleClient from './PeopleClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
+import PeopleClient from '../Services/Api/PeopleClient';
 import {emptyPerson} from './PersonService';
 import {MatomoWindow} from '../Types/MatomoWindow';
 import moment from 'moment';
@@ -36,11 +36,11 @@ import {Person} from '../Types/Person';
 
 declare let window: MatomoWindow;
 
-jest.mock('People/PeopleClient');
-jest.mock('Roles/RoleClient');
-jest.mock('Assignments/AssignmentClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
-jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Services/Api/PeopleClient');
+jest.mock('Services/Api/RoleClient');
+jest.mock('Services/Api/AssignmentClient');
+jest.mock('Services/Api/ProductTagClient');
+jest.mock('Services/Api/PersonTagClient');
 
 describe('Person Form', () => {
     const mayFourteen: Date = new Date(2020, 4, 14);

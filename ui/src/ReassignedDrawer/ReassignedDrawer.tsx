@@ -18,10 +18,10 @@
 import React, {useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import DrawerContainer from 'ReusableComponents/DrawerContainer';
-import AssignmentClient from 'Assignments/AssignmentClient';
+import AssignmentClient from 'Services/Api/AssignmentClient';
 import {isArchived} from 'People/PersonService';
 import MatomoEvents from 'Matomo/MatomoEvents';
-import PeopleClient from 'People/PeopleClient';
+import PeopleClient from 'Services/Api/PeopleClient';
 import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';

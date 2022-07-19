@@ -20,7 +20,7 @@ import SpaceDashboard from './SpaceDashboard';
 import React from 'react';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from '../Services/Api/SpaceClient';
 import moment from 'moment';
 import {createEmptySpace, Space} from 'Types/Space';
 import {MemoryRouter} from 'react-router-dom';
@@ -42,7 +42,7 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedUsedNavigate,
 }));
 
-jest.mock('../Space/SpaceClient');
+jest.mock('Services/Api/SpaceClient');
 
 describe('SpaceDashboard', () => {
     describe('Resetting Space Date', () => {

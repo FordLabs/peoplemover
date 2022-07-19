@@ -15,14 +15,16 @@
  * limitations under the License.
  */
 
-import TestData from '../../Utils/TestData';
-import {AxiosResponse} from 'axios';
+import TestData from '../../../Utils/TestData';
 
-const PeopleClient = {
-    createPersonForSpace: jest.fn((space, person) => Promise.resolve({ data: person } as AxiosResponse)),
-    getAllPeopleInSpace: jest.fn().mockResolvedValue({ data: TestData.people }),
-    updatePerson: jest.fn().mockResolvedValue({data: {}}),
-    removePerson: jest.fn().mockResolvedValue({data: {}})
+const SpaceClient = {
+    getSpacesForUser: jest.fn().mockResolvedValue([TestData.space]),
+    getUsersForSpace:  jest.fn().mockResolvedValue(TestData.spaceMappingsArray),
+    changeOwner: jest.fn().mockResolvedValue({}),
+    removeUser: jest.fn().mockResolvedValue({data: {}}),
+    deleteSpaceByUuid: jest.fn().mockResolvedValue({}),
+    getSpaceFromUuid: jest.fn().mockResolvedValue({data: TestData.space}),
+    inviteUsersToSpace: jest.fn().mockResolvedValue({})
 }
 
-export default PeopleClient;
+export default SpaceClient;

@@ -19,7 +19,7 @@ import Axios, {AxiosResponse} from 'axios';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 import MatomoEvents from 'Matomo/MatomoEvents';
-import {getAxiosConfig} from '../Utils/getAxiosConfig';
+import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
 const baseSpaceUrl = `/api/spaces`;
 

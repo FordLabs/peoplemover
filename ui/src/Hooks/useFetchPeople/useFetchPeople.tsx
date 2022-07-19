@@ -18,7 +18,7 @@
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import {PeopleState} from 'State/PeopleState';
-import PeopleClient from 'People/PeopleClient';
+import PeopleClient from 'Services/Api/PeopleClient';
 import {Person} from 'Types/Person';
 
 interface UseFetchPeople {

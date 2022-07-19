@@ -17,7 +17,7 @@
 
 import React, {useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
-import ProductClient from './ProductClient';
+import ProductClient from '../Services/Api/ProductClient';
 import {isUnassignedProduct} from './ProductService';
 import AssignmentCardList from '../Assignments/AssignmentCardList';
 
@@ -25,7 +25,7 @@ import moment from 'moment';
 import {createDataTestId} from '../Utils/ReactUtils';
 import MatomoEvents from '../Matomo/MatomoEvents';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
-import AssignmentClient from '../Assignments/AssignmentClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {getAssignments} from '../People/PersonService';

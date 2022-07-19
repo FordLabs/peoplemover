@@ -22,9 +22,9 @@ import {emptyProduct} from './ProductService';
 import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
 import {MatomoWindow} from '../Types/MatomoWindow';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import ProductClient from './ProductClient';
+import ProductClient from '../Services/Api/ProductClient';
 import moment from 'moment';
-import AssignmentClient from '../Assignments/AssignmentClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
@@ -32,7 +32,7 @@ import {Product} from '../Types/Product';
 
 declare let window: MatomoWindow;
 
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/AssignmentClient');
 
 describe('ProductCard', () => {
     let originalWindow: Window;

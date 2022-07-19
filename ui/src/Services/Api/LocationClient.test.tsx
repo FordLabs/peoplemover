@@ -17,7 +17,7 @@
 
 import Axios from 'axios';
 import LocationClient from './LocationClient';
-import TestData from '../Utils/TestData';
+import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
 
 describe('Location Client', function() {

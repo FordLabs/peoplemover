@@ -18,7 +18,7 @@
 import React, {useState} from 'react';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import ReactSwitch from 'react-switch';
-import SpaceClient from 'Space/SpaceClient';
+import SpaceClient from 'Services/Api/SpaceClient';
 import MatomoEvents from 'Matomo/MatomoEvents';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
 

@@ -17,10 +17,10 @@
 
 import Axios from 'axios';
 import PeopleClient from './PeopleClient';
-import TestData from '../Utils/TestData';
+import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from '../Types/MatomoWindow';
-import {Person} from '../Types/Person';
+import {MatomoWindow} from '../../Types/MatomoWindow';
+import {Person} from '../../Types/Person';
 
 jest.mock('axios');
 

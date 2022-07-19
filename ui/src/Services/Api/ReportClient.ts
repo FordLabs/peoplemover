@@ -16,12 +16,12 @@
  */
 
 import Axios from 'axios';
-import {Report} from '../Types/Report';
+import {Report} from '../../Types/Report';
 import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
 import moment from 'moment';
-import MatomoEvents from '../Matomo/MatomoEvents';
-import {getAxiosConfig} from '../Utils/getAxiosConfig';
+import MatomoEvents from '../../Matomo/MatomoEvents';
+import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
 async function getReportsWithNames(spaceName: string, spaceUuid: string, date: Date): Promise<void> {
     const dateAsString = moment(date).format('YYYY-MM-DD');

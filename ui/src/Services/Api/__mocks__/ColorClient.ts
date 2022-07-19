@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import TestData from '../../Utils/TestData';
+import TestData from '../../../Utils/TestData';
 
 const ColorClient = {
     getAllColors: jest.fn().mockResolvedValue({ data: TestData.colors }),
