@@ -16,14 +16,13 @@
  */
 
 import React from 'react';
-import RedirectClient from '../Utils/RedirectClient';
 
 interface RedirectWrapperProps {
     redirectUrl: string;
 }
 
 function RedirectWrapper({redirectUrl}: RedirectWrapperProps): JSX.Element {
-    RedirectClient.redirect(redirectUrl);
+    window.location.href = redirectUrl;
     return (<></>);
 }
 
